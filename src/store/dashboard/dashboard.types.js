@@ -1,0 +1,6 @@
+export const DashboardActionTypes = {
+  SET_SITES: "SET_SITES",
+  SET_SITE_LAYOUTS: "SET_SITE_LAYOUTS",
+  DELETE_SITE: "DELETE_SITE",
+  DELETE_LAYOUT: "DELETE_LAYOUT",
+}

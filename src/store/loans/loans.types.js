@@ -1,0 +1,4 @@
+export const LoanActionTypes = {
+  SET_ALL_LOANS: 'SET_ALL_LOANS',
+  SET_LOANS_STAUTS_DATA: 'SET_LOANS_STATUS_DATA',
+}

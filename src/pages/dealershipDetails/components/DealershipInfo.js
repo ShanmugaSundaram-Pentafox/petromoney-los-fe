@@ -9,7 +9,9 @@ import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import TextInput from '../../../components/TextInput/TextInput';
 // import { Typography } from '@material-ui/core';
+import { useFormik } from 'formik';
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -53,7 +55,14 @@ const useStyles = makeStyles(theme => ({
 */
 
 const DealershipInfo = ({ data, className }) => {
-  const [values, setValues] = useState(data);
+  const [readOnly, setReadOnly] = useState(true);
+  const {values, handleChange: onChange} = useFormik({
+    initialValues: data,
+    onSubmit: values => {
+      console.log('Form Values >> ', values);
+    }
+  });
+  // const [values, setValues] = useState(data);
   const classes = useStyles();
   const gridProps = {
     item: true,
@@ -61,12 +70,17 @@ const DealershipInfo = ({ data, className }) => {
     className: classes.gridItemStyle
   }
 
-  const handleChange = event => {
-    setValues({
-      ...values,
-      [event.target.name]: event.target.value
-    });
-  };
+  // const handleChange = event => {
+  //   setValues({
+  //     ...values,
+  //     [event.target.name]: event.target.value
+  //   });
+  // };
+
+  const fieldProps = {
+    readOnly,
+    onChange
+  }
 
   return (
     <Card className={clsx(classes.root, className)}>
@@ -79,44 +93,109 @@ const DealershipInfo = ({ data, className }) => {
         <CardContent>
           <Grid container>
             <Grid {...gridProps}>
-              <TextField fullWidth disabled label="Name" defaultValue={values.name} onChange={handleChange} />
-            </Grid>
-            <Grid {...gridProps}>
-              <TextField
-                fullWidth
-                disabled
-                label="Address"
-                defaultValue={values.address}
-                onChange={handleChange}
-                multiline
+              <TextInput
+                labelText="Name"
+                name="name"
+                defaultValue={values.name}
+                {...fieldProps}
                 />
             </Grid>
-            {
-              values.pincode && (
-                <Grid item xs={12}>
-                  <TextField fullWidth disabled label="Pincode" defaultValue={values.pincode} onChange={handleChange} />
-                </Grid>
-              )
-            }
-            {
-              values.pan && (
-                <Grid {...gridProps}>
-                  <TextField fullWidth disabled label="PAN" defaultValue={values.pan} onChange={handleChange} />
-                </Grid>
-              )
-            }
-            {
-              values.gst && (
-                <Grid {...gridProps}>
-                  <TextField fullWidth disabled label="GST" defaultValue={values.gst} onChange={handleChange} />
-                </Grid>
-              )
-            }
+            <Grid {...gridProps}>
+              <TextInput
+                multiline
+                labelText="Address"
+                name="address"
+                defaultValue={values.address}
+                {...fieldProps}
+                />
+            </Grid>
+            <Grid {...gridProps}>
+              <TextInput
+                labelText="Pincode"
+                name="pincode"
+                defaultValue={values.pincode}
+                {...fieldProps}
+                />
+            </Grid>
+            <Grid {...gridProps}>
+              <TextInput
+                labelText="PAN"
+                name="pan"
+                defaultValue={values.pan}
+                {...fieldProps}
+                />
+            </Grid>
+            <Grid {...gridProps}>
+              <TextInput 
+                labelText="GST"
+                name="gst"
+                defaultValue={values.gst}
+                {...fieldProps}
+                />
+            </Grid>
+            <Divider />
+            <Grid {...gridProps} xs={6}>
+              <TextInput 
+                labelText="Latitude"
+                name="latitude"
+                labelWidth={40}
+                defaultValue={values.latitude}
+                {...fieldProps}
+                />
+            </Grid>
+            <Grid {...gridProps} xs={6}>
+              <TextInput 
+                labelText="Longtitude"
+                name="longtitude"
+                labelWidth={40}
+                defaultValue={values.longtitude}
+                {...fieldProps}
+                />
+            </Grid>
+            <Grid {...gridProps} xs={6}>
+              <TextInput 
+                labelText="District"
+                labelWidth={40}
+                defaultValue={values.district}
+                readOnly
+                />
+            </Grid>
+            <Grid {...gridProps} xs={6}>
+              <TextInput 
+                labelText="State"
+                labelWidth={40}
+                defaultValue={values.state}
+                readOnly
+                />
+            </Grid>
+            <Grid {...gridProps} xs={6}>
+              <TextInput 
+                labelText="Sales Area"
+                labelWidth={40}
+                defaultValue={values.sales_area}
+                readOnly
+                />
+            </Grid>
+            <Grid {...gridProps} xs={6}>
+              <TextInput 
+                labelText="Zone"
+                labelWidth={40}
+                defaultValue={values.zone}
+                readOnly
+                />
+            </Grid>
           </Grid>
         </CardContent>
         <Divider />
         <CardActions className={classes.actionFooter}>
-          <Button color="primary" variant="outlined" size="small">Edit Details</Button>
+          {!readOnly ? (
+            <>
+              <Button variant="contained" size="small">Cancel</Button>
+              <Button variant="contained" size="small">Save</Button>
+            </>
+            ) : (
+              <Button color="primary" variant="outlined" size="small" onClick={() => { setReadOnly(false); }}>Edit Details</Button>
+            )}
         </CardActions>
       </form>
     </Card>

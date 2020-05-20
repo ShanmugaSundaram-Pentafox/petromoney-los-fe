@@ -1,0 +1,56 @@
+import React from 'react';
+import styled from 'styled-components';
+import TextField from '@material-ui/core/TextField';
+import InputAdornment from '@material-ui/core/InputAdornment';
+
+const InputWrapper = styled.div`
+  display: flex;
+  align-items: ${props => props.top ? 'flex-start' : 'center'};
+  justify-content: flex-end;
+
+  .input-label {
+    font-size: 13px;
+    width: ${props => props.labelWidth ? props.labelWidth : "15"}%;
+    margin-right: 8px;
+    text-align: right;
+    padding: 4px 0;
+  }
+
+  .text-field {
+    margin: 4px 0;
+  }
+`;
+
+const TextInput = ({
+  alignTop,
+  labelText,
+  labelWidth,
+  readOnly,
+  placeholder,
+  inputProps,
+  onChange,
+  money,
+  ...restProps
+}) => (
+  <InputWrapper top={alignTop} labelWidth={labelWidth}>
+    {labelText ? <label className="input-label">{labelText}</label> : null}
+    <TextField
+      className="text-field"
+      fullWidth
+      size="small"
+      variant="outlined"
+      inputProps={{
+        readOnly,
+        placeholder,
+        ...inputProps
+      }}
+      onChange={onChange}
+      InputProps={{
+        startAdornment: money && <InputAdornment position="start">₹</InputAdornment>,
+      }}
+      {...restProps}
+      />
+  </InputWrapper>
+)
+
+export default TextInput

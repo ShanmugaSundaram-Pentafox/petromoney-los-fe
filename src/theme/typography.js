@@ -1,6 +1,7 @@
 import palette from './palette';
 
 export default {
+  fontFamily: "'Open Sans', Roboto, sans-serif",
   h1: {
     color: palette.text.primary,
     fontWeight: 500,
@@ -58,7 +59,7 @@ export default {
   },
   body1: {
     color: palette.text.primary,
-    fontSize: '14px',
+    fontSize: '13px',
     letterSpacing: '-0.05px',
     lineHeight: '21px'
   },

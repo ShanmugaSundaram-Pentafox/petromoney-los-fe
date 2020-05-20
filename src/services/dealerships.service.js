@@ -48,3 +48,19 @@ export const getDealershipLoansById = id => {
       })
   });
 }
+
+export const getDealershipSalesById = id => {
+  return new Promise((resolve, reject) => {
+    API.get(`${URL.salesInfo}/${id}`)
+      .then(({ data }) => {
+        if(data.status === "SUCCESS") {
+          resolve(data.data);
+        } else {
+          reject(data.message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

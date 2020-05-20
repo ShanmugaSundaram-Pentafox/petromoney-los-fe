@@ -1,9 +1,18 @@
 import palette from '../palette';
+import { colors } from '@material-ui/core';
 import typography from '../typography';
 
 export default {
   root: {
-    ...typography.body1,
-    borderBottom: `1px solid ${palette.divider}`
+    ...typography.body2,
+    border: `1px solid ${palette.divider}`,
+    borderBottom: `1px solid ${palette.divider}`,
+    '&.MuiTableCell-head': {
+      fontWeight: 600,
+      color: colors.grey[800]
+    },
+    '&.MuiTableCell-sizeSmall': {
+      padding: '6px 18px 6px 12px'
+    }
   }
 };

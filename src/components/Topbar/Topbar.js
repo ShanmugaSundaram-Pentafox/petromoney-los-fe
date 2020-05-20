@@ -14,7 +14,10 @@ const useStyles = makeStyles(theme => {
   console.log(theme)
   return ({
   root: {
-    boxShadow: 'none'
+    boxShadow: '0 0 0 1px rgba(63,63,68,0.05), 0 1px 2px 0 rgba(63,63,68,0.15)',
+    color: theme.palette.primary.dark,
+    backgroundColor: theme.palette.white,
+    borderBottomColor: theme.palette.grey
   },
   flexGrow: {
     flexGrow: 1

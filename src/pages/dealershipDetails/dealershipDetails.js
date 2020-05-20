@@ -4,13 +4,15 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
 import DealershipInfo from './components/DealershipInfo';
 import { useMount } from 'react-use';
-import { getDealershipById, getDealershipLoansById } from '../../services/dealerships.service';
+import { getDealershipById } from '../../services/dealerships.service';
 import { getDealersByDealershipId } from '../../services/dealers.service';
 import DealersList from './components/DealersList';
 import LoansList from './components/LoansList';
 import { NavLink as RouterLink } from 'react-router-dom';
+import SalesInfo from '../dashboard/components/SalesInfo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -31,7 +33,6 @@ const useStyles = makeStyles(theme => ({
 const DealershipDetails = ({ currentUser, match }) => {
   const classes = useStyles();
   const [dealershipData, setDealershipData] = useState();
-  const [loansData, setLoansData] = useState();
   const [dealersData, setDealersData] = useState();
   const { url, params: { id } } = match;
   
@@ -39,10 +40,6 @@ const DealershipDetails = ({ currentUser, match }) => {
     getDealershipById(id)
       .then(data => setDealershipData(data))
       .catch(e => null);
-
-    getDealershipLoansById(id)
-      .then(data => setLoansData(data))
-      .catch(e => null)
 
     getDealersByDealershipId(id)
       .then(data => setDealersData(data))
@@ -69,15 +66,18 @@ const DealershipDetails = ({ currentUser, match }) => {
       <Divider className={classes.bottomSpacing} />
       <Grid container spacing={2}>
         {
-          dealershipData && <Grid item md={5} xs={12}><DealershipInfo data={dealershipData} /></Grid>
+          dealershipData && <Grid item md={6} xs={12}><DealershipInfo data={dealershipData} /></Grid>
         }
         
-        { (dealersData && dealersData.length > 0) || (loansData && loansData.length > 0) ? (
-            <Grid container item md={7} xs={12}>
-              <Grid item xs={12}><DealersList data={dealersData} /></Grid>
-              <Grid item xs={12}><LoansList data={loansData} /></Grid>
-            </Grid>
-          ) : null}
+        <Grid item md={6} xs={12}>
+          <Paper className={classes.bottomSpacing}>
+            <LoansList id={id} titleAlign="center" />
+          </Paper>
+          <Paper className={classes.bottomSpacing}>
+            <SalesInfo id={id} titleAlign="center" column />
+          </Paper>
+          { (dealersData && dealersData.length > 0) ? <DealersList data={dealersData} /> : null}
+        </Grid>
       </Grid>
     </div>
   );

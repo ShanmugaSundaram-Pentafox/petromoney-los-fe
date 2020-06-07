@@ -24,7 +24,10 @@ export default {
       },
       '& input.MuiOutlinedInput-inputMarginDense': {
         padding: 10,
-      }
+      },
     },
+    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+      transform: 'translate(14px, -6px) scale(0.80)',
+    }
   },
 };

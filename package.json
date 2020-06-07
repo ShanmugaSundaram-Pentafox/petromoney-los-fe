@@ -15,6 +15,7 @@
     "formik": "^2.1.4",
     "lodash": "^4.17.15",
     "match-sorter": "^4.0.2",
+    "material-ui-dropzone": "^3.0.0",
     "moment": "^2.24.0",
     "mui-datatables": "^2.14.0",
     "node-sass": "^4.13.1",

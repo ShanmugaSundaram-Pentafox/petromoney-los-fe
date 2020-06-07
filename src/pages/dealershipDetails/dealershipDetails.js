@@ -53,14 +53,14 @@ const DealershipDetails = ({ currentUser, match }) => {
           <Typography className={classes.title} variant="h4">{id} - {dealershipData && dealershipData.name}</Typography>
         </Grid>
         <Grid item md={7} xs={12} className={classes.titleActionContainer}>
-          <Button
+          {/* <Button
             color="primary"
             size="small"
             variant="contained"
             component={RouterLink}
             to={`${url}/credit-form`}
             exact
-            >Credit Eval. Form</Button>
+            >Credit Eval. Form</Button> */}
         </Grid>
       </Grid>
       <Divider className={classes.bottomSpacing} />
@@ -74,10 +74,15 @@ const DealershipDetails = ({ currentUser, match }) => {
             <LoansList id={id} titleAlign="center" />
           </Paper>
           <Paper className={classes.bottomSpacing}>
+            <DealersList id={id} titleAlign="center" />
+          </Paper>
+          <Paper className={classes.bottomSpacing}>
             <SalesInfo id={id} titleAlign="center" column />
           </Paper>
-          { (dealersData && dealersData.length > 0) ? <DealersList data={dealersData} /> : null}
         </Grid>
+        {/* <Grid item md={6} xs={12}>
+          
+        </Grid> */}
       </Grid>
     </div>
   );

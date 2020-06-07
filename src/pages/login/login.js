@@ -103,7 +103,7 @@ const Login = ({ setCurrentUser }) => {
             color="primary"
             className={classes.submit}
           >
-            Sign In
+            Login
           </Button>
           <Grid container>
             <Grid item xs>

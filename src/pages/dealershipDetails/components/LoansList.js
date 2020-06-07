@@ -6,8 +6,8 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Tooltip from '@material-ui/core/Tooltip';
-import IconButton from '@material-ui/core/IconButton';
-import EditRoundedIcon from '@material-ui/icons/EditRounded';
+import Button from '@material-ui/core/Button';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Typography from '@material-ui/core/Typography';
 import Currency from '../../../components/Number/Currency';
 import { useMount } from 'react-use';
@@ -62,15 +62,10 @@ const LoansList = ({ id, titleAlign }) => {
               <TableCell align="right"><Currency value={row.amount_disbursed} /></TableCell>
               <TableCell align="center">{row.status}</TableCell>
               <TableCell align="center">
-                <Tooltip title="Edit">
-                  <IconButton
-                    size="small"
-                    color="inherit"
-                    onClick={() => null}
-                  >
-                    <EditRoundedIcon />
-                  </IconButton>
-                </Tooltip>
+                <ButtonGroup size="small" aria-label="dealer action buttons">
+                  <Button>View</Button>
+                  <Button>Edit</Button>
+                </ButtonGroup>
               </TableCell>
             </TableRow>
           ))}

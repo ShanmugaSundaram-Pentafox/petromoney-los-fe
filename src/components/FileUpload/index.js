@@ -1,9 +1,11 @@
 import React from "react";
 import { DropzoneDialog } from "material-ui-dropzone";
-import { updateDocument } from '../../services/dealerships.service';
-import { logger } from '../../config/logger';
+import { useSnackbar } from 'notistack';
+import { uploadDocument } from '../../services/dealerships.service';
 
 const FileUpload = ({id,data, open, onCloseUploader }) => {
+  const { enqueueSnackbar } = useSnackbar();
+
   const handleSave = (files) => {
     const formData = new FormData();
     files.map(file => {
@@ -12,13 +14,13 @@ const FileUpload = ({id,data, open, onCloseUploader }) => {
       formData.append(`fileName`, docName);
       formData.append(`id`, data.doc_id);
     });
-    updateDocument(id, formData)
+    uploadDocument(id, formData)
       .then(data => {
-        logger('FileUpload Success');
+        enqueueSnackbar('File Upload Success', { variant: "success" });
         onCloseUploader();
       })
       .catch(e => {
-        logger('File Upload Failed', data.data);
+        enqueueSnackbar('File Upload Failed', { variant: "error" });
       });
   };
 

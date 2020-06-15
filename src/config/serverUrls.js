@@ -8,4 +8,5 @@ export const URL = {
   salesInfo: "sales/dealership",
   creditInfo: "credit/info",
   creditReport: "credit/report",
+  upload: 'upload',
 }

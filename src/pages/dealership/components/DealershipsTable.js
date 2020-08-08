@@ -12,7 +12,8 @@ import { setAllDealerships } from '../../../store/dealership/dealership.actions'
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(3)
+    padding: theme.spacing(3),
+    paddingTop: 0
   },
   title: {
     fontWeight: 600
@@ -137,12 +138,16 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
 
   return (
     <div className={classes.root}>
-      <MUIDataTable
-        title={<Typography className={classes.title} variant="h5" component="h5">Dealership List</Typography>}
-        data={dealerships}
-        columns={columns}
-        options={options}
-      />
+      {
+        Array.isArray(dealerships) && dealerships.length ? (
+          <MUIDataTable
+            title={<Typography className={classes.title} variant="h5" component="h5">Dealership List</Typography>}
+            data={dealerships}
+            columns={columns}
+            options={options}
+          />
+        ) : null
+      }
     </div>
   )
 }

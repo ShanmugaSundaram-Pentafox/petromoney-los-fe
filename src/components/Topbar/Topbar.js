@@ -1,22 +1,23 @@
 import React, { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+// import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { AppBar, Toolbar, Badge, Hidden, IconButton, Tooltip } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
-import InputIcon from '@material-ui/icons/Input';
+// import InputIcon from '@material-ui/icons/Input';
 import { connect } from 'react-redux';
 import { resetCurrentUser } from '../../store/user/user.actions';
 
 const useStyles = makeStyles(theme => {
-  console.log(theme)
   return ({
   root: {
-    boxShadow: '0 0 0 1px rgba(63,63,68,0.05), 0 1px 2px 0 rgba(63,63,68,0.15)',
+    boxShadow: 'none',
     color: theme.palette.primary.dark,
-    backgroundColor: theme.palette.white,
+    backgroundColor: 'transparent',
+    // boxShadow: '0 0 0 1px rgba(63,63,68,0.05), 0 1px 2px 0 rgba(63,63,68,0.15)',
+    // backgroundColor: theme.palette.white,
     borderBottomColor: theme.palette.grey
   },
   flexGrow: {
@@ -27,13 +28,16 @@ const useStyles = makeStyles(theme => {
   },
   logoLink: {
     backgroundColor: theme.palette.white
+  },
+  title: {
+    ...theme.typography.h2,
+    fontSize: 18,
   }
 })
 });
 
 const Topbar = props => {
-  const { className, onSidebarOpen, logout, ...rest } = props;
-
+  const { className, onSidebarOpen, pageTitle, logout, ...rest } = props;
   const classes = useStyles();
 
   const [notifications] = useState([]);
@@ -44,13 +48,14 @@ const Topbar = props => {
       className={clsx(classes.root, className)}
     >
       <Toolbar>
-        <RouterLink to="/" className={classes.logoLink}>
+        {/* <RouterLink to="/" className={classes.logoLink}>
           <img
             alt="Logo"
             src="/images/logo.png"
             height="48px"
           />
-        </RouterLink>
+        </RouterLink> */}
+        <h2 className={classes.title}>{pageTitle}</h2>
         <div className={classes.flexGrow} />
         <Hidden mdDown>
           <IconButton color="inherit">
@@ -62,7 +67,7 @@ const Topbar = props => {
               <NotificationsIcon />
             </Badge>
           </IconButton>
-          <Tooltip title="Logout">
+          {/* <Tooltip title="Logout">
             <IconButton
               className={classes.signOutButton}
               color="inherit"
@@ -70,7 +75,7 @@ const Topbar = props => {
             >
               <InputIcon />
             </IconButton>
-          </Tooltip>
+          </Tooltip> */}
         </Hidden>
         <Hidden lgUp>
           <IconButton
@@ -90,8 +95,13 @@ Topbar.propTypes = {
   onSidebarOpen: PropTypes.func
 };
 
+const mapStateToProps = ({ common }) => ({
+  pageTitle: common.pageTitle,
+  searchText: common.searchText
+})
+
 const mapDispatchToProps = dispatch => ({
   logout: () => dispatch(resetCurrentUser())
 })
 
-export default connect(null, mapDispatchToProps)(Topbar);
+export default connect(mapStateToProps, mapDispatchToProps)(Topbar);

@@ -6,6 +6,7 @@ import { userReducer } from './user/user.reducer';
 import { dashboardReducer } from './dashboard/dashboard.reducer';
 import { loanReducer } from './loans/loans.reducer';
 import { dealershipReducer } from './dealership/dealership.reducer';
+import { commonReducer } from './common/common.reducer';
 
 const persistConfig = {
   key: 'root',
@@ -15,6 +16,7 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   user: userReducer,
+  common: commonReducer,
   loans: loanReducer,
   dashboard: dashboardReducer,
   dealerships: dealershipReducer

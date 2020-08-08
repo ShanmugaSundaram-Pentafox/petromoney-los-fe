@@ -13,7 +13,7 @@ export default {
     color: palette.text.primary,
     fontWeight: 500,
     fontSize: '29px',
-    letterSpacing: '-0.24px',
+    // letterSpacing: '-0.24px',
     lineHeight: '32px'
   },
   h3: {

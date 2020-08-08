@@ -24,6 +24,7 @@ import DealershipDetails from './DealershipDetails';
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(3),
+    paddingTop: theme.spacing(0),
     display: 'flex',
   },
   categoryCard: {

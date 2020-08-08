@@ -9,10 +9,10 @@ import Topbar from '../components/Topbar/Topbar';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    paddingTop: 56,
+    // paddingTop: 56,
     height: '100%',
     [theme.breakpoints.up('sm')]: {
-      paddingTop: 64
+      // paddingTop: 64
     }
   },
   shiftContent: {
@@ -51,14 +51,15 @@ const MainLayout = props => {
         [classes.shiftContent]: isDesktop
       })}
     >
-      <Topbar onSidebarOpen={handleSidebarOpen} />
       <Sidebar
         user={currentUser}
+        onOpen={handleSidebarOpen}
         onClose={handleSidebarClose}
         open={shouldOpenSidebar}
         variant={isDesktop ? 'persistent' : 'temporary'}
-      />
+        />
       <main className={classes.content}>
+        <Topbar position="static" onSidebarOpen={handleSidebarOpen} />
         {children}
         {/* <Footer /> */}
       </main>

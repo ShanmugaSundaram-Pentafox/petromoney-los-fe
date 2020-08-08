@@ -6,6 +6,8 @@ const black = '#000000';
 export default {
   black,
   white,
+  blueGreyLight: colors.blueGrey[400],
+  blueGreyDark: colors.blueGrey[900],
   primary: {
     contrastText: white,
     dark: colors.indigo[900],

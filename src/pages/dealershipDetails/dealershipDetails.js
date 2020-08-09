@@ -14,10 +14,12 @@ import LoansList from "./components/LoansList";
 import DealershipDoc from "./components/DocList";
 import { NavLink as RouterLink } from "react-router-dom";
 import SalesInfo from "../dashboard/components/SalesInfo";
+import usePageTitle from "../../hooks/usePageTitle";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     padding: theme.spacing(2),
+    paddingTop: 0,
   },
   title: {
     fontWeight: 500,
@@ -50,26 +52,28 @@ const DealershipDetails = ({ currentUser, match }) => {
       .catch((e) => null);
   });
 
+  usePageTitle(`${id} - ${dealershipData && dealershipData.name}`)
+
   return (
     <div className={classes.root}>
-      <Grid container>
+      {/* <Grid container>
         <Grid item md={5} xs={12}>
           <Typography className={classes.title} variant="h4">
             {id} - {dealershipData && dealershipData.name}
           </Typography>
         </Grid>
         <Grid item md={7} xs={12} className={classes.titleActionContainer}>
-          {/* <Button
+          <Button
             color="primary"
             size="small"
             variant="contained"
             component={RouterLink}
             to={`${url}/credit-form`}
             exact
-            >Credit Eval. Form</Button> */}
+            >Credit Eval. Form</Button>
         </Grid>
-      </Grid>
-      <Divider className={classes.bottomSpacing} />
+      </Grid> */}
+      {/* <Divider className={classes.bottomSpacing} /> */}
       <Grid container spacing={2}>
         {dealershipData && (
           <Grid item md={6} xs={12}>

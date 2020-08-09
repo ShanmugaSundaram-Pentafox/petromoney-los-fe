@@ -23,7 +23,8 @@ const useStyles = makeStyles(theme => ({
     }
   },
   root: {
-    backgroundColor: theme.palette.white,
+    // backgroundColor: theme.palette.white,
+    backgroundColor: "#050712",
     color: theme.palette.black,
     display: 'flex',
     flexDirection: 'column',
@@ -43,7 +44,8 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: 0
   },
   button: {
-    color: colors.blueGrey[200],
+    // color: colors.blueGrey[200],
+    color: "#E9ECF3",
     padding: '10px 8px',
     justifyContent: 'flex-start',
     textTransform: 'none',
@@ -52,7 +54,8 @@ const useStyles = makeStyles(theme => ({
     fontWeight: theme.typography.fontWeightMedium
   },
   icon: {
-    color: theme.palette.icon,
+    // color: theme.palette.icon,
+    color: "#E9ECF3",
     width: 24,
     height: 24,
     display: 'flex',

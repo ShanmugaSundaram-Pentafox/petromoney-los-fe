@@ -11,6 +11,7 @@ import { resetCurrentUser } from '../../store/user/user.actions';
 import NotificationsBell from '../CommonComponents/NotificationsBell';
 import LoginUserInfo from '../CommonComponents/LoginUserInfo';
 import NotificationSidebar from '../CommonComponents/NotificationSidebar';
+import Searchbox from '../CommonComponents/Searchbox';
 
 const useStyles = makeStyles(theme => {
   return ({
@@ -63,6 +64,7 @@ const Topbar = props => {
           <h2 className={classes.title}>{pageTitle}</h2>
           <div className={classes.flexGrow} />
           <Hidden mdDown>
+            <Searchbox />
             <NotificationsBell action={() => setShowNotificationSidebar(true)} />
             <LoginUserInfo />
   

@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 // import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { AppBar, Toolbar, Badge, Hidden, IconButton, Tooltip } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
-import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
 // import InputIcon from '@material-ui/icons/Input';
 import { connect } from 'react-redux';
 import { resetCurrentUser } from '../../store/user/user.actions';
+import NotificationsBell from '../CommonComponents/NotificationsBell';
+import LoginUserInfo from '../CommonComponents/LoginUserInfo';
+import NotificationSidebar from '../CommonComponents/NotificationSidebar';
+import Searchbox from '../CommonComponents/Searchbox';
 
 const useStyles = makeStyles(theme => {
   return ({
@@ -42,51 +45,52 @@ const Topbar = props => {
 
   const [notifications] = useState([]);
 
+  const [showNotificationSidebar, setShowNotificationSidebar] = useState(false);
+
   return (
-    <AppBar
-      {...rest}
-      className={clsx(classes.root, className)}
-    >
-      <Toolbar>
-        {/* <RouterLink to="/" className={classes.logoLink}>
-          <img
-            alt="Logo"
-            src="/images/logo.png"
-            height="48px"
-          />
-        </RouterLink> */}
-        <h2 className={classes.title}>{pageTitle}</h2>
-        <div className={classes.flexGrow} />
-        <Hidden mdDown>
-          <IconButton color="inherit">
-            <Badge
-              badgeContent={notifications.length}
-              color="primary"
-              variant="dot"
-            >
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-          {/* <Tooltip title="Logout">
+    <Fragment>
+      <AppBar
+        {...rest}
+        className={clsx(classes.root, className)}
+      >
+        <Toolbar>
+          {/* <RouterLink to="/" className={classes.logoLink}>
+            <img
+              alt="Logo"
+              src="/images/logo.png"
+              height="48px"
+            />
+          </RouterLink> */}
+          <h2 className={classes.title}>{pageTitle}</h2>
+          <div className={classes.flexGrow} />
+          <Hidden mdDown>
+            <Searchbox />
+            <NotificationsBell action={() => setShowNotificationSidebar(true)} />
+            <LoginUserInfo />
+  
+            {/* <Tooltip title="Logout">
+              <IconButton
+                className={classes.signOutButton}
+                color="inherit"
+                onClick={logout}
+              >
+                <InputIcon />
+              </IconButton>
+            </Tooltip> */}
+          </Hidden>
+          <Hidden lgUp>
             <IconButton
-              className={classes.signOutButton}
               color="inherit"
-              onClick={logout}
+              onClick={onSidebarOpen}
             >
-              <InputIcon />
+              <MenuIcon />
             </IconButton>
-          </Tooltip> */}
-        </Hidden>
-        <Hidden lgUp>
-          <IconButton
-            color="inherit"
-            onClick={onSidebarOpen}
-          >
-            <MenuIcon />
-          </IconButton>
-        </Hidden>
-      </Toolbar>
-    </AppBar>
+          </Hidden>
+        </Toolbar>
+      </AppBar>
+  
+      <NotificationSidebar showNotification={showNotificationSidebar} closeButton={() => setShowNotificationSidebar(false)} />
+    </Fragment>
   );
 };
 

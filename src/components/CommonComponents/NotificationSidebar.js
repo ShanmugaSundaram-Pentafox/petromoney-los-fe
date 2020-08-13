@@ -45,7 +45,7 @@ export const NotificationSidebarWrapper = styled.aside`
             }
 
             &.title {
-                font-weight: 600;
+                font-weight: 500;
                 margin-bottom: 6px;
             }
 

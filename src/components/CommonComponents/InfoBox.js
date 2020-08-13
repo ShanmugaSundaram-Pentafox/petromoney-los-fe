@@ -17,11 +17,13 @@ export const InfoBoxWrapper = styled.div`
     height: ${props => props.height || 'auto'};
     display: flex;
     flex-wrap: wrap;
+    flex-direction: column;
     justify-content: space-between;
     background-color: #ffffff;
     padding: 8px;
     border-radius: 16px;
     box-shadow: 0 8px 6px -6px rgba(0,0,0,0.12);
+    margin-right: 16px;
 `;
 
 const InfoBoxCard = styled.div`
@@ -42,7 +44,7 @@ const InfoBoxCard = styled.div`
         align-items: center;
         justify-content: center;
         padding: 0 6px;
-        font-weight: 600;
+        font-weight: 500;
         font-size: 24px;
         font-style: normal;
         color: #FFFFFF;
@@ -59,7 +61,7 @@ const InfoBoxCard = styled.div`
             color: #000000;
             font-size: 13px;
             line-height: 15px;
-            font-weight: 700;
+            font-weight: 500;
             
             &.title {
                 margin-bottom: 4px;

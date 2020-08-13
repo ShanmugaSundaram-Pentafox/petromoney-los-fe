@@ -61,7 +61,7 @@ const LoansNewTable = styled.div`
       color: #504E58;
       font-size: 12px;
       line-height: 15px;
-      font-weight: 500;
+      font-weight: 400;
       margin-bottom: 0;
 
       span {
@@ -69,7 +69,7 @@ const LoansNewTable = styled.div`
         color: #000000;
         font-size: 13px;
         line-height: 15px;
-        font-weight: 700;
+        font-weight: 400;
         margin-bottom: 4px;
       }
     }
@@ -105,9 +105,11 @@ const Dashboard = ({ currentUser }) => {
   return (
     <div>
       <InfoBoxContainer>
-        <InfoBoxWrapper width={"42%"}>
+        <InfoBoxWrapper width={"260px"}>
           <InfoBox number={100} title={"Submitted"} text={"Lorem Ipsum"} />
           <InfoBox number={100} title={"Approved/Rejected"} text={"Lorem Ipsum"} />
+        </InfoBoxWrapper>
+        <InfoBoxWrapper width={"260px"}>
           <InfoBox number={100} title={"Disbursed"} text={"Lorem Ipsum"} />
           <InfoBox number={0} title={"Lorem Ipsum"} text={"Inprogress"} />
         </InfoBoxWrapper>
@@ -117,148 +119,6 @@ const Dashboard = ({ currentUser }) => {
       <LoansNewTableContainer>        
         <LoansNewTableWrapper>
           <div class="title">Submitted</div>
-          <LoansNewTable>
-            <div className="table-content">
-              <div class="content">
-                <p>
-                  <span>Lorem Ipsum</span>
-                  Lorem Ipsum Lorem Ipsum 
-                </p>
-              </div> 
-
-              <div class="content center">
-                <span className="table-pill">Paid</span>
-              </div>  
-              
-              <div class="content">
-                <span className="price-txt">₹5,000,000</span>
-              </div>
-            </div>
-            <div className="table-content">
-              <div class="content">
-                <p>
-                  <span>Lorem Ipsum</span>
-                  Lorem Ipsum Lorem Ipsum 
-                </p>
-              </div> 
-
-              <div class="content center">
-                <span className="table-pill">Paid</span>
-              </div>  
-              
-              <div class="content">
-                <span className="price-txt">₹5,000,000</span>
-              </div>
-            </div>
-            <div className="table-content">
-              <div class="content">
-                <p>
-                  <span>Lorem Ipsum</span>
-                  Lorem Ipsum Lorem Ipsum 
-                </p>
-              </div> 
-
-              <div class="content center">
-                <span className="table-pill red">Late</span>
-              </div>  
-              
-              <div class="content">
-                <span className="price-txt">₹5,000,000</span>
-              </div>
-            </div>
-            <div className="table-content">
-              <div class="content">
-                <p>
-                  <span>Lorem Ipsum</span>
-                  Lorem Ipsum Lorem Ipsum 
-                </p>
-              </div> 
-
-              <div class="content center">
-                <span className="table-pill">Paid</span>
-              </div>  
-              
-              <div class="content">
-                <span className="price-txt">₹5,000,000</span>
-              </div>
-            </div>
-            <div className="table-content">
-              <div class="content">
-                <p>
-                  <span>Lorem Ipsum</span>
-                  Lorem Ipsum Lorem Ipsum 
-                </p>
-              </div> 
-
-              <div class="content center">
-                <span className="table-pill">Paid</span>
-              </div>  
-              
-              <div class="content">
-                <span className="price-txt">₹5,000,000</span>
-              </div>
-            </div>
-          </LoansNewTable>
-        </LoansNewTableWrapper>  
-        
-        <LoansNewTableWrapper>
-          <div class="title">Approved/Rejected</div>
-          <LoansNewTable>
-            <div className="table-content">
-              <div class="content">
-                <p>
-                  <span>Lorem Ipsum</span>
-                  Lorem Ipsum Lorem Ipsum 
-                </p>
-              </div> 
-
-              <div class="content center">
-                <span className="table-pill">Paid</span>
-              </div>  
-              
-              <div class="content">
-                <span className="price-txt">₹5,000,000</span>
-              </div>
-            </div>
-            <div className="table-content">
-              <div class="content">
-                <p>
-                  <span>Lorem Ipsum</span>
-                  Lorem Ipsum Lorem Ipsum 
-                </p>
-              </div> 
-
-              <div class="content center">
-                <span className="table-pill">Paid</span>
-              </div>  
-              
-              <div class="content">
-                <span className="price-txt">₹5,000,000</span>
-              </div>
-            </div>
-            <div className="table-content">
-              <div class="content">
-                <p>
-                  <span>Lorem Ipsum</span>
-                  Lorem Ipsum Lorem Ipsum 
-                </p>
-              </div> 
-
-              <div class="content center">
-                <span className="table-pill red">Late</span>
-              </div>  
-              
-              <div class="content">
-                <span className="price-txt">₹5,000,000</span>
-              </div>
-            </div>
-          </LoansNewTable>
-        </LoansNewTableWrapper>
-      </LoansNewTableContainer>
-
-      <LoansNewTableContainer>        
-        <LoansNewTableWrapper>
-          <div class="title">Disbursed</div>
           <LoansNewTable>
             <div className="table-content">
               <div class="content">

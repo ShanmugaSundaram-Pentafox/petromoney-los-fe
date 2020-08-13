@@ -1,7 +1,10 @@
 export default {
   root: {
     fontSize: 13,
-    textTransform: 'none'
+    textTransform: 'none',
+    '&:hover': {
+      backgroundColor: 'auto'
+    }
   },
   contained: {
     boxShadow:

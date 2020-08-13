@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
     paddingTop: 0
   },
   title: {
-    fontWeight: 600
+    fontWeight: 500
   }
 }));
 /*
@@ -133,6 +133,7 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
   const options = {
     // filterType: 'checkbox',
     selectableRowsHeader: false,
+    selectableRows: 'none',
     isRowSelectable: () => false
   };
 

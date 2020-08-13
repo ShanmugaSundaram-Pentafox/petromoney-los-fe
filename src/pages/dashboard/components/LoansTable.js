@@ -1,12 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import { createStructuredSelector } from 'reselect';
-import { Link as RouterLink } from 'react-router-dom';
+// import { Link as RouterLink } from 'react-router-dom';
 import moment from 'moment';
-import clsx from 'clsx';
+// import clsx from 'clsx';
 import { connect } from 'react-redux';
 import { useMount } from 'react-use';
 import { makeStyles } from '@material-ui/styles';
-import MUIDataTable from "mui-datatables";
+// import MUIDataTable from "mui-datatables";
 import Typography from '@material-ui/core/Typography';
 import { selectAllLoans } from '../../../store/loans/loans.selector';
 import { setAllLoans } from '../../../store/loans/loans.actions';
@@ -71,7 +71,7 @@ const useStyles = makeStyles(theme => ({
     width: theme.spacing(3),
     height: theme.spacing(3),
     fontSize: 14,
-    fontWeight: 500,
+    fontWeight: 600,
     backgroundColor: theme.palette.primary.main,
     opacity: 0.35
   },
@@ -234,7 +234,7 @@ const LoansTable = ({ all_loans, setAllLoans }) => {
           {
             all_loans.filter(item => item.status.toLowerCase() == "submitted").map((item, i) => (
               <div key={i} onClick={() => showDealershipInfo(item.dealership_id, item.status)} className={classes.cardItem}>
-                <Typography className={classes.cardTitle} component="p">{item.dealership_id}</Typography>
+                <Typography className={classes.cardTitle} component="p">{item.dealership_id} - {item.name}</Typography>
                 <AvatarGroup max={4} className={classes.avatarWrapper}>
                   {
                     Array.isArray(item.type) && item.type.map(t => <Avatar key={t} component="span" className={classes.avatar}>{t.charAt(0)}</Avatar>)
@@ -257,7 +257,7 @@ const LoansTable = ({ all_loans, setAllLoans }) => {
           {
             all_loans.filter(item => (item.status.toLowerCase() == "approved" || item.status.toLowerCase() == "rejected")).map((item, i) => (
               <div key={i} onClick={() => showDealershipInfo(item.dealership_id, item.status)} className={classes.cardItem}>
-                <Typography className={classes.cardTitle} component="p">{item.dealership_id}</Typography>
+                <Typography className={classes.cardTitle} component="p">{item.dealership_id} - {item.name}</Typography>
                 <AvatarGroup max={4} className={classes.avatarWrapper}>
                   {
                     Array.isArray(item.type) && item.type.map(t => <Avatar key={t} component="span" className={classes.avatar}>{t.charAt(0)}</Avatar>)
@@ -280,7 +280,7 @@ const LoansTable = ({ all_loans, setAllLoans }) => {
           {
             all_loans.filter(item => item.status.toLowerCase() == "disbursed").map((item, i) => (
               <div key={i} onClick={() => showDealershipInfo(item.dealership_id, item.status)} className={classes.cardItem}>
-                <Typography className={classes.cardTitle} component="p">{item.dealership_id}</Typography>
+                <Typography className={classes.cardTitle} component="p">{item.dealership_id} - {item.name}</Typography>
                 <AvatarGroup max={4} className={classes.avatarWrapper}>
                   {
                     Array.isArray(item.type) && item.type.map(t => <Avatar key={t} component="span" className={classes.avatar}>{t.charAt(0)}</Avatar>)

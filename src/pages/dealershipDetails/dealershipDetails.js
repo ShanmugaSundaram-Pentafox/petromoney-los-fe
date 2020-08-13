@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: 0,
   },
   title: {
-    fontWeight: 500,
+    fontWeight: 600,
     marginBottom: theme.spacing(1),
   },
   titleActionContainer: {

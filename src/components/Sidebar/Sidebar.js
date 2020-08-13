@@ -24,7 +24,8 @@ const useStyles = makeStyles(theme => ({
   },
   root: {
     // backgroundColor: theme.palette.white,
-    backgroundColor: "#050712",
+    // backgroundColor: "#050712",
+    backgroundColor: "#202c4f",
     color: theme.palette.black,
     display: 'flex',
     flexDirection: 'column',
@@ -52,6 +53,10 @@ const useStyles = makeStyles(theme => ({
     letterSpacing: 0,
     width: '100%',
     fontWeight: theme.typography.fontWeightMedium
+  },
+  active: {
+    backgroundColor: 'white',
+    color: colors.blueGrey[800]
   },
   icon: {
     // color: theme.palette.icon,

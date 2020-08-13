@@ -8,7 +8,7 @@ export default {
     border: `1px solid ${palette.divider}`,
     borderBottom: `1px solid ${palette.divider}`,
     '&.MuiTableCell-head': {
-      fontWeight: 600,
+      fontWeight: 400,
       color: colors.grey[800]
     },
     '&.MuiTableCell-sizeSmall': {

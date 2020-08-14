@@ -21,7 +21,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute exact path="/dealership" component={Dealership} />
       <ProtectedRoute exact path="/dealership/:id?" component={DealershipDetails} />
       {
-        creditRoutes.includes(currentUser.role_name) ? (
+        currentUser && creditRoutes.includes(currentUser.role_name) ? (
           <>
             <ProtectedRoute exact path="/dealership/:id/credit-form" component={CreditForm} />
           </>

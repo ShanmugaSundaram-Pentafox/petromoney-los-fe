@@ -12,13 +12,21 @@ import Settings from '../pages/settings/settings';
 import DealershipDetails from '../pages/dealershipDetails/dealershipDetails';
 import CreditForm from '../pages/creditForm/creditForm';
 
+const creditRoutes = ["Admin"];
+
 const Routes = ({ currentUser }) => {
   return (
     <Switch>
       <ProtectedRoute exact path="/" component={Dashboard} />
       <ProtectedRoute exact path="/dealership" component={Dealership} />
       <ProtectedRoute exact path="/dealership/:id?" component={DealershipDetails} />
-      <ProtectedRoute exact path="/dealership/:id/credit-form" component={CreditForm} />
+      {
+        creditRoutes.includes(currentUser.role_name) ? (
+          <>
+            <ProtectedRoute exact path="/dealership/:id/credit-form" component={CreditForm} />
+          </>
+        ) : null
+      }
       <ProtectedRoute exact path="/settings" component={Settings} />
       <Route exact path="/login" render={props => currentUser ? <Redirect to="/" /> : <Login {...props} />} />
     </Switch>

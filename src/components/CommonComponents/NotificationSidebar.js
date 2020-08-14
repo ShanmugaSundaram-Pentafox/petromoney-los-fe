@@ -15,7 +15,7 @@ export const NotificationSidebarWrapper = styled.aside`
     overflow-y: scroll;
     transition: all 0.3s;
     margin-right: -100%;
-    z-index: 10;
+    z-index: 110;
 
     @media(min-width: 768px) {
         min-width: 416px;
@@ -88,10 +88,10 @@ const NotificationSidebar = ({
                 return (
                     <div className="notification-card" key={index}>
                         <span className="title">
-                            Notificaion List Title
+                            Notificaion Title
                             <i>Yesterday, 12:20</i>
                         </span>
-                        <span className="txt">Number of coins deducted &amp; refunded for the above set of enquiries.</span>
+                        <span className="txt">New Loand request from this Dealership.</span>
                     </div>
                 );
             })}

@@ -104,7 +104,7 @@ const Dashboard = ({ currentUser }) => {
   usePageTitle('Dashboard');
   return (
     <div>
-      <InfoBoxContainer>
+      {/* <InfoBoxContainer>
         <InfoBoxWrapper width={"260px"}>
           <InfoBox number={100} title={"Submitted"} text={"Lorem Ipsum"} />
           <InfoBox number={100} title={"Approved/Rejected"} text={"Lorem Ipsum"} />
@@ -113,10 +113,10 @@ const Dashboard = ({ currentUser }) => {
           <InfoBox number={100} title={"Disbursed"} text={"Lorem Ipsum"} />
           <InfoBox number={0} title={"Lorem Ipsum"} text={"Inprogress"} />
         </InfoBoxWrapper>
-      </InfoBoxContainer>
+      </InfoBoxContainer> */}
 
       {/* New table code start */}
-      <LoansNewTableContainer>        
+      {/* <LoansNewTableContainer>        
         <LoansNewTableWrapper>
           <div class="title">Submitted</div>
           <LoansNewTable>
@@ -203,6 +203,7 @@ const Dashboard = ({ currentUser }) => {
           </LoansNewTable>
         </LoansNewTableWrapper>  
       </LoansNewTableContainer>  
+       */}
       {/* New table code end */}
 
 

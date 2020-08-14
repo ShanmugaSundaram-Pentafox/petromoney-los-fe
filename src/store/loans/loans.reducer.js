@@ -5,12 +5,17 @@ const INITIAL_STATE = {
 }
 
 export const loanReducer = (state = INITIAL_STATE, action) => {
-  console.log('loanReducer >> ', action)
+  // console.log('loanReducer >> ', action)
   switch(action.type) {
     case LoanActionTypes.SET_ALL_LOANS:
       return {
         ...state,
         all_loans: action.payload
+      }
+    case LoanActionTypes.SET_LOANS_STAUTS_DATA:
+      return {
+        ...state,
+        [action.payload.status]: action.payload.data
       }
     default:
       return state;

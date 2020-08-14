@@ -48,29 +48,29 @@ const DocList = ({ id }) => {
       .catch((e) => null);
   });
 
-  if (!checkListData || !checkListData.length) return null;
+  // if (!checkListData || !checkListData.length) return null;
 
   return (
     <div className={classes.wrapper}>
       {showUpload && <FileUpload id={id} data={rowData} open={showUpload} onCloseUploader={onCloseUploader}/>}
       <Typography variant="h5" align={"center"} className={classes.title}>
-        Dealers Document
+        Dealership Documents
       </Typography>
       <Table className={classes.table} size="small" aria-label="Dealers">
         <TableHead>
           <TableRow>
-            <TableCell align="center">ID</TableCell>
-            <TableCell align="center">Document Name</TableCell>
-            <TableCell align="center">Document Type</TableCell>
+            {/* <TableCell align="center">ID</TableCell> */}
+            <TableCell>Document Name</TableCell>
+            {/* <TableCell align="center">Document Type</TableCell> */}
             <TableCell align="center">Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {checkListData.map((row) => (
+          {Array.isArray(checkListData) && checkListData.map((row) => row.doc_type !== 'dealer' && (
             <TableRow key={row.doc_id}>
-              <TableCell align="center">{row.doc_id}</TableCell>
-              <TableCell align="center">{row.doc_name}</TableCell>
-              <TableCell align="center">{row.doc_type}</TableCell>
+              {/* <TableCell align="center">{row.doc_id}</TableCell> */}
+              <TableCell>{row.description}</TableCell>
+              {/* <TableCell align="center">{row.doc_type}</TableCell> */}
               <TableCell align="center">
                 <ButtonGroup size="small" aria-label="dealer action buttons">
                   <Button onClick={(e) => onView()}>View</Button>

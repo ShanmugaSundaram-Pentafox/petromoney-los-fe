@@ -67,7 +67,7 @@ export const getDealershipSalesById = (id) => {
 
 export const getDealershipCheckList = (id) => {
   return new Promise((resolve, reject) => {
-    API.get(`${URL.dealership}/${id}/checklist`)
+    API.get(`${URL.checklist}/${id}`)
       .then(({ data }) => {
         if (data.status === "SUCCESS") {
           resolve(data.data);

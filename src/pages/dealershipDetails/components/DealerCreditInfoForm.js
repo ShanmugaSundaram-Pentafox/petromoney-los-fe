@@ -121,7 +121,7 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
           <option value="1">1 time</option>
           <option value="2">2 times</option>
           <option value="3">3 times</option>
-          <option value=">3">>3 times</option>
+          <option value=">3">&gt;3 times</option>
         </TextInput>
       </Grid>
       <Grid {...gridItem} md={6}>

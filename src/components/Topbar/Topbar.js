@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => {
 });
 
 const Topbar = props => {
-  const { className, onSidebarOpen, pageTitle, logout, ...rest } = props;
+  const { className, onSidebarOpen, pageTitle, user, logout, ...rest } = props;
   const classes = useStyles();
 
   const [notifications] = useState([]);
@@ -66,7 +66,7 @@ const Topbar = props => {
           <Hidden mdDown>
             <Searchbox />
             <NotificationsBell action={() => setShowNotificationSidebar(true)} />
-            <LoginUserInfo />
+            <LoginUserInfo user={user} logout={logout} />
   
             {/* <Tooltip title="Logout">
               <IconButton

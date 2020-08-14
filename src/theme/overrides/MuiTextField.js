@@ -1,16 +1,17 @@
 export default {
   root: {
     // '& label.Mui-focused': {
-    //   color: 'green',
+    //   fontSize: 13
     // },
     // '& .MuiInput-underline:after': {
     //   borderBottomColor: 'green',
     // },
     '& .MuiInputBase-input': {
-      fontSize: 12,
+      fontSize: 13,
     },
     '& .MuiInputBase-input[readonly]+fieldset': {
       borderStyle: 'dotted',
+      borderColor: 'rgba(0, 0, 0, 0.1)'
     },
     '& .MuiOutlinedInput-root': {
       '& fieldset': {

@@ -10,8 +10,10 @@ import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
-import clsx from 'clsx';
 import { useFormik } from 'formik';
+import clsx from 'clsx';
+import Alert from '@material-ui/lab/Alert';
+import { API } from '../../../config/api';
 
 const useStyles = makeStyles(theme => ({
   sidePanelTitle: {
@@ -71,6 +73,25 @@ const CreditInfoSideWrapper = ({ data, onClose }) => {
       console.log('Form Values >> ', values);
       handleReset();
       setActiveStep(activeStep+1);
+      // dealership/<int:dealership_id>/credit/info
+      return null;
+      // API.post(`${URL.dealership}/${values.id}`, values)
+      //   .then(({ status, message, data }) => {
+      //     if(status == 'success') {
+      //       setApiStatus({ type: 'success', message: message || 'Unable to save the details. Please try again later' })
+      //       setLoading(false);
+      //     }
+      //     else {
+      //       setApiStatus({ type: 'error', message: message || 'Unable to save the details. Please try again later' })
+      //       setLoading(false);
+      //     }
+      //   })
+      //   .catch(e => {
+      //     setApiStatus({ type: 'error', message: 'Unable to save the details. Please try again later' })
+      //     setLoading(false);
+      //     setReadOnly(true);
+      //     logger(e);
+      //   })
     }
   });
 
@@ -80,7 +101,7 @@ const CreditInfoSideWrapper = ({ data, onClose }) => {
       <div className={classes.sidePanelFormContentWrapper}>
         <Stepper activeStep={activeStep} orientation="vertical" className={classes.stepperRoot}>
           {
-            Array(4).fill(data[0]).map((item, i) => {
+            Array.isArray(data) && data.map((item, i) => {
               return (
                 <Step key={item.id}>
                   <StepLabel className={classes.stepTitle}>{item.first_name}</StepLabel>

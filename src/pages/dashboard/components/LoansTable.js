@@ -20,11 +20,21 @@ import AvatarGroup from '@material-ui/lab/AvatarGroup';
 import { getDealershipById, getDealershipLoansById } from '../../../services/dealerships.service';
 import { getDealersByDealershipId } from '../../../services/dealers.service';
 import DealershipDetails from './DealershipDetails';
+import SubmittedTable from '../../../components/Tables/SubmittedTable';
+import ApprovedTable from '../../../components/Tables/ApprovedTable';
+import DisbursedTable from '../../../components/Tables/DisbursedTable';
 
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(3),
     // paddingTop: theme.spacing(0),
+  },
+  tableContainer: {
+    borderRadius: 12,
+    boxShadow: '0 8px 6px -6px rgba(0,0,0,0.12)',
+    marginBottom: theme.spacing(3)
+  },
+  categoryContainer: {
     display: 'flex',
   },
   categoryCard: {
@@ -206,15 +216,15 @@ const LoansTable = ({ all_loans, setAllLoans }) => {
     ]
   }, []);
 
-  useMount(() => {
-    if(!all_loans.length) {
-      getAllLoans()
-        .then(data => {
-          setAllLoans(data);
-        })
-        .catch(e => null)
-    }
-  })
+  // useMount(() => {
+  //   if(!all_loans.length) {
+  //     getAllLoans()
+  //       .then(data => {
+  //         setAllLoans(data);
+  //       })
+  //       .catch(e => null)
+  //   }
+  // })
 
   const options = {
     elevation: 1,
@@ -226,81 +236,86 @@ const LoansTable = ({ all_loans, setAllLoans }) => {
 
   return (
     <div className={classes.root}>
-      <Paper elevation={1} className={classes.categoryCard}>
-        <Typography className={classes.title} variant="h3" component="h3">
-          Submitted
-        </Typography>
-        <div style={{ overflow: 'auto', height: '70vh' }}>
-          {
-            all_loans.filter(item => item.status.toLowerCase() == "submitted").map((item, i) => (
-              <div key={i} onClick={() => showDealershipInfo(item.dealership_id, item.status)} className={classes.cardItem}>
-                <Typography className={classes.cardTitle} component="p">{item.dealership_id} - {item.name}</Typography>
-                <AvatarGroup max={4} className={classes.avatarWrapper}>
-                  {
-                    Array.isArray(item.type) && item.type.map(t => <Avatar key={t} component="span" className={classes.avatar}>{t.charAt(0)}</Avatar>)
-                  }
-                </AvatarGroup>
-                <div className={classes.infoSection}>
-                  <div>Req. amt: <Currency className={classes.money} value={item.amount_requested} /></div>
-                  <div>{moment(new Date(item.created_date)).fromNow()}</div>
-                </div>
-              </div>
-            ))
-          }
-        </div>
+      <Paper elevation={1} className={classes.tableContainer}>
+        <SubmittedTable title={"Loan Requests"} onRowClick={showDealershipInfo} />
       </Paper>
-      <Paper elevation={1} className={classes.categoryCard}>
-        <Typography className={classes.title} variant="h3" component="h3">
-          Approved/Rejected
-        </Typography>
-        <div style={{ overflow: 'auto', height: '70vh' }}>
-          {
-            all_loans.filter(item => (item.status.toLowerCase() == "approved" || item.status.toLowerCase() == "rejected")).map((item, i) => (
-              <div key={i} onClick={() => showDealershipInfo(item.dealership_id, item.status)} className={classes.cardItem}>
-                <Typography className={classes.cardTitle} component="p">{item.dealership_id} - {item.name}</Typography>
-                <AvatarGroup max={4} className={classes.avatarWrapper}>
-                  {
-                    Array.isArray(item.type) && item.type.map(t => <Avatar key={t} component="span" className={classes.avatar}>{t.charAt(0)}</Avatar>)
-                  }
-                </AvatarGroup>
-                <div className={classes.infoSection}>
-                  <div>Appr. amt: <Currency className={classes.money} value={item.amount_approved} /></div>
-                  <div>{item.status} - {moment(new Date(item.loan_approved_rejected_date)).fromNow()}</div>
-                </div>
-              </div>
-            ))
-          }
-        </div>
+      <Paper elevation={1} className={classes.tableContainer}>
+        <ApprovedTable title={"Approved Loans"} onRowClick={showDealershipInfo} />
       </Paper>
-      <Paper elevation={1} className={classes.categoryCard}>
-        <Typography className={classes.title} variant="h3" component="h3">
-          Disbursed
-        </Typography>
-        <div style={{ overflow: 'auto', height: '70vh' }}>
-          {
-            all_loans.filter(item => item.status.toLowerCase() == "disbursed").map((item, i) => (
-              <div key={i} onClick={() => showDealershipInfo(item.dealership_id, item.status)} className={classes.cardItem}>
-                <Typography className={classes.cardTitle} component="p">{item.dealership_id} - {item.name}</Typography>
-                <AvatarGroup max={4} className={classes.avatarWrapper}>
-                  {
-                    Array.isArray(item.type) && item.type.map(t => <Avatar key={t} component="span" className={classes.avatar}>{t.charAt(0)}</Avatar>)
-                  }
-                </AvatarGroup>
-                <div className={classes.infoSection}>
-                  <div>Disb. amt: <Currency className={classes.money} value={item.amount_disbursed} /></div>
-                  <div>{moment(new Date(item.loan_disbursed_date)).fromNow()}</div>
-                </div>
-              </div>
-            ))
-          }
-        </div>
+      <Paper elevation={1} className={classes.tableContainer}>
+        <DisbursedTable title={"Disbursed Loans"} onRowClick={showDealershipInfo} />
       </Paper>
-      {/* <MUIDataTable
-        title={<Typography className={classes.title} variant="h5" component="h5">Loans</Typography>}
-        data={all_loans}
-        columns={columns}
-        options={options}
-      /> */}
+      {/* <div className={classes.categoryContainer}>
+        <Paper elevation={1} className={classes.categoryCard}>
+          <Typography className={classes.title} variant="h3" component="h3">
+            Submitted
+          </Typography>
+          <div style={{ overflow: 'auto', height: '70vh' }}>
+            {
+              all_loans.filter(item => item.status.toLowerCase() == "submitted").map((item, i) => (
+                <div key={i} onClick={() => showDealershipInfo(item.dealership_id, item.status)} className={classes.cardItem}>
+                  <Typography className={classes.cardTitle} component="p">{item.dealership_id} - {item.name}</Typography>
+                  <AvatarGroup max={4} className={classes.avatarWrapper}>
+                    {
+                      Array.isArray(item.type) && item.type.map(t => <Avatar key={t} component="span" className={classes.avatar}>{t.charAt(0)}</Avatar>)
+                    }
+                  </AvatarGroup>
+                  <div className={classes.infoSection}>
+                    <div>Req. amt: <Currency className={classes.money} value={item.amount_requested} /></div>
+                    <div>{moment(new Date(item.created_date)).fromNow()}</div>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </Paper>
+        <Paper elevation={1} className={classes.categoryCard}>
+          <Typography className={classes.title} variant="h3" component="h3">
+            Approved/Rejected
+          </Typography>
+          <div style={{ overflow: 'auto', height: '70vh' }}>
+            {
+              all_loans.filter(item => (item.status.toLowerCase() == "approved" || item.status.toLowerCase() == "rejected")).map((item, i) => (
+                <div key={i} onClick={() => showDealershipInfo(item.dealership_id, item.status)} className={classes.cardItem}>
+                  <Typography className={classes.cardTitle} component="p">{item.dealership_id} - {item.name}</Typography>
+                  <AvatarGroup max={4} className={classes.avatarWrapper}>
+                    {
+                      Array.isArray(item.type) && item.type.map(t => <Avatar key={t} component="span" className={classes.avatar}>{t.charAt(0)}</Avatar>)
+                    }
+                  </AvatarGroup>
+                  <div className={classes.infoSection}>
+                    <div>Appr. amt: <Currency className={classes.money} value={item.amount_approved} /></div>
+                    <div>{item.status} - {moment(new Date(item.loan_approved_rejected_date)).fromNow()}</div>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </Paper>
+        <Paper elevation={1} className={classes.categoryCard}>
+          <Typography className={classes.title} variant="h3" component="h3">
+            Disbursed
+          </Typography>
+          <div style={{ overflow: 'auto', height: '70vh' }}>
+            {
+              all_loans.filter(item => item.status.toLowerCase() == "disbursed").map((item, i) => (
+                <div key={i} onClick={() => showDealershipInfo(item.dealership_id, item.status)} className={classes.cardItem}>
+                  <Typography className={classes.cardTitle} component="p">{item.dealership_id} - {item.name}</Typography>
+                  <AvatarGroup max={4} className={classes.avatarWrapper}>
+                    {
+                      Array.isArray(item.type) && item.type.map(t => <Avatar key={t} component="span" className={classes.avatar}>{t.charAt(0)}</Avatar>)
+                    }
+                  </AvatarGroup>
+                  <div className={classes.infoSection}>
+                    <div>Disb. amt: <Currency className={classes.money} value={item.amount_disbursed} /></div>
+                    <div>{moment(new Date(item.loan_disbursed_date)).fromNow()}</div>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </Paper>
+      </div> */}
       <Drawer
         anchor="right"
         // elevation={4}

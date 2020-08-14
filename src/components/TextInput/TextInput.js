@@ -14,6 +14,7 @@ const InputWrapper = styled.div`
     margin-right: 8px;
     text-align: right;
     padding: 4px 0;
+    color: #242424;
   }
 
   .text-field {

@@ -11,7 +11,7 @@ export const selectAllLoans = createSelector(
         temp[item.dealership_id] = {...item, type: [item.type]};
       } else {
         temp[item.dealership_id].type.push(item.type); 
-        console.log(temp[item.dealership_id]);
+        // console.log(temp[item.dealership_id]);
       }
     });
     return Object.values(temp)

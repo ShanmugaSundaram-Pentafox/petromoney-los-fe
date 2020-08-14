@@ -19,7 +19,7 @@ import usePageTitle from "../../hooks/usePageTitle";
 const useStyles = makeStyles((theme) => ({
   root: {
     padding: theme.spacing(2),
-    paddingTop: 0,
+    paddingTop: theme.spacing(1),
   },
   title: {
     fontWeight: 600,

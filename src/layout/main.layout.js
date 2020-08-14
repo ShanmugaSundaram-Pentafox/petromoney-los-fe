@@ -59,7 +59,7 @@ const MainLayout = props => {
         variant={isDesktop ? 'persistent' : 'temporary'}
         />
       <main className={classes.content}>
-        <Topbar position="static" onSidebarOpen={handleSidebarOpen} />
+        <Topbar user={currentUser} position="static" onSidebarOpen={handleSidebarOpen} />
         {children}
         {/* <Footer /> */}
       </main>

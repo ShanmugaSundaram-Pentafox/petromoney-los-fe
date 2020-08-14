@@ -20,13 +20,8 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute exact path="/" component={Dashboard} />
       <ProtectedRoute exact path="/dealership" component={Dealership} />
       <ProtectedRoute exact path="/dealership/:id?" component={DealershipDetails} />
-      {
-        currentUser && creditRoutes.includes(currentUser.role_name) ? (
-          <>
+      
             <ProtectedRoute exact path="/dealership/:id/credit-form" component={CreditForm} />
-          </>
-        ) : null
-      }
       <ProtectedRoute exact path="/settings" component={Settings} />
       <Route exact path="/login" render={props => currentUser ? <Redirect to="/" /> : <Login {...props} />} />
     </Switch>

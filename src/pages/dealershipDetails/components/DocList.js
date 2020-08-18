@@ -8,6 +8,7 @@ import TableRow from "@material-ui/core/TableRow";
 import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import Typography from "@material-ui/core/Typography";
+import Chip from '@material-ui/core/Chip';
 import { makeStyles } from "@material-ui/core/styles";
 import FileUpload from "../../../components/FileUpload";
 import { getDealershipCheckList } from "../../../services/dealerships.service";
@@ -24,6 +25,16 @@ const useStyles = makeStyles((theme) => ({
     padding: 8,
   },
 }));
+
+const Docs = ({ data }) => {
+  let temp = 0;
+  return data.map((file, i) => {
+    temp += file.file_url ? 1 : 0;
+    return file.file_url ? (
+      <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }} href={file.file_url} target="_blank" title={file.name}>{temp}</a>
+    ) : null
+  });
+}
 
 const DocList = ({ id }) => {
   const classes = useStyles();
@@ -62,18 +73,19 @@ const DocList = ({ id }) => {
             {/* <TableCell align="center">ID</TableCell> */}
             <TableCell>Document Name</TableCell>
             {/* <TableCell align="center">Document Type</TableCell> */}
-            <TableCell align="center">Actions</TableCell>
+            <TableCell align="center">Files</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {Array.isArray(checkListData) && checkListData.map((row) => row.doc_type !== 'dealer' && (
+          {Array.isArray(checkListData) && checkListData.map((row, i) => row.doc_type !== 'dealer' && (
             <TableRow key={row.doc_id}>
               {/* <TableCell align="center">{row.doc_id}</TableCell> */}
               <TableCell>{row.description}</TableCell>
               {/* <TableCell align="center">{row.doc_type}</TableCell> */}
-              <TableCell align="center">
+              <TableCell align="right">
+                <Docs data={Array.isArray(row.file_data) && row.file_data.length ? row.file_data : []} />
                 <ButtonGroup size="small" aria-label="dealer action buttons">
-                  <Button onClick={(e) => onView()}>View</Button>
+                  {/* <Button onClick={(e) => onView()}>View</Button> */}
                   <Button onClick={(e) => onDocUpload(row)}>Upload</Button>
                 </ButtonGroup>
               </TableCell>

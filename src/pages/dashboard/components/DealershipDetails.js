@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import Divider from '@material-ui/core/Divider';
@@ -19,6 +20,10 @@ import TableCell from '@material-ui/core/TableCell';
 import Currency from '../../../components/Number/Currency';
 import SalesInfo from './SalesInfo';
 import TextInput from '../../../components/TextInput/TextInput';
+import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
+import { selectCurrentUser } from '../../../store/user/user.selector';
+import { createStructuredSelector } from 'reselect';
 
 const LoanInfoWrapper = styled.div`
   padding: 12px;
@@ -88,6 +93,7 @@ const LoanInfo = ({
   data,
   status,
   newInfo,
+  currentUser,
   setNewLoanInfo
 }) => {
   return (
@@ -112,17 +118,24 @@ const LoanInfo = ({
                 <TableCell align="right">
                   {
                     status === "submitted" ? (
-                      <TextInput
-                        money
-                        type="number"
-                        fullWidth={false}
-                        value={newInfo.amount_approved}
-                        onChange={e => {
-                          setNewLoanInfo({
-                            ...newInfo,
-                            [row.type]: e.target.value
-                          })
-                        }}
+                      <UserCan
+                        role={currentUser.role_name}
+                        perform={rulesList.loan_approval}
+                        yes={() => (
+                          <TextInput
+                            money
+                            type="number"
+                            fullWidth={false}
+                            value={newInfo.amount_approved}
+                            onChange={e => {
+                              setNewLoanInfo({
+                                ...newInfo,
+                                [row.type]: e.target.value
+                              })
+                            }}
+                          />
+                        )}
+                        no={() => "-"}
                       />
                     )
                     : <Currency value={row.amount_approved} /> 
@@ -148,7 +161,8 @@ const DealershipDetails = ({
   data,
   loanData,
   onClose,
-  status
+  status,
+  currentUser
 }) => {
   const [values, setValues] = useState({});
   const [loanInfo, setLoanInfo] = useState({});
@@ -270,7 +284,7 @@ const DealershipDetails = ({
             {values.id ? <SalesInfo id={values.id} /> : null}
             {
               Array.isArray(loanInfo) ?
-                <LoanInfo data={loanInfo} status={status} newInfo={newLoanInfo} setNewLoanInfo={setNewLoanInfo} />
+                <LoanInfo data={loanInfo} status={status} newInfo={newLoanInfo} currentUser={currentUser} setNewLoanInfo={setNewLoanInfo} />
                 : null
             }
             {
@@ -282,6 +296,7 @@ const DealershipDetails = ({
                   labelText="Remarks"
                   alignTop
                   placeholder="Enter your remarks here."
+                  readOnly={!permissionCheck(currentUser.role_name, rulesList.loan_approval)}
                   onChange={e => {
                     setComments(e.target.value)
                   }}
@@ -309,18 +324,24 @@ const DealershipDetails = ({
               startIcon={<AccountTreeRoundedIcon />}>View more</Button>
             {
               status == "submitted" && (
-                <>
-                  <Button
-                    variant="contained"
-                    className={clsx(classes.btn, classes.btnError)}
-                    startIcon={<ThumbDownAltIcon />}
-                    onClick={() => null}>Reject</Button>
-                  <Button
-                    variant="contained"
-                    className={clsx(classes.btn, classes.btnSuccess)}
-                    startIcon={<ThumbUpAltIcon />}
-                    onClick={() => null}>Approve</Button>
-                </>
+                <UserCan
+                  role={currentUser.role_name}
+                  perform={rulesList.loan_approval}
+                  yes={() => (
+                    <>
+                      <Button
+                        variant="contained"
+                        className={clsx(classes.btn, classes.btnError)}
+                        startIcon={<ThumbDownAltIcon />}
+                        onClick={() => null}>Reject</Button>
+                      <Button
+                        variant="contained"
+                        className={clsx(classes.btn, classes.btnSuccess)}
+                        startIcon={<ThumbUpAltIcon />}
+                        onClick={() => null}>Approve</Button>
+                    </>
+                  )}
+                />
               )
             }
           </div>
@@ -329,5 +350,8 @@ const DealershipDetails = ({
     </div>
   )
 }
+const mapStateToProps = createStructuredSelector({
+  currentUser: selectCurrentUser
+});
 
-export default DealershipDetails
+export default connect(mapStateToProps)(DealershipDetails);

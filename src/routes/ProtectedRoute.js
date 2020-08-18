@@ -6,6 +6,7 @@ import { selectCurrentUser } from '../store/user/user.selector';
 import MainLayout from '../layout/main.layout';
 
 const ProtectedRoute = ({ component: Component, currentUser, ...rest }) => {
+
   return (
     <Route
       {...rest}

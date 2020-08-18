@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
@@ -60,7 +61,15 @@ const SalesInfo = ({
     }
   }, [id])
 
-  if(Array.isArray(info) && !info.length) return null;
+  if(Array.isArray(info) && !info.length)
+    return (
+      <SalesInfoWrapper>
+        <Typography align={titleAlign} variant="h5">Sales data not available</Typography>
+        <div style={{ textAlign: 'center', marginTop: 8, paddingBottom: 8 }}>
+          <Button color="primary" variant="contained" size="small" onClick={() => null}>Add/Modify Sales Data</Button>
+        </div>
+      </SalesInfoWrapper>
+    );
 
   return (
     <SalesInfoWrapper>
@@ -89,6 +98,9 @@ const SalesInfo = ({
               }
             </TableBody>
           </Table>
+          <div style={{ textAlign: 'right', marginTop: 8 }}>
+            <Button color="primary" variant="contained" size="small" onClick={() => null}>Add/Modify Sales Data</Button>
+          </div>
         </div>
         <div>
           <Table size="small">
@@ -115,6 +127,7 @@ const SalesInfo = ({
           </Table>
         </div>
       </SalesTableWrapper>
+      
     </SalesInfoWrapper>
   )
 }

@@ -107,7 +107,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
           }),
           customBodyRender: value => {
             return <div>
-              {value ? moment(new Date(value)).fromNow() : '-'}
+              {value ? moment(new Date(value)).format('DD MMM, YYYY') : '-'}
             </div>
           }
         }

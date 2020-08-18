@@ -28,6 +28,9 @@ const useStyles = makeStyles((theme) => ({
   titleActionContainer: {
     textAlign: "right",
   },
+  topSpacing: {
+    marginTop: theme.spacing(2),
+  },
   bottomSpacing: {
     marginBottom: theme.spacing(2),
   },
@@ -75,11 +78,14 @@ const DealershipDetails = ({ currentUser, match }) => {
       </Grid> */}
       {/* <Divider className={classes.bottomSpacing} /> */}
       <Grid container spacing={2}>
-        {dealershipData && (
           <Grid item md={6} xs={12}>
-            <DealershipInfo data={dealershipData} />
+            {dealershipData && (
+              <DealershipInfo data={dealershipData} />
+            )}
+            <Paper className={classes.topSpacing}>
+              <DealershipDoc id={id} />
+            </Paper>
           </Grid>
-        )}
 
         <Grid item md={6} xs={12}>
           <Paper className={classes.bottomSpacing}>
@@ -90,13 +96,6 @@ const DealershipDetails = ({ currentUser, match }) => {
           </Paper>
           <Paper className={classes.bottomSpacing}>
             <SalesInfo id={id} titleAlign="center" column />
-          </Paper>
-        </Grid>
-      </Grid>
-      <Grid container spacing={2}>
-        <Grid item md={6} xs={12}>
-          <Paper className={classes.bottomSpacing}>
-            <DealershipDoc id={id} />
           </Paper>
         </Grid>
       </Grid>

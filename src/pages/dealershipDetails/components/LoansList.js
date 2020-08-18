@@ -37,7 +37,12 @@ const LoansList = ({ id, titleAlign }) => {
       .catch(e => null)
   });
 
-  if(!data || !data.length) return null;
+  if(!data || !data.length)
+    return (
+      <div className={classes.wrapper}>
+        <Typography variant="h5" align={titleAlign} className={classes.title}>No Loan details found</Typography>
+      </div>
+    );
 
   return (
     <div className={classes.wrapper}>

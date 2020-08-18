@@ -13,7 +13,10 @@ import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
 import { useFormik } from 'formik';
 import clsx from 'clsx';
 import Alert from '@material-ui/lab/Alert';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { API } from '../../../config/api';
+import { URL } from '../../../config/serverUrls';
+import { logger } from '../../../config/logger';
 
 const useStyles = makeStyles(theme => ({
   sidePanelTitle: {
@@ -64,34 +67,45 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const CreditInfoSideWrapper = ({ data, onClose }) => {
+const CreditInfoSideWrapper = ({ dealershipId, data, onClose }) => {
   const classes = useStyles();
+  const [readOnly, setReadOnly] = useState(true);
   const [activeStep, setActiveStep] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [apiStatus, setApiStatus] = useState({});
   const { values, errors, handleChange, handleSubmit, handleReset, setValues } = useFormik({
-    initialValues: {},
+    initialValues: {
+      dealer_id: data.id
+    },
     onSubmit: values => {
-      console.log('Form Values >> ', values);
-      handleReset();
-      setActiveStep(activeStep+1);
+      // console.log('Form Values >> ', values);
+      setLoading(true);
+      setApiStatus({});
+      // setActiveStep(activeStep+1);
       // dealership/<int:dealership_id>/credit/info
-      return null;
-      // API.post(`${URL.dealership}/${values.id}`, values)
-      //   .then(({ status, message, data }) => {
-      //     if(status == 'success') {
-      //       setApiStatus({ type: 'success', message: message || 'Unable to save the details. Please try again later' })
-      //       setLoading(false);
-      //     }
-      //     else {
-      //       setApiStatus({ type: 'error', message: message || 'Unable to save the details. Please try again later' })
-      //       setLoading(false);
-      //     }
-      //   })
-      //   .catch(e => {
-      //     setApiStatus({ type: 'error', message: 'Unable to save the details. Please try again later' })
-      //     setLoading(false);
-      //     setReadOnly(true);
-      //     logger(e);
-      //   })
+      // return null;
+      API.post(`${URL.dealership}/${dealershipId}/credit/info`, values, {
+        withCredentials: true,
+        credentials: 'include'
+      })
+        .then(({ status, message, data }) => {
+          if(status == 'success') {
+            setApiStatus({ type: 'success', message: message || 'Unable to save the details. Please try again later' })
+            setLoading(false);
+            handleReset();
+            setActiveStep(activeStep+1);
+          }
+          else {
+            setApiStatus({ type: 'error', message: message || 'Unable to save the details. Please try again later' })
+            setLoading(false);
+          }
+        })
+        .catch(e => {
+          setApiStatus({ type: 'error', message: 'Unable to save the details. Please try again later' })
+          setLoading(false);
+          setReadOnly(true);
+          logger(e);
+        })
     }
   });
 
@@ -104,7 +118,7 @@ const CreditInfoSideWrapper = ({ data, onClose }) => {
             Array.isArray(data) && data.map((item, i) => {
               return (
                 <Step key={item.id}>
-                  <StepLabel className={classes.stepTitle}>{item.first_name}</StepLabel>
+                  <StepLabel className={classes.stepTitle}>{item.first_name}  { values.cibil_score ? <b>({values.cibil_score})</b> : null }</StepLabel>
                   <StepContent>
                     <DealerCreditInfoForm data={item} values={values} errors={errors} onChange={handleChange} />
                   </StepContent>
@@ -116,11 +130,17 @@ const CreditInfoSideWrapper = ({ data, onClose }) => {
       </div>
       <div className={classes.actionFooter}>
         <Divider />
+        {
+          apiStatus.type && (
+            <Alert severity={apiStatus.type}>{apiStatus.message}</Alert>
+          )
+        }
         <div className={classes.actionButtonsWrapper}>
           <div>
             <Button
               variant="contained"
               startIcon={<NavigateBeforeRoundedIcon />}
+              disabled={loading}
               onClick={onClose}>Back</Button>
           </div>
           <div>
@@ -128,7 +148,8 @@ const CreditInfoSideWrapper = ({ data, onClose }) => {
               variant="contained"
               className={clsx(classes.btn, classes.btnSuccess)}
               startIcon={<NavigateNextRoundedIcon />}
-              onClick={handleSubmit}>Save &amp; Next</Button>
+              disabled={loading}
+              onClick={loading ? () => null : handleSubmit}>{loading ? <CircularProgress size={20} /> :`Save`}</Button>
           </div>
         </div>
       </div>

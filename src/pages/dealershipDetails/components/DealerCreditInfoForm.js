@@ -26,49 +26,49 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
       <Grid {...gridItem}>
         <TextInput
           label="CIBIL Score"
-          name="cibil"
+          name="cibil_score"
           type="number"
-          defaultValue={values.cibil}
+          defaultValue={values.cibil_score}
           onChange={onChange}
           />
       </Grid>
       <Grid {...gridItem} md={6}>
         <TextInput
           label="Total no.of loans"
-          name="loans"
-          defaultValue={values.loans}
+          name="loans_count"
+          defaultValue={values.loans_count}
           onChange={onChange}
           />
       </Grid>
       <Grid {...gridItem} md={6}>
         <TextInput
           label="No of closed loans"
-          name="loans_closed"
-          defaultValue={values.loans_closed}
+          name="closed_loans_count"
+          defaultValue={values.closed_loans_count}
           onChange={onChange}
           />
       </Grid>
       <Grid {...gridItem} md={6}>
         <TextInput
           label="No of overdue accounts"
-          name="overdue_acc"
-          defaultValue={values.overdue_acc}
+          name="od_accounts_count"
+          defaultValue={values.od_accounts_count}
           onChange={onChange}
           />
       </Grid>
       <Grid {...gridItem} md={6}>
         <TextInput
           label="Overdue Amount"
-          name="overdue_amount"
-          defaultValue={values.overdue_amount}
+          name="od_amount"
+          defaultValue={values.od_amount}
           onChange={onChange}
           />
       </Grid>
       <Grid {...gridItem}>
         <TextInput
           label="Current O/S amount"
-          name="os_amount"
-          defaultValue={values.os_amount}
+          name="current_os_amount"
+          defaultValue={values.current_os_amount}
           onChange={onChange}
           />
       </Grid>
@@ -83,8 +83,8 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
       <Grid {...gridItem}>
         <TextInput
           label="No of enquiries last 6 months"
-          name="enquiries"
-          defaultValue={values.enquiries}
+          name="no_of_enquiries"
+          defaultValue={values.no_of_enquiries}
           onChange={onChange}
           />
       </Grid>
@@ -93,16 +93,16 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
           <TextInput
             select
             label="Loans in Bureau Report"
-            name="loans_bureau"
-            value={values.loans_bureau}
+            name="is_loan_in_bureau"
+            value={values.is_loan_in_bureau}
             onChange={onChange}
             SelectProps={{
               native: true,
             }}
             >
               <option value="NA">Select</option>
-              <option value="Y">Yes</option>
-              <option value="N">No</option>
+              <option value="1">Yes</option>
+              <option value="0">No</option>
           </TextInput>
         </Grid>
       </Grid>
@@ -110,8 +110,8 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
         <TextInput
           select
           label="No of times of highest DPD"
-          name="highest_dpd_count"
-          value={values.highest_dpd_count}
+          name="highest_dpd"
+          value={values.highest_dpd}
           onChange={onChange}
           SelectProps={{
             native: true,
@@ -128,8 +128,8 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
         <TextInput
           select
           label="Highest DPD bracket"
-          name="highest_dpd"
-          value={values.highest_dpd}
+          name="highest_dpd_bracket"
+          value={values.highest_dpd_bracket}
           onChange={onChange}
           SelectProps={{
             native: true,
@@ -150,16 +150,16 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
           <TextInput
             select
             label="Credit Card in Bureau Report"
-            name="credit_card"
-            value={values.credit_card}
+            name="is_cc_in_cibil"
+            value={values.is_cc_in_cibil}
             onChange={onChange}
             SelectProps={{
               native: true,
             }}
           >
             <option value="NA">Select</option>
-            <option value="Y">Yes</option>
-            <option value="N">No</option>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
           </TextInput>
         </Grid>
       </Grid>
@@ -167,8 +167,8 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
         <TextInput
           select
           label="Status - For Loans & Credit Cards"
-          name="status_loans"
-          defaultValue={values.status_loans}
+          name="status"
+          defaultValue={values.status}
           onChange={onChange}
           SelectProps={{
             native: true,

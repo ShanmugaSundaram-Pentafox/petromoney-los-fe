@@ -56,7 +56,15 @@ const DealersList = ({ id, titleAlign }) => {
       .catch(e => null)
   });
 
-  if(!data || !data.length) return null;
+  if(!data || !data.length)
+    return (
+      <div className={classes.wrapper}>
+        <Typography variant="h5" align={titleAlign} className={classes.title}>No Dealers Found</Typography>
+        <div style={{ textAlign: 'center', marginTop: 8 }}>
+          <Button color="primary" variant="contained" size="small" onClick={() => null}>Add dealer</Button>
+        </div>
+      </div>
+    );
 
   return (
     <div className={classes.wrapper}>
@@ -105,7 +113,7 @@ const DealersList = ({ id, titleAlign }) => {
           variant="temporary"
         >
           <div className={classes.sidePanelWrapper}>
-            <CreditInfoSideWrapper data={data} onClose={() => setShowCreditForm(false)} />
+            <CreditInfoSideWrapper dealershipId={id} data={data} onClose={() => setShowCreditForm(false)} />
           </div>
         </Drawer>
       </div>

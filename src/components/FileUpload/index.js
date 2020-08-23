@@ -8,13 +8,15 @@ const FileUpload = ({id,data, open, onCloseUploader }) => {
 
   const handleSave = (files) => {
     const formData = new FormData();
+    const dealerShipId = id;
+    const docID = data.doc_id;
     files.map(file => {
-      const docName = data.doc_name.replace(/[()%.,+\-&]/g, '').toLowerCase().replace(/\s/g, '_');
+      const fileName = file.name.replace(/[()%.,+\-&]/g, '').toLowerCase().replace(/\s/g, '_');
       formData.append(`file-${id}`, file);
-      formData.append(`fileName`, docName);
+      formData.append(`fileName`, fileName);
       formData.append(`id`, data.doc_id);
     });
-    uploadDocument(id, formData)
+    uploadDocument(dealerShipId, docID, formData)
       .then(data => {
         enqueueSnackbar('File Upload Success', { variant: "success" });
         onCloseUploader();
@@ -32,7 +34,7 @@ const FileUpload = ({id,data, open, onCloseUploader }) => {
           disableBackdropClick: true
       }}
       onSave={handleSave}
-      acceptedFiles={["image/jpeg", "image/png"]}
+      acceptedFiles={["image/jpeg", "image/png", ".pdf"]}
       showPreviews={true}
       submitButtonText={'Upload'}
       maxFileSize={5000000}

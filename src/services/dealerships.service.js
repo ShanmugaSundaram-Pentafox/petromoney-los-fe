@@ -81,9 +81,9 @@ export const getDealershipCheckList = (id) => {
   });
 };
 
-export const uploadDocument = (id, files) => {
+export const uploadDocument = (dealershipID, docID, files) => {
   return new Promise((resolve, reject) => {
-    API.post(`${URL.upload}/${id}`, files)
+    API.post(`${URL.checklist}/${dealershipID}/doc/${docID}`, files)
       .then(({ data }) => {
           resolve(data);
       })

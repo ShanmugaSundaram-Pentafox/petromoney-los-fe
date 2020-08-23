@@ -74,9 +74,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [apiStatus, setApiStatus] = useState({});
   const { values, errors, handleChange, handleSubmit, handleReset, setValues } = useFormik({
-    initialValues: {
-      dealer_id: data.id
-    },
+    initialValues: {},
     onSubmit: values => {
       // console.log('Form Values >> ', values);
       setLoading(true);
@@ -84,7 +82,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, onClose }) => {
       // setActiveStep(activeStep+1);
       // dealership/<int:dealership_id>/credit/info
       // return null;
-      API.post(`${URL.dealership}/${dealershipId}/credit/info`, values, {
+      API.post(`${URL.dealership}/${dealershipId}/credit/info`, { ...values, dealer_id: data[activeStep].id }, {
         withCredentials: true,
         credentials: 'include'
       })
@@ -127,6 +125,11 @@ const CreditInfoSideWrapper = ({ dealershipId, data, onClose }) => {
             })
           }
         </Stepper>
+        {
+          Array.isArray(data) && activeStep+1 === data.length ? (
+            <Alert severity={'success'}>Thanks for submitting credit info for dealers</Alert>
+          ) : null
+        }
       </div>
       <div className={classes.actionFooter}>
         <Divider />

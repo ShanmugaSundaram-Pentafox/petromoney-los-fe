@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => ({
 }
 */
 
-const DealershipInfo = ({ data, className }) => {
+const DealershipInfo = ({ data, className, currentUser }) => {
   const [readOnly, setReadOnly] = useState(true);
   const [loading, setLoading] = useState();
   const [apiStatus, setApiStatus] = useState({});
@@ -68,7 +68,7 @@ const DealershipInfo = ({ data, className }) => {
       console.log('Form Values >> ', values);
       setLoading(true);
       setApiStatus({});
-      API.post(`${URL.dealership}/${values.id}`, values)
+      API.post(`${URL.dealership}/${values.id}`, { ...values, user_id: currentUser.id })
         .then(({ status, message, data }) => {
           if(status == 'success') {
             setApiStatus({ type: 'success', message: message || 'Unable to save the details. Please try again later' })

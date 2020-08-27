@@ -67,7 +67,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const CreditInfoSideWrapper = ({ dealershipId, data, onClose }) => {
+const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => {
   const classes = useStyles();
   const [readOnly, setReadOnly] = useState(true);
   const [activeStep, setActiveStep] = useState(0);
@@ -82,7 +82,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, onClose }) => {
       // setActiveStep(activeStep+1);
       // dealership/<int:dealership_id>/credit/info
       // return null;
-      API.post(`${URL.dealership}/${dealershipId}/credit/info`, { ...values, dealer_id: data[activeStep].id }, {
+      API.post(`${URL.dealership}/${dealershipId}/credit/info`, { ...values, user_id: currentUser.id, dealer_id: data[activeStep].id }, {
         withCredentials: true,
         credentials: 'include'
       })

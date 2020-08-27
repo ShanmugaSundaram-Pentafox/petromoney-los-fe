@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const DealersList = ({ id, titleAlign }) => {
+const DealersList = ({ id, titleAlign, currentUser }) => {
   const classes = useStyles();
   const [data, setDealersData] = useState();
   const [activeStep, setActiveStep] = useState(0);
@@ -113,7 +113,7 @@ const DealersList = ({ id, titleAlign }) => {
           variant="temporary"
         >
           <div className={classes.sidePanelWrapper}>
-            <CreditInfoSideWrapper dealershipId={id} data={data} onClose={() => setShowCreditForm(false)} />
+            <CreditInfoSideWrapper dealershipId={id} data={data} currentUser={currentUser} onClose={() => setShowCreditForm(false)} />
           </div>
         </Drawer>
       </div>

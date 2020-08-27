@@ -80,22 +80,22 @@ const DealershipDetails = ({ currentUser, match }) => {
       <Grid container spacing={2}>
           <Grid item md={6} xs={12}>
             {dealershipData && (
-              <DealershipInfo data={dealershipData} />
+              <DealershipInfo data={dealershipData} currentUser={currentUser} />
             )}
             <Paper className={classes.topSpacing}>
-              <DealershipDoc id={id} />
+              <DealershipDoc id={id} currentUser={currentUser} />
             </Paper>
           </Grid>
 
         <Grid item md={6} xs={12}>
           <Paper className={classes.bottomSpacing}>
-            <LoansList id={id} titleAlign="center" />
+            <LoansList id={id} titleAlign="center" currentUser={currentUser} />
           </Paper>
           <Paper className={classes.bottomSpacing}>
-            <DealersList id={id} titleAlign="center" />
+            <DealersList id={id} titleAlign="center" currentUser={currentUser} />
           </Paper>
           <Paper className={classes.bottomSpacing}>
-            <SalesInfo id={id} titleAlign="center" column />
+            <SalesInfo id={id} titleAlign="center" currentUser={currentUser} column />
           </Paper>
         </Grid>
       </Grid>

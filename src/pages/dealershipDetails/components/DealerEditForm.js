@@ -25,7 +25,7 @@ const useStyles = makeStyles({
     }
 });
 
-const DealerEditForm = ({ data, deleteFile, editableValues, readOnlyProps, values, errors, onChange }) => {
+const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValues, readOnlyProps, values, errors, onChange }) => {
     const readOnly = readOnlyProps;
     const classes = useStyles();
     const [showUpload, setShowUpload] = useState(false);
@@ -39,6 +39,37 @@ const DealerEditForm = ({ data, deleteFile, editableValues, readOnlyProps, value
     const date = new Date();
     const currentYear = date.getFullYear();
     const currentYearDiff = date.getFullYear() - 1970;
+
+    const relationShipOptions = [
+        { label: "Choose Relationship", value: "" },
+        { label: "Father", value: "FATHER" },
+        { label: "Mother", value: "MOTHER" },
+        { label: "Uncle", value: "UNCLE" },
+        { label: "Aunt", value: "AUNT" },
+        { label: "Son", value: "SON" },
+        { label: "Daughter", value: "DAUGHTER" },
+        { label: "Grandfather", value: "GRANDFATHER" },
+        { label: "Grandmother", value: "GRANDMOTHER" },
+        { label: "Mother-in-law", value: "MOTHER-IN-LAW" },
+        { label: "Father-in-law", value: "FATHER-IN-LAW" },
+        { label: "Sister-in-law", value: "SISTER-IN-LAW" },
+        { label: "Brother-in-law", value: "BROTHER-IN-LAW" },
+        { label: "Brother", value: "BROTHER" },
+        { label: "Newphew", value: "NEPHEW" },
+        { label: "Partner", value: "PARTNER" },
+        { label: "Friend", value: "FRIEND" },
+        { label: "Shareholder", value: "SHAREHOLDER" },
+        { label: "Buyer", value: "BUYER" },
+        { label: "Supplier", value: "SUPPLIER" },
+        { label: "Business Neighbour", value: "BUSINESS NEIGHBOUR" },
+        { label: "Home Neighbour", value: "HOME NEIGHBOUR" },
+        { label: "Director", value: "DIRECTOR" },
+        { label: "Proprietor", value: "PROPRIETOR" },
+        { label: "Debtors", value: "DEBTORS" },
+        { label: "Creditors", value: "CREDITORS" },
+        { label: "Principal", value: "PRINCIPAL" },
+        { label: "Others", value: "OTHERS" }
+    ]
 
     const aadharBack = () => {
         return (
@@ -106,26 +137,6 @@ const DealerEditForm = ({ data, deleteFile, editableValues, readOnlyProps, value
             </Grid>
             <Grid {...gridItem} md={6}>
                 <TextInput
-                    label="ID"
-                    name="id"
-                    disabled={true}
-                    type="number"
-                    defaultValue={values.id}
-                    onChange={onChange}
-                />
-            </Grid>
-            <Grid {...gridItem} md={6}>
-                <TextInput
-                    label="DealerShip ID"
-                    name="dealership_id"
-                    type="number"
-                    disabled={true}
-                    defaultValue={values.dealership_id}
-                    onChange={onChange}
-                />
-            </Grid>
-            <Grid {...gridItem} md={6}>
-                <TextInput
                     id="date"
                     label="Date of Birth"
                     name="dob"
@@ -170,6 +181,60 @@ const DealerEditForm = ({ data, deleteFile, editableValues, readOnlyProps, value
                     <option value="Widowed">Widowed</option>
                 </TextInput>
             </Grid>
+            {modelType === 'COAPPLICANT' ?
+                <>
+                    <Grid {...gridItem} md={6}>
+                        <TextInput
+                            select
+                            label="Relation To"
+                            name="dealer_id"
+                            error={errors.dealer_id}
+                            helperText={errors.dealer_id}
+                            readOnly={readOnly}
+                            value={values.dealer_id}
+                            onChange={onChange}
+                            disabled={readOnly}
+                            SelectProps={{
+                                native: true,
+                            }}
+                        >
+                            <option value="null">Choose Relative</option>
+                            {
+                                dealersList.map((item, i) => {
+                                    return (
+                                        <option value={item.id}>{item.first_name} {item.last_name}</option>
+                                    )
+                                })
+                            }
+                        </TextInput>
+                    </Grid>
+                    <Grid {...gridItem} md={6}>
+                        <TextInput
+                            select
+                            label="Relationship type"
+                            name="relationship"
+                            error={errors.relationship}
+                            helperText={errors.relationship}
+                            readOnly={readOnly}
+                            value={values.relationship}
+                            onChange={onChange}
+                            disabled={readOnly}
+                            SelectProps={{
+                                native: true,
+                            }}
+                            InputLabelProps={{ shrink: true }}
+                        >
+                            {
+                                relationShipOptions.map((item, i) => {
+                                    return (
+                                        <option value={item.value}>{item.label}</option>
+                                    )
+                                })
+                            }
+                        </TextInput>
+                    </Grid>
+                </> : null}
+
             <Grid {...gridItem}>
                 <TextInput
                     label="Address"

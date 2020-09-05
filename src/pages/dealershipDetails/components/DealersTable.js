@@ -86,7 +86,7 @@ const DealersTable = ({ id,data, titleAlign, showCreditForm, onClickAddMenu, for
                 </TableHead>
                 <TableBody>
                     {data.map(row => (
-                        <TableRow className={classes.tableRow} key={row.id} onClick={e => dealersClickRow(e, row)}>
+                        <TableRow className={classes.tableRow} key={row.id} onClick={e => dealersClickRow(e, row, 'DEALER')}>
                             <TableCell>{row.first_name}</TableCell>
                             <TableCell align="center">{row.mobile}</TableCell>
                             <TableCell align="center">

@@ -22,7 +22,6 @@ import DealerEditSideWrapper from './DealerEditSideWrapper';
 import AddIconButon from './AddIcon';
 import DealersTable from './DealersTable';
 import CoApplicantsTable from './CoApplicantsTable';
-import CoApplicantEditSideWrapper from './CoApplicantEditSideWrapper';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -74,8 +73,8 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   const classes = useStyles();
   const [showCreditForm, setShowCreditForm] = useState(false);
   const [showDealerEditForm, setShowDealerEditForm] = useState(false);
-  const [showApplicantEditForm, setShowApplicantEditForm] = useState(false);
   const [formType, setFormType] = useState('');
+  const [modelType, setModelType] = useState('');
   const [rowData, setRowData] = useState({});
 
   const [dealerData, setDealersData] = useState();
@@ -103,31 +102,29 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   }
 
   const onClickAddMenu = (modelType) => {
+    if (modelType === 'DEALER') {
+      setModelType('DEALER')
+    } else if (modelType === 'COAPPLICANT') {
+      setModelType('COAPPLICANT')
+    }
     setFormType('Add');
     setRowData({})
-    if (modelType === 'DEALER') {
-      setShowDealerEditForm(true);
-    } else if (modelType === 'COAPPLICANT') {
-      setShowApplicantEditForm(true);
-    }
+    setShowDealerEditForm(true);
     return null;
   }
 
-  const dealersClickRow = (e, row) => {
+  const dealersClickRow = (e, row, type) => {
     if (e.target.tagName == 'A') {
       return null;
     }
+    setModelType(type);
     setFormType('Edit');
     setShowDealerEditForm(true);
     setRowData(row);
   }
 
   const editFormClose = (type) => {
-    if (type !== 'COAPPLICANT') {
-      setShowDealerEditForm(false);
-    } else {
-      setShowApplicantEditForm(false);
-    }
+    setShowDealerEditForm(false)
   }
 
   return (
@@ -163,23 +160,16 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         variant="temporary"
       >
         <div className={classes.sidePanelWrapper}>
-          <DealerEditSideWrapper getDealerApiCall={getDealerApiCall}
+          <DealerEditSideWrapper
+            getDealerApiCall={getDealerApiCall}
+            dealersList={dealerData}
+            getCoApplicantApiCall={getCoApplicantApiCall}
             isAdd={formType}
-            dealershipId={id} data={rowData} currentUser={currentUser}
-            onClose={() => editFormClose()} />
-        </div>
-      </Drawer>
-
-      <Drawer
-        anchor="right"
-        open={showApplicantEditForm}
-        variant="temporary"
-      >
-        <div className={classes.sidePanelWrapper}>
-          <CoApplicantEditSideWrapper getCoApplicantApiCall={getCoApplicantApiCall}
-            isAdd={formType}
-            dealershipId={id} data={coApplicantsData} currentUser={currentUser}
-            onClose={() => editFormClose('COAPPLICANT')} />
+            modelType={modelType}
+            dealershipId={id} 
+            data={rowData}
+            currentUser={currentUser}
+            onClose={() => editFormClose(modelType)} />
         </div>
       </Drawer>
     </>

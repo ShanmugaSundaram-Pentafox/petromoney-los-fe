@@ -72,16 +72,26 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const DealerEditSideWrapper = ({ isAdd, dealershipId, getDealerApiCall, data, currentUser, onClose }) => {
+const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, getDealerApiCall, getCoApplicantApiCall, data, currentUser, onClose }) => {
   const classes = useStyles();
   const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
-  // const [errors, setErrors] =  useState({});
+
+  const [apicallStatus, setApicallStatus] = useState(null);
+  const [apiCallMessage, setApiCallMessage] = useState('');
 
   const handleEdit = () => {
     setReadOnly(!readOnly)
   };
+
+  let coApplicantFields = {};
+  if (modelType === 'COAPPLICANT') {
+    coApplicantFields = {
+      dealer_id: Yup.number().required(),
+      relationship: Yup.string().min(2).required(),
+    }
+  }
 
   const validationSchema = Yup.object().shape({
     first_name: Yup.string().min(2).required("Enter first name"),
@@ -94,6 +104,7 @@ const DealerEditSideWrapper = ({ isAdd, dealershipId, getDealerApiCall, data, cu
     mobile: Yup.string().matches(/^\d{10}$/).required("Enter valid mobile number"),
     pan: Yup.string().matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, "Invalid PAN").required("Enter PAN").uppercase(),
     aadhar: Yup.string().matches(/^(\d{12})$|^(\d{16})$/, "Invalid aadhar").required("Enter valid aadhar"),
+    ...coApplicantFields
   })
 
   const deleteFile = (type) => {
@@ -123,7 +134,7 @@ const DealerEditSideWrapper = ({ isAdd, dealershipId, getDealerApiCall, data, cu
       })
   };
 
-  const { values, errors, handleSubmit,handleChange, handleReset, setValues } = useFormik({
+  const { values, errors, handleSubmit, handleChange, handleReset, setValues } = useFormik({
     initialValues: {
       ...data
     },
@@ -133,24 +144,28 @@ const DealerEditSideWrapper = ({ isAdd, dealershipId, getDealerApiCall, data, cu
     validationSchema,
     onSubmit: values => {
       setLoading(true);
-      
       const data = new FormData();
       Object.keys(values).forEach(key => {
         data.append(key, values[key]);
       })
-
-      let url = `dealers/${dealershipId}`;
+      const apiURL = modelType === "DEALER" ? URL.dealers : URL.coApplicants;
+      let url = `${apiURL}/${dealershipId}`;
       if (values.id) {
         url += `/${values.id}`;
-      }
+      };
       API.post(url, data)
         .then(res => {
           setLoading(false);
+          setApicallStatus('success');
+          setApiCallMessage(isAdd ? 'Dealer Added' : 'Dealer Updated');
           onClose();
-          getDealerApiCall(dealershipId)
+          modelType === "DEALER" ? getDealerApiCall(dealershipId) : getCoApplicantApiCall(dealershipId);
         })
         .catch(err => {
-          setReadOnly(true);
+          setReadOnly(false);
+          setLoading(false);
+          setApicallStatus('error');
+          setApiCallMessage('Sorry! Unable to add or Update. Try again later.')
           logger(err);
         })
     }
@@ -158,15 +173,24 @@ const DealerEditSideWrapper = ({ isAdd, dealershipId, getDealerApiCall, data, cu
 
   return (
     <div className={classes.sidePanelFormWrapper}>
-      <Typography className={classes.sidePanelTitle} variant="h4">Dealer Edit Form</Typography>
+      <Typography className={classes.sidePanelTitle} variant="h4">{modelType === 'DEALER' ? 'Dealer Edit Form' : 'CoApplicant Edit Form'}</Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <Stepper activeStep={activeStep} orientation="vertical" className={classes.stepperRoot}>
           <Step key={data.id}>
             <StepContent>
-              <DealerEditForm deleteFile={deleteFile} readOnlyProps={readOnly} data={data} values={values} errors={errors} onChange={handleChange} />
+              <DealerEditForm
+                dealersList={dealersList}
+                deleteFile={deleteFile}
+                readOnlyProps={readOnly}
+                modelType={modelType}
+                data={data}
+                values={values}
+                errors={errors}
+                onChange={handleChange} />
             </StepContent>
           </Step>
         </Stepper>
+        {apicallStatus ? <Alert severity={apicallStatus}>{apiCallMessage}</Alert> : null}
       </div>
       <div className={classes.actionFooter}>
         <Divider />

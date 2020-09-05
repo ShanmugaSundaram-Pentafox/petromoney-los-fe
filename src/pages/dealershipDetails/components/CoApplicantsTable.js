@@ -91,7 +91,7 @@ const CoApplicantsTable = ({id,coApplicantsData, titleAlign, showCreditForm, onC
         </TableHead>
         <TableBody>
           {coApplicantsData.map(row => (
-            <TableRow className={classes.tableRow} key={row.id} onClick={e => dealersClickRow(e, row)}>
+            <TableRow className={classes.tableRow} key={row.id} onClick={e => dealersClickRow(e, row, 'COAPPLICANT')}>
               <TableCell>{row.first_name}</TableCell>
               <TableCell align="center">{row.mobile}</TableCell>
               <TableCell align="center">
@@ -131,19 +131,6 @@ const CoApplicantsTable = ({id,coApplicantsData, titleAlign, showCreditForm, onC
             <CreditInfoSideWrapper dealershipId={id} data={coApplicantsData} currentUser={currentUser} onClose={() => openCloseCreditForm()} />
           </div>
         </Drawer>
-
-        {/* <Drawer
-          anchor="right"
-          open={showDealerEditForm}
-          variant="temporary"
-        >
-          <div className={classes.sidePanelWrapper}>
-            <DealerEditSideWrapper getCoApplicantApiCall={getCoApplicantApiCall}
-              isAdd={formType}
-              dealershipId={id} data={rowData} currentUser={currentUser}
-              onClose={() => setShowDealerEditForm(false)} />
-          </div>
-        </Drawer> */}
       </div>
     </div>
   )

@@ -17,6 +17,22 @@ export const getDealersByDealershipId = id => {
   });
 }
 
+export const getCoApplicantByDealershipId = id => {
+  return new Promise((resolve, reject) => {
+    API.get(`${URL.coApplicants}/${id}`)
+      .then(({ data }) => {
+        if(data.status === "SUCCESS") {
+          resolve(data.data);
+        } else {
+          reject(data.message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
 export const getAllApplicantsByDealershipId = id => {
   return new Promise((resolve, reject) => {
     API.get(`${URL.applicants}/${id}`)

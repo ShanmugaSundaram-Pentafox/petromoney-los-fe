@@ -46,8 +46,8 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 8
   },
   footer: {
-    paddingTop: 8,
-    textAlign: 'right'
+    padding: 8,
+    textAlign: 'right',
   },
   sidePanelWrapper: {
     width: '40vw',
@@ -79,16 +79,23 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
 
   const [dealerData, setDealersData] = useState();
   const [coApplicantsData, setCoApplicantsData] = useState([]);
+  const [dealerCoApplicantData, setDealerCoApplicantData] = useState([]);
 
   const getCoApplicantApiCall = (id) => {
     getCoApplicantByDealershipId(id)
-      .then(data => setCoApplicantsData(data))
+      .then(data => {
+        setCoApplicantsData(data);
+        setDealerCoApplicantData(prevArray => [...prevArray, ...data]);
+      })
       .catch(e => null)
   }
 
   const getDealerApiCall = (id) => {
     getDealersByDealershipId(id)
-      .then(data => setDealersData(data))
+      .then(data => {
+        setDealersData(data);
+        setDealerCoApplicantData(prevArray => [...prevArray, ...data]);
+      })
       .catch(e => null)
   }
 
@@ -172,6 +179,21 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
             onClose={() => editFormClose(modelType)} />
         </div>
       </Drawer>
+
+      <div className={classes.footer}>
+                <div className={classes.actionButtons}>
+                    <Button color="primary" variant="contained" size="small" onClick={() => openCloseCreditForm()}>Add Credit Information</Button>
+                </div>
+                <Drawer
+                    anchor="right"
+                    open={showCreditForm}
+                    variant="temporary"
+                >
+                    <div className={classes.sidePanelWrapper}>
+                        <CreditInfoSideWrapper dealershipId={id} data={dealerCoApplicantData} currentUser={currentUser} onClose={() => openCloseCreditForm()} />
+                    </div>
+                </Drawer>
+            </div>
     </>
   )
 }

@@ -118,20 +118,6 @@ const CoApplicantsTable = ({id,coApplicantsData, titleAlign, showCreditForm, onC
           ))}
         </TableBody>
       </Table>
-      <div className={classes.footer}>
-        <div className={classes.actionButtons}>
-          <Button color="primary" variant="contained" size="small" onClick={() => openCloseCreditForm()}>Add Credit Information</Button>
-        </div>
-        <Drawer
-          anchor="right"
-          open={showCreditForm}
-          variant="temporary"
-        >
-          <div className={classes.sidePanelWrapper}>
-            <CreditInfoSideWrapper dealershipId={id} data={coApplicantsData} currentUser={currentUser} onClose={() => openCloseCreditForm()} />
-          </div>
-        </Drawer>
-      </div>
     </div>
   )
 }

@@ -16,12 +16,22 @@ import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import EditRoundedIcon from '@material-ui/icons/EditRounded';
 import MoreHorizRoundedIcon from '@material-ui/icons/MoreHorizRounded';
-import { getDealersByDealershipId } from '../../../services/dealers.service';
+import { getDealersByDealershipId, getCoApplicantByDealershipId } from '../../../services/dealers.service';
 import CreditInfoSideWrapper from "./CreditInfoSideWrapper";
+import DealerEditSideWrapper from './DealerEditSideWrapper';
+import AddIconButon from './AddIcon';
+import DealersTable from './DealersTable';
+import CoApplicantsTable from './CoApplicantsTable';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
     padding: 8,
+  },
+  addButton: {
+    width: '10%',
+    textAlign: 'right',
+    float: 'right',
+    marginTop: '4px'
   },
   title: {
     paddingLeft: 8,
@@ -30,6 +40,10 @@ const useStyles = makeStyles(theme => ({
   table: {
     // minWidth: 650,
     padding: 8
+  },
+  header: {
+    display: 'flex',
+    marginBottom: 8
   },
   footer: {
     paddingTop: 8,
@@ -42,82 +56,123 @@ const useStyles = makeStyles(theme => ({
   actionButtons: {
     // paddingTop: 8
   },
+  tableRow: {
+    cursor: 'pointer'
+  },
+  document: {
+    display: 'inline-block',
+    borderRadius: 2,
+    lineHeight: 1,
+    marginRight: 3,
+    marginBottom: 4,
+    padding: 4,
+  }
 }));
 
 const DealersList = ({ id, titleAlign, currentUser }) => {
   const classes = useStyles();
-  const [data, setDealersData] = useState();
-  const [activeStep, setActiveStep] = useState(0);
   const [showCreditForm, setShowCreditForm] = useState(false);
-  
-  useMount(() => {
+  const [showDealerEditForm, setShowDealerEditForm] = useState(false);
+  const [formType, setFormType] = useState('');
+  const [modelType, setModelType] = useState('');
+  const [rowData, setRowData] = useState({});
+
+  const [dealerData, setDealersData] = useState();
+  const [coApplicantsData, setCoApplicantsData] = useState([]);
+
+  const getCoApplicantApiCall = (id) => {
+    getCoApplicantByDealershipId(id)
+      .then(data => setCoApplicantsData(data))
+      .catch(e => null)
+  }
+
+  const getDealerApiCall = (id) => {
     getDealersByDealershipId(id)
       .then(data => setDealersData(data))
       .catch(e => null)
+  }
+
+  useMount(() => {
+    getDealerApiCall(id);
+    getCoApplicantApiCall(id);
   });
 
-  if(!data || !data.length)
-    return (
-      <div className={classes.wrapper}>
-        <Typography variant="h5" align={titleAlign} className={classes.title}>No Dealers Found</Typography>
-        <div style={{ textAlign: 'center', marginTop: 8 }}>
-          <Button color="primary" variant="contained" size="small" onClick={() => null}>Add dealer</Button>
-        </div>
-      </div>
-    );
+  const openCloseCreditForm = () => {
+    setShowCreditForm(!showCreditForm);
+  }
+
+  const onClickAddMenu = (modelType) => {
+    if (modelType === 'DEALER') {
+      setModelType('DEALER')
+    } else if (modelType === 'COAPPLICANT') {
+      setModelType('COAPPLICANT')
+    }
+    setFormType('Add');
+    setRowData({})
+    setShowDealerEditForm(true);
+    return null;
+  }
+
+  const dealersClickRow = (e, row, type) => {
+    if (e.target.tagName == 'A') {
+      return null;
+    }
+    setModelType(type);
+    setFormType('Edit');
+    setShowDealerEditForm(true);
+    setRowData(row);
+  }
+
+  const editFormClose = (type) => {
+    setShowDealerEditForm(false)
+  }
 
   return (
-    <div className={classes.wrapper}>
-      <Typography variant="h5" align={titleAlign} className={classes.title}>Dealers</Typography>
-      <Table className={classes.table} size="small" aria-label="Dealers">
-        <TableHead>
-          <TableRow>
-            <TableCell>Dealer Name</TableCell>
-            <TableCell align="center">Mobile</TableCell>
-            <TableCell align="center">Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data.map(row => (
-            <TableRow key={row.id}>
-              <TableCell>{row.first_name}</TableCell>
-              <TableCell align="center">{row.mobile}</TableCell>
-              <TableCell align="center">
-                <ButtonGroup size="small" aria-label="dealer action buttons">
-                  <Button>View</Button>
-                  <Button>Edit</Button>
-                </ButtonGroup>
-                {/* <Tooltip title="Edit">
-                  <Chip variant="outlined" color="primary" size="small" label="Edit" avatar={<Avatar>E</Avatar>} />
-                  <IconButton
-                    size="small"
-                    color="inherit"
-                    onClick={() => null}
-                  >
-                    <EditRoundedIcon />
-                  </IconButton>
-                </Tooltip> */}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <div className={classes.footer}>
-        <div className={classes.actionButtons}>
-          <Button color="primary" variant="contained" size="small" onClick={() => setShowCreditForm(true)}>Add Credit Information</Button>
-        </div>
+    <>
+      <div className={classes.addButton}><AddIconButon onClickAddMenu={onClickAddMenu} /></div>
+      <DealersTable id={id}
+        data={dealerData}
+        formType={formType}
+        rowData={rowData}
+        titleAlign={titleAlign}
+        showCreditForm={showCreditForm}
+        openCloseCreditForm={openCloseCreditForm}
+        editFormClose={editFormClose}
+        dealersClickRow={dealersClickRow}
+        onClickAddMenu={onClickAddMenu}
+        showDealerEditForm={showDealerEditForm} />
 
-        <Drawer
-          anchor="right"
-          open={showCreditForm}
-          variant="temporary"
-        >
-          <div className={classes.sidePanelWrapper}>
-            <CreditInfoSideWrapper dealershipId={id} data={data} currentUser={currentUser} onClose={() => setShowCreditForm(false)} />
-          </div>
-        </Drawer>
-      </div>
-    </div>
+      <CoApplicantsTable id={id} titleAlign={titleAlign}
+        coApplicantsData={coApplicantsData}
+        formType={formType}
+        rowData={rowData}
+        titleAlign={titleAlign}
+        showCreditForm={showCreditForm}
+        openCloseCreditForm={openCloseCreditForm}
+        editFormClose={editFormClose}
+        dealersClickRow={dealersClickRow}
+        onClickAddMenu={onClickAddMenu}
+        showDealerEditForm={showDealerEditForm} />
+
+      <Drawer
+        anchor="right"
+        open={showDealerEditForm}
+        variant="temporary"
+      >
+        <div className={classes.sidePanelWrapper}>
+          <DealerEditSideWrapper
+            getDealerApiCall={getDealerApiCall}
+            dealersList={dealerData}
+            getCoApplicantApiCall={getCoApplicantApiCall}
+            isAdd={formType}
+            modelType={modelType}
+            dealershipId={id} 
+            data={rowData}
+            currentUser={currentUser}
+            onClose={() => editFormClose(modelType)} />
+        </div>
+      </Drawer>
+    </>
   )
 }
 

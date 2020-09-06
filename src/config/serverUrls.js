@@ -5,6 +5,7 @@ export const URL = {
   sanction: "loans/sanction",
   dealership: "dealership",
   dealers: "dealers",
+  coApplicants: "coapplicants",
   checklist: "checklist",
   applicants: "applicants/dealership",
   salesInfo: "sales/dealership",

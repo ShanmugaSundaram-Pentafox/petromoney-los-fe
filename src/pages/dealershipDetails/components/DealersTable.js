@@ -113,20 +113,6 @@ const DealersTable = ({ id,data, titleAlign, showCreditForm, onClickAddMenu, for
                     ))}
                 </TableBody>
             </Table>
-            <div className={classes.footer}>
-                <div className={classes.actionButtons}>
-                    <Button color="primary" variant="contained" size="small" onClick={() => openCloseCreditForm()}>Add Credit Information</Button>
-                </div>
-                <Drawer
-                    anchor="right"
-                    open={showCreditForm}
-                    variant="temporary"
-                >
-                    <div className={classes.sidePanelWrapper}>
-                        <CreditInfoSideWrapper dealershipId={id} data={data} currentUser={currentUser} onClose={() => openCloseCreditForm()} />
-                    </div>
-                </Drawer>
-            </div>
         </div>
     )
 }

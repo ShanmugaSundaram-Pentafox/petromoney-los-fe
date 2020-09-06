@@ -262,16 +262,6 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
             </Grid>
             <Grid {...gridItem} md={6}>
                 <TextInput
-                    label="Is Main Applicant"
-                    name="is_main_applicant"
-                    readOnly={readOnly}
-                    value={values.is_main_applicant}
-                    onChange={onChange}
-                >
-                </TextInput>
-            </Grid>
-            <Grid {...gridItem} md={6}>
-                <TextInput
                     select
                     label="Residing Since"
                     name="residing_since"

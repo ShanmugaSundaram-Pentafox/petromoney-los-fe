@@ -129,10 +129,10 @@ export const LoginUserInfo = ({
             <i className="caret"></i>
             </div>
 
-            {/* <div className="header-dropdown">
+            <div className="header-dropdown">
                 <span>Lorem Ipsum</span>
                 <span onClick={logout}>Logout</span>
-            </div> */}
+            </div>
         </LoginUserInfoWrapper>
     );
 };

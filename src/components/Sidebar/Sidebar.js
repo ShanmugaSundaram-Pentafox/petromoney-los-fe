@@ -1,7 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
 import { Divider, Drawer, List, ListItem, Button, colors } from '@material-ui/core';
 import DashboardIcon from '@material-ui/icons/Dashboard';
@@ -82,20 +81,25 @@ const Sidebar = props => {
       icon: <DashboardIcon />
     },
     {
+      title: 'Loans',
+      href: '/loans',
+      icon: <AccountBoxIcon />
+    },
+    {
       title: 'Dealerships',
       href: '/dealership',
       icon: <PeopleIcon />
     },
-    {
-      title: 'Account',
-      href: '/account',
-      icon: <AccountBoxIcon />
-    },
-    {
-      title: 'Settings',
-      href: '/settings',
-      icon: <SettingsIcon />
-    }
+    // {
+    //   title: 'Account',
+    //   href: '/account',
+    //   icon: <AccountBoxIcon />
+    // },
+    // {
+    //   title: 'Settings',
+    //   href: '/settings',
+    //   icon: <SettingsIcon />
+    // }
   ];
 
   return (
@@ -141,7 +145,7 @@ const Sidebar = props => {
           className={classes.nav}
           pages={pages}
         />
-        <div>
+        {/* <div>
           <List>
               <ListItem
                 className={classes.item}
@@ -160,7 +164,7 @@ const Sidebar = props => {
                 </Button>
               </ListItem>
           </List>
-        </div>
+        </div> */}
       </div>
     </Drawer>
   );
@@ -173,8 +177,4 @@ Sidebar.propTypes = {
   variant: PropTypes.string.isRequired
 };
 
-const mapDispatchToProps = dispatch => ({
-  logout: () => dispatch(resetCurrentUser())
-});
-
-export default connect(null, mapDispatchToProps)(Sidebar);
+export default Sidebar;

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
+import { connect } from 'react-redux';
 import { makeStyles, useTheme } from '@material-ui/styles';
 import { useMediaQuery } from '@material-ui/core';
 import Sidebar from '../components/Sidebar/Sidebar';
 import Topbar from '../components/Topbar/Topbar';
+import { resetCurrentUser } from '../store/user/user.actions';
 
 
 const useStyles = makeStyles(theme => ({
@@ -24,7 +26,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const MainLayout = props => {
-  const { children, currentUser } = props;
+  const { children, currentUser, logout } = props;
 
   const classes = useStyles();
   const theme = useTheme();
@@ -59,7 +61,7 @@ const MainLayout = props => {
         variant={isDesktop ? 'persistent' : 'temporary'}
         />
       <main className={classes.content}>
-        <Topbar user={currentUser} position="static" onSidebarOpen={handleSidebarOpen} />
+        <Topbar user={currentUser} logout={logout} position="static" onSidebarOpen={handleSidebarOpen} />
         {children}
         {/* <Footer /> */}
       </main>
@@ -71,4 +73,8 @@ MainLayout.propTypes = {
   children: PropTypes.node
 };
 
-export default MainLayout;
+const mapDispatchToProps = dispatch => ({
+  logout: () => dispatch(resetCurrentUser())
+});
+
+export default connect(null, mapDispatchToProps)(MainLayout);

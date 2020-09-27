@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { AppBar, Toolbar, Badge, Hidden, IconButton, Tooltip } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
-// import InputIcon from '@material-ui/icons/Input';
+import InputIcon from '@material-ui/icons/Input';
 import { connect } from 'react-redux';
 import { resetCurrentUser } from '../../store/user/user.actions';
 import NotificationsBell from '../CommonComponents/NotificationsBell';
@@ -64,8 +64,8 @@ const Topbar = props => {
           <h2 className={classes.title}>{pageTitle}</h2>
           <div className={classes.flexGrow} />
           <Hidden mdDown>
-            <Searchbox />
-            <NotificationsBell action={() => setShowNotificationSidebar(true)} />
+            {/* <Searchbox /> */}
+            {/* <NotificationsBell action={() => setShowNotificationSidebar(true)} /> */}
             <LoginUserInfo user={user} logout={logout} />
   
             {/* <Tooltip title="Logout">

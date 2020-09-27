@@ -4,6 +4,7 @@ import LoansTable from './components/LoansTable';
 import usePageTitle from '../../hooks/usePageTitle';
 import { InfoBoxContainer, InfoBoxWrapper } from '../../components/CommonComponents/InfoBox';
 import styled from 'styled-components';
+import Grid from '@material-ui/core/Grid';
 import { Tooltip, LabelList,Legend, BarChart, CartesianGrid, XAxis, YAxis, Bar } from 'recharts';
 import { useMount } from 'react-use';
 import { getAllLoans } from '../../services/loans.service';
@@ -129,92 +130,38 @@ const Dashboard = ({ currentUser }) => {
   });
   return (
     <div>
-      <InfoBoxContainer>
-        {
-          chartData.length ? (
-            <InfoBoxWrapper>
-              <p>Loans</p>
-              <BarChart
-                width={800}
-                height={260}
-                data={chartData}
-                label
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                {/* <Legend dataKey="name" /> */}
-                <Bar dataKey="count" fill="#ec6e30">
-                  <LabelList position="top" />
-                </Bar>
-                {/* <Bar width={20} dataKey="count" fill="#82ca9d" />
-                <Bar width={20} dataKey="count" fill="#f4a853" />
-                <Bar width={20} dataKey="count" fill="#19a474" />
-                <Bar width={20} dataKey="count" fill="#e66023" /> */}
-              </BarChart>
-            </InfoBoxWrapper>
-          ) : null
-        }
-        {/* <InfoBoxWrapper width={"300px"}>
-          <p>Submitted Loans</p>
-          <PieChart width={280} height={260}>
-            <Pie
-            data={chartData1}
-            dataKey="value"
-            nameKey="name"
-            cx="50%"
-            cy="50%"
-            innerRadius={30}
-            outerRadius={80}
-            fill="#ec6e30" />
-            <Legend verticalAlign="bottom" height={36}/>
-            <Tooltip />
-          </PieChart>
-        </InfoBoxWrapper>
-        <InfoBoxWrapper width={"300px"}>
-          <p>Requests</p>
-          <PieChart width={280} height={260}>
-            <Pie
-              data={chartData2}
-              dataKey="value"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              innerRadius={40}
-              outerRadius={80}
-              fill="#82ca9d"
-              label>
-              {
-                chartData2.map((item, i) => <Cell key={i} fill={item.color}/>)
-              }
-            </Pie>
-            <Legend verticalAlign="bottom" height={36}/>
-            <Tooltip />
-          </PieChart>
-        </InfoBoxWrapper>
-        <InfoBoxWrapper width={"300px"}>
-          <p>Approved vs Rejected</p>
-          <PieChart width={280} height={260}>
-          <Pie
-              data={chartData2}
-              dataKey="value"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              innerRadius={40}
-              outerRadius={80}
-              fill="#82ca9d"
-              label>
-              {
-                chartData3.map((item, i) => <Cell key={i} fill={item.color}/>)
-              }
-            </Pie>
-            <Legend verticalAlign="bottom" height={36}/>
-            <Tooltip />
-          </PieChart>
-        </InfoBoxWrapper> */}
-      </InfoBoxContainer>
+      <Grid container spacing={2}>
+        <Grid item md={6}>
+          <InfoBoxContainer>
+            {
+              chartData.length ? (
+                <InfoBoxWrapper>
+                  <p>Loans</p>
+                  <BarChart
+                    width={540}
+                    height={260}
+                    data={chartData}
+                    label
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    {/* <Legend dataKey="name" /> */}
+                    <Bar dataKey="count" fill="#ec6e30">
+                      <LabelList position="top" />
+                    </Bar>
+                    {/* <Bar width={20} dataKey="count" fill="#82ca9d" />
+                    <Bar width={20} dataKey="count" fill="#f4a853" />
+                    <Bar width={20} dataKey="count" fill="#19a474" />
+                    <Bar width={20} dataKey="count" fill="#e66023" /> */}
+                  </BarChart>
+                </InfoBoxWrapper>
+              ) : null
+            }
+          </InfoBoxContainer>
+        </Grid>
+      </Grid>
 
         {/* <InfoBoxWrapper width={"260px"}>
           <InfoBox number={100} title={"Submitted"} text={"Lorem Ipsum"} />

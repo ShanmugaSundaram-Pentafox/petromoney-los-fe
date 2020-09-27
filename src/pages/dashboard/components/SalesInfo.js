@@ -7,8 +7,13 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
+import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
 import Currency from '../../../components/Number/Currency';
-import { getDealershipSalesById } from '../../../services/dealerships.service';
+import { getDealershipSalesById, postDealershipSalesById } from '../../../services/dealerships.service';
+import TextInput from '../../../components/TextInput/TextInput';
+import UserCan from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
 
 /**
 {
@@ -49,9 +54,12 @@ const SalesTableWrapper = styled.div`
 const SalesInfo = ({
   id,
   titleAlign,
-  column
+  column,
+  currentUser
 }) => {
   const [info, setInfo] = useState([]);
+  const [addNewRow, setAddNewRow] = useState();
+  const [apiData, setApiData] = useState({});
 
   useEffect(() => {
     if(id) {
@@ -59,17 +67,37 @@ const SalesInfo = ({
         .then(data => setInfo(data))
         .catch(err => null)
     }
-  }, [id])
+  }, [id]);
 
-  if(Array.isArray(info) && !info.length)
-    return (
-      <SalesInfoWrapper>
-        <Typography align={titleAlign} variant="h5">Sales data not available</Typography>
-        <div style={{ textAlign: 'center', marginTop: 8, paddingBottom: 8 }}>
-          <Button color="primary" variant="contained" size="small" onClick={() => null}>Add/Modify Sales Data</Button>
-        </div>
-      </SalesInfoWrapper>
-    );
+  const onTextChange = e => {
+    const { name, value } = e.target;
+    setApiData({
+      ...apiData,
+      [name]: value
+    })
+  }
+
+  const saveNewSalesData = () => {
+    if(Object.keys(apiData).length < 4) return null;
+    postDealershipSalesById(id, apiData)
+      .then(res => {
+        setInfo(res);
+        setAddNewRow(false);
+      })
+      .catch(err => {
+        console.log('Sales data save error - ', err);
+      })
+  }
+
+  // if(Array.isArray(info) && !info.length)
+  //   return (
+  //     <SalesInfoWrapper>
+  //       <Typography align={titleAlign} variant="h5">Sales data not available</Typography>
+  //       <div style={{ textAlign: 'center', marginTop: 8, paddingBottom: 8 }}>
+  //         <Button color="primary" variant="contained" size="small" onClick={() => null}>Add Sales Data</Button>
+  //       </div>
+  //     </SalesInfoWrapper>
+  //   );
 
   return (
     <SalesInfoWrapper>
@@ -96,11 +124,80 @@ const SalesInfo = ({
                   </TableRow>
                 ))
               }
+              {
+                addNewRow && (
+                  <TableRow key={"new-row"}>
+                    <TableCell scope="row" component="th">
+                      <TextInput
+                        fullWidth={false}
+                        label="From Year"
+                        name="from_year"
+                        type="number"
+                        value={apiData.from_year}
+                        onChange={onTextChange}
+                      />
+                      -
+                      <TextInput
+                        fullWidth={false}
+                        label="To Year"
+                        name="to_year"
+                        type="number"
+                        value={apiData.to_year}
+                        onChange={onTextChange}
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      <TextInput
+                        label="MS (KL)"
+                        name="ms"
+                        type="number"
+                        value={apiData.ms}
+                        onChange={onTextChange}
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      <TextInput
+                        label="HSD (KL)"
+                        name="hsd"
+                        type="number"
+                        value={apiData.hsd}
+                        onChange={onTextChange}
+                      />
+                    </TableCell>
+                    <TableCell align="center">
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        color="error"
+                        onClick={() => {
+                          setAddNewRow(false);
+                        }}>
+                          <DeleteForeverRoundedIcon fontSize="small" />
+                      </Button>
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        color="primary"
+                        // className={classes.btnSuccess}
+                        onClick={saveNewSalesData}>
+                          <DoneRoundedIcon fontSize="small" />
+                        </Button>
+                    </TableCell>
+                  </TableRow>
+
+                )
+              }
             </TableBody>
           </Table>
-          <div style={{ textAlign: 'right', marginTop: 8 }}>
-            <Button color="primary" variant="contained" size="small" onClick={() => null}>Add/Modify Sales Data</Button>
-          </div>
+          <UserCan
+            role={currentUser.role_name}
+            perform={rulesList.dealership_edit}
+            yes={() => (
+              <div style={{ textAlign: 'right', marginTop: 8 }}>
+                <Button color="primary" variant="contained" size="small" onClick={() => setAddNewRow(true)}>Add Sales Data</Button>
+              </div>
+            )}
+          />
         </div>
         <div>
           <Table size="small">

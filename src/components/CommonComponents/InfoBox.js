@@ -8,8 +8,8 @@ import styled from "styled-components";
 export const InfoBoxContainer = styled.div`
     display: flex;
     flex-wrap: wrap;
-    padding: 48px 24px 8px;
-    margin-bottom: 32px;
+    padding: 20px 24px 8px;
+    /* margin-bottom: 32px; */
 `;
 
 export const InfoBoxWrapper = styled.div`
@@ -18,12 +18,14 @@ export const InfoBoxWrapper = styled.div`
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
+    /* justify-content: space-between; */
+    align-items: center;
     background-color: #ffffff;
-    padding: 8px;
-    border-radius: 16px;
-    box-shadow: 0 8px 6px -6px rgba(0,0,0,0.12);
-    margin-right: 16px;
+    padding: 10px;
+    border-radius: 6px;
+    /* box-shadow: 0 8px 6px -6px rgba(0,0,0,0.12); */
+    /* margin-right: 30px; */
 `;
 
 const InfoBoxCard = styled.div`

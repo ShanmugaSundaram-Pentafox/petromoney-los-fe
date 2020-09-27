@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, HashRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { ThemeProvider } from "@material-ui/styles";
@@ -15,11 +15,11 @@ function App() {
     <Provider store={store}>
       <SnackbarProvider maxSnack={3} anchorOrigin={{ vertical: 'top', horizontal: 'right'}}>
         <ThemeProvider theme={theme}>
-          <BrowserRouter>
+          <HashRouter>
             <PersistGate persistor={persistor}>
               <Routes />
             </PersistGate>
-          </BrowserRouter>
+          </HashRouter>
         </ThemeProvider>
       </SnackbarProvider>
     </Provider>

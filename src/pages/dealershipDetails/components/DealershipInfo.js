@@ -15,6 +15,8 @@ import { API } from '../../../config/api';
 import { URL } from '../../../config/serverUrls';
 import { logger } from '../../../config/logger';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
 // import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -58,7 +60,7 @@ const useStyles = makeStyles(theme => ({
 }
 */
 
-const DealershipInfo = ({ data, className, currentUser }) => {
+const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) => {
   const [readOnly, setReadOnly] = useState(true);
   const [loading, setLoading] = useState();
   const [apiStatus, setApiStatus] = useState({});
@@ -219,15 +221,26 @@ const DealershipInfo = ({ data, className, currentUser }) => {
           )
         }
         <CardActions className={classes.actionFooter}>
+          <Button
+            color="primary"
+            size="small"
+            variant="outlined"
+            onClick={toggleCreditReport}
+            >View/Update Credit Report</Button>
           {!readOnly ? (
               !loading ? (
                 <>
                   <Button variant="contained" size="small" onClick={() => { setReadOnly(true); }}>Cancel</Button>
-                  <Button type="submit" variant="contained" size="small">Save</Button>
+                  <Button type="submit" color="primary" variant="contained" size="small">Save</Button>
                 </>
                 ) : <CircularProgress />
             ) : (
-              <Button color="primary" variant="outlined" size="small" onClick={() => { setReadOnly(false); }}>Edit Details</Button>
+              <Button
+                disabled={!permissionCheck(currentUser.role_name, rulesList.dealership_edit)}
+                color="primary"
+                variant="outlined"
+                size="small"
+                onClick={() => { setReadOnly(false); }}>Edit Details</Button>
             )}
         </CardActions>
       </form>

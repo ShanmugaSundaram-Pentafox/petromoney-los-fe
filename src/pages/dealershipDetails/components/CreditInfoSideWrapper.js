@@ -12,6 +12,7 @@ import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded'
 import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
 import { useFormik } from 'formik';
 import clsx from 'clsx';
+import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { API } from '../../../config/api';
@@ -56,6 +57,15 @@ const useStyles = makeStyles(theme => ({
       fontWeight: 600
     }
   },
+  btnBack: {
+    '&.MuiButton-contained': {
+      backgroundColor: theme.palette.blueGreyLight,
+      // color: theme.palette.white
+    },
+    '&.MuiButton-contained:hover': {
+      backgroundColor: theme.palette.blueGreyLight
+    }
+  },
   btnSuccess: {
     '&.MuiButton-contained': {
       backgroundColor: theme.palette.success.main,
@@ -88,18 +98,18 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
       })
         .then(({ status, message, data }) => {
           if(status == 'success') {
-            setApiStatus({ type: 'success', message: message || 'Unable to save the details. Please try again later' })
+            // setApiStatus({ type: 'success', message: message || `Credit Info updated for ${data[activeStep].id}` })
             setLoading(false);
             handleReset();
             setActiveStep(activeStep+1);
           }
           else {
-            setApiStatus({ type: 'error', message: message || 'Unable to save the details. Please try again later' })
+            setApiStatus({ show: true, type: 'error', message: message || 'Unable to save the details. Please try again later' })
             setLoading(false);
           }
         })
         .catch(e => {
-          setApiStatus({ type: 'error', message: 'Unable to save the details. Please try again later' })
+          setApiStatus({ show: true, type: 'error', message: 'Unable to save the details. Please contact admin.' })
           setLoading(false);
           setReadOnly(true);
           logger(e);
@@ -125,26 +135,25 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
             })
           }
         </Stepper>
-        {
+        {/* {
           Array.isArray(data) && activeStep+1 === data.length ? (
             <Alert severity={'success'}>Thanks for submitting credit info for dealers</Alert>
           ) : null
-        }
+        } */}
       </div>
       <div className={classes.actionFooter}>
         <Divider />
-        {
-          apiStatus.type && (
-            <Alert severity={apiStatus.type}>{apiStatus.message}</Alert>
-          )
-        }
+        <Snackbar open={apiStatus.show} autoHideDuration={2000} onClose={() => setApiStatus({ show: false })}>
+          <Alert severity={apiStatus.type}>{apiStatus.message}</Alert>
+        </Snackbar>
         <div className={classes.actionButtonsWrapper}>
           <div>
             <Button
               variant="contained"
+              color="secondary"
               startIcon={<NavigateBeforeRoundedIcon />}
               disabled={loading}
-              onClick={onClose}>Back</Button>
+              onClick={onClose}>Close</Button>
           </div>
           <div>
             <Button

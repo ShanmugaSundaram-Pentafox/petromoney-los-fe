@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/styles";
-import Typography from "@material-ui/core/Typography";
+// import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
+import Drawer from '@material-ui/core/Drawer';
 import DealershipInfo from "./components/DealershipInfo";
 import { useMount } from "react-use";
 import { getDealershipById } from "../../services/dealerships.service";
@@ -15,6 +16,7 @@ import DealershipDoc from "./components/DocList";
 import { NavLink as RouterLink } from "react-router-dom";
 import SalesInfo from "../dashboard/components/SalesInfo";
 import usePageTitle from "../../hooks/usePageTitle";
+import CreditReportSideWrapper from "./components/CreditReportSideWrapper";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,16 +36,24 @@ const useStyles = makeStyles((theme) => ({
   bottomSpacing: {
     marginBottom: theme.spacing(2),
   },
+  sidePanelWrapper: {
+    width: 700
+  }
 }));
 
 const DealershipDetails = ({ currentUser, match }) => {
   const classes = useStyles();
   const [dealershipData, setDealershipData] = useState();
   const [dealersData, setDealersData] = useState();
+  const [showCreditReport, setShowCreditReport] = useState();
   const {
     url,
     params: { id },
   } = match;
+
+  const toggleCreditReport = () => {
+    setShowCreditReport(!showCreditReport);
+  }
 
   useMount(() => {
     getDealershipById(id)
@@ -59,28 +69,34 @@ const DealershipDetails = ({ currentUser, match }) => {
 
   return (
     <div className={classes.root}>
-      {/* <Grid container>
+      <Grid container>
         <Grid item md={5} xs={12}>
-          <Typography className={classes.title} variant="h4">
+          {/* <Typography className={classes.title} variant="h4">
             {id} - {dealershipData && dealershipData.name}
-          </Typography>
+          </Typography> */}
         </Grid>
         <Grid item md={7} xs={12} className={classes.titleActionContainer}>
-          <Button
-            color="primary"
-            size="small"
-            variant="contained"
-            component={RouterLink}
-            to={`${url}/credit-form`}
-            exact
-            >Credit Eval. Form</Button>
+          <Drawer
+            anchor="right"
+            open={showCreditReport}
+            variant="temporary"
+          >
+            <div className={classes.sidePanelWrapper}>
+              <CreditReportSideWrapper
+                dealershipId={id}
+                data={{}}
+                currentUser={currentUser}
+                onClose={toggleCreditReport}
+              />
+            </div>
+          </Drawer>
         </Grid>
-      </Grid> */}
-      {/* <Divider className={classes.bottomSpacing} /> */}
+      </Grid>
+      <Divider className={classes.bottomSpacing} />
       <Grid container spacing={2}>
           <Grid item md={6} xs={12}>
             {dealershipData && (
-              <DealershipInfo data={dealershipData} currentUser={currentUser} />
+              <DealershipInfo data={dealershipData} currentUser={currentUser} toggleCreditReport={toggleCreditReport} />
             )}
             <Paper className={classes.topSpacing}>
               <DealershipDoc id={id} currentUser={currentUser} />
@@ -89,13 +105,13 @@ const DealershipDetails = ({ currentUser, match }) => {
 
         <Grid item md={6} xs={12}>
           <Paper className={classes.bottomSpacing}>
-            <LoansList id={id} titleAlign="center" currentUser={currentUser} />
+            <LoansList id={id} titleAlign="left" currentUser={currentUser} />
           </Paper>
           <Paper className={classes.bottomSpacing}>
-            <DealersList id={id} titleAlign="center" currentUser={currentUser} />
+            <DealersList id={id} titleAlign="left" currentUser={currentUser} />
           </Paper>
           <Paper className={classes.bottomSpacing}>
-            <SalesInfo id={id} titleAlign="center" currentUser={currentUser} column />
+            <SalesInfo id={id} titleAlign="left" currentUser={currentUser} column />
           </Paper>
         </Grid>
       </Grid>

@@ -24,6 +24,8 @@ import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { selectCurrentUser } from '../../../store/user/user.selector';
 import { createStructuredSelector } from 'reselect';
+import { updateLoanApprovalStatusById } from '../../../services/loans.service';
+import Alert from '@material-ui/lab/Alert';
 
 const LoanInfoWrapper = styled.div`
   padding: 12px;
@@ -90,7 +92,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const LoanInfo = ({
-  data,
+  data: row,
   status,
   newInfo,
   currentUser,
@@ -105,19 +107,19 @@ const LoanInfo = ({
             <TableCell align="right">Req. Amount</TableCell>
             <TableCell align="right">Amount Approved</TableCell>
             {
-              status == "disbursed" ? <TableCell align="right">Amount Disbursed</TableCell> : null
+              ["disbursed", "disbursement_approval"].includes(status) ? <TableCell align="right">Disbursement Amount</TableCell> : null
             }
           </TableRow>
         </TableHead>
         <TableBody>
           {
-            data.map((row, i) => (
+            // data.map((row, i) => (
               <TableRow key={row.id}>
                 <TableCell scope="row" component="th"><strong>{row.type}</strong></TableCell>
                 <TableCell align="right"><Currency value={row.amount_requested} /></TableCell>
                 <TableCell align="right">
                   {
-                    status === "submitted" ? (
+                    status === "loan_approval" ? (
                       <UserCan
                         role={currentUser.role_name}
                         perform={rulesList.loan_approval}
@@ -142,14 +144,36 @@ const LoanInfo = ({
                   }
                 </TableCell>
                   {
-                    status == "disbursed" ? (
+                    status === "disbursement_approval" ? (
+                      <TableCell align="right">
+                        <UserCan
+                          role={currentUser.role_name}
+                          perform={rulesList.loan_approval}
+                          yes={() => (
+                            <TextInput
+                              money
+                              type="number"
+                              fullWidth={false}
+                              value={newInfo.amount_disbursed}
+                              onChange={e => {
+                                setNewLoanInfo({
+                                  ...newInfo,
+                                  [row.type]: e.target.value
+                                })
+                              }}
+                            />
+                          )}
+                          no={() => "-"}
+                        />
+                      </TableCell>
+                    ) : (status == "disbursed" ? (
                       <TableCell align="right">
                         <Currency value={row.amount_disbursed} />
                       </TableCell>
-                    )  : null
+                    )  : null)
                   }
               </TableRow>
-            ))
+            // ))
           }
         </TableBody>
       </Table>
@@ -166,7 +190,7 @@ const DealershipDetails = ({
 }) => {
   const [values, setValues] = useState({});
   const [loanInfo, setLoanInfo] = useState({});
-  const [comments, setComments] = useState();
+  const [apiStatus, setApiStatus] = useState({});
   const [readOnly, setReadOnly] = useState(true);
   const [newLoanInfo, setNewLoanInfo] = useState({});
   
@@ -178,10 +202,50 @@ const DealershipDetails = ({
 
   useEffect(() => {
     console.log(loanData)
-    if(loanData) setLoanInfo(loanData);
+    if(loanData) {
+      setLoanInfo(loanData)
+      setNewLoanInfo(loanData)
+    };
   }, [loanData]);
   
   if(!data) return null;
+
+  const updateLoanStatus = status => {
+    if(!newLoanInfo.remarks) {
+      setApiStatus({ type: 'error', message: 'Please enter your remarks/comments.' });
+      return null
+    }
+    setApiStatus({ loading: true, type: 'info', message: 'We are processing your request, Please wait...' });
+    let reqBody = {
+      status,
+      remarks: newLoanInfo.remarks
+    };
+    let resMsg = '';
+    if(status === "approved") {
+      if (loanData.amount_approved === newLoanInfo.amount_approved) {
+        setApiStatus({ type: 'error', message: 'Please check Approved amount. We see no change in Approved loan amount!' })
+        return null;
+      }
+      resMsg = 'Successfully Approved Loan Request'.
+      reqBody.amount_approved = newLoanInfo.amount_approved;
+    }
+    if(status === "disbursed") {
+      if (loanData.amount_disbursed === newLoanInfo.amount_disbursed) {
+        setApiStatus({ type: 'error', message: 'Please check Disburse amount. We see no change in Disburse amount!' })
+        return null;
+      }
+      resMsg = 'Succussfully Approved Loan for Disbursement';
+      reqBody.amount_disbursed = newLoanInfo.amount_disbursed;
+    }
+    updateLoanApprovalStatusById(values.id, loanData.id, reqBody)
+      .then(res => {
+        setApiStatus({ type: 'success', message: resMsg })
+      })
+      .catch(err => {
+        setApiStatus({ type: 'error', message: 'Unable to update status. Please contact your admin' })
+        console.log('Loan status update error - ', err)
+      })
+  }
 
   const gridProps = {
     item: true,
@@ -281,33 +345,51 @@ const DealershipDetails = ({
           }
 
           <Grid {...gridProps}>
-            {values.id ? <SalesInfo id={values.id} /> : null}
-            {
-              Array.isArray(loanInfo) ?
-                <LoanInfo data={loanInfo} status={status} newInfo={newLoanInfo} currentUser={currentUser} setNewLoanInfo={setNewLoanInfo} />
-                : null
-            }
-            {
-              status == "submitted" && (
+            {values.id ? <SalesInfo id={values.id} currentUser={currentUser} /> : null}
+            <LoanInfo data={loanInfo} status={status} newInfo={newLoanInfo} currentUser={currentUser} setNewLoanInfo={setNewLoanInfo} />
+          </Grid>
+          {
+            ["loan_approval", "disbursement_approval"].includes(status) ? (
+              <Grid {...gridProps}>
                 <TextInput
                   multiline
                   rows={4}
                   rowsMax={8}
-                  labelText="Remarks"
+                  labelText="Remarks*"
                   alignTop
                   placeholder="Enter your remarks here."
                   readOnly={!permissionCheck(currentUser.role_name, rulesList.loan_approval)}
+                  value={newLoanInfo.remarks}
                   onChange={e => {
-                    setComments(e.target.value)
+                    setNewLoanInfo({
+                      ...newLoanInfo,
+                      remarks: e.target.value
+                    })
                   }}
                 />
-              )
-            }
-          </Grid>
+              </Grid>
+            ) : (
+              <>
+                <Grid {...gridProps} md={2}>
+                  Remarks
+                </Grid>
+                <Grid {...gridProps} md={8}>
+                  <Typography variant="p" component={'p'}>
+                    {loanInfo.remarks}
+                  </Typography>
+                </Grid>
+              </>
+            )
+          }
         </Grid>
       </div>
       <div className={classes.actionFooter}>
         <Divider />
+        {
+          apiStatus.type && (
+            <Alert severity={apiStatus.type}>{apiStatus.message}</Alert>
+          )
+        }
         <div className={classes.actionButtonsWrapper}>
           <div>
             <Button
@@ -320,10 +402,11 @@ const DealershipDetails = ({
               component={RouterLink}
               to={`/dealership/${values.id}`}
               variant="contained"
+              disabled={apiStatus.loading}
               className={clsx(classes.btn, classes.btnSuccess)}
               startIcon={<AccountTreeRoundedIcon />}>View more</Button>
             {
-              status == "submitted" && (
+              status && ["loan_approval", "disbursement_approval"].includes(status.toLowerCase()) && (
                 <UserCan
                   role={currentUser.role_name}
                   perform={rulesList.loan_approval}
@@ -331,14 +414,16 @@ const DealershipDetails = ({
                     <>
                       <Button
                         variant="contained"
+                        disabled={apiStatus.loading}
                         className={clsx(classes.btn, classes.btnError)}
                         startIcon={<ThumbDownAltIcon />}
-                        onClick={() => null}>Reject</Button>
+                        onClick={() => updateLoanStatus('rejected')}>Reject</Button>
                       <Button
                         variant="contained"
+                        disabled={apiStatus.loading}
                         className={clsx(classes.btn, classes.btnSuccess)}
                         startIcon={<ThumbUpAltIcon />}
-                        onClick={() => null}>Approve</Button>
+                        onClick={() => updateLoanStatus('approved')}>Approve</Button>
                     </>
                   )}
                 />

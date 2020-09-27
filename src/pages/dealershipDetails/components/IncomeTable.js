@@ -1,0 +1,222 @@
+import React, { useState, Fragment } from 'react';
+import { useMount } from 'react-use';
+import { makeStyles } from '@material-ui/styles';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import TextInput from '../../../components/TextInput/TextInput';
+import Currency from '../../../components/Number/Currency';
+import { getDealershipIncomeById, postDealershipIncomeById } from '../../../services/dealerships.service';
+import { getDealersWithCoapplicants } from '../../../services/dealers.service';
+import { useFormik } from 'formik';
+import { getBusinessTypes } from '../../../services/common.service';
+
+const useStyles = makeStyles({
+  table: {
+    padding: 8
+  },
+  formWrapper: {
+    padding: '0 15px'
+  },
+  row: {
+    paddingRight: 4,
+    paddingBottom: 14
+  }
+});
+
+const IncomeTable = ({ id, editable }) => {
+  const classes = useStyles();
+  const [income, setIncome] = useState([]);
+  const [businessTypes, setBusinessTypes] = useState([]);
+  const [applicantsList, setApplicantsList] = useState([]);
+  const [addNewRow, setAddNewRow] = useState();
+  const [loading, setLoading] = useState(false);
+  const gridItem = {
+    md: 12,
+    item: true,
+    className: classes.row
+  };
+
+  const { values, errors, handleChange, handleSubmit, handleReset, setValues } = useFormik({
+    initialValues: {},
+    onSubmit: values => {
+      setLoading(true);
+      postDealershipIncomeById(id, values)
+        .then(res => {
+          setIncome(res);
+          setLoading(false);
+          setAddNewRow(false);
+        })
+        .catch(err => {
+          console.log('Income data save error - ', err);
+          setLoading(false);
+        })
+    }
+  })
+
+  useMount(() => {
+    getBusinessTypes()
+      .then(setBusinessTypes)
+      .catch(err => {
+        console.log('BusinessTypes fetch error - ', err)
+      })
+    getDealersWithCoapplicants(id)
+      .then(setApplicantsList)
+      .catch(err => {
+        console.log('DealersWithCoapplicants fetch error - ', err);
+      });
+
+    getDealershipIncomeById(id)
+      .then(setIncome)
+      .catch(err => {
+        console.log('Incomes data fetch error - ', err);
+      });
+  });
+
+  return (
+    <Fragment>
+
+      <Table className={classes.table} size="small" aria-label="Income">
+        <TableHead>
+          <TableRow>
+            <TableCell>Business Name</TableCell>
+            <TableCell>Business Age</TableCell>
+            <TableCell align="right">FY Turnover</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {
+            Array.isArray(income) && income.map((item, i) => (
+              <TableRow key={i}>
+                <TableCell>{item.business_name}</TableCell>
+                <TableCell>{item.business_age}</TableCell>
+                <TableCell align={"right"}>
+                  <Currency value={item.cur_fy_turnover} />
+                </TableCell>
+              </TableRow>
+            ))
+          }
+          <TableRow key={"add-row"}>
+            <TableCell align="right" colSpan={3}>
+              {
+                !addNewRow && editable && (
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    className={classes.btnSuccess}
+                    onClick={() => setAddNewRow(true)}>Add Income</Button>
+                )
+              }
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+      
+      <Dialog
+        open={addNewRow}
+        fullWidth
+        maxWidth={'sm'}
+        // onClose={() => setAddNewRow(false)}
+        scroll={"paper"}
+        aria-labelledby="scroll-dialog-title"
+        aria-describedby="scroll-dialog-description"
+      >
+        <DialogTitle id="scroll-dialog-title">Add Income Detail</DialogTitle>
+        <DialogContent dividers>
+          <div className={classes.formWrapper}>
+            <Grid container>
+              <Grid {...gridItem}>
+                <TextInput
+                  label="Name of the Business"
+                  name="business_name"
+                  defaultValue={values.business_name}
+                  onChange={handleChange}
+                  />
+              </Grid>
+              <Grid {...gridItem}>
+                <TextInput
+                  select
+                  label="Business Type"
+                  name="business_type"
+                  defaultValue={values.business_type}
+                  onChange={handleChange}
+                  SelectProps={{ native: true }}
+                >
+                  {
+                    businessTypes.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
+                  }
+                  <option value="">Test</option>
+                </TextInput>
+              </Grid>
+              <Grid {...gridItem}>
+                <TextInput
+                  select
+                  label="Business Owner"
+                  name="business_owner"
+                  defaultValue={values.business_owner}
+                  onChange={handleChange}
+                  SelectProps={{ native: true }}
+                >
+                  {
+                    applicantsList.map((item, i) => <option key={i} value={item.value}>{item.label}</option>)
+                  }
+                </TextInput>
+              </Grid>
+              <Grid {...gridItem}>
+                <TextInput
+                  label="Business Age(Years)"
+                  name="business_age"
+                  type="number"
+                  defaultValue={values.business_age}
+                  onChange={handleChange}
+                  />
+              </Grid>
+              <Grid {...gridItem}>
+                <TextInput
+                  money
+                  label="Latest FY Turnover"
+                  name="cur_fy_turnover"
+                  type="number"
+                  defaultValue={values.cur_fy_turnover}
+                  onChange={handleChange}
+                  />
+              </Grid>
+              <Grid {...gridItem}>
+                <TextInput
+                  money
+                  label="FY Net Profit/Loss"
+                  name="cur_fy_profit_loss"
+                  type="number"
+                  defaultValue={values.cur_fy_profit_loss}
+                  onChange={handleChange}
+                  />
+              </Grid>
+            </Grid>
+          </div>
+        </DialogContent>
+        {
+          !loading && (
+            <DialogActions>
+              <Button onClick={() => setAddNewRow(false)} color="primary">
+                Cancel
+              </Button>
+              <Button onClick={handleSubmit} color="primary">
+                Save
+              </Button>
+            </DialogActions>
+          )
+        }
+      </Dialog>
+    </Fragment>
+  )
+}
+
+export default IncomeTable;

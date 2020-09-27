@@ -12,6 +12,9 @@ import Typography from '@material-ui/core/Typography';
 import Currency from '../../../components/Number/Currency';
 import { useMount } from 'react-use';
 import { getDealershipLoansById } from '../../../services/dealerships.service';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
+import { updateLoanApprovalStatusById } from '../../../services/loans.service';
 
 const useStyles = makeStyles({
   wrapper: {
@@ -27,15 +30,39 @@ const useStyles = makeStyles({
   },
 });
 
-const LoansList = ({ id, titleAlign }) => {
+const LoansList = ({ id, currentUser, titleAlign }) => {
   const classes = useStyles();
   const [data, setLoansData] = useState();
+  const [loading, setLoading] = useState(false);
   
   useMount(() => {
     getDealershipLoansById(id)
       .then(data => setLoansData(data))
       .catch(e => null)
   });
+
+  const processLoan = loan => {
+    let status;
+    if(loan.status.toLowerCase() === "submitted") {
+      setLoading(true);
+      status = 'loan_approval';
+    } else if (loan.status.toLowerCase() === "approved") {
+      setLoading(true);
+      status = 'disbursement_approval'
+    }
+
+    status && updateLoanApprovalStatusById(id, loan.id, { status })
+      .then(res => {
+        setLoansData(res);
+        setLoading(false);
+      })
+      .catch(err => {
+        setLoading(false);
+        console.log('Loan Status update error - ', err)
+      })
+  }
+
+  const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit)
 
   if(!data || !data.length)
     return (
@@ -51,8 +78,8 @@ const LoansList = ({ id, titleAlign }) => {
         <TableHead>
           <TableRow>
             <TableCell>Type</TableCell>
-            <TableCell align="right">Requested</TableCell>
-            <TableCell align="right">Approved</TableCell>
+            <TableCell align="right">Req</TableCell>
+            <TableCell align="right">Appr</TableCell>
             <TableCell align="right">Disb</TableCell>
             <TableCell align="center">Status</TableCell>
             <TableCell align="center">Actions</TableCell>
@@ -63,14 +90,54 @@ const LoansList = ({ id, titleAlign }) => {
             <TableRow key={row.id}>
               <TableCell>{row.type}</TableCell>
               <TableCell align="right"><Currency value={row.amount_requested} /></TableCell>
-              <TableCell align="right"><Currency value={row.amount_approved} /></TableCell>
-              <TableCell align="right"><Currency value={row.amount_disbursed} /></TableCell>
+              <TableCell align="right">
+                <Tooltip title={row.remarks} arrow>
+                  <Currency value={row.amount_approved} />
+                </Tooltip>
+              </TableCell>
+              <TableCell align="right">
+                <Tooltip title={row.remarks} arrow>
+                  <Currency value={row.amount_disbursed} />
+                </Tooltip>
+              </TableCell>
               <TableCell align="center">{row.status}</TableCell>
               <TableCell align="center">
-                <ButtonGroup size="small" aria-label="dealer action buttons">
-                  <Button>View</Button>
-                  <Button>Edit</Button>
-                </ButtonGroup>
+                {
+                  row.status.toLowerCase() === "submitted" && editable && (
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      fontSize="small"
+                      disabled={loading}
+                      className={classes.btnSuccess}
+                      onClick={() => processLoan(row)}>
+                        {
+                          loading ? 'Pleaes wait...' : 'Send for Approval'
+                        }
+                      </Button>
+                  )
+                }
+                {
+                  row.status.toLowerCase() === "approved" && editable && (
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      fontSize="small"
+                      disabled={loading}
+                      className={classes.btnSuccess}
+                      onClick={() => processLoan(row)}>
+                        {
+                          loading ? 'Pleaes wait...' : 'Send for Disbursement Approval'
+                        }
+                    </Button>
+                  )
+                }
+                {
+                  row.status.toLowerCase() === "loan_approval" && 'Pending for approval'
+                }
+                {
+                  row.status.toLowerCase() === "disbursement_approval" && 'Pending for disbursement approval'
+                }
               </TableCell>
             </TableRow>
           ))}

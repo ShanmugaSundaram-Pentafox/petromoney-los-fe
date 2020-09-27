@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { useMount } from 'react-use';
 import { makeStyles } from '@material-ui/styles';
 // import MUIDataTable from "mui-datatables";
-import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
 import { selectAllLoans } from '../../../store/loans/loans.selector';
 import { setAllLoans } from '../../../store/loans/loans.actions';
 import { getAllLoans } from '../../../services/loans.service';
@@ -23,6 +23,10 @@ import DealershipDetails from './DealershipDetails';
 import SubmittedTable from '../../../components/Tables/SubmittedTable';
 import ApprovedTable from '../../../components/Tables/ApprovedTable';
 import DisbursedTable from '../../../components/Tables/DisbursedTable';
+import ApprovalReqestTable from '../../../components/Tables/ApprovalReqestTable';
+import DisbursementReqestTable from '../../../components/Tables/DisbursementReqestTable';
+import UserCan from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -30,8 +34,8 @@ const useStyles = makeStyles(theme => ({
     // paddingTop: theme.spacing(0),
   },
   tableContainer: {
-    borderRadius: 12,
-    boxShadow: '0 8px 6px -6px rgba(0,0,0,0.12)',
+    borderRadius: 6,
+    // boxShadow: '0 8px 6px -6px rgba(0,0,0,0.12)',
     marginBottom: theme.spacing(3)
   },
   categoryContainer: {
@@ -123,7 +127,7 @@ const useStyles = makeStyles(theme => ({
 
 const convertToCurrency = value => <Currency value={value} />;
 
-const LoansTable = ({ all_loans, setAllLoans }) => {
+const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
   const classes = useStyles();
   const [showPanel, setShowPanel] = useState({
     status: false,
@@ -133,16 +137,17 @@ const LoansTable = ({ all_loans, setAllLoans }) => {
   const [loansData, setLoansData] = useState();
   const [dealersData, setDealersData] = useState();
   
-  const showDealershipInfo = (id, status) => {
+  const showDealershipInfo = (id, selectedLoanData, status) => {
+    setLoansData(selectedLoanData);
     getDealershipById(id)
       .then(data => {
         setDealershipData(data)
       })
       .catch(e => null);
   
-    getDealershipLoansById(id)
-      .then(data => setLoansData(data))
-      .catch(e => null)
+    // getDealershipLoansById(id)
+    //   .then(data => setLoansData(data))
+    //   .catch(e => null)
   
     getDealersByDealershipId(id)
       .then(data => setDealersData(data))
@@ -236,15 +241,42 @@ const LoansTable = ({ all_loans, setAllLoans }) => {
 
   return (
     <div className={classes.root}>
-      <Paper elevation={1} className={classes.tableContainer}>
-        <SubmittedTable title={"Loan Requests"} onRowClick={showDealershipInfo} />
-      </Paper>
-      <Paper elevation={1} className={classes.tableContainer}>
-        <ApprovedTable title={"Approved Loans"} onRowClick={showDealershipInfo} />
-      </Paper>
-      <Paper elevation={1} className={classes.tableContainer}>
-        <DisbursedTable title={"Disbursed Loans"} onRowClick={showDealershipInfo} />
-      </Paper>
+      <UserCan
+        role={currentUser.role_name}
+        perform={rulesList.loan_approval}
+        yes={() => (
+          <>
+            <Grid container spacing={2}>
+              <Grid item md={6}>
+                <Paper elevation={1} className={classes.tableContainer}>
+                  <ApprovalReqestTable title={"Pending for Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                </Paper>
+              </Grid>
+              <Grid item md={6}>
+                <Paper elevation={1} className={classes.tableContainer}>
+                  <DisbursementReqestTable title={"Pending for Disbursement Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                </Paper>
+              </Grid>
+            </Grid>
+            <Paper elevation={1} className={classes.tableContainer}>
+              <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+            </Paper>
+          </>
+        )}
+        no={() => (
+          <>
+            <Paper elevation={1} className={classes.tableContainer}>
+              <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+            </Paper>
+            <Paper elevation={1} className={classes.tableContainer}>
+              <ApprovedTable title={"Approved Loans"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+            </Paper>
+            <Paper elevation={1} className={classes.tableContainer}>
+              <DisbursedTable title={"Disbursed Loans"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+            </Paper>
+          </>
+        )}
+      />
       {/* <div className={classes.categoryContainer}>
         <Paper elevation={1} className={classes.categoryCard}>
           <Typography className={classes.title} variant="h3" component="h3">
@@ -330,6 +362,7 @@ const LoansTable = ({ all_loans, setAllLoans }) => {
             data={dealershipData}
             loanData={loansData}
             status={showPanel.data}
+            currentUser={currentUser}
             onClose={() => { setShowPanel({ status: false }) }}
             />
         </div>

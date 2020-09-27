@@ -9,6 +9,7 @@ import PeopleIcon from '@material-ui/icons/People';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 
 // import Profile from './components/Profile';
 import SidebarNav from './components/SidebarNav';
@@ -70,7 +71,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Sidebar = props => {
-  const { open, variant, onClose, className, user, logout, ...rest } = props;
+  const { open, variant, onClose, className, user, logout, currentUser, ...rest } = props;
 
   const classes = useStyles();
 
@@ -118,6 +119,24 @@ const Sidebar = props => {
         </div>
         {/* <Profile user={user} /> */}
         <Divider light className={classes.divider} />
+        <div>
+          <List>
+              <ListItem
+                className={classes.item}
+                disableGutters
+              >
+                <Button
+                  activeClassName={classes.active}
+                  className={classes.button}
+                >
+                  <div className={classes.icon}>
+                    <RadioButtonUncheckedIcon />
+                  </div>
+                    {user.role_name}
+                </Button>
+              </ListItem>
+          </List>
+        </div>
         <SidebarNav
           className={classes.nav}
           pages={pages}

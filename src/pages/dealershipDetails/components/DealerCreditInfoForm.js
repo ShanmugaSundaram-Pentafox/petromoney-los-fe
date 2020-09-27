@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import TextInput from '../../../components/TextInput/TextInput';
-import { useFormik } from 'formik';
 
 const useStyles = makeStyles({
   row: {

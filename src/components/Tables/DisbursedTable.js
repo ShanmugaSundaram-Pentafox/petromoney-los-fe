@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     padding: '3px 8px',
     fontSize: '13px',
     fontWeight: '600',
-    minWidth: '80px',
+    minWidth: '30px',
     textAlign: 'center',
   },
   pills_FUEL: {
@@ -75,12 +75,12 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick }) => {
         }
       },
       {
-        label: 'Loan Type',
+        label: 'Type',
         name: 'type',
         options: {
           filter: true,
           sort: true,
-          customBodyRender: value => <div className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</div>
+          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value.charAt(0)}</span>
         }
       },
       {
@@ -119,10 +119,10 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick }) => {
     selectableRowsHeader: false,
     selectableRows: 'none',
     isRowSelectable: () => false,
-    onRowClick: (rowData, { dataIndex }) => {
-      // console.log(rowData, rowMeta);
-      onRowClick(loans[dataIndex].dealership_id, 'disbursed')
-    }
+    // onRowClick: (rowData, { dataIndex }) => {
+    //   // console.log(rowData, rowMeta);
+    //   onRowClick(loans[dataIndex].dealership_id, 'disbursed')
+    // }
   };
 
   return (

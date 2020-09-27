@@ -20,6 +20,7 @@ export const rulesForUserRoles = {
   },
   ADMIN: {
     static: [
+      rulesList.loan_approval,
       rulesList.dashboard,
       rulesList.dealership_edit,
       rulesList.dealer_edit,

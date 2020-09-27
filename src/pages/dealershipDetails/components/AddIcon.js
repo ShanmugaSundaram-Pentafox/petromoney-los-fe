@@ -38,7 +38,7 @@ const AddIconButton = ({ onClickAddMenu }) => {
   return (
     <Grid container direction="column" alignItems="center" >
       <Grid item xs={12}>
-        <ButtonGroup variant="contained" color="primary" ref={anchorRef} aria-label="split button">
+        <ButtonGroup variant="outlined" color="primary" ref={anchorRef} aria-label="split button">
           <Button
             color="primary"
             size="small"
@@ -48,10 +48,10 @@ const AddIconButton = ({ onClickAddMenu }) => {
             aria-haspopup="menu"
             onClick={handleToggle}
           >
-            <AddIcon />
+            <AddIcon fontSize="small" />
           </Button>
         </ButtonGroup>
-        <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
+        <Popper open={open} placement="bottom-end" anchorEl={anchorRef.current} role={undefined} transition disablePortal>
           {({ TransitionProps, placement }) => (
             <Grow
               {...TransitionProps}

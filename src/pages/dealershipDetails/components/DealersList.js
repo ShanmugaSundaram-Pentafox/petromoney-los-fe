@@ -1,27 +1,17 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useMount } from 'react-use';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Tooltip from '@material-ui/core/Tooltip';
-import Typography from '@material-ui/core/Typography';
 import Drawer from '@material-ui/core/Drawer';
 import Button from '@material-ui/core/Button';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import Chip from '@material-ui/core/Chip';
-import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
-import EditRoundedIcon from '@material-ui/icons/EditRounded';
-import MoreHorizRoundedIcon from '@material-ui/icons/MoreHorizRounded';
 import { getDealersByDealershipId, getCoApplicantByDealershipId } from '../../../services/dealers.service';
 import CreditInfoSideWrapper from "./CreditInfoSideWrapper";
 import DealerEditSideWrapper from './DealerEditSideWrapper';
 import AddIconButon from './AddIcon';
 import DealersTable from './DealersTable';
 import CoApplicantsTable from './CoApplicantsTable';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
+import ExperianReport from './ExperianReport';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -53,6 +43,10 @@ const useStyles = makeStyles(theme => ({
     width: '40vw',
     minWidth: 300
   },
+  experianWrapper: {
+    width: '50vw',
+    minWidth: 300
+  },
   actionButtons: {
     // paddingTop: 8
   },
@@ -73,6 +67,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   const classes = useStyles();
   const [showCreditForm, setShowCreditForm] = useState(false);
   const [showDealerEditForm, setShowDealerEditForm] = useState(false);
+  const [experianData, setExperianData] = useState({});
   const [formType, setFormType] = useState('');
   const [modelType, setModelType] = useState('');
   const [rowData, setRowData] = useState({});
@@ -134,10 +129,20 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
     setShowDealerEditForm(false)
   }
 
+  const getExperianData = type => id => {
+    setExperianData({ show: true, id, type });
+  }
+
+  const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit);
+
   return (
     <>
-      <div className={classes.addButton}><AddIconButon onClickAddMenu={onClickAddMenu} /></div>
-      <DealersTable id={id}
+      {
+        editable && <div className={classes.addButton}><AddIconButon onClickAddMenu={onClickAddMenu} /></div>
+      }
+      <DealersTable
+        id={id}
+        editable={editable}
         data={dealerData}
         formType={formType}
         rowData={rowData}
@@ -147,9 +152,13 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         editFormClose={editFormClose}
         dealersClickRow={dealersClickRow}
         onClickAddMenu={onClickAddMenu}
+        getExperianData={getExperianData("dealer")}
         showDealerEditForm={showDealerEditForm} />
 
-      <CoApplicantsTable id={id} titleAlign={titleAlign}
+      <CoApplicantsTable
+        id={id}
+        editable={editable}
+        titleAlign={titleAlign}
         coApplicantsData={coApplicantsData}
         formType={formType}
         rowData={rowData}
@@ -159,8 +168,27 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         editFormClose={editFormClose}
         dealersClickRow={dealersClickRow}
         onClickAddMenu={onClickAddMenu}
+        getExperianData={getExperianData("coapplicant")}
         showDealerEditForm={showDealerEditForm} />
 
+      <Drawer
+        anchor="right"
+        open={experianData.show}
+        onBackdropClick={() => setExperianData({ show: false })}
+        variant="temporary"
+      >
+        <div className={classes.experianWrapper}>
+          {
+            experianData.id ? (
+              <ExperianReport
+                id={experianData.id}
+                type={experianData.type}
+                onClose={() => setExperianData({ show: false })}
+              />
+            ) : null
+          }
+        </div>
+      </Drawer>
       <Drawer
         anchor="right"
         open={showDealerEditForm}
@@ -180,20 +208,24 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         </div>
       </Drawer>
 
-      <div className={classes.footer}>
-                <div className={classes.actionButtons}>
-                    <Button color="primary" variant="contained" size="small" onClick={() => openCloseCreditForm()}>Add Credit Information</Button>
-                </div>
-                <Drawer
-                    anchor="right"
-                    open={showCreditForm}
-                    variant="temporary"
-                >
-                    <div className={classes.sidePanelWrapper}>
-                        <CreditInfoSideWrapper dealershipId={id} data={dealerCoApplicantData} currentUser={currentUser} onClose={() => openCloseCreditForm()} />
-                    </div>
-                </Drawer>
+      {
+        editable && (
+          <div className={classes.footer}>
+            <div className={classes.actionButtons}>
+              <Button color="primary" variant="contained" size="small" onClick={() => openCloseCreditForm()}>Add Credit Information</Button>
             </div>
+            <Drawer
+              anchor="right"
+              open={showCreditForm}
+              variant="temporary"
+            >
+              <div className={classes.sidePanelWrapper}>
+                <CreditInfoSideWrapper dealershipId={id} data={dealerCoApplicantData} currentUser={currentUser} onClose={() => openCloseCreditForm()} />
+              </div>
+            </Drawer>
+          </div>
+        )
+      }
     </>
   )
 }

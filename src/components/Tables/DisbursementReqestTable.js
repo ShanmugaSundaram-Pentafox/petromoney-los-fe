@@ -1,8 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from "mui-datatables";
 import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
 import { useMount } from 'react-use';
 // import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
@@ -40,17 +41,21 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
-  // const [ data, setData ] = useState([]);
+const DisbursementReqestTable = ({ title, loans, setLoansData, onRowClick }) => {
   const classes = useStyles();
+  const [ loading, setLoading ] = useState(false);
 
   useMount(() => {
     if(!loans || !loans.length) {
-      getLoansByStatus('submitted')
+      setLoading(true);
+      getLoansByStatus('disbursement_approval')
         .then(data => {
-          setLoansData('submitted', data);
+          setLoansData('disbursement_approval', data);
+          setLoading(false);
         })
-        .catch(e => null)
+        .catch(e => {
+          setLoading(false);
+        })
     }
   });
   
@@ -85,8 +90,8 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
         }
       },
       {
-        label: 'Req. Amount',
-        name: 'amount_requested',
+        label: 'Approved Amount',
+        name: 'amount_approved',
         options: {
           filter: false,
           sort: true,
@@ -97,8 +102,8 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
         }
       },
       {
-        label: 'Req. Date',
-        name: 'created_date',
+        label: 'Approved Date',
+        name: 'loan_approved_rejected_date',
         options: {
           filter: false,
           sort: true,
@@ -120,10 +125,10 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
     selectableRowsHeader: false,
     selectableRows: 'none',
     isRowSelectable: () => false,
-    // onRowClick: (rowData, { dataIndex }) => {
-    //   // console.log(rowData, rowMeta);
-    //   onRowClick(loans[dataIndex].dealership_id, 'submitted')
-    // }
+    onRowClick: (rowData, { dataIndex }) => {
+      // console.log(rowData, rowMeta);
+      onRowClick(loans[dataIndex].dealership_id, 'disbursement_approval')
+    }
   };
 
   return (
@@ -136,18 +141,21 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
             columns={columns}
             options={options}
           />
-        ) : <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
+        ) : <Paper style={{ padding: 10 }} >No Pending Disbursement Approvals</Paper>   
+      }
+      {
+        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
       }
     </div>
   )
 }
 
 const mapStateToProps = ({ loans }) => ({
-  loans: loans.submitted
+  loans: loans.disbursement_approval
 });
 
 const mapDispatchToProps = dispatch => ({
   setLoansData : (status, data) => dispatch(setLoansByStatus(status, data))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(SubmittedTable);
+export default connect(mapStateToProps, mapDispatchToProps)(DisbursementReqestTable);

@@ -5,7 +5,7 @@ import typography from '../typography';
 export default {
   root: {
     ...typography.body2,
-    padding: '8px 16px',
+    padding: '6px 12px',
     border: `1px solid ${palette.divider}`,
     borderBottom: `1px solid ${palette.divider}`,
     '&.MuiTableCell-head': {

@@ -58,23 +58,27 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const DealersTable = ({ id,data, titleAlign, showCreditForm, onClickAddMenu, formType, openCloseCreditForm, rowData, currentUser, showDealerEditForm, dealersClickRow, editFormClose }) => {
+const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExperianData, onClickAddMenu, formType, openCloseCreditForm, rowData, currentUser, showDealerEditForm, dealersClickRow, editFormClose }) => {
     const classes = useStyles();
 
     if (!data || !data.length)
         return (
             <div className={classes.wrapper}>
                 <Typography variant="h5" align={titleAlign} className={classes.title}>No Dealers Found</Typography>
-                <div style={{ textAlign: 'center', marginTop: 8 }}>
-                    <Button color="primary" variant="contained" size="small" onClick={() => onClickAddMenu('DEALER')}>Add dealer</Button>
-                </div>
+                {
+                    editable && (
+                        <div style={{ textAlign: 'center', marginTop: 8 }}>
+                            <Button color="primary" variant="outlined" size="small" onClick={() => onClickAddMenu('DEALER')}>Add dealer</Button>
+                        </div>
+                    )
+                }
             </div>
         );
 
     return (
         <div className={classes.wrapper}>
             <div className={classes.header}>
-                <Typography style={{ width: '90%', textAlign: 'center' }} variant="h5" align={titleAlign} className={classes.title}>Dealers</Typography>
+                <Typography style={{ width: '90%' }} variant="h5" align={titleAlign} className={classes.title}>Dealers</Typography>
             </div>
             <Table className={classes.table} size="small" aria-label="Dealers">
                 <TableHead>
@@ -86,8 +90,11 @@ const DealersTable = ({ id,data, titleAlign, showCreditForm, onClickAddMenu, for
                 </TableHead>
                 <TableBody>
                     {data.map(row => (
-                        <TableRow className={classes.tableRow} key={row.id} onClick={e => dealersClickRow(e, row, 'DEALER')}>
-                            <TableCell>{row.first_name}</TableCell>
+                        <TableRow className={classes.tableRow} key={row.id} onClick={e => editable && dealersClickRow(e, row, 'DEALER')}>
+                            <TableCell>
+                              {row.first_name}&nbsp;&nbsp;
+                              <Chip size="small" label="Experian Report" onClick={() => getExperianData(row.id)} />
+                            </TableCell>
                             <TableCell align="center">{row.mobile}</TableCell>
                             <TableCell align="center">
                                 {row.aadhar_f_file_url && <TableCell style={{ border: 0 }} align="center">

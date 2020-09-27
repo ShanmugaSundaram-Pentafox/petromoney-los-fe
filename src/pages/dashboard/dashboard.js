@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
+import _countBy from 'lodash/countBy'
 import LoansTable from './components/LoansTable';
 import usePageTitle from '../../hooks/usePageTitle';
-import InfoBox, { InfoBoxContainer, InfoBoxWrapper } from '../../components/CommonComponents/InfoBox';
+import { InfoBoxContainer, InfoBoxWrapper } from '../../components/CommonComponents/InfoBox';
 import styled from 'styled-components';
+import { Tooltip, LabelList,Legend, BarChart, CartesianGrid, XAxis, YAxis, Bar } from 'recharts';
+import { useMount } from 'react-use';
+import { getAllLoans } from '../../services/loans.service';
 
 const LoansNewTableContainer = styled.div`
   display: flex;
@@ -102,18 +106,124 @@ const LoansNewTable = styled.div`
 
 const Dashboard = ({ currentUser }) => {
   usePageTitle('Dashboard');
+  const [chartData, setChartData] = useState([]);
+  useMount(() => {
+    getAllLoans()
+      .then(res => {
+        const data = _countBy(res, item => {
+          return item.status.toLowerCase()
+        });
+        let cdata = [
+          { name: 'Submitted', count: data.submitted },
+          { name: 'Req for Appr', count: data.loan_approval || 0 },
+          { name: 'Req for Disb', count: data.disbursement_approval || 0 },
+          { name: 'Approved', count: data.approved },
+          { name: 'Rejected', count: data.rejected },
+          { name: 'Disbursed', count: data.disbursed },
+        ];
+        setChartData(cdata);
+      })
+      .catch(err => {
+
+      })
+  });
   return (
     <div>
-      {/* <InfoBoxContainer>
-        <InfoBoxWrapper width={"260px"}>
+      <InfoBoxContainer>
+        {
+          chartData.length ? (
+            <InfoBoxWrapper>
+              <p>Loans</p>
+              <BarChart
+                width={800}
+                height={260}
+                data={chartData}
+                label
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                {/* <Legend dataKey="name" /> */}
+                <Bar dataKey="count" fill="#ec6e30">
+                  <LabelList position="top" />
+                </Bar>
+                {/* <Bar width={20} dataKey="count" fill="#82ca9d" />
+                <Bar width={20} dataKey="count" fill="#f4a853" />
+                <Bar width={20} dataKey="count" fill="#19a474" />
+                <Bar width={20} dataKey="count" fill="#e66023" /> */}
+              </BarChart>
+            </InfoBoxWrapper>
+          ) : null
+        }
+        {/* <InfoBoxWrapper width={"300px"}>
+          <p>Submitted Loans</p>
+          <PieChart width={280} height={260}>
+            <Pie
+            data={chartData1}
+            dataKey="value"
+            nameKey="name"
+            cx="50%"
+            cy="50%"
+            innerRadius={30}
+            outerRadius={80}
+            fill="#ec6e30" />
+            <Legend verticalAlign="bottom" height={36}/>
+            <Tooltip />
+          </PieChart>
+        </InfoBoxWrapper>
+        <InfoBoxWrapper width={"300px"}>
+          <p>Requests</p>
+          <PieChart width={280} height={260}>
+            <Pie
+              data={chartData2}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              innerRadius={40}
+              outerRadius={80}
+              fill="#82ca9d"
+              label>
+              {
+                chartData2.map((item, i) => <Cell key={i} fill={item.color}/>)
+              }
+            </Pie>
+            <Legend verticalAlign="bottom" height={36}/>
+            <Tooltip />
+          </PieChart>
+        </InfoBoxWrapper>
+        <InfoBoxWrapper width={"300px"}>
+          <p>Approved vs Rejected</p>
+          <PieChart width={280} height={260}>
+          <Pie
+              data={chartData2}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              innerRadius={40}
+              outerRadius={80}
+              fill="#82ca9d"
+              label>
+              {
+                chartData3.map((item, i) => <Cell key={i} fill={item.color}/>)
+              }
+            </Pie>
+            <Legend verticalAlign="bottom" height={36}/>
+            <Tooltip />
+          </PieChart>
+        </InfoBoxWrapper> */}
+      </InfoBoxContainer>
+
+        {/* <InfoBoxWrapper width={"260px"}>
           <InfoBox number={100} title={"Submitted"} text={"Lorem Ipsum"} />
           <InfoBox number={100} title={"Approved/Rejected"} text={"Lorem Ipsum"} />
         </InfoBoxWrapper>
         <InfoBoxWrapper width={"260px"}>
           <InfoBox number={100} title={"Disbursed"} text={"Lorem Ipsum"} />
           <InfoBox number={0} title={"Lorem Ipsum"} text={"Inprogress"} />
-        </InfoBoxWrapper>
-      </InfoBoxContainer> */}
+        </InfoBoxWrapper> */}
 
       {/* New table code start */}
       {/* <LoansNewTableContainer>        
@@ -207,7 +317,7 @@ const Dashboard = ({ currentUser }) => {
       {/* New table code end */}
 
 
-      <LoansTable />
+      <LoansTable currentUser={currentUser} />
     </div>
   );
 }

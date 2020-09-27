@@ -6,7 +6,6 @@ import { selectCurrentUser } from '../store/user/user.selector';
 import MainLayout from '../layout/main.layout';
 
 const ProtectedRoute = ({ component: Component, currentUser, ...rest }) => {
-
   return (
     <Route
       {...rest}
@@ -18,6 +17,9 @@ const ProtectedRoute = ({ component: Component, currentUser, ...rest }) => {
             </MainLayout>
           )
         }
+        // store url for redirection after login
+        window.sessionStorage.setItem('pm-login-url', props.location.pathname);
+        
         return <Redirect to="/login" />
       }}
     />

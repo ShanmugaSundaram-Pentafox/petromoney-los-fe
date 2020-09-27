@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from "mui-datatables";
@@ -12,6 +12,7 @@ import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
 import Currency from '../Number/Currency';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { Paper } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -40,17 +41,21 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
-  // const [ data, setData ] = useState([]);
+const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick }) => {
+  const [ loading, setLoading ] = useState(false);
   const classes = useStyles();
 
   useMount(() => {
     if(!loans || !loans.length) {
-      getLoansByStatus('submitted')
+      setLoading(true);
+      getLoansByStatus('loan_approval')
         .then(data => {
-          setLoansData('submitted', data);
+          setLoansData('loan_approval', data);
+          setLoading(false);
         })
-        .catch(e => null)
+        .catch(e => {
+          setLoading(false);
+        })
     }
   });
   
@@ -120,10 +125,9 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
     selectableRowsHeader: false,
     selectableRows: 'none',
     isRowSelectable: () => false,
-    // onRowClick: (rowData, { dataIndex }) => {
-    //   // console.log(rowData, rowMeta);
-    //   onRowClick(loans[dataIndex].dealership_id, 'submitted')
-    // }
+    onRowClick: (rowData, { dataIndex }) => {
+      onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'loan_approval')
+    }
   };
 
   return (
@@ -136,18 +140,21 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
             columns={columns}
             options={options}
           />
-        ) : <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
+        ) : <Paper style={{ padding: 10 }} >No Pending Approvals</Paper> 
+      }
+      {
+        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
       }
     </div>
   )
 }
 
 const mapStateToProps = ({ loans }) => ({
-  loans: loans.submitted
+  loans: loans.loan_approval
 });
 
 const mapDispatchToProps = dispatch => ({
   setLoansData : (status, data) => dispatch(setLoansByStatus(status, data))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(SubmittedTable);
+export default connect(mapStateToProps, mapDispatchToProps)(ApprovalReqestTable);

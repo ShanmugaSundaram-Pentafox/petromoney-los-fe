@@ -51,7 +51,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
       status = 'disbursement_approval'
     }
 
-    status && updateLoanApprovalStatusById(id, loan.id, { status })
+    status && updateLoanApprovalStatusById(id, loan.id, { user_id: currentUser.id, status })
       .then(res => {
         setLoansData(res);
         setLoading(false);

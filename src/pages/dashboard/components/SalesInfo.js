@@ -79,7 +79,10 @@ const SalesInfo = ({
 
   const saveNewSalesData = () => {
     if(Object.keys(apiData).length < 4) return null;
-    postDealershipSalesById(id, apiData)
+    const objBody = {
+      user_id: currentUser.id, ...apiData
+    }
+    postDealershipSalesById(id, objBody)
       .then(res => {
         setInfo(res);
         setAddNewRow(false);

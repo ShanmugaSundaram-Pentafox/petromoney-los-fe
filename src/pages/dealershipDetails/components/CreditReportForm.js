@@ -71,7 +71,7 @@ const Row = ({ text, value, children }) => {
   )
 }
 
-const CreditReportForm = ({ id, editable, data, values, errors, onChange, setValues }) => {
+const CreditReportForm = ({ id, editable, data, values, errors, onChange, setValues, currentUser }) => {
   const classes = useStyles();
   const gridItem = {
     md: 12,
@@ -119,6 +119,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                       errors={errors}
                       editable={editable}
                       btnLabel={'Latest FY'}
+                      currentUser={currentUser}
                     />
                   </TableCell>
                   <TableCell>
@@ -130,6 +131,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                       errors={errors}
                       editable={editable}
                       btnLabel={'Previous FY'}
+                      currentUser={currentUser}
                     />
                   </TableCell>
                 </TableRow>
@@ -264,7 +266,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
       </Grid>
       <Grid {...gridItem}>
         <Typography className={classes.sidePanelTitle} variant="h4">Income</Typography>
-        <IncomeTable id={id} editable={editable} />
+        <IncomeTable id={id} editable={editable} currentUser={currentUser} />
       </Grid>
       <Grid {...gridItem}>
         <Text>Total Income <strong>{`-`}</strong></Text>
@@ -274,7 +276,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
       </Grid>
       <Grid {...gridItem}>
         <Typography className={classes.sidePanelTitle} variant="h4">Expenses</Typography>
-        <ExpensesTable id={id} editable={editable} />
+        <ExpensesTable id={id} editable={editable} currentUser={currentUser} />
       </Grid>
       <Grid {...gridItem}>
         <Text>Total Expenses other than Depreciation, Interest &amp; Tax <strong>{`-`}</strong></Text>
@@ -392,7 +394,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
   )
 }
 
-const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors }) => {
+const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors,  currentUser }) => {
   const classes = useStyles();
   const [financeData, setFinanceData] = useState(values);
   const [financeErrors, setFinanceErrors] = useState({});
@@ -422,7 +424,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
 
   const validateFinanceData = () => {
     // TODO: need to add validation
-    postDealershipFinancialsById(id, { type, ...financeData })
+    postDealershipFinancialsById(id, { type, user_id: currentUser.id, ...financeData })
       .then(res => {
         setFinanceData(res)
       })

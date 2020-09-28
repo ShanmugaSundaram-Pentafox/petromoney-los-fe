@@ -120,6 +120,7 @@ const CreditInfoCard = ({
   applicants,
   creditInfoData,
   updateCreditData,
+  currentUser
 }) => {
   const classes = useStyles();
   const [modalStatus, setModalStatus] = useState({ open: false });
@@ -129,6 +130,7 @@ const CreditInfoCard = ({
     saveDealerCreditInfo(dealership_id, {
       dealer_id,
       coapplicant_id,
+      user_id: currentUser.id,
       ...creditInfoData[id]
     })
     .then(() => {

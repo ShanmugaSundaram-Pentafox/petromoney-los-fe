@@ -83,6 +83,27 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [apiStatus, setApiStatus] = useState({});
+
+  const getCreditInfo = () => {
+    return new Promise((resolve, reject) => {
+      API.get(`${URL.dealership}/${dealershipId}/credit/info`)
+        .then(({ data }) => {
+          if(data.status === "SUCCESS") {
+            resolve(data.data);
+          } else {
+            reject(data.message);
+          }
+        })
+        .catch(e => {
+          reject(e.message);
+        })
+    });
+  }
+
+  React.useEffect(() => {
+    getCreditInfo();
+  }, []);
+
   const { values, errors, handleChange, handleSubmit, handleReset, setValues } = useFormik({
     initialValues: {},
     onSubmit: values => {

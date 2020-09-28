@@ -105,7 +105,7 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
           errors={errors}
           onChange={handleChange}
           setValues={setValues}
-          
+          currentUser={currentUser}
         />
         {/* <Alert severity={'success'}>Thanks for submitting credit report</Alert> */}
       </div>

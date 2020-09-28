@@ -19,7 +19,7 @@ const useStyles = makeStyles({
   }
 });
 
-const ExpensesTable = ({ id, editable, values=[] }) => {
+const ExpensesTable = ({ id, editable, values=[], currentUser }) => {
   const classes = useStyles();
   const [expenses, setExpenses] = useState(values);
   const [addNewRow, setAddNewRow] = useState();
@@ -46,7 +46,10 @@ const ExpensesTable = ({ id, editable, values=[] }) => {
   const saveNewExpense = () => {
     console.log('Expense api body - ', apiData)
     if(Object.keys(apiData).length < 2) return null;
-    postDealershipExpensesById(id, apiData)
+    const objBody = {
+      user_id: currentUser.id, ...apiData
+    }
+    postDealershipExpensesById(id, objBody)
       .then(res => {
         setExpenses(res);
         setAddNewRow(false);

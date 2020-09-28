@@ -218,7 +218,8 @@ const DealershipDetails = ({
     setApiStatus({ loading: true, type: 'info', message: 'We are processing your request, Please wait...' });
     let reqBody = {
       status,
-      remarks: newLoanInfo.remarks
+      remarks: newLoanInfo.remarks,
+      user_id: currentUser.id
     };
     let resMsg = '';
     if(status === "approved") {

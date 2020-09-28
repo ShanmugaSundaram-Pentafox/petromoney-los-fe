@@ -153,6 +153,7 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
       if (values.id) {
         url += `/${values.id}`;
       };
+      data.append('user_id', currentUser.id);
       API.post(url, data)
         .then(res => {
           setLoading(false);

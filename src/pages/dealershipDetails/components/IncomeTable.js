@@ -32,7 +32,7 @@ const useStyles = makeStyles({
   }
 });
 
-const IncomeTable = ({ id, editable }) => {
+const IncomeTable = ({ id, editable, currentUser }) => {
   const classes = useStyles();
   const [income, setIncome] = useState([]);
   const [businessTypes, setBusinessTypes] = useState([]);
@@ -49,7 +49,10 @@ const IncomeTable = ({ id, editable }) => {
     initialValues: {},
     onSubmit: values => {
       setLoading(true);
-      postDealershipIncomeById(id, values)
+      const objBody = {
+        user_id: currentUser.id, ...values
+      }
+      postDealershipIncomeById(id, objBody)
         .then(res => {
           setIncome(res);
           setLoading(false);

@@ -224,7 +224,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
           <Button
             color="primary"
             size="small"
-            variant="outlined"
+            variant="contained"
             onClick={toggleCreditReport}
             >View/Update Credit Report</Button>
           {!readOnly ? (
@@ -238,7 +238,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
               <Button
                 disabled={!permissionCheck(currentUser.role_name, rulesList.dealership_edit)}
                 color="primary"
-                variant="outlined"
+                variant="contained"
                 size="small"
                 onClick={() => { setReadOnly(false); }}>Edit Details</Button>
             )}

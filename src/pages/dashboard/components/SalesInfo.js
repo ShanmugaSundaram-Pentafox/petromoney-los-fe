@@ -121,8 +121,12 @@ const SalesInfo = ({
                 info.map((row, i) => (
                   <TableRow key={i}>
                     <TableCell scope="row" component="th">{row.from_year} - {row.to_year}</TableCell>
-                    <TableCell align="right">{row.ms?.toFixed(2)}</TableCell>
-                    <TableCell align="right">{row.hsd?.toFixed(2)}</TableCell>
+                    {row.to_year >= 2020 ?
+                      <TableCell align="center" colSpan={2}>{row.ms?.toFixed(2)}</TableCell>
+                      : <>
+                        <TableCell align="right">{row.ms?.toFixed(2)}</TableCell>
+                        <TableCell align="right">{row.hsd?.toFixed(2)}</TableCell>
+                      </>}
                     <TableCell align="right">{(row.ms + row.hsd)?.toFixed(2)}</TableCell>
                   </TableRow>
                 ))
@@ -217,8 +221,12 @@ const SalesInfo = ({
                 info.map((row, i) => (
                   <TableRow key={i}>
                     <TableCell scope="row" component="th">{row.from_year} - {row.to_year}</TableCell>
-                    <TableCell align="right"><Currency value={row.ms_rs?.toFixed(2)} /></TableCell>
-                    <TableCell align="right"><Currency value={row.hsd_rs?.toFixed(2)} /></TableCell>
+                    {row.to_year >= 2020 ?
+                      <TableCell align="center" colSpan={2}><Currency value={row.ms_rs?.toFixed(2)} /></TableCell>
+                      : <>
+                        <TableCell align="right"><Currency value={row.ms_rs?.toFixed(2)} /></TableCell>
+                        <TableCell align="right"><Currency value={row.hsd_rs?.toFixed(2)} /></TableCell>
+                      </>}
                     <TableCell align="right"><Currency value={(row.ms_rs + row.hsd_rs)?.toFixed(2)} /></TableCell>
                   </TableRow>
                 ))

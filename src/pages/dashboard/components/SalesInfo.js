@@ -10,6 +10,9 @@ import TableCell from '@material-ui/core/TableCell';
 import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
 import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
 import Currency from '../../../components/Number/Currency';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import Popover from '@material-ui/core/Popover';
+import { makeStyles } from '@material-ui/core';
 import { getDealershipSalesById, postDealershipSalesById } from '../../../services/dealerships.service';
 import TextInput from '../../../components/TextInput/TextInput';
 import UserCan from '../../../components/UserCan/UserCan';
@@ -27,6 +30,21 @@ import { rulesList } from '../../../config/userRules';
   "to_year": 2017
 }
  */
+
+
+const useStyles = makeStyles(theme => ({
+  popover: {
+    pointerEvents: 'none',
+  },
+  paper: {
+    padding: theme.spacing(1),
+  },
+  infoIcon: {
+    width: 16,
+    height: 15,
+    color: '#ff0000'
+  },
+}));
 
 const SalesInfoWrapper = styled.div`
   padding-top: 8px;
@@ -58,16 +76,26 @@ const SalesInfo = ({
   currentUser
 }) => {
   const [info, setInfo] = useState([]);
+  const classes = useStyles();
   const [addNewRow, setAddNewRow] = useState();
   const [apiData, setApiData] = useState({});
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
   useEffect(() => {
-    if(id) {
+    if (id) {
       getDealershipSalesById(id)
         .then(data => setInfo(data))
         .catch(err => null)
     }
   }, [id]);
+
+  const handlePopoverOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
 
   const onTextChange = e => {
     const { name, value } = e.target;
@@ -77,8 +105,10 @@ const SalesInfo = ({
     })
   }
 
+  const open = Boolean(anchorEl);
+
   const saveNewSalesData = () => {
-    if(Object.keys(apiData).length < 4) return null;
+    if (Object.keys(apiData).length < 4) return null;
     const objBody = {
       user_id: currentUser.id, ...apiData
     }
@@ -104,6 +134,27 @@ const SalesInfo = ({
 
   return (
     <SalesInfoWrapper>
+      <Popover
+        id="mouse-over-popover"
+        className={classes.popover}
+        classes={{
+          paper: classes.paper,
+        }}
+        open={open}
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        onClose={handlePopoverClose}
+        disableRestoreFocus
+      >
+        <Typography variant='subtitle2' component='div'>The combined value of MS and HSD are considered</Typography>
+      </Popover>
       <Typography align={titleAlign} variant="h5">Sales History</Typography>
       <SalesTableWrapper column={column}>
         <div>
@@ -120,9 +171,21 @@ const SalesInfo = ({
               {
                 info.map((row, i) => (
                   <TableRow key={i}>
-                    <TableCell scope="row" component="th">{row.from_year} - {row.to_year}</TableCell>
-                    <TableCell align="right">{row.ms?.toFixed(2)}</TableCell>
-                    <TableCell align="right">{row.hsd?.toFixed(2)}</TableCell>
+                    <TableCell scope="row" component="th">{row.from_year} - {row.to_year}
+                      {row.to_year >= 2020 ? <InfoOutlinedIcon
+                        className={classes.infoIcon}
+                        color='primary'
+                        aria-haspopup="true"
+                        aria-owns={open ? 'mouse-over-popover' : undefined}
+                        onMouseEnter={handlePopoverOpen}
+                        onMouseLeave={handlePopoverClose} />
+                        : null}</TableCell>
+                    {row.to_year >= 2020 ?
+                      <TableCell align="center" colSpan={2}>{row.ms?.toFixed(2)}</TableCell>
+                      : <>
+                        <TableCell align="right">{row.ms?.toFixed(2)}</TableCell>
+                        <TableCell align="right">{row.hsd?.toFixed(2)}</TableCell>
+                      </>}
                     <TableCell align="right">{(row.ms + row.hsd)?.toFixed(2)}</TableCell>
                   </TableRow>
                 ))
@@ -175,7 +238,7 @@ const SalesInfo = ({
                         onClick={() => {
                           setAddNewRow(false);
                         }}>
-                          <DeleteForeverRoundedIcon fontSize="small" />
+                        <DeleteForeverRoundedIcon fontSize="small" />
                       </Button>
                       <Button
                         size="small"
@@ -183,8 +246,8 @@ const SalesInfo = ({
                         color="primary"
                         // className={classes.btnSuccess}
                         onClick={saveNewSalesData}>
-                          <DoneRoundedIcon fontSize="small" />
-                        </Button>
+                        <DoneRoundedIcon fontSize="small" />
+                      </Button>
                     </TableCell>
                   </TableRow>
 
@@ -192,6 +255,7 @@ const SalesInfo = ({
               }
             </TableBody>
           </Table>
+
           <UserCan
             role={currentUser.role_name}
             perform={rulesList.dealership_edit}
@@ -216,9 +280,21 @@ const SalesInfo = ({
               {
                 info.map((row, i) => (
                   <TableRow key={i}>
-                    <TableCell scope="row" component="th">{row.from_year} - {row.to_year}</TableCell>
-                    <TableCell align="right"><Currency value={row.ms_rs?.toFixed(2)} /></TableCell>
-                    <TableCell align="right"><Currency value={row.hsd_rs?.toFixed(2)} /></TableCell>
+                    <TableCell scope="row" component="th">{row.from_year} - {row.to_year}
+                      {row.to_year >= 2020 ? <InfoOutlinedIcon
+                        className={classes.infoIcon}
+                        color='primary'
+                        aria-haspopup="true"
+                        aria-owns={open ? 'mouse-over-popover' : undefined}
+                        onMouseEnter={handlePopoverOpen}
+                        onMouseLeave={handlePopoverClose} />
+                        : null}</TableCell>
+                    {row.to_year >= 2020 ?
+                      <TableCell align="center" colSpan={2}><Currency value={row.ms_rs?.toFixed(2)} /></TableCell>
+                      : <>
+                        <TableCell align="right"><Currency value={row.ms_rs?.toFixed(2)} /></TableCell>
+                        <TableCell align="right"><Currency value={row.hsd_rs?.toFixed(2)} /></TableCell>
+                      </>}
                     <TableCell align="right"><Currency value={(row.ms_rs + row.hsd_rs)?.toFixed(2)} /></TableCell>
                   </TableRow>
                 ))
@@ -227,7 +303,7 @@ const SalesInfo = ({
           </Table>
         </div>
       </SalesTableWrapper>
-      
+
     </SalesInfoWrapper>
   )
 }

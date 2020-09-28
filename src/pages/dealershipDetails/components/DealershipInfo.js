@@ -226,7 +226,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
             size="small"
             variant="contained"
             onClick={toggleCreditReport}
-            >View/Update Credit Report</Button>
+            >Edit Financial Repoort</Button>
           {!readOnly ? (
               !loading ? (
                 <>

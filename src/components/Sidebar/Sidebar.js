@@ -9,6 +9,7 @@ import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
+import PersonOutlineRoundedIcon from '@material-ui/icons/PersonOutlineRounded';
 
 // import Profile from './components/Profile';
 import SidebarNav from './components/SidebarNav';
@@ -134,7 +135,7 @@ const Sidebar = props => {
                   className={classes.button}
                 >
                   <div className={classes.icon}>
-                    <RadioButtonUncheckedIcon />
+                    <PersonOutlineRoundedIcon />
                   </div>
                     {user.role_name}
                 </Button>

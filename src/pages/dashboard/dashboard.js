@@ -117,7 +117,7 @@ const Dashboard = ({ currentUser }) => {
         let cdata = [
           { name: 'Submitted', count: data.submitted },
           { name: 'Pending Approval', count: data.loan_approval || 0 },
-          { name: 'Pending Disbursed', count: data.disbursement_approval || 0 },
+          { name: 'Pending Disbursement Approval', count: data.disbursement_approval || 0 },
           { name: 'Approved', count: data.approved },
           { name: 'Rejected', count: data.rejected },
           { name: 'Disbursed', count: data.disbursed },
@@ -151,7 +151,7 @@ const Dashboard = ({ currentUser }) => {
                     label
                   >
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" interval={0} tick={<CustomizedAxisTick />} />
+                    <XAxis dataKey="name" interval={0} tick={<CustomizedAxisTick />} height={40} />
                     <YAxis />
                     <Tooltip />
                     {/* <Legend dataKey="name" /> */}

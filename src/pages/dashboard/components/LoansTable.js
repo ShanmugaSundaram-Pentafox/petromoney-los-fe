@@ -268,12 +268,12 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
             <Paper elevation={1} className={classes.tableContainer}>
               <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
             </Paper>
-            <Paper elevation={1} className={classes.tableContainer}>
+            {/* <Paper elevation={1} className={classes.tableContainer}>
               <ApprovedTable title={"Approved Loans"} currentUser={currentUser} onRowClick={showDealershipInfo} />
             </Paper>
             <Paper elevation={1} className={classes.tableContainer}>
               <DisbursedTable title={"Disbursed Loans"} currentUser={currentUser} onRowClick={showDealershipInfo} />
-            </Paper>
+            </Paper> */}
           </>
         )}
       />
@@ -348,7 +348,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
           </div>
         </Paper>
       </div> */}
-      <Drawer
+      {/* <Drawer
         anchor="right"
         // elevation={4}
         ModalProps={{
@@ -366,7 +366,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
             onClose={() => { setShowPanel({ status: false }) }}
             />
         </div>
-      </Drawer>
+      </Drawer> */}
     </div>
   )
 }

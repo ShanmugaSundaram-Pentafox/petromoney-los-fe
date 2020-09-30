@@ -18,10 +18,10 @@ const useStyles = makeStyles(theme => ({
     padding: 8,
   },
   addButton: {
-    width: '10%',
     textAlign: 'right',
     float: 'right',
-    marginTop: '4px'
+    marginTop: '8px',
+    marginRight: '8px'
   },
   title: {
     paddingLeft: 8,
@@ -138,7 +138,9 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   return (
     <>
       {
-        editable && <div className={classes.addButton}><AddIconButon onClickAddMenu={onClickAddMenu} /></div>
+        !editable && <div className={classes.addButton}>
+          <Button color="primary" variant="contained" size="small" onClick={() => onClickAddMenu()}>Add Dealer</Button>
+           </div>
       }
       <DealersTable
         id={id}

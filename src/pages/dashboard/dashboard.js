@@ -148,14 +148,15 @@ const Dashboard = ({ currentUser }) => {
                     width={540}
                     height={260}
                     data={chartData}
+                    style={{ fontSize: '14px'}}
                     label
                   >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" interval={0} tick={<CustomizedAxisTick />} height={40} />
-                    <YAxis />
+                    <YAxis type="number" domain={[0, 200]}/>
                     <Tooltip />
                     {/* <Legend dataKey="name" /> */}
-                    <Bar dataKey="count" fill="#ec6e30">
+                    <Bar dataKey="count" fill="#ec6e30" barSize={30}>
                       <LabelList position="top" />
                     </Bar>
                     {/* <Bar width={20} dataKey="count" fill="#82ca9d" />

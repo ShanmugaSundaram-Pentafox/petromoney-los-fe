@@ -129,7 +129,9 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
     setShowDealerEditForm(false)
   }
 
-  const getExperianData = type => id => {
+  const getExperianData = type => (event ,id) => {
+    event.preventDefault();
+    event.stopPropagation()
     setExperianData({ show: true, id, type });
   }
 

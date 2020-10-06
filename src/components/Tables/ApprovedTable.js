@@ -128,10 +128,10 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
           }),
           customBodyRender: (value, tableMeta, updateValue) => {
             return (
-              <a className={classes.anchorTag} href={`http://salesapi.petromoney.in/api/loans/sanction/${tableMeta.rowData[0]}`} download={'Sanction_Letter.pdf'}>
+              <a className={classes.anchorTag} href={`http://salesapi.petromoney.in/api/loans/sanction/${tableMeta.rowData[0]}`} download={'Sanction_Letter'}>
                   <Tooltip title='Sanction Letter'>
                     <GetAppOutlinedIcon style={{ width: '20px' }}> </GetAppOutlinedIcon>
-                  </Tooltip>
+                   </Tooltip>
               </a>
             )
           }

@@ -3,6 +3,9 @@ import { NavLink as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from "mui-datatables";
 import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
+import GetAppOutlinedIcon from '@material-ui/icons/GetAppOutlined';
 import { useMount } from 'react-use';
 // import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
@@ -37,7 +40,11 @@ const useStyles = makeStyles(theme => ({
   pills_SOLAR: {
     color: '#51b37f',
     backgroundColor: '#e1f8e5',
-  }
+  },
+  anchorTag: {
+    textDecoration: 'none',
+    color: '#d35178',
+  },
 }));
 
 const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
@@ -108,6 +115,25 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
             return <div>
               {value ? moment(new Date(value)).format('DD MMM, YYYY') : '-'}
             </div>
+          }
+        }
+      },
+      {
+        name: 'Documents',
+        options: {
+          filter: false,
+          sort: false,
+          setCellProps: () => ({
+            align: 'center',
+          }),
+          customBodyRender: (value, tableMeta, updateValue) => {
+            return (
+              <a className={classes.anchorTag} href={`http://salesapi.petromoney.in/api/loans/sanction/${tableMeta.rowData[0]}`} download={'Sanction_Letter.pdf'}>
+                  <Tooltip title='Sanction Letter'>
+                    <GetAppOutlinedIcon style={{ width: '20px' }}> </GetAppOutlinedIcon>
+                  </Tooltip>
+              </a>
+            )
           }
         }
       }

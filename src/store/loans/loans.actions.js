@@ -9,3 +9,8 @@ export const setLoansByStatus = (status, data) => ({
   type: LoanActionTypes.SET_LOANS_STAUTS_DATA,
   payload: { status, data }
 });
+
+export const setLoanBook = (data => ({
+  type: LoanActionTypes.SET_LOAN_BOOK_DATA,
+  payload: { data }
+}))

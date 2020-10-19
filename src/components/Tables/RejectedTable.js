@@ -3,9 +3,6 @@ import { NavLink as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from "mui-datatables";
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import GetAppOutlinedIcon from '@material-ui/icons/GetAppOutlined';
 import { useMount } from 'react-use';
 // import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
@@ -40,21 +37,17 @@ const useStyles = makeStyles(theme => ({
   pills_SOLAR: {
     color: '#51b37f',
     backgroundColor: '#e1f8e5',
-  },
-  anchorTag: {
-    textDecoration: 'none',
-    color: '#d35178',
-  },
+  }
 }));
 
-const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
+const RejectedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const classes = useStyles();
 
   useMount(() => {
     if(!loans || !loans.length) {
-      getLoansByStatus('approved')
+      getLoansByStatus('rejected')
         .then(data => {
-          setLoansData('approved', data);
+          setLoansData('rejected', data);
         })
         .catch(e => null)
     }
@@ -103,7 +96,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
         }
       },
       {
-        label: 'Approved Date',
+        label: 'Rejected Date',
         name: 'loan_approved_rejected_date',
         options: {
           filter: false,
@@ -117,25 +110,6 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
             </div>
           }
         }
-      },
-      {
-        name: 'Documents',
-        options: {
-          filter: false,
-          sort: false,
-          setCellProps: () => ({
-            align: 'center',
-          }),
-          customBodyRender: (value, tableMeta, updateValue) => {
-            return (
-              <a className={classes.anchorTag} href={`http://salesapi.petromoney.in/api/loans/sanction/${tableMeta.rowData[0]}`} download={'Sanction_Letter'}>
-                  <Tooltip title='Sanction Letter'>
-                    <GetAppOutlinedIcon style={{ width: '20px' }}> </GetAppOutlinedIcon>
-                   </Tooltip>
-              </a>
-            )
-          }
-        }
       }
     ]
   }, []);
@@ -147,7 +121,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
     isRowSelectable: () => false,
     // onRowClick: (rowData, { dataIndex }) => {
     //   // console.log(rowData, rowMeta);
-    //   onRowClick(loans[dataIndex].dealership_id, 'approved')
+    //   onRowClick(loans[dataIndex].dealership_id, 'rejected')
     // }
   };
 
@@ -168,11 +142,11 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
 }
 
 const mapStateToProps = ({ loans }) => ({
-  loans: loans.approved
+  loans: loans.rejected
 });
 
 const mapDispatchToProps = dispatch => ({
   setLoansData : (status, data) => dispatch(setLoansByStatus(status, data))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(ApprovedTable);
+export default connect(mapStateToProps, mapDispatchToProps)(RejectedTable);

@@ -11,6 +11,7 @@ import Dashboard from '../pages/dashboard/dashboard';
 import Dealership from '../pages/dealership/dealership';
 import Settings from '../pages/settings/settings';
 import DealershipDetails from '../pages/dealershipDetails/dealershipDetails';
+import Loans from '../pages/loanspage/loans'
 import CreditForm from '../pages/creditForm/creditForm';
 
 const Routes = ({ currentUser }) => {
@@ -18,6 +19,7 @@ const Routes = ({ currentUser }) => {
     <Switch>
       <ProtectedRoute exact path="/" component={Dashboard} />
       <ProtectedRoute exact path="/dealership" component={Dealership} />
+      <ProtectedRoute exact path="/loans" component={Loans} />
       <ProtectedRoute exact path="/dealership/:id?" component={DealershipDetails} />
       <ProtectedRoute exact path="/dealership/:id/credit-form" component={CreditForm} />
       <ProtectedRoute exact path="/settings" component={Settings} />

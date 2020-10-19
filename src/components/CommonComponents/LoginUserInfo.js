@@ -130,7 +130,6 @@ export const LoginUserInfo = ({
             </div>
 
             <div className="header-dropdown">
-                <span>Lorem Ipsum</span>
                 <span onClick={logout}>Logout</span>
             </div>
         </LoginUserInfoWrapper>

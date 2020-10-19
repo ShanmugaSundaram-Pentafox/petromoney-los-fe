@@ -97,7 +97,7 @@ const CoApplicantsTable = ({id, editable, coApplicantsData, titleAlign, getExper
             <TableRow className={classes.tableRow} key={row.id} onClick={e => editable && dealersClickRow(e, row, 'COAPPLICANT')}>
               <TableCell>
                 {row.first_name}&nbsp;&nbsp;
-                <Chip size="small" label="Experian Report" onClick={() => getExperianData(row.id)} />
+                <Chip size="small" label="Experian Report" onClick={(e) => getExperianData(e, row.id)} />
               </TableCell>
               <TableCell align="center">{row.mobile}</TableCell>
               <TableCell align="center">

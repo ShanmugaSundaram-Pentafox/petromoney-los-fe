@@ -5,7 +5,7 @@ import usePageTitle from '../../hooks/usePageTitle';
 import { InfoBoxContainer, InfoBoxWrapper } from '../../components/CommonComponents/InfoBox';
 import styled from 'styled-components';
 import Grid from '@material-ui/core/Grid';
-import { Tooltip, LabelList,Legend, BarChart, CartesianGrid, XAxis, YAxis, Bar } from 'recharts';
+import { Tooltip, LabelList,Legend, BarChart, CartesianGrid, XAxis, YAxis, Bar, Text } from 'recharts';
 import { useMount } from 'react-use';
 import { getAllLoans } from '../../services/loans.service';
 
@@ -116,8 +116,8 @@ const Dashboard = ({ currentUser }) => {
         });
         let cdata = [
           { name: 'Submitted', count: data.submitted },
-          { name: 'Req for Appr', count: data.loan_approval || 0 },
-          { name: 'Req for Disb', count: data.disbursement_approval || 0 },
+          { name: 'Pending Approval', count: data.loan_approval || 0 },
+          { name: 'Pending Disbursement Approval', count: data.disbursement_approval || 0 },
           { name: 'Approved', count: data.approved },
           { name: 'Rejected', count: data.rejected },
           { name: 'Disbursed', count: data.disbursed },
@@ -128,6 +128,13 @@ const Dashboard = ({ currentUser }) => {
 
       })
   });
+
+  const CustomizedAxisTick = ({ x, y, payload }) => {
+    return (
+      <Text x={x} y={y} fill='#666' width={70} fontSize='12' fontWeight='bold' textAnchor="middle" verticalAnchor="start">{payload.value}</Text>
+    )
+  }
+
   return (
     <div>
       <Grid container spacing={2}>
@@ -141,14 +148,15 @@ const Dashboard = ({ currentUser }) => {
                     width={540}
                     height={260}
                     data={chartData}
+                    style={{ fontSize: '14px'}}
                     label
                   >
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
+                    <XAxis dataKey="name" interval={0} tick={<CustomizedAxisTick />} height={40} />
+                    <YAxis type="number" domain={[0, 200]}/>
                     <Tooltip />
                     {/* <Legend dataKey="name" /> */}
-                    <Bar dataKey="count" fill="#ec6e30">
+                    <Bar dataKey="count" fill="#ec6e30" barSize={30}>
                       <LabelList position="top" />
                     </Bar>
                     {/* <Bar width={20} dataKey="count" fill="#82ca9d" />

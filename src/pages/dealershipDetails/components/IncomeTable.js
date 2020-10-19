@@ -14,6 +14,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextInput from '../../../components/TextInput/TextInput';
 import Currency from '../../../components/Number/Currency';
+import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
+import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
 import { getDealershipIncomeById, postDealershipIncomeById } from '../../../services/dealerships.service';
 import { getDealersWithCoapplicants } from '../../../services/dealers.service';
 import { useFormik } from 'formik';
@@ -38,6 +40,8 @@ const IncomeTable = ({ id, editable, currentUser }) => {
   const [businessTypes, setBusinessTypes] = useState([]);
   const [applicantsList, setApplicantsList] = useState([]);
   const [addNewRow, setAddNewRow] = useState();
+  const [apiData, setApiData] = useState({});
+
   const [loading, setLoading] = useState(false);
   const gridItem = {
     md: 12,
@@ -84,6 +88,33 @@ const IncomeTable = ({ id, editable, currentUser }) => {
       });
   });
 
+  const onTextChange = e => {
+    const { name, value } = e.target;
+    setApiData({
+      ...apiData,
+      [name]: value
+    })
+  }
+
+
+  const saveNewExpense = () => {
+    console.log('Expense api body - ', apiData)
+    if (Object.keys(apiData).length < 3) return null;
+    const objBody = {
+      user_id: currentUser.id, ...apiData
+    }
+    postDealershipIncomeById(id, objBody)
+      .then(res => {
+        setIncome(res);
+        setLoading(false);
+        setAddNewRow(false);
+      })
+      .catch(err => {
+        console.log('Income data save error - ', err);
+        setLoading(false);
+      })
+  }
+
   return (
     <Fragment>
 
@@ -107,23 +138,77 @@ const IncomeTable = ({ id, editable, currentUser }) => {
               </TableRow>
             ))
           }
+          {
+            addNewRow && (
+              <TableRow key={"new-row"}>
+                <TableCell>
+                  <TextInput
+                    label="Business Name"
+                    name="business_name"
+                    value={apiData.business_name}
+                    onChange={onTextChange}
+                  />
+                </TableCell>
+                <TableCell align={"right"}>
+                  <TextInput
+                    label="Business Age"
+                    name="business_age"
+                    type="number"
+                    value={apiData.business_age}
+                    onChange={onTextChange}
+                  />
+                </TableCell>
+                <TableCell align={"right"}>
+                  <TextInput
+                    money
+                    label="FY Turnover"
+                    name="cur_fy_turnover"
+                    type="number"
+                    value={apiData.cur_fy_turnover}
+                    onChange={onTextChange}
+                  />
+                </TableCell>
+              </TableRow>
+            )
+          }
           <TableRow key={"add-row"}>
             <TableCell align="right" colSpan={3}>
               {
-                !addNewRow && editable && (
+                addNewRow ? (
+                  <Fragment>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      color="error"
+                      onClick={() => {
+                        setAddNewRow(false);
+                      }}>
+                      <DeleteForeverRoundedIcon fontSize="small" />
+                    </Button>
+                    &nbsp;&nbsp;
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      color="success"
+                      className={classes.btnSuccess}
+                      onClick={saveNewExpense}>
+                      <DoneRoundedIcon fontSize="small" />
+                    </Button>
+                  </Fragment>
+                ) : (editable && (
                   <Button
                     size="small"
                     variant="outlined"
                     className={classes.btnSuccess}
-                    onClick={() => setAddNewRow(true)}>Add Income</Button>
-                )
+                    onClick={() => setAddNewRow(true)}>Add Expense</Button>
+                ))
               }
             </TableCell>
           </TableRow>
         </TableBody>
       </Table>
-      
-      <Dialog
+
+      {/* <Dialog
         open={addNewRow}
         fullWidth
         maxWidth={'sm'}
@@ -217,7 +302,7 @@ const IncomeTable = ({ id, editable, currentUser }) => {
             </DialogActions>
           )
         }
-      </Dialog>
+      </Dialog> */}
     </Fragment>
   )
 }

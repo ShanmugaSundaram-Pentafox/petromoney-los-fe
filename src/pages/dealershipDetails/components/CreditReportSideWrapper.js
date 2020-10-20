@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import Typography from '@material-ui/core/Typography';
 import DealerCreditInfoForm from './DealerCreditInfoForm';
@@ -61,7 +61,23 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
   const classes = useStyles();
   const [readOnly, setReadOnly] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [apiData, setApiData] = useState({});
   const [apiStatus, setApiStatus] = useState({});
+
+  useEffect(() => {
+    API.get(`${URL.dealership}/${dealershipId}/credit/report`)
+      .then(({ data }) => {
+        if(data.status === "SUCCESS") {
+          setApiData(data.data[0] || {});
+        } else {
+          // reject(data.message);
+        }
+      })
+      .catch(e => {
+        // reject(e.message);
+      })
+  }, [])
+
   const { values, errors, handleChange, handleSubmit, handleReset, setValues } = useFormik({
     initialValues: {},
     onSubmit: values => {
@@ -70,7 +86,8 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
       setApiStatus({});
       // dealership/<int:dealership_id>/credit/info
       // return null;
-      API.post(`${URL.dealership}/${dealershipId}/credit/report`, { ...values, user_id: currentUser.id })
+      const id = apiData.id || undefined;
+      API.post(`${URL.dealership}/${dealershipId}/credit/report`, { ...values, id, user_id: currentUser.id })
         .then(({ status, message }) => {
           if(status == 'success') {
             setApiStatus({ type: 'success', message: message || 'Unable to save the details. Please try again later' })
@@ -101,7 +118,7 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
           editable={editable}
           id={dealershipId}
           data={data}
-          values={values}
+          values={{ ...apiData, ...values}}
           errors={errors}
           onChange={handleChange}
           setValues={setValues}

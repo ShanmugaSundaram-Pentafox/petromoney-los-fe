@@ -88,7 +88,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
             label="Business Vintage with OMC"
             name="business_vintage"
             type="number"
-            defaultValue={values.business_vintage}
+            value={values.business_vintage || ""}
             onChange={onChange}
             />
         </Grid>
@@ -207,7 +207,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
           label="Vintage with main banker"
           name="vintage_with_banker"
           type="number"
-          defaultValue={values.vintage_with_banker}
+          value={values.vintage_with_banker || ""}
           onChange={onChange}
           />
       </Grid>
@@ -217,7 +217,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
           label="No of inward returns(last 6 months)"
           name="inward_returns"
           type="number"
-          defaultValue={values.inward_returns}
+          value={values.inward_returns || ""}
           onChange={onChange}
           />
       </Grid>
@@ -282,7 +282,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
       </Grid>
       <Grid {...gridItem}>
         <Typography className={classes.sidePanelTitle} variant="h4">Sales Margin</Typography>
-        <Text>Total Gross Income from Fuel Sale <strong>{`-`}</strong></Text>
+        <Text>Total Gross Income from Fuel Sale <strong>{values.gross_income_fuel ? <Currency value={values.gross_income_fuel} /> : '-'}</strong></Text>
       </Grid>
       <Grid {...gridItem}>
         <Typography className={classes.sidePanelTitle} variant="h4">Income</Typography>
@@ -314,7 +314,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 readOnly={!editable}
                 name="current_loans_emi"
                 type="number"
-                defaultValue={values.current_loans_emi}
+                value={values.current_loans_emi || ""}
                 onChange={onChange}
                 />
             </Row>
@@ -324,7 +324,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 readOnly={!editable}
                 name="interest"
                 type="number"
-                defaultValue={values.interest}
+                value={values.interest || ""}
                 onChange={onChange}
                 />
             </Row>
@@ -348,7 +348,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 readOnly={!editable}
                 name="turnover"
                 type="number"
-                defaultValue={values.turnover}
+                value={values.turnover || ""}
                 onChange={onChange}
                 />
             </Row>
@@ -357,7 +357,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 readOnly={!editable}
                 name="turnover_percentage_loan"
                 type="number"
-                defaultValue={values.turnover_percentage_loan}
+                value={values.turnover_percentage_loan || ""}
                 onChange={onChange}
                 />
             </Row>
@@ -367,7 +367,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 readOnly={!editable}
                 name="score"
                 type="number"
-                defaultValue={values.score}
+                value={values.score || ""}
                 onChange={onChange}
                 />
             </Row>
@@ -379,7 +379,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 readOnly={!editable}
                 name="max_cap_policy"
                 type="number"
-                defaultValue={values.max_cap_policy}
+                value={values.max_cap_policy || ""}
                 onChange={onChange}
                 />
             </Row>
@@ -391,7 +391,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 readOnly={!editable}
                 name="approved_loan_amount"
                 type="number"
-                defaultValue={values.approved_loan_amount}
+                value={values.approved_loan_amount || ""}
                 onChange={onChange}
                 />
             </Row>
@@ -401,7 +401,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 readOnly={!editable}
                 name="final_loan_amount"
                 type="number"
-                defaultValue={values.final_loan_amount}
+                value={values.final_loan_amount || ""}
                 onChange={onChange}
                 />
             </Row>
@@ -463,7 +463,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
             label="Turnover"
             name="turnover"
             type="number"
-            defaultValue={financeData.turnover}
+            value={financeData.turnover || ""}
             onChange={onTextChange}
             />
         </Grid>
@@ -475,7 +475,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
           label="Net Profit before Tax"
           name="net_profit"
           type="number"
-          defaultValue={financeData.net_profit}
+          value={financeData.net_profit || ""}
           onChange={onTextChange}
           />
       </Grid>

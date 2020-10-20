@@ -157,7 +157,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
               const dealerData = { ...(resData || {}), ...values };
               return (
                 <Step key={item.id}>
-                  <StepLabel className={classes.stepTitle}>{item.first_name}  { dealerData.cibil_score ? <b>({dealerData.cibil_score})</b> : null }</StepLabel>
+                  <StepLabel className={classes.stepTitle} onClick={() => setActiveStep(i)}>{item.first_name}  { dealerData.cibil_score ? <b>({dealerData.cibil_score})</b> : null }</StepLabel>
                   <StepContent>
                     <DealerCreditInfoForm data={item} values={dealerData} errors={errors} onChange={handleChange} />
                   </StepContent>

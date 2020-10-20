@@ -1,6 +1,7 @@
 import { API } from "../config/api"
 import { URL } from "../config/serverUrls"
 import { getDealershipLoansById } from "./dealerships.service";
+import { store } from "../store";
 
 export const getAllLoans = () => {
   return new Promise((resolve, reject) => {
@@ -20,7 +21,13 @@ export const getAllLoans = () => {
 
 export const getAll_ls1_Metrices = () => {
   return new Promise((resolve, reject) => {
-    API.get(URL.ls1_metrices)
+    const currentUser = store.getState().user.currentUser;
+    API.get(URL.ls1_metrices, {
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': `${currentUser.token}`
+      }
+    })
       .then(({ data }) => {
         if(data.status === "SUCCESS") {
           resolve(data.data);
@@ -36,7 +43,13 @@ export const getAll_ls1_Metrices = () => {
 
 export const getAll_ls2_Metrices = () => {
   return new Promise((resolve, reject) => {
-    API.get(URL.ls2_metrices)
+    const currentUser = store.getState().user.currentUser;
+    API.get(URL.ls2_metrices, {
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': `${currentUser.token}`
+      }
+    })
       .then(({ data }) => {
         if(data.status === "SUCCESS") {
           resolve(data.data);
@@ -52,7 +65,13 @@ export const getAll_ls2_Metrices = () => {
 
 export const getLoanBookData = () => {
   return new Promise((resolve, reject) => {
-    API.get(URL.loanBook)
+    const currentUser = store.getState().user.currentUser;
+    API.get(URL.loanBook, {
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': `${currentUser.token}`
+      }
+    })
       .then(({ data }) => {
         if(data.status === "SUCCESS") {
           resolve(data.data);

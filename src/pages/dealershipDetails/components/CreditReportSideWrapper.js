@@ -89,8 +89,8 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
       const id = apiData.id || undefined;
       API.post(`${URL.dealership}/${dealershipId}/credit/report`, { ...values, id, user_id: currentUser.id })
         .then(({ status, message }) => {
-          if(status == 'success') {
-            setApiStatus({ type: 'success', message: message || 'Unable to save the details. Please try again later' })
+          if(status == 'SUCCESS') {
+            setApiStatus({ type: 'success', message: message || 'Report details updated' })
             setLoading(false);
             handleReset();
           }
@@ -100,7 +100,7 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
           }
         })
         .catch(e => {
-          setApiStatus({ type: 'error', message: 'Unable to save the details. Please try again later' })
+          setApiStatus({ type: 'error', message: 'Unable to save the details. Please contact admin' })
           setLoading(false);
           setReadOnly(true);
           logger(e);

@@ -1,5 +1,6 @@
 import { API } from "../config/api"
-import { URL } from "../config/serverUrls"
+// import { URL } from "../config/serverUrls"
+import { store } from "../store";
 
 export const getBusinessTypes = () => {
   return new Promise((resolve, reject) => {
@@ -34,8 +35,13 @@ export const getExperianReportById = (id, type) => {
 }
 
 export const refreshExperianReportById = (id, type) => {
+  const currentUser = store.getState().user.currentUser;
   return new Promise((resolve, reject) => {
-    API.get(`refresh/experian/report/consumer/${id}`)
+    API.get(`refresh/experian/report/consumer/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${currentUser.token}`
+      }
+    })
       .then(({ data }) => {
         if(data.status === "SUCCESS") {
           resolve(data.data);

@@ -135,11 +135,11 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                     />
                   </TableCell>
                 </TableRow>
-                <TableRow>
+                {/* <TableRow>
                   <TableCell colSpan={2}>
                     <Text>Change in net profit over sales % for last 2 years <strong>{`-%`}</strong></Text>
                   </TableCell>
-                </TableRow>
+                </TableRow> */}
               </TableBody>
             </Table>          
           </Grid>
@@ -428,6 +428,8 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
     getDealershipFinancialsById(id)
       .then(res => {
         setFinanceData(res);
+        const d = (res[0] || {}).to_year == 2020 && type == 'latest_fy' ? res[0] : res[1]; 
+        setFinanceData(d || {});
       })
       .catch(err => {
         console.log('Finance data fetch error - ', type, err)
@@ -486,7 +488,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
           label="NP %"
           name="net_profit_percentage"
           type="number"
-          defaultValue={financeData.net_profit_percentage}
+          value={((financeData.net_profit_percentage || 0) * 100) || ""}
           onChange={onTextChange}
           />
       </Grid>
@@ -497,7 +499,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
           label="NP % Change"
           name="net_profit_change_percentage"
           type="number"
-          defaultValue={financeData.net_profit_percentage_change}
+          value={financeData.net_profit_change_percentage || ""}
           onChange={onTextChange}
           />
       </Grid>
@@ -508,7 +510,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
           label="Income tax for the year"
           name="it_paid"
           type="number"
-          defaultValue={financeData.it_paid}
+          value={financeData.it_paid || ""}
           onChange={onTextChange}
           />
       </Grid>
@@ -519,7 +521,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
           label="Net Worth (Equity + Reserves)"
           name="networth"
           type="number"
-          defaultValue={financeData.networth}
+          value={financeData.networth || ""}
           onChange={onTextChange}
           />
       </Grid>
@@ -530,7 +532,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
           label="Value if assets owned by family members"
           name="assets_value"
           type="number"
-          defaultValue={financeData.assets_value}
+          value={financeData.assets_value || ""}
           onChange={onTextChange}
           />
       </Grid>
@@ -541,7 +543,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
           label="Total loan amount outstanding"
           name="loan_os"
           type="number"
-          defaultValue={financeData.loan_os}
+          value={financeData.loan_os || ""}
           onChange={onTextChange}
           />
       </Grid>
@@ -552,9 +554,12 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
           label="Leverage (No of Times)"
           name="leverage"
           type="number"
-          defaultValue={financeData.leverage}
+          value={financeData.leverage || ""}
           onChange={onTextChange}
           />
+      </Grid>
+      <Grid {...gridItem}>
+        <Text>Change in net profit over sales % for last 2 years <strong>{financeData.change_in_profit_over_sales}%</strong></Text>
       </Grid>
       {
         editable && (

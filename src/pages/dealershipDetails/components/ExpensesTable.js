@@ -11,7 +11,7 @@ import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
 import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
 import TextInput from '../../../components/TextInput/TextInput';
 import Currency from '../../../components/Number/Currency';
-import { getDealershipExpensesById, postDealershipExpensesById } from '../../../services/dealerships.service';
+import { getDealershipExpensesById, postDealershipExpensesById, updateDealershipExpenseById } from '../../../services/dealerships.service';
 
 const useStyles = makeStyles({
   table: {
@@ -24,7 +24,9 @@ const ExpensesTable = ({ id, editable, values=[], currentUser }) => {
   const [expenses, setExpenses] = useState(values);
   const [addNewRow, setAddNewRow] = useState();
   const [apiData, setApiData] = useState({});
+  const [editRow, setEditRow] = useState({});
 
+  const [loading, setLoading] = useState(false);
   useMount(() => {
     getDealershipExpensesById(id)
       .then(data => {
@@ -41,6 +43,35 @@ const ExpensesTable = ({ id, editable, values=[], currentUser }) => {
       ...apiData,
       [name]: value
     })
+  }
+
+  const onEditTextChange = e => {
+    const { name, value } = e.target;
+    setEditRow({
+      ...editRow,
+      [name]: value
+    })
+  }
+
+  const editExpenseRow = (rowData, rowIndex) => {
+    setEditRow({ ...rowData, rowIndex });
+  }
+
+  const saveExpenseRow = (rowData, rowIndex) => {
+    const objBody = {
+      user_id: currentUser.id, ...rowData
+    }
+    updateDealershipExpenseById(id, objBody)
+      .then(res => {
+        setExpenses(res);
+        setAddNewRow(false);
+        setEditRow({});
+        setApiData({});
+      })
+      .catch(err => {
+        console.log('Income data update error - ', err);
+        setLoading(false);
+      })
   }
 
   const saveNewExpense = () => {
@@ -66,15 +97,57 @@ const ExpensesTable = ({ id, editable, values=[], currentUser }) => {
         <TableRow>
           <TableCell>Type</TableCell>
           <TableCell align="right">Amount</TableCell>
+          <TableCell align="right">Action</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
         {
-          Array.isArray(expenses) && expenses.map((item, i) => (
+          Array.isArray(expenses) && expenses.map((item, i) => editRow.rowIndex === i ? (
+            <TableRow key={i}>
+              <TableCell>
+                <TextInput
+                  label="Expense Type"
+                  name="expense_type"
+                  value={editRow.expense_type}
+                  onChange={onEditTextChange}
+                />
+              </TableCell>
+              <TableCell align={"right"}>
+                <TextInput
+                  money
+                  label="Expense Amount"
+                  name="expense_amount"
+                  type="number"
+                  value={editRow.expense_amount}
+                  onChange={onEditTextChange}
+                />
+              </TableCell>
+              <TableCell align={"right"}>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="success"
+                  className={classes.btnSuccess}
+                  onClick={() => saveExpenseRow(editRow, i)}>
+                  Save
+                </Button>
+              </TableCell>
+            </TableRow>
+          ) : (
             <TableRow key={i}>
               <TableCell>{item.expense_type}</TableCell>
               <TableCell align={"right"}>
                 <Currency value={item.expense_amount} />
+              </TableCell>
+              <TableCell align={"right"}>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="success"
+                  className={classes.btnSuccess}
+                  onClick={() => editExpenseRow(item, i)}>
+                  Edit
+                </Button>
               </TableCell>
             </TableRow>
           ))
@@ -100,11 +173,12 @@ const ExpensesTable = ({ id, editable, values=[], currentUser }) => {
                   onChange={onTextChange}
                 />
               </TableCell>
+              <TableCell align={"right"}></TableCell>
             </TableRow>
           )
         }
         <TableRow key={"add-row"}>
-          <TableCell align="right" colSpan={2}>
+          <TableCell align="right" colSpan={3}>
             {
               addNewRow ? (
                 <Fragment>

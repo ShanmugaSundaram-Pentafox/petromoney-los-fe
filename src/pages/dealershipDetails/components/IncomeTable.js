@@ -16,7 +16,7 @@ import TextInput from '../../../components/TextInput/TextInput';
 import Currency from '../../../components/Number/Currency';
 import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
 import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
-import { getDealershipIncomeById, postDealershipIncomeById } from '../../../services/dealerships.service';
+import { getDealershipIncomeById, postDealershipIncomeById, updateDealershipIncomeById } from '../../../services/dealerships.service';
 import { getDealersWithCoapplicants } from '../../../services/dealers.service';
 import { useFormik } from 'formik';
 import { getBusinessTypes } from '../../../services/common.service';
@@ -41,6 +41,7 @@ const IncomeTable = ({ id, editable, currentUser }) => {
   const [applicantsList, setApplicantsList] = useState([]);
   const [addNewRow, setAddNewRow] = useState();
   const [apiData, setApiData] = useState({});
+  const [editRow, setEditRow] = useState({});
 
   const [loading, setLoading] = useState(false);
   const gridItem = {
@@ -96,6 +97,34 @@ const IncomeTable = ({ id, editable, currentUser }) => {
     })
   }
 
+  const onEditTextChange = e => {
+    const { name, value } = e.target;
+    setEditRow({
+      ...editRow,
+      [name]: value
+    })
+  }
+
+  const editIncomeRow = (rowData, rowIndex) => {
+    setEditRow({ ...rowData, rowIndex });
+  }
+
+  const saveIncomeRow = (rowData, rowIndex) => {
+    const objBody = {
+      user_id: currentUser.id, ...rowData
+    }
+    updateDealershipIncomeById(id, objBody)
+      .then(res => {
+        setIncome(res);
+        setLoading(false);
+        setEditRow({});
+        setApiData({});
+      })
+      .catch(err => {
+        console.log('Income data update error - ', err);
+        setLoading(false);
+      })
+  }
 
   const saveNewIncome = () => {
     console.log('Income api body - ', apiData)
@@ -125,16 +154,67 @@ const IncomeTable = ({ id, editable, currentUser }) => {
             <TableCell>Business Name</TableCell>
             <TableCell>Business Age</TableCell>
             <TableCell align="right">FY Turnover</TableCell>
+            <TableCell align="right">Action</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {
-            Array.isArray(income) && income.map((item, i) => (
+            Array.isArray(income) && income.map((item, i) => editRow.rowIndex === i ? (
+              <TableRow key={i}>
+                <TableCell>
+                  <TextInput
+                    label="Business Name"
+                    name="business_name"
+                    value={editRow.business_name}
+                    onChange={onEditTextChange}
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextInput
+                    label="Business Age"
+                    name="business_age"
+                    type="number"
+                    value={editRow.business_age}
+                    onChange={onEditTextChange}
+                  />
+                </TableCell>
+                <TableCell align={"right"}>
+                  <TextInput
+                    money
+                    label="FY Turnover"
+                    name="cur_fy_turnover"
+                    type="number"
+                    value={editRow.cur_fy_turnover}
+                    onChange={onEditTextChange}
+                  />
+                </TableCell>
+                <TableCell align={"right"}>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    color="success"
+                    className={classes.btnSuccess}
+                    onClick={() => saveIncomeRow(editRow, i)}>
+                    Save
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ) : (
               <TableRow key={i}>
                 <TableCell>{item.business_name}</TableCell>
                 <TableCell>{item.business_age}</TableCell>
                 <TableCell align={"right"}>
                   <Currency value={item.cur_fy_turnover} />
+                </TableCell>
+                <TableCell align={"right"}>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    color="success"
+                    className={classes.btnSuccess}
+                    onClick={() => editIncomeRow(item, i)}>
+                    Edit
+                  </Button>
                 </TableCell>
               </TableRow>
             ))
@@ -169,11 +249,12 @@ const IncomeTable = ({ id, editable, currentUser }) => {
                     onChange={onTextChange}
                   />
                 </TableCell>
+                <TableCell align={"right"}></TableCell>
               </TableRow>
             )
           }
           <TableRow key={"add-row"}>
-            <TableCell align="right" colSpan={3}>
+            <TableCell align="right" colSpan={4}>
               {
                 addNewRow ? (
                   <Fragment>

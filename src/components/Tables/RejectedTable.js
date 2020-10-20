@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from "mui-datatables";
 import Typography from '@material-ui/core/Typography';
 import { useMount } from 'react-use';
+import Paper from '@material-ui/core/Paper';
 // import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -135,7 +136,7 @@ const RejectedTable = ({ title, loans, setLoansData, onRowClick }) => {
             columns={columns}
             options={options}
           />
-        ) : <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
+        ) : <Paper style={{ padding: 10 }}>No Submitted Records</Paper> 
       }
     </div>
   )

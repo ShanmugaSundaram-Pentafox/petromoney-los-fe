@@ -137,7 +137,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
             columns={columns}
             options={options}
           />
-        ) : <Paper style={{ padding: 10 }} >No Submitted Records</Paper> 
+        ) : <Paper style={{ padding: 10 }}>No Submitted Records</Paper> 
       }
     </div>
   )

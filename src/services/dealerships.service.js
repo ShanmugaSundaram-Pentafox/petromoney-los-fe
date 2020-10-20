@@ -82,6 +82,23 @@ export const postDealershipIncomeById = (id, body) => {
   });
 };
 
+export const updateDealershipIncomeById = (id, body) => {
+  return new Promise((resolve, reject) => {
+    API.post(`${URL.dealership}/income/details/${body.id}`, body)
+      .then(async ({ data }) => {
+        if (data.status === "SUCCESS") {
+          const res = await getDealershipIncomeById(id);
+          resolve(res);
+        } else {
+          reject(data.message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
+
 export const getDealershipExpensesById = (id) => {
   return new Promise((resolve, reject) => {
     API.get(`${URL.dealership}/${id}/expense/details`)
@@ -104,6 +121,23 @@ export const postDealershipExpensesById = (id, body) => {
       .then(async ({ data }) => {
         if (data.status === "SUCCESS") {
           const res = await getDealershipExpensesById(id)
+          resolve(res);
+        } else {
+          reject(data.message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
+
+export const updateDealershipExpenseById = (id, body) => {
+  return new Promise((resolve, reject) => {
+    API.post(`${URL.dealership}/expense/details/${body.id}`, body)
+      .then(async ({ data }) => {
+        if (data.status === "SUCCESS") {
+          const res = await getDealershipExpensesById(id);
           resolve(res);
         } else {
           reject(data.message);

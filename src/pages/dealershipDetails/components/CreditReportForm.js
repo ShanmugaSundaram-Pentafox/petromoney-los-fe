@@ -203,6 +203,26 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
       </Grid>
       <Grid {...gridItem} md={6}>
         <TextInput
+          readOnly={!editable}
+          label="Vintage with main banker"
+          name="vintage_with_banker"
+          type="number"
+          defaultValue={values.vintage_with_banker}
+          onChange={onChange}
+          />
+      </Grid>
+      <Grid {...gridItem} md={6}>
+        <TextInput
+          readOnly={!editable}
+          label="No of inward returns(last 6 months)"
+          name="inward_returns"
+          type="number"
+          defaultValue={values.inward_returns}
+          onChange={onChange}
+          />
+      </Grid>
+      <Grid {...gridItem} md={6}>
+        <TextInput
           select
           readOnly={!editable}
           label="No of other services"
@@ -213,12 +233,12 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
             native: true,
           }}
           >
-          <option value="0">NA / 0</option>
-          <option value="1">1 time</option>
-          <option value="2">2 times</option>
-          <option value="3">3 times</option>
-          <option value="4">4 times</option>
-          <option value=">4">&gt;4 times</option>
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
         </TextInput>
       </Grid>
       <Grid {...gridItem} md={6}>
@@ -233,12 +253,12 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
             native: true,
           }}
           >
-          <option value="0">NA / 0</option>
-          <option value="1">1 time</option>
-          <option value="2">2 times</option>
-          <option value="3">3 times</option>
-          <option value="4">4 times</option>
-          <option value=">4">&gt;4 times</option>
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
         </TextInput>
       </Grid>
       <Grid {...gridItem} md={6}>
@@ -475,7 +495,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
           disabled
           readOnly
           label="NP % Change"
-          name="net_profit_percentage_change"
+          name="net_profit_change_percentage"
           type="number"
           defaultValue={financeData.net_profit_percentage_change}
           onChange={onTextChange}
@@ -486,9 +506,9 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
           money
           readOnly={!editable}
           label="Income tax for the year"
-          name="income_tax"
+          name="it_paid"
           type="number"
-          defaultValue={financeData.income_tax}
+          defaultValue={financeData.it_paid}
           onChange={onTextChange}
           />
       </Grid>
@@ -497,9 +517,9 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
           money
           readOnly={!editable}
           label="Net Worth (Equity + Reserves)"
-          name="net_worth"
+          name="networth"
           type="number"
-          defaultValue={financeData.net_worth}
+          defaultValue={financeData.networth}
           onChange={onTextChange}
           />
       </Grid>
@@ -508,9 +528,9 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
           money
           readOnly={!editable}
           label="Value if assets owned by family members"
-          name="value_assets"
+          name="assets_value"
           type="number"
-          defaultValue={financeData.value_assets}
+          defaultValue={financeData.assets_value}
           onChange={onTextChange}
           />
       </Grid>
@@ -519,9 +539,9 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
           money
           readOnly={!editable}
           label="Total loan amount outstanding"
-          name="loan_amount_outstanding"
+          name="loan_os"
           type="number"
-          defaultValue={financeData.loan_amount_outstanding}
+          defaultValue={financeData.loan_os}
           onChange={onTextChange}
           />
       </Grid>
@@ -533,16 +553,6 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
           name="leverage"
           type="number"
           defaultValue={financeData.leverage}
-          onChange={onTextChange}
-          />
-      </Grid>
-      <Grid {...gridItem}>
-        <TextInput
-          readOnly={!editable}
-          label="Vintage with main banker"
-          name="vintage_with_banker"
-          type="number"
-          defaultValue={financeData.vintage_with_banker}
           onChange={onTextChange}
           />
       </Grid>

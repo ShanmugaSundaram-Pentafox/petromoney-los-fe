@@ -53,6 +53,7 @@ const ExpensesTable = ({ id, editable, values=[], currentUser }) => {
       .then(res => {
         setExpenses(res);
         setAddNewRow(false);
+        setApiData({});
       })
       .catch(err => {
         console.log('Expenses data save error - ', err);

@@ -97,8 +97,8 @@ const IncomeTable = ({ id, editable, currentUser }) => {
   }
 
 
-  const saveNewExpense = () => {
-    console.log('Expense api body - ', apiData)
+  const saveNewIncome = () => {
+    console.log('Income api body - ', apiData)
     if (Object.keys(apiData).length < 3) return null;
     const objBody = {
       user_id: currentUser.id, ...apiData
@@ -108,6 +108,7 @@ const IncomeTable = ({ id, editable, currentUser }) => {
         setIncome(res);
         setLoading(false);
         setAddNewRow(false);
+        setApiData({});
       })
       .catch(err => {
         console.log('Income data save error - ', err);
@@ -191,7 +192,7 @@ const IncomeTable = ({ id, editable, currentUser }) => {
                       variant="outlined"
                       color="success"
                       className={classes.btnSuccess}
-                      onClick={saveNewExpense}>
+                      onClick={saveNewIncome}>
                       <DoneRoundedIcon fontSize="small" />
                     </Button>
                   </Fragment>
@@ -200,7 +201,7 @@ const IncomeTable = ({ id, editable, currentUser }) => {
                     size="small"
                     variant="outlined"
                     className={classes.btnSuccess}
-                    onClick={() => setAddNewRow(true)}>Add Expense</Button>
+                    onClick={() => setAddNewRow(true)}>Add Income</Button>
                 ))
               }
             </TableCell>

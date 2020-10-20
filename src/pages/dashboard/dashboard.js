@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import _countBy from 'lodash/countBy'
 import LoansTable from './components/LoansTable';
 import usePageTitle from '../../hooks/usePageTitle';
+import Paper from '@material-ui/core/Paper';
 import { InfoBoxContainer, InfoBoxWrapper } from '../../components/CommonComponents/InfoBox';
 import styled from 'styled-components';
 import Grid from '@material-ui/core/Grid';
@@ -183,7 +184,7 @@ const Dashboard = ({ currentUser }) => {
       <Grid container spacing={2}>
         <Grid item md={6}>
           <DataCharts>
-            {Object.keys(ls1_metrices).length ? <SummaryTile ls1Data={ls1_metrices}/> : null}
+            {Object.keys(ls1_metrices).length ? <SummaryTile ls1Data={ls1_metrices}/> : <Paper style={{ padding: 10 }}>No Data Found</Paper> }
           </DataCharts>
         </Grid>
         <Grid item md={6}>
@@ -219,7 +220,7 @@ const Dashboard = ({ currentUser }) => {
         </Grid>
         <Grid item md={6}>
           <DataCharts>
-            <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion}/>
+            {ls2_metrices.length > 2 ? <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion}/> : <Paper style={{ padding: 10 }}>No Data Found. Check if EOD has been completed</Paper> }
           </DataCharts>
         </Grid>
         <Grid item md={6}>

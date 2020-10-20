@@ -21,7 +21,6 @@ import { getDealershipById, getDealershipLoansById } from '../../../services/dea
 import { getDealersByDealershipId } from '../../../services/dealers.service';
 import DealershipDetails from './DealershipDetails';
 import SubmittedTable from '../../../components/Tables/SubmittedTable';
-import LoanBookTable from '../../../components/Tables/LoanBookTable';
 import ApprovedTable from '../../../components/Tables/ApprovedTable';
 import DisbursedTable from '../../../components/Tables/DisbursedTable';
 import ApprovalReqestTable from '../../../components/Tables/ApprovalReqestTable';
@@ -261,9 +260,6 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
             </Grid>
             <Paper elevation={1} className={classes.tableContainer}>
               <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
-            </Paper>
-            <Paper elevation={1} className={classes.tableContainer}>
-              <LoanBookTable title={"Loan Book"} currentUser={currentUser}/>
             </Paper>
           </>
         )}

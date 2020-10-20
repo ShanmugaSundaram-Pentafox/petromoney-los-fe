@@ -18,6 +18,54 @@ export const getAllLoans = () => {
   });
 }
 
+export const getAll_ls1_Metrices = () => {
+  return new Promise((resolve, reject) => {
+    API.get(URL.ls1_metrices)
+      .then(({ data }) => {
+        if(data.status === "SUCCESS") {
+          resolve(data.data);
+        } else {
+          reject(data.message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const getAll_ls2_Metrices = () => {
+  return new Promise((resolve, reject) => {
+    API.get(URL.ls2_metrices)
+      .then(({ data }) => {
+        if(data.status === "SUCCESS") {
+          resolve(data.data);
+        } else {
+          reject(data.message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const getLoanBookData = () => {
+  return new Promise((resolve, reject) => {
+    API.get(URL.loanBook)
+      .then(({ data }) => {
+        if(data.status === "SUCCESS") {
+          resolve(data.data);
+        } else {
+          reject(data.message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
 export const getLoansByStatus = status => {
   return new Promise((resolve, reject) => {
     API.get(URL.loans, {

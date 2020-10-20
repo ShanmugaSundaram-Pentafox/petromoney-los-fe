@@ -1,7 +1,8 @@
 import { LoanActionTypes } from "./loans.types";
 
 const INITIAL_STATE = {
-  all_loans: []
+  all_loans: [],
+  loanBook: []
 }
 
 export const loanReducer = (state = INITIAL_STATE, action) => {
@@ -16,6 +17,11 @@ export const loanReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         [action.payload.status]: action.payload.data
+      }
+    case LoanActionTypes.SET_LOAN_BOOK_DATA:
+      return {
+        ...state,
+        loanBook: action.payload.data
       }
     default:
       return state;

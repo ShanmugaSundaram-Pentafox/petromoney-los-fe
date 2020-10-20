@@ -1,16 +1,30 @@
 import React, { useState } from 'react';
-import _countBy from 'lodash/countBy'
+import _countBy from 'lodash/countBy';
+
+import { makeStyles } from '@material-ui/styles';
 import LoansTable from './components/LoansTable';
 import usePageTitle from '../../hooks/usePageTitle';
+import Paper from '@material-ui/core/Paper';
 import { InfoBoxContainer, InfoBoxWrapper } from '../../components/CommonComponents/InfoBox';
 import styled from 'styled-components';
 import Grid from '@material-ui/core/Grid';
 import { Tooltip, LabelList,Legend, BarChart, CartesianGrid, XAxis, YAxis, Bar, Text } from 'recharts';
+import LoanBookTable from '../../components/Tables/LoanBookTable';
 import { useMount } from 'react-use';
 import moment from 'moment';
 import { getAllLoans, getAll_ls1_Metrices, getAll_ls2_Metrices } from '../../services/loans.service';
 import { SummaryTile, PieChartData, BarChartData } from './components/MetricsComponents';
 import Chart from "react-google-charts";
+
+
+const useStyles = makeStyles((theme) => ({
+  tableContainer: {
+    borderRadius: 6,
+    margin: 24,
+    marginTop: 16,
+    // marginBottom: 9,
+  }
+}));
 
 
 const DataCharts = styled.div`
@@ -115,10 +129,11 @@ const LoansNewTable = styled.div`
 `;
 
 const Dashboard = ({ currentUser }) => {
+  const classes = useStyles();
   usePageTitle('Dashboard');
   const [chartData, setChartData] = useState([]);
   const [ ls1_metrices, setLs1Metrices ] = useState([]);
-  const [ ls2_metrices, setLs2Metrices ] = useState(['Region', 'Amount']);
+  const [ ls2_metrices, setLs2Metrices ] = useState([]);
   const [ daysChartData, setdaysChartData ] = useState(['Days', 'Amount']);
   const [ totalForRegion, setTotalForRegion ] = useState(0)
 
@@ -166,7 +181,7 @@ const Dashboard = ({ currentUser }) => {
           total += item.od_amount;
           return [item.cust_region, item.od_amount]
         });
-        dataSource.unshift(['Region', 'Amount']);
+        dataSource.length && dataSource.unshift(['Region', 'Amount']);
         setTotalForRegion(total);
         setLs2Metrices(dataSource);
       })
@@ -183,7 +198,7 @@ const Dashboard = ({ currentUser }) => {
       <Grid container spacing={2}>
         <Grid item md={6}>
           <DataCharts>
-            {Object.keys(ls1_metrices).length ? <SummaryTile ls1Data={ls1_metrices}/> : null}
+            {Object.keys(ls1_metrices).length ? <SummaryTile ls1Data={ls1_metrices}/> : <Paper style={{ padding: 10 }}>No Data Found</Paper> }
           </DataCharts>
         </Grid>
         <Grid item md={6}>
@@ -219,7 +234,7 @@ const Dashboard = ({ currentUser }) => {
         </Grid>
         <Grid item md={6}>
           <DataCharts>
-            <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion}/>
+            {ls2_metrices.length ? <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion}/> : <Paper style={{ padding: 10 }}>No Data Found. Check if EOD has been completed</Paper> }
           </DataCharts>
         </Grid>
         <Grid item md={6}>
@@ -328,9 +343,13 @@ const Dashboard = ({ currentUser }) => {
       </LoansNewTableContainer>  
        */}
       {/* New table code end */}
-
+      <Paper elevation={1} className={classes.tableContainer}>
+        <LoanBookTable title={"Loan Book"} currentUser={currentUser}/>
+      </Paper>
 
       <LoansTable currentUser={currentUser} />
+
+
     </div>
   );
 }

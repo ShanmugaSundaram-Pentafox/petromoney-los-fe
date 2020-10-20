@@ -20,9 +20,9 @@ const useStyles = makeStyles(theme => ({
     padding: 8,
   },
   row: {
-    paddingLeft: 12,
+    paddingLeft: 10,
     paddingRight: 4,
-    paddingBottom: 14
+    paddingBottom: 10
   },
   titleRow: {
     paddingRight: 4,
@@ -35,11 +35,14 @@ const useStyles = makeStyles(theme => ({
     boxShadow: '0 1px 4px -3px #333'
   },
   sidePanelTitle: {
-    fontSize: 18,
+    fontSize: 16,
     padding: '8px 4px',
     marginBottom: 8,
     borderBottom: '1px dashed #ccc',
     background: '#f6f6f6'
+  },
+  textLabel: {
+    fontSize: 14,
   },
   sidePanelFormWrapper: {
     position: 'relative',
@@ -118,7 +121,7 @@ const ExperianReport = ({ id, type, onClose }) => {
         })
       return;
     }
-    
+
     getExperianReportById(id, type)
       .then(res => {
         setData(res[0] || {});

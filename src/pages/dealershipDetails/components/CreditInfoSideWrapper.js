@@ -83,6 +83,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [apiStatus, setApiStatus] = useState({});
+  const [apiData, setApiData] = useState([]);
 
   const getCreditInfo = () => {
     return new Promise((resolve, reject) => {
@@ -101,7 +102,11 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
   }
 
   React.useEffect(() => {
-    getCreditInfo();
+    getCreditInfo()
+      .then(res => {
+        setApiData(res);
+      })
+      .catch(e => null)
   }, []);
 
   const { values, errors, handleChange, handleSubmit, handleReset, setValues } = useFormik({
@@ -113,19 +118,21 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
       // setActiveStep(activeStep+1);
       // dealership/<int:dealership_id>/credit/info
       // return null;
-      API.post(`${URL.dealership}/${dealershipId}/credit/info`, { ...values, user_id: currentUser.id, dealer_id: data[activeStep].id }, {
+      const resData = apiData.find(n => n.dealer_id === data[activeStep].id);
+      API.post(`${URL.dealership}/${dealershipId}/credit/info`, { ...values, id: resData.id || undefined, user_id: currentUser.id, dealer_id: data[activeStep].id }, {
         withCredentials: true,
         credentials: 'include'
       })
-        .then(({ status, message, data }) => {
-          if(status == 'success') {
+        .then(({ data }) => {
+          // console.log(data, data.status, data.status == 'SUCCESS')
+          if(data.status == 'SUCCESS') {
             // setApiStatus({ type: 'success', message: message || `Credit Info updated for ${data[activeStep].id}` })
             setLoading(false);
             handleReset();
             setActiveStep(activeStep+1);
           }
           else {
-            setApiStatus({ show: true, type: 'error', message: message || 'Unable to save the details. Please try again later' })
+            setApiStatus({ show: true, type: 'error', message: data.message || 'Unable to save the details. Please try again later' })
             setLoading(false);
           }
         })
@@ -145,11 +152,14 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
         <Stepper activeStep={activeStep} orientation="vertical" className={classes.stepperRoot}>
           {
             Array.isArray(data) && data.map((item, i) => {
+              const resData = apiData.find(n => n.dealer_id === item.id);
+              // console.log('REs >> ', apiData, item);
+              const dealerData = { ...(resData || {}), ...values };
               return (
                 <Step key={item.id}>
-                  <StepLabel className={classes.stepTitle}>{item.first_name}  { values.cibil_score ? <b>({values.cibil_score})</b> : null }</StepLabel>
+                  <StepLabel className={classes.stepTitle}>{item.first_name}  { dealerData.cibil_score ? <b>({dealerData.cibil_score})</b> : null }</StepLabel>
                   <StepContent>
-                    <DealerCreditInfoForm data={item} values={values} errors={errors} onChange={handleChange} />
+                    <DealerCreditInfoForm data={item} values={dealerData} errors={errors} onChange={handleChange} />
                   </StepContent>
                 </Step>
               );

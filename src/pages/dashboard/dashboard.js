@@ -119,7 +119,7 @@ const Dashboard = ({ currentUser }) => {
   usePageTitle('Dashboard');
   const [chartData, setChartData] = useState([]);
   const [ ls1_metrices, setLs1Metrices ] = useState([]);
-  const [ ls2_metrices, setLs2Metrices ] = useState(['Region', 'Amount']);
+  const [ ls2_metrices, setLs2Metrices ] = useState([]);
   const [ daysChartData, setdaysChartData ] = useState(['Days', 'Amount']);
   const [ totalForRegion, setTotalForRegion ] = useState(0)
 
@@ -167,7 +167,7 @@ const Dashboard = ({ currentUser }) => {
           total += item.od_amount;
           return [item.cust_region, item.od_amount]
         });
-        dataSource.unshift(['Region', 'Amount']);
+        dataSource.length && dataSource.unshift(['Region', 'Amount']);
         setTotalForRegion(total);
         setLs2Metrices(dataSource);
       })
@@ -220,7 +220,7 @@ const Dashboard = ({ currentUser }) => {
         </Grid>
         <Grid item md={6}>
           <DataCharts>
-            {ls2_metrices.length > 2 ? <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion}/> : <Paper style={{ padding: 10 }}>No Data Found. Check if EOD has been completed</Paper> }
+            {ls2_metrices.length ? <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion}/> : <Paper style={{ padding: 10 }}>No Data Found. Check if EOD has been completed</Paper> }
           </DataCharts>
         </Grid>
         <Grid item md={6}>

@@ -32,3 +32,19 @@ export const getExperianReportById = (id, type) => {
       })
   });
 }
+
+export const refreshExperianReportById = (id, type) => {
+  return new Promise((resolve, reject) => {
+    API.get(`refresh/experian/report/consumer/${id}`)
+      .then(({ data }) => {
+        if(data.status === "SUCCESS") {
+          resolve(data.data);
+        } else {
+          reject(data.message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

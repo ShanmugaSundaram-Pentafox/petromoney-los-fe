@@ -12,7 +12,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { getExperianReportById } from '../../../services/common.service';
+import { getExperianReportById, refreshExperianReportById } from '../../../services/common.service';
 import Currency from '../../../components/Number/Currency';
 
 const useStyles = makeStyles(theme => ({
@@ -105,7 +105,20 @@ const ExperianReport = ({ id, type, onClose }) => {
   });
 
   const getReport = refresh => {
-    refresh && setLoading(true);
+    if(refresh) {
+      setLoading(true);
+      refreshExperianReportById(id, type)
+        .then(res => {
+          setData(res[0] || {});
+          setLoading(false);
+        })
+        .catch(err => {
+          setLoading(false);
+          console.log('Experian report fetch err - ', err);
+        })
+      return;
+    }
+    
     getExperianReportById(id, type)
       .then(res => {
         setData(res[0] || {});

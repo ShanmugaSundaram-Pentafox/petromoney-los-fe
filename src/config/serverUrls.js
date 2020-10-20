@@ -12,4 +12,7 @@ export const URL = {
   creditInfo: "credit/info",
   creditReport: "credit/report",
   upload: 'upload',
+  ls1_metrices: "business/metrics/ls1",
+  ls2_metrices: "business/metrics/ls2",
+  loanBook: 'business/loanbook',
 }

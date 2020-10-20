@@ -7,7 +7,16 @@ import styled from 'styled-components';
 import Grid from '@material-ui/core/Grid';
 import { Tooltip, LabelList,Legend, BarChart, CartesianGrid, XAxis, YAxis, Bar, Text } from 'recharts';
 import { useMount } from 'react-use';
-import { getAllLoans } from '../../services/loans.service';
+import moment from 'moment';
+import { getAllLoans, getAll_ls1_Metrices, getAll_ls2_Metrices } from '../../services/loans.service';
+import { SummaryTile, PieChartData, BarChartData } from './components/MetricsComponents';
+import Chart from "react-google-charts";
+
+
+const DataCharts = styled.div`
+padding: 20px 24px 8px;
+border-radius: 2px
+`;
 
 const LoansNewTableContainer = styled.div`
   display: flex;
@@ -108,6 +117,11 @@ const LoansNewTable = styled.div`
 const Dashboard = ({ currentUser }) => {
   usePageTitle('Dashboard');
   const [chartData, setChartData] = useState([]);
+  const [ ls1_metrices, setLs1Metrices ] = useState([]);
+  const [ ls2_metrices, setLs2Metrices ] = useState(['Region', 'Amount']);
+  const [ daysChartData, setdaysChartData ] = useState(['Days', 'Amount']);
+  const [ totalForRegion, setTotalForRegion ] = useState(0)
+
   useMount(() => {
     getAllLoans()
       .then(res => {
@@ -127,6 +141,35 @@ const Dashboard = ({ currentUser }) => {
       .catch(err => {
 
       })
+
+      getAll_ls1_Metrices().then(res => {
+        const result = res[0];
+        setLs1Metrices(result);
+        let overallData = [
+          ['Days', 'Amount'],
+          ['>=90 Days', result.gt90_days],
+          ['60-90 Days', result.gt60lt90_days],
+          ['30-60 Days', result.gt30lt60_days],
+          ['15-30 Days', result.gt15lt30_days],
+          ['4-15 Days', result.gt4lt15_days],
+          ['<=3 Days', result.lt3_days]
+        ]
+        setdaysChartData(overallData);
+      }).catch(err => {
+
+      })
+
+      getAll_ls2_Metrices().then(res => {
+        const result =  res;
+        let total = 0;
+        const dataSource = result.map((item, index) => {
+          total += item.od_amount;
+          return [item.cust_region, item.od_amount]
+        });
+        dataSource.unshift(['Region', 'Amount']);
+        setTotalForRegion(total);
+        setLs2Metrices(dataSource);
+      })
   });
 
   const CustomizedAxisTick = ({ x, y, payload }) => {
@@ -139,10 +182,15 @@ const Dashboard = ({ currentUser }) => {
     <div>
       <Grid container spacing={2}>
         <Grid item md={6}>
+          <DataCharts>
+            {Object.keys(ls1_metrices).length ? <SummaryTile ls1Data={ls1_metrices}/> : null}
+          </DataCharts>
+        </Grid>
+        <Grid item md={6}>
           <InfoBoxContainer>
             {
               chartData.length ? (
-                <InfoBoxWrapper>
+                <InfoBoxWrapper style={{ width: '100%'}}>
                   <p>Loans</p>
                   <BarChart
                     width={540}
@@ -156,7 +204,7 @@ const Dashboard = ({ currentUser }) => {
                     <YAxis type="number" domain={[0, 200]}/>
                     <Tooltip />
                     {/* <Legend dataKey="name" /> */}
-                    <Bar dataKey="count" fill="#ec6e30" barSize={30}>
+                    <Bar dataKey="count" fill="rgb(66, 133, 244)" barSize={30}>
                       <LabelList position="top" />
                     </Bar>
                     {/* <Bar width={20} dataKey="count" fill="#82ca9d" />
@@ -168,6 +216,16 @@ const Dashboard = ({ currentUser }) => {
               ) : null
             }
           </InfoBoxContainer>
+        </Grid>
+        <Grid item md={6}>
+          <DataCharts>
+            <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion}/>
+          </DataCharts>
+        </Grid>
+        <Grid item md={6}>
+          <DataCharts>
+            <BarChartData daysChartData={daysChartData}/>
+          </DataCharts>
         </Grid>
       </Grid>
 

@@ -289,20 +289,20 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
         <IncomeTable id={id} editable={editable} currentUser={currentUser} />
       </Grid>
       <Grid {...gridItem}>
-        <Text>Total Income <strong>{`-`}</strong></Text>
+        <Text>Total Income <strong><Currency value={values.total_income} /></strong></Text>
       </Grid>
       <Grid {...gridItem}>
-        <Text>Gross Income Considered <strong>{`-`}</strong></Text>
+        <Text>Gross Income Considered <strong><Currency value={values.gross_income_considered} /></strong></Text>
       </Grid>
       <Grid {...gridItem}>
         <Typography className={classes.sidePanelTitle} variant="h4">Expenses</Typography>
         <ExpensesTable id={id} editable={editable} currentUser={currentUser} />
       </Grid>
       <Grid {...gridItem}>
-        <Text>Total Expenses other than Depreciation, Interest &amp; Tax <strong>{`-`}</strong></Text>
+        <Text>Total Expenses other than Depreciation, Interest &amp; Tax <strong><Currency value={values.total_expense} /></strong></Text>
       </Grid>
       <Grid {...gridItem}>
-        <Text>EBIDTA (Gross Income - All Expenses) <strong>{`-`}</strong></Text>
+        <Text>EBIDTA (Gross Income - All Expenses) <strong><Currency value={values.gross_income_considered - values.total_expense} /></strong></Text>
       </Grid>
       <Grid {...gridItem}>
         <Typography className={classes.sidePanelTitle} variant="h4">Obligations</Typography>
@@ -328,7 +328,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 onChange={onChange}
                 />
             </Row>
-            <Row text={`Total Existing Obligations`} value={'-'} />
+            <Row text={`Total Existing Obligations`} value={<Currency value={values.total_obligations} />} />
           </TableBody>
         </Table>
       </Grid>
@@ -336,12 +336,12 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
         <Typography className={classes.sidePanelTitle} variant="h4">Eligibility</Typography>
         <Table className={classes.table} size="small" aria-label="Expenses">
           <TableBody>
-            <Row text={`FOIR % Considered`} value={'-'} />
-            <Row text={`FOIR % EBIDTA`} value={'-'} />
-            <Row text={`Eligibility for Loan`} value={'-'} />
-            <Row text={`Max monthly interest possible on fuel credit`} value={'-'} />
-            <Row text={`Applicable Interest Rate for Loan per Annum %`} value={'-'} />
-            <Row text={`Max Loan possible as per FOIR on EBIDTA`} value={'-'} />
+            <Row text={`FOIR % Considered`} value={`${values.foir}`} />
+            <Row text={`FOIR % EBIDTA`} value={values.foir_ebidta} />
+            <Row text={`Eligibility for Loan`} value={values.is_loan ? 'Yes' : '-'} />
+            <Row text={`Max monthly interest possible on fuel credit`} value={values.loan_interest} />
+            <Row text={`Applicable Interest Rate for Loan per Annum %`} value={values.applicable_interest} />
+            <Row text={`Max Loan possible as per FOIR on EBIDTA`} value={values.max_loan_possible} />
             <Row text={`Annual Turnover (Rs)`}>
               <TextInput
                 money
@@ -361,7 +361,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 onChange={onChange}
                 />
             </Row>
-            <Row text={`Max Loan possible as per Turnover criteria`} value={`-`} />
+            <Row text={`Max Loan possible as per Turnover criteria`} value={<Currency value={values.max_loan_possible} />} />
             <Row text={`Score as per Scorecard`}>
               <TextInput
                 readOnly={!editable}
@@ -371,20 +371,20 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 onChange={onChange}
                 />
             </Row>
-            <Row text={`Score Impact`} value={`-`} />
-            <Row text={`Max Loan Exposure Possible post Score Impact`} value={`-`} />
+            <Row text={`Score Impact`} value={values.score_impact} />
+            <Row text={`Max Loan Exposure Possible post Score Impact`} value={values.max_loan_score} />
             <Row text={`Max Exposure Cap as per policy (RS)`}>
               <TextInput
                 money
                 readOnly={!editable}
-                name="max_cap_policy"
+                name="max_loan_cap"
                 type="number"
-                value={values.max_cap_policy || ""}
+                value={values.max_loan_cap || ""}
                 onChange={onChange}
                 />
             </Row>
-            <Row text={`Existing PetroMoney Exposure`} value={`-`} />
-            <Row text={`Max Loan Possible (after applying policy caps) (Rs)`} value={`-`} />
+            <Row text={`Existing PetroMoney Exposure`} value={values.pm_exposure} />
+            <Row text={`Max Loan Possible (after applying policy caps) (Rs)`} value={<Currency value={values.max_loan_possible} />} />
             <Row text={`Loan Amount applied for (Rs)`}>
               <TextInput
                 money
@@ -405,8 +405,8 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 onChange={onChange}
                 />
             </Row>
-            <Row text={`Annual Interest on Loan Amount (Rs)`} value={`-`} />
-            <Row text={`FOIR % on fuel credit`} value={`-`} />
+            <Row text={`Annual Interest on Loan Amount (Rs)`} value={<Currency value={values.loan_interest} />} />
+            <Row text={`FOIR % on fuel credit`} value={values.foir_percentage*100} />
           </TableBody>
         </Table>
       </Grid>

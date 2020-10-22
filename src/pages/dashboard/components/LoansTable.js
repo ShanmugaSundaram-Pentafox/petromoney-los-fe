@@ -348,7 +348,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
           </div>
         </Paper>
       </div> */}
-      {/* <Drawer
+      <Drawer
         anchor="right"
         // elevation={4}
         ModalProps={{
@@ -366,7 +366,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
             onClose={() => { setShowPanel({ status: false }) }}
             />
         </div>
-      </Drawer> */}
+      </Drawer>
     </div>
   )
 }

@@ -96,7 +96,7 @@ const LoanInfo = ({
   status,
   newInfo,
   currentUser,
-  setNewLoanInfo
+  updateNewLoanInfo
 }) => {
   return (
     <LoanInfoWrapper>
@@ -130,8 +130,8 @@ const LoanInfo = ({
                             fullWidth={false}
                             value={newInfo.amount_approved}
                             onChange={e => {
-                              setNewLoanInfo({
-                                ...newInfo,
+                              console.log('>>> ', e.target.value)
+                              updateNewLoanInfo({
                                 [row.type]: e.target.value
                               })
                             }}
@@ -156,8 +156,7 @@ const LoanInfo = ({
                               fullWidth={false}
                               value={newInfo.amount_disbursed}
                               onChange={e => {
-                                setNewLoanInfo({
-                                  ...newInfo,
+                                updateNewLoanInfo({
                                   [row.type]: e.target.value
                                 })
                               }}
@@ -261,6 +260,14 @@ const DealershipDetails = ({
     });
   };
 
+  const updateNewLoanInfo = (d) => {
+    setNewLoanInfo({
+      ...newLoanInfo,
+      ...d
+    });
+    console.log('updateNewLoanInfo >> ', d, newLoanInfo)
+  }
+
   return (
     <div className={classes.wrapper}>
       <Typography className={classes.title} variant="h4" component="h4">{values.id}</Typography>
@@ -347,7 +354,7 @@ const DealershipDetails = ({
 
           <Grid {...gridProps}>
             {values.id ? <SalesInfo id={values.id} currentUser={currentUser} /> : null}
-            <LoanInfo data={loanInfo} status={status} newInfo={newLoanInfo} currentUser={currentUser} setNewLoanInfo={setNewLoanInfo} />
+            <LoanInfo data={loanInfo} status={status} newInfo={newLoanInfo} currentUser={currentUser} updateNewLoanInfo={updateNewLoanInfo} />
           </Grid>
           {
             ["loan_approval", "disbursement_approval"].includes(status) ? (

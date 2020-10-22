@@ -118,7 +118,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
       // setActiveStep(activeStep+1);
       // dealership/<int:dealership_id>/credit/info
       // return null;
-      const resData = apiData.find(n => n.dealer_id === data[activeStep].id);
+      const resData = apiData.find(n => n.dealer_id === data[activeStep].id) || {};
       API.post(`${URL.dealership}/${dealershipId}/credit/info`, { ...values, id: resData.id || undefined, user_id: currentUser.id, dealer_id: data[activeStep].id }, {
         withCredentials: true,
         credentials: 'include'

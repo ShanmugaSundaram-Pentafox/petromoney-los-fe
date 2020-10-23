@@ -130,9 +130,8 @@ const LoanInfo = ({
                             fullWidth={false}
                             value={newInfo.amount_approved}
                             onChange={e => {
-                              console.log('>>> ', e.target.value)
                               updateNewLoanInfo({
-                                [row.type]: e.target.value
+                                amount_approved: e.target.value
                               })
                             }}
                           />
@@ -157,7 +156,7 @@ const LoanInfo = ({
                               value={newInfo.amount_disbursed}
                               onChange={e => {
                                 updateNewLoanInfo({
-                                  [row.type]: e.target.value
+                                  amount_disbursed: e.target.value
                                 })
                               }}
                             />
@@ -200,7 +199,6 @@ const DealershipDetails = ({
   }, [data]);
 
   useEffect(() => {
-    console.log(loanData)
     if(loanData) {
       setLoanInfo(loanData)
       setNewLoanInfo(loanData)
@@ -265,7 +263,6 @@ const DealershipDetails = ({
       ...newLoanInfo,
       ...d
     });
-    console.log('updateNewLoanInfo >> ', d, newLoanInfo)
   }
 
   return (

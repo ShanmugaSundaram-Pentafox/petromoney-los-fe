@@ -8,6 +8,11 @@ import TableRow from '@material-ui/core/TableRow';
 import Tooltip from '@material-ui/core/Tooltip';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import Typography from '@material-ui/core/Typography';
 import Currency from '../../../components/Number/Currency';
 import { useMount } from 'react-use';
@@ -15,6 +20,7 @@ import { getDealershipLoansById } from '../../../services/dealerships.service';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { updateLoanApprovalStatusById } from '../../../services/loans.service';
+import TextInput from '../../../components/TextInput/TextInput';
 
 const useStyles = makeStyles({
   wrapper: {
@@ -34,6 +40,8 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
   const classes = useStyles();
   const [data, setLoansData] = useState();
   const [loading, setLoading] = useState(false);
+  const [remarks, setRemarks] = useState();
+  const [dialogState, setDialogState] = useState({});
   
   useMount(() => {
     getDealershipLoansById(id)
@@ -51,18 +59,28 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
       status = 'disbursement_approval'
     }
 
-    status && updateLoanApprovalStatusById(id, loan.id, { user_id: currentUser.id, status })
+    status && updateLoanApprovalStatusById(id, loan.id, { user_id: currentUser.id, status, remarks })
       .then(res => {
         setLoansData(res);
         setLoading(false);
+        setDialogState({});
       })
       .catch(err => {
         setLoading(false);
+        setDialogState({});
         console.log('Loan Status update error - ', err)
       })
   }
 
   const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit)
+
+  const getRemarks = loan => () => {
+    setDialogState({ open: true, data: loan });
+  }
+
+  const submitRemarks = () => {
+    processLoan({ ...dialogState.data });
+  }
 
   if(!data || !data.length)
     return (
@@ -110,7 +128,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
                       fontSize="small"
                       disabled={loading}
                       className={classes.btnSuccess}
-                      onClick={() => processLoan(row)}>
+                      onClick={getRemarks(row)}>
                         {
                           loading ? 'Pleaes wait...' : 'Send for Approval'
                         }
@@ -125,7 +143,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
                       fontSize="small"
                       disabled={loading}
                       className={classes.btnSuccess}
-                      onClick={() => processLoan(row)}>
+                      onClick={getRemarks(row)}>
                         {
                           loading ? 'Pleaes wait...' : 'Send for Disbursement Approval'
                         }
@@ -143,6 +161,40 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
           ))}
         </TableBody>
       </Table>
+
+      <Dialog
+        open={dialogState.open}
+        onClose={() => setDialogState({})}
+        aria-labelledby="approval-remarks"
+        aria-describedby="approval-remarks-desc"
+      >
+        <DialogTitle id="approval-remarks">Remarks: Send for {dialogState.data?.status?.toLowerCase() === 'submitted' ? `Approval` : 'Disbursement Approval'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="approval-remarks-desc">
+            Please enter your remarks for sending this for {dialogState.data?.status?.toLowerCase() === 'approved' ? `approval` : 'disbursement approval'}.
+          </DialogContentText>
+          <TextInput
+            multiline
+            rows={4}
+            rowsMax={8}
+            labelText="Remarks*"
+            alignTop
+            placeholder="Enter your remarks here."
+            value={remarks}
+            onChange={e => {
+              setRemarks(e.target.value);
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDialogState({})} color="primary">
+            Cancel
+          </Button>
+          <Button disabled={!remarks || loading} onClick={submitRemarks} color="primary" autoFocus>
+            {loading ? `Please wait...` : `Confirm`}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   )
 }

@@ -100,8 +100,8 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
             <Table className={classes.table} size="small" aria-label="Financials">
               <TableHead>
                 <TableRow>
+                <TableCell>Previous Financial Year</TableCell>
                   <TableCell>Latest Financial Year {values.from_year ? `${values.from_year}_${values.to_year}` : ''}</TableCell>
-                  <TableCell>Previous Financial Year</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

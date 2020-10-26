@@ -79,7 +79,8 @@ const SalesInfo = ({
   const classes = useStyles();
   const [addNewRow, setAddNewRow] = useState();
   const [apiData, setApiData] = useState({});
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [editRow, setEditRow] = useState({});
 
   useEffect(() => {
     if (id) {
@@ -120,6 +121,32 @@ const SalesInfo = ({
       .catch(err => {
         console.log('Sales data save error - ', err);
       })
+  }
+
+  const saveEditRow = (data, i) => {
+    const objBody = {
+      user_id: currentUser.id, ...data
+    }
+    postDealershipSalesById(id, objBody)
+      .then(res => {
+        setInfo(res);
+        setEditRow({});
+      })
+      .catch(err => {
+        console.log('Sales data save error - ', err);
+      })
+  }
+
+  const editSalesRow = (rowData, rowIndex) => {
+    setEditRow({ ...rowData, rowIndex });
+  }
+
+  const onEditTextChange = e => {
+    const { name, value } = e.target;
+    setEditRow({
+      ...editRow,
+      [name]: value
+    })
   }
 
   // if(Array.isArray(info) && !info.length)
@@ -165,11 +192,72 @@ const SalesInfo = ({
                 <TableCell align="center">MS</TableCell>
                 <TableCell align="center">HSD</TableCell>
                 <TableCell align="right">Total (in KL)</TableCell>
+                <TableCell align="right">Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {
-                info.map((row, i) => (
+                info.map((row, i) => i === editRow.rowIndex ? (
+                  <TableRow key={`edit-row-${i}`}>
+                    <TableCell scope="row" component="th">
+                      <TextInput
+                        fullWidth={false}
+                        label="From Year"
+                        name="from_year"
+                        type="number"
+                        value={editRow.from_year}
+                        onChange={onEditTextChange}
+                      />
+                      -
+                      <TextInput
+                        fullWidth={false}
+                        label="To Year"
+                        name="to_year"
+                        type="number"
+                        value={editRow.to_year}
+                        onChange={onEditTextChange}
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      <TextInput
+                        label="MS (KL)"
+                        name="ms"
+                        type="number"
+                        value={editRow.ms}
+                        onChange={onEditTextChange}
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      <TextInput
+                        label="HSD (KL)"
+                        name="hsd"
+                        type="number"
+                        value={editRow.hsd}
+                        onChange={onEditTextChange}
+                      />
+                    </TableCell>
+                    <TableCell>&nbsp;</TableCell>
+                    <TableCell align="center">
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        color="success"
+                        className={classes.btnSuccess}
+                        onClick={() => saveEditRow(editRow, i)}>
+                        Save
+                      </Button>
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        color="error"
+                        onClick={() => {
+                          setEditRow({});
+                        }}>
+                        Cancel
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ) : (
                   <TableRow key={i}>
                     <TableCell scope="row" component="th">{row.from_year} - {row.to_year}
                       {row.to_year >= 2020 ? <InfoOutlinedIcon
@@ -187,6 +275,16 @@ const SalesInfo = ({
                         <TableCell align="right">{row.hsd?.toFixed(2)}</TableCell>
                       </>}
                     <TableCell align="right">{(row.ms + row.hsd)?.toFixed(2)}</TableCell>
+                    <TableCell align="right">
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        color="success"
+                        className={classes.btnSuccess}
+                        onClick={() => editSalesRow(row, i)}>
+                        Edit
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))
               }
@@ -230,6 +328,7 @@ const SalesInfo = ({
                         onChange={onTextChange}
                       />
                     </TableCell>
+                    <TableCell>&nbsp;</TableCell>
                     <TableCell align="center">
                       <Button
                         size="small"

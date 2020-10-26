@@ -131,6 +131,7 @@ const LoanInfo = ({
                             value={newInfo.amount_approved}
                             onChange={e => {
                               updateNewLoanInfo({
+                                ...newInfo,
                                 amount_approved: e.target.value
                               })
                             }}
@@ -156,6 +157,7 @@ const LoanInfo = ({
                               value={newInfo.amount_disbursed}
                               onChange={e => {
                                 updateNewLoanInfo({
+                                  ...newInfo,
                                   amount_disbursed: e.target.value
                                 })
                               }}
@@ -175,6 +177,18 @@ const LoanInfo = ({
           }
         </TableBody>
       </Table>
+      {
+        row.recommendations && (
+          <Grid container>
+            <Grid item xs={4}>
+              Recommendations
+            </Grid>
+            <Grid item xs={8}>
+              <p>{row.recommendations}</p>
+            </Grid>
+          </Grid>
+        )
+      }
     </LoanInfoWrapper>
   )
 }
@@ -201,7 +215,11 @@ const DealershipDetails = ({
   useEffect(() => {
     if(loanData) {
       setLoanInfo(loanData)
-      setNewLoanInfo(loanData)
+      setNewLoanInfo({
+        ...loanData,
+        amount_approved: loanData.amount_requested,
+        amount_disbursed: loanData.amount_approved,
+      });
     };
   }, [loanData]);
   
@@ -220,18 +238,18 @@ const DealershipDetails = ({
     };
     let resMsg = '';
     if(status === "approved") {
-      if (loanData.amount_approved === newLoanInfo.amount_approved) {
-        setApiStatus({ type: 'error', message: 'Please check Approved amount. We see no change in Approved loan amount!' })
-        return null;
-      }
-      resMsg = 'Successfully Approved Loan Request'.
+      // if (loanData.amount_approved === newLoanInfo.amount_approved) {
+      //   setApiStatus({ type: 'error', message: 'Please check Approved amount. We see no change in Approved loan amount!' })
+      //   return null;
+      // }
+      resMsg = 'Successfully Approved Loan Request';
       reqBody.amount_approved = newLoanInfo.amount_approved;
     }
     if(status === "disbursed") {
-      if (loanData.amount_disbursed === newLoanInfo.amount_disbursed) {
-        setApiStatus({ type: 'error', message: 'Please check Disburse amount. We see no change in Disburse amount!' })
-        return null;
-      }
+      // if (loanData.amount_disbursed === newLoanInfo.amount_disbursed) {
+      //   setApiStatus({ type: 'error', message: 'Please check Disburse amount. We see no change in Disburse amount!' })
+      //   return null;
+      // }
       resMsg = 'Succussfully Approved Loan for Disbursement';
       reqBody.amount_disbursed = newLoanInfo.amount_disbursed;
     }

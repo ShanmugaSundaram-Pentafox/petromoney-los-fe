@@ -178,13 +178,13 @@ const LoanInfo = ({
         </TableBody>
       </Table>
       {
-        row.recommendations && (
+        row.recommendation_remarks && (
           <Grid container>
             <Grid item xs={4}>
               Recommendations
             </Grid>
             <Grid item xs={8}>
-              <p>{row.recommendations}</p>
+              <p>{row.recommendation_remarks}</p>
             </Grid>
           </Grid>
         )
@@ -225,34 +225,49 @@ const DealershipDetails = ({
   
   if(!data) return null;
 
-  const updateLoanStatus = status => {
-    if(!newLoanInfo.remarks) {
-      setApiStatus({ type: 'error', message: 'Please enter your remarks/comments.' });
-      return null
-    }
+  const updateLoanStatus = submitStatus => {
+    // if(!newLoanInfo.approval_remarks) {
+    //   setApiStatus({ type: 'error', message: 'Please enter your remarks/comments.' });
+    //   return null
+    // }
     setApiStatus({ loading: true, type: 'info', message: 'We are processing your request, Please wait...' });
     let reqBody = {
-      status,
-      remarks: newLoanInfo.remarks,
+      status: submitStatus,
       user_id: currentUser.id
     };
     let resMsg = '';
-    if(status === "approved") {
+    
+    if(status === "loan_approval") {
+      reqBody.approval_remarks = newLoanInfo.approval_remarks;
+    }
+    if(submitStatus === "approved") {
       // if (loanData.amount_approved === newLoanInfo.amount_approved) {
       //   setApiStatus({ type: 'error', message: 'Please check Approved amount. We see no change in Approved loan amount!' })
       //   return null;
       // }
-      resMsg = 'Successfully Approved Loan Request';
-      reqBody.amount_approved = newLoanInfo.amount_approved;
+      
+      if(status === "disbursement_approval") {
+        resMsg = 'Successfully Approved Loan Request';
+        reqBody.amount_approved = newLoanInfo.amount_approved;
+      } else if(status === "disbursement_approval") {
+        resMsg = 'Successfully Approved Loan for Disbursement';
+        reqBody.amount_disbursed = newLoanInfo.amount_disbursed;
+      }
     }
-    if(status === "disbursed") {
+    if(status === "disbursement_approval") {
+      reqBody.disbursement_approval_remarks = newLoanInfo.disbursement_approval_remarks;
+    }
+
+    if(submitStatus === 'rejected') {
+      resMsg = 'Request got rejected successfully';
+    }
+    // if(submitStatus === "disbursed") {
       // if (loanData.amount_disbursed === newLoanInfo.amount_disbursed) {
       //   setApiStatus({ type: 'error', message: 'Please check Disburse amount. We see no change in Disburse amount!' })
       //   return null;
       // }
-      resMsg = 'Succussfully Approved Loan for Disbursement';
-      reqBody.amount_disbursed = newLoanInfo.amount_disbursed;
-    }
+      
+    // }
     updateLoanApprovalStatusById(values.id, loanData.id, reqBody)
       .then(res => {
         setApiStatus({ type: 'success', message: resMsg })
@@ -371,8 +386,9 @@ const DealershipDetails = ({
             {values.id ? <SalesInfo id={values.id} currentUser={currentUser} /> : null}
             <LoanInfo data={loanInfo} status={status} newInfo={newLoanInfo} currentUser={currentUser} updateNewLoanInfo={updateNewLoanInfo} />
           </Grid>
+          
           {
-            ["loan_approval", "disbursement_approval"].includes(status) ? (
+            status == "loan_approval" ? (
               <Grid {...gridProps}>
                 <TextInput
                   multiline
@@ -382,27 +398,73 @@ const DealershipDetails = ({
                   alignTop
                   placeholder="Enter your remarks here."
                   readOnly={!permissionCheck(currentUser.role_name, rulesList.loan_approval)}
-                  value={newLoanInfo.remarks}
+                  value={newLoanInfo.approval_remarks}
                   onChange={e => {
                     setNewLoanInfo({
                       ...newLoanInfo,
-                      remarks: e.target.value
+                      approval_remarks: e.target.value
                     })
                   }}
                 />
               </Grid>
-            ) : (
+            ) : null
+          }
+          
+          {
+            status == "disbursement_approval" ? (
               <>
                 <Grid {...gridProps} md={2}>
-                  Remarks
+                  Remarks(Approval)
                 </Grid>
                 <Grid {...gridProps} md={8}>
                   <Typography variant="p" component={'p'}>
-                    {loanInfo.remarks}
+                    {loanInfo.approval_remarks}
+                  </Typography>
+                </Grid>
+
+                <Grid {...gridProps}>
+                  <TextInput
+                    multiline
+                    rows={4}
+                    rowsMax={8}
+                    labelText="Remarks*"
+                    alignTop
+                    placeholder="Enter your remarks here."
+                    readOnly={!permissionCheck(currentUser.role_name, rulesList.loan_approval)}
+                    value={newLoanInfo.disbursement_approval_remarks}
+                    onChange={e => {
+                      setNewLoanInfo({
+                        ...newLoanInfo,
+                        disbursement_approval_remarks: e.target.value
+                      })
+                    }}
+                  />
+                </Grid>
+              </>
+            ) : null
+          }
+
+          {
+            status == 'disbursed' ? (
+              <>
+                <Grid {...gridProps} md={2}>
+                  Remarks(Approval)
+                </Grid>
+                <Grid {...gridProps} md={8}>
+                  <Typography variant="p" component={'p'}>
+                    {loanInfo.approval_remarks}
+                  </Typography>
+                </Grid>
+                <Grid {...gridProps} md={2}>
+                  Remarks(Disbursement)
+                </Grid>
+                <Grid {...gridProps} md={8}>
+                  <Typography variant="p" component={'p'}>
+                    {loanInfo.disbursement_approval_remarks}
                   </Typography>
                 </Grid>
               </>
-            )
+            ) : null
           }
         </Grid>
       </div>

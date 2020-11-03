@@ -207,7 +207,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
           label="Vintage with main banker"
           name="vintage_with_banker"
           type="number"
-          value={values.vintage_with_banker || ""}
+          value={values.vintage_with_banker || 0}
           onChange={onChange}
           />
       </Grid>
@@ -217,7 +217,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
           label="No of inward returns(last 6 months)"
           name="inward_returns"
           type="number"
-          value={values.inward_returns || ""}
+          value={values.inward_returns || 0}
           onChange={onChange}
           />
       </Grid>

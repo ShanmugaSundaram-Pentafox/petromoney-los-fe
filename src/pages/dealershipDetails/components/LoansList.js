@@ -61,7 +61,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
 
     status && updateLoanApprovalStatusById(id, loan.id, { user_id: currentUser.id, status, recommendation_remarks: remarks })
       .then(res => {
-        setLoansData(res);
+        setLoansData(res.data);
         setLoading(false);
         setDialogState({});
       })

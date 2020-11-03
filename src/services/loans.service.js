@@ -111,7 +111,7 @@ export const updateLoanApprovalStatusById = (dealershipId, loanId, body) => {
       .then(async ({ data }) => {
         if(data.status === "SUCCESS") {
           const res = await getDealershipLoansById(dealershipId);
-          resolve(res);
+          resolve({ data: res, message: data.message });
         } else {
           reject(data.message);
         }

@@ -177,18 +177,14 @@ const LoanInfo = ({
           }
         </TableBody>
       </Table>
-      {
-        row.recommendation_remarks && (
-          <Grid container>
-            <Grid item xs={4}>
-              Recommendations
-            </Grid>
-            <Grid item xs={8}>
-              <p>{row.recommendation_remarks}</p>
-            </Grid>
-          </Grid>
-        )
-      }
+      <Grid container>
+        <Grid item xs={4}>
+          Recommendation Remarks:
+        </Grid>
+        <Grid item xs={8}>
+          <p>{row.recommendation_remarks}</p>
+        </Grid>
+      </Grid>
     </LoanInfoWrapper>
   )
 }
@@ -270,7 +266,7 @@ const DealershipDetails = ({
     // }
     updateLoanApprovalStatusById(values.id, loanData.id, reqBody)
       .then(res => {
-        setApiStatus({ type: 'success', message: resMsg })
+        setApiStatus({ type: 'success', message: res.message || resMsg })
       })
       .catch(err => {
         setApiStatus({ type: 'error', message: 'Unable to update status. Please contact your admin' })

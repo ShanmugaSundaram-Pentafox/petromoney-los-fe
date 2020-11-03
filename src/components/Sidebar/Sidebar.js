@@ -6,6 +6,7 @@ import { Divider, Drawer, List, ListItem, Button, colors } from '@material-ui/co
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import PeopleIcon from '@material-ui/icons/People';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
+import LocalShippingIcon from '@material-ui/icons/LocalShipping';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
@@ -91,6 +92,11 @@ const Sidebar = props => {
       href: '/dealership',
       icon: <PeopleIcon />
     },
+    {
+      title:'Transports',
+      href: '/transport',
+      icon: <LocalShippingIcon/>
+    }
     // {
     //   title: 'Account',
     //   href: '/account',

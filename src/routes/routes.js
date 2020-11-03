@@ -13,6 +13,7 @@ import Settings from '../pages/settings/settings';
 import DealershipDetails from '../pages/dealershipDetails/dealershipDetails';
 import Loans from '../pages/loanspage/loans'
 import CreditForm from '../pages/creditForm/creditForm';
+import Transport from '../pages/transports/transports';
 
 const Routes = ({ currentUser }) => {
   return (
@@ -21,6 +22,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute exact path="/dealership" component={Dealership} />
       <ProtectedRoute exact path="/loans" component={Loans} />
       <ProtectedRoute exact path="/dealership/:id?" component={DealershipDetails} />
+      <ProtectedRoute exact path='/transport' component={Transport} />
       <ProtectedRoute exact path="/dealership/:id/credit-form" component={CreditForm} />
       <ProtectedRoute exact path="/settings" component={Settings} />
       <Route exact path="/survey" render={props => <Survey {...props} />} />

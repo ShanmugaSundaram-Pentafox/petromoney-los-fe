@@ -16,6 +16,8 @@ import IncomeTable from './IncomeTable';
 import { postDealershipFinancialsById, getDealershipFinancialsById } from '../../../services/dealerships.service';
 import { useMount } from 'react-use';
 
+let ANNUAL_TURNOVER
+
 const useStyles = makeStyles(theme => ({
   row: {
     paddingRight: 4,
@@ -213,12 +215,14 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
       </Grid>
       <Grid {...gridItem} md={6}>
         <TextInput
+        select
           readOnly={!editable}
           label="No of inward returns(last 6 months)"
           name="inward_returns"
           type="number"
           value={values.inward_returns || ""}
           onChange={onChange}
+
           />
       </Grid>
       <Grid {...gridItem} md={6}>
@@ -341,14 +345,14 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
             <Row text={`Eligibility for Loan`} value={values.is_loan ? 'Yes' : '-'} />
             <Row text={`Max monthly interest possible on fuel credit`} value={values.loan_interest} />
             <Row text={`Applicable Interest Rate for Loan per Annum %`} value={values.applicable_interest} />
-            <Row text={`Max Loan possible as per FOIR on EBIDTA`} value={values.max_loan_possible} />
+            <Row text={`Max Loan possible as per FOIR on EBIDTA`} value={values.final_loan_value} />
             <Row text={`Annual Turnover (Rs)`}>
               <TextInput
                 money
                 readOnly={!editable}
                 name="turnover"
                 type="number"
-                value={values.turnover || ""}
+                value={ANNUAL_TURNOVER || ""}
                 onChange={onChange}
                 />
             </Row>
@@ -357,11 +361,12 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 readOnly={!editable}
                 name="turnover_percentage_loan"
                 type="number"
-                value={values.turnover_percentage_loan || ""}
+                value={values.loan_percentage * 100 || ""}
                 onChange={onChange}
                 />
             </Row>
             <Row text={`Max Loan possible as per Turnover criteria`} value={<Currency value={values.max_loan_possible} />} />
+            <Row text={`Max Loan Possible (Lower of FOIR & Turnover Criteria calculations)`} value={<Currency value={values.max_loan_possible} />}  />
             <Row text={`Score as per Scorecard`}>
               <TextInput
                 readOnly={!editable}
@@ -372,7 +377,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 />
             </Row>
             <Row text={`Score Impact`} value={values.score_impact} />
-            <Row text={`Max Loan Exposure Possible post Score Impact`} value={values.max_loan_score} />
+            <Row text={`Max Loan Exposure Possible post Score Impact`} value={values.max_loan_exposure} />
             <Row text={`Max Exposure Cap as per policy (RS)`}>
               <TextInput
                 money
@@ -405,7 +410,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 onChange={onChange}
                 />
             </Row>
-            <Row text={`Annual Interest on Loan Amount (Rs)`} value={<Currency value={values.loan_interest} />} />
+            <Row text={`Annual Interest on Loan Amount (Rs)`} value={<Currency value={values.annual_interest} />} />
             <Row text={`FOIR % on fuel credit`} value={values.foir_percentage*100} />
           </TableBody>
         </Table>
@@ -430,6 +435,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
         setFinanceData(res);
         const d = (res[0] || {}).to_year == 2020 && type == 'latest_fy' ? res[0] : res[1]; 
         setFinanceData(d || {});
+        ANNUAL_TURNOVER=d.turnover
       })
       .catch(err => {
         console.log('Finance data fetch error - ', type, err)

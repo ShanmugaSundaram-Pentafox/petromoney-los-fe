@@ -4,7 +4,7 @@ import { store } from "../store"
 
 export const getAllTransport = () => {
   const currentUser = store.getState().user.currentUser
-  console.log(currentUser)
+  console.log(currentUser.token)
   return new Promise((resolve, reject) => {
     API.get(URL.transport, {
       headers: {
@@ -13,7 +13,6 @@ export const getAllTransport = () => {
     })
       .then(({ data }) => {
         if (data.status === "SUCCESS") {
-          console.log(data)
           resolve(data.data)
         } else {
           reject(data.message)

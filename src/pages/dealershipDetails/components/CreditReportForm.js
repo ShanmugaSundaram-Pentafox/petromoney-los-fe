@@ -352,7 +352,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 readOnly={!editable}
                 name="turnover"
                 type="number"
-                value={ANNUAL_TURNOVER || ""}
+                value={annualTurnover || 0}
                 onChange={onChange}
                 />
             </Row>

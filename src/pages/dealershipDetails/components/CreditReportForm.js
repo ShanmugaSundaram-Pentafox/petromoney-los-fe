@@ -215,7 +215,6 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
       </Grid>
       <Grid {...gridItem} md={6}>
         <TextInput
-        select
           readOnly={!editable}
           label="No of inward returns(last 6 months)"
           name="inward_returns"

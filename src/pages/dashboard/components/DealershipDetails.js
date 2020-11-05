@@ -24,7 +24,7 @@ import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { selectCurrentUser } from '../../../store/user/user.selector';
 import { createStructuredSelector } from 'reselect';
-import { updateLoanApprovalStatusById } from '../../../services/loans.service';
+import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import Alert from '@material-ui/lab/Alert';
 
 const LoanInfoWrapper = styled.div`
@@ -98,28 +98,54 @@ const LoanInfo = ({
   currentUser,
   updateNewLoanInfo
 }) => {
+  const classes = useStyles();
   return (
-    <LoanInfoWrapper>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>Loan Type</TableCell>
-            <TableCell align="right">Req. Amount</TableCell>
-            <TableCell align="right">Amount Approved</TableCell>
-            {
-              ["disbursed", "disbursement_approval"].includes(status) ? <TableCell align="right">Disbursement Amount</TableCell> : null
-            }
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {
-            // data.map((row, i) => (
-              <TableRow key={row.id}>
-                <TableCell scope="row" component="th"><strong>{row.type}</strong></TableCell>
-                <TableCell align="right"><Currency value={row.amount_requested} /></TableCell>
-                <TableCell align="right">
-                  {
-                    status === "loan_approval" ? (
+    <>
+      <LoanInfoWrapper>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>Loan Type</TableCell>
+              <TableCell align="right">Req. Amount</TableCell>
+              <TableCell align="right">Amount Approved</TableCell>
+              {
+                ["disbursed", "disbursement_approval"].includes(status) ? <TableCell align="right">Disbursement Amount</TableCell> : null
+              }
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow key={row.id}>
+              <TableCell scope="row" component="th"><strong>{row.type}</strong></TableCell>
+              <TableCell align="right"><Currency value={row.amount_requested} /></TableCell>
+              <TableCell align="right">
+                {
+                  status === "loan_approval" ? (
+                    <UserCan
+                      role={currentUser.role_name}
+                      perform={rulesList.loan_approval}
+                      yes={() => (
+                        <TextInput
+                          money
+                          type="number"
+                          fullWidth={false}
+                          value={newInfo.amount_approved}
+                          onChange={e => {
+                            updateNewLoanInfo({
+                              ...newInfo,
+                              amount_approved: e.target.value
+                            })
+                          }}
+                        />
+                      )}
+                      no={() => "-"}
+                    />
+                  )
+                  : <Currency value={row.amount_approved} /> 
+                }
+              </TableCell>
+                {
+                  status === "disbursement_approval" ? (
+                    <TableCell align="right">
                       <UserCan
                         role={currentUser.role_name}
                         perform={rulesList.loan_approval}
@@ -128,68 +154,37 @@ const LoanInfo = ({
                             money
                             type="number"
                             fullWidth={false}
-                            value={newInfo.amount_approved}
+                            value={newInfo.amount_disbursed}
                             onChange={e => {
                               updateNewLoanInfo({
                                 ...newInfo,
-                                amount_approved: e.target.value
+                                amount_disbursed: e.target.value
                               })
                             }}
                           />
                         )}
                         no={() => "-"}
                       />
-                    )
-                    : <Currency value={row.amount_approved} /> 
-                  }
-                </TableCell>
-                  {
-                    status === "disbursement_approval" ? (
-                      <TableCell align="right">
-                        <UserCan
-                          role={currentUser.role_name}
-                          perform={rulesList.loan_approval}
-                          yes={() => (
-                            <TextInput
-                              money
-                              type="number"
-                              fullWidth={false}
-                              value={newInfo.amount_disbursed}
-                              onChange={e => {
-                                updateNewLoanInfo({
-                                  ...newInfo,
-                                  amount_disbursed: e.target.value
-                                })
-                              }}
-                            />
-                          )}
-                          no={() => "-"}
-                        />
-                      </TableCell>
-                    ) : (status == "disbursed" ? (
-                      <TableCell align="right">
-                        <Currency value={row.amount_disbursed} />
-                      </TableCell>
-                    )  : null)
-                  }
-              </TableRow>
-            // ))
-          }
-        </TableBody>
-      </Table>
-      {
-        row.recommendations && (
-          <Grid container>
-            <Grid item xs={4}>
-              Recommendations
-            </Grid>
-            <Grid item xs={8}>
-              <p>{row.recommendations}</p>
-            </Grid>
-          </Grid>
-        )
-      }
-    </LoanInfoWrapper>
+                    </TableCell>
+                  ) : (status == "disbursed" ? (
+                    <TableCell align="right">
+                      <Currency value={row.amount_disbursed} />
+                    </TableCell>
+                  )  : null)
+                }
+            </TableRow>
+          </TableBody>
+        </Table>
+      </LoanInfoWrapper>
+      <Grid container>
+        <Grid item xs={4} className={classes.gridItemStyle}>
+          Recommendation Remarks:
+        </Grid>
+        <Grid item xs={8} className={classes.gridItemStyle}>
+          <p>{row.recommendation_remarks}</p>
+        </Grid>
+      </Grid>
+    </>
   )
 }
 
@@ -209,53 +204,85 @@ const DealershipDetails = ({
   const classes = useStyles();
 
   useEffect(() => {
+    if(loanData?.id && data?.id) {
+      getLoanById(data.id, loanData.id)
+        .then(res => {
+          setLoanInfo(res);
+          setNewLoanInfo({
+            ...res,
+            amount_approved: res.amount_requested || 0,
+            amount_disbursed: res.amount_approved || 0,
+          });
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    }
+  }, [data, loanData]);
+
+  useEffect(() => {
     if(data) setValues(data);
   }, [data]);
 
-  useEffect(() => {
-    if(loanData) {
-      setLoanInfo(loanData)
-      setNewLoanInfo({
-        ...loanData,
-        amount_approved: loanData.amount_requested,
-        amount_disbursed: loanData.amount_approved,
-      });
-    };
-  }, [loanData]);
+  // useEffect(() => {
+  //   if(loanData) {
+      // setLoanInfo(loanData)
+      // setNewLoanInfo({
+      //   ...loanData,
+      //   amount_approved: loanData.amount_requested,
+      //   amount_disbursed: loanData.amount_approved,
+      // });
+  //   };
+  // }, [loanData]);
   
   if(!data) return null;
 
-  const updateLoanStatus = status => {
-    if(!newLoanInfo.remarks) {
-      setApiStatus({ type: 'error', message: 'Please enter your remarks/comments.' });
-      return null
-    }
+  const updateLoanStatus = submitStatus => {
+    // if(!newLoanInfo.approval_remarks) {
+    //   setApiStatus({ type: 'error', message: 'Please enter your remarks/comments.' });
+    //   return null
+    // }
     setApiStatus({ loading: true, type: 'info', message: 'We are processing your request, Please wait...' });
     let reqBody = {
-      status,
-      remarks: newLoanInfo.remarks,
+      status: submitStatus,
       user_id: currentUser.id
     };
     let resMsg = '';
-    if(status === "approved") {
+    
+    if(status === "loan_approval") {
+      reqBody.approval_remarks = newLoanInfo.approval_remarks;
+    }
+    if(submitStatus === "approved") {
       // if (loanData.amount_approved === newLoanInfo.amount_approved) {
       //   setApiStatus({ type: 'error', message: 'Please check Approved amount. We see no change in Approved loan amount!' })
       //   return null;
       // }
-      resMsg = 'Successfully Approved Loan Request';
-      reqBody.amount_approved = newLoanInfo.amount_approved;
+      
+      if(status === "disbursement_approval") {
+        resMsg = 'Successfully Approved Loan Request';
+        reqBody.amount_approved = newLoanInfo.amount_approved;
+      } else if(status === "disbursement_approval") {
+        resMsg = 'Successfully Approved Loan for Disbursement';
+        reqBody.amount_disbursed = newLoanInfo.amount_disbursed;
+      }
     }
-    if(status === "disbursed") {
+    if(status === "disbursement_approval") {
+      reqBody.disbursement_approval_remarks = newLoanInfo.disbursement_approval_remarks;
+    }
+
+    if(submitStatus === 'rejected') {
+      resMsg = 'Request got rejected successfully';
+    }
+    // if(submitStatus === "disbursed") {
       // if (loanData.amount_disbursed === newLoanInfo.amount_disbursed) {
       //   setApiStatus({ type: 'error', message: 'Please check Disburse amount. We see no change in Disburse amount!' })
       //   return null;
       // }
-      resMsg = 'Succussfully Approved Loan for Disbursement';
-      reqBody.amount_disbursed = newLoanInfo.amount_disbursed;
-    }
+      
+    // }
     updateLoanApprovalStatusById(values.id, loanData.id, reqBody)
       .then(res => {
-        setApiStatus({ type: 'success', message: resMsg })
+        setApiStatus({ type: 'success', message: res.message || resMsg })
       })
       .catch(err => {
         setApiStatus({ type: 'error', message: 'Unable to update status. Please contact your admin' })
@@ -371,8 +398,9 @@ const DealershipDetails = ({
             {values.id ? <SalesInfo id={values.id} currentUser={currentUser} /> : null}
             <LoanInfo data={loanInfo} status={status} newInfo={newLoanInfo} currentUser={currentUser} updateNewLoanInfo={updateNewLoanInfo} />
           </Grid>
+          
           {
-            ["loan_approval", "disbursement_approval"].includes(status) ? (
+            status == "loan_approval" ? (
               <Grid {...gridProps}>
                 <TextInput
                   multiline
@@ -382,27 +410,73 @@ const DealershipDetails = ({
                   alignTop
                   placeholder="Enter your remarks here."
                   readOnly={!permissionCheck(currentUser.role_name, rulesList.loan_approval)}
-                  value={newLoanInfo.remarks}
+                  value={newLoanInfo.approval_remarks}
                   onChange={e => {
                     setNewLoanInfo({
                       ...newLoanInfo,
-                      remarks: e.target.value
+                      approval_remarks: e.target.value
                     })
                   }}
                 />
               </Grid>
-            ) : (
+            ) : null
+          }
+          
+          {
+            status == "disbursement_approval" ? (
               <>
                 <Grid {...gridProps} md={2}>
-                  Remarks
+                  Remarks(Approval)
                 </Grid>
                 <Grid {...gridProps} md={8}>
                   <Typography variant="p" component={'p'}>
-                    {loanInfo.remarks}
+                    {loanInfo.approval_remarks}
+                  </Typography>
+                </Grid>
+
+                <Grid {...gridProps}>
+                  <TextInput
+                    multiline
+                    rows={4}
+                    rowsMax={8}
+                    labelText="Remarks*"
+                    alignTop
+                    placeholder="Enter your remarks here."
+                    readOnly={!permissionCheck(currentUser.role_name, rulesList.loan_approval)}
+                    value={newLoanInfo.disbursement_approval_remarks}
+                    onChange={e => {
+                      setNewLoanInfo({
+                        ...newLoanInfo,
+                        disbursement_approval_remarks: e.target.value
+                      })
+                    }}
+                  />
+                </Grid>
+              </>
+            ) : null
+          }
+
+          {
+            status == 'disbursed' ? (
+              <>
+                <Grid {...gridProps} md={2}>
+                  Remarks(Approval)
+                </Grid>
+                <Grid {...gridProps} md={8}>
+                  <Typography variant="p" component={'p'}>
+                    {loanInfo.approval_remarks}
+                  </Typography>
+                </Grid>
+                <Grid {...gridProps} md={2}>
+                  Remarks(Disbursement)
+                </Grid>
+                <Grid {...gridProps} md={8}>
+                  <Typography variant="p" component={'p'}>
+                    {loanInfo.disbursement_approval_remarks}
                   </Typography>
                 </Grid>
               </>
-            )
+            ) : null
           }
         </Grid>
       </div>

@@ -87,7 +87,11 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
       // dealership/<int:dealership_id>/credit/info
       // return null;
       const id = apiData.id || undefined;
-      API.post(`${URL.dealership}/${dealershipId}/credit/report`, { ...values, id, user_id: currentUser.id })
+      let reqData = {};
+      if(id) {
+        reqData = apiData;
+      }
+      API.post(`${URL.dealership}/${dealershipId}/credit/report`, { ...reqData, ...values, id, user_id: currentUser.id })
         .then(({ data }) => {
           if(data.status == 'SUCCESS') {
             setApiStatus({ type: 'success', message: data.message || 'Report details updated' })

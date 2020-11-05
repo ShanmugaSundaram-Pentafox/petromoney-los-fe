@@ -18,7 +18,35 @@ export const rulesForUserRoles = {
       rulesList.dealership_credit_view,
     ]
   },
+  CREDIT_HEAD: {
+    static: [
+      rulesList.dashboard,
+      rulesList.loan_approval,
+      rulesList.dealer_credit_view,
+      rulesList.dealership_credit_view,
+    ]
+  },
   ADMIN: {
+    static: [
+      rulesList.loan_approval,
+      rulesList.dashboard,
+      rulesList.dealership_edit,
+      rulesList.dealer_edit,
+      rulesList.dealer_credit_edit,
+      rulesList.dealership_credit_edit,
+    ]
+  },
+  CFO: {
+    static: [
+      rulesList.loan_approval,
+      rulesList.dashboard,
+      rulesList.dealership_edit,
+      rulesList.dealer_edit,
+      rulesList.dealer_credit_edit,
+      rulesList.dealership_credit_edit,
+    ]
+  },
+  CREDIT_EXEC: {
     static: [
       rulesList.loan_approval,
       rulesList.dashboard,

@@ -386,7 +386,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 onChange={onChange}
                 />
             </Row>
-            <Row text={`Max Loan Possible (after applying policy caps) (Rs)`} value={<Currency value={values.max_loan_possible} />} />
+            <Row text={`Max Loan Possible (after applying policy caps) (Rs)`} value={<Currency value={values.final_loan_value} />} />
             <Row text={`Loan Amount applied for (Rs)`}>
               <TextInput
                 money

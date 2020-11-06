@@ -30,35 +30,6 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-/*
-{
-  "address": "HPC DEALER T.C.ROAD IRRITY 670703",
-  "address_2": "None",
-  "auto": "No",
-  "business_property": "2",
-  "business_type": "1",
-  "created_date": "Sat, 28 Dec 2019 14:40:10 GMT",
-  "deal_status": "",
-  "district": "KL-KANNUR",
-  "doi": "02-Dec-2010",
-  "gst": "33FGSPM5019G2Z5",
-  "id": 12830330,
-  "is_microatm": "",
-  "latitude": 0.0,
-  "location": "IRRITY                   ",
-  "longtitude": 0.0,
-  "modified_date": "0000-00-00 00:00:00",
-  "name": "MS HSD CANNANORE PETROLEUM PRODUCTS     ",
-  "nhsh": "SH30",
-  "pan": "FGSPM6019G",
-  "pincode": "None",
-  "region": "KOZHICODE (CALICUT) Retail RO",
-  "sales_area": "Kannur Retail S.A.",
-  "state": "Kerala",
-  "urh": "Highway",
-  "zone": "South"
-}
-*/
 
 const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) => {
   const [readOnly, setReadOnly] = useState(true);

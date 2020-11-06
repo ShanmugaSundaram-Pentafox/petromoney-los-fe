@@ -6,7 +6,6 @@ const selectTransportsData = state => {
 
 } 
 
-
 export const selectAllTransports = createSelector(
   [selectTransportsData],
   transports => transports.all

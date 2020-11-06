@@ -30,37 +30,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-/*
-{
-  "address": "HPC DEALER T.C.ROAD IRRITY 670703",
-  "address_2": "None",
-  "auto": "No",
-  "business_property": "2",
-  "business_type": "1",
-  "created_date": "Sat, 28 Dec 2019 14:40:10 GMT",
-  "deal_status": "",
-  "district": "KL-KANNUR",
-  "doi": "02-Dec-2010",
-  "gst": "33FGSPM5019G2Z5",
-  "id": 12830330,
-  "is_microatm": "",
-  "latitude": 0.0,
-  "location": "IRRITY                   ",
-  "longtitude": 0.0,
-  "modified_date": "0000-00-00 00:00:00",
-  "name": "MS HSD CANNANORE PETROLEUM PRODUCTS     ",
-  "nhsh": "SH30",
-  "pan": "FGSPM6019G",
-  "pincode": "None",
-  "region": "KOZHICODE (CALICUT) Retail RO",
-  "sales_area": "Kannur Retail S.A.",
-  "state": "Kerala",
-  "urh": "Highway",
-  "zone": "South"
-}
-*/
-
-const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) => {
+const TransportsInfo = ({ data, className, currentUser, toggleCreditReport }) => {
   const [readOnly, setReadOnly] = useState(true);
   const [loading, setLoading] = useState();
   const [apiStatus, setApiStatus] = useState({});
@@ -89,7 +59,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         })
     }
   });
-  // const [values, setValues] = useState(data);
+//   // const [values, setValues] = useState(data);
   const classes = useStyles();
   const gridProps = {
     item: true,
@@ -97,12 +67,12 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
     className: classes.gridItemStyle
   }
 
-  // const handleChange = event => {
-  //   setValues({
-  //     ...values,
-  //     [event.target.name]: event.target.value
-  //   });
-  // };
+//   // const handleChange = event => {
+//   //   setValues({
+//   //     ...values,
+//   //     [event.target.name]: event.target.value
+//   //   });
+//   // };
 
   const fieldProps = {
     readOnly,
@@ -116,8 +86,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         autoComplete="off"
         noValidate
       >
-        {/* <CardHeader title={`${values.id} - ${values.name}`} /> */}
-        {/* <Divider /> */}
         <CardContent>
           <Grid container>
             <Grid {...gridProps}>
@@ -139,9 +107,27 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
             </Grid>
             <Grid {...gridProps}>
               <TextInput
+                multiline
+                labelText="Mobile"
+                name="mobile"
+                defaultValue={values.mobile}
+                {...fieldProps}
+                />
+            </Grid>
+            <Grid {...gridProps}>
+              <TextInput
+                multiline
+                labelText="OMC"
+                name="omc"
+                defaultValue={values.omc}
+                {...fieldProps}
+                />
+            </Grid>
+            <Grid {...gridProps}>
+              <TextInput
                 labelText="Pincode"
                 name="pincode"
-                defaultValue={values.pincode}
+                defaultValue={values.pincode === 'NULL' ? '' : values.pincode}
                 {...fieldProps}
                 />
             </Grid>
@@ -198,9 +184,9 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
             </Grid>
             <Grid {...gridProps} xs={6}>
               <TextInput 
-                labelText="Sales Area"
+                labelText="Region"
                 labelWidth={40}
-                defaultValue={values.sales_area}
+                defaultValue={values.region}
                 readOnly
                 />
             </Grid>
@@ -248,4 +234,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
   );
 };
 
-export default DealershipInfo;
+export default TransportsInfo;
+
+

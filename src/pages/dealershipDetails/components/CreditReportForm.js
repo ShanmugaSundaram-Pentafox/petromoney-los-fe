@@ -353,7 +353,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 onChange={onChange}
                 />
             </Row>
-            <Row text={`Max Loan possible as per Turnover criteria`} value={<Currency value={max_loan_turnover} />} />
+            <Row text={`Max Loan possible as per Turnover criteria`} value={<Currency value={values.max_loan_turnover} />} />
             <Row text={`Max Loan Possible (Lower of FOIR & Turnover Criteria calculations)`} value={<Currency value={values.max_loan_possible} />}  />
             <Row text={`Score as per Scorecard`}>
               <TextInput

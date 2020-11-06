@@ -35,7 +35,7 @@ const TransportsTable = ({ transports, setAllTransports  }) => {
           filter: false,
           sort: true,
           customBodyRender: value => {
-            return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
+            return <RouterLink to={`/transports/${value}`}>{value}</RouterLink>
           }
         }
       },

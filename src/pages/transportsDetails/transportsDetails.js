@@ -1,0 +1,129 @@
+import React, { useState } from "react";
+// import { makeStyles } from "@material-ui/styles";
+// // import Typography from "@material-ui/core/Typography";
+// import Grid from "@material-ui/core/Grid";
+// import Divider from "@material-ui/core/Divider";
+// import Button from "@material-ui/core/Button";
+// import Paper from "@material-ui/core/Paper";
+// import Drawer from '@material-ui/core/Drawer';
+// import DealershipInfo from "./components/DealershipInfo";
+// import { useMount } from "react-use";
+// import { getDealershipById } from "../../services/dealerships.service";
+// import { getDealersByDealershipId } from "../../services/dealers.service";
+// import DealersList from "./components/DealersList";
+// import LoansList from "./components/LoansList";
+// import DealershipDoc from "./components/DocList";
+// import { NavLink as RouterLink } from "react-router-dom";
+// import SalesInfo from "../dashboard/components/SalesInfo";
+// import usePageTitle from "../../hooks/usePageTitle";
+// import CreditReportSideWrapper from "./components/CreditReportSideWrapper";
+
+// const useStyles = makeStyles((theme) => ({
+//   root: {
+//     padding: theme.spacing(2),
+//     paddingTop: theme.spacing(1),
+//   },
+//   title: {
+//     fontWeight: 600,
+//     marginBottom: theme.spacing(1),
+//   },
+//   titleActionContainer: {
+//     textAlign: "right",
+//   },
+//   topSpacing: {
+//     marginTop: theme.spacing(2),
+//   },
+//   bottomSpacing: {
+//     marginBottom: theme.spacing(2),
+//   },
+//   sidePanelWrapper: {
+//     width: 700
+//   }
+// }));
+
+
+function TransportsDetails() {
+    return <h1>TransportsDetails Page</h1>
+}
+
+
+
+// const TransportsDetails = ({ currentUser, match }) => {
+//   const classes = useStyles();
+//   const [dealershipData, setDealershipData] = useState();
+//   const [dealersData, setDealersData] = useState();
+//   const [showCreditReport, setShowCreditReport] = useState();
+//   const {
+//     url,
+//     params: { id },
+//   } = match;
+
+//   const toggleCreditReport = () => {
+//     setShowCreditReport(!showCreditReport);
+//   }
+
+//   useMount(() => {
+//     getDealershipById(id)
+//       .then((data) => setDealershipData(data))
+//       .catch((e) => null);
+
+//     getDealersByDealershipId(id)
+//       .then((data) => setDealersData(data))
+//       .catch((e) => null);
+//   });
+
+//   usePageTitle(`${id} - ${dealershipData && dealershipData.name}`)
+
+//   return (
+//     <div className={classes.root}>
+//       <Grid container>
+//         <Grid item md={5} xs={12}>
+//           {/* <Typography className={classes.title} variant="h4">
+//             {id} - {dealershipData && dealershipData.name}
+//           </Typography> */}
+//         </Grid>
+//         <Grid item md={7} xs={12} className={classes.titleActionContainer}>
+//           <Drawer
+//             anchor="right"
+//             open={showCreditReport}
+//             variant="temporary"
+//           >
+//             <div className={classes.sidePanelWrapper}>
+//               <CreditReportSideWrapper
+//                 dealershipId={id}
+//                 data={{}}
+//                 currentUser={currentUser}
+//                 onClose={toggleCreditReport}
+//               />
+//             </div>
+//           </Drawer>
+//         </Grid>
+//       </Grid>
+//       <Divider className={classes.bottomSpacing} />
+//       <Grid container spacing={2}>
+//           <Grid item md={6} xs={12}>
+//             {dealershipData && (
+//               <DealershipInfo data={dealershipData} currentUser={currentUser} toggleCreditReport={toggleCreditReport} />
+//             )}
+//             <Paper className={classes.topSpacing}>
+//               <DealershipDoc id={id} currentUser={currentUser} />
+//             </Paper>
+//           </Grid>
+
+//         <Grid item md={6} xs={12}>
+//           <Paper className={classes.bottomSpacing}>
+//             <LoansList id={id} titleAlign="left" currentUser={currentUser} />
+//           </Paper>
+//           <Paper className={classes.bottomSpacing}>
+//             <DealersList id={id} titleAlign="left" currentUser={currentUser} />
+//           </Paper>
+//           <Paper className={classes.bottomSpacing}>
+//             <SalesInfo id={id} titleAlign="left" currentUser={currentUser} column />
+//           </Paper>
+//         </Grid>
+//       </Grid>
+//     </div>
+//   );
+// };
+
+export default TransportsDetails;

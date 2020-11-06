@@ -72,7 +72,6 @@ const Row = ({ text, value, children }) => {
 }
 
 const CreditReportForm = ({ id, editable, data, values, errors, onChange, setValues, currentUser }) => {
-  const [annualTurnover, setAnnualTurnover] = useState(0);
   const classes = useStyles();
   const gridItem = {
     md: 12,
@@ -133,7 +132,6 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                       editable={editable}
                       btnLabel={'Latest FY'}
                       currentUser={currentUser}
-                      setAnnualTurnover={setAnnualTurnover}
                     />
                   </TableCell>
                 </TableRow>
@@ -345,7 +343,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
             <Row text={`Max monthly interest possible on fuel credit`} value={<Currency value={values.max_loan_interest} />} />
             <Row text={`Applicable Interest Rate for Loan per Annum %`} value={values.applicable_interest} />
             <Row text={`Max Loan possible as per FOIR on EBIDTA`} value={<Currency value={values.max_loan_foir} />} />
-            <Row text={`Annual Turnover (Rs)`} value={<Currency value={annualTurnover} />} />
+            <Row text={`Annual Turnover (Rs)`} value={<Currency value={values.annual_turnover} />} />
             <Row text={`% of Turnover to be considered for Loan`}>
               <TextInput
                 readOnly={!editable}
@@ -355,7 +353,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 onChange={onChange}
                 />
             </Row>
-            <Row text={`Max Loan possible as per Turnover criteria`} value={<Currency value={annualTurnover * (values.loan_percentage/100)} />} />
+            <Row text={`Max Loan possible as per Turnover criteria`} value={<Currency value={max_loan_turnover} />} />
             <Row text={`Max Loan Possible (Lower of FOIR & Turnover Criteria calculations)`} value={<Currency value={values.max_loan_possible} />}  />
             <Row text={`Score as per Scorecard`}>
               <TextInput
@@ -418,7 +416,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
   )
 }
 
-const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors,  currentUser, setAnnualTurnover }) => {
+const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors,  currentUser }) => {
   const classes = useStyles();
   const [financeData, setFinanceData] = useState(values);
   const [financeErrors, setFinanceErrors] = useState({});
@@ -434,8 +432,6 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
         setFinanceData(res);
         const d = (res[0] || {}).to_year == 2020 && type == 'latest_fy' ? res[0] : res[1]; 
         setFinanceData(d || {});
-        setAnnualTurnover && setAnnualTurnover(d.turnover);
-        // ANNUAL_TURNOVER=d.turnover
       })
       .catch(err => {
         console.log('Finance data fetch error - ', type, err)

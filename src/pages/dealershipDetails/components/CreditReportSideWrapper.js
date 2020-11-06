@@ -64,7 +64,7 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
   const [apiData, setApiData] = useState({});
   const [apiStatus, setApiStatus] = useState({});
 
-  useEffect(() => {
+  const getCreditReport = () => {
     API.get(`${URL.dealership}/${dealershipId}/credit/report`)
       .then(({ data }) => {
         if(data.status === "SUCCESS") {
@@ -76,6 +76,10 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
       .catch(e => {
         // reject(e.message);
       })
+  }
+
+  useEffect(() => {
+    getCreditReport();
   }, [])
 
   const { values, errors, handleChange, handleSubmit, handleReset, setValues } = useFormik({
@@ -94,9 +98,10 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
       API.post(`${URL.dealership}/${dealershipId}/credit/report`, { ...reqData, ...values, id, user_id: currentUser.id })
         .then(({ data }) => {
           if(data.status == 'SUCCESS') {
+            getCreditReport();
             setApiStatus({ type: 'success', message: data.message || 'Report details updated' })
             setLoading(false);
-            handleReset();
+            // handleReset();
           }
           else {
             setApiStatus({ type: 'error', message: data.message || 'Unable to save the details. Please try again later' })

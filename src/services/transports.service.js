@@ -6,11 +6,7 @@ export const getAllTransport = () => {
   const currentUser = store.getState().user.currentUser
   console.log(currentUser.token)
   return new Promise((resolve, reject) => {
-    API.get(URL.transport, {
-      headers: {
-        Authorization: `Bearer ${currentUser.token}`,
-      },
-    })
+    API.get(URL.transport)
       .then(({ data }) => {
         if (data.status === "SUCCESS") {
           resolve(data.data)

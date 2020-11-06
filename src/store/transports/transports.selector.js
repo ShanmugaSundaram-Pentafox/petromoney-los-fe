@@ -1,6 +1,11 @@
 import { createSelector } from 'reselect';
 
-const selectTransportsData = state => state.transports;
+const selectTransportsData = state => {
+  console.log(state.transports);
+  return state.transports;
+
+} 
+
 
 export const selectAllTransports = createSelector(
   [selectTransportsData],

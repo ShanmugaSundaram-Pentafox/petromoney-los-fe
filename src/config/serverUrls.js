@@ -4,7 +4,7 @@ export const URL = {
   loans: "loans",
   sanction: "loans/sanction",
   dealership: "dealership",
-  transport: 'transporters',
+  transport: 'transporterslist',
   dealers: "dealers",
   coApplicants: "coapplicants",
   checklist: "checklist",

@@ -345,26 +345,17 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
             <Row text={`Max monthly interest possible on fuel credit`} value={<Currency value={values.max_loan_interest} />} />
             <Row text={`Applicable Interest Rate for Loan per Annum %`} value={values.applicable_interest} />
             <Row text={`Max Loan possible as per FOIR on EBIDTA`} value={<Currency value={values.max_loan_foir} />} />
-            <Row text={`Annual Turnover (Rs)`}>
-              <TextInput
-                money
-                readOnly={!editable}
-                name="turnover"
-                type="number"
-                value={annualTurnover || 0}
-                onChange={onChange}
-                />
-            </Row>
+            <Row text={`Annual Turnover (Rs)`} value={<Currency value={annualTurnover} />} />
             <Row text={`% of Turnover to be considered for Loan`}>
               <TextInput
                 readOnly={!editable}
-                name="turnover_percentage_loan"
+                name="loan_percentage"
                 type="number"
-                value={values.loan_percentage * 100 || 0}
+                value={values.loan_percentage || 1}
                 onChange={onChange}
                 />
             </Row>
-            <Row text={`Max Loan possible as per Turnover criteria`} value={<Currency value={annualTurnover * values.loan_percentage} />} />
+            <Row text={`Max Loan possible as per Turnover criteria`} value={<Currency value={annualTurnover * (values.loan_percentage/100)} />} />
             <Row text={`Max Loan Possible (Lower of FOIR & Turnover Criteria calculations)`} value={<Currency value={values.max_loan_possible} />}  />
             <Row text={`Score as per Scorecard`}>
               <TextInput

@@ -150,24 +150,6 @@ const TransportsInfo = ({ data, className, currentUser, toggleCreditReport }) =>
             <Divider />
             <Grid {...gridProps} xs={6}>
               <TextInput 
-                labelText="Latitude"
-                name="latitude"
-                labelWidth={40}
-                defaultValue={values.latitude}
-                {...fieldProps}
-                />
-            </Grid>
-            <Grid {...gridProps} xs={6}>
-              <TextInput 
-                labelText="Longtitude"
-                name="longtitude"
-                labelWidth={40}
-                defaultValue={values.longtitude}
-                {...fieldProps}
-                />
-            </Grid>
-            <Grid {...gridProps} xs={6}>
-              <TextInput 
                 labelText="District"
                 labelWidth={40}
                 defaultValue={values.district}

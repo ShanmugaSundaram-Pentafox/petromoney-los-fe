@@ -17,7 +17,8 @@ import { logger } from '../../../config/logger';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-// import { Typography } from '@material-ui/core';
+
+
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -213,9 +214,9 @@ const TransportsInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         </CardActions>
       </form>
     </Card>
+
   );
 };
 
 export default TransportsInfo;
-
 

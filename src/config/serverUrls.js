@@ -6,6 +6,7 @@ export const URL = {
   dealership: "dealership",
   transport: 'transporterslist',
   transportInfo: 'transporter/info',
+  vehicleInfo: 'transporters',
   dealers: "dealers",
   coApplicants: "coapplicants",
   checklist: "checklist",

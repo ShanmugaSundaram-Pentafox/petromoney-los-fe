@@ -8,7 +8,11 @@ import TransportsInfo from "./components/transportsInfo"
 import { useMount } from "react-use"
 import { NavLink as RouterLink } from "react-router-dom"
 import usePageTitle from "../../hooks/usePageTitle"
-import { getTransporterInfoFromID } from "../../services/transports.service"
+import {
+  getTransporterInfoFromID,
+  getVehicleInfoFromID,
+} from "../../services/transports.service"
+import VehicleInfo from "./components/VehicleInfo"
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,6 +45,7 @@ const useStyles = makeStyles((theme) => ({
 const TransportsDetails = ({ currentUser, match }) => {
   const classes = useStyles()
   const [transportsData, setTransportsData] = useState()
+  const [vehicleData, setVehicleData] = useState()
   const {
     url,
     params: { id },
@@ -49,6 +54,13 @@ const TransportsDetails = ({ currentUser, match }) => {
   useMount(() => {
     getTransporterInfoFromID(id)
       .then((data) => setTransportsData(...data))
+      .catch((e) => null)
+
+    getVehicleInfoFromID(id)
+      .then((data) => {
+        console.log(data)
+        setVehicleData(data)
+      })
       .catch((e) => null)
 
     // getDealersByDealershipId(id)
@@ -63,6 +75,11 @@ const TransportsDetails = ({ currentUser, match }) => {
         <Grid item md={6} xs={12}>
           {transportsData && (
             <TransportsInfo data={transportsData} currentUser={currentUser} />
+          )}
+        </Grid>
+        <Grid item md={6} xs={12}>
+          {vehicleData && (
+            <VehicleInfo data={vehicleData} currentUser={currentUser} />
           )}
         </Grid>
       </Grid>

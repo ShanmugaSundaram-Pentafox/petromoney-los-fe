@@ -190,12 +190,7 @@ const TransportsInfo = ({ data, className, currentUser, toggleCreditReport }) =>
           )
         }
         <CardActions className={classes.actionFooter}>
-          <Button
-            color="primary"
-            size="small"
-            variant="contained"
-            onClick={toggleCreditReport}
-            >View/Edit Financial Report</Button>
+            
           {!readOnly ? (
               !loading ? (
                 <>

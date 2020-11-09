@@ -37,6 +37,7 @@ const AccordionSummary = withStyles({
     "&$expanded": {
       margin: "12px 0",
     },
+    justifyContent: "space-between",
   },
   expanded: {},
 })(MuiAccordionSummary)
@@ -67,9 +68,9 @@ export default function VehicleInfo({ data, currentUser }) {
                 aria-controls="panel1d-content"
                 id="panel1d-header"
               >
+                <Typography>Vehicle Number: {vehicleInfo.tt_no}</Typography>
                 <Typography>
-                  Vehicle Number: {vehicleInfo.tt_no} - Credit Limit:{" "}
-                  <Currency value={vehicleInfo.credit_limit} />
+                  Credit Limit: <Currency value={vehicleInfo.credit_limit} />
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>

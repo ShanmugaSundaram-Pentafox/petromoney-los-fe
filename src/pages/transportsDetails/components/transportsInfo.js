@@ -17,7 +17,8 @@ import { logger } from '../../../config/logger';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-// import { Typography } from '@material-ui/core';
+
+
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -30,8 +31,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-
-const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) => {
+const TransportsInfo = ({ data, className, currentUser, toggleCreditReport }) => {
   const [readOnly, setReadOnly] = useState(true);
   const [loading, setLoading] = useState();
   const [apiStatus, setApiStatus] = useState({});
@@ -60,7 +60,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         })
     }
   });
-  // const [values, setValues] = useState(data);
+//   // const [values, setValues] = useState(data);
   const classes = useStyles();
   const gridProps = {
     item: true,
@@ -68,12 +68,12 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
     className: classes.gridItemStyle
   }
 
-  // const handleChange = event => {
-  //   setValues({
-  //     ...values,
-  //     [event.target.name]: event.target.value
-  //   });
-  // };
+//   // const handleChange = event => {
+//   //   setValues({
+//   //     ...values,
+//   //     [event.target.name]: event.target.value
+//   //   });
+//   // };
 
   const fieldProps = {
     readOnly,
@@ -87,8 +87,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         autoComplete="off"
         noValidate
       >
-        {/* <CardHeader title={`${values.id} - ${values.name}`} /> */}
-        {/* <Divider /> */}
         <CardContent>
           <Grid container>
             <Grid {...gridProps}>
@@ -110,9 +108,27 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
             </Grid>
             <Grid {...gridProps}>
               <TextInput
+                multiline
+                labelText="Mobile"
+                name="mobile"
+                defaultValue={values.mobile}
+                {...fieldProps}
+                />
+            </Grid>
+            <Grid {...gridProps}>
+              <TextInput
+                multiline
+                labelText="OMC"
+                name="omc"
+                defaultValue={values.omc}
+                {...fieldProps}
+                />
+            </Grid>
+            <Grid {...gridProps}>
+              <TextInput
                 labelText="Pincode"
                 name="pincode"
-                defaultValue={values.pincode}
+                defaultValue={values.pincode === 'NULL' ? '' : values.pincode}
                 {...fieldProps}
                 />
             </Grid>
@@ -135,24 +151,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
             <Divider />
             <Grid {...gridProps} xs={6}>
               <TextInput 
-                labelText="Latitude"
-                name="latitude"
-                labelWidth={40}
-                defaultValue={values.latitude}
-                {...fieldProps}
-                />
-            </Grid>
-            <Grid {...gridProps} xs={6}>
-              <TextInput 
-                labelText="Longtitude"
-                name="longtitude"
-                labelWidth={40}
-                defaultValue={values.longtitude}
-                {...fieldProps}
-                />
-            </Grid>
-            <Grid {...gridProps} xs={6}>
-              <TextInput 
                 labelText="District"
                 labelWidth={40}
                 defaultValue={values.district}
@@ -169,9 +167,9 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
             </Grid>
             <Grid {...gridProps} xs={6}>
               <TextInput 
-                labelText="Sales Area"
+                labelText="Region"
                 labelWidth={40}
-                defaultValue={values.sales_area}
+                defaultValue={values.region}
                 readOnly
                 />
             </Grid>
@@ -192,12 +190,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
           )
         }
         <CardActions className={classes.actionFooter}>
-          <Button
-            color="primary"
-            size="small"
-            variant="contained"
-            onClick={toggleCreditReport}
-            >View/Edit Financial Report</Button>
+            
           {!readOnly ? (
               !loading ? (
                 <>
@@ -216,7 +209,9 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         </CardActions>
       </form>
     </Card>
+
   );
 };
 
-export default DealershipInfo;
+export default TransportsInfo;
+

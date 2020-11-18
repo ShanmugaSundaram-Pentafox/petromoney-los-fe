@@ -178,12 +178,24 @@ const LoanInfo = ({
       </LoanInfoWrapper>
       <Grid container>
         <Grid item xs={4} className={classes.gridItemStyle}>
-          Recommendation Remarks:
+          Recommendation Remarks(Approval):
         </Grid>
         <Grid item xs={8} className={classes.gridItemStyle}>
           <p>{row.recommendation_remarks}</p>
         </Grid>
       </Grid>
+      {
+        row.disbursement_recommendation_remarks && (
+          <Grid container>
+            <Grid item xs={4} className={classes.gridItemStyle}>
+              Recommendation Remarks(Disbursement):
+            </Grid>
+            <Grid item xs={8} className={classes.gridItemStyle}>
+              <p>{row.disbursement_recommendation_remarks}</p>
+            </Grid>
+          </Grid>
+        )
+      }
     </>
   )
 }
@@ -253,12 +265,7 @@ const DealershipDetails = ({
       reqBody.approval_remarks = newLoanInfo.approval_remarks;
     }
     if(submitStatus === "approved") {
-      // if (loanData.amount_approved === newLoanInfo.amount_approved) {
-      //   setApiStatus({ type: 'error', message: 'Please check Approved amount. We see no change in Approved loan amount!' })
-      //   return null;
-      // }
-      
-      if(status === "disbursement_approval") {
+      if(status === "loan_approval") {
         resMsg = 'Successfully Approved Loan Request';
         reqBody.amount_approved = newLoanInfo.amount_approved;
       } else if(status === "disbursement_approval") {

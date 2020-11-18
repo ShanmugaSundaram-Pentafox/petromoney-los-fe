@@ -50,16 +50,18 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
   });
 
   const processLoan = loan => {
-    let status;
+    let status, remarksObj = {};
     if(loan.status.toLowerCase() === "submitted") {
       setLoading(true);
       status = 'loan_approval';
+      remarksObj.recommendation_remarks = remarks;
     } else if (loan.status.toLowerCase() === "approved") {
       setLoading(true);
-      status = 'disbursement_approval'
+      status = 'disbursement_approval';
+      remarksObj.disbursement_recommendation_remarks = remarks;
     }
 
-    status && updateLoanApprovalStatusById(id, loan.id, { user_id: currentUser.id, status, recommendation_remarks: remarks })
+    status && updateLoanApprovalStatusById(id, loan.id, { user_id: currentUser.id, status, ...remarksObj })
       .then(res => {
         setLoansData(res.data);
         setLoading(false);
@@ -109,12 +111,12 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
               <TableCell>{row.type}</TableCell>
               <TableCell align="right"><Currency value={row.amount_requested} /></TableCell>
               <TableCell align="right">
-                <Tooltip title={row.remarks} arrow>
+                <Tooltip title={row.approval_remarks} arrow>
                   <Currency value={row.amount_approved} />
                 </Tooltip>
               </TableCell>
               <TableCell align="right">
-                <Tooltip title={row.remarks} arrow>
+                <Tooltip title={row.disbursement_approval_remarks} arrow>
                   <Currency value={row.amount_disbursed} />
                 </Tooltip>
               </TableCell>

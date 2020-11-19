@@ -127,7 +127,7 @@ const DisbursementReqestTable = ({ title, loans, setLoansData, onRowClick }) => 
     isRowSelectable: () => false,
     onRowClick: (rowData, { dataIndex }) => {
       // console.log(rowData, rowMeta);
-      onRowClick(loans[dataIndex].dealership_id, 'disbursement_approval')
+      onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'disbursement_approval')
     }
   };
 

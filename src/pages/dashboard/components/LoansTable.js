@@ -135,7 +135,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
   });
   const [dealershipData, setDealershipData] = useState();
   const [loansData, setLoansData] = useState();
-  const [dealersData, setDealersData] = useState();
+  // const [dealersData, setDealersData] = useState();
   
   const showDealershipInfo = (id, selectedLoanData, status) => {
     setLoansData(selectedLoanData);
@@ -149,9 +149,9 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
     //   .then(data => setLoansData(data))
     //   .catch(e => null)
   
-    getDealersByDealershipId(id)
-      .then(data => setDealersData(data))
-      .catch(e => null)
+    // getDealersByDealershipId(id)
+    //   .then(data => setDealersData(data))
+    //   .catch(e => null)
 
     setShowPanel({ status: true, data: status});
   }

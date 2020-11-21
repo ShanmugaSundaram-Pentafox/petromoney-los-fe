@@ -34,10 +34,11 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1)
   },
   active: {
-    color: theme.palette.primary.white,
+    backgroundColor: '#343e5f',
+    // color: colors.blueGrey[800],
     fontWeight: theme.typography.fontWeightMedium,
     '& $icon': {
-      color: theme.palette.primary.white
+      // color: colors.blueGrey[800]
     }
   }
 }));
@@ -53,7 +54,6 @@ const CustomRouterLink = forwardRef((props, ref) => (
 
 const SidebarNav = props => {
   const { pages, className, ...rest } = props;
-
   const classes = useStyles();
 
   return (

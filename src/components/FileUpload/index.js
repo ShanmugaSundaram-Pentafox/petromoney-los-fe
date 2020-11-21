@@ -1,29 +1,8 @@
 import React from "react";
 import { DropzoneDialog } from "material-ui-dropzone";
-import { useSnackbar } from 'notistack';
-import { uploadDocument } from '../../services/dealerships.service';
 
-const FileUpload = ({id,data, open, onCloseUploader }) => {
-  const { enqueueSnackbar } = useSnackbar();
-
-  const handleSave = (files) => {
-    const formData = new FormData();
-    files.map(file => {
-      const docName = data.doc_name.replace(/[()%.,+\-&]/g, '').toLowerCase().replace(/\s/g, '_');
-      formData.append(`file-${id}`, file);
-      formData.append(`fileName`, docName);
-      formData.append(`id`, data.doc_id);
-    });
-    uploadDocument(id, formData)
-      .then(data => {
-        enqueueSnackbar('File Upload Success', { variant: "success" });
-        onCloseUploader();
-      })
-      .catch(e => {
-        enqueueSnackbar('File Upload Failed', { variant: "error" });
-      });
-  };
-
+const FileUpload = ({id,data, open, onCloseUploader, handleSave }) => {
+ 
   return (
     <DropzoneDialog
       open={open}
@@ -32,7 +11,7 @@ const FileUpload = ({id,data, open, onCloseUploader }) => {
           disableBackdropClick: true
       }}
       onSave={handleSave}
-      acceptedFiles={["image/jpeg", "image/png"]}
+      acceptedFiles={["image/jpeg", "image/png", ".pdf"]}
       showPreviews={true}
       submitButtonText={'Upload'}
       maxFileSize={5000000}

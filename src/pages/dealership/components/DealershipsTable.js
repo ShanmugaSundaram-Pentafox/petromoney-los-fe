@@ -3,6 +3,7 @@ import { NavLink as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from "mui-datatables";
 import Typography from '@material-ui/core/Typography';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { useMount } from 'react-use';
 import { getAllDealership } from '../../../services/dealerships.service';
 import { selectAllDealerships } from '../../../store/dealership/dealership.selector';
@@ -16,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     paddingTop: 0
   },
   title: {
-    fontWeight: 600
+    fontWeight: 500
   }
 }));
 /*
@@ -80,7 +81,7 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
         label: 'Sales Area',
         name: 'sales_area',
         options: {
-          filter: false,
+          filter: true,
           sort: true
         }
       },
@@ -133,6 +134,7 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
   const options = {
     // filterType: 'checkbox',
     selectableRowsHeader: false,
+    selectableRows: 'none',
     isRowSelectable: () => false
   };
 
@@ -146,7 +148,7 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
             columns={columns}
             options={options}
           />
-        ) : null
+        ) : <CircularProgress />
       }
     </div>
   )

@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
-import clsx from 'clsx';
+import React, { useState, useRef, useEffect } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import TextInput from '../../../components/TextInput/TextInput';
-import { useFormik } from 'formik';
 
 const useStyles = makeStyles({
   row: {
@@ -14,61 +12,66 @@ const useStyles = makeStyles({
 });
 
 const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
+  const [formData, setFormData] = useState({});
   const classes = useStyles();
   const gridItem = {
     md: 12,
     item: true,
     className: classes.row
   };
+
+  useEffect(() => {
+    setFormData(values);
+  }, [values])
   
   return (
     <Grid container>
       <Grid {...gridItem}>
         <TextInput
           label="CIBIL Score"
-          name="cibil"
+          name="cibil_score"
           type="number"
-          defaultValue={values.cibil}
+          value={formData.cibil_score || ""}
           onChange={onChange}
           />
       </Grid>
       <Grid {...gridItem} md={6}>
         <TextInput
           label="Total no.of loans"
-          name="loans"
-          defaultValue={values.loans}
+          name="loans_count"
+          value={formData.loans_count || ""}
           onChange={onChange}
           />
       </Grid>
       <Grid {...gridItem} md={6}>
         <TextInput
           label="No of closed loans"
-          name="loans_closed"
-          defaultValue={values.loans_closed}
+          name="closed_loans_count"
+          value={formData.closed_loans_count || ""}
           onChange={onChange}
           />
       </Grid>
       <Grid {...gridItem} md={6}>
         <TextInput
           label="No of overdue accounts"
-          name="overdue_acc"
-          defaultValue={values.overdue_acc}
+          name="od_accounts_count"
+          value={formData.od_accounts_count || ""}
           onChange={onChange}
           />
       </Grid>
       <Grid {...gridItem} md={6}>
         <TextInput
           label="Overdue Amount"
-          name="overdue_amount"
-          defaultValue={values.overdue_amount}
+          name="od_amount"
+          value={formData.od_amount || ""}
           onChange={onChange}
           />
       </Grid>
       <Grid {...gridItem}>
         <TextInput
           label="Current O/S amount"
-          name="os_amount"
-          defaultValue={values.os_amount}
+          name="current_os_amount"
+          value={formData.current_os_amount || ""}
           onChange={onChange}
           />
       </Grid>
@@ -76,15 +79,15 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
         <TextInput
           label="Vintage with CIBIL bureau"
           name="cibil_vintage"
-          defaultValue={values.cibil_vintage}
+          value={formData.cibil_vintage || ""}
           onChange={onChange}
           />
       </Grid>
       <Grid {...gridItem}>
         <TextInput
           label="No of enquiries last 6 months"
-          name="enquiries"
-          defaultValue={values.enquiries}
+          name="no_of_enquiries"
+          value={formData.no_of_enquiries || ""}
           onChange={onChange}
           />
       </Grid>
@@ -93,16 +96,16 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
           <TextInput
             select
             label="Loans in Bureau Report"
-            name="loans_bureau"
-            value={values.loans_bureau}
+            name="is_loan_in_bureau"
+            value={formData.is_loan_in_bureau}
             onChange={onChange}
             SelectProps={{
               native: true,
             }}
             >
               <option value="NA">Select</option>
-              <option value="Y">Yes</option>
-              <option value="N">No</option>
+              <option value="1">Yes</option>
+              <option value="0">No</option>
           </TextInput>
         </Grid>
       </Grid>
@@ -110,8 +113,8 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
         <TextInput
           select
           label="No of times of highest DPD"
-          name="highest_dpd_count"
-          value={values.highest_dpd_count}
+          name="highest_dpd"
+          value={formData.highest_dpd}
           onChange={onChange}
           SelectProps={{
             native: true,
@@ -121,15 +124,15 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
           <option value="1">1 time</option>
           <option value="2">2 times</option>
           <option value="3">3 times</option>
-          <option value=">3">>3 times</option>
+          <option value=">3">&gt;3 times</option>
         </TextInput>
       </Grid>
       <Grid {...gridItem} md={6}>
         <TextInput
           select
           label="Highest DPD bracket"
-          name="highest_dpd"
-          value={values.highest_dpd}
+          name="highest_dpd_bracket"
+          value={formData.highest_dpd_bracket}
           onChange={onChange}
           SelectProps={{
             native: true,
@@ -150,16 +153,16 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
           <TextInput
             select
             label="Credit Card in Bureau Report"
-            name="credit_card"
-            value={values.credit_card}
+            name="is_cc_in_cibil"
+            value={formData.is_cc_in_cibil}
             onChange={onChange}
             SelectProps={{
               native: true,
             }}
           >
             <option value="NA">Select</option>
-            <option value="Y">Yes</option>
-            <option value="N">No</option>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
           </TextInput>
         </Grid>
       </Grid>
@@ -167,8 +170,8 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
         <TextInput
           select
           label="Status - For Loans & Credit Cards"
-          name="status_loans"
-          defaultValue={values.status_loans}
+          name="status"
+          value={formData.status}
           onChange={onChange}
           SelectProps={{
             native: true,

@@ -14,10 +14,12 @@ const InputWrapper = styled.div`
     margin-right: 8px;
     text-align: right;
     padding: 4px 0;
+    color: #242424;
   }
 
   .text-field {
     margin: 4px 0;
+    background-color: #fff;
   }
 `;
 
@@ -44,6 +46,7 @@ const TextInput = ({
         placeholder,
         ...inputProps
       }}
+      back
       onChange={onChange}
       InputProps={{
         startAdornment: money && <InputAdornment position="start">₹</InputAdornment>,

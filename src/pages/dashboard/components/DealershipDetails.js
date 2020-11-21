@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import Divider from '@material-ui/core/Divider';
@@ -19,6 +20,12 @@ import TableCell from '@material-ui/core/TableCell';
 import Currency from '../../../components/Number/Currency';
 import SalesInfo from './SalesInfo';
 import TextInput from '../../../components/TextInput/TextInput';
+import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
+import { selectCurrentUser } from '../../../store/user/user.selector';
+import { createStructuredSelector } from 'reselect';
+import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
+import Alert from '@material-ui/lab/Alert';
 
 const LoanInfoWrapper = styled.div`
   padding: 12px;
@@ -85,62 +92,111 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const LoanInfo = ({
-  data,
+  data: row,
   status,
   newInfo,
-  setNewLoanInfo
+  currentUser,
+  updateNewLoanInfo
 }) => {
+  const classes = useStyles();
   return (
-    <LoanInfoWrapper>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>Loan Type</TableCell>
-            <TableCell align="right">Req. Amount</TableCell>
-            <TableCell align="right">Amount Approved</TableCell>
-            {
-              status == "disbursed" ? <TableCell align="right">Amount Disbursed</TableCell> : null
-            }
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {
-            data.map((row, i) => (
-              <TableRow key={row.id}>
-                <TableCell scope="row" component="th"><strong>{row.type}</strong></TableCell>
-                <TableCell align="right"><Currency value={row.amount_requested} /></TableCell>
-                <TableCell align="right">
-                  {
-                    status === "submitted" ? (
-                      <TextInput
-                        money
-                        type="number"
-                        fullWidth={false}
-                        value={newInfo.amount_approved}
-                        onChange={e => {
-                          setNewLoanInfo({
-                            ...newInfo,
-                            [row.type]: e.target.value
-                          })
-                        }}
+    <>
+      <LoanInfoWrapper>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>Loan Type</TableCell>
+              <TableCell align="right">Req. Amount</TableCell>
+              <TableCell align="right">Amount Approved</TableCell>
+              {
+                ["disbursed", "disbursement_approval"].includes(status) ? <TableCell align="right">Disbursement Amount</TableCell> : null
+              }
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow key={row.id}>
+              <TableCell scope="row" component="th"><strong>{row.type}</strong></TableCell>
+              <TableCell align="right"><Currency value={row.amount_requested} /></TableCell>
+              <TableCell align="right">
+                {
+                  status === "loan_approval" ? (
+                    <UserCan
+                      role={currentUser.role_name}
+                      perform={rulesList.loan_approval}
+                      yes={() => (
+                        <TextInput
+                          money
+                          type="number"
+                          fullWidth={false}
+                          value={newInfo.amount_approved}
+                          onChange={e => {
+                            updateNewLoanInfo({
+                              ...newInfo,
+                              amount_approved: e.target.value
+                            })
+                          }}
+                        />
+                      )}
+                      no={() => "-"}
+                    />
+                  )
+                  : <Currency value={row.amount_approved} /> 
+                }
+              </TableCell>
+                {
+                  status === "disbursement_approval" ? (
+                    <TableCell align="right">
+                      <UserCan
+                        role={currentUser.role_name}
+                        perform={rulesList.loan_approval}
+                        yes={() => (
+                          <TextInput
+                            money
+                            type="number"
+                            fullWidth={false}
+                            value={newInfo.amount_disbursed}
+                            onChange={e => {
+                              updateNewLoanInfo({
+                                ...newInfo,
+                                amount_disbursed: e.target.value
+                              })
+                            }}
+                          />
+                        )}
+                        no={() => "-"}
                       />
-                    )
-                    : <Currency value={row.amount_approved} /> 
-                  }
-                </TableCell>
-                  {
-                    status == "disbursed" ? (
-                      <TableCell align="right">
-                        <Currency value={row.amount_disbursed} />
-                      </TableCell>
-                    )  : null
-                  }
-              </TableRow>
-            ))
-          }
-        </TableBody>
-      </Table>
-    </LoanInfoWrapper>
+                    </TableCell>
+                  ) : (status == "disbursed" ? (
+                    <TableCell align="right">
+                      <Currency value={row.amount_disbursed} />
+                    </TableCell>
+                  )  : null)
+                }
+            </TableRow>
+          </TableBody>
+        </Table>
+      </LoanInfoWrapper>
+      <Grid container>
+        <Grid item xs={4} className={classes.gridItemStyle}>
+          Recommendation Remarks(Approval):
+        </Grid>
+        <Grid item xs={8} className={classes.gridItemStyle}>
+          <p>{row.recommendation_remarks}</p>
+        </Grid>
+      </Grid>
+      {
+        row.disbursement_recommendation_remarks && (
+          <Grid container>
+            <Grid item xs={4} className={classes.gridItemStyle}>
+              Recommendation Remarks(Disbursement):
+            </Grid>
+            <Grid item xs={8} className={classes.gridItemStyle}>
+              <p>{row.disbursement_recommendation_remarks}</p>
+            </Grid>
+          </Grid>
+        )
+      }
+    </>
   )
 }
 
@@ -148,26 +204,98 @@ const DealershipDetails = ({
   data,
   loanData,
   onClose,
-  status
+  status,
+  currentUser
 }) => {
   const [values, setValues] = useState({});
   const [loanInfo, setLoanInfo] = useState({});
-  const [comments, setComments] = useState();
+  const [apiStatus, setApiStatus] = useState({});
   const [readOnly, setReadOnly] = useState(true);
   const [newLoanInfo, setNewLoanInfo] = useState({});
   
   const classes = useStyles();
 
   useEffect(() => {
+    if(loanData?.id && data?.id) {
+      getLoanById(data.id, loanData.id)
+        .then(res => {
+          setLoanInfo(res);
+          setNewLoanInfo({
+            ...res,
+            amount_approved: res.amount_requested || 0,
+            amount_disbursed: res.amount_approved || 0,
+          });
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    }
+  }, [data, loanData]);
+
+  useEffect(() => {
     if(data) setValues(data);
   }, [data]);
 
-  useEffect(() => {
-    console.log(loanData)
-    if(loanData) setLoanInfo(loanData);
-  }, [loanData]);
+  // useEffect(() => {
+  //   if(loanData) {
+      // setLoanInfo(loanData)
+      // setNewLoanInfo({
+      //   ...loanData,
+      //   amount_approved: loanData.amount_requested,
+      //   amount_disbursed: loanData.amount_approved,
+      // });
+  //   };
+  // }, [loanData]);
   
   if(!data) return null;
+
+  const updateLoanStatus = submitStatus => {
+    // if(!newLoanInfo.approval_remarks) {
+    //   setApiStatus({ type: 'error', message: 'Please enter your remarks/comments.' });
+    //   return null
+    // }
+    setApiStatus({ loading: true, type: 'info', message: 'We are processing your request, Please wait...' });
+    let reqBody = {
+      status: submitStatus,
+      user_id: currentUser.id
+    };
+    let resMsg = '';
+    
+    if(status === "loan_approval") {
+      reqBody.approval_remarks = newLoanInfo.approval_remarks;
+    }
+    if(submitStatus === "approved") {
+      if(status === "loan_approval") {
+        resMsg = 'Successfully Approved Loan Request';
+        reqBody.amount_approved = newLoanInfo.amount_approved;
+      } else if(status === "disbursement_approval") {
+        resMsg = 'Successfully Approved Loan for Disbursement';
+        reqBody.amount_disbursed = newLoanInfo.amount_disbursed;
+      }
+    }
+    if(status === "disbursement_approval") {
+      reqBody.disbursement_approval_remarks = newLoanInfo.disbursement_approval_remarks;
+    }
+
+    if(submitStatus === 'rejected') {
+      resMsg = 'Request got rejected successfully';
+    }
+    // if(submitStatus === "disbursed") {
+      // if (loanData.amount_disbursed === newLoanInfo.amount_disbursed) {
+      //   setApiStatus({ type: 'error', message: 'Please check Disburse amount. We see no change in Disburse amount!' })
+      //   return null;
+      // }
+      
+    // }
+    updateLoanApprovalStatusById(values.id, loanData.id, reqBody)
+      .then(res => {
+        setApiStatus({ type: 'success', message: res.message || resMsg })
+      })
+      .catch(err => {
+        setApiStatus({ type: 'error', message: 'Unable to update status. Please contact your admin' })
+        console.log('Loan status update error - ', err)
+      })
+  }
 
   const gridProps = {
     item: true,
@@ -181,6 +309,13 @@ const DealershipDetails = ({
       [event.target.name]: event.target.value
     });
   };
+
+  const updateNewLoanInfo = (d) => {
+    setNewLoanInfo({
+      ...newLoanInfo,
+      ...d
+    });
+  }
 
   return (
     <div className={classes.wrapper}>
@@ -267,32 +402,98 @@ const DealershipDetails = ({
           }
 
           <Grid {...gridProps}>
-            {values.id ? <SalesInfo id={values.id} /> : null}
-            {
-              Array.isArray(loanInfo) ?
-                <LoanInfo data={loanInfo} status={status} newInfo={newLoanInfo} setNewLoanInfo={setNewLoanInfo} />
-                : null
-            }
-            {
-              status == "submitted" && (
+            {values.id ? <SalesInfo id={values.id} currentUser={currentUser} /> : null}
+            <LoanInfo data={loanInfo} status={status} newInfo={newLoanInfo} currentUser={currentUser} updateNewLoanInfo={updateNewLoanInfo} />
+          </Grid>
+          
+          {
+            status == "loan_approval" ? (
+              <Grid {...gridProps}>
                 <TextInput
                   multiline
                   rows={4}
                   rowsMax={8}
-                  labelText="Remarks"
+                  labelText="Remarks*"
                   alignTop
                   placeholder="Enter your remarks here."
+                  readOnly={!permissionCheck(currentUser.role_name, rulesList.loan_approval)}
+                  value={newLoanInfo.approval_remarks}
                   onChange={e => {
-                    setComments(e.target.value)
+                    setNewLoanInfo({
+                      ...newLoanInfo,
+                      approval_remarks: e.target.value
+                    })
                   }}
                 />
-              )
-            }
-          </Grid>
+              </Grid>
+            ) : null
+          }
+          
+          {
+            status == "disbursement_approval" ? (
+              <>
+                <Grid {...gridProps} md={2}>
+                  Remarks(Approval)
+                </Grid>
+                <Grid {...gridProps} md={8}>
+                  <Typography variant="p" component={'p'}>
+                    {loanInfo.approval_remarks}
+                  </Typography>
+                </Grid>
+
+                <Grid {...gridProps}>
+                  <TextInput
+                    multiline
+                    rows={4}
+                    rowsMax={8}
+                    labelText="Remarks*"
+                    alignTop
+                    placeholder="Enter your remarks here."
+                    readOnly={!permissionCheck(currentUser.role_name, rulesList.loan_approval)}
+                    value={newLoanInfo.disbursement_approval_remarks}
+                    onChange={e => {
+                      setNewLoanInfo({
+                        ...newLoanInfo,
+                        disbursement_approval_remarks: e.target.value
+                      })
+                    }}
+                  />
+                </Grid>
+              </>
+            ) : null
+          }
+
+          {
+            status == 'disbursed' ? (
+              <>
+                <Grid {...gridProps} md={2}>
+                  Remarks(Approval)
+                </Grid>
+                <Grid {...gridProps} md={8}>
+                  <Typography variant="p" component={'p'}>
+                    {loanInfo.approval_remarks}
+                  </Typography>
+                </Grid>
+                <Grid {...gridProps} md={2}>
+                  Remarks(Disbursement)
+                </Grid>
+                <Grid {...gridProps} md={8}>
+                  <Typography variant="p" component={'p'}>
+                    {loanInfo.disbursement_approval_remarks}
+                  </Typography>
+                </Grid>
+              </>
+            ) : null
+          }
         </Grid>
       </div>
       <div className={classes.actionFooter}>
         <Divider />
+        {
+          apiStatus.type && (
+            <Alert severity={apiStatus.type}>{apiStatus.message}</Alert>
+          )
+        }
         <div className={classes.actionButtonsWrapper}>
           <div>
             <Button
@@ -305,22 +506,31 @@ const DealershipDetails = ({
               component={RouterLink}
               to={`/dealership/${values.id}`}
               variant="contained"
+              disabled={apiStatus.loading}
               className={clsx(classes.btn, classes.btnSuccess)}
               startIcon={<AccountTreeRoundedIcon />}>View more</Button>
             {
-              status == "submitted" && (
-                <>
-                  <Button
-                    variant="contained"
-                    className={clsx(classes.btn, classes.btnError)}
-                    startIcon={<ThumbDownAltIcon />}
-                    onClick={() => null}>Reject</Button>
-                  <Button
-                    variant="contained"
-                    className={clsx(classes.btn, classes.btnSuccess)}
-                    startIcon={<ThumbUpAltIcon />}
-                    onClick={() => null}>Approve</Button>
-                </>
+              status && ["loan_approval", "disbursement_approval"].includes(status.toLowerCase()) && (
+                <UserCan
+                  role={currentUser.role_name}
+                  perform={rulesList.loan_approval}
+                  yes={() => (
+                    <>
+                      <Button
+                        variant="contained"
+                        disabled={apiStatus.loading}
+                        className={clsx(classes.btn, classes.btnError)}
+                        startIcon={<ThumbDownAltIcon />}
+                        onClick={() => updateLoanStatus('rejected')}>Reject</Button>
+                      <Button
+                        variant="contained"
+                        disabled={apiStatus.loading}
+                        className={clsx(classes.btn, classes.btnSuccess)}
+                        startIcon={<ThumbUpAltIcon />}
+                        onClick={() => updateLoanStatus('approved')}>Approve</Button>
+                    </>
+                  )}
+                />
               )
             }
           </div>
@@ -329,5 +539,8 @@ const DealershipDetails = ({
     </div>
   )
 }
+const mapStateToProps = createStructuredSelector({
+  currentUser: selectCurrentUser
+});
 
-export default DealershipDetails
+export default connect(mapStateToProps)(DealershipDetails);

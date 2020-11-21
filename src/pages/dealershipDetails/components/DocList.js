@@ -8,9 +8,11 @@ import TableRow from "@material-ui/core/TableRow";
 import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import Typography from "@material-ui/core/Typography";
+import { useSnackbar } from 'notistack';
+import Chip from '@material-ui/core/Chip';
 import { makeStyles } from "@material-ui/core/styles";
 import FileUpload from "../../../components/FileUpload";
-import { getDealershipCheckList } from "../../../services/dealerships.service";
+import { getDealershipCheckList, uploadDocument } from "../../../services/dealerships.service";
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -25,12 +27,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const Docs = ({ data }) => {
+  let temp = 0;
+  return data.map((file, i) => {
+    temp += file.file_url ? 1 : 0;
+    return file.file_url ? (
+      <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }} href={file.file_url} target="_blank" title={file.name}>{temp}</a>
+    ) : null
+  });
+}
+
 const DocList = ({ id }) => {
   const classes = useStyles();
   const [checkListData, setCheckListData] = useState();
   const [showUpload, setShowUpload] = useState(false);
   const [rowData, setRowData] = useState();
-
+  const { enqueueSnackbar } = useSnackbar();
   const onCloseUploader = () => {
     setShowUpload(false);
   }
@@ -48,32 +60,52 @@ const DocList = ({ id }) => {
       .catch((e) => null);
   });
 
-  if (!checkListData || !checkListData.length) return null;
+ 
+  const handleSave = (files) => {
+    const formData = new FormData();
+    const dealerShipId = id;
+    const docID = rowData.doc_id;
+    files.map(file => {
+      const fileName = file.name.replace(/[()%.,+\-&]/g, '').toLowerCase().replace(/\s/g, '_');
+      formData.append(`file-${id}`, file);
+      formData.append(`fileName`, fileName);
+      formData.append(`id`, rowData.doc_id);
+    });
+    uploadDocument(dealerShipId, docID, formData)
+      .then(data => {
+        enqueueSnackbar('File Upload Success', { variant: "success" });
+        onCloseUploader();
+      })
+      .catch(e => {
+        enqueueSnackbar('File Upload Failed', { variant: "error" });
+      });
+  };
 
   return (
     <div className={classes.wrapper}>
-      {showUpload && <FileUpload id={id} data={rowData} open={showUpload} onCloseUploader={onCloseUploader}/>}
+      {showUpload && <FileUpload handleSave={handleSave} id={id} data={rowData} open={showUpload} onCloseUploader={onCloseUploader}/>}
       <Typography variant="h5" align={"center"} className={classes.title}>
-        Dealers Document
+        Dealership Documents
       </Typography>
       <Table className={classes.table} size="small" aria-label="Dealers">
         <TableHead>
           <TableRow>
-            <TableCell align="center">ID</TableCell>
-            <TableCell align="center">Document Name</TableCell>
-            <TableCell align="center">Document Type</TableCell>
-            <TableCell align="center">Actions</TableCell>
+            {/* <TableCell align="center">ID</TableCell> */}
+            <TableCell>Document Name</TableCell>
+            {/* <TableCell align="center">Document Type</TableCell> */}
+            <TableCell align="center">Files</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {checkListData.map((row) => (
+          {Array.isArray(checkListData) && checkListData.map((row, i) => row.doc_type !== 'dealer' && (
             <TableRow key={row.doc_id}>
-              <TableCell align="center">{row.doc_id}</TableCell>
-              <TableCell align="center">{row.doc_name}</TableCell>
-              <TableCell align="center">{row.doc_type}</TableCell>
-              <TableCell align="center">
+              {/* <TableCell align="center">{row.doc_id}</TableCell> */}
+              <TableCell>{row.description}</TableCell>
+              {/* <TableCell align="center">{row.doc_type}</TableCell> */}
+              <TableCell align="right">
+                <Docs data={Array.isArray(row.file_data) && row.file_data.length ? row.file_data : []} />
                 <ButtonGroup size="small" aria-label="dealer action buttons">
-                  <Button onClick={(e) => onView()}>View</Button>
+                  {/* <Button onClick={(e) => onView()}>View</Button> */}
                   <Button onClick={(e) => onDocUpload(row)}>Upload</Button>
                 </ButtonGroup>
               </TableCell>

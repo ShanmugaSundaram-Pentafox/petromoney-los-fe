@@ -1,14 +1,16 @@
 import React from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
 import { Divider, Drawer, List, ListItem, Button, colors } from '@material-ui/core';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import PeopleIcon from '@material-ui/icons/People';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
+import LocalShippingIcon from '@material-ui/icons/LocalShipping';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
+import PersonOutlineRoundedIcon from '@material-ui/icons/PersonOutlineRounded';
 
 // import Profile from './components/Profile';
 import SidebarNav from './components/SidebarNav';
@@ -24,7 +26,8 @@ const useStyles = makeStyles(theme => ({
   },
   root: {
     // backgroundColor: theme.palette.white,
-    backgroundColor: "#050712",
+    // backgroundColor: "#050712",
+    backgroundColor: "#202c4f",
     color: theme.palette.black,
     display: 'flex',
     flexDirection: 'column',
@@ -53,6 +56,10 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     fontWeight: theme.typography.fontWeightMedium
   },
+  active: {
+    backgroundColor: 'white',
+    color: colors.blueGrey[800]
+  },
   icon: {
     // color: theme.palette.icon,
     color: "#E9ECF3",
@@ -65,7 +72,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Sidebar = props => {
-  const { open, variant, onClose, className, user, logout, ...rest } = props;
+  const { open, variant, onClose, className, user, logout, currentUser, ...rest } = props;
 
   const classes = useStyles();
 
@@ -76,20 +83,30 @@ const Sidebar = props => {
       icon: <DashboardIcon />
     },
     {
+      title: 'Loans',
+      href: '/loans',
+      icon: <AccountBoxIcon />
+    },
+    {
       title: 'Dealerships',
       href: '/dealership',
       icon: <PeopleIcon />
     },
     {
-      title: 'Account',
-      href: '/account',
-      icon: <AccountBoxIcon />
-    },
-    {
-      title: 'Settings',
-      href: '/settings',
-      icon: <SettingsIcon />
+      title:'Transports',
+      href: '/transports',
+      icon: <LocalShippingIcon/>
     }
+    // {
+    //   title: 'Account',
+    //   href: '/account',
+    //   icon: <AccountBoxIcon />
+    // },
+    // {
+    //   title: 'Settings',
+    //   href: '/settings',
+    //   icon: <SettingsIcon />
+    // }
   ];
 
   return (
@@ -113,11 +130,29 @@ const Sidebar = props => {
         </div>
         {/* <Profile user={user} /> */}
         <Divider light className={classes.divider} />
+        <div>
+          <List>
+              <ListItem
+                className={classes.item}
+                disableGutters
+              >
+                <Button
+                  activeClassName={classes.active}
+                  className={classes.button}
+                >
+                  <div className={classes.icon}>
+                    <PersonOutlineRoundedIcon />
+                  </div>
+                    {user.role_name}
+                </Button>
+              </ListItem>
+          </List>
+        </div>
         <SidebarNav
           className={classes.nav}
           pages={pages}
         />
-        <div>
+        {/* <div>
           <List>
               <ListItem
                 className={classes.item}
@@ -136,7 +171,7 @@ const Sidebar = props => {
                 </Button>
               </ListItem>
           </List>
-        </div>
+        </div> */}
       </div>
     </Drawer>
   );
@@ -149,8 +184,4 @@ Sidebar.propTypes = {
   variant: PropTypes.string.isRequired
 };
 
-const mapDispatchToProps = dispatch => ({
-  logout: () => dispatch(resetCurrentUser())
-});
-
-export default connect(null, mapDispatchToProps)(Sidebar);
+export default Sidebar;

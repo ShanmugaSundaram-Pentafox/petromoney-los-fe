@@ -11,7 +11,7 @@ const LoginUserInfoWrapper = styled.div`
 
     p {
         text-align: right;
-        font-weight: 600;
+        font-weight: 500;
         font-size: 14px;
         line-height: 1.2;
         margin: 0 12px 0 0;
@@ -108,29 +108,29 @@ const LoginUserInfoWrapper = styled.div`
 `;
 
 export const LoginUserInfo = ({
-    open= false
+    open= false,
+    user,
+    logout
 }) => {
-    const [isLogout, setIsLogout] = useState();
-
+    const [show, setShow] = useState();
     return (
-        <LoginUserInfoWrapper open={isLogout}>
+        <LoginUserInfoWrapper open={show} onClick={() => setShow(!show)}>
             <p>
-            Lorem Ipsum
-            <span>Lorem Ipsum</span>
+            {user.name}
+            {/* <span>{user.mobile}</span> */}
             </p>
             
             {/* user image style */}
             {/* <img src="https://i.imgur.com/JBj1jMv.png" alt="user-img" /> */}
 
             {/* user initials style */}
-            <div className="user-initials-wrapper" onClick={() => setIsLogout(!isLogout)}>
-            <span className="user-initials">L</span>
+            <div className="user-initials-wrapper">
+            <span className="user-initials">{user.name.charAt(0)}</span>
             <i className="caret"></i>
             </div>
 
             <div className="header-dropdown">
-                <span>Lorem Ipsum</span>
-                <span onClick={() => setIsLogout(false)}>Logout</span>
+                <span onClick={logout}>Logout</span>
             </div>
         </LoginUserInfoWrapper>
     );

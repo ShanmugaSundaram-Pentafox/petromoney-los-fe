@@ -17,6 +17,9 @@ const ProtectedRoute = ({ component: Component, currentUser, ...rest }) => {
             </MainLayout>
           )
         }
+        // store url for redirection after login
+        window.sessionStorage.setItem('pm-login-url', props.location.pathname);
+        
         return <Redirect to="/login" />
       }}
     />

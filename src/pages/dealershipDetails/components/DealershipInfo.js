@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
+import Alert from '@material-ui/lab/Alert';
 import Card from '@material-ui/core/Card';
 // import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
@@ -10,6 +11,12 @@ import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import TextInput from '../../../components/TextInput/TextInput';
 import { useFormik } from 'formik';
+import { API } from '../../../config/api';
+import { URL } from '../../../config/serverUrls';
+import { logger } from '../../../config/logger';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
 // import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -23,42 +30,34 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-/*
-{
-  "address": "HPC DEALER T.C.ROAD IRRITY 670703",
-  "address_2": "None",
-  "auto": "No",
-  "business_property": "2",
-  "business_type": "1",
-  "created_date": "Sat, 28 Dec 2019 14:40:10 GMT",
-  "deal_status": "",
-  "district": "KL-KANNUR",
-  "doi": "02-Dec-2010",
-  "gst": "33FGSPM5019G2Z5",
-  "id": 12830330,
-  "is_microatm": "",
-  "latitude": 0.0,
-  "location": "IRRITY                   ",
-  "longtitude": 0.0,
-  "modified_date": "0000-00-00 00:00:00",
-  "name": "MS HSD CANNANORE PETROLEUM PRODUCTS     ",
-  "nhsh": "SH30",
-  "pan": "FGSPM6019G",
-  "pincode": "None",
-  "region": "KOZHICODE (CALICUT) Retail RO",
-  "sales_area": "Kannur Retail S.A.",
-  "state": "Kerala",
-  "urh": "Highway",
-  "zone": "South"
-}
-*/
 
-const DealershipInfo = ({ data, className }) => {
+const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) => {
   const [readOnly, setReadOnly] = useState(true);
-  const {values, handleChange: onChange} = useFormik({
+  const [loading, setLoading] = useState();
+  const [apiStatus, setApiStatus] = useState({});
+  const {values, handleChange: onChange, handleSubmit} = useFormik({
     initialValues: data,
     onSubmit: values => {
       console.log('Form Values >> ', values);
+      setLoading(true);
+      setApiStatus({});
+      API.post(`${URL.dealership}/${values.id}`, { ...values, user_id: currentUser.id })
+        .then(({ status, message, data }) => {
+          if(status == 'success') {
+            setApiStatus({ type: 'success', message: message || 'Unable to save the details. Please try again later' })
+            setLoading(false);
+          }
+          else {
+            setApiStatus({ type: 'error', message: message || 'Unable to save the details. Please try again later' })
+            setLoading(false);
+          }
+        })
+        .catch(e => {
+          setApiStatus({ type: 'error', message: 'Unable to save the details. Please try again later' })
+          setLoading(false);
+          setReadOnly(true);
+          logger(e);
+        })
     }
   });
   // const [values, setValues] = useState(data);
@@ -84,6 +83,7 @@ const DealershipInfo = ({ data, className }) => {
   return (
     <Card className={clsx(classes.root, className)}>
       <form
+        onSubmit={handleSubmit}
         autoComplete="off"
         noValidate
       >
@@ -186,14 +186,32 @@ const DealershipInfo = ({ data, className }) => {
           </Grid>
         </CardContent>
         <Divider />
+        {
+          apiStatus.type && (
+            <Alert severity={apiStatus.type}>{apiStatus.message}</Alert>
+          )
+        }
         <CardActions className={classes.actionFooter}>
+          <Button
+            color="primary"
+            size="small"
+            variant="contained"
+            onClick={toggleCreditReport}
+            >View/Edit Financial Report</Button>
           {!readOnly ? (
-            <>
-              <Button variant="contained" size="small">Cancel</Button>
-              <Button variant="contained" size="small">Save</Button>
-            </>
+              !loading ? (
+                <>
+                  <Button variant="contained" size="small" onClick={() => { setReadOnly(true); }}>Cancel</Button>
+                  <Button type="submit" color="primary" variant="contained" size="small">Save</Button>
+                </>
+                ) : <CircularProgress />
             ) : (
-              <Button color="primary" variant="outlined" size="small" onClick={() => { setReadOnly(false); }}>Edit Details</Button>
+              <Button
+                disabled={!permissionCheck(currentUser.role_name, rulesList.dealership_edit)}
+                color="primary"
+                variant="contained"
+                size="small"
+                onClick={() => { setReadOnly(false); }}>Edit Details</Button>
             )}
         </CardActions>
       </form>

@@ -156,7 +156,10 @@ class CreditForm extends Component {
       case 2:
       case 3:
         const { id } = this.props.match.params;
-        isValid = await saveDealershipCreditReportData(id, this.state.reportData);
+        const objBody = {
+          user_id: this.props.currentUser.id, ...this.state.reportData
+        }
+        isValid = await saveDealershipCreditReportData(id, objBody);
         // isValid = validateCreditReport(this.state.reportData, steps[activeStep]);
         break;
       default:
@@ -174,7 +177,7 @@ class CreditForm extends Component {
   }
 
   render() {
-    const { match, classes } = this.props;
+    const { match, classes, currentUser } = this.props;
     const { id } = match.params;
     const { applicants, creditInfoData, activeStep, reportData } = this.state;
 
@@ -195,6 +198,7 @@ class CreditForm extends Component {
                       creditInfoData={creditInfoData}
                       applicants={applicants}
                       updateCreditData={this.updateCreditData}
+                      currentUser={currentUser}
                       />)
                 }
                 {

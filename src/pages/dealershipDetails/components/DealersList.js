@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useMount } from 'react-use';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Tooltip from '@material-ui/core/Tooltip';
-import Typography from '@material-ui/core/Typography';
 import Drawer from '@material-ui/core/Drawer';
 import Button from '@material-ui/core/Button';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import Chip from '@material-ui/core/Chip';
-import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
-import EditRoundedIcon from '@material-ui/icons/EditRounded';
-import MoreHorizRoundedIcon from '@material-ui/icons/MoreHorizRounded';
-import { getDealersByDealershipId } from '../../../services/dealers.service';
+import { getDealersByDealershipId, getCoApplicantByDealershipId } from '../../../services/dealers.service';
 import CreditInfoSideWrapper from "./CreditInfoSideWrapper";
+import DealerEditSideWrapper from './DealerEditSideWrapper';
+import AddIconButon from './AddIcon';
+import DealersTable from './DealersTable';
+import CoApplicantsTable from './CoApplicantsTable';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
+import ExperianReport from './ExperianReport';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
     padding: 8,
+  },
+  addButton: {
+    textAlign: 'right',
+    float: 'right',
+    marginTop: '8px',
+    marginRight: '8px'
   },
   title: {
     paddingLeft: 8,
@@ -31,85 +31,206 @@ const useStyles = makeStyles(theme => ({
     // minWidth: 650,
     padding: 8
   },
+  header: {
+    display: 'flex',
+    marginBottom: 8
+  },
   footer: {
-    paddingTop: 8,
-    textAlign: 'right'
+    padding: 8,
+    textAlign: 'right',
   },
   sidePanelWrapper: {
     width: '40vw',
     minWidth: 300
   },
+  experianWrapper: {
+    width: '50vw',
+    minWidth: 300
+  },
   actionButtons: {
     // paddingTop: 8
   },
+  tableRow: {
+    cursor: 'pointer'
+  },
+  document: {
+    display: 'inline-block',
+    borderRadius: 2,
+    lineHeight: 1,
+    marginRight: 3,
+    marginBottom: 4,
+    padding: 4,
+  }
 }));
 
-const DealersList = ({ id, titleAlign }) => {
+const DealersList = ({ id, titleAlign, currentUser }) => {
   const classes = useStyles();
-  const [data, setDealersData] = useState();
-  const [activeStep, setActiveStep] = useState(0);
   const [showCreditForm, setShowCreditForm] = useState(false);
-  
-  useMount(() => {
-    getDealersByDealershipId(id)
-      .then(data => setDealersData(data))
+  const [showDealerEditForm, setShowDealerEditForm] = useState(false);
+  const [experianData, setExperianData] = useState({});
+  const [formType, setFormType] = useState('');
+  const [modelType, setModelType] = useState('');
+  const [rowData, setRowData] = useState({});
+
+  const [dealerData, setDealersData] = useState();
+  const [coApplicantsData, setCoApplicantsData] = useState([]);
+  const [dealerCoApplicantData, setDealerCoApplicantData] = useState([]);
+
+  const getCoApplicantApiCall = (id) => {
+    getCoApplicantByDealershipId(id)
+      .then(data => {
+        setCoApplicantsData(data);
+        setDealerCoApplicantData(prevArray => [...prevArray, ...data]);
+      })
       .catch(e => null)
+  }
+
+  const getDealerApiCall = (id) => {
+    getDealersByDealershipId(id)
+      .then(data => {
+        setDealersData(data);
+        setDealerCoApplicantData(prevArray => [...prevArray, ...data]);
+      })
+      .catch(e => null)
+  }
+
+  useMount(() => {
+    getDealerApiCall(id);
+    getCoApplicantApiCall(id);
   });
 
-  if(!data || !data.length) return null;
+  const openCloseCreditForm = () => {
+    setShowCreditForm(!showCreditForm);
+  }
+
+  const onClickAddMenu = (modelType) => {
+    if (modelType === 'DEALER') {
+      setModelType('DEALER')
+    } else if (modelType === 'COAPPLICANT') {
+      setModelType('COAPPLICANT')
+    }
+    setFormType('Add');
+    setRowData({})
+    setShowDealerEditForm(true);
+    return null;
+  }
+
+  const dealersClickRow = (e, row, type) => {
+    if (e.target.tagName == 'A') {
+      return null;
+    }
+    setModelType(type);
+    setFormType('Edit');
+    setShowDealerEditForm(true);
+    setRowData(row);
+  }
+
+  const editFormClose = (type) => {
+    setShowDealerEditForm(false)
+  }
+
+  const getExperianData = type => (event ,id) => {
+    event.preventDefault();
+    event.stopPropagation()
+    setExperianData({ show: true, id, type });
+  }
+
+  const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit);
 
   return (
-    <div className={classes.wrapper}>
-      <Typography variant="h5" align={titleAlign} className={classes.title}>Dealers</Typography>
-      <Table className={classes.table} size="small" aria-label="Dealers">
-        <TableHead>
-          <TableRow>
-            <TableCell>Dealer Name</TableCell>
-            <TableCell align="center">Mobile</TableCell>
-            <TableCell align="center">Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data.map(row => (
-            <TableRow key={row.id}>
-              <TableCell>{row.first_name}</TableCell>
-              <TableCell align="center">{row.mobile}</TableCell>
-              <TableCell align="center">
-                <ButtonGroup size="small" aria-label="dealer action buttons">
-                  <Button>View</Button>
-                  <Button>Edit</Button>
-                </ButtonGroup>
-                {/* <Tooltip title="Edit">
-                  <Chip variant="outlined" color="primary" size="small" label="Edit" avatar={<Avatar>E</Avatar>} />
-                  <IconButton
-                    size="small"
-                    color="inherit"
-                    onClick={() => null}
-                  >
-                    <EditRoundedIcon />
-                  </IconButton>
-                </Tooltip> */}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <div className={classes.footer}>
-        <div className={classes.actionButtons}>
-          <Button color="primary" variant="contained" size="small" onClick={() => setShowCreditForm(true)}>Add Credit Information</Button>
-        </div>
+    <>
+      {
+        !editable && <div className={classes.addButton}>
+          <Button color="primary" variant="contained" size="small" onClick={() => onClickAddMenu()}>Add Dealer</Button>
+           </div>
+      }
+      <DealersTable
+        id={id}
+        editable={editable}
+        data={dealerData}
+        formType={formType}
+        rowData={rowData}
+        titleAlign={titleAlign}
+        showCreditForm={showCreditForm}
+        openCloseCreditForm={openCloseCreditForm}
+        editFormClose={editFormClose}
+        dealersClickRow={dealersClickRow}
+        onClickAddMenu={onClickAddMenu}
+        getExperianData={getExperianData("dealer")}
+        showDealerEditForm={showDealerEditForm} />
 
-        <Drawer
-          anchor="right"
-          open={showCreditForm}
-          variant="temporary"
-        >
-          <div className={classes.sidePanelWrapper}>
-            <CreditInfoSideWrapper data={data} onClose={() => setShowCreditForm(false)} />
+      <CoApplicantsTable
+        id={id}
+        editable={editable}
+        titleAlign={titleAlign}
+        coApplicantsData={coApplicantsData}
+        formType={formType}
+        rowData={rowData}
+        titleAlign={titleAlign}
+        showCreditForm={showCreditForm}
+        openCloseCreditForm={openCloseCreditForm}
+        editFormClose={editFormClose}
+        dealersClickRow={dealersClickRow}
+        onClickAddMenu={onClickAddMenu}
+        getExperianData={getExperianData("coapplicant")}
+        showDealerEditForm={showDealerEditForm} />
+
+      <Drawer
+        anchor="right"
+        open={experianData.show}
+        onBackdropClick={() => setExperianData({ show: false })}
+        variant="temporary"
+      >
+        <div className={classes.experianWrapper}>
+          {
+            experianData.id ? (
+              <ExperianReport
+                id={experianData.id}
+                type={experianData.type}
+                onClose={() => setExperianData({ show: false })}
+              />
+            ) : null
+          }
+        </div>
+      </Drawer>
+      <Drawer
+        anchor="right"
+        open={showDealerEditForm}
+        variant="temporary"
+      >
+        <div className={classes.sidePanelWrapper}>
+          <DealerEditSideWrapper
+            getDealerApiCall={getDealerApiCall}
+            dealersList={dealerData}
+            getCoApplicantApiCall={getCoApplicantApiCall}
+            isAdd={formType}
+            modelType={modelType}
+            dealershipId={id} 
+            data={rowData}
+            currentUser={currentUser}
+            onClose={() => editFormClose(modelType)} />
+        </div>
+      </Drawer>
+
+      {
+        editable && ((dealerData || []).length || (coApplicantsData || []).length) && (
+          <div className={classes.footer}>
+            <div className={classes.actionButtons}>
+              <Button color="primary" variant="contained" size="small" onClick={() => openCloseCreditForm()}>View/Edit Credit Information</Button>
+            </div>
+            <Drawer
+              anchor="right"
+              open={showCreditForm}
+              variant="temporary"
+            >
+              <div className={classes.sidePanelWrapper}>
+                <CreditInfoSideWrapper dealershipId={id} data={dealerCoApplicantData} currentUser={currentUser} onClose={() => openCloseCreditForm()} />
+              </div>
+            </Drawer>
           </div>
-        </Drawer>
-      </div>
-    </div>
+        )
+      }
+    </>
   )
 }
 

@@ -11,10 +11,8 @@ import Grid from '@material-ui/core/Grid';
 import { Tooltip, LabelList,Legend, BarChart, CartesianGrid, XAxis, YAxis, Bar, Text } from 'recharts';
 import LoanBookTable from '../../components/Tables/LoanBookTable';
 import { useMount } from 'react-use';
-import moment from 'moment';
 import { getAllLoans, getAll_ls1_Metrices, getAll_ls2_Metrices } from '../../services/loans.service';
 import { SummaryTile, PieChartData, BarChartData } from './components/MetricsComponents';
-import Chart from "react-google-charts";
 
 
 const useStyles = makeStyles((theme) => ({

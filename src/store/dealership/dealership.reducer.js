@@ -5,7 +5,7 @@ const INITIAL_STATE = {
 }
 
 export const dealershipReducer = (state = INITIAL_STATE, action) => {
-  console.log('Reducer >> ', action)
+  // console.log('Reducer >> ', action)
   switch(action.type) {
     case DealershipActionTypes.SET_DEALERSHIP_DATA:
       return {  

@@ -7,8 +7,9 @@ import { useMediaQuery } from '@material-ui/core';
 import Sidebar from '../components/Sidebar/Sidebar';
 import Topbar from '../components/Topbar/Topbar';
 import { resetCurrentUser } from '../store/user/user.actions';
-
-
+import DealerEnquiryPage from '../pages/dealerEnquiryPage/DealerEnquiryPage';
+import AddDealerForm from '../pages/hpcl/AddDealerForm';
+import HPCL from '../pages/hpcl/HPCL';
 const useStyles = makeStyles(theme => ({
   root: {
     // paddingTop: 56,
@@ -64,6 +65,10 @@ const MainLayout = props => {
         <Topbar user={currentUser} logout={logout} position="static" onSidebarOpen={handleSidebarOpen} />
         {children}
         {/* <Footer /> */}
+
+        {/* <HPCL /> */}
+        {/* <AddDealerForm /> */}
+        {/* <DealerEnquiryPage /> */}
       </main>
     </div>
   );

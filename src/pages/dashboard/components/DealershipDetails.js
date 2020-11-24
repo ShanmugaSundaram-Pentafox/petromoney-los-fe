@@ -269,6 +269,7 @@ const DealershipDetails = ({
         resMsg = 'Successfully Approved Loan Request';
         reqBody.amount_approved = newLoanInfo.amount_approved;
       } else if(status === "disbursement_approval") {
+        reqBody.status = 'disbursement_approved';
         resMsg = 'Successfully Approved Loan for Disbursement';
         reqBody.amount_disbursed = newLoanInfo.amount_disbursed;
       }

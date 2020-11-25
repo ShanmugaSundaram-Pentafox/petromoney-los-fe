@@ -14,7 +14,6 @@ import { useMount } from 'react-use';
 import { getAllLoans, getAll_ls1_Metrices, getAll_ls2_Metrices } from '../../services/loans.service';
 import { SummaryTile, PieChartData, BarChartData } from './components/MetricsComponents';
 
-
 const useStyles = makeStyles((theme) => ({
   tableContainer: {
     borderRadius: 6,
@@ -24,10 +23,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-
 const DataCharts = styled.div`
-padding: 20px 24px 8px;
-border-radius: 2px
+  padding: 20px 24px 8px;
+  border-radius: 2px;
 `;
 
 const LoansNewTableContainer = styled.div`
@@ -216,14 +214,9 @@ const Dashboard = ({ currentUser }) => {
                     <XAxis dataKey="name" interval={0} tick={<CustomizedAxisTick />} height={40} />
                     <YAxis type="number" domain={[0, 200]}/>
                     <Tooltip />
-                    {/* <Legend dataKey="name" /> */}
                     <Bar dataKey="count" fill="rgb(66, 133, 244)" barSize={30}>
                       <LabelList position="top" />
                     </Bar>
-                    {/* <Bar width={20} dataKey="count" fill="#82ca9d" />
-                    <Bar width={20} dataKey="count" fill="#f4a853" />
-                    <Bar width={20} dataKey="count" fill="#19a474" />
-                    <Bar width={20} dataKey="count" fill="#e66023" /> */}
                   </BarChart>
                 </InfoBoxWrapper>
               ) : null
@@ -241,112 +234,11 @@ const Dashboard = ({ currentUser }) => {
           </DataCharts>
         </Grid>
       </Grid>
-
-        {/* <InfoBoxWrapper width={"260px"}>
-          <InfoBox number={100} title={"Submitted"} text={"Lorem Ipsum"} />
-          <InfoBox number={100} title={"Approved/Rejected"} text={"Lorem Ipsum"} />
-        </InfoBoxWrapper>
-        <InfoBoxWrapper width={"260px"}>
-          <InfoBox number={100} title={"Disbursed"} text={"Lorem Ipsum"} />
-          <InfoBox number={0} title={"Lorem Ipsum"} text={"Inprogress"} />
-        </InfoBoxWrapper> */}
-
-      {/* New table code start */}
-      {/* <LoansNewTableContainer>        
-        <LoansNewTableWrapper>
-          <div class="title">Submitted</div>
-          <LoansNewTable>
-            <div className="table-content">
-              <div class="content">
-                <p>
-                  <span>Lorem Ipsum</span>
-                  Lorem Ipsum Lorem Ipsum 
-                </p>
-              </div> 
-
-              <div class="content center">
-                <span className="table-pill">Paid</span>
-              </div>  
-              
-              <div class="content">
-                <span className="price-txt">₹5,000,000</span>
-              </div>
-            </div>
-            <div className="table-content">
-              <div class="content">
-                <p>
-                  <span>Lorem Ipsum</span>
-                  Lorem Ipsum Lorem Ipsum 
-                </p>
-              </div> 
-
-              <div class="content center">
-                <span className="table-pill">Paid</span>
-              </div>  
-              
-              <div class="content">
-                <span className="price-txt">₹5,000,000</span>
-              </div>
-            </div>
-            <div className="table-content">
-              <div class="content">
-                <p>
-                  <span>Lorem Ipsum</span>
-                  Lorem Ipsum Lorem Ipsum 
-                </p>
-              </div> 
-
-              <div class="content center">
-                <span className="table-pill red">Late</span>
-              </div>  
-              
-              <div class="content">
-                <span className="price-txt">₹5,000,000</span>
-              </div>
-            </div>
-            <div className="table-content">
-              <div class="content">
-                <p>
-                  <span>Lorem Ipsum</span>
-                  Lorem Ipsum Lorem Ipsum 
-                </p>
-              </div> 
-
-              <div class="content center">
-                <span className="table-pill">Paid</span>
-              </div>  
-              
-              <div class="content">
-                <span className="price-txt">₹5,000,000</span>
-              </div>
-            </div>
-            <div className="table-content">
-              <div class="content">
-                <p>
-                  <span>Lorem Ipsum</span>
-                  Lorem Ipsum Lorem Ipsum 
-                </p>
-              </div> 
-
-              <div class="content center">
-                <span className="table-pill">Paid</span>
-              </div>  
-              
-              <div class="content">
-                <span className="price-txt">₹5,000,000</span>
-              </div>
-            </div>
-          </LoansNewTable>
-        </LoansNewTableWrapper>  
-      </LoansNewTableContainer>  
-       */}
-      {/* New table code end */}
       <Paper elevation={1} className={classes.tableContainer}>
         <LoanBookTable title={"Loan Book"} currentUser={currentUser}/>
       </Paper>
 
       <LoansTable currentUser={currentUser} />
-
 
     </div>
   );

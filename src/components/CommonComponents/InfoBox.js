@@ -2,7 +2,7 @@
 
 import React from "react";
 import PropTypes from 'prop-types';
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 
 export const InfoBoxContainer = styled.div`
@@ -29,44 +29,67 @@ export const InfoBoxWrapper = styled.div`
 `;
 
 const InfoBoxCard = styled.div`
-    min-width: 216px;
-    padding: 14px;
+    width: 100%;
+    padding: 12px;
     display: flex;
     align-items: center;
-    background-color: #E9ECF3;
-    border-radius: 16px;
-    transition: all .4s ease;
-    margin: 0 0 16px;
+    color: #000000;
+    background-color: #fff;
+    border-radius: 2px;
+    transition: all .2s ease-in-out;
     cursor: pointer;
+    margin-bottom: 8px;
 
     i {
-        min-width: 56px;
-        min-height: 56px;
+        /* min-width: 56px;
+        min-height: 56px; */
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 0 6px;
+        padding: 5px;
         font-weight: 500;
-        font-size: 24px;
+        font-size: 13px;
         font-style: normal;
         color: #FFFFFF;
-        background-color: #2d6839;
-        border-radius: 16px;
-        margin-right: 12px;
+        background-color: #4770C1;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        margin-right: 8px;
     }
+
+    &:hover {
+        background-color: #4770C1;
+        color: #fff;
+
+        i {
+            background-color: #fff;
+            color: #4770C1;
+        }
+    }
+
+    ${props => props.active && css`
+        background-color: #4770C1;
+        color: #fff;
+
+        i {
+            background-color: #fff;
+            color: #4770C1;
+        }
+    `}
 
     p {
         margin-bottom: 0;
+        vertical-align: middle;
 
         span {
             display: block;
-            color: #000000;
-            font-size: 13px;
-            line-height: 15px;
+            font-size: 14px;
+            line-height: 14px;
             font-weight: 500;
             
             &.title {
-                margin-bottom: 4px;
+                /* margin-bottom: 4px; */
             }
 
             &.txt {
@@ -90,10 +113,11 @@ export const InfoBox = ({
     number= "",
     title= "",
     text= "",
-    action= () => {}
+    active,
+    action= () => {},
 }) => {
     return (
-        <InfoBoxCard onClick={action}>
+        <InfoBoxCard active={active} onClick={action}>
             {number ? <i>{number}</i> : null}
             <p>
                 {title ? <span className="title">{title}</span> : null}

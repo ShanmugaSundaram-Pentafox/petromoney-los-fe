@@ -1,6 +1,7 @@
 import MuiButton from './MuiButton';
 import MuiTextField from './MuiTextField';
 import MuiIconButton from './MuiIconButton';
+import MuiTabs from './MuiTabs';
 import MuiPaper from './MuiPaper';
 import MUIDataTable from './MuiDataTable';
 import MuiTableCell from './MuiTableCell';
@@ -11,6 +12,7 @@ export default {
   MuiTextField,
   MuiButton,
   MuiIconButton,
+  MuiTabs,
   MuiPaper,
   MUIDataTable,
   MuiTableCell,

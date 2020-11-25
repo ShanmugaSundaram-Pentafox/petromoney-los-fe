@@ -7,7 +7,8 @@ export default {
     //   borderBottomColor: 'green',
     // },
     '& .MuiInputBase-input': {
-      fontSize: 13,
+      fontSize: 14,
+      color: '#222444'
     },
     '& .MuiInputBase-input[readonly]+fieldset': {
       borderStyle: 'dotted',

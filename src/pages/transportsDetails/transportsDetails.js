@@ -58,7 +58,7 @@ const TransportsDetails = ({ currentUser, match }) => {
 
     getVehicleInfoFromID(id)
       .then((data) => {
-        console.log(data)
+        // console.log(data)
         setVehicleData(data)
       })
       .catch((e) => null)

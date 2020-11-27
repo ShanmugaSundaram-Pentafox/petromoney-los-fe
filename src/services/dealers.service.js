@@ -1,14 +1,14 @@
-import { API } from "../config/api"
-import { URL } from "../config/serverUrls"
+import { URL } from "../config/serverUrls";
+import apiCall from "../utils/api.util";
 
 export const getDealersByDealershipId = id => {
   return new Promise((resolve, reject) => {
-    API.get(`${URL.dealers}/${id}`)
-      .then(({ data }) => {
-        if(data.status === "SUCCESS") {
-          resolve(data.data);
+    apiCall(`${URL.dealers}/${id}`)
+      .then(({ status, data, message }) => {
+        if(status === "SUCCESS") {
+          resolve(data);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch(e => {
@@ -19,12 +19,12 @@ export const getDealersByDealershipId = id => {
 
 export const getCoApplicantByDealershipId = id => {
   return new Promise((resolve, reject) => {
-    API.get(`${URL.coApplicants}/${id}`)
-      .then(({ data }) => {
-        if(data.status === "SUCCESS") {
-          resolve(data.data);
+    apiCall(`${URL.coApplicants}/${id}`)
+      .then(({ status, data, message }) => {
+        if(status === "SUCCESS") {
+          resolve(data);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch(e => {
@@ -35,12 +35,12 @@ export const getCoApplicantByDealershipId = id => {
 
 export const getAllApplicantsByDealershipId = id => {
   return new Promise((resolve, reject) => {
-    API.get(`${URL.applicants}/${id}`)
-      .then(({ data }) => {
-        if(data.status === "SUCCESS") {
-          resolve(data.data);
+    apiCall(`${URL.applicants}/${id}`)
+      .then(({ status, data, message }) => {
+        if(status === "SUCCESS") {
+          resolve(data);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch(e => {
@@ -51,12 +51,12 @@ export const getAllApplicantsByDealershipId = id => {
 
 export const getDealerInfoById = (dealershipId, dealerId) => {
   return new Promise((resolve, reject) => {
-    API.get(`${URL.dealers}/${dealershipId}/${dealerId}`)
-      .then(({ data }) => {
-        if(data.status === "SUCCESS") {
-          resolve(data.data);
+    apiCall(`${URL.dealers}/${dealershipId}/${dealerId}`)
+      .then(({ status, data, message }) => {
+        if(status === "SUCCESS") {
+          resolve(data);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch(e => {
@@ -67,11 +67,11 @@ export const getDealerInfoById = (dealershipId, dealerId) => {
 
 export const getDealersWithCoapplicants = dealershipId => {
   return new Promise((resolve, reject) => {
-    API.get(`applicants/dealership/${dealershipId}`)
-      .then(({ data }) => {
-        if(data.status === 'SUCCESS') {
+    apiCall(`applicants/dealership/${dealershipId}`)
+      .then(({ status, data, message }) => {
+        if(status === 'SUCCESS') {
           let applicantsList = [];
-          data.data.forEach((item, i) => {
+          data.forEach((item, i) => {
             const { co_applicants, main_applicant_id, main_applicant_name } = item;
             applicantsList = applicantsList.concat({ label: `${main_applicant_name}`, value: `${main_applicant_id}_0` })
             co_applicants.forEach((coap, j) => {
@@ -81,7 +81,7 @@ export const getDealersWithCoapplicants = dealershipId => {
           })
           resolve(applicantsList)
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch(err => {

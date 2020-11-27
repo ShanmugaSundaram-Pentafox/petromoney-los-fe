@@ -72,7 +72,9 @@ const TransportsTable = ({ transports, setAllTransports }) => {
           setAllTransports(data)
           // setData(data)
         })
-        .catch((e) => null)
+        .catch((e) => {
+          console.log(e);
+        })
     }
   })
 

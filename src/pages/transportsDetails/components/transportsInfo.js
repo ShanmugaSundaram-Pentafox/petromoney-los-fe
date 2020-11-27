@@ -17,6 +17,7 @@ import { logger } from '../../../config/logger';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
+import apiCall from '../../../utils/api.util';
 
 
 
@@ -41,7 +42,12 @@ const TransportsInfo = ({ data, className, currentUser, toggleCreditReport }) =>
       console.log('Form Values >> ', values);
       setLoading(true);
       setApiStatus({});
-      API.post(`${URL.dealership}/${values.id}`, { ...values, user_id: currentUser.id })
+      apiCall(
+        `${URL.vehicleInfo}/${values.id}`,
+        {
+          method: 'post',
+          body: { ...values, user_id: currentUser.id },
+        })
         .then(({ status, message, data }) => {
           if(status == 'success') {
             setApiStatus({ type: 'success', message: message || 'Unable to save the details. Please try again later' })

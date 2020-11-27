@@ -11,7 +11,7 @@ const FileUpload = ({id,data, open, onCloseUploader, handleSave }) => {
           disableBackdropClick: true
       }}
       onSave={handleSave}
-      acceptedFiles={["image/jpeg", "image/png", ".pdf"]}
+      acceptedFiles={["image/jpeg", "image/png", ".pdf", ".xls", ".xlsx", ".csv"]}
       showPreviews={true}
       submitButtonText={'Upload'}
       maxFileSize={5000000}

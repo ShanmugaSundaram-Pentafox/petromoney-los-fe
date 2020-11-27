@@ -5,7 +5,7 @@ const INITIAL_STATE = {
 }
 
 export const transportsReducer = (state = INITIAL_STATE, action) => {
-  console.log('Reducer >> ', action)
+  // console.log('Reducer >> ', action)
   switch(action.type) {
     case TransportsActionTypes.SET_TRANSPORTS_DATA:
       return {  

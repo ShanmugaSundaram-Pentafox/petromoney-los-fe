@@ -1,16 +1,15 @@
-import { API } from "../config/api"
+// import { API } from "../config/api"
 import { URL } from "../config/serverUrls"
-import { store } from "../store"
+import apiCall from "../utils/api.util"
 
 export const getAllTransport = () => {
-
   return new Promise((resolve, reject) => {
-    API.get(URL.transport)
-      .then(({ data }) => {
-        if (data.status === "SUCCESS") {
-          resolve(data.data)
+    apiCall(URL.transport)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
         } else {
-          reject(data.message)
+          reject(message)
         }
       })
       .catch((e) => {
@@ -21,12 +20,12 @@ export const getAllTransport = () => {
 
 export const getTransporterInfoFromID = (id) => {
   return new Promise((resolve, reject) => {
-    API.get(`${URL.transportInfo}/${id}`)
-      .then(({ data }) => {
-        if (data.status === "SUCCESS") {
-          resolve(data.data)
+    apiCall(`${URL.transportInfo}/${id}`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
         } else {
-          reject(data.message)
+          reject(message)
         }
       })
       .catch((e) => {
@@ -37,12 +36,12 @@ export const getTransporterInfoFromID = (id) => {
 
 export const getVehicleInfoFromID = (id) => {
   return new Promise((resolve, reject) => {
-    API.get(`${URL.vehicleInfo}/${id}/vehicles`)
-      .then(({ data }) => {
-        if (data.status === "SUCCESS") {
-          resolve(data.data)
+    apiCall(`${URL.vehicleInfo}/${id}/vehicles`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
         } else {
-          reject(data.message)
+          reject(message)
         }
       })
       .catch((e) => {

@@ -10,7 +10,7 @@ import { makeStyles } from '@material-ui/styles';
 import Grid from '@material-ui/core/Grid';
 import { selectAllLoans } from '../../../store/loans/loans.selector';
 import { setAllLoans } from '../../../store/loans/loans.actions';
-import { getAllLoans } from '../../../services/loans.service';
+import { getAllLoans, getDisbursementLoanData } from '../../../services/loans.service';
 import Currency from '../../../components/Number/Currency';
 import Drawer from '@material-ui/core/Drawer';
 import Paper from '@material-ui/core/Paper';
@@ -27,6 +27,7 @@ import ApprovalReqestTable from '../../../components/Tables/ApprovalReqestTable'
 import DisbursementReqestTable from '../../../components/Tables/DisbursementReqestTable';
 import UserCan from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
+import DisbursementApprovedTable from '../../../components/Tables/DisbursementApprovedTable';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -104,26 +105,6 @@ const useStyles = makeStyles(theme => ({
     maxWidth: '80vw'
   }
 }));
-// {
-//   "amount_approved":0
-//   "amount_disbursed":0
-//   "amount_requested":2300000
-//   "commission":0.0
-//   "created_date":"Thu
-//    16 Jan 2020 18:00:02 GMT"
-//   "dealership_id":11727030
-//   "downpayment":0
-//   "id":47
-//   "insurance":0.0
-//   "loan_approved_rejected_date":"0000-00-00 00:00:00"
-//   "loan_disbursed_date":"0000-00-00 00:00:00"
-//   "modified_date":"Tue
-//    28 Jan 2020 13:56:57 GMT"
-//   "need_microatm":0
-//   "roi":18.0
-//   "status":"SUBMITTED"
-//   "tenure":15
-//   "type":"FUEL"}
 
 const convertToCurrency = value => <Currency value={value} />;
 
@@ -144,7 +125,6 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
         setDealershipData(data)
       })
       .catch(e => null);
-  
     // getDealershipLoansById(id)
     //   .then(data => setLoansData(data))
     //   .catch(e => null)
@@ -221,16 +201,6 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
     ]
   }, []);
 
-  // useMount(() => {
-  //   if(!all_loans.length) {
-  //     getAllLoans()
-  //       .then(data => {
-  //         setAllLoans(data);
-  //       })
-  //       .catch(e => null)
-  //   }
-  // })
-
   const options = {
     elevation: 1,
     filterType: 'checkbox',
@@ -261,6 +231,9 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
             <Paper elevation={1} className={classes.tableContainer}>
               <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
             </Paper>
+            <Paper elevation={1} className={classes.tableContainer}>
+              <DisbursementApprovedTable title={"Disbursement Approved Loans"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+            </Paper>
           </>
         )}
         no={() => (
@@ -268,86 +241,9 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
             <Paper elevation={1} className={classes.tableContainer}>
               <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
             </Paper>
-            {/* <Paper elevation={1} className={classes.tableContainer}>
-              <ApprovedTable title={"Approved Loans"} currentUser={currentUser} onRowClick={showDealershipInfo} />
-            </Paper>
-            <Paper elevation={1} className={classes.tableContainer}>
-              <DisbursedTable title={"Disbursed Loans"} currentUser={currentUser} onRowClick={showDealershipInfo} />
-            </Paper> */}
           </>
         )}
       />
-      {/* <div className={classes.categoryContainer}>
-        <Paper elevation={1} className={classes.categoryCard}>
-          <Typography className={classes.title} variant="h3" component="h3">
-            Submitted
-          </Typography>
-          <div style={{ overflow: 'auto', height: '70vh' }}>
-            {
-              all_loans.filter(item => item.status.toLowerCase() == "submitted").map((item, i) => (
-                <div key={i} onClick={() => showDealershipInfo(item.dealership_id, item.status)} className={classes.cardItem}>
-                  <Typography className={classes.cardTitle} component="p">{item.dealership_id} - {item.name}</Typography>
-                  <AvatarGroup max={4} className={classes.avatarWrapper}>
-                    {
-                      Array.isArray(item.type) && item.type.map(t => <Avatar key={t} component="span" className={classes.avatar}>{t.charAt(0)}</Avatar>)
-                    }
-                  </AvatarGroup>
-                  <div className={classes.infoSection}>
-                    <div>Req. amt: <Currency className={classes.money} value={item.amount_requested} /></div>
-                    <div>{moment(new Date(item.created_date)).fromNow()}</div>
-                  </div>
-                </div>
-              ))
-            }
-          </div>
-        </Paper>
-        <Paper elevation={1} className={classes.categoryCard}>
-          <Typography className={classes.title} variant="h3" component="h3">
-            Approved/Rejected
-          </Typography>
-          <div style={{ overflow: 'auto', height: '70vh' }}>
-            {
-              all_loans.filter(item => (item.status.toLowerCase() == "approved" || item.status.toLowerCase() == "rejected")).map((item, i) => (
-                <div key={i} onClick={() => showDealershipInfo(item.dealership_id, item.status)} className={classes.cardItem}>
-                  <Typography className={classes.cardTitle} component="p">{item.dealership_id} - {item.name}</Typography>
-                  <AvatarGroup max={4} className={classes.avatarWrapper}>
-                    {
-                      Array.isArray(item.type) && item.type.map(t => <Avatar key={t} component="span" className={classes.avatar}>{t.charAt(0)}</Avatar>)
-                    }
-                  </AvatarGroup>
-                  <div className={classes.infoSection}>
-                    <div>Appr. amt: <Currency className={classes.money} value={item.amount_approved} /></div>
-                    <div>{item.status} - {moment(new Date(item.loan_approved_rejected_date)).fromNow()}</div>
-                  </div>
-                </div>
-              ))
-            }
-          </div>
-        </Paper>
-        <Paper elevation={1} className={classes.categoryCard}>
-          <Typography className={classes.title} variant="h3" component="h3">
-            Disbursed
-          </Typography>
-          <div style={{ overflow: 'auto', height: '70vh' }}>
-            {
-              all_loans.filter(item => item.status.toLowerCase() == "disbursed").map((item, i) => (
-                <div key={i} onClick={() => showDealershipInfo(item.dealership_id, item.status)} className={classes.cardItem}>
-                  <Typography className={classes.cardTitle} component="p">{item.dealership_id} - {item.name}</Typography>
-                  <AvatarGroup max={4} className={classes.avatarWrapper}>
-                    {
-                      Array.isArray(item.type) && item.type.map(t => <Avatar key={t} component="span" className={classes.avatar}>{t.charAt(0)}</Avatar>)
-                    }
-                  </AvatarGroup>
-                  <div className={classes.infoSection}>
-                    <div>Disb. amt: <Currency className={classes.money} value={item.amount_disbursed} /></div>
-                    <div>{moment(new Date(item.loan_disbursed_date)).fromNow()}</div>
-                  </div>
-                </div>
-              ))
-            }
-          </div>
-        </Paper>
-      </div> */}
       <Drawer
         anchor="right"
         // elevation={4}
@@ -376,7 +272,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setAllLoans : loans => dispatch(setAllLoans(loans))
+  setAllLoans: loans => dispatch(setAllLoans(loans))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoansTable);

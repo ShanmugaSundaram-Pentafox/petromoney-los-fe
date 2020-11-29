@@ -26,6 +26,7 @@ import { selectCurrentUser } from '../../../store/user/user.selector';
 import { createStructuredSelector } from 'reselect';
 import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import Alert from '@material-ui/lab/Alert';
+import DispApprovedDataTable from './DispApprovedDataTable';
 
 const LoanInfoWrapper = styled.div`
   padding: 12px;
@@ -437,9 +438,18 @@ const DealershipDetails = ({
                   Remarks(Approval)
                 </Grid>
                 <Grid {...gridProps} md={8}>
-                  <Typography variant="p" component={'p'}>
+                  <TextInput
+                    disabled
+                    readOnly
+                    alignTop
+                    multiline
+                    rows={4}
+                    // rowsMax={8}
+                    value={loanInfo.approval_remarks}
+                    />
+                  {/* <Typography variant="p" component={'p'}>
                     {loanInfo.approval_remarks}
-                  </Typography>
+                  </Typography> */}
                 </Grid>
 
                 <Grid {...gridProps}>
@@ -465,23 +475,50 @@ const DealershipDetails = ({
           }
 
           {
-            status == 'disbursed' ? (
+            status == 'disbursement_approved' || status == 'disbursed' ? (
               <>
                 <Grid {...gridProps} md={2}>
                   Remarks(Approval)
                 </Grid>
                 <Grid {...gridProps} md={8}>
-                  <Typography variant="p" component={'p'}>
+                  {/* <Typography variant="p" component={'p'}>
                     {loanInfo.approval_remarks}
-                  </Typography>
+                  </Typography> */}
+                  <TextInput
+                    disabled
+                    readOnly
+                    alignTop
+                    multiline
+                    rows={4}
+                    // rowsMax={8}
+                    value={loanInfo.approval_remarks}
+                    />
                 </Grid>
                 <Grid {...gridProps} md={2}>
                   Remarks(Disbursement)
                 </Grid>
                 <Grid {...gridProps} md={8}>
-                  <Typography variant="p" component={'p'}>
+                  {/* <Typography variant="p" component={'p'}>
                     {loanInfo.disbursement_approval_remarks}
-                  </Typography>
+                  </Typography> */}
+                  <TextInput
+                    disabled
+                    readOnly
+                    alignTop
+                    multiline
+                    rows={4}
+                    value={loanInfo.disbursement_approval_remarks}
+                    />
+                </Grid>
+              </>
+            ) : null
+          }
+
+          {
+            status == "disbursement_approved" ? (
+              <>
+                <Grid {...gridProps}>
+                  <DispApprovedDataTable id={values.id} loanData={loanInfo} />
                 </Grid>
               </>
             ) : null

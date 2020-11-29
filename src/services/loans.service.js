@@ -2,6 +2,7 @@ import { API } from "../config/api"
 import { URL } from "../config/serverUrls"
 import { getDealershipLoansById } from "./dealerships.service";
 import { store } from "../store";
+import apiCall from "../utils/api.util";
 
 export const getAllLoans = () => {
   return new Promise((resolve, reject) => {
@@ -113,6 +114,22 @@ export const getLoanById = (dealershipId, loanId) => {
           resolve(data.data[0] || {});
         } else {
           reject(data.message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const getDisbursementLoanData = (dealershipId, loanId) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${URL.dealership}/${dealershipId}/loans/${loanId}`)
+      .then(({ status, data, message }) => {
+        if(status === "SUCCESS") {
+          resolve(data[0] || {});
+        } else {
+          reject(message);
         }
       })
       .catch(e => {

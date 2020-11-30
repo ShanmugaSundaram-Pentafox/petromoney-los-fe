@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 
@@ -7,6 +7,7 @@ const InputWrapper = styled.div`
   display: flex;
   align-items: ${props => props.top ? 'flex-start' : 'center'};
   justify-content: flex-end;
+  flex-direction: ${props => props.direction ? 'column' : 'row'};
 
   .input-label {
     font-size: 13px;
@@ -15,6 +16,11 @@ const InputWrapper = styled.div`
     text-align: right;
     padding: 4px 0;
     color: #242424;
+    ${props => props.direction ? css`
+      width: auto;
+      text-align: left;
+      font-weight: 600;
+      ` : undefined}
   }
 
   .text-field {
@@ -23,8 +29,25 @@ const InputWrapper = styled.div`
   }
 `;
 
+export const InputFieldWrapper = styled.div`
+  display: flex;
+  align-items: 'flex-start';
+  justify-content: flex-end;
+  flex-direction: column;
+`;
+
+export const InputLabel = styled.label`
+  width: auto;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  padding: 4px 0;
+  color: #242424;
+`;
+
 const TextInput = ({
   alignTop,
+  direction,
   labelText,
   labelWidth,
   readOnly,
@@ -34,7 +57,7 @@ const TextInput = ({
   money,
   ...restProps
 }) => (
-  <InputWrapper top={alignTop} labelWidth={labelWidth}>
+  <InputWrapper direction={direction} top={alignTop} labelWidth={labelWidth}>
     {labelText ? <label className="input-label">{labelText}</label> : null}
     <TextField
       className="text-field"

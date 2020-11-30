@@ -20,7 +20,8 @@ export const getAllLoans = () => {
 
 export const getAll_ls1_Metrices = () => {
   return new Promise((resolve, reject) => {
-    // resolve({});
+    resolve({});
+    return;
     apiCall(URL.ls1_metrices)
       .then(({ status, data, message }) => {
         if(status === "SUCCESS") {
@@ -37,7 +38,8 @@ export const getAll_ls1_Metrices = () => {
 
 export const getAll_ls2_Metrices = () => {
   return new Promise((resolve, reject) => {
-    // resolve([]);
+    resolve([]);
+    return;
     apiCall(URL.ls2_metrices)
       .then(({ status, data, message }) => {
         if(status === "SUCCESS") {
@@ -54,6 +56,8 @@ export const getAll_ls2_Metrices = () => {
 
 export const getLoanBookData = () => {
   return new Promise((resolve, reject) => {
+    reject("");
+    return;
     apiCall(URL.loanBook)
       .then(({ status, data, message }) => {
         if(status === "SUCCESS") {
@@ -100,12 +104,17 @@ export const getLoanById = (dealershipId, loanId) => {
   });
 }
 
-export const getDisbursementLoanData = (dealershipId, loanId) => {
+export const updateLoanApprovalStatusById = (dealershipId, loanId, body) => {
   return new Promise((resolve, reject) => {
-    apiCall(`${URL.dealership}/${dealershipId}/loans/${loanId}`)
-      .then(({ status, data, message }) => {
+    apiCall(`${URL.dealership}/${dealershipId}/loan/${loanId}/approval`, {
+      method: "POST",
+      body,
+    })
+      .then(async ({ status, data, message }) => {
         if(status === "SUCCESS") {
-          resolve(data[0] || {});
+          const res = await getDealershipLoansById(dealershipId);
+          const updatedLoanData = await getLoanById(dealershipId, loanId);
+          resolve({ loans: res, data: updatedLoanData, message });
         } else {
           reject(message);
         }
@@ -116,10 +125,10 @@ export const getDisbursementLoanData = (dealershipId, loanId) => {
   });
 }
 
-export const updateLoanApprovalStatusById = (dealershipId, loanId, body) => {
+export const deleteLoanDisbursementRecord = (dealershipId, loanId, body) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.dealership}/${dealershipId}/loan/${loanId}/approval`, {
-      method: "POST",
+      method: "DELETE",
       body,
     })
       .then(async ({ status, data, message }) => {

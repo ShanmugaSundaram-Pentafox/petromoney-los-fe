@@ -307,6 +307,7 @@ const DealershipDetails = ({
     // }
     updateLoanApprovalStatusById(values.id, loanData.id, reqBody)
       .then(res => {
+        setLoanInfo(res.data);
         setApiStatus({ type: 'success', message: res.message || resMsg })
       })
       .catch(err => {
@@ -492,6 +493,7 @@ const DealershipDetails = ({
 
           {
             status == 'disbursement_approved' || status == 'disbursed' ? (
+              <>
               <Grid container>
                 <Grid {...gridProps} md={6}>
                   Remarks(Approval)
@@ -527,15 +529,9 @@ const DealershipDetails = ({
                     />
                 </Grid>
               </Grid>
-            ) : null
-          }
-
-          {
-            status == "disbursement_approved" ? (
-              <>
-                <Grid {...gridProps}>
-                  <DispApprovedDataTable id={values.id} loanData={loanInfo} />
-                </Grid>
+              <Grid {...gridProps}>
+                <DispApprovedDataTable id={values.id} loanData={loanInfo} />
+              </Grid>
               </>
             ) : null
           }

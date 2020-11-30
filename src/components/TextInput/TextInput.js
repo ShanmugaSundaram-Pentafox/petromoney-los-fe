@@ -17,6 +17,7 @@ const InputWrapper = styled.div`
     padding: 4px 0;
     color: #242424;
     ${props => props.direction ? css`
+      color: #444444;
       width: auto;
       text-align: left;
       font-weight: 600;
@@ -53,8 +54,9 @@ const TextInput = ({
   readOnly,
   placeholder,
   inputProps,
-  onChange,
+  onChange = () => null,
   money,
+  date,
   ...restProps
 }) => (
   <InputWrapper direction={direction} top={alignTop} labelWidth={labelWidth}>
@@ -77,6 +79,6 @@ const TextInput = ({
       {...restProps}
       />
   </InputWrapper>
-)
+);
 
 export default TextInput

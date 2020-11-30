@@ -120,10 +120,10 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick }) => {
     selectableRowsHeader: false,
     selectableRows: 'none',
     isRowSelectable: () => false,
-    // onRowClick: (rowData, { dataIndex }) => {
-    //   // console.log(rowData, rowMeta);
-    //   onRowClick(loans[dataIndex].dealership_id, 'disbursed')
-    // }
+    onRowClick: (rowData, { dataIndex }) => {
+      // console.log(rowData, rowMeta);
+      onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'disbursed')
+    }
   };
 
   return (
@@ -136,7 +136,7 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick }) => {
             columns={columns}
             options={options}
           />
-        ) : <Paper style={{ padding: 10 }}>No Submitted Records</Paper> 
+        ) : <Paper style={{ padding: 10 }}>No Disbursed Loans</Paper> 
       }
     </div>
   )

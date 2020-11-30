@@ -14,6 +14,10 @@ export default {
       borderStyle: 'dotted',
       borderColor: 'rgba(0, 0, 0, 0.1)'
     },
+    '& .MuiInputBase-input.MuiInputBase-inputMultiline[readonly]+fieldset': {
+      borderStyle: 'solid',
+      borderColor: 'rgba(0, 0, 0, 0.23)'
+    },
     '& .MuiOutlinedInput-root': {
       '& fieldset': {
         // borderWidth: 'red',

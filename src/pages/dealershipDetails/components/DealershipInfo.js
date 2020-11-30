@@ -11,12 +11,12 @@ import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import TextInput from '../../../components/TextInput/TextInput';
 import { useFormik } from 'formik';
-import { API } from '../../../config/api';
 import { URL } from '../../../config/serverUrls';
 import { logger } from '../../../config/logger';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
+import apiCall from '../../../utils/api.util';
 // import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -41,7 +41,13 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
       console.log('Form Values >> ', values);
       setLoading(true);
       setApiStatus({});
-      API.post(`${URL.dealership}/${values.id}`, { ...values, user_id: currentUser.id })
+      apiCall(`${URL.dealership}/${values.id}`, {
+        method: "POST",
+        body: {
+          ...values,
+          user_id: currentUser.id
+        }
+      })
         .then(({ status, message, data }) => {
           if(status == 'success') {
             setApiStatus({ type: 'success', message: message || 'Unable to save the details. Please try again later' })

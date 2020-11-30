@@ -178,21 +178,37 @@ const LoanInfo = ({
         </Table>
       </LoanInfoWrapper>
       <Grid container>
-        <Grid item xs={4} className={classes.gridItemStyle}>
-          Recommendation Remarks(Approval):
+        <Grid item xs={6} className={classes.gridItemStyle}>
+          Recommendation Remarks(for Approval):
         </Grid>
-        <Grid item xs={8} className={classes.gridItemStyle}>
-          <p>{row.recommendation_remarks}</p>
+        <Grid item xs={6} className={classes.gridItemStyle}>
+          <TextInput
+            disabled
+            readOnly
+            alignTop
+            multiline
+            rows={4}
+            // rowsMax={8}
+            value={row.recommendation_remarks}
+            />
         </Grid>
       </Grid>
       {
         row.disbursement_recommendation_remarks && (
           <Grid container>
-            <Grid item xs={4} className={classes.gridItemStyle}>
-              Recommendation Remarks(Disbursement):
+            <Grid item xs={6} className={classes.gridItemStyle}>
+              Recommendation Remarks(for Disbursement):
             </Grid>
-            <Grid item xs={8} className={classes.gridItemStyle}>
-              <p>{row.disbursement_recommendation_remarks}</p>
+            <Grid item xs={6} className={classes.gridItemStyle}>
+              <TextInput
+                disabled
+                readOnly
+                alignTop
+                multiline
+                rows={4}
+                // rowsMax={8}
+                value={row.disbursement_recommendation_remarks}
+                />
             </Grid>
           </Grid>
         )
@@ -433,11 +449,11 @@ const DealershipDetails = ({
           
           {
             status == "disbursement_approval" ? (
-              <>
-                <Grid {...gridProps} md={2}>
+              <Grid container>
+                <Grid {...gridProps} md={6}>
                   Remarks(Approval)
                 </Grid>
-                <Grid {...gridProps} md={8}>
+                <Grid {...gridProps} md={6}>
                   <TextInput
                     disabled
                     readOnly
@@ -470,17 +486,17 @@ const DealershipDetails = ({
                     }}
                   />
                 </Grid>
-              </>
+              </Grid>
             ) : null
           }
 
           {
             status == 'disbursement_approved' || status == 'disbursed' ? (
-              <>
-                <Grid {...gridProps} md={2}>
+              <Grid container>
+                <Grid {...gridProps} md={6}>
                   Remarks(Approval)
                 </Grid>
-                <Grid {...gridProps} md={8}>
+                <Grid {...gridProps} md={6}>
                   {/* <Typography variant="p" component={'p'}>
                     {loanInfo.approval_remarks}
                   </Typography> */}
@@ -494,10 +510,10 @@ const DealershipDetails = ({
                     value={loanInfo.approval_remarks}
                     />
                 </Grid>
-                <Grid {...gridProps} md={2}>
+                <Grid {...gridProps} md={6}>
                   Remarks(Disbursement)
                 </Grid>
-                <Grid {...gridProps} md={8}>
+                <Grid {...gridProps} md={6}>
                   {/* <Typography variant="p" component={'p'}>
                     {loanInfo.disbursement_approval_remarks}
                   </Typography> */}
@@ -510,7 +526,7 @@ const DealershipDetails = ({
                     value={loanInfo.disbursement_approval_remarks}
                     />
                 </Grid>
-              </>
+              </Grid>
             ) : null
           }
 

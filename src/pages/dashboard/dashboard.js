@@ -128,7 +128,7 @@ const Dashboard = ({ currentUser }) => {
   const classes = useStyles();
   usePageTitle('Dashboard');
   const [chartData, setChartData] = useState([]);
-  const [ ls1_metrices, setLs1Metrices ] = useState([]);
+  const [ ls1_metrices, setLs1Metrices ] = useState({});
   const [ ls2_metrices, setLs2Metrices ] = useState([]);
   const [ daysChartData, setdaysChartData ] = useState(['Days', 'Amount']);
   const [ totalForRegion, setTotalForRegion ] = useState(0)
@@ -154,7 +154,7 @@ const Dashboard = ({ currentUser }) => {
       })
 
       getAll_ls1_Metrices().then(res => {
-        const result = res[0];
+        const result = res[0] || {};
         setLs1Metrices(result);
         let overallData = [
           ['Days', 'Amount'],

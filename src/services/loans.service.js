@@ -1,17 +1,15 @@
-import { API } from "../config/api"
 import { URL } from "../config/serverUrls"
 import { getDealershipLoansById } from "./dealerships.service";
-import { store } from "../store";
 import apiCall from "../utils/api.util";
 
 export const getAllLoans = () => {
   return new Promise((resolve, reject) => {
-    API.get(URL.loans)
-      .then(({ data }) => {
-        if(data.status === "SUCCESS") {
-          resolve(data.data);
+    apiCall(URL.loans)
+      .then(({ status, data, message }) => {
+        if(status === "SUCCESS") {
+          resolve(data);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch(e => {
@@ -22,18 +20,13 @@ export const getAllLoans = () => {
 
 export const getAll_ls1_Metrices = () => {
   return new Promise((resolve, reject) => {
-    const currentUser = store.getState().user.currentUser;
-    API.get(URL.ls1_metrices, {
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': `${currentUser.token}`
-      }
-    })
-      .then(({ data }) => {
-        if(data.status === "SUCCESS") {
-          resolve(data.data);
+    // resolve({});
+    apiCall(URL.ls1_metrices)
+      .then(({ status, data, message }) => {
+        if(status === "SUCCESS") {
+          resolve(data);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch(e => {
@@ -44,18 +37,13 @@ export const getAll_ls1_Metrices = () => {
 
 export const getAll_ls2_Metrices = () => {
   return new Promise((resolve, reject) => {
-    const currentUser = store.getState().user.currentUser;
-    API.get(URL.ls2_metrices, {
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': `${currentUser.token}`
-      }
-    })
-      .then(({ data }) => {
-        if(data.status === "SUCCESS") {
-          resolve(data.data);
+    // resolve([]);
+    apiCall(URL.ls2_metrices)
+      .then(({ status, data, message }) => {
+        if(status === "SUCCESS") {
+          resolve(data);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch(e => {
@@ -66,18 +54,12 @@ export const getAll_ls2_Metrices = () => {
 
 export const getLoanBookData = () => {
   return new Promise((resolve, reject) => {
-    const currentUser = store.getState().user.currentUser;
-    API.get(URL.loanBook, {
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': `${currentUser.token}`
-      }
-    })
-      .then(({ data }) => {
-        if(data.status === "SUCCESS") {
-          resolve(data.data);
+    apiCall(URL.loanBook)
+      .then(({ status, data, message }) => {
+        if(status === "SUCCESS") {
+          resolve(data);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch(e => {
@@ -88,16 +70,12 @@ export const getLoanBookData = () => {
 
 export const getLoansByStatus = status => {
   return new Promise((resolve, reject) => {
-    API.get(URL.loans, {
-      params: {
-        status
-      }
-    })
-      .then(({ data }) => {
-        if(data.status === "SUCCESS") {
-          resolve(data.data);
+    apiCall(`${URL.loans}?status=${status}`)
+      .then(({ status, data, message }) => {
+        if(status === "SUCCESS") {
+          resolve(data);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch(e => {
@@ -108,12 +86,12 @@ export const getLoansByStatus = status => {
 
 export const getLoanById = (dealershipId, loanId) => {
   return new Promise((resolve, reject) => {
-    API.get(`${URL.dealership}/${dealershipId}/loans/${loanId}`)
-      .then(({ data }) => {
-        if(data.status === "SUCCESS") {
-          resolve(data.data[0] || {});
+    apiCall(`${URL.dealership}/${dealershipId}/loans/${loanId}`)
+      .then(({ status, data, message }) => {
+        if(status === "SUCCESS") {
+          resolve(data[0] || {});
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch(e => {
@@ -140,13 +118,16 @@ export const getDisbursementLoanData = (dealershipId, loanId) => {
 
 export const updateLoanApprovalStatusById = (dealershipId, loanId, body) => {
   return new Promise((resolve, reject) => {
-    API.post(`${URL.dealership}/${dealershipId}/loan/${loanId}/approval`, body)
-      .then(async ({ data }) => {
-        if(data.status === "SUCCESS") {
+    apiCall(`${URL.dealership}/${dealershipId}/loan/${loanId}/approval`, {
+      method: "POST",
+      body,
+    })
+      .then(async ({ status, data, message }) => {
+        if(status === "SUCCESS") {
           const res = await getDealershipLoansById(dealershipId);
-          resolve({ data: res, message: data.message });
+          resolve({ data: res, message });
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch(e => {

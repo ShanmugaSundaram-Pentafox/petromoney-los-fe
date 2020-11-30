@@ -20,8 +20,8 @@ export const getAllLoans = () => {
 
 export const getAll_ls1_Metrices = () => {
   return new Promise((resolve, reject) => {
-    resolve({});
-    return;
+    // resolve({});
+    // return;
     apiCall(URL.ls1_metrices)
       .then(({ status, data, message }) => {
         if(status === "SUCCESS") {
@@ -38,8 +38,8 @@ export const getAll_ls1_Metrices = () => {
 
 export const getAll_ls2_Metrices = () => {
   return new Promise((resolve, reject) => {
-    resolve([]);
-    return;
+    // resolve([]);
+    // return;
     apiCall(URL.ls2_metrices)
       .then(({ status, data, message }) => {
         if(status === "SUCCESS") {
@@ -56,8 +56,8 @@ export const getAll_ls2_Metrices = () => {
 
 export const getLoanBookData = () => {
   return new Promise((resolve, reject) => {
-    reject("");
-    return;
+    // reject("");
+    // return;
     apiCall(URL.loanBook)
       .then(({ status, data, message }) => {
         if(status === "SUCCESS") {

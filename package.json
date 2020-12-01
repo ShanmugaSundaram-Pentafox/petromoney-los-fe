@@ -12,6 +12,7 @@
     "@testing-library/user-event": "^7.1.2",
     "axios": "^0.19.2",
     "clsx": "^1.1.0",
+    "crypto-es": "^1.2.6",
     "formik": "^2.1.4",
     "lodash": "^4.17.15",
     "match-sorter": "^4.0.2",

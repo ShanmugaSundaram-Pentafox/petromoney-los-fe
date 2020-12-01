@@ -140,7 +140,7 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick }) => {
             columns={columns}
             options={options}
           />
-        ) : <Paper style={{ padding: 10 }} >No Pending Approvals</Paper> 
+        ) : <Paper style={{ padding: 10 }} >No Pending Initial Approvals</Paper> 
       }
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>

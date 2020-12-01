@@ -140,7 +140,7 @@ const DisbursementApprovedTable = ({ title, loans, setLoansData, onRowClick }) =
             columns={columns}
             options={options}
           />
-        ) : <Paper style={{ padding: 10 }}>No Disbursed Records</Paper> 
+        ) : <Paper style={{ padding: 10 }}>No pending Disbursement Approved applications</Paper> 
       }
     </div>
   )

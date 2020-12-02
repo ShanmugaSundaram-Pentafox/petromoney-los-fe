@@ -52,6 +52,8 @@ const SolarEnquiryForm = ({ dealershipId, currentUser, onClose }) => {
   const [dealerData, setDealersData] = useState()
   const [activeTab, setActiveTab] = useState(0)
   const [apiStatus, setAapiStatus] = useState({})
+  const [previous, setPrevious] = useState()
+  const [next, setNext] = useState()
 
   useMount(() => {
     getDealersByDealershipId(dealershipId)
@@ -223,7 +225,22 @@ const SolarEnquiryForm = ({ dealershipId, currentUser, onClose }) => {
                   onChange={() => null}
                 />
               </Grid>
-              <Grid item xs={12}></Grid>
+
+              <Grid item xs={12} container="row" spacing={2}>
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    onClick={(e) => {
+                      if (activeTab < 4) {
+                        setActiveTab(activeTab + 1)
+                        console.log(activeTab)
+                      }
+                    }}
+                  >
+                    Save & Continue
+                  </Button>
+                </Grid>
+              </Grid>
             </Grid>
           </form>
         </TabPanel>
@@ -260,7 +277,34 @@ const SolarEnquiryForm = ({ dealershipId, currentUser, onClose }) => {
                 />
               </Grid>
 
-              <Grid item xs={12}></Grid>
+              <Grid item xs={12} spacing={2} container direction="row">
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    onClick={(e) => {
+                      if (activeTab !== 0) {
+                        setActiveTab(activeTab - 1)
+                        console.log(activeTab)
+                      }
+                    }}
+                  >
+                    Previous
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    onClick={(e) => {
+                      if (activeTab < 4) {
+                        setActiveTab(activeTab + 1)
+                        console.log(activeTab)
+                      }
+                    }}
+                  >
+                    Save & Continue
+                  </Button>
+                </Grid>
+              </Grid>
             </Grid>
           </form>
         </TabPanel>
@@ -297,7 +341,34 @@ const SolarEnquiryForm = ({ dealershipId, currentUser, onClose }) => {
                 />
               </Grid>
 
-              <Grid item xs={12}></Grid>
+              <Grid item xs={12} spacing={2} container direction="row">
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    onClick={(e) => {
+                      if (activeTab !== 0) {
+                        setActiveTab(activeTab - 1)
+                        console.log(activeTab)
+                      }
+                    }}
+                  >
+                    Previous
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    onClick={(e) => {
+                      if (activeTab < 4) {
+                        setActiveTab(activeTab + 1)
+                        console.log(activeTab)
+                      }
+                    }}
+                  >
+                    Save & Continue
+                  </Button>
+                </Grid>
+              </Grid>
             </Grid>
           </form>
         </TabPanel>
@@ -334,15 +405,57 @@ const SolarEnquiryForm = ({ dealershipId, currentUser, onClose }) => {
                 />
               </Grid>
 
-              <Grid item xs={12}></Grid>
+              <Grid item xs={12} spacing={2} container direction="row">
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    onClick={(e) => {
+                      if (activeTab !== 0) {
+                        setActiveTab(activeTab - 1)
+                        console.log(activeTab)
+                      }
+                    }}
+                  >
+                    Previous
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    onClick={(e) => {
+                      if (activeTab < 4) {
+                        setActiveTab(activeTab + 1)
+                        console.log(activeTab)
+                      }
+                    }}
+                  >
+                    Save & Continue
+                  </Button>
+                </Grid>
+              </Grid>
             </Grid>
           </form>
         </TabPanel>
-        <TabPanel
-          activeTab={activeTab}
-          index={4}
-          style={{ maxWidth: 620 }}
-        ></TabPanel>
+        <TabPanel activeTab={activeTab} index={4} style={{ maxWidth: 620 }}>
+          <Grid spacing={2} container direction="row">
+            <Grid item>
+              <Button
+                variant="contained"
+                onClick={(e) => {
+                  if (activeTab !== 0) {
+                    setActiveTab(activeTab - 1)
+                    console.log(activeTab)
+                  }
+                }}
+              >
+                Previous
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button variant="contained">Preview Report</Button>
+            </Grid>
+          </Grid>
+        </TabPanel>
       </div>
 
       <div className={classes.actionFooter}>

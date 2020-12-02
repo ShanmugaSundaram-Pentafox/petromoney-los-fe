@@ -83,7 +83,11 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
   }, [])
 
   const { values, errors, handleChange, handleSubmit, handleReset, setValues } = useFormik({
-    initialValues: {},
+    initialValues: {
+      applicable_interest: 18,
+      loan_percentage: 1,
+      max_loan_cap: 3000000,
+    },
     onSubmit: values => {
       // console.log('Form Values >> ', values);
       setLoading(true);

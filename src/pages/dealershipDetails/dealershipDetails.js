@@ -21,6 +21,8 @@ import SalesInfo from "../dashboard/components/SalesInfo";
 import usePageTitle from "../../hooks/usePageTitle";
 import CreditReportSideWrapper from "./components/CreditReportSideWrapper";
 import InfoBox from "../../components/CommonComponents/InfoBox";
+import SolarEnquiryForm from "./components/SolarEnquiryForm";
+import { tabA11yProps, TabPanel } from "../../components/CommonComponents/Tabs/TabPanel";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,37 +51,13 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   sidePanelWrapper: {
-    width: 700
-  }
+    width: '60vw'
+  },
+  solarPanelWrapper: {
+    width: '80vw',
+    backgroundColor: '#e5e5e5',
+  },
 }));
-
-function a11yProps(index) {
-  return {
-    id: `vertical-tab-${index}`,
-    'aria-controls': `vertical-tabpanel-${index}`,
-  };
-}
-
-const TabPanel = ({ children, activeTab, index, ...rest }) => {
-  return (
-    <div
-      role="tabpanel"
-      hidden={activeTab !== index}
-      id={`vertical-tabpanel-${index}`}
-      aria-labelledby={`vertical-tab-${index}`}
-      {...rest}
-    >
-      {activeTab === index && (
-        <Box p={2} pt={0}>
-          <Paper>
-            {children}
-          </Paper>
-        </Box>
-      )}
-    </div>
-  );
-}
-
 
 const DealershipDetails = ({ currentUser, match }) => {
   const classes = useStyles();
@@ -87,6 +65,7 @@ const DealershipDetails = ({ currentUser, match }) => {
   const [dealershipData, setDealershipData] = useState();
   const [dealersData, setDealersData] = useState();
   const [showCreditReport, setShowCreditReport] = useState();
+  const [showSolarForm, setShowSolarForm] = useState();
   const {
     url,
     params: { id },
@@ -123,11 +102,14 @@ const DealershipDetails = ({ currentUser, match }) => {
           aria-label="Dealership Details Panel"
           className={classes.tabs}
         >
-          <Tab label={<InfoBox active={activeTab === 0} number={1} title="Dealership Info" />} {...a11yProps(0)} />
-          <Tab label={<InfoBox active={activeTab === 1} number={2} title="Dealers List" />} {...a11yProps(1)} />
-          <Tab label={<InfoBox active={activeTab === 2} number={3} title="Sales History" />} {...a11yProps(2)} />
-          <Tab label={<InfoBox active={activeTab === 3} number={4} title="Loans List" />} {...a11yProps(3)} />
-          <Tab label={<InfoBox active={activeTab === 4} number={5} title="Documents" />} {...a11yProps(4)} />
+          <Tab label={<InfoBox active={activeTab === 0} number={1} title="Dealership Info" />} {...tabA11yProps(0)} />
+          <Tab label={<InfoBox active={activeTab === 1} number={2} title="Dealers List" />} {...tabA11yProps(1)} />
+          <Tab label={<InfoBox active={activeTab === 2} number={3} title="Sales History" />} {...tabA11yProps(2)} />
+          <Tab label={<InfoBox active={activeTab === 3} number={4} title="Loans List" />} {...tabA11yProps(3)} />
+          <Tab label={<InfoBox active={activeTab === 4} number={5} title="Documents" />} {...tabA11yProps(4)} />
+          {/* <div onClick={() => setShowSolarForm(true)}>
+            <InfoBox title="Solar Enquiry Form" />
+          </div> */}
         </Tabs>
         <TabPanel activeTab={activeTab} index={0}>
           {dealershipData && (
@@ -147,29 +129,39 @@ const DealershipDetails = ({ currentUser, match }) => {
           <DealershipDoc id={id} currentUser={currentUser} />
         </TabPanel>
       </div>
-      <Grid container>
-        <Grid item md={5} xs={12}>
-          {/* <Typography className={classes.title} variant="h4">
-            {id} - {dealershipData && dealershipData.name}
-          </Typography> */}
-        </Grid>
-        <Grid item md={7} xs={12} className={classes.titleActionContainer}>
-          <Drawer
-            anchor="right"
-            open={showCreditReport}
-            variant="temporary"
-          >
-            <div className={classes.sidePanelWrapper}>
-              <CreditReportSideWrapper
-                dealershipId={id}
-                data={{}}
-                currentUser={currentUser}
-                onClose={toggleCreditReport}
-              />
-            </div>
-          </Drawer>
-        </Grid>
-      </Grid>
+
+      <Drawer
+        anchor="right"
+        open={showSolarForm}
+        variant="temporary"
+        PaperProps={{
+          style: { backgroundColor: '#e5e5e5' }
+        }}
+      >
+        <div className={classes.solarPanelWrapper}>
+          <SolarEnquiryForm
+            dealershipId={id}
+            data={{}}
+            currentUser={currentUser}
+            onClose={() => setShowSolarForm(false)}
+          />
+        </div>
+      </Drawer>
+      
+      <Drawer
+        anchor="right"
+        open={showCreditReport}
+        variant="temporary"
+      >
+        <div className={classes.sidePanelWrapper}>
+          <CreditReportSideWrapper
+            dealershipId={id}
+            data={{}}
+            currentUser={currentUser}
+            onClose={toggleCreditReport}
+          />
+        </div>
+      </Drawer>
       {/* <Divider className={classes.bottomSpacing} /> */}
       {/* <Grid container spacing={2}>
           <Grid item md={6} xs={12}>

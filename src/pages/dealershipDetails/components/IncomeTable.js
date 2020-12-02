@@ -153,7 +153,7 @@ const IncomeTable = ({ id, editable, currentUser }) => {
           <TableRow>
             <TableCell>Business Name</TableCell>
             <TableCell>Business Age</TableCell>
-            <TableCell align="right">FY Turnover</TableCell>
+            <TableCell align="right">FY Income</TableCell>
             <TableCell align="right">Action</TableCell>
           </TableRow>
         </TableHead>
@@ -181,10 +181,10 @@ const IncomeTable = ({ id, editable, currentUser }) => {
                 <TableCell align={"right"}>
                   <TextInput
                     money
-                    label="FY Turnover"
-                    name="cur_fy_turnover"
+                    label="FY Income"
+                    name="cur_fy_income"
                     type="number"
-                    value={editRow.cur_fy_turnover}
+                    value={editRow.cur_fy_income}
                     onChange={onEditTextChange}
                   />
                 </TableCell>
@@ -242,10 +242,10 @@ const IncomeTable = ({ id, editable, currentUser }) => {
                 <TableCell align={"right"}>
                   <TextInput
                     money
-                    label="FY Turnover"
-                    name="cur_fy_turnover"
+                    label="FY Income"
+                    name="cur_fy_income"
                     type="number"
-                    value={apiData.cur_fy_turnover}
+                    value={apiData.cur_fy_income}
                     onChange={onTextChange}
                   />
                 </TableCell>

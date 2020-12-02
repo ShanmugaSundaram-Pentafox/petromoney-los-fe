@@ -1,9 +1,7 @@
-
-
 import React from "react";
 import PropTypes from 'prop-types';
 import styled, { css } from "styled-components";
-
+import ChevronRightRoundedIcon from '@material-ui/icons/ChevronRightRounded';
 
 export const InfoBoxContainer = styled.div`
     display: flex;
@@ -118,7 +116,7 @@ export const InfoBox = ({
 }) => {
     return (
         <InfoBoxCard active={active} onClick={action}>
-            {number ? <i>{number}</i> : null}
+            {number ? <i>{number}</i> : <i><ChevronRightRoundedIcon  /></i>}
             <p>
                 {title ? <span className="title">{title}</span> : null}
                 {text ? <span className="txt">{text}</span> : null}

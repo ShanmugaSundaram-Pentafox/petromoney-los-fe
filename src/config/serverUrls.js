@@ -18,4 +18,5 @@ export const URL = {
   ls1_metrices: "business/metrics/ls1",
   ls2_metrices: "business/metrics/ls2",
   loanBook: 'business/loanbook',
+  loanMetrics: "metrics/loan/stats",
 }

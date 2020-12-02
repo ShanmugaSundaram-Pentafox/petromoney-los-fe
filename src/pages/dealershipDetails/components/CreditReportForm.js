@@ -337,11 +337,21 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
         <Typography className={classes.sidePanelTitle} variant="h4">Eligibility</Typography>
         <Table className={classes.table} size="small" aria-label="Expenses">
           <TableBody>
-            <Row text={`FOIR % Considered`} value={`${values.foir}`} />
+            <Row text={`FOIR % Considered (Normalised to 0 - 1)`} value={`${values.foir}`} />
             <Row text={`FOIR % EBIDTA`} value={values.foir_ebidta} />
             <Row text={`Eligibility for Loan`} value={values.is_loan ? 'Yes' : '-'} />
             <Row text={`Max monthly interest possible on fuel credit`} value={<Currency value={values.max_loan_interest} />} />
-            <Row text={`Applicable Interest Rate for Loan per Annum %`} value={values.applicable_interest} />
+            <Row text={`Applicable Interest Rate for Loan per Annum %`}>
+              <TextInput
+                readOnly={!editable}
+                name="applicable_interest"
+                type="number"
+                value={values.applicable_interest || 0}
+                onChange={onChange}
+                min={0}
+                max={100}
+                />
+            </Row>
             <Row text={`Max Loan possible as per FOIR on EBIDTA`} value={<Currency value={values.max_loan_foir} />} />
             <Row text={`Annual Turnover (Rs)`} value={<Currency value={values.annual_turnover} />} />
             <Row text={`% of Turnover to be considered for Loan`}>
@@ -349,7 +359,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 readOnly={!editable}
                 name="loan_percentage"
                 type="number"
-                value={values.loan_percentage || 1}
+                value={values.loan_percentage || 0}
                 onChange={onChange}
                 />
             </Row>

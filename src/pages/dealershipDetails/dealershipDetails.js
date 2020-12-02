@@ -107,9 +107,9 @@ const DealershipDetails = ({ currentUser, match }) => {
           <Tab label={<InfoBox active={activeTab === 2} number={3} title="Sales History" />} {...tabA11yProps(2)} />
           <Tab label={<InfoBox active={activeTab === 3} number={4} title="Loans List" />} {...tabA11yProps(3)} />
           <Tab label={<InfoBox active={activeTab === 4} number={5} title="Documents" />} {...tabA11yProps(4)} />
-          {/* <div onClick={() => setShowSolarForm(true)}>
+          <div onClick={() => setShowSolarForm(true)}>
             <InfoBox title="Solar Enquiry Form" />
-          </div> */}
+          </div>
         </Tabs>
         <TabPanel activeTab={activeTab} index={0}>
           {dealershipData && (

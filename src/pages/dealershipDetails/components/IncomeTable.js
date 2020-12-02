@@ -204,7 +204,7 @@ const IncomeTable = ({ id, editable, currentUser }) => {
                 <TableCell>{item.business_name}</TableCell>
                 <TableCell>{item.business_age}</TableCell>
                 <TableCell align={"right"}>
-                  <Currency value={item.cur_fy_turnover} />
+                  <Currency value={item.cur_fy_income} />
                 </TableCell>
                 <TableCell align={"right"}>
                   <Button

@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from 'prop-types';
 import styled from "styled-components";
 
-export const DealerInfoWrapper = styled.div`
+export const InfoWrapper = styled.div`
     display: flex;
 
     .user-initial {
@@ -11,12 +11,12 @@ export const DealerInfoWrapper = styled.div`
         justify-content: center;    
         color: #FFFFFF;
         font-weight: 600;
-        font-size: 36px;
+        font-size: 24px;
         font-style: normal;
         line-height: 150%;
         text-transform: uppercase;
-        width: 64px;
-        height: 64px;
+        width: 52px;
+        height: 52px;
         background-color: #4770C1;
         border-radius: 100%;
         margin-right: 20px;
@@ -28,13 +28,13 @@ export const DealerInfoWrapper = styled.div`
 
         p {
             color: #212323;
-            font-size: 18px;
-            line-height: 26px;
+            font-size: 16px;
+            line-height: 22px;
 
             &.name {
-                font-size: 20px;
+                font-size: 18px;
                 font-weight: bold;
-                line-height: 29px;
+                line-height: 24px;
                 margin-bottom: 2px;
                 display: -webkit-box;
                 -webkit-line-clamp: 2;
@@ -46,18 +46,18 @@ export const DealerInfoWrapper = styled.div`
             }
 
 
-            &.dealership-number {
+            &.caption {
                 color: #909191;
                 font-size: 16px;
-                line-height: 23px;
+                line-height: 22px;
                 margin-bottom: 2px;
             }
         }
     }
 `;
 
-export const DealerInfoCardWrapper = styled.div`
-    min-height: 160px;
+export const InfoCardWrapper = styled.div`
+    min-height: 140px;
     padding: 24px;
     background-color: #FFFFFF;
     border-radius: 4px;
@@ -66,67 +66,67 @@ export const DealerInfoCardWrapper = styled.div`
 
     .title {
         color: #444444;
-        font-size: 18px;
+        font-size: 16px;
         line-height: 26px;
-        margin-bottom: 16px;
+        margin-bottom: 12px;
     }
 `;
 
-export const DealerInfo = ({
+export const Info = ({
     userInitial="",
     name="",
     description="",
-    dealershipNumber=""
+    caption=""
 }) => {
     return (
-        <DealerInfoWrapper>
+        <InfoWrapper>
             <i className="user-initial">{userInitial}</i>
 
             <div className="user-info-txt">
-                {dealershipNumber ? <p className="dealership-number">{dealershipNumber}</p> : null}
+                {caption ? <p className="caption">{caption}</p> : null}
                 {name ? <p className="name">{name}</p> : null}
                 {description ? <p>{description}</p> : null}
             </div>
-        </DealerInfoWrapper>
+        </InfoWrapper>
     );
 };
 
-const DealerInfoCard = ({
+const InfoCard = ({
     title="",
     userInitial="",
     name="",
     description="",
-    dealershipNumber="",
+    caption="",
     onClick= () => {}
 }) => {
     return (
-        <DealerInfoCardWrapper onClick={onClick}>
+        <InfoCardWrapper onClick={onClick}>
             {title ? <p className="title">{title}</p> : null}
             
-            <DealerInfo 
+            <Info 
                 userInitial={userInitial}
-                dealershipNumber={dealershipNumber}
+                caption={caption}
                 name={name}
                 description={description}
             />
-        </DealerInfoCardWrapper>
+        </InfoCardWrapper>
     );
 };
 
-DealerInfo.propTypes = {
+Info.propTypes = {
     userInitial: PropTypes.string,
     name: PropTypes.string,
     description: PropTypes.string,
-    dealershipNumber: PropTypes.string
+    caption: PropTypes.string
 };
 
-DealerInfoCard.propTypes = {
+InfoCard.propTypes = {
     title: PropTypes.string,
     userInitial: PropTypes.string,
     name: PropTypes.string,
     description: PropTypes.string,
-    dealershipNumber: PropTypes.string,
+    caption: PropTypes.string,
     onClick: PropTypes.func
 };
 
-export default DealerInfoCard;
+export default InfoCard;

@@ -11,7 +11,7 @@ import DealerEnquiryInfoCard from "../../components/CommonComponents/Dealer/Deal
 import PhotoCard from "../../components/CommonComponents/Dealer/PhotoCard";
 import BreadCrumbs from "../../components/CommonComponents/BreadCrumbs/BreadCrumbs";
 import { InfoBoxStyle } from "../../theme/styled-components/utils";
-import { DealerInfo } from "../../components/CommonComponents/Dealer/DealerInfoCard";
+import { Info } from "../../components/CommonComponents/Dealer/InfoCard";
 import { DealerEnquiryUserInfoWrapper, DealerEnquiryPageWrapper } from "./dealerenquirypage.styles";
 
 const photoData = [
@@ -113,7 +113,7 @@ const DealerEnquiryPage = () => {
                         <div className="user-info-details">
                             <Grid container spacing={2}>
                                 <Grid item xs={4}>
-                                    <DealerInfo 
+                                    <Info 
                                         userInitial={"s"}
                                         name={"Sri Saravana Agencies"}
                                         description={"Sasikumar Palanisamy"}

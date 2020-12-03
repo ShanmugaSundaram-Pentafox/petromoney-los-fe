@@ -6,9 +6,9 @@ import Tabs from "@material-ui/core/Tabs"
 import Tab from "@material-ui/core/Tab"
 import Grid from "@material-ui/core/Grid"
 import Divider from "@material-ui/core/Divider"
-import Button from "@material-ui/core/Button"
 import Alert from "@material-ui/lab/Alert"
 import Radio from "@material-ui/core/Radio"
+import Typography from "@material-ui/core/Typography"
 import RadioGroup from "@material-ui/core/RadioGroup"
 import FormControl from "@material-ui/core/FormControl"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
@@ -23,8 +23,13 @@ import TextInput, {
   InputFieldWrapper,
   InputLabel,
 } from "../../../components/TextInput/TextInput"
+import Button from "../../../components/CommonComponents/Button/Button"
+import InfoCard from "../../../components/CommonComponents/Cards/InfoCard"
 
 const useStyles = makeStyles((theme) => ({
+  pageTitle: {
+    marginBottom: 16
+  },
   tabsWrapper: {
     display: "flex",
     flexGrow: 1,
@@ -71,6 +76,25 @@ const SolarEnquiryForm = ({ dealershipId, currentUser, onClose }) => {
 
   return (
     <Box p={2}>
+      <Typography variant="h3" className={classes.pageTitle}>Solar Enquiry Form</Typography>
+      <Grid container spacing={2}>
+        <Grid item xs={6} sm={4}>
+          <InfoCard
+            title={"Dealership Info"}
+            userInitial={"S"}
+            name={"Sri Vetri Agencies"}
+            caption={"PM5215131513"}
+          />
+        </Grid>
+        <Grid item xs={6} sm={4}>
+        <InfoCard 
+            title={"Dealer Info"}
+            userInitial={"S"}
+            name={"Sasikumar"}
+            description={"+91 95006 - 30513"}
+          />
+        </Grid>
+      </Grid>
       <div className={classes.tabsWrapper}>
         <Tabs
           orientation="vertical"
@@ -226,20 +250,27 @@ const SolarEnquiryForm = ({ dealershipId, currentUser, onClose }) => {
                 />
               </Grid>
 
-              <Grid item xs={12} container="row" spacing={2}>
-                <Grid item>
-                  <Button
-                    variant="contained"
-                    onClick={(e) => {
-                      if (activeTab < 4) {
-                        setActiveTab(activeTab + 1)
-                        console.log(activeTab)
-                      }
-                    }}
-                  >
-                    Save & Continue
-                  </Button>
-                </Grid>
+              <Grid xs={12} container item justify="space-between">
+                <Button
+                  variant="contained"
+                  startIcon={<ChevronLeftRoundedIcon />}
+                  disabled={loading}
+                  onClick={onClose}
+                >
+                  Go back
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={(e) => {
+                    if (activeTab < 4) {
+                      setActiveTab(activeTab + 1)
+                      console.log(activeTab)
+                    }
+                  }}
+                >
+                  Save & Continue
+                </Button>
               </Grid>
             </Grid>
           </form>
@@ -277,33 +308,32 @@ const SolarEnquiryForm = ({ dealershipId, currentUser, onClose }) => {
                 />
               </Grid>
 
-              <Grid item xs={12} spacing={2} container direction="row">
-                <Grid item>
-                  <Button
-                    variant="contained"
-                    onClick={(e) => {
-                      if (activeTab !== 0) {
-                        setActiveTab(activeTab - 1)
-                        console.log(activeTab)
-                      }
-                    }}
-                  >
-                    Previous
-                  </Button>
-                </Grid>
-                <Grid item>
-                  <Button
-                    variant="contained"
-                    onClick={(e) => {
-                      if (activeTab < 4) {
-                        setActiveTab(activeTab + 1)
-                        console.log(activeTab)
-                      }
-                    }}
-                  >
-                    Save & Continue
-                  </Button>
-                </Grid>
+              <Grid xs={12} container item justify="space-between">
+                <Button
+                  variant="contained"
+                  startIcon={<ChevronLeftRoundedIcon />}
+                  disabled={loading}
+                  onClick={(e) => {
+                    if (activeTab !== 0) {
+                      setActiveTab(activeTab - 1)
+                      console.log(activeTab)
+                    }
+                  }}
+                >
+                  Previous
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={(e) => {
+                    if (activeTab < 4) {
+                      setActiveTab(activeTab + 1)
+                      console.log(activeTab)
+                    }
+                  }}
+                >
+                  Save & Continue
+                </Button>
               </Grid>
             </Grid>
           </form>
@@ -341,33 +371,32 @@ const SolarEnquiryForm = ({ dealershipId, currentUser, onClose }) => {
                 />
               </Grid>
 
-              <Grid item xs={12} spacing={2} container direction="row">
-                <Grid item>
-                  <Button
-                    variant="contained"
-                    onClick={(e) => {
-                      if (activeTab !== 0) {
-                        setActiveTab(activeTab - 1)
-                        console.log(activeTab)
-                      }
-                    }}
-                  >
-                    Previous
-                  </Button>
-                </Grid>
-                <Grid item>
-                  <Button
-                    variant="contained"
-                    onClick={(e) => {
-                      if (activeTab < 4) {
-                        setActiveTab(activeTab + 1)
-                        console.log(activeTab)
-                      }
-                    }}
-                  >
-                    Save & Continue
-                  </Button>
-                </Grid>
+              <Grid xs={12} container item justify="space-between">
+                <Button
+                  variant="contained"
+                  startIcon={<ChevronLeftRoundedIcon />}
+                  disabled={loading}
+                  onClick={(e) => {
+                    if (activeTab !== 0) {
+                      setActiveTab(activeTab - 1)
+                      console.log(activeTab)
+                    }
+                  }}
+                >
+                  Previous
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={(e) => {
+                    if (activeTab < 4) {
+                      setActiveTab(activeTab + 1)
+                      console.log(activeTab)
+                    }
+                  }}
+                >
+                  Save & Continue
+                </Button>
               </Grid>
             </Grid>
           </form>
@@ -405,77 +434,60 @@ const SolarEnquiryForm = ({ dealershipId, currentUser, onClose }) => {
                 />
               </Grid>
 
-              <Grid item xs={12} spacing={2} container direction="row">
-                <Grid item>
-                  <Button
-                    variant="contained"
-                    onClick={(e) => {
-                      if (activeTab !== 0) {
-                        setActiveTab(activeTab - 1)
-                        console.log(activeTab)
-                      }
-                    }}
-                  >
-                    Previous
-                  </Button>
-                </Grid>
-                <Grid item>
-                  <Button
-                    variant="contained"
-                    onClick={(e) => {
-                      if (activeTab < 4) {
-                        setActiveTab(activeTab + 1)
-                        console.log(activeTab)
-                      }
-                    }}
-                  >
-                    Save & Continue
-                  </Button>
-                </Grid>
+              <Grid xs={12} container item justify="space-between">
+                <Button
+                  variant="contained"
+                  startIcon={<ChevronLeftRoundedIcon />}
+                  disabled={loading}
+                  onClick={(e) => {
+                    if (activeTab !== 0) {
+                      setActiveTab(activeTab - 1)
+                      console.log(activeTab)
+                    }
+                  }}
+                >
+                  Previous
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={(e) => {
+                    if (activeTab < 4) {
+                      setActiveTab(activeTab + 1)
+                      console.log(activeTab)
+                    }
+                  }}
+                >
+                  Save & Continue
+                </Button>
               </Grid>
             </Grid>
           </form>
         </TabPanel>
         <TabPanel activeTab={activeTab} index={4} style={{ maxWidth: 620 }}>
-          <Grid spacing={2} container direction="row">
-            <Grid item>
-              <Button
-                variant="contained"
-                onClick={(e) => {
-                  if (activeTab !== 0) {
-                    setActiveTab(activeTab - 1)
-                    console.log(activeTab)
-                  }
-                }}
-              >
-                Previous
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button variant="contained">Preview Report</Button>
-            </Grid>
+          <Grid xs={12} container item justify="space-between">
+            <Button
+              variant="contained"
+              startIcon={<ChevronLeftRoundedIcon />}
+              disabled={loading}
+              onClick={(e) => {
+                if (activeTab !== 0) {
+                  setActiveTab(activeTab - 1)
+                  console.log(activeTab)
+                }
+              }}
+            >
+              Previous
+            </Button>
+            <Button variant="contained" color="primary">Preview Report</Button>
           </Grid>
         </TabPanel>
       </div>
 
       <div className={classes.actionFooter}>
-        <Divider />
         {apiStatus.type && (
           <Alert severity={apiStatus.type}>{apiStatus.message}</Alert>
         )}
-        <div className={classes.actionButtonsWrapper}>
-          <div>
-            <Button
-              variant="contained"
-              startIcon={<ChevronLeftRoundedIcon />}
-              disabled={loading}
-              onClick={onClose}
-            >
-              Go back
-            </Button>
-          </div>
-          <div></div>
-        </div>
       </div>
     </Box>
   )

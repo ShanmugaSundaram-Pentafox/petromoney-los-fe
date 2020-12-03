@@ -1,9 +1,26 @@
 import React from 'react';
 import ButtonComp from '@material-ui/core/Button';
-import ButtonBase from '@material-ui/core/ButtonBase';
+import { withStyles } from '@material-ui/core/styles';
+
+const CustomButton = withStyles(theme => ({
+  root: {
+    textTransform: 'none',
+    lineHeight: 1.5,
+
+    '&:hover': {
+    
+    },
+    '&:focus': {
+    
+    },
+    '&:active': {
+    
+    },
+  }
+}))(ButtonComp)
 
 const Button = ({ ...rest }) => {
-  return <ButtonComp {...rest} />
+  return <CustomButton disableElevation {...rest} />
 }
 
 export default Button;

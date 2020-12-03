@@ -7,17 +7,17 @@ import AddIcon from '@material-ui/icons/Add';
 
 import BreadCrumbs from "../../components/CommonComponents/BreadCrumbs/BreadCrumbs";
 import SectionTitle from "../../components/CommonComponents/HPCL/SectionTitle";
-import DealerEnquiryInfoCard, { DealerEnquiryInfoCardWrapper } from "../../components/CommonComponents/Dealer/DealerEnquiryInfoCard";
+import EnquiryInfoCard, { EnquiryInfoCardWrapper } from "../../components/CommonComponents/Cards/EnquiryInfoCard";
 import { InfoBoxStyle } from "../../theme/styled-components/utils";
 
 const HPCLWrapper = styled.div`
     padding: 16px;
 
-    ${DealerEnquiryInfoCardWrapper}, ${InfoBoxStyle} {
+    ${EnquiryInfoCardWrapper}, ${InfoBoxStyle} {
         padding: 24px 60px;
     }
 
-    ${DealerEnquiryInfoCardWrapper} {
+    ${EnquiryInfoCardWrapper} {
         ul li {
             margin-bottom: 0;
         }
@@ -67,7 +67,7 @@ const HPCL = () => {
 
             <Grid container spacing={2}>
                 <Grid item xs={6}>
-                    <DealerEnquiryInfoCard 
+                    <EnquiryInfoCard 
                         listData={[
                             {'title': 'Dealership name', 'description': 'Sri velraj Agencies'},
                             {'title': 'Dealership ID', 'description': '5122422554'}
@@ -75,7 +75,7 @@ const HPCL = () => {
                     />
                 </Grid>
                 <Grid item xs={6}>
-                    <DealerEnquiryInfoCard 
+                    <EnquiryInfoCard 
                         listData={[
                             {'title': 'Dealer name', 'description': 'Sasikumar palanisamy'},
                             {'title': 'Dealer Phone NO', 'description': '9545621578'}
@@ -83,7 +83,7 @@ const HPCL = () => {
                     />
                 </Grid>
                 <Grid item xs={6}>
-                    <DealerEnquiryInfoCard 
+                    <EnquiryInfoCard 
                         listData={[
                             {'title': 'Referral date', 'description': '23 Nov, 2020'},
                             {'title': 'Sales area/Region', 'description': 'Chennai - Egmore'}
@@ -91,7 +91,7 @@ const HPCL = () => {
                     />
                 </Grid>
                 <Grid item xs={6}>
-                    <DealerEnquiryInfoCard 
+                    <EnquiryInfoCard 
                         listData={[
                             {'title': 'Regional manager name', 'description': 'Raj kumar'},
                             {'title': 'Sales area/Region', 'description': 'Rahul gandhi'}

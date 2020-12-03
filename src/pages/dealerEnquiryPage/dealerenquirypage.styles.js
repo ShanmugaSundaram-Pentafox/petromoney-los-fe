@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { InfoBoxStyle } from "../../theme/styled-components/utils";
-import { DealerInfoWrapper } from "../../components/CommonComponents/Dealer/DealerInfoCard";
+import { InfoWrapper } from "../../components/CommonComponents/Dealer/InfoCard";
 import { DealerEnquiryInfoCardWrapper } from "../../components/CommonComponents/Dealer/DealerEnquiryInfoCard";
 
 export const DealerEnquiryUserInfoWrapper = styled(InfoBoxStyle)`
@@ -31,7 +31,7 @@ export const DealerEnquiryUserInfoWrapper = styled(InfoBoxStyle)`
         padding-bottom: 36px;
         border-bottom: 1px dashed #BCBDBD;
 
-        ${DealerInfoWrapper} {
+        ${InfoWrapper} {
             margin-right: 48px;
         }
 

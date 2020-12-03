@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
 
 import BreadCrumbs from "../../components/CommonComponents/BreadCrumbs/BreadCrumbs";
-import DealerInfoCard from "../../components/CommonComponents/Dealer/DealerInfoCard";
+import InfoCard from "../../components/CommonComponents/Cards/InfoCard";
 import SectionTitle from "../../components/CommonComponents/HPCL/SectionTitle";
 
 const AddDealerFormWrapper = styled.div`
@@ -69,7 +69,7 @@ const AddDealerForm = () => {
             
             <Grid container spacing={2}>
                 <Grid item xs={4}>
-                    <DealerInfoCard 
+                    <InfoCard 
                         title={"Dealer Info"}
                         userInitial={"S"}
                         name={"Sasikumar"}
@@ -78,16 +78,16 @@ const AddDealerForm = () => {
                 </Grid>
 
                 <Grid item xs={4}>
-                    <DealerInfoCard 
+                    <InfoCard 
                         title={"Dealership Info"}
                         userInitial={"S"}
                         name={"Sri Vetri Agencies"}
-                        dealershipNumber={"PM5215131513"}
+                        caption={"PM5215131513"}
                     />
                 </Grid>
 
                 <Grid item xs={4}>
-                    <DealerInfoCard 
+                    <InfoCard 
                         title={"Sales Info"}
                         userInitial={"v"}
                         name={"Vetrimaran"}

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from "styled-components";
 import { InfoBoxStyle } from "../../../theme/styled-components/utils";
 
-export const DealerEnquiryInfoCardWrapper = styled(InfoBoxStyle)`
+export const EnquiryInfoCardWrapper = styled(InfoBoxStyle)`
     padding: 32px 12px 0px 24px;
     margin-bottom: 16px;
     ul {
@@ -32,12 +32,12 @@ export const DealerEnquiryInfoCardWrapper = styled(InfoBoxStyle)`
     }
 `;
 
-const DealerEnquiryInfoCard = ({
+const EnquiryInfoCard = ({
     title="",
     listData= []
 }) => {
     return (
-        <DealerEnquiryInfoCardWrapper>
+        <EnquiryInfoCardWrapper>
             {title ? <p className="title">{title}</p> : null}
 
             <ul>
@@ -50,12 +50,12 @@ const DealerEnquiryInfoCard = ({
                     )
                 })}
             </ul>
-        </DealerEnquiryInfoCardWrapper>
+        </EnquiryInfoCardWrapper>
     );
 };
 
-DealerEnquiryInfoCard.propTypes = {
+EnquiryInfoCard.propTypes = {
     title: PropTypes.string
 };
 
-export default DealerEnquiryInfoCard;
+export default EnquiryInfoCard;

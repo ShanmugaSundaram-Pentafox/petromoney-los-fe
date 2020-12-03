@@ -7,12 +7,12 @@ import EditIcon from '@material-ui/icons/Edit';
 import PhonelinkRingIcon from '@material-ui/icons/PhonelinkRing';
 import SendIcon from '@material-ui/icons/Send';
 
-import DealerEnquiryInfoCard from "../../components/CommonComponents/Dealer/DealerEnquiryInfoCard";
-import PhotoCard from "../../components/CommonComponents/Dealer/PhotoCard";
+import EnquiryInfoCard from "../../components/CommonComponents/Cards/EnquiryInfoCard";
+import PhotoCard from "../../components/CommonComponents/Cards/PhotoCard";
 import BreadCrumbs from "../../components/CommonComponents/BreadCrumbs/BreadCrumbs";
 import { InfoBoxStyle } from "../../theme/styled-components/utils";
-import { Info } from "../../components/CommonComponents/Dealer/InfoCard";
-import { DealerEnquiryUserInfoWrapper, DealerEnquiryPageWrapper } from "./dealerenquirypage.styles";
+import { Info } from "../../components/CommonComponents/Cards/InfoCard";
+import { EnquiryUserInfoWrapper, EnquiryPageWrapper } from "./enquirypage.styles";
 
 const photoData = [
     "https://bit.ly/2SB6BEy",
@@ -79,11 +79,11 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const DealerEnquiryPage = () => {
+const EnquiryPage = () => {
     const classes = useStyles();
 
     return (
-        <DealerEnquiryPageWrapper>
+        <EnquiryPageWrapper>
             <BreadCrumbs />
 
             <div className="section-title">
@@ -109,7 +109,7 @@ const DealerEnquiryPage = () => {
             
             <Grid container spacing={2}>
                 <Grid item xs={12}>
-                    <DealerEnquiryUserInfoWrapper>
+                    <EnquiryUserInfoWrapper>
                         <div className="user-info-details">
                             <Grid container spacing={2}>
                                 <Grid item xs={4}>
@@ -145,7 +145,7 @@ const DealerEnquiryPage = () => {
 
                         </div>
                         <div>
-                            <DealerEnquiryInfoCard 
+                            <EnquiryInfoCard 
                                 listData={[
                                     {'title': 'Manager Name:', 'description': 'M Saravanan'},
                                     {'title': 'Manager Phone No:', 'description': '+91 - 9585262611'},
@@ -153,7 +153,7 @@ const DealerEnquiryPage = () => {
                                     {'title': 'GPS Location:', 'description': ''}
                                 ]}
                             />
-                            <DealerEnquiryInfoCard 
+                            <EnquiryInfoCard 
                                 listData={[
                                     {'title': 'Electricity service No:', 'description': '513521513'},
                                     {'title': 'Electricity Charge Per Month:', 'description': 'Rs.150000'},
@@ -161,7 +161,7 @@ const DealerEnquiryPage = () => {
                                     {'title': 'Netmeter Instruction to Dealer:', 'description': 'Yes'}
                                 ]}
                             />
-                            <DealerEnquiryInfoCard 
+                            <EnquiryInfoCard 
                                 title={"Building details"}
                                 listData={[
                                     {'title': 'Office room terrace area:', 'description': '651 sq.ft'},
@@ -170,7 +170,7 @@ const DealerEnquiryPage = () => {
                                     {'title': 'Additional space for rooftop.Sqmtr:', 'description': '1522 sq.ft'}
                                 ]}
                             />
-                            <DealerEnquiryInfoCard 
+                            <EnquiryInfoCard 
                                 title={"Power details"}
                                 listData={[
                                     {'title': 'Capacity required KWP:', 'description': '65 KW'},
@@ -180,10 +180,10 @@ const DealerEnquiryPage = () => {
                                 ]}
                             />
                         </div>
-                    </DealerEnquiryUserInfoWrapper>
+                    </EnquiryUserInfoWrapper>
                 </Grid>
                 <Grid item xs={6}>
-                    <DealerEnquiryInfoCard 
+                    <EnquiryInfoCard 
                         title={"Building details"}
                         listData={[
                             {'title': 'Office room terrace area:', 'description': '651 sq.ft'},
@@ -194,7 +194,7 @@ const DealerEnquiryPage = () => {
                     />
                 </Grid>
                 <Grid item xs={6}>
-                    <DealerEnquiryInfoCard 
+                    <EnquiryInfoCard 
                         title={"Power details"}
                         listData={[
                             {'title': 'Capacity required KWP:', 'description': '65 KW'},
@@ -224,8 +224,8 @@ const DealerEnquiryPage = () => {
                     </InfoBoxStyle>
                 </Grid>
             </Grid>
-        </DealerEnquiryPageWrapper>
+        </EnquiryPageWrapper>
     );
 };
 
-export default DealerEnquiryPage;
+export default EnquiryPage;

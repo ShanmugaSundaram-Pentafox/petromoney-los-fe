@@ -7,7 +7,7 @@ import { useMediaQuery } from '@material-ui/core';
 import Sidebar from '../components/Sidebar/Sidebar';
 import Topbar from '../components/Topbar/Topbar';
 import { resetCurrentUser } from '../store/user/user.actions';
-import DealerEnquiryPage from '../pages/dealerEnquiryPage/DealerEnquiryPage';
+import EnquiryPage from '../pages/enquiryPage/EnquiryPage';
 import AddDealerForm from '../pages/hpcl/AddDealerForm';
 import HPCL from '../pages/hpcl/HPCL';
 const useStyles = makeStyles(theme => ({
@@ -68,7 +68,7 @@ const MainLayout = props => {
 
         {/* <HPCL /> */}
         {/* <AddDealerForm /> */}
-        {/* <DealerEnquiryPage /> */}
+        {/* <EnquiryPage /> */}
       </main>
     </div>
   );

@@ -1,10 +1,10 @@
 import styled from "styled-components";
 import { InfoBoxStyle } from "../../theme/styled-components/utils";
-import { InfoWrapper } from "../../components/CommonComponents/Dealer/InfoCard";
-import { DealerEnquiryInfoCardWrapper } from "../../components/CommonComponents/Dealer/DealerEnquiryInfoCard";
+import { InfoWrapper } from "../../components/CommonComponents/Cards/InfoCard";
+import { EnquiryInfoCardWrapper } from "../../components/CommonComponents/Cards/EnquiryInfoCard";
 
-export const DealerEnquiryUserInfoWrapper = styled(InfoBoxStyle)`
-    ${DealerEnquiryInfoCardWrapper} {
+export const EnquiryUserInfoWrapper = styled(InfoBoxStyle)`
+    ${EnquiryInfoCardWrapper} {
         padding: 24px 0 22px;
         border-radius: 0px;
         box-shadow: none;
@@ -72,7 +72,7 @@ export const DealerEnquiryUserInfoWrapper = styled(InfoBoxStyle)`
     }
 `;
 
-export const DealerEnquiryPageWrapper = styled.section`
+export const EnquiryPageWrapper = styled.section`
     padding: 16px;
 
     .section-title {

@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
   },
   button: {
     // color: colors.blueGrey[200],
-    color: "#E9ECF3",
+    color: "rgba(173, 173, 173, 1)",
     padding: '10px 8px',
     justifyContent: 'flex-start',
     textTransform: 'none',
@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
   icon: {
     // color: theme.palette.icon,
-    color: "#E9ECF3",
+    // color: "rgba(34, 36, 68, 1)",
     width: 24,
     height: 24,
     display: 'flex',
@@ -34,11 +34,11 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1)
   },
   active: {
-    backgroundColor: '#343e5f',
-    // color: colors.blueGrey[800],
+    backgroundColor: 'rgba(248, 213, 138, 1)',
+    color: colors.blueGrey[800],
     fontWeight: theme.typography.fontWeightMedium,
     '& $icon': {
-      // color: colors.blueGrey[800]
+      color: 'rgba(34, 36, 68, 1)'
     }
   }
 }));

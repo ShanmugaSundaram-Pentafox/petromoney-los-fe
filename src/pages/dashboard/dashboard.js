@@ -24,8 +24,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const DataCharts = styled.div`
-  padding: 20px 24px 8px;
+  /* padding: 20px 24px 8px; */
   border-radius: 2px;
+
+  svg {
+    border-radius: 6px;
+  }
 `;
 
 const LoansNewTableContainer = styled.div`
@@ -190,15 +194,15 @@ const Dashboard = ({ currentUser }) => {
   }
 
   return (
-    <div>
-      <Grid container spacing={2}>
+    <div style={{ flexGrow: 1 }}>
+      <Grid container style={{ padding: 12, paddingTop: 0 }} spacing={2}>
         <Grid item md={6}>
           <DataCharts>
             {Object.keys(ls1_metrices).length ? <SummaryTile ls1Data={ls1_metrices}/> : <Paper style={{ padding: 10 }}>No Data Found</Paper> }
           </DataCharts>
         </Grid>
         <Grid item md={6}>
-          <InfoBoxContainer>
+          <DataCharts>
             {
               chartData.length ? (
                 <InfoBoxWrapper style={{ width: '100%'}}>
@@ -221,7 +225,7 @@ const Dashboard = ({ currentUser }) => {
                 </InfoBoxWrapper>
               ) : null
             }
-          </InfoBoxContainer>
+          </DataCharts>
         </Grid>
         <Grid item md={6}>
           <DataCharts>

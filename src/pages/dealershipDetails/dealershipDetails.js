@@ -142,6 +142,7 @@ const DealershipDetails = ({ currentUser, match }) => {
           <SolarEnquiryForm
             dealershipId={id}
             data={{}}
+            dealershipData={dealershipData}
             currentUser={currentUser}
             onClose={() => setShowSolarForm(false)}
           />

@@ -51,10 +51,11 @@ const inputProps = {
   alignTop: true,
 }
 
-const SolarEnquiryForm = ({ dealershipId, currentUser, onClose }) => {
+const SolarEnquiryForm = ({ dealershipId, dealershipData, currentUser, onClose }) => {
   const classes = useStyles()
   const [loading, setLoading] = useState(false)
-  const [dealerData, setDealersData] = useState()
+  const [dealerData, setDealersData] = useState([])
+  const [mainApplicant, setMainApplicant] = useState({})
   const [activeTab, setActiveTab] = useState(0)
   const [apiStatus, setAapiStatus] = useState({})
   const [previous, setPrevious] = useState()
@@ -63,7 +64,10 @@ const SolarEnquiryForm = ({ dealershipId, currentUser, onClose }) => {
   useMount(() => {
     getDealersByDealershipId(dealershipId)
       .then((data) => {
+        console.log(dealerData)
         setDealersData(data)
+        const ap = data.find(item => item.is_main_applicant);
+        setMainApplicant(ap);
       })
       .catch((e) => {
         console.log(e)
@@ -81,18 +85,22 @@ const SolarEnquiryForm = ({ dealershipId, currentUser, onClose }) => {
         <Grid item xs={6} sm={4}>
           <InfoCard
             title={"Dealership Info"}
-            userInitial={"S"}
-            name={"Sri Vetri Agencies"}
-            caption={"PM5215131513"}
+            userInitial={dealershipData?.name?.charAt(0)}
+            name={dealershipData.name}
+            caption={dealershipId}
           />
         </Grid>
         <Grid item xs={6} sm={4}>
-        <InfoCard 
-            title={"Dealer Info"}
-            userInitial={"S"}
-            name={"Sasikumar"}
-            description={"+91 95006 - 30513"}
-          />
+          {
+            mainApplicant.first_name ? (
+              <InfoCard 
+                title={"Main Dealer Info"}
+                userInitial={`${mainApplicant?.first_name?.charAt(0)}`}
+                name={`${mainApplicant.first_name} ${mainApplicant?.last_name || ''}`}
+                description={`+91 ${mainApplicant.mobile}`}
+              />
+            ) : null
+          }
         </Grid>
       </Grid>
       <div className={classes.tabsWrapper}>
@@ -161,6 +169,7 @@ const SolarEnquiryForm = ({ dealershipId, currentUser, onClose }) => {
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
+                  value={mainApplicant?.first_name}
                   labelText="Dealer Name"
                   onChange={() => null}
                 />
@@ -168,6 +177,7 @@ const SolarEnquiryForm = ({ dealershipId, currentUser, onClose }) => {
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
+                  value={mainApplicant?.mobile}
                   labelText="Dealer Phone Number"
                   onChange={() => null}
                 />

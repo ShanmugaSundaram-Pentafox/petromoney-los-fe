@@ -12,10 +12,7 @@ import { connect } from 'react-redux';
 import { setAllDealerships } from '../../../store/dealership/dealership.actions';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    padding: theme.spacing(3),
-    paddingTop: 0
-  },
+  root: {},
   title: {
     fontWeight: 500
   }
@@ -135,11 +132,12 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
     // filterType: 'checkbox',
     selectableRowsHeader: false,
     selectableRows: 'none',
+    rowsPerPage: 15,
     isRowSelectable: () => false
   };
 
   return (
-    <div className={classes.root}>
+    <div>
       {
         Array.isArray(dealerships) && dealerships.length ? (
           <MUIDataTable

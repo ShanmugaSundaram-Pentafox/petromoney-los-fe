@@ -4,11 +4,10 @@ import { makeStyles } from '@material-ui/styles';
 import Alert from '@material-ui/lab/Alert';
 import Card from '@material-ui/core/Card';
 // import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
+import Paper from '@material-ui/core/Paper';
 import CardActions from '@material-ui/core/CardActions';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
 import TextInput from '../../../components/TextInput/TextInput';
 import { useFormik } from 'formik';
 import { URL } from '../../../config/serverUrls';
@@ -17,13 +16,14 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import apiCall from '../../../utils/api.util';
+import Button from '../../../components/CommonComponents/Button/Button';
 // import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {},
   gridItemStyle: {
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1)
+    // paddingTop: theme.spacing(1),
+    // paddingBottom: theme.spacing(1)
   },
   actionFooter: {
     justifyContent: 'flex-end'
@@ -71,6 +71,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
   const gridProps = {
     item: true,
     xs: 12,
+    sm: 6,
     className: classes.gridItemStyle
   }
 
@@ -82,6 +83,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
   // };
 
   const fieldProps = {
+    direction: "column",
+    alignTop: true,
     readOnly,
     onChange
   }
@@ -95,9 +98,9 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
       >
         {/* <CardHeader title={`${values.id} - ${values.name}`} /> */}
         {/* <Divider /> */}
-        <CardContent>
-          <Grid container>
-            <Grid {...gridProps}>
+        <Paper>
+          <Grid container spacing={2}>
+            <Grid {...gridProps} sm={12}>
               <TextInput
                 labelText="Name"
                 name="name"
@@ -163,6 +166,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 labelWidth={40}
                 defaultValue={values.district}
                 readOnly
+                alignTop
+                direction="column"
                 />
             </Grid>
             <Grid {...gridProps} xs={6}>
@@ -171,6 +176,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 labelWidth={40}
                 defaultValue={values.state}
                 readOnly
+                alignTop
+                direction="column"
                 />
             </Grid>
             <Grid {...gridProps} xs={6}>
@@ -179,6 +186,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 labelWidth={40}
                 defaultValue={values.sales_area}
                 readOnly
+                alignTop
+                direction="column"
                 />
             </Grid>
             <Grid {...gridProps} xs={6}>
@@ -187,10 +196,12 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 labelWidth={40}
                 defaultValue={values.zone}
                 readOnly
+                alignTop
+                direction="column"
                 />
             </Grid>
           </Grid>
-        </CardContent>
+        </Paper>
         <Divider />
         {
           apiStatus.type && (

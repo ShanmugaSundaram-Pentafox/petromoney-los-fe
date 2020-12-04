@@ -5,9 +5,7 @@ import usePageTitle from '../../hooks/usePageTitle';
 const Dealership = ({ currentUser }) => {
   usePageTitle('Dealership List');
   return (
-    <div>
-      <DealershipsTable />
-    </div>
+    <DealershipsTable />
   );
 }
 

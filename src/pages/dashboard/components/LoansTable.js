@@ -12,6 +12,7 @@ import { setAllLoans } from '../../../store/loans/loans.actions';
 // import Currency from '../../../components/Number/Currency';
 import Drawer from '@material-ui/core/Drawer';
 import Paper from '@material-ui/core/Paper';
+import Box from '@material-ui/core/Box';
 import { getDealershipById } from '../../../services/dealerships.service';
 import DealershipDetails from './DealershipDetails';
 import SubmittedTable from '../../../components/Tables/SubmittedTable';
@@ -22,14 +23,10 @@ import { rulesList } from '../../../config/userRules';
 import DisbursementApprovedTable from '../../../components/Tables/DisbursementApprovedTable';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    padding: theme.spacing(3),
-    // paddingTop: theme.spacing(0),
-  },
   tableContainer: {
     borderRadius: 6,
     // boxShadow: '0 8px 6px -6px rgba(0,0,0,0.12)',
-    marginBottom: theme.spacing(3)
+    // marginBottom: theme.spacing(3)
   },
   categoryContainer: {
     display: 'flex',
@@ -116,35 +113,37 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
   }
 
   return (
-    <div className={classes.root}>
+    <Box pt={2}>
       <UserCan
         role={currentUser.role_name}
         perform={rulesList.loan_approval}
         yes={() => (
-          <>
-            <Grid container spacing={2}>
-              <Grid item md={6}>
-                <Paper elevation={1} className={classes.tableContainer}>
-                  <ApprovalReqestTable title={"Pending for Initial Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} />
-                </Paper>
-              </Grid>
-              <Grid item md={6}>
-                <Paper elevation={1} className={classes.tableContainer}>
-                  <DisbursementReqestTable title={"Pending for Disbursement Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} />
-                </Paper>
-              </Grid>
+          <Grid container spacing={2}>
+            <Grid item md={6}>
+              <Paper className={classes.tableContainer}>
+                <ApprovalReqestTable title={"Pending for Initial Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+              </Paper>
             </Grid>
-            <Paper elevation={1} className={classes.tableContainer}>
-              <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
-            </Paper>
-            <Paper elevation={1} className={classes.tableContainer}>
-              <DisbursementApprovedTable title={"Disbursement Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
-            </Paper>
-          </>
+            <Grid item md={6}>
+              <Paper className={classes.tableContainer}>
+                <DisbursementReqestTable title={"Pending for Disbursement Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+              </Paper>
+            </Grid>
+            <Grid item xs={12}>
+              <Paper className={classes.tableContainer}>
+                <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+              </Paper>
+            </Grid>
+            <Grid item xs={12}>
+              <Paper className={classes.tableContainer}>
+                <DisbursementApprovedTable title={"Disbursement Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+              </Paper>
+            </Grid>
+          </Grid>
         )}
         no={() => (
           <>
-            <Paper elevation={1} className={classes.tableContainer}>
+            <Paper className={classes.tableContainer}>
               <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
             </Paper>
           </>
@@ -169,7 +168,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
             />
         </div>
       </Drawer>
-    </div>
+    </Box>
   )
 }
 

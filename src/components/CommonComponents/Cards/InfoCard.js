@@ -52,6 +52,12 @@ export const InfoWrapper = styled.div`
                 line-height: 22px;
                 margin-bottom: 2px;
             }
+
+            &.light {
+                color: #909191;
+                font-size: 14px;
+                line-height: 16px;
+            }
         }
     }
 `;
@@ -76,7 +82,8 @@ export const Info = ({
     userInitial="",
     name="",
     description="",
-    caption=""
+    caption="",
+    content="",
 }) => {
     return (
         <InfoWrapper>
@@ -85,7 +92,8 @@ export const Info = ({
             <div className="user-info-txt">
                 {caption ? <p className="caption">{caption}</p> : null}
                 {name ? <p className="name">{name}</p> : null}
-                {description ? <p>{description}</p> : null}
+                {description ? <p><small>{description}</small></p> : null}
+                {content ? <p className="light"><small>{content}</small></p> : null}
             </div>
         </InfoWrapper>
     );
@@ -97,6 +105,7 @@ const InfoCard = ({
     name="",
     description="",
     caption="",
+    content="",
     onClick= () => {}
 }) => {
     return (
@@ -108,6 +117,7 @@ const InfoCard = ({
                 caption={caption}
                 name={name}
                 description={description}
+                content={content}
             />
         </InfoCardWrapper>
     );

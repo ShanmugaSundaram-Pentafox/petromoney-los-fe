@@ -1,8 +1,11 @@
 import { CommonActionTypes } from "./common.types";
 
-export const setPageTitle = title => ({
+export const setPageTitle = (pageTitle, goBackIcon) => ({
   type: CommonActionTypes.SET_PAGE_TITLE,
-  payload: title
+  payload: {
+    pageTitle,
+    goBackIcon,
+  }
 });
 
 export const setSearchText = searchText => ({

@@ -3,13 +3,15 @@ import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
 import { makeStyles, useTheme } from '@material-ui/styles';
-import { useMediaQuery } from '@material-ui/core';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import Box from '@material-ui/core/Box';
 import Sidebar from '../components/Sidebar/Sidebar';
 import Topbar from '../components/Topbar/Topbar';
 import { resetCurrentUser } from '../store/user/user.actions';
-import EnquiryPage from '../pages/enquiryPage/EnquiryPage';
-import AddDealerForm from '../pages/hpcl/AddDealerForm';
-import HPCL from '../pages/hpcl/HPCL';
+// import EnquiryPage from '../pages/enquiryPage/EnquiryPage';
+// import AddDealerForm from '../pages/hpcl/AddDealerForm';
+// import HPCL from '../pages/hpcl/HPCL';
+
 const useStyles = makeStyles(theme => ({
   root: {
     // paddingTop: 56,
@@ -62,8 +64,13 @@ const MainLayout = props => {
         variant={isDesktop ? 'persistent' : 'temporary'}
         />
       <main className={classes.content}>
-        <Topbar user={currentUser} logout={logout} position="static" onSidebarOpen={handleSidebarOpen} />
-        {children}
+        <Topbar user={currentUser} logout={logout} appBarProps={{
+          position: "sticky",
+          onSidebarOpen: handleSidebarOpen,
+        }}  />
+        <Box p={2}>
+          {children}
+        </Box>
         {/* <Footer /> */}
 
         {/* <HPCL /> */}

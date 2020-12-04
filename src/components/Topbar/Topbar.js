@@ -1,17 +1,19 @@
 import React, { Fragment, useState } from 'react';
+import { withRouter } from 'react-router-dom';
 // import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { AppBar, Toolbar, Badge, Hidden, IconButton, Tooltip } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
-import InputIcon from '@material-ui/icons/Input';
+// import InputIcon from '@material-ui/icons/Input';
 import { connect } from 'react-redux';
 import { resetCurrentUser } from '../../store/user/user.actions';
-import NotificationsBell from '../CommonComponents/NotificationsBell';
+// import NotificationsBell from '../CommonComponents/NotificationsBell';
 import LoginUserInfo from '../CommonComponents/LoginUserInfo';
 import NotificationSidebar from '../CommonComponents/NotificationSidebar';
-import Searchbox from '../CommonComponents/Searchbox';
+import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
+// import Searchbox from '../CommonComponents/Searchbox';
 
 const useStyles = makeStyles(theme => {
   return ({
@@ -19,8 +21,8 @@ const useStyles = makeStyles(theme => {
     boxShadow: 'none',
     color: theme.palette.primary.dark,
     backgroundColor: 'transparent',
-    // boxShadow: '0 0 0 1px rgba(63,63,68,0.05), 0 1px 2px 0 rgba(63,63,68,0.15)',
-    // backgroundColor: theme.palette.white,
+    boxShadow: '0 0 0 1px rgba(63,63,68,0.05), 0 1px 2px 0 rgba(63,63,68,0.15)',
+    backgroundColor: theme.palette.white,
     borderBottomColor: theme.palette.grey
   },
   flexGrow: {
@@ -35,22 +37,25 @@ const useStyles = makeStyles(theme => {
   title: {
     ...theme.typography.h2,
     fontSize: 18,
+  },
+  goback: {
+    marginRight: theme.spacing(1)
   }
 })
 });
 
 const Topbar = props => {
-  const { className, onSidebarOpen, pageTitle, user, logout, ...rest } = props;
+  const { className, onSidebarOpen, pageTitle, user, logout, history, goBackIcon, appBarProps } = props;
   const classes = useStyles();
 
-  const [notifications] = useState([]);
+  // const [notifications] = useState([]);
 
   const [showNotificationSidebar, setShowNotificationSidebar] = useState(false);
 
   return (
     <Fragment>
       <AppBar
-        {...rest}
+        {...appBarProps}
         className={clsx(classes.root, className)}
       >
         <Toolbar>
@@ -61,6 +66,15 @@ const Topbar = props => {
               height="48px"
             />
           </RouterLink> */}
+          {
+            goBackIcon && (
+              <Tooltip title="Go Back">
+                <IconButton edge="start" className={classes.goback} color="inherit" aria-label="goback" onClick={history.goBack}>
+                  <ArrowBackIosRoundedIcon />
+                </IconButton>
+              </Tooltip>
+            )
+          }
           <h2 className={classes.title}>{pageTitle}</h2>
           <div className={classes.flexGrow} />
           <Hidden mdDown>
@@ -101,6 +115,7 @@ Topbar.propTypes = {
 
 const mapStateToProps = ({ common }) => ({
   pageTitle: common.pageTitle,
+  goBackIcon: common.goBackIcon,
   searchText: common.searchText
 })
 
@@ -108,4 +123,4 @@ const mapDispatchToProps = dispatch => ({
   logout: () => dispatch(resetCurrentUser())
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(Topbar);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Topbar));

@@ -5,9 +5,7 @@ import usePageTitle from '../../hooks/usePageTitle';
 const Transport = ({ currentUser }) => {
   usePageTitle('Transport List');
   return (
-    <div>
-      <TransportTable />
-    </div>
+    <TransportTable />
   );
 }
 

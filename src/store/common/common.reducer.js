@@ -2,6 +2,7 @@ import { CommonActionTypes } from "./common.types"
 
 const INITIAL_STATE = {
   pageTitle: undefined,
+  backLink: false,
   search: undefined
 }
 
@@ -10,7 +11,7 @@ export const commonReducer = (state = INITIAL_STATE, action) => {
     case CommonActionTypes.SET_PAGE_TITLE:
       return {
         ...state,
-        pageTitle: action.payload
+        ...(action.payload || {})
       }
     case CommonActionTypes.SET_SEARCH_TEXT:
       return {

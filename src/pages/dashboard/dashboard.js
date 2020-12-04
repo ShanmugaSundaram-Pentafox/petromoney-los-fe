@@ -17,8 +17,8 @@ import { SummaryTile, PieChartData, BarChartData } from './components/MetricsCom
 const useStyles = makeStyles((theme) => ({
   tableContainer: {
     borderRadius: 6,
-    margin: 24,
-    marginTop: 16,
+    // margin: 24,
+    // marginTop: 16,
     // marginBottom: 9,
   }
 }));
@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
 const DataCharts = styled.div`
   /* padding: 20px 24px 8px; */
   border-radius: 2px;
+  width: 100%;
 
   svg {
     border-radius: 6px;
@@ -195,7 +196,7 @@ const Dashboard = ({ currentUser }) => {
 
   return (
     <div style={{ flexGrow: 1 }}>
-      <Grid container style={{ padding: 12, paddingTop: 0 }} spacing={2}>
+      <Grid container spacing={2}>
         <Grid item md={6}>
           <DataCharts>
             {Object.keys(ls1_metrices).length ? <SummaryTile ls1Data={ls1_metrices}/> : <Paper style={{ padding: 10 }}>No Data Found</Paper> }
@@ -237,10 +238,10 @@ const Dashboard = ({ currentUser }) => {
             <BarChartData daysChartData={daysChartData}/>
           </DataCharts>
         </Grid>
+        <Grid item xs={12}>
+          <LoanBookTable title={"Loan Book"} currentUser={currentUser}/>
+        </Grid>
       </Grid>
-      <Paper elevation={1} className={classes.tableContainer}>
-        <LoanBookTable title={"Loan Book"} currentUser={currentUser}/>
-      </Paper>
 
       <LoansTable currentUser={currentUser} />
 

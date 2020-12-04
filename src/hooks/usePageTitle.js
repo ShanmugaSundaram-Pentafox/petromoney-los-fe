@@ -2,13 +2,13 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setPageTitle } from '../store/common/common.actions';
 
-const usePageTitle = title => {
+const usePageTitle = (title, goBackIcon=false) => {
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(setPageTitle(title));
+    dispatch(setPageTitle(title, goBackIcon));
 
     return () => {
-      dispatch(setPageTitle(undefined));
+      dispatch(setPageTitle('', false));
     }
   }, [title])
 

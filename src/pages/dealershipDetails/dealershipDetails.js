@@ -23,6 +23,7 @@ import CreditReportSideWrapper from "./components/CreditReportSideWrapper";
 import InfoBox from "../../components/CommonComponents/InfoBox";
 import SolarEnquiryForm from "./components/SolarEnquiryForm";
 import { tabA11yProps, TabPanel } from "../../components/CommonComponents/Tabs/TabPanel";
+import InfoCard from "../../components/CommonComponents/Cards/InfoCard";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -64,6 +65,7 @@ const DealershipDetails = ({ currentUser, match }) => {
   const [activeTab, setActiveTab] = useState(0);
   const [dealershipData, setDealershipData] = useState();
   const [dealersData, setDealersData] = useState();
+  const [mainApplicant, setMainApplicant] = useState({})
   const [showCreditReport, setShowCreditReport] = useState();
   const [showSolarForm, setShowSolarForm] = useState();
   const {
@@ -85,14 +87,42 @@ const DealershipDetails = ({ currentUser, match }) => {
       .catch((e) => null);
 
     getDealersByDealershipId(id)
-      .then((data) => setDealersData(data))
+      .then((data) => {
+        setDealersData(data);
+        const ap = data.find(item => item.is_main_applicant);
+        setMainApplicant(ap);
+      })
       .catch((e) => null);
   });
 
-  usePageTitle(`${id} - ${dealershipData && (dealershipData.name || '')}`)
+  usePageTitle(`${id} - ${dealershipData && (dealershipData.name || '')}`, true)
 
   return (
-    <div className={classes.root}>
+    <div>
+      <Grid container spacing={2}>
+        <Grid item xs={6} sm={4}>
+          <InfoCard
+            title={"Dealership Info"}
+            userInitial={dealershipData?.name?.charAt(0)}
+            name={dealershipData?.name}
+            caption={id}
+            content={dealershipData?.address}
+          />
+        </Grid>
+        <Grid item xs={6} sm={4}>
+          {
+            mainApplicant?.first_name ? (
+              <InfoCard 
+                title={"Main Dealer Info"}
+                userInitial={`${mainApplicant?.first_name?.charAt(0)}`}
+                name={`${mainApplicant?.first_name} ${mainApplicant?.last_name || ''}`}
+                description={`+91 ${mainApplicant?.mobile}`}
+                content={`${mainApplicant?.email}`}
+              />
+            ) : null
+          }
+        </Grid>
+      </Grid>
       <div className={classes.tabsWrapper}>
         <Tabs
           orientation="vertical"
@@ -163,29 +193,6 @@ const DealershipDetails = ({ currentUser, match }) => {
           />
         </div>
       </Drawer>
-      {/* <Divider className={classes.bottomSpacing} /> */}
-      {/* <Grid container spacing={2}>
-          <Grid item md={6} xs={12}>
-            {dealershipData && (
-              <DealershipInfo data={dealershipData} currentUser={currentUser} toggleCreditReport={toggleCreditReport} />
-            )}
-            <Paper className={classes.topSpacing}>
-              <DealershipDoc id={id} currentUser={currentUser} />
-            </Paper>
-          </Grid>
-
-        <Grid item md={6} xs={12}>
-          <Paper className={classes.bottomSpacing}>
-            <LoansList id={id} titleAlign="left" currentUser={currentUser} />
-          </Paper>
-          <Paper className={classes.bottomSpacing}>
-            <DealersList id={id} titleAlign="left" currentUser={currentUser} />
-          </Paper>
-          <Paper className={classes.bottomSpacing}>
-            <SalesInfo id={id} titleAlign="left" currentUser={currentUser} column />
-          </Paper>
-        </Grid>
-      </Grid> */}
     </div>
   );
 };

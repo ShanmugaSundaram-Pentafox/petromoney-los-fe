@@ -12,10 +12,6 @@ import { connect } from "react-redux"
 import { setAllTransports } from "../../../store/transports/transports.actions"
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    padding: theme.spacing(3),
-    paddingTop: 0,
-  },
   title: {
     fontWeight: 500,
   },
@@ -82,11 +78,12 @@ const TransportsTable = ({ transports, setAllTransports }) => {
     // filterType: 'checkbox',
     selectableRowsHeader: false,
     selectableRows: "none",
+    rowsPerPage: 15,
     isRowSelectable: () => false,
   }
 
   return (
-    <div className={classes.root}>
+    <div>
       {Array.isArray(transports) && transports.length ? (
         <MUIDataTable
           title={

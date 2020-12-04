@@ -2,21 +2,14 @@ import React, { useState } from "react"
 import { useMount } from "react-use"
 import { makeStyles } from "@material-ui/styles"
 import Box from "@material-ui/core/Box"
-import Tabs from "@material-ui/core/Tabs"
-import Tab from "@material-ui/core/Tab"
 import Grid from "@material-ui/core/Grid"
-import Divider from "@material-ui/core/Divider"
 import Alert from "@material-ui/lab/Alert"
 import Radio from "@material-ui/core/Radio"
-import Typography from "@material-ui/core/Typography"
 import RadioGroup from "@material-ui/core/RadioGroup"
 import FormControl from "@material-ui/core/FormControl"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
 import ChevronLeftRoundedIcon from "@material-ui/icons/ChevronLeftRounded"
-import InfoBox from "../../../components/CommonComponents/InfoBox"
-import { getDealersByDealershipId } from "../../../services/dealers.service"
 import {
-  tabA11yProps,
   TabPanel,
 } from "../../../components/CommonComponents/Tabs/TabPanel"
 import TextInput, {
@@ -24,7 +17,6 @@ import TextInput, {
   InputLabel,
 } from "../../../components/TextInput/TextInput"
 import Button from "../../../components/CommonComponents/Button/Button"
-import InfoCard from "../../../components/CommonComponents/Cards/InfoCard"
 
 const useStyles = makeStyles((theme) => ({
   pageTitle: {
@@ -51,119 +43,15 @@ const inputProps = {
   alignTop: true,
 }
 
-const SolarEnquiryForm = ({ dealershipId, dealershipData, currentUser, onClose }) => {
+const SolarEnquiryForm = ({ solarTab, onChangeTab, dealershipId, mainApplicant, currentUser }) => {
   const classes = useStyles()
   const [loading, setLoading] = useState(false)
-  const [dealerData, setDealersData] = useState([])
-  const [mainApplicant, setMainApplicant] = useState({})
-  const [activeTab, setActiveTab] = useState(0)
   const [apiStatus, setAapiStatus] = useState({})
-  const [previous, setPrevious] = useState()
-  const [next, setNext] = useState()
-
-  useMount(() => {
-    getDealersByDealershipId(dealershipId)
-      .then((data) => {
-        console.log(dealerData)
-        setDealersData(data)
-        const ap = data.find(item => item.is_main_applicant);
-        setMainApplicant(ap);
-      })
-      .catch((e) => {
-        console.log(e)
-      })
-  })
-
-  const onChangeTab = (e, newTab) => {
-    setActiveTab(newTab)
-  }
 
   return (
-    <Box p={2}>
-      <Typography variant="h3" className={classes.pageTitle}>Solar Enquiry Form</Typography>
-      <Grid container spacing={2}>
-        <Grid item xs={6} sm={4}>
-          <InfoCard
-            title={"Dealership Info"}
-            userInitial={dealershipData?.name?.charAt(0)}
-            name={dealershipData.name}
-            caption={dealershipId}
-          />
-        </Grid>
-        <Grid item xs={6} sm={4}>
-          {
-            mainApplicant.first_name ? (
-              <InfoCard 
-                title={"Main Dealer Info"}
-                userInitial={`${mainApplicant?.first_name?.charAt(0)}`}
-                name={`${mainApplicant.first_name} ${mainApplicant?.last_name || ''}`}
-                description={`+91 ${mainApplicant.mobile}`}
-              />
-            ) : null
-          }
-        </Grid>
-      </Grid>
+    <Box>
       <div className={classes.tabsWrapper}>
-        <Tabs
-          orientation="vertical"
-          // variant="scrollable"
-          value={activeTab}
-          onChange={onChangeTab}
-          aria-label="Solar Enquiry Form"
-          className={classes.tabs}
-        >
-          <Tab
-            label={
-              <InfoBox
-                active={activeTab === 0}
-                number={1}
-                title="Dealer Info"
-              />
-            }
-            {...tabA11yProps(0)}
-          />
-          <Tab
-            label={
-              <InfoBox
-                active={activeTab === 1}
-                number={2}
-                title="Project Details"
-              />
-            }
-            {...tabA11yProps(1)}
-          />
-          <Tab
-            label={
-              <InfoBox
-                active={activeTab === 2}
-                number={3}
-                title="Roof Details"
-              />
-            }
-            {...tabA11yProps(2)}
-          />
-          <Tab
-            label={
-              <InfoBox
-                active={activeTab === 3}
-                number={4}
-                title="Electrical Assessments"
-              />
-            }
-            {...tabA11yProps(3)}
-          />
-          <Tab
-            label={
-              <InfoBox
-                active={activeTab === 4}
-                number={5}
-                title="Load Profile"
-              />
-            }
-            {...tabA11yProps(4)}
-          />
-        </Tabs>
-        <TabPanel activeTab={activeTab} index={0} style={{ maxWidth: 620 }}>
+        <TabPanel activeTab={solarTab} index={0} style={{ maxWidth: 620 }}>
           <form>
             <Grid container spacing={2}>
               <Grid item md={6}>
@@ -260,22 +148,21 @@ const SolarEnquiryForm = ({ dealershipId, dealershipData, currentUser, onClose }
                 />
               </Grid>
 
-              <Grid xs={12} container item justify="space-between">
-                <Button
+              <Grid xs={12} container item justify="flex-end">
+                {/* <Button
                   variant="contained"
                   startIcon={<ChevronLeftRoundedIcon />}
                   disabled={loading}
                   onClick={onClose}
                 >
                   Go back
-                </Button>
+                </Button> */}
                 <Button
                   variant="contained"
                   color="primary"
                   onClick={(e) => {
-                    if (activeTab < 4) {
-                      setActiveTab(activeTab + 1)
-                      console.log(activeTab)
+                    if (solarTab < 4) {
+                      onChangeTab(solarTab + 1)
                     }
                   }}
                 >
@@ -285,7 +172,7 @@ const SolarEnquiryForm = ({ dealershipId, dealershipData, currentUser, onClose }
             </Grid>
           </form>
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={1} style={{ maxWidth: 620 }}>
+        <TabPanel activeTab={solarTab} index={1} style={{ maxWidth: 620 }}>
           <form>
             <Grid container spacing={2}>
               <Grid item md={6}>
@@ -324,9 +211,8 @@ const SolarEnquiryForm = ({ dealershipId, dealershipData, currentUser, onClose }
                   startIcon={<ChevronLeftRoundedIcon />}
                   disabled={loading}
                   onClick={(e) => {
-                    if (activeTab !== 0) {
-                      setActiveTab(activeTab - 1)
-                      console.log(activeTab)
+                    if (solarTab !== 0) {
+                      onChangeTab(solarTab - 1)
                     }
                   }}
                 >
@@ -336,9 +222,8 @@ const SolarEnquiryForm = ({ dealershipId, dealershipData, currentUser, onClose }
                   variant="contained"
                   color="primary"
                   onClick={(e) => {
-                    if (activeTab < 4) {
-                      setActiveTab(activeTab + 1)
-                      console.log(activeTab)
+                    if (solarTab < 4) {
+                      onChangeTab(solarTab + 1)
                     }
                   }}
                 >
@@ -348,7 +233,7 @@ const SolarEnquiryForm = ({ dealershipId, dealershipData, currentUser, onClose }
             </Grid>
           </form>
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={2} style={{ maxWidth: 620 }}>
+        <TabPanel activeTab={solarTab} index={2} style={{ maxWidth: 620 }}>
           <form>
             <Grid container spacing={2}>
               <Grid item md={6}>
@@ -387,9 +272,8 @@ const SolarEnquiryForm = ({ dealershipId, dealershipData, currentUser, onClose }
                   startIcon={<ChevronLeftRoundedIcon />}
                   disabled={loading}
                   onClick={(e) => {
-                    if (activeTab !== 0) {
-                      setActiveTab(activeTab - 1)
-                      console.log(activeTab)
+                    if (solarTab !== 0) {
+                      onChangeTab(solarTab - 1)
                     }
                   }}
                 >
@@ -399,9 +283,8 @@ const SolarEnquiryForm = ({ dealershipId, dealershipData, currentUser, onClose }
                   variant="contained"
                   color="primary"
                   onClick={(e) => {
-                    if (activeTab < 4) {
-                      setActiveTab(activeTab + 1)
-                      console.log(activeTab)
+                    if (solarTab < 4) {
+                      onChangeTab(solarTab + 1)
                     }
                   }}
                 >
@@ -411,7 +294,7 @@ const SolarEnquiryForm = ({ dealershipId, dealershipData, currentUser, onClose }
             </Grid>
           </form>
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={3} style={{ maxWidth: 620 }}>
+        <TabPanel activeTab={solarTab} index={3} style={{ maxWidth: 620 }}>
           <form>
             <Grid container spacing={2}>
               <Grid item md={6}>
@@ -450,9 +333,8 @@ const SolarEnquiryForm = ({ dealershipId, dealershipData, currentUser, onClose }
                   startIcon={<ChevronLeftRoundedIcon />}
                   disabled={loading}
                   onClick={(e) => {
-                    if (activeTab !== 0) {
-                      setActiveTab(activeTab - 1)
-                      console.log(activeTab)
+                    if (solarTab !== 0) {
+                      onChangeTab(solarTab - 1)
                     }
                   }}
                 >
@@ -462,9 +344,8 @@ const SolarEnquiryForm = ({ dealershipId, dealershipData, currentUser, onClose }
                   variant="contained"
                   color="primary"
                   onClick={(e) => {
-                    if (activeTab < 4) {
-                      setActiveTab(activeTab + 1)
-                      console.log(activeTab)
+                    if (solarTab < 4) {
+                      onChangeTab(solarTab + 1)
                     }
                   }}
                 >
@@ -474,16 +355,15 @@ const SolarEnquiryForm = ({ dealershipId, dealershipData, currentUser, onClose }
             </Grid>
           </form>
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={4} style={{ maxWidth: 620 }}>
+        <TabPanel activeTab={solarTab} index={4} style={{ maxWidth: 620 }}>
           <Grid xs={12} container item justify="space-between">
             <Button
               variant="contained"
               startIcon={<ChevronLeftRoundedIcon />}
               disabled={loading}
               onClick={(e) => {
-                if (activeTab !== 0) {
-                  setActiveTab(activeTab - 1)
-                  console.log(activeTab)
+                if (solarTab !== 0) {
+                  onChangeTab(solarTab - 1)
                 }
               }}
             >

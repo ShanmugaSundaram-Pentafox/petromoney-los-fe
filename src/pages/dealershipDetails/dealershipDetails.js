@@ -5,6 +5,7 @@ import Grid from "@material-ui/core/Grid";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
+import Collapse from '@material-ui/core/Collapse';
 // import Divider from "@material-ui/core/Divider";
 // import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
@@ -38,6 +39,10 @@ const useStyles = makeStyles((theme) => ({
     borderRight: 'none',
     minWidth: 180,
   },
+  solarTabs: {
+    paddingLeft: 16,
+    // borderLeft: '0.5px solid rgba(0,0,0,0.25)'
+  },
   title: {
     fontWeight: 600,
     marginBottom: theme.spacing(1),
@@ -63,6 +68,7 @@ const useStyles = makeStyles((theme) => ({
 const DealershipDetails = ({ currentUser, match }) => {
   const classes = useStyles();
   const [activeTab, setActiveTab] = useState(0);
+  const [solarTab, setSolarTab] = useState(-1);
   const [dealershipData, setDealershipData] = useState();
   const [dealersData, setDealersData] = useState();
   const [mainApplicant, setMainApplicant] = useState({})
@@ -75,6 +81,10 @@ const DealershipDetails = ({ currentUser, match }) => {
 
   const onChangeTab = (e, newTab) => {
     setActiveTab(newTab);
+  }
+
+  const onChangeSolarTab = (e, newTab) => {
+    setSolarTab(newTab);
   }
 
   const toggleCreditReport = () => {
@@ -124,23 +134,56 @@ const DealershipDetails = ({ currentUser, match }) => {
         </Grid>
       </Grid>
       <div className={classes.tabsWrapper}>
-        <Tabs
-          orientation="vertical"
-          // variant="scrollable"
-          value={activeTab}
-          onChange={onChangeTab}
-          aria-label="Dealership Details Panel"
-          className={classes.tabs}
-        >
-          <Tab label={<InfoBox active={activeTab === 0} number={1} title="Dealership Info" />} {...tabA11yProps(0)} />
-          <Tab label={<InfoBox active={activeTab === 1} number={2} title="Dealers List" />} {...tabA11yProps(1)} />
-          <Tab label={<InfoBox active={activeTab === 2} number={3} title="Sales History" />} {...tabA11yProps(2)} />
-          <Tab label={<InfoBox active={activeTab === 3} number={4} title="Loans List" />} {...tabA11yProps(3)} />
-          <Tab label={<InfoBox active={activeTab === 4} number={5} title="Documents" />} {...tabA11yProps(4)} />
-          <div onClick={() => setShowSolarForm(true)}>
-            <InfoBox title="Solar Enquiry Form" />
+        <div>
+          <Collapse in={!showSolarForm}>
+            <Tabs
+              orientation="vertical"
+              // variant="scrollable"
+              value={activeTab}
+              onChange={onChangeTab}
+              aria-label="Dealership Details Panel"
+              className={classes.tabs}
+            >
+              <Tab label={<InfoBox active={activeTab === 0} number={1} title="Dealership Info" />} {...tabA11yProps(0)} />
+              <Tab label={<InfoBox active={activeTab === 1} number={2} title="Dealers List" />} {...tabA11yProps(1)} />
+              <Tab label={<InfoBox active={activeTab === 2} number={3} title="Sales History" />} {...tabA11yProps(2)} />
+              <Tab label={<InfoBox active={activeTab === 3} number={4} title="Loans List" />} {...tabA11yProps(3)} />
+              <Tab label={<InfoBox active={activeTab === 4} number={5} title="Documents" />} {...tabA11yProps(4)} />
+            </Tabs>
+          </Collapse>
+          <div>
+            <div onClick={() => {
+              setActiveTab(-1);
+              setSolarTab(0);
+              setShowSolarForm(true);
+              }}>
+              <InfoBox title="Solar Enquiry Form" />
+            </div>
+            <Collapse in={showSolarForm}>
+              <Tabs
+                orientation="vertical"
+                // variant="scrollable"
+                value={solarTab}
+                onChange={onChangeSolarTab}
+                aria-label="Solar Enquiry Form"
+                className={[classes.tabs, classes.solarTabs]}
+              >
+                <Tab label={<InfoBox active={solarTab === 0} number={1} title="Dealer Info" />} {...tabA11yProps(0)} />
+                <Tab label={<InfoBox active={solarTab === 1} number={2} title="Project Details" />} {...tabA11yProps(1)} />
+                <Tab label={<InfoBox active={solarTab === 2} number={3} title="Roof Details" />} {...tabA11yProps(2)} />
+                <Tab label={<InfoBox active={solarTab === 3} number={4} title="Electrical Assessments" />} {...tabA11yProps(3)} />
+                <Tab label={<InfoBox active={solarTab === 4} number={5} title="Load Profile" />} {...tabA11yProps(4)} />
+              </Tabs>
+              <div onClick={() => {
+                setActiveTab(0);
+                setSolarTab(-1);
+                setShowSolarForm(false);
+              }}>
+                <InfoBox title="Go Back" />
+              </div>
+            </Collapse>
           </div>
-        </Tabs>
+        </div>
         <TabPanel activeTab={activeTab} index={0}>
           {dealershipData && (
             <DealershipInfo data={dealershipData} currentUser={currentUser} toggleCreditReport={toggleCreditReport} />
@@ -158,11 +201,19 @@ const DealershipDetails = ({ currentUser, match }) => {
         <TabPanel activeTab={activeTab} index={4}>
           <DealershipDoc id={id} currentUser={currentUser} />
         </TabPanel>
+        <SolarEnquiryForm
+          dealershipId={id}
+          mainApplicant={mainApplicant}
+          solarTab={solarTab}
+          onChangeTab={setSolarTab}
+          currentUser={currentUser}
+          onClose={() => setShowSolarForm(false)}
+        />
       </div>
 
-      <Drawer
+      {/* <Drawer
         anchor="right"
-        open={showSolarForm}
+        open={false}
         variant="temporary"
         PaperProps={{
           style: { backgroundColor: '#e5e5e5' }
@@ -177,7 +228,7 @@ const DealershipDetails = ({ currentUser, match }) => {
             onClose={() => setShowSolarForm(false)}
           />
         </div>
-      </Drawer>
+      </Drawer> */}
       
       <Drawer
         anchor="right"

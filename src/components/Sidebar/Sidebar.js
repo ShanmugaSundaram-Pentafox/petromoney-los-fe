@@ -7,6 +7,7 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import PeopleIcon from '@material-ui/icons/People';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import LocalShippingIcon from '@material-ui/icons/LocalShipping';
+import WbSunnyRoundedIcon from '@material-ui/icons/WbSunnyRounded';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
@@ -83,6 +84,11 @@ const Sidebar = props => {
       title: 'Dashboard',
       href: '/',
       icon: <DashboardIcon />
+    },
+    {
+      title: 'Solar',
+      href: '/solar',
+      icon: <WbSunnyRoundedIcon />
     },
     {
       title: 'Loans',

@@ -14,11 +14,13 @@ import DealershipDetails from '../pages/dealershipDetails/dealershipDetails';
 import Loans from '../pages/loanspage/loans'
 import CreditForm from '../pages/creditForm/creditForm';
 import Transport from '../pages/transports/transports';
+import Solar from '../pages/solar/solar';
 
 const Routes = ({ currentUser }) => {
   return (
     <Switch>
       <ProtectedRoute exact path="/" component={Dashboard} />
+      <ProtectedRoute exact path="/solar" component={Solar} />
       <ProtectedRoute exact path="/dealership" component={Dealership} />
       <ProtectedRoute exact path="/loans" component={Loans} />
       <ProtectedRoute exact path="/dealership/:id?" component={DealershipDetails} />

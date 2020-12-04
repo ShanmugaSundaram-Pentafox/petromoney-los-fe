@@ -1,7 +1,7 @@
 import palette from './palette';
 
 export default {
-  fontFamily: "'Nunito', Roboto, sans-serif",
+  fontFamily: "'Nunito Sans', 'Open Sans', Roboto, sans-serif",
   fontWeightMedium: 600,
   h1: {
     color: palette.text.primary,

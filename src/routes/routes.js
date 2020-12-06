@@ -21,6 +21,7 @@ const Routes = ({ currentUser }) => {
     <Switch>
       <ProtectedRoute exact path="/" component={Dashboard} />
       <ProtectedRoute exact path="/solar" component={Solar} />
+      <ProtectedRoute exact path="/solar/feasibility" component={Solar} />
       <ProtectedRoute exact path="/dealership" component={Dealership} />
       <ProtectedRoute exact path="/loans" component={Loans} />
       <ProtectedRoute exact path="/dealership/:id?" component={DealershipDetails} />

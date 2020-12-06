@@ -26,7 +26,7 @@ const ChartLabelItem = ({
   )
 }
 
-const ChartCard = ({ title, actionButton, labels, chartTitle, chartCaption, children }) => {
+const ChartCard = ({ title, actionButton, labels, verticalLabels, fullWidth, chartTitle, chartCaption, children, chartContainerStyle={} }) => {
   const { label, ...buttonProps } = actionButton || {};
   return (
     <ChartCardContainer>
@@ -39,12 +39,12 @@ const ChartCard = ({ title, actionButton, labels, chartTitle, chartCaption, chil
         }
       </ChartCardHeader>
       <ChartWrapper>
-        <ChartBlock>
+        <ChartBlock verticalLabels={verticalLabels}>
           <div>{chartTitle}</div>
-          <div style={{ width: '85%', margin: '0 auto' }}>{children}</div>
+          <div style={{ width: fullWidth ? '100%' : '85%', margin: '0 auto', ...chartContainerStyle }}>{children}</div>
           <div>{chartCaption}</div>
         </ChartBlock>
-        <ChartLabelsBlock vertical={Array.isArray(labels) && labels.length < 4}>
+        <ChartLabelsBlock>
           {
             Array.isArray(labels) && labels.map((item, i) => (
               <ChartLabelItem key={i} text={item.label} value={item.value} color={item.color || CHART_COLORS[i]} onClick={item.onClick} />

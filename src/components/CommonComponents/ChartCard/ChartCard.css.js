@@ -21,14 +21,14 @@ export const ChartWrapper = styled.div`
 `;
 
 export const ChartBlock = styled.div`
-  min-width: 50%;
+  min-width: ${props => props.verticalLabels ? `70%` : `50%`};
   text-align: center;
 `;
 
 export const ChartLabelWrapper = styled.div`
   background-color: #fff;
   color: #353535;
-  transition: all 0.35s ease-in;
+  /* transition: all 0.35s ease-in; */
   position: relative;
   padding: 8px;
   padding-left: 24px;

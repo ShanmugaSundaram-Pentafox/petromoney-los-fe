@@ -46,7 +46,7 @@ const inputProps = {
 const SolarEnquiryForm = ({ solarTab, onChangeTab, dealershipId, mainApplicant, currentUser }) => {
   const classes = useStyles()
   const [loading, setLoading] = useState(false)
-  const [apiStatus, setAapiStatus] = useState({})
+  const [apiStatus, setApiStatus] = useState({})
 
   return (
     <Box>

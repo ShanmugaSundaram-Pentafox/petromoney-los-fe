@@ -5,7 +5,7 @@ import { createStructuredSelector } from 'reselect';
 import { selectCurrentUser } from '../store/user/user.selector';
 import ProtectedRoute from './ProtectedRoute';
 import TransportsDetails from '../pages/transportsDetails/transportsDetails'
-import Survey from '../pages/survey/survey';
+// import Survey from '../pages/survey/survey';
 import Login from '../pages/login/login';
 import Dashboard from '../pages/dashboard/dashboard';
 import Dealership from '../pages/dealership/dealership';
@@ -29,7 +29,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute exact path="/transports/:id?" component={TransportsDetails} />
       <ProtectedRoute exact path="/dealership/:id/credit-form" component={CreditForm} />
       <ProtectedRoute exact path="/settings" component={Settings} />
-      <Route exact path="/survey" render={props => <Survey {...props} />} />
+      {/* <Route exact path="/survey" render={props => <Survey {...props} />} /> */}
       
       <Route exact path="/login" render={props => {
         const authUrl = window.sessionStorage.getItem('pm-login-url');

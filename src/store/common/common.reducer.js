@@ -2,6 +2,7 @@ import { CommonActionTypes } from "./common.types"
 
 const INITIAL_STATE = {
   pageTitle: undefined,
+  dashboardView: 'LOS',
   backLink: false,
   search: undefined
 }
@@ -17,6 +18,11 @@ export const commonReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         searchText: action.payload
+      }
+    case CommonActionTypes.SET_DASHBOARD_VIEW:
+      return {
+        ...state,
+        dashboardView: action.payload
       }
     default:
       return state;

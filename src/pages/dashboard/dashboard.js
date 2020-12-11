@@ -1,27 +1,22 @@
 import React, { useState } from 'react';
 import _countBy from 'lodash/countBy';
-
-import { makeStyles } from '@material-ui/styles';
+import { useMount } from 'react-use';
+import { connect } from 'react-redux';
 import LoansTable from './components/LoansTable';
 import usePageTitle from '../../hooks/usePageTitle';
 import Paper from '@material-ui/core/Paper';
-import { InfoBoxContainer, InfoBoxWrapper } from '../../components/CommonComponents/InfoBox';
+import Box from '@material-ui/core/Box';
+// import { InfoBoxContainer, InfoBoxWrapper } from '../../components/CommonComponents/InfoBox';
 import styled from 'styled-components';
 import Grid from '@material-ui/core/Grid';
-import { Tooltip, LabelList,Legend, BarChart, CartesianGrid, XAxis, YAxis, Bar, Text } from 'recharts';
+import moment from 'moment';
+import Skeleton from '@material-ui/lab/Skeleton';
+// import { Tooltip, LabelList,Legend, BarChart, CartesianGrid, XAxis, YAxis, Bar, Text } from 'recharts';
 import LoanBookTable from '../../components/Tables/LoanBookTable';
-import { useMount } from 'react-use';
 import { getAllLoans, getAll_ls1_Metrices, getAll_ls2_Metrices } from '../../services/loans.service';
 import { SummaryTile, PieChartData, BarChartData } from './components/MetricsComponents';
-
-const useStyles = makeStyles((theme) => ({
-  tableContainer: {
-    borderRadius: 6,
-    // margin: 24,
-    // marginTop: 16,
-    // marginBottom: 9,
-  }
-}));
+import DashCard from '../../components/CommonComponents/Cards/DashCard';
+import { Typography } from '@material-ui/core';
 
 const DataCharts = styled.div`
   /* padding: 20px 24px 8px; */
@@ -33,106 +28,9 @@ const DataCharts = styled.div`
   }
 `;
 
-const LoansNewTableContainer = styled.div`
-  display: flex;
-  padding: 12px;
-`;
-
-const LoansNewTableWrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  width: 50%;
-  margin: 0 12px;
-
-  .title {
-    font-size: 18px;
-    font-weight: 600;
-    line-height: 1.33;
-    margin-bottom: 16px;
-  }
-`;
-
-const LoansNewTable = styled.div`
-  width: 100%;
-  height: 352px;
-  background-color: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 8px 6px -6px rgba(0,0,0,0.12);
-  overflow: hidden;
-  overflow-y: scroll;
-
-  .table-content {
-    display: flex;
-    align-items: center;
-    padding: 16px 8px;
-    cursor: pointer;
-
-    &:hover {
-      background-color: #F7F7F7;
-    }
-
-    .content {
-      display: flex;
-      width: 30%;
-      padding: 0 12px;
-
-      &.center {
-        justify-content: center;
-      }
-
-      &:first-child {
-        width: 40%;
-      }
-    }
-
-    p {
-      color: #504E58;
-      font-size: 12px;
-      line-height: 15px;
-      font-weight: 400;
-      margin-bottom: 0;
-
-      span {
-        display: block;
-        color: #000000;
-        font-size: 13px;
-        line-height: 15px;
-        font-weight: 400;
-        margin-bottom: 4px;
-      }
-    }
-
-    .table-pill {
-      background-color: #e1f8e5;
-      display: inline-block;
-      color: #51b37f;
-      border-radius: 29px;
-      padding: 6px 12px;
-      font-size: 13px;
-      font-weight: 600;
-      min-width: 80px;
-      text-align: center;
-
-      &.red {
-        color: #d35178;
-        background-color: #f7eae8;
-      }
-    }
-
-    .price-txt {
-      font-weight: 600;
-      font-size: 16px;
-      line-height: 20px;
-      margin-left: auto;
-    }
-  }
-`;
-
-const Dashboard = ({ currentUser }) => {
-  const classes = useStyles();
+const Dashboard = ({ currentUser, dashboardView }) => {
   usePageTitle('Dashboard');
-  const [chartData, setChartData] = useState([]);
+  const [chartData, setChartData] = useState([{}, {}, {}, {}, {}, {}]);
   const [ ls1_metrices, setLs1Metrices ] = useState({});
   const [ ls2_metrices, setLs2Metrices ] = useState([]);
   const [ daysChartData, setdaysChartData ] = useState(['Days', 'Amount']);
@@ -158,51 +56,88 @@ const Dashboard = ({ currentUser }) => {
 
       })
 
-      getAll_ls1_Metrices().then(res => {
-        const result = res[0] || {};
-        setLs1Metrices(result);
-        let overallData = [
-          ['Days', 'Amount'],
-          ['>=90 Days', result.gt90_days],
-          ['60-90 Days', result.gt60lt90_days],
-          ['30-60 Days', result.gt30lt60_days],
-          ['15-30 Days', result.gt15lt30_days],
-          ['4-15 Days', result.gt4lt15_days],
-          ['<=3 Days', result.lt3_days]
-        ]
-        setdaysChartData(overallData);
-      }).catch(err => {
+      setTimeout(() => {
+        getAll_ls1_Metrices().then(res => {
+          const result = res[0] || {};
+          setLs1Metrices(result);
+          let overallData = [
+            ['Days', 'Amount'],
+            ['>=90 Days', result.gt90_days],
+            ['60-90 Days', result.gt60lt90_days],
+            ['30-60 Days', result.gt30lt60_days],
+            ['15-30 Days', result.gt15lt30_days],
+            ['4-15 Days', result.gt4lt15_days],
+            ['<=3 Days', result.lt3_days]
+          ]
+          setdaysChartData(overallData);
+        }).catch(err => {
+  
+        })
 
-      })
-
-      getAll_ls2_Metrices().then(res => {
-        const result =  res;
-        let total = 0;
-        const dataSource = result.map((item, index) => {
-          total += item.od_amount;
-          return [item.cust_region, item.od_amount]
-        });
-        dataSource.length && dataSource.unshift(['Region', 'Amount']);
-        setTotalForRegion(total);
-        setLs2Metrices(dataSource);
-      })
+        getAll_ls2_Metrices().then(res => {
+          const result =  res;
+          let total = 0;
+          const dataSource = result.map((item, index) => {
+            total += item.od_amount;
+            return [item.cust_region, item.od_amount]
+          });
+          dataSource.length && dataSource.unshift(['Region', 'Amount']);
+          setTotalForRegion(total);
+          setLs2Metrices(dataSource);
+        })
+      }, 4000)
   });
 
-  const CustomizedAxisTick = ({ x, y, payload }) => {
-    return (
-      <Text x={x} y={y} fill='#666' width={70} fontSize='12' fontWeight='bold' textAnchor="middle" verticalAnchor="start">{payload.value}</Text>
-    )
-  }
+  // const CustomizedAxisTick = ({ x, y, payload }) => {
+  //   return (
+  //     <Text x={x} y={y} fill='#666' width={70} fontSize='12' fontWeight='bold' textAnchor="middle" verticalAnchor="start">{payload.value}</Text>
+  //   )
+  // }
 
   return (
     <div style={{ flexGrow: 1 }}>
       <Grid container spacing={2}>
-        <Grid item md={6}>
-          <DataCharts>
-            {Object.keys(ls1_metrices).length ? <SummaryTile ls1Data={ls1_metrices}/> : <Paper style={{ padding: 10 }}>No Data Found</Paper> }
-          </DataCharts>
+        <Grid item xs={12}>
+          {
+            Array.isArray(chartData) && dashboardView === "LOS" && (
+              <Box p={2} borderRadius={4} bgcolor="background.paper">
+                <Typography variant="h5">Loans' Statistics</Typography>
+                <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">
+                {
+                  chartData.map((item, i) => (
+                    <DashCard key={i} value={item.count} text={item.name} />
+                  ))
+                }
+                </Box>
+              </Box>
+            )
+          }
+
+          {
+            dashboardView === "LMS" ? (
+              <Box p={2} borderRadius={4} bgcolor="background.paper">
+                <Typography variant="h5">Credit Book</Typography>
+                <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">
+                  <DashCard text="Date (Opening)" value={ls1_metrices.opening ? moment(new Date(ls1_metrices.opening)).format('DD MMM, YYYY') : '-' } />
+                  <DashCard text="Loan Book (in Crs)" value={ls1_metrices.loan_book} />
+                  <DashCard text="Overdue (in Crs)" value={ls1_metrices.overdue} />
+                  <DashCard text="Due (in Crs)" value={ls1_metrices.due} />
+                  <DashCard text="Current (in Crs)" value={ls1_metrices.current1} />
+                </Box>
+              </Box>
+            ) : null
+          }
         </Grid>
-        <Grid item md={6}>
+        {/* {
+          dashboardView === "LMS" && (
+            <Grid item md={6}>
+              <DataCharts>
+                {Object.keys(ls1_metrices).length ? <SummaryTile ls1Data={ls1_metrices}/> : <Paper style={{ padding: 10 }}>No Data Found</Paper> }
+              </DataCharts>
+            </Grid>
+          )
+        } */}
+        {/* <Grid item md={6}>
           <DataCharts>
             {
               chartData.length ? (
@@ -227,26 +162,37 @@ const Dashboard = ({ currentUser }) => {
               ) : null
             }
           </DataCharts>
-        </Grid>
-        <Grid item md={6}>
-          <DataCharts>
-            {ls2_metrices.length ? <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion}/> : <Paper style={{ padding: 10 }}>No Data Found. Check if EOD has been completed</Paper> }
-          </DataCharts>
-        </Grid>
-        <Grid item md={6}>
-          <DataCharts>
-            <BarChartData daysChartData={daysChartData}/>
-          </DataCharts>
-        </Grid>
-        <Grid item xs={12}>
-          <LoanBookTable title={"Loan Book"} currentUser={currentUser}/>
-        </Grid>
+        </Grid> */}
+        {
+          dashboardView === "LMS" && (<>
+            <Grid item md={6}>
+              <DataCharts>
+                {ls2_metrices.length ? <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion}/> : <Paper style={{ padding: 10 }}>No Data Found. Check if EOD has been completed</Paper> }
+              </DataCharts>
+            </Grid>
+            <Grid item md={6}>
+              <DataCharts>
+                <BarChartData daysChartData={daysChartData}/>
+              </DataCharts>
+            </Grid>
+            <Grid item xs={12}>
+              <LoanBookTable title={"Loan Book"} currentUser={currentUser}/>
+            </Grid>
+          </>
+          )
+        }
       </Grid>
 
-      <LoansTable currentUser={currentUser} />
+      {
+        dashboardView === "LOS" && (
+          <LoansTable currentUser={currentUser} />
+        )
+      }
 
     </div>
   );
 }
 
-export default Dashboard;
+const mapStateToProps = ({ common }) => ({ dashboardView: common.dashboardView });
+
+export default connect(mapStateToProps)(Dashboard);

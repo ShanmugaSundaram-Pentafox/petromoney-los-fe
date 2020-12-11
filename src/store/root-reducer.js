@@ -12,7 +12,7 @@ import { transportsReducer } from './transports/transports.reducer';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['user']
+  whitelist: ['user', 'common']
 }
 
 const rootReducer = combineReducers({

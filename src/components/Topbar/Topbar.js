@@ -1,11 +1,13 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 // import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
-import { AppBar, Toolbar, Badge, Hidden, IconButton, Tooltip } from '@material-ui/core';
+import { AppBar, Toolbar, Badge, Hidden, Tooltip, IconButton, RadioGroup, Radio, FormControlLabel } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
+// import ToggleButton from '@material-ui/lab/ToggleButton';
+// import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 // import InputIcon from '@material-ui/icons/Input';
 import { connect } from 'react-redux';
 import { resetCurrentUser } from '../../store/user/user.actions';
@@ -13,6 +15,7 @@ import { resetCurrentUser } from '../../store/user/user.actions';
 import LoginUserInfo from '../CommonComponents/LoginUserInfo';
 import NotificationSidebar from '../CommonComponents/NotificationSidebar';
 import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
+import { setDashboardView } from '../../store/common/common.actions';
 // import Searchbox from '../CommonComponents/Searchbox';
 
 const useStyles = makeStyles(theme => {
@@ -37,6 +40,15 @@ const useStyles = makeStyles(theme => {
   title: {
     ...theme.typography.h2,
     fontSize: 18,
+    display: 'flex',
+    alignItems: 'center',
+  },
+  optionsContainer: {
+    paddingRight: theme.spacing(2),
+    paddingLeft: theme.spacing(2),
+    marginLeft: theme.spacing(1),
+    borderRadius: 20,
+    boxShadow: `inset 0 0 8px 0px #cdcdcd`,
   },
   goback: {
     marginRight: theme.spacing(1)
@@ -45,12 +57,15 @@ const useStyles = makeStyles(theme => {
 });
 
 const Topbar = props => {
-  const { className, onSidebarOpen, pageTitle, user, logout, history, goBackIcon, appBarProps } = props;
+  const { className, onSidebarOpen, pageTitle, user, logout, history, goBackIcon, appBarProps, dashboardView, updateDashboardView } = props;
   const classes = useStyles();
 
   // const [notifications] = useState([]);
 
   const [showNotificationSidebar, setShowNotificationSidebar] = useState(false);
+  useEffect(() => {
+
+  }, [dashboardView])
 
   return (
     <Fragment>
@@ -75,7 +90,47 @@ const Topbar = props => {
               </Tooltip>
             )
           }
-          <h2 className={classes.title}>{pageTitle}</h2>
+          <h2 className={classes.title}>
+            {pageTitle}
+            {
+              pageTitle?.toLowerCase() == "dashboard" ? (
+                <span className={classes.optionsContainer}>
+                  {/* <ToggleButtonGroup
+                    value={dashboardView}
+                    exclusive
+                    onChange={(e, v) => {
+                      console.log(e, v);
+                      updateDashboardView(v)
+                    }}
+                    aria-label="dashboard-view"
+                  >
+                    <ToggleButton value="LOS" aria-label="los-view">
+                      LOS
+                    </ToggleButton>
+                    <ToggleButton value="LMS" aria-label="lms-view">
+                      LMS
+                    </ToggleButton>
+                  </ToggleButtonGroup> */}
+                  <RadioGroup onChange={(e, v) => updateDashboardView(v)} row aria-label="dashboard-view-type" name="dashboard-view-type" defaultValue={dashboardView}>
+                    <Tooltip title="Loan Origination System">
+                      <FormControlLabel
+                        value="LOS"
+                        control={<Radio color="primary" />}
+                        label="LOS"
+                      />
+                    </Tooltip>
+                    <Tooltip title="Loan Management System">
+                      <FormControlLabel
+                        value="LMS"
+                        control={<Radio color="secondary" />}
+                        label="LMS"
+                      />
+                    </Tooltip>
+                  </RadioGroup>
+                </span>
+              ) : null
+            }
+          </h2>
           <div className={classes.flexGrow} />
           <Hidden mdDown>
             {/* <Searchbox /> */}
@@ -115,11 +170,13 @@ Topbar.propTypes = {
 
 const mapStateToProps = ({ common }) => ({
   pageTitle: common.pageTitle,
+  dashboardView: common.dashboardView,
   goBackIcon: common.goBackIcon,
   searchText: common.searchText
 })
 
 const mapDispatchToProps = dispatch => ({
+  updateDashboardView: view => dispatch(setDashboardView(view)),
   logout: () => dispatch(resetCurrentUser())
 })
 

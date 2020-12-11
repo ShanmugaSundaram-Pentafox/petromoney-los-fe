@@ -1,162 +1,183 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from "react";
 import { connect } from 'react-redux';
-// import { Link } from 'react-router-dom';
-// import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import { colors } from '@material-ui/core';
-// import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-// import StyledLink from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-// import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
+import { setCurrentUser } from '../../store/user/user.actions';
 import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import { API } from '../../config/api';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Box from "@material-ui/core/Box";
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { LoginWrapper } from "./login.css";
 import { URL } from '../../config/serverUrls';
 import { logger } from '../../config/logger';
-import { setCurrentUser } from '../../store/user/user.actions';
+import apiCall from "../../utils/api.util";
+import Alert from "@material-ui/lab/Alert";
 
-const useStyles = makeStyles(theme => ({
-  container: {
-    paddingTop: theme.spacing(16),
+const useStyles = makeStyles(() => ({
+  textFieldStyle: {
+    marginBottom: '32px',
+
+    '& .MuiInputLabel-formControl': {
+      fontSize: '18px',
+      lineHeight: '140%',
+      color: '#909191',
+      top: '-6px'
+    },
+    '& .MuiInputBase-input': {
+      fontWeight: '500',
+      fontSize: '18px',
+      lineHeight: '140%'
+    }
   },
-  wrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    boxShadow: '0 15px 0 -25px rgba(63,63,68,0.1), 0 1px 16px 0 rgba(63,63,68,0.15)',
-    padding: theme.spacing(3),
-    background: "white"
-  },
-  paper: {
-    // marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  logoWrapper: {
-    background: "white",
-    padding: '16px',
-    marginTop: `-100px`,
-    borderRadius: 68
-  },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(2, 0, 0),
-    fontSize: 16
-  },
-  version: {
-    textAlign: "center",
-    marginTop: 16,
-    fontSize: 12,
-    color: colors.blueGrey[700]
+  buttonStyle: {
+    fontSize: '18px',
+    fontWeight: '500',
+    lineHeight: '26px',
+    padding: '12px 40px',
+    backgroundColor: '#2CAE66',
+    borderColor: '#2CAE66',
+    boxShadow: 'none',
+    marginTop: '12px',
+
+    '&:hover': {
+      backgroundColor: '#2CAE66',
+      borderColor: '#2CAE66',
+      boxShadow: 'none'
+    }
   }
 }));
 
 const Login = ({ setCurrentUser }) => {
   const classes = useStyles();
-  const [mobile, setMobile] = useState();
-  const [password, setPassword] = useState();
+  const [isShowOTP, setShowOTPState] = useState(false);
+  const [apiStatus, setApiStatus] = useState({});
 
-  const submitAction = useCallback(e => {
-    e.preventDefault();
-    API.post(URL.login, { mobile, password })
-      .then(({ status, data }) => {
-        logger(status, data.data);
-        setCurrentUser(data.data);
+  const { values, errors, handleChange, handleSubmit } = useFormik({
+    initialValues: {},
+    validationSchema: Yup.object().shape({
+      mobile: Yup.number().required("Enter mobile number"),
+      password: Yup.string().required("Enter password"),
+    }),
+    onSubmit: values => {
+      apiCall(URL.login, {
+        method: 'POST',
+        body: values
       })
-      .catch(e => {
-        logger(e);
-      });
-  }, [mobile, password, setCurrentUser])
+        .then(({ status, data, message }) => {
+          // logger(status, data);
+          if(status == 'SUCCESS') {
+            setCurrentUser(data);
+          }
+          setApiStatus({ type: status, message })
+        })
+        .catch(e => {
+          logger(e);
+          setApiStatus({ type: "ERROR", message: e?.message })
+        });
+    }
+  });
 
   return (
-    <Container className={classes.container} component="main" maxWidth="xs">
-      {/* <CssBaseline /> */}
-      <div className={classes.wrapper}>
-        <div className={classes.logoWrapper}>
-          <img
-            alt="Logo"
-            src="/images/logo.png"
-            height="108px"
+    <LoginWrapper>
+      <aside
+        style={{
+          backgroundImage: 'url("/images/login-bg.png")'
+        }}
+      >
+        <img alt="Logo" src="/images/logo-white.png" />
+
+        <h1>
+          {/* <span>Welcome to</span> */}
+          Master Data Management
+        </h1>
+      </aside>
+
+      <div className="right-content">
+        <img alt="Logo" src="/images/logo.png" height="112" className="mbl-img" />
+
+        <p className="section-title">
+          <span>Login</span>
+          Please login to your account
+        </p>
+
+        <form onSubmit={handleSubmit}>
+          <TextField
+            name="mobile"
+            label="Mobile Number"
+            type="number"
+            fullWidth
+            className={classes.textFieldStyle}
+            onChange={handleChange}
+            value={String(values.mobile)}
+            error={errors.mobile}
+            helperText={errors.mobile}
           />
-        </div>
-        <div className={classes.paper}>
-          {/* <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
-          </Avatar> */}
-          <Typography component="h1" variant="h4">
-            Sign in
-          </Typography>
-          <form className={classes.form} onSubmit={submitAction}>
-            <TextField
-              value={mobile}
-              onChange={e => setMobile(e.target.value)}
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="mobile"
-              label="Mobile"
-              name="mobile"
-              autoComplete="mobile"
-              autoFocus
-            />
-            <TextField
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-            >
-              Login
-            </Button>
-            <Grid container>
-              <Grid item xs>
-                {/* <Link href="#" variant="body2">
-                  Forgot password?
-                </Link> */}
-              </Grid>
-              {/* <Grid item>
-                <StyledLink to="/signup" component={Link} variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </StyledLink>
-              </Grid> */}
-            </Grid>
-          </form>
-        </div>
+
+          {
+            isShowOTP ? (
+              <>
+                <TextField
+                  name="otp"
+                  label="OTP"
+                  type="number"
+                  fullWidth
+                  className={classes.textFieldStyle}
+                />
+                <Button
+                  variant="contained"
+                  size="medium"
+                  color="primary"
+                  hidden={!isShowOTP}
+                  className={classes.buttonStyle}
+                  onClick={() => null}
+                >
+                  Send OTP
+                </Button>
+              </>
+            ) : (
+                <>
+                  <TextField
+                    name="password"
+                    label="Password"
+                    type="password"
+                    fullWidth
+                    className={classes.textFieldStyle}
+                    onChange={handleChange}
+                    value={values.password}
+                    error={errors.password}
+                    helperText={errors.password}
+                  />
+                  <Button
+                    variant="contained"
+                    size="medium"
+                    color="primary"
+                    className={classes.buttonStyle}
+                    type="submit"
+                  >
+                    Login
+                  </Button>
+                </>
+              )
+          }
+        </form>
+
+        <Box pt={2}>
+          {
+            apiStatus.type && (
+              <Alert severity={apiStatus.type.toLowerCase()}>{apiStatus.message}</Alert>
+            )
+          }
+          {/* <Button
+            size="small"
+            onClick={() => setShowOTPState(!isShowOTP)}
+          >
+            {isShowOTP ? 'Login with Password' : 'Login with OTP'}
+          </Button> */}
+        </Box>
       </div>
-      <div className={classes.version}>version: 0.1 beta</div>
-    </Container>
+    </LoginWrapper>
   );
-}
+};
 
 const mapDispatchToProps = dispatch => ({
   setCurrentUser: user => dispatch(setCurrentUser(user))

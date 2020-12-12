@@ -15,5 +15,8 @@ export default {
     '&.MuiTableCell-sizeSmall': {
       padding: '6px 18px 6px 12px'
     }
+  },
+  footer: {
+    border: 'none'
   }
 };

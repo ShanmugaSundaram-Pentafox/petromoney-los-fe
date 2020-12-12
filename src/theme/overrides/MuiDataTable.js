@@ -3,7 +3,7 @@ import palette from '../palette';
 export default {
   paper: {
     '&.MuiPaper-rounded': {
-      borderRadius: '6px',
+      borderRadius: '8px',
       boxShadow: 'none'
     },
   },

@@ -9,10 +9,11 @@ const DashCardWrapper = styled.div`
   /* box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.034),
     0 6.7px 5.3px rgba(0, 0, 0, 0.048); */
   color: #343434;
-  width: 100%;
+  /* width: 100%; */
+  flex: 1;
   min-width: 140px;
   text-align: center;
-  border-right: 1px dashed #ccc;
+  border-right: ${props => props.noBorder ? 'none' : '1px dashed #ccc'};
 
   .stat-number-block {
     display: flex;
@@ -46,10 +47,11 @@ const DashCard = ({
   value,
   text,
   icon,
+  noBorder,
   action = ()=>null
 }) => {
   return (
-    <DashCardWrapper className={classes} style={styles} onClick={action}>
+    <DashCardWrapper noBorder={noBorder} className={classes} style={styles} onClick={action}>
       <div className="stat-number-block">
         <div className="stat-number">
           {value || '-'}

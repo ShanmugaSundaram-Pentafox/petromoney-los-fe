@@ -54,6 +54,7 @@ const Login = ({ setCurrentUser }) => {
 
   const { values, errors, handleChange, handleSubmit } = useFormik({
     initialValues: {},
+    validateOnChange: false,
     validationSchema: Yup.object().shape({
       mobile: Yup.number().required("Enter mobile number"),
       password: Yup.string().required("Enter password"),

@@ -2,11 +2,17 @@ import { DashboardActionTypes } from "./dashboard.types"
 
 const INITIAL_STATE = {
   sites: null,
-  layouts: null
+  layouts: null,
+  allUsers: []
 }
 
 export const dashboardReducer = (state = INITIAL_STATE, action) => {
   switch(action.type) {
+    case DashboardActionTypes.SET_ALL_USERS:
+      return {
+        ...state,
+        allUsers: action.payload
+      }
     case DashboardActionTypes.SET_SITES:
       return {
         ...state,

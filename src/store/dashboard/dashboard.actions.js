@@ -1,5 +1,10 @@
 import { DashboardActionTypes } from "./dashboard.types";
 
+export const setAllUsers = allUsers => ({
+  type: DashboardActionTypes.SET_ALL_USERS,
+  payload: allUsers
+});
+
 export const setSites = sites => ({
   type: DashboardActionTypes.SET_SITES,
   payload: sites

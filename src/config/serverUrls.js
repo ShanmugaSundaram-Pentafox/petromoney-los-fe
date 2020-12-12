@@ -1,6 +1,11 @@
 export const URL = {
   base: "http://salesapi.petromoney.in/api/",
   login: "login/user",
+  allUsers: "users",
+  userRoles: "user/roles",
+  addNewUser: "signup",
+  addNewTransporter: "signup/transporter",
+  addNewDealer: "signup/dealer",
   loans: "loans",
   sanction: "loans/sanction",
   dealership: "dealership",

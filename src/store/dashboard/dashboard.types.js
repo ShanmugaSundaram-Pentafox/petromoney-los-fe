@@ -1,4 +1,5 @@
 export const DashboardActionTypes = {
+  SET_ALL_USERS: "SET_ALL_USERS",
   SET_SITES: "SET_SITES",
   SET_SITE_LAYOUTS: "SET_SITE_LAYOUTS",
   DELETE_SITE: "DELETE_SITE",

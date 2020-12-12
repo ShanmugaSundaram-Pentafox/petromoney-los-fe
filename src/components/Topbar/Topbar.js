@@ -16,6 +16,7 @@ import LoginUserInfo from '../CommonComponents/LoginUserInfo';
 import NotificationSidebar from '../CommonComponents/NotificationSidebar';
 import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 import { setDashboardView } from '../../store/common/common.actions';
+import AddNewUserAction from '../AddNewUser/AddNewUserAction';
 // import Searchbox from '../CommonComponents/Searchbox';
 
 const useStyles = makeStyles(theme => {
@@ -50,6 +51,11 @@ const useStyles = makeStyles(theme => {
     borderRadius: 20,
     boxShadow: `inset 0 0 8px 0px #cdcdcd`,
   },
+  actionsContainer: {
+    paddingRight: theme.spacing(2),
+    paddingLeft: theme.spacing(2),
+    marginLeft: theme.spacing(1),
+  },
   goback: {
     marginRight: theme.spacing(1)
   }
@@ -57,7 +63,7 @@ const useStyles = makeStyles(theme => {
 });
 
 const Topbar = props => {
-  const { className, onSidebarOpen, pageTitle, user, logout, history, goBackIcon, appBarProps, dashboardView, updateDashboardView } = props;
+  const { className, onSidebarOpen, pageTitle, user, logout, match, history, goBackIcon, appBarProps, dashboardView, updateDashboardView } = props;
   const classes = useStyles();
 
   // const [notifications] = useState([]);
@@ -93,24 +99,8 @@ const Topbar = props => {
           <h2 className={classes.title}>
             {pageTitle}
             {
-              pageTitle?.toLowerCase() == "dashboard" ? (
+              pageTitle?.toLowerCase() == "dashboard" && (
                 <span className={classes.optionsContainer}>
-                  {/* <ToggleButtonGroup
-                    value={dashboardView}
-                    exclusive
-                    onChange={(e, v) => {
-                      console.log(e, v);
-                      updateDashboardView(v)
-                    }}
-                    aria-label="dashboard-view"
-                  >
-                    <ToggleButton value="LOS" aria-label="los-view">
-                      LOS
-                    </ToggleButton>
-                    <ToggleButton value="LMS" aria-label="lms-view">
-                      LMS
-                    </ToggleButton>
-                  </ToggleButtonGroup> */}
                   <RadioGroup onChange={(e, v) => updateDashboardView(v)} row aria-label="dashboard-view-type" name="dashboard-view-type" defaultValue={dashboardView}>
                     <Tooltip title="Loan Origination System">
                       <FormControlLabel
@@ -128,7 +118,15 @@ const Topbar = props => {
                     </Tooltip>
                   </RadioGroup>
                 </span>
-              ) : null
+              )
+            }
+
+            {
+              match?.path?.toLowerCase() == "/users" && (
+                <span className={classes.actionsContainer}>
+                  <AddNewUserAction />
+                </span>
+              )
             }
           </h2>
           <div className={classes.flexGrow} />
@@ -168,7 +166,7 @@ Topbar.propTypes = {
   onSidebarOpen: PropTypes.func
 };
 
-const mapStateToProps = ({ common }) => ({
+const mapStateToProps = ({ common, users }) => ({
   pageTitle: common.pageTitle,
   dashboardView: common.dashboardView,
   goBackIcon: common.goBackIcon,

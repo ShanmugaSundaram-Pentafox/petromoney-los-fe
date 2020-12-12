@@ -13,7 +13,7 @@ import { store, persistor } from "./store";
 function App() {
   return (
     <Provider store={store}>
-      <SnackbarProvider maxSnack={3} anchorOrigin={{ vertical: 'top', horizontal: 'right'}}>
+      <SnackbarProvider maxSnack={3} anchorOrigin={{ vertical: 'bottom', horizontal: 'left'}}>
         <ThemeProvider theme={theme}>
           <HashRouter>
             <PersistGate persistor={persistor}>

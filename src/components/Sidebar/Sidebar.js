@@ -8,14 +8,16 @@ import PeopleIcon from '@material-ui/icons/People';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import LocalShippingIcon from '@material-ui/icons/LocalShipping';
 import WbSunnyRoundedIcon from '@material-ui/icons/WbSunnyRounded';
-import SettingsIcon from '@material-ui/icons/Settings';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
+// import SettingsIcon from '@material-ui/icons/Settings';
+// import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+// import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import PersonOutlineRoundedIcon from '@material-ui/icons/PersonOutlineRounded';
 
 // import Profile from './components/Profile';
 import SidebarNav from './components/SidebarNav';
-import { resetCurrentUser } from '../../store/user/user.actions';
+// import { resetCurrentUser } from '../../store/user/user.actions';
+import { permissionCheck } from '../UserCan/UserCan';
+import { rulesList } from '../../config/userRules';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -117,6 +119,14 @@ const Sidebar = props => {
     // }
   ];
 
+  if(permissionCheck(currentUser.role_name, rulesList.users_view)) {
+    pages.push({
+      title: 'Users',
+      href: '/users',
+      icon: <AccountBoxIcon />
+    })
+  }
+
   return (
     <Drawer
       anchor="left"
@@ -136,7 +146,7 @@ const Sidebar = props => {
             height="108px"
           />
         </div>
-        {/* <Profile user={user} /> */}
+        {/* <Profile user={currentUser} /> */}
         <Divider light className={classes.divider} />
         <div>
           <List>
@@ -151,7 +161,7 @@ const Sidebar = props => {
                   <div className={classes.icon}>
                     <PersonOutlineRoundedIcon />
                   </div>
-                    {user.role_name}
+                    {currentUser.role_name}
                 </Button>
               </ListItem>
           </List>

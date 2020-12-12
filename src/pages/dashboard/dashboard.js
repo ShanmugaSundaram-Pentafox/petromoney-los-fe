@@ -102,10 +102,10 @@ const Dashboard = ({ currentUser, dashboardView }) => {
             Array.isArray(chartData) && dashboardView === "LOS" && (
               <Box p={2} borderRadius={4} bgcolor="background.paper">
                 <Typography variant="h5">Loans' Statistics</Typography>
-                <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">
+                <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="wrap">
                 {
                   chartData.map((item, i) => (
-                    <DashCard key={i} value={item.count} text={item.name} />
+                    <DashCard key={i} noBorder={i === chartData.length-1} value={item.count} text={item.name} />
                   ))
                 }
                 </Box>
@@ -122,7 +122,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                   <DashCard text="Loan Book (in Crs)" value={ls1_metrices.loan_book} />
                   <DashCard text="Overdue (in Crs)" value={ls1_metrices.overdue} />
                   <DashCard text="Due (in Crs)" value={ls1_metrices.due} />
-                  <DashCard text="Current (in Crs)" value={ls1_metrices.current1} />
+                  <DashCard noBorder text="Current (in Crs)" value={ls1_metrices.current1} />
                 </Box>
               </Box>
             ) : null

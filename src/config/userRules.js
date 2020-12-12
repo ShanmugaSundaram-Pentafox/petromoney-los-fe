@@ -1,5 +1,6 @@
 export const rulesList = {
   "dashboard": "dashboard",
+  "users_view": "users:view",
   "loan_approval": "loan:approval",
   "dealership_edit": "dealership:edit",
   "dealer_edit": "dealer:edit",
@@ -34,6 +35,7 @@ export const rulesForUserRoles = {
       rulesList.dealer_edit,
       rulesList.dealer_credit_edit,
       rulesList.dealership_credit_edit,
+      rulesList.users_view,
     ]
   },
   CFO: {

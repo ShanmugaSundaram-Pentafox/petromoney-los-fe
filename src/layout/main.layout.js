@@ -58,6 +58,7 @@ const MainLayout = props => {
     >
       <Sidebar
         user={currentUser}
+        currentUser={currentUser}
         onOpen={handleSidebarOpen}
         onClose={handleSidebarClose}
         open={shouldOpenSidebar}

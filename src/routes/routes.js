@@ -15,20 +15,29 @@ import Loans from '../pages/loanspage/loans'
 import CreditForm from '../pages/creditForm/creditForm';
 import Transport from '../pages/transports/transports';
 import Solar from '../pages/solar/solar';
+import Users from '../pages/users/users';
+import { permissionCheck } from '../components/UserCan/UserCan';
+import { rulesList } from '../config/userRules';
 
 const Routes = ({ currentUser }) => {
   return (
     <Switch>
-      <ProtectedRoute exact path="/" component={Dashboard} />
-      <ProtectedRoute exact path="/solar" component={Solar} />
-      <ProtectedRoute exact path="/solar/feasibility" component={Solar} />
-      <ProtectedRoute exact path="/dealership" component={Dealership} />
-      <ProtectedRoute exact path="/loans" component={Loans} />
-      <ProtectedRoute exact path="/dealership/:id?" component={DealershipDetails} />
-      <ProtectedRoute exact path='/transports' component={Transport} />
-      <ProtectedRoute exact path="/transports/:id?" component={TransportsDetails} />
-      <ProtectedRoute exact path="/dealership/:id/credit-form" component={CreditForm} />
-      <ProtectedRoute exact path="/settings" component={Settings} />
+      <ProtectedRoute allow exact path="/" component={Dashboard} />
+      <ProtectedRoute allow exact path="/solar" component={Solar} />
+      <ProtectedRoute allow exact path="/solar/feasibility" component={Solar} />
+      <ProtectedRoute allow exact path="/dealership" component={Dealership} />
+      <ProtectedRoute allow exact path="/loans" component={Loans} />
+      <ProtectedRoute allow exact path="/dealership/:id?" component={DealershipDetails} />
+      <ProtectedRoute allow exact path='/transports' component={Transport} />
+      <ProtectedRoute allow exact path="/transports/:id?" component={TransportsDetails} />
+      <ProtectedRoute allow exact path="/dealership/:id/credit-form" component={CreditForm} />
+      <ProtectedRoute allow exact path="/settings" component={Settings} />
+      <ProtectedRoute
+        exact
+        path="/users"
+        component={Users}
+        allow={permissionCheck(currentUser.role_name, rulesList.users_view)}
+        />
       <Route exact path="/survey" render={props => <Survey {...props} />} />
       
       <Route exact path="/login" render={props => {

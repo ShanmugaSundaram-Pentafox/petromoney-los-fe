@@ -36,7 +36,7 @@ const Routes = ({ currentUser }) => {
         exact
         path="/users"
         component={Users}
-        allow={permissionCheck(currentUser.role_name, rulesList.users_view)}
+        allow={permissionCheck(currentUser?.role_name, rulesList.users_view)}
         />
       <Route exact path="/survey" render={props => <Survey {...props} />} />
       

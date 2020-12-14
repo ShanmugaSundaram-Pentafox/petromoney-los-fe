@@ -119,10 +119,10 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                 <Typography variant="h5">Credit Book</Typography>
                 <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">
                   <DashCard text="Date (Opening)" value={ls1_metrices.opening ? moment(new Date(ls1_metrices.opening)).format('DD MMM, YYYY') : '-' } />
-                  <DashCard text="Loan Book (in Crs)" value={ls1_metrices.loan_book} />
-                  <DashCard text="Overdue (in Crs)" value={ls1_metrices.overdue} />
-                  <DashCard text="Due (in Crs)" value={ls1_metrices.due} />
-                  <DashCard noBorder text="Current (in Crs)" value={ls1_metrices.current1} />
+                  <DashCard text="Loan Book (in Crs)" value={Number(ls1_metrices.loan_book)?.toFixed(2)} />
+                  <DashCard text="Overdue (in Crs)" value={Number(ls1_metrices.overdue)?.toFixed(2)} />
+                  <DashCard text="Due (in Crs)" value={Number(ls1_metrices.due)?.toFixed(2)} />
+                  <DashCard noBorder text="Current (in Crs)" value={Number(ls1_metrices.current1)?.toFixed(2)} />
                 </Box>
               </Box>
             ) : null

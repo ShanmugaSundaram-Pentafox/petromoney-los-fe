@@ -2,6 +2,22 @@ import { URL } from "../config/serverUrls"
 import { getDealershipLoansById } from "./dealerships.service";
 import apiCall from "../utils/api.util";
 
+export const getLoanStats = () => {
+  return new Promise((resolve, reject) => {
+    apiCall(`metrics/loan/stats`)
+      .then(({ status, data, message }) => {
+        if(status === "SUCCESS") {
+          resolve(data[0]);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
 export const getAllLoans = () => {
   return new Promise((resolve, reject) => {
     apiCall(URL.loans)

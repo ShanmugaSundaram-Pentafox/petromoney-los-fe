@@ -13,7 +13,7 @@ import moment from 'moment';
 import Skeleton from '@material-ui/lab/Skeleton';
 // import { Tooltip, LabelList,Legend, BarChart, CartesianGrid, XAxis, YAxis, Bar, Text } from 'recharts';
 import LoanBookTable from '../../components/Tables/LoanBookTable';
-import { getAllLoans, getAll_ls1_Metrices, getAll_ls2_Metrices } from '../../services/loans.service';
+import { getLoanStats, getAll_ls1_Metrices, getAll_ls2_Metrices } from '../../services/loans.service';
 import { SummaryTile, PieChartData, BarChartData } from './components/MetricsComponents';
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import { Typography } from '@material-ui/core';
@@ -37,23 +37,23 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   const [ totalForRegion, setTotalForRegion ] = useState(0)
 
   useMount(() => {
-    getAllLoans()
-      .then(res => {
-        const data = _countBy(res, item => {
-          return item.status.toLowerCase()
-        });
+    getLoanStats()
+      .then(data => {
+        // const data = _countBy(res, item => {
+        //   return item.status?.toLowerCase()
+        // });
         let cdata = [
-          { name: 'Submitted', count: data.submitted },
-          { name: 'Pending Approval', count: data.loan_approval || 0 },
-          { name: 'Pending Disbursement Approval', count: data.disbursement_approval || 0 },
-          { name: 'Approved', count: data.approved },
-          { name: 'Rejected', count: data.rejected },
-          { name: 'Disbursed', count: data.disbursed },
+          { name: 'Submitted', count: data.submitted_count },
+          { name: 'Pending Approval', count: data.loan_approval_count || 0 },
+          { name: 'Pending Disbursement Approval', count: data.disbursement_approval_count || 0 },
+          { name: 'Approved', count: data.approved_count },
+          { name: 'Rejected', count: data.rejected_count },
+          { name: 'Disbursed', count: data.disbursed_count },
         ];
         setChartData(cdata);
       })
       .catch(err => {
-
+        console.log(err);
       })
 
       setTimeout(() => {

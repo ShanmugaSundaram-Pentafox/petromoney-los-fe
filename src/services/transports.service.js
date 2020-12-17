@@ -50,3 +50,51 @@ export const getVehicleInfoFromID = (id) => {
   })
 }
 
+export const getVehicleDocuments = (transportId, vehicleId) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`transporter/${transportId}/vehicle/${vehicleId}/docs`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const getVehicleLoans = (vehicleId) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`vehicle/${vehicleId}/loan`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const getVehicleLoanOptions = () => {
+  return new Promise((resolve, reject) => {
+    apiCall(`vehicle/loan/options`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+

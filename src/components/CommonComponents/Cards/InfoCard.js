@@ -67,7 +67,7 @@ export const InfoCardWrapper = styled.div`
     padding: 24px;
     background-color: #FFFFFF;
     border-radius: 4px;
-    margin-bottom: 24px;
+    margin-bottom: ${props => props.noMargin ? 0 : '24px'};
     cursor: pointer;
 
     .title {
@@ -106,10 +106,11 @@ const InfoCard = ({
     description="",
     caption="",
     content="",
-    onClick= () => {}
+    onClick= () => {},
+    noMargin,
 }) => {
     return (
-        <InfoCardWrapper onClick={onClick}>
+        <InfoCardWrapper noMargin onClick={onClick}>
             {title ? <p className="title">{title}</p> : null}
             
             <Info 

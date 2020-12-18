@@ -1,5 +1,7 @@
 import { API } from "../config/api";
 import { URL } from "../config/serverUrls";
+import apiCall from "../utils/api.util";
+import { decrypt } from "./crypto.service";
 
 export const getAllDealership = () => {
   return new Promise((resolve, reject) => {
@@ -19,12 +21,19 @@ export const getAllDealership = () => {
 
 export const getDealershipById = (id) => {
   return new Promise((resolve, reject) => {
-    API.get(`${URL.dealership}/${id}`)
-      .then(({ data }) => {
-        if (data.status === "SUCCESS") {
-          resolve(data.data[0]);
+    apiCall(`${URL.dealership}/${id}`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          const result = data[0];
+          if(result?.pan) {
+            result.pan = decrypt(result.pan);
+          }
+          if(result?.gst) {
+            result.gst = decrypt(result.gst);
+          }
+          resolve(result);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch((e) => {
@@ -185,12 +194,13 @@ export const postDealershipSalesById = (id, body) => {
 
 export const getDealershipCheckList = (id) => {
   return new Promise((resolve, reject) => {
-    API.get(`${URL.checklist}/${id}`)
-      .then(({ data }) => {
-        if (data.status === "SUCCESS") {
-          resolve(data.data);
+    apiCall(`${URL.checklist}/${id}`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          const result = data.filter(item => item.doc_type === "dealership");
+          resolve(result);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch((e) => {

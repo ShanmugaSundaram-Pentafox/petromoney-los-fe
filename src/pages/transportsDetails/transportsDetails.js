@@ -1,50 +1,20 @@
 import React, { useState } from "react"
-import { makeStyles } from "@material-ui/styles"
 import Grid from "@material-ui/core/Grid"
 import Button from "@material-ui/core/Button"
-import Paper from "@material-ui/core/Paper"
-import Drawer from "@material-ui/core/Drawer"
 import TransportsInfo from "./components/transportsInfo"
 import { useMount } from "react-use"
-import { NavLink as RouterLink } from "react-router-dom"
 import usePageTitle from "../../hooks/usePageTitle"
 import {
   getTransporterInfoFromID,
+  getTransportOwnerInfo,
   getVehicleInfoFromID,
 } from "../../services/transports.service"
 import VehicleInfo from "./components/VehicleInfo"
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    padding: theme.spacing(2),
-    paddingTop: theme.spacing(1),
-  },
-  title: {
-    fontWeight: 600,
-    marginBottom: theme.spacing(1),
-  },
-  titleActionContainer: {
-    textAlign: "right",
-  },
-  topSpacing: {
-    marginTop: theme.spacing(2),
-  },
-  bottomSpacing: {
-    marginBottom: theme.spacing(2),
-  },
-  sidePanelWrapper: {
-    width: 700,
-  },
-}))
-
-// function TransportsDetails(props) {
-//   console.log(props)
-//   return <h1>TransportsDetails Page</h1>
-// }
+import InfoCard from "../../components/CommonComponents/Cards/InfoCard"
 
 const TransportsDetails = ({ currentUser, match }) => {
-  const classes = useStyles()
-  const [transportsData, setTransportsData] = useState()
+  const [ownerInfo, setOwnerInfo] = useState({})
+  const [transportsData, setTransportsData] = useState({})
   const [vehicleData, setVehicleData] = useState()
   const {
     url,
@@ -53,7 +23,14 @@ const TransportsDetails = ({ currentUser, match }) => {
 
   useMount(() => {
     getTransporterInfoFromID(id)
-      .then((data) => setTransportsData(...data))
+      .then(data => {
+        setTransportsData(data);
+        console.log(data);
+        return getTransportOwnerInfo(data.pm_user_id)
+      })
+      .then(data => {
+        setOwnerInfo(data)
+      })
       .catch((e) => null)
 
     getVehicleInfoFromID(id)
@@ -62,28 +39,43 @@ const TransportsDetails = ({ currentUser, match }) => {
         setVehicleData(data)
       })
       .catch((e) => null)
-
-    // getDealersByDealershipId(id)
-    //   .then((data) => setDealersData(data))
-    //   .catch((e) => null)
   })
-  usePageTitle(`${id} - ${transportsData && transportsData.name}`)
+  usePageTitle(`${id} - ${transportsData && transportsData?.name}`, true)
 
   return (
-    <div className={classes.root}>
-      <Grid container spacing={2}>
-        <Grid item md={6} xs={12}>
-          {transportsData && (
-            <TransportsInfo data={transportsData} currentUser={currentUser} />
-          )}
+    <Grid container spacing={2}>
+      <Grid item container spacing={2}>
+        <Grid item md={4} xs={12}>
+          <InfoCard
+            title={"Owner Info"}
+            userInitial={ownerInfo?.first_name?.charAt(0)}
+            name={ownerInfo?.first_name ? `${ownerInfo?.first_name} ${ownerInfo?.last_name}` : 'Transporter Name'}
+            caption={ownerInfo?.mobile}
+            content={ownerInfo?.email}
+            description={ownerInfo?.address}
+          />
         </Grid>
-        <Grid item md={6} xs={12}>
-          {vehicleData && (
-            <VehicleInfo id={id} data={vehicleData} currentUser={currentUser} />
-          )}
+        <Grid item md={4} xs={12}>
+          <InfoCard
+            title={"Transport Info"}
+            userInitial={transportsData?.name?.charAt(0)}
+            name={transportsData?.name}
+            caption={transportsData?.id}
+            content={transportsData?.mobile}
+          />
         </Grid>
       </Grid>
-    </div>
+      <Grid item md={6} xs={12}>
+        {transportsData && (
+          <TransportsInfo data={transportsData} currentUser={currentUser} />
+        )}
+      </Grid>
+      <Grid item md={6} xs={12}>
+        {vehicleData && (
+          <VehicleInfo id={id} data={vehicleData} currentUser={currentUser} />
+        )}
+      </Grid>
+    </Grid>
   )
 }
 

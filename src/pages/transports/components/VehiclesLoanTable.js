@@ -1,15 +1,13 @@
-import React, { useMemo } from "react"
+import React, { useMemo, useState } from "react"
 import { NavLink as RouterLink } from "react-router-dom"
 import { makeStyles } from "@material-ui/styles"
 import MUIDataTable from "mui-datatables"
+import Tooltip from "@material-ui/core/Tooltip"
 import Typography from "@material-ui/core/Typography"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import { useMount } from "react-use"
-import { getAllTransport } from "../../../services/transports.service"
-import { selectAllTransports } from "../../../store/transports/transports.selector"
-import { createStructuredSelector } from "reselect"
-import { connect } from "react-redux"
-import { setAllTransports } from "../../../store/transports/transports.actions"
+import { getAllVehicleLoans } from "../../../services/transports.service"
+import Currency from "../../../components/Number/Currency"
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -17,15 +15,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const TransportsTable = ({ transports, setAllTransports }) => {
-  // const [ data, setData ] = useState([]);
+const VehiclesLoanTable = () => {
+  const [ data, setData ] = useState([]);
   const classes = useStyles()
 
   const columns = useMemo(() => {
     return [
       {
         label: "Code",
-        name: "id",
+        name: "transporter_id",
         options: {
           filter: false,
           sort: true,
@@ -36,42 +34,54 @@ const TransportsTable = ({ transports, setAllTransports }) => {
       },
       {
         label: "Name",
-        name: "name",
+        name: "transporter_name",
         options: {
           filter: false,
           sort: true,
         },
       },
       {
-        label: "Mobile Number",
-        name: "mobile",
+        label: "Vehicle Number",
+        name: "tt_no",
         options: {
-          filter: true,
+          filter: false,
           sort: true,
         },
       },
       {
-        label: "OMC",
-        name: "omc",
+        label: "Loan Type",
+        name: "credit_head",
         options: {
           filter: true,
           sort: true,
+          customBodyRender: (value, tableMeta) => {
+            console.log(tableMeta)
+            return value
+          },
+        },
+      },
+      {
+        label: "Amount",
+        name: "loan_amount",
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: value => {
+            return <Currency value={value} />
+          },
         },
       },
     ]
   }, [])
 
   useMount(() => {
-    if (!transports.length) {
-      getAllTransport()
-        .then((data) => {
-          setAllTransports(data)
-          // setData(data)
-        })
-        .catch((e) => {
-          console.log(e);
-        })
-    }
+    getAllVehicleLoans()
+      .then((data) => {
+        setData(data)
+      })
+      .catch((e) => {
+        console.log(e);
+      })
   })
 
   const options = {
@@ -84,14 +94,14 @@ const TransportsTable = ({ transports, setAllTransports }) => {
 
   return (
     <div>
-      {Array.isArray(transports) && transports.length ? (
+      {Array.isArray(data) && data.length ? (
         <MUIDataTable
           title={
             <Typography className={classes.title} variant="h5" component="h5">
-              Transports List
+              Vehicle Loans List
             </Typography>
           }
-          data={transports}
+          data={data}
           columns={columns}
           options={options}
         />
@@ -102,12 +112,4 @@ const TransportsTable = ({ transports, setAllTransports }) => {
   )
 }
 
-const mapStateToProps = createStructuredSelector({
-  transports: selectAllTransports,
-})
-
-const mapDispatchToProps = (dispatch) => ({
-  setAllTransports: (data) => dispatch(setAllTransports(data)),
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(TransportsTable)
+export default VehiclesLoanTable

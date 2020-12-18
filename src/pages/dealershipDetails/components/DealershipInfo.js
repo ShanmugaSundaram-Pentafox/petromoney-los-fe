@@ -17,6 +17,7 @@ import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import apiCall from '../../../utils/api.util';
 import Button from '../../../components/CommonComponents/Button/Button';
+import { encrypt } from '../../../services/crypto.service';
 // import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -39,12 +40,16 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
     initialValues: data,
     onSubmit: values => {
       console.log('Form Values >> ', values);
+      let pan = values?.pan ? encrypt(values.pan) : values?.pan;
+      let gst = values?.gst ? encrypt(values.gst) : values?.gst;
       setLoading(true);
       setApiStatus({});
       apiCall(`${URL.dealership}/${values.id}`, {
         method: "POST",
         body: {
           ...values,
+          pan,
+          gst,
           user_id: currentUser.id
         }
       })

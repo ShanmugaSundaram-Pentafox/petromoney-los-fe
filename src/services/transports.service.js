@@ -1,6 +1,7 @@
 // import { API } from "../config/api"
 import { URL } from "../config/serverUrls"
 import apiCall from "../utils/api.util"
+import { decrypt } from "./crypto.service"
 
 export const getAllTransport = () => {
   return new Promise((resolve, reject) => {
@@ -23,12 +24,35 @@ export const getTransporterInfoFromID = (id) => {
     apiCall(`${URL.transportInfo}/${id}`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data)
+          resolve(data[0])
         } else {
           reject(message)
         }
       })
       .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const getTransportOwnerInfo = (pm_user_id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`transport/profile?pm_user_id=${pm_user_id}`)
+      .then(({ status, data, message }) => {
+        if(status === "SUCCESS") {
+          const result = data[0];
+          if(result?.pan) {
+            result.pan = decrypt(result.pan);
+          }
+          if(result?.aadhar) {
+            result.aadhar = decrypt(result.aadhar);
+          }
+          resolve(result)
+        } else {
+          reject(message)
+        }
+      })
+      .catch(e => {
         reject(e.message)
       })
   })
@@ -85,6 +109,22 @@ export const getVehicleLoans = (vehicleId) => {
 export const getVehicleLoanOptions = () => {
   return new Promise((resolve, reject) => {
     apiCall(`vehicle/loan/options`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const getAllVehicleLoans = () => {
+  return new Promise((resolve, reject) => {
+    apiCall(`vehicle/loans`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data)

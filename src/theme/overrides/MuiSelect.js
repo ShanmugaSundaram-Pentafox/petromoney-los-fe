@@ -14,19 +14,11 @@ export default {
       borderStyle: 'dotted',
       borderColor: 'rgba(0, 0, 0, 0.1)'
     },
-    // '& .MuiInputBase-input.MuiInputBase-inputMultiline[readonly]+fieldset': {
-    //   borderStyle: 'solid',
-    //   borderColor: 'rgba(0, 0, 0, 0.23)'
-    // },
-    '& textarea.MuiInputBase-input+textarea.MuiInputBase-input[readonly]+fieldset': {
-      borderStyle: 'solid',
-      borderColor: 'rgba(0, 0, 0, 0.23)'
-    },
-    '& textarea.MuiInputBase-input[readonly]+textarea.MuiInputBase-input[readonly]+fieldset': {
+    '&.MuiSelect-root[readonly]+fieldset': {
       borderStyle: 'dotted',
       borderColor: 'rgba(0, 0, 0, 0.1)'
     },
-    '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline': {
+    '& .MuiInputBase-input.MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline': {
       borderStyle: 'dotted',
       borderColor: 'rgba(0, 0, 0, 0.1)'
     },

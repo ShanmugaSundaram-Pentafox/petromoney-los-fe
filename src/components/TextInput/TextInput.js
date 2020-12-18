@@ -57,6 +57,7 @@ const TextInput = ({
   onChange = () => null,
   money,
   date,
+  select,
   ...restProps
 }) => (
   <InputWrapper direction={direction} top={alignTop} labelWidth={labelWidth}>
@@ -75,6 +76,10 @@ const TextInput = ({
       onChange={onChange}
       InputProps={{
         startAdornment: money && <InputAdornment position="start">₹</InputAdornment>,
+      }}
+      select={select}
+      SelectProps={{
+        native: true,
       }}
       {...restProps}
       />

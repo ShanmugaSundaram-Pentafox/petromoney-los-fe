@@ -13,6 +13,7 @@ import Chip from '@material-ui/core/Chip';
 import { makeStyles } from "@material-ui/core/styles";
 import FileUpload from "../../../components/FileUpload";
 import { getDealershipCheckList, uploadDocument } from "../../../services/dealerships.service";
+import { getFileNameFromUrl } from "../../../utils/strings.util";
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -32,7 +33,7 @@ const Docs = ({ data }) => {
   return data.map((file, i) => {
     temp += file.file_url ? 1 : 0;
     return file.file_url ? (
-      <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }} href={file.file_url} target="_blank" title={file.name}>{temp}</a>
+    <a style={{ display: 'inline-block', borderRadius: 4, lineHeight: 1, marginRight: 8, marginBottom: 8, padding: 8, backgroundColor: '#f0f0f0' }} href={file.file_url} target="_blank" title={file.name}>{getFileNameFromUrl(file?.file_url)}</a>
     ) : null
   });
 }
@@ -84,14 +85,14 @@ const DocList = ({ id }) => {
   return (
     <div className={classes.wrapper}>
       {showUpload && <FileUpload handleSave={handleSave} id={id} data={rowData} open={showUpload} onCloseUploader={onCloseUploader}/>}
-      <Typography variant="h5" align={"center"} className={classes.title}>
+      {/* <Typography variant="h5" align={"center"} className={classes.title}>
         Dealership Documents
-      </Typography>
+      </Typography> */}
       <Table className={classes.table} size="small" aria-label="Dealers">
         <TableHead>
           <TableRow>
             {/* <TableCell align="center">ID</TableCell> */}
-            <TableCell>Document Name</TableCell>
+            <TableCell style={{ minWidth: 300 }}>Document Name</TableCell>
             {/* <TableCell align="center">Document Type</TableCell> */}
             <TableCell align="center">Files</TableCell>
           </TableRow>

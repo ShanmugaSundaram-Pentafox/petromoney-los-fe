@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from 'prop-types';
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 export const InfoWrapper = styled.div`
     display: flex;
@@ -69,6 +69,14 @@ export const InfoCardWrapper = styled.div`
     border-radius: 4px;
     margin-bottom: ${props => props.noMargin ? 0 : '24px'};
     cursor: pointer;
+    
+    ${props => props.hover && css`
+        &:hover {
+            background-color: ${props => props.hover ? '#e0ffe2' : '#fff'};
+            box-shadow: 0 0 8px #f1f1f1; 
+        }
+    `}
+
 
     .title {
         color: #444444;
@@ -107,10 +115,11 @@ const InfoCard = ({
     caption="",
     content="",
     onClick= () => {},
+    hover,
     noMargin,
 }) => {
     return (
-        <InfoCardWrapper noMargin onClick={onClick}>
+        <InfoCardWrapper noMargin={noMargin} hover={hover} onClick={onClick}>
             {title ? <p className="title">{title}</p> : null}
             
             <Info 

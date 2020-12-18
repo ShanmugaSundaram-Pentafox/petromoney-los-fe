@@ -1,42 +1,30 @@
 import React, { useState } from 'react';
-import clsx from 'clsx';
-import { makeStyles } from '@material-ui/styles';
 import Alert from '@material-ui/lab/Alert';
-import Card from '@material-ui/core/Card';
-// import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
-import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
+import Box from '@material-ui/core/Box';
 import TextInput from '../../../components/TextInput/TextInput';
 import { useFormik } from 'formik';
-import { API } from '../../../config/api';
 import { URL } from '../../../config/serverUrls';
 import { logger } from '../../../config/logger';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { permissionCheck } from '../../../components/UserCan/UserCan';
-import { rulesList } from '../../../config/userRules';
 import apiCall from '../../../utils/api.util';
+import { useMount } from 'react-use';
+import { getOmcList } from '../../../services/common.service';
+import { getDistricts, getFormattedStatesList } from '../../../utils/indianStates.util';
+import Button from '../../../components/CommonComponents/Button/Button';
 
-
-
-const useStyles = makeStyles(theme => ({
-  root: {},
-  gridItemStyle: {
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1)
-  },
-  actionFooter: {
-    justifyContent: 'flex-end'
-  }
-}));
-
-const TransportsInfo = ({ data, className, currentUser, toggleCreditReport }) => {
-  const [readOnly, setReadOnly] = useState(true);
+const TransportsInfo = ({ data, currentUser }) => {
   const [loading, setLoading] = useState();
+  const [omcOptions, setOmcOptions] = useState([]);
   const [apiStatus, setApiStatus] = useState({});
-  const {values, handleChange: onChange, handleSubmit} = useFormik({
+
+  useMount(() => {
+    getOmcList()
+      .then(setOmcOptions)
+      .catch(e => console.log(e))
+  })
+
+  const {values, handleChange: onChange, handleSubmit, setValues} = useFormik({
     initialValues: data,
     onSubmit: values => {
       console.log('Form Values >> ', values);
@@ -61,161 +49,153 @@ const TransportsInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         .catch(e => {
           setApiStatus({ type: 'error', message: 'Unable to save the details. Please try again later' })
           setLoading(false);
-          setReadOnly(true);
           logger(e);
         })
     }
   });
-//   // const [values, setValues] = useState(data);
-  const classes = useStyles();
+
   const gridProps = {
     item: true,
     xs: 12,
-    className: classes.gridItemStyle
   }
 
-//   // const handleChange = event => {
-//   //   setValues({
-//   //     ...values,
-//   //     [event.target.name]: event.target.value
-//   //   });
-//   // };
-
   const fieldProps = {
-    readOnly,
+    alignTop: true,
+    direction: 'column',
     onChange
   }
 
   return (
-    <Card className={clsx(classes.root, className)}>
-      <form
-        onSubmit={handleSubmit}
-        autoComplete="off"
-        noValidate
-      >
-        <CardContent>
-          <Grid container>
-            <Grid {...gridProps}>
-              <TextInput
-                labelText="Name"
-                name="name"
-                defaultValue={values.name}
-                {...fieldProps}
-                />
-            </Grid>
-            <Grid {...gridProps}>
-              <TextInput
-                multiline
-                labelText="Address"
-                name="address"
-                defaultValue={values.address}
-                {...fieldProps}
-                />
-            </Grid>
-            <Grid {...gridProps}>
-              <TextInput
-                multiline
-                labelText="Mobile"
-                name="mobile"
-                defaultValue={values.mobile}
-                {...fieldProps}
-                />
-            </Grid>
-            <Grid {...gridProps}>
-              <TextInput
-                multiline
-                labelText="OMC"
-                name="omc"
-                defaultValue={values.omc}
-                {...fieldProps}
-                />
-            </Grid>
-            <Grid {...gridProps}>
-              <TextInput
-                labelText="Pincode"
-                name="pincode"
-                defaultValue={values.pincode === 'NULL' ? '' : values.pincode}
-                {...fieldProps}
-                />
-            </Grid>
-            <Grid {...gridProps}>
-              <TextInput
-                labelText="PAN"
-                name="pan"
-                defaultValue={values.pan}
-                {...fieldProps}
-                />
-            </Grid>
-            <Grid {...gridProps}>
-              <TextInput 
-                labelText="GST"
-                name="gst"
-                defaultValue={values.gst}
-                {...fieldProps}
-                />
-            </Grid>
-            <Divider />
-            <Grid {...gridProps} xs={6}>
-              <TextInput 
-                labelText="District"
-                labelWidth={40}
-                defaultValue={values.district}
-                readOnly
-                />
-            </Grid>
-            <Grid {...gridProps} xs={6}>
-              <TextInput 
-                labelText="State"
-                labelWidth={40}
-                defaultValue={values.state}
-                readOnly
-                />
-            </Grid>
-            <Grid {...gridProps} xs={6}>
-              <TextInput 
-                labelText="Region"
-                labelWidth={40}
-                defaultValue={values.region}
-                readOnly
-                />
-            </Grid>
-            <Grid {...gridProps} xs={6}>
-              <TextInput 
-                labelText="Zone"
-                labelWidth={40}
-                defaultValue={values.zone}
-                readOnly
-                />
-            </Grid>
-          </Grid>
-        </CardContent>
-        <Divider />
-        {
-          apiStatus.type && (
-            <Alert severity={apiStatus.type}>{apiStatus.message}</Alert>
-          )
-        }
-        <CardActions className={classes.actionFooter}>
-            
-          {!readOnly ? (
-              !loading ? (
-                <>
-                  <Button variant="contained" size="small" onClick={() => { setReadOnly(true); }}>Cancel</Button>
-                  <Button type="submit" color="primary" variant="contained" size="small">Save</Button>
-                </>
-                ) : <CircularProgress />
-            ) : (
-              <Button
-                disabled={!permissionCheck(currentUser.role_name, rulesList.dealership_edit)}
-                color="primary"
-                variant="contained"
-                size="small"
-                onClick={() => { setReadOnly(false); }}>Edit Details</Button>
-            )}
-        </CardActions>
-      </form>
-    </Card>
-
+    <form
+      onSubmit={handleSubmit}
+      autoComplete="off"
+      noValidate
+    >
+      <Grid container spacing={2}>
+        <Grid {...gridProps}>
+          <TextInput
+            labelText="Name"
+            name="name"
+            defaultValue={values.name}
+            {...fieldProps}
+            />
+        </Grid>
+        <Grid {...gridProps} md={6}>
+          <TextInput
+            type="number"
+            labelText="Mobile"
+            name="mobile"
+            defaultValue={values.mobile}
+            {...fieldProps}
+            />
+        </Grid>
+        <Grid {...gridProps}>
+          <TextInput
+            multiline
+            labelText="Address"
+            name="address"
+            defaultValue={values.address}
+            {...fieldProps}
+            />
+        </Grid>
+        <Grid {...gridProps} md={6}>
+          <TextInput
+            labelText="Pincode"
+            name="pincode"
+            defaultValue={values.pincode === 'NULL' ? '' : values.pincode}
+            {...fieldProps}
+            />
+        </Grid>
+        <Grid {...gridProps} md={6}>
+          <TextInput
+            select
+            labelText="OMC"
+            name="omc"
+            defaultValue={values.omc}
+            {...fieldProps}
+          >
+            <option value="">Choose OMC</option>
+            {
+              omcOptions.map(item => <option key={item.id} value={String(item.id)}>{item.name}</option>)
+            }
+          </TextInput>
+        </Grid>
+        <Grid {...gridProps} md={6}>
+          <TextInput
+            labelText="PAN"
+            name="pan"
+            defaultValue={values.pan}
+            {...fieldProps}
+            />
+        </Grid>
+        <Grid {...gridProps} md={6}>
+          <TextInput 
+            labelText="GST"
+            name="gst"
+            defaultValue={values.gst}
+            {...fieldProps}
+            />
+        </Grid>
+        <Grid {...gridProps} md={6}>
+          <TextInput 
+            select
+            labelText="State"
+            name="state"
+            value={values.state}
+            {...fieldProps}
+            >
+              <option value="">Choose State</option>
+              {
+                getFormattedStatesList().map(item => <option key={item.code} value={item.value}>{item.label}</option>)
+              }
+          </TextInput>
+        </Grid>
+        <Grid {...gridProps} md={6}>
+          <TextInput 
+            select
+            labelText="District"
+            name="district"
+            value={values.district}
+            {...fieldProps}
+          >
+            <option value="">Choose District</option>
+            {
+              getDistricts(values.state).map(item => <option key={item} value={item}>{item}</option>)
+            }
+          </TextInput>
+        </Grid>
+        <Grid {...gridProps} md={6}>
+          <TextInput 
+            labelText="Region"
+            name="region"
+            defaultValue={values.region}
+            {...fieldProps}
+            />
+        </Grid>
+        <Grid {...gridProps} md={6}>
+          <TextInput 
+            labelText="Zone"
+            name="zone"
+            defaultValue={values.zone}
+            {...fieldProps}
+            />
+        </Grid>
+        <Grid {...gridProps}>
+          {
+            apiStatus.type && (
+              <Alert severity={apiStatus.type}>{apiStatus.message}</Alert>
+            )
+          }
+          {!loading ? (
+            <Box textAlign="right">
+              {/* <Button variant="contained" size="small" onClick={() => { console.log(data); setValues({...data}); }}>Cancel</Button> */}
+              <Button type="submit" color="primary" variant="contained" size="medium">Save</Button>
+            </Box>
+            ) : <CircularProgress />
+          }
+        </Grid>
+      </Grid>
+    </form>
   );
 };
 

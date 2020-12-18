@@ -11,11 +11,13 @@ import {
 } from "../../services/transports.service"
 import VehicleInfo from "./components/VehicleInfo"
 import InfoCard from "../../components/CommonComponents/Cards/InfoCard"
+import FormDialog from "../../components/CommonComponents/FormDialog/FormDialog"
 
 const TransportsDetails = ({ currentUser, match }) => {
-  const [ownerInfo, setOwnerInfo] = useState({})
-  const [transportsData, setTransportsData] = useState({})
+  const [ownerInfo, setOwnerInfo] = useState()
+  const [transportsData, setTransportsData] = useState()
   const [vehicleData, setVehicleData] = useState()
+  const [showModal, setShowModal] = useState(false)
   const {
     url,
     params: { id },
@@ -25,9 +27,9 @@ const TransportsDetails = ({ currentUser, match }) => {
     getTransporterInfoFromID(id)
       .then(data => {
         setTransportsData(data);
-        console.log(data);
-        return getTransportOwnerInfo(data.pm_user_id)
+        return data.pm_user_id
       })
+      .then(getTransportOwnerInfo)
       .then(data => {
         setOwnerInfo(data)
       })
@@ -48,6 +50,7 @@ const TransportsDetails = ({ currentUser, match }) => {
         <Grid item md={4} xs={12}>
           <InfoCard
             title={"Owner Info"}
+            noMargin
             userInitial={ownerInfo?.first_name?.charAt(0)}
             name={ownerInfo?.first_name ? `${ownerInfo?.first_name} ${ownerInfo?.last_name}` : 'Transporter Name'}
             caption={ownerInfo?.mobile}
@@ -57,18 +60,21 @@ const TransportsDetails = ({ currentUser, match }) => {
         </Grid>
         <Grid item md={4} xs={12}>
           <InfoCard
+            hover
+            noMargin
             title={"Transport Info"}
             userInitial={transportsData?.name?.charAt(0)}
             name={transportsData?.name}
             caption={transportsData?.id}
             content={transportsData?.mobile}
+            onClick={() => setShowModal(true)}
           />
+          {transportsData && (
+            <FormDialog title="Transport Details" open={showModal} onClose={() => setShowModal(false)}>
+              <TransportsInfo data={transportsData} currentUser={currentUser} />
+            </FormDialog>
+          )}
         </Grid>
-      </Grid>
-      <Grid item md={6} xs={12}>
-        {transportsData && (
-          <TransportsInfo data={transportsData} currentUser={currentUser} />
-        )}
       </Grid>
       <Grid item md={6} xs={12}>
         {vehicleData && (

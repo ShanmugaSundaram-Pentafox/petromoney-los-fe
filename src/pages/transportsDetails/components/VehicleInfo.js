@@ -12,6 +12,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Tooltip from '@material-ui/core/Tooltip';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { getVehicleDocuments, getVehicleLoans } from "../../../services/transports.service"
 import { logger } from "../../../config/logger"
 import Button from "../../../components/CommonComponents/Button/Button"
@@ -21,7 +22,9 @@ import FormDialog from "../../../components/CommonComponents/FormDialog/FormDial
 const Accordion = withStyles({
   root: {
     border: "1px solid rgba(0, 0, 0, .125)",
-    boxShadow: "none",
+    borderRadius: 4,
+    marginBottom: 8,
+    // boxShadow: "none",
     "&:not(:last-child)": {
       borderBottom: 0,
     },
@@ -30,6 +33,9 @@ const Accordion = withStyles({
     },
     "&$expanded": {
       margin: "auto",
+      "&:last-child": {
+        marginBottom: 8,
+      },
     },
   },
   expanded: {},
@@ -37,9 +43,9 @@ const Accordion = withStyles({
 
 const AccordionSummary = withStyles({
   root: {
-    backgroundColor: "rgba(0, 0, 0, .03)",
-    borderBottom: "1px solid rgba(0, 0, 0, .125)",
-    marginBottom: -1,
+    // backgroundColor: "rgba(0, 0, 0, .03)",
+    // borderBottom: "1px solid rgba(0, 0, 0, .125)",
+    // marginBottom: -1,
     minHeight: 56,
     "&$expanded": {
       minHeight: 56,
@@ -58,6 +64,7 @@ const AccordionDetails = withStyles((theme) => ({
   root: {
     padding: theme.spacing(2),
     flexDirection: 'column',
+    borderTop: "1px solid rgba(0, 0, 0, .125)",
   },
 }))(MuiAccordionDetails)
 
@@ -107,10 +114,11 @@ export default function VehicleInfo({ id, data, currentUser }) {
               onChange={handleChange(vehicleInfo.vehicle_id)}
             >
               <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1d-content"
                 id="panel1d-header"
               >
-                <Typography>Vehicle Number: {vehicleInfo.tt_no}</Typography>
+                <Typography variant="h6">Vehicle Number: {vehicleInfo.tt_no}</Typography>
                 <Typography>
                   Credit Limit: <Currency value={vehicleInfo.credit_limit} />
                 </Typography>

@@ -1,15 +1,32 @@
-import { API } from "../config/api"
+// import { API } from "../config/api"
 // import { URL } from "../config/serverUrls"
-import { store } from "../store";
+// import { store } from "../store";
+import apiCall from "../utils/api.util";
 
 export const getBusinessTypes = () => {
   return new Promise((resolve, reject) => {
-    API.get("business/types")
-      .then(({ data }) => {
-        if(data.status === "SUCCESS") {
-          resolve(data.data);
+    apiCall("business/types")
+      .then(({ status, data, message }) => {
+        if(status === "SUCCESS") {
+          resolve(data);
         } else {
-          reject(data.message);
+          reject(message);
+        }
+      })
+      .catch(err => {
+        reject(err.message);
+      })
+  })
+}
+
+export const getOmcList = () => {
+  return new Promise((resolve, reject) => {
+    apiCall("omcs")
+      .then(({ status, data, message }) => {
+        if(status === "SUCCESS") {
+          resolve(data);
+        } else {
+          reject(message);
         }
       })
       .catch(err => {
@@ -20,12 +37,12 @@ export const getBusinessTypes = () => {
 
 export const getExperianReportById = (id, type) => {
   return new Promise((resolve, reject) => {
-    API.get(`experian/report/${id}/${type}`)
-      .then(({ data }) => {
-        if(data.status === "SUCCESS") {
-          resolve(data.data);
+    apiCall(`experian/report/${id}/${type}`)
+      .then(({ status, data, message }) => {
+        if(status === "SUCCESS") {
+          resolve(data);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch(e => {
@@ -35,18 +52,21 @@ export const getExperianReportById = (id, type) => {
 }
 
 export const refreshExperianReportById = (id, type) => {
-  const currentUser = store.getState().user.currentUser;
+  // const currentUser = store.getState().user.currentUser;
   return new Promise((resolve, reject) => {
-    API.get(`refresh/experian/report/consumer/${id}`, {
+    /**
+     * , {
       headers: {
         'Authorization': `Bearer ${currentUser.token}`
       }
-    })
-      .then(({ data }) => {
-        if(data.status === "SUCCESS") {
-          resolve(data.data);
+    }
+     */
+    apiCall(`refresh/experian/report/consumer/${id}`)
+      .then(({ status, data, message }) => {
+        if(status === "SUCCESS") {
+          resolve(data);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch(e => {

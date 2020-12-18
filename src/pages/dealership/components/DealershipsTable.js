@@ -10,6 +10,7 @@ import { selectAllDealerships } from '../../../store/dealership/dealership.selec
 import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
 import { setAllDealerships } from '../../../store/dealership/dealership.actions';
+import { decrypt } from '../../../services/crypto.service';
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -103,7 +104,7 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
         name: 'gst',
         options: {
           filter: false,
-          sort: false
+          sort: false,
         }
       },
       {
@@ -111,7 +112,7 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
         name: 'pan',
         options: {
           filter: false,
-          sort: false
+          sort: false,
         }
       }
     ]
@@ -121,6 +122,7 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
     if(!dealerships.length) {
       getAllDealership()
         .then(data => {
+          console.log(data);
           setAllDealerships(data);
           // setData(data)
         })

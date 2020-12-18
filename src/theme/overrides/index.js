@@ -1,5 +1,6 @@
 import MuiButton from './MuiButton';
 import MuiTextField from './MuiTextField';
+import MuiSelect from './MuiSelect';
 import MuiIconButton from './MuiIconButton';
 import MuiTabs from './MuiTabs';
 import MuiPaper from './MuiPaper';
@@ -10,6 +11,7 @@ import MuiTypography from './MuiTypography';
 
 export default {
   MuiTextField,
+  MuiSelect,
   MuiButton,
   MuiIconButton,
   MuiTabs,

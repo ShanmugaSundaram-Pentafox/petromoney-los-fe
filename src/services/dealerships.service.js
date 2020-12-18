@@ -5,12 +5,27 @@ import { decrypt } from "./crypto.service";
 
 export const getAllDealership = () => {
   return new Promise((resolve, reject) => {
-    API.get(URL.dealership)
-      .then(({ data }) => {
-        if (data.status === "SUCCESS") {
-          resolve(data.data);
+    apiCall(URL.dealership)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          const result = data.map((item, i) => {
+            let pan = item.pan;
+            let gst = item.gst;
+            if(pan) {
+              pan = decrypt(pan)
+            }
+            if(gst) {
+              gst = decrypt(gst)
+            }
+            return {
+              ...item,
+              pan,
+              gst,
+            }
+          })
+          resolve(result);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch((e) => {

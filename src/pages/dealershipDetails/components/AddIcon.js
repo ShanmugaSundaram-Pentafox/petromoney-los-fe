@@ -59,7 +59,7 @@ const AddIconButton = ({ onClickAddMenu }) => {
                 transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
               }}
             >
-              <Paper>
+              <Paper elevation={2}>
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList id="split-button-menu">
                     {options.map((option, index) => (

@@ -140,9 +140,10 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   return (
     <>
       {
-        !editable && <div className={classes.addButton}>
-          <Button color="primary" variant="contained" size="small" onClick={() => onClickAddMenu()}>Add Dealer</Button>
-           </div>
+        editable && <div className={classes.addButton}>
+          <AddIconButon onClickAddMenu={onClickAddMenu} />
+          {/* <Button color="primary" variant="contained" size="small" onClick={() => onClickAddMenu()}>Add Dealer</Button> */}
+        </div>
       }
       <DealersTable
         id={id}

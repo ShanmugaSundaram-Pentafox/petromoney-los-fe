@@ -22,6 +22,8 @@ const OrderedList = styled.ol`
 
 const UpdateServiceForm = ({ data, callback }) => {
   const [apiStatus, setApiStatus] = useState({});
+  const [depositFee, setDepositFee] = useState({});
+  const [ftIssued, setFtIssued] = useState({});
   const [concentLetterStatus, setConcentLetterStatus] = useState(false);
 
   const inputProps = {
@@ -117,9 +119,9 @@ const UpdateServiceForm = ({ data, callback }) => {
                 <TextInput
                   {...inputProps}
                   name="tar_number"
-                  value={ftIssued.values.tar_number}
-                  error={ftIssued.errors.tar_number}
-                  helperText={ftIssued.errors.tar_number}
+                  value={ftIssued.values?.tar_number}
+                  error={ftIssued.errors?.tar_number}
+                  helperText={ftIssued.errors?.tar_number}
                 />
               </Grid>
               <Grid item md={4}>

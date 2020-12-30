@@ -3,7 +3,7 @@ import FormDialog from '../CommonComponents/FormDialog/FormDialog';
 import NewVehicleLoanForm from './NewVehicleLoanForm';
 import Button from '../CommonComponents/Button/Button';
 
-const AddNewUserAction = ({ callback }) => {
+const NewVehicleLoanAction = ({ vehicleId, callback, currentUser }) => {
   const [openModal, setOpenModal] = useState(false);
   
   const onSaveCallback = () => {
@@ -19,18 +19,18 @@ const AddNewUserAction = ({ callback }) => {
         variant="contained"
         onClick={() => setOpenModal(true)}
       >
-        Reqeust Loan
+        Reqeust Loan/Service
       </Button>
 
       <FormDialog
-        title="Request New Loan"
+        title="Request New Loan/Service"
         open={openModal}
         onClose={() => setOpenModal(false)}
       >
-        <NewVehicleLoanForm callback={onSaveCallback} />
+        <NewVehicleLoanForm vehicleId={vehicleId} currentUser={currentUser} callback={onSaveCallback} />
       </FormDialog>
     </div>
   )
 }
 
-export default AddNewUserAction;
+export default NewVehicleLoanAction;

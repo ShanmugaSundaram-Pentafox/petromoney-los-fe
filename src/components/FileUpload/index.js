@@ -1,8 +1,22 @@
 import React from "react";
-import { DropzoneDialog } from "material-ui-dropzone";
+import { DropzoneDialog, DropzoneArea } from "material-ui-dropzone";
 
-const FileUpload = ({id,data, open, onCloseUploader, handleSave }) => {
- 
+const FileUpload = ({id,data, inline, open, onCloseUploader, handleSave }) => {
+  if(inline) {
+    return (
+      <DropzoneArea
+        showPreviews
+        useChipsForPreview
+        showPreviewsInDropzone={false}
+        previewText="Selected Files"
+        onChange={handleSave}
+        acceptedFiles={["image/*", ".pdf"]}
+        maxFileSize={5000000}
+        showAlerts={false}
+      />
+    )
+  }
+
   return (
     <DropzoneDialog
       open={open}

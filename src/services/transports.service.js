@@ -106,6 +106,22 @@ export const getVehicleLoans = (vehicleId) => {
   })
 }
 
+export const getVehicleServiceDetails = (vehicleId, serviceId, loanId) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`vehicle/${vehicleId}/service/${serviceId}/tracker/${loanId}`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
 export const getVehicleLoanOptions = () => {
   return new Promise((resolve, reject) => {
     apiCall(`vehicle/loan/options`)

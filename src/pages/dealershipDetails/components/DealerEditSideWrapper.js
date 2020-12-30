@@ -21,6 +21,7 @@ import { API } from '../../../config/api';
 import { URL } from '../../../config/serverUrls';
 import { logger } from '../../../config/logger';
 import DealerEditForm from './DealerEditForm';
+import apiCall from '../../../utils/api.util';
 
 const useStyles = makeStyles(theme => ({
   sidePanelTitle: {
@@ -154,7 +155,11 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
         url += `/${values.id}`;
       };
       data.append('user_id', currentUser.id);
-      API.post(url, data)
+      // API.post(url, data)
+      apiCall({
+        method : 'POST',
+        body:data,url
+      })
         .then(res => {
           setLoading(false);
           setApicallStatus('success');

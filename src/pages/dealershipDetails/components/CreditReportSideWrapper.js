@@ -100,7 +100,6 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
       if(id) {
         reqData = apiData;
       }
-      
       apiCall(`${URL.dealership}/${dealershipId}/credit/report`, { ...reqData, ...values, id, user_id: currentUser.id } ,{
         method:'POST'
       })

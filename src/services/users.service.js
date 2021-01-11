@@ -61,3 +61,22 @@ export const addNewUser = (data, type) => {
     })
   })
 }
+export const deleteUser = (userId,body) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`user/${userId}`, {
+      method: "DELETE",
+      body,
+    })
+      .then(async ({ status,  message }) => {
+        if(status === "SUCCESS") {
+          const res=getAllUsers(userId);
+          resolve({ data: res, message });
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

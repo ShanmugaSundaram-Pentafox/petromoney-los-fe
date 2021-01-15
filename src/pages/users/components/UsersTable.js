@@ -50,10 +50,8 @@ const UsersTable = ({ title, data, withRole }) => {
   const handleClose = () => {
     setOpen(false);
   };
-  // console.log("delete user record",userId);
 
   const deleteUserRecord = (userId) => {
-  // console.log("delete user",userId);
   setOpen(false);
     setLoading(true);
       deleteUser(userId)

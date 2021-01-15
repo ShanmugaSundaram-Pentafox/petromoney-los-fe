@@ -40,43 +40,35 @@ const UsersTable = ({ title, data, withRole }) => {
   const [loading, setLoading] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState({});
   const [apiStatus, setApiStatus] = useState({});
+  const [userId,setuserId] = useState({});
 
 
-  const handleClickOpen = () => {
+  const handleClickOpen = (value) => {
+    setuserId(value);
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
   };
-  
-  const deleteUserRecord = data => {
+  // console.log("delete user record",userId);
+
+  const deleteUserRecord = (userId) => {
+  // console.log("delete user",userId);
+  setOpen(false);
     setLoading(true);
-      deleteUser()
+      deleteUser(userId)
       .then(({ message }) => {
         setLoading(false);
         setApiStatus({ status: 'success', message });
         setTimeout(() => {
-          setConfirmDelete({})
+          setConfirmDelete(userId)
         }, 700);
       })
       .catch(e => {
         setLoading(false);
-        setApiStatus({ status: 'error', message: e });
+        setApiStatus({status: 'error', message: e});
         logger(e);
       })
-    // deleteLoanDisbursementRecord(id, loanData.id, data)
-    //   .then(({ message }) => {
-    //     setLoading(false);
-    //     setApiStatus({ status: 'success', message });
-    //     setTimeout(() => {
-    //       setConfirmDelete({})
-    //     }, 700);
-    //   })
-    //   .catch(e => {
-    //     setLoading(false);
-    //     setApiStatus({ status: 'error', message: e });
-    //     logger(e);
-    //   })
 
   }
   const columns = useMemo(() => {
@@ -106,18 +98,19 @@ const UsersTable = ({ title, data, withRole }) => {
         },
       },
       {
-        name: 'Action',
+        label:"Action",
+        name: 'id',
         options: {
           filter: false,
           sort: false,
           setCellProps: () => ({
             align: 'center',
           }),
-          customBodyRender: () => {
+          customBodyRender: (value) => {
             return (
               <div>
                 <div>
-                  <Button onClick={handleClickOpen}>
+                  <Button onClick={() =>handleClickOpen(value)}>
                   <Tooltip title="deactivate" aria-label="add">
                   <DeleteOutlinedIcon style={{ width: "20px", color: "#ff6666" }} />
                   </Tooltip>
@@ -176,7 +169,7 @@ const UsersTable = ({ title, data, withRole }) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} variant="contained" >Cancel</Button>
-          <Button onClick={() => deleteUserRecord(confirmDelete.data)} className={classes.button} >yes</Button>
+          <Button onClick={() => deleteUserRecord(userId)} className={classes.button} >yes</Button>
         </DialogActions>
       </Dialog>
     </div>

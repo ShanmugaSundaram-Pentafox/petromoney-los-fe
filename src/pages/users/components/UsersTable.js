@@ -95,31 +95,32 @@ const UsersTable = ({ title, data, withRole }) => {
           sort: true,
         },
       },
-      {
-        label:"Action",
-        name: 'id',
-        options: {
-          filter: false,
-          sort: false,
-          setCellProps: () => ({
-            align: 'center',
-          }),
-          customBodyRender: (value) => {
-            return (
+      
+    ];
+    const actionColumnData ={
+      label:"Action",
+      name: 'id',
+      options: {
+        filter: false,
+        sort: false,
+        setCellProps: () => ({
+          align: 'center',
+        }),
+        customBodyRender: (value) => {
+          return (
+            <div>
               <div>
-                <div>
-                  <Button onClick={() =>handleClickOpen(value)}>
-                  <Tooltip title="deactivate" aria-label="add">
-                  <DeleteOutlinedIcon style={{ width: "20px", color: "#ff6666" }} />
-                  </Tooltip>
-                  </Button>
-                </div>
+                <Button onClick={() =>handleClickOpen(value)}>
+                <Tooltip title="deactivate" aria-label="add">
+                <DeleteOutlinedIcon style={{ width: "20px", color: "#ff6666" }} />
+                </Tooltip>
+                </Button>
               </div>
-            )
-          }
+            </div>
+          )
         }
       }
-    ];
+    }
     return withRole ? [
       ...d,
       {
@@ -129,8 +130,8 @@ const UsersTable = ({ title, data, withRole }) => {
           filter: true,
           sort: true,
         },
-      },
-    ] : d;
+      },actionColumnData,
+    ] : [...d, actionColumnData];;
   }, [withRole])
 
   const options = {

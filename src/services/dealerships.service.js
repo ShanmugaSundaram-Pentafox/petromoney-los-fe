@@ -59,12 +59,12 @@ export const getDealershipById = (id) => {
 
 export const getDealershipLoansById = (id) => {
   return new Promise((resolve, reject) => {
-    API.get(`${URL.dealership}/${id}/loans`)
-      .then(({ data }) => {
-        if (data.status === "SUCCESS") {
-          resolve(data.data);
+    apiCall(`${URL.dealership}/${id}/loans`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch((e) => {
@@ -75,12 +75,12 @@ export const getDealershipLoansById = (id) => {
 
 export const getDealershipIncomeById = (id) => {
   return new Promise((resolve, reject) => {
-    API.get(`${URL.dealership}/${id}/income/details`)
-      .then(({ data }) => {
-        if (data.status === "SUCCESS") {
-          resolve(data.data);
+    apiCall(`${URL.dealership}/${id}/income/details`)
+      .then(({ status,data,message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch((e) => {
@@ -91,7 +91,11 @@ export const getDealershipIncomeById = (id) => {
 
 export const postDealershipIncomeById = (id, body) => {
   return new Promise((resolve, reject) => {
-    API.post(`${URL.dealership}/${id}/income/details`, body)
+    // API.post(`${URL.dealership}/${id}/income/details`, body)
+    apiCall(`${URL.dealership}/${id}/income/details`, {
+      method : 'POST',
+      body:body
+    })
       .then(async ({ data }) => {
         if (data.status === "SUCCESS") {
           const res = await getDealershipIncomeById(id);
@@ -108,7 +112,11 @@ export const postDealershipIncomeById = (id, body) => {
 
 export const updateDealershipIncomeById = (id, body) => {
   return new Promise((resolve, reject) => {
-    API.post(`${URL.dealership}/income/details/${body.id}`, body)
+    // API.post(`${URL.dealership}/income/details/${body.id}`, body)
+    apiCall(`${URL.dealership}/income/details/${body.id}`,{
+      method : 'POST',
+      body :body
+    })
       .then(async ({ data }) => {
         if (data.status === "SUCCESS") {
           const res = await getDealershipIncomeById(id);
@@ -125,12 +133,13 @@ export const updateDealershipIncomeById = (id, body) => {
 
 export const getDealershipExpensesById = (id) => {
   return new Promise((resolve, reject) => {
-    API.get(`${URL.dealership}/${id}/expense/details`)
-      .then(({ data }) => {
-        if (data.status === "SUCCESS") {
-          resolve(data.data);
+    // API.get(`${URL.dealership}/${id}/expense/details`)
+    apiCall(`${URL.dealership}/${id}/expense/details`)
+      .then(({ status,data,message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch((e) => {
@@ -141,7 +150,11 @@ export const getDealershipExpensesById = (id) => {
 
 export const postDealershipExpensesById = (id, body) => {
   return new Promise((resolve, reject) => {
-    API.post(`${URL.dealership}/${id}/expense/details`, body)
+    // API.post(`${URL.dealership}/${id}/expense/details`, body)
+    apiCall(`${URL.dealership}/${id}/expense/details`, {
+      method : 'POST',
+      body :body
+    })
       .then(async ({ data }) => {
         if (data.status === "SUCCESS") {
           const res = await getDealershipExpensesById(id)
@@ -158,7 +171,11 @@ export const postDealershipExpensesById = (id, body) => {
 
 export const updateDealershipExpenseById = (id, body) => {
   return new Promise((resolve, reject) => {
-    API.post(`${URL.dealership}/expense/details/${body.id}`, body)
+    // API.post(`${URL.dealership}/expense/details/${body.id}`, body)
+    apiCall(`${URL.dealership}/expense/details/${body.id}`, {
+      method :'POST',
+      body :body
+    })
       .then(async ({ data }) => {
         if (data.status === "SUCCESS") {
           const res = await getDealershipExpensesById(id);
@@ -176,12 +193,13 @@ export const updateDealershipExpenseById = (id, body) => {
 export const getDealershipSalesById = (id) => {
   return new Promise((resolve, reject) => {
     // API.get(`${URL.salesInfo}/${id}`)
-    API.get(`${URL.dealership}/${id}/salesdata`)
-      .then(({ data }) => {
-        if (data.status === "SUCCESS") {
-          resolve(data.data);
+    // API.get(`${URL.dealership}/${id}/salesdata`)
+    apiCall(`${URL.dealership}/${id}/salesdata`)
+      .then(({ status,data,message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch((e) => {
@@ -192,7 +210,11 @@ export const getDealershipSalesById = (id) => {
 
 export const postDealershipSalesById = (id, body) => {
   return new Promise((resolve, reject) => {
-    API.post(`${URL.dealership}/${id}/salesdata`, body)
+    // API.post(`${URL.dealership}/${id}/salesdata`, body)
+    apiCall(`${URL.dealership}/${id}/salesdata`, {
+      method :'POST',
+      body:body
+    })
       .then(async ({ data }) => {
         if (data.status === "SUCCESS") {
           const res = await getDealershipSalesById(id)
@@ -226,7 +248,11 @@ export const getDealershipCheckList = (id) => {
 
 export const uploadDocument = (dealershipID, docID, files) => {
   return new Promise((resolve, reject) => {
-    API.post(`${URL.checklist}/${dealershipID}/doc/${docID}`, files)
+    // API.post(`${URL.checklist}/${dealershipID}/doc/${docID}`, files)
+    apiCall(`${URL.checklist}/${dealershipID}/doc/${docID}`, {
+      method : 'POST',
+      body :files
+    })
       .then(({ data }) => {
           resolve(data);
       })
@@ -238,12 +264,13 @@ export const uploadDocument = (dealershipID, docID, files) => {
 
 export const getDealershipFinancialsById = (id) => {
   return new Promise((resolve, reject) => {
-    API.get(`${URL.dealership}/${id}/financials`)
-      .then(({ data }) => {
-        if (data.status === "SUCCESS") {
-          resolve(data.data);
+    // API.get(`${URL.dealership}/${id}/financials`)
+    apiCall(`${URL.dealership}/${id}/financials`)
+      .then(({ data,status,message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch((e) => {
@@ -254,7 +281,11 @@ export const getDealershipFinancialsById = (id) => {
 
 export const postDealershipFinancialsById = (id, body) => {
   return new Promise((resolve, reject) => {
-    API.post(`${URL.dealership}/${id}/financials`, body)
+    // API.post(`${URL.dealership}/${id}/financials`, body)
+    apiCall(`${URL.dealership}/${id}/financials`, {
+      method : 'POST',
+      body: body
+    })
       .then(async ({ data }) => {
         if (data.status === "SUCCESS") {
           const res = await getDealershipFinancialsById(id);

@@ -18,6 +18,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { API } from '../../../config/api';
 import { URL } from '../../../config/serverUrls';
 import { logger } from '../../../config/logger';
+import apiCall from '../../../utils/api.util';
+
 
 const useStyles = makeStyles(theme => ({
   sidePanelTitle: {
@@ -87,12 +89,12 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
 
   const getCreditInfo = () => {
     return new Promise((resolve, reject) => {
-      API.get(`${URL.dealership}/${dealershipId}/credit/info`)
-        .then(({ data }) => {
-          if(data.status === "SUCCESS") {
-            resolve(data.data);
+      apiCall(`${URL.dealership}/${dealershipId}/credit/info`)
+        .then(({ status , data ,message }) => {
+          if(status === "SUCCESS") {
+            resolve(data);
           } else {
-            reject(data.message);
+            reject(message);
           }
         })
         .catch(e => {
@@ -119,9 +121,10 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
       // dealership/<int:dealership_id>/credit/info
       // return null;
       const resData = apiData.find(n => n.dealer_id === data[activeStep].id) || {};
-      API.post(`${URL.dealership}/${dealershipId}/credit/info`, { ...values, id: resData.id || undefined, user_id: currentUser.id, dealer_id: data[activeStep].id }, {
-        withCredentials: true,
-        credentials: 'include'
+      
+      apiCall(`${URL.dealership}/${dealershipId}/credit/info`, { ...values, id: resData.id || undefined, user_id: currentUser.id, dealer_id: data[activeStep].id }, {
+        method: 'POST',
+        body:data
       })
         .then(({ data }) => {
           // console.log(data, data.status, data.status == 'SUCCESS')

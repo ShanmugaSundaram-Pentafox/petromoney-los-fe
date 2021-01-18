@@ -21,6 +21,7 @@ import Container from '@material-ui/core/Container';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { API } from '../../config/api';
+import apiCall from '../../utils/api.util';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -244,17 +245,28 @@ const Survey = (props) => {
   });
 
   const getTransporterInfo = () => {
-    API.get(`temp/transporter/info/${values.transporter}`)
-      .then(({ status, data: { data } }) => {
-        console.log('>>', status, data)
-        if(Array.isArray(data) && data[0]) {
-          setTransporterInfo(data[0])
-          // return API.get(`transporters/${values.transporter}/vehicles`);
-        } else {
-          setApiStatus({ show: true, type: 'error', message: 'Transporter Code not found!'});
-          return { data: null };
-        }
-      })
+    // API.get(`temp/transporter/info/${values.transporter}`)
+    //   .then(({ status, data: { data } }) => {
+    //     console.log('>>', status, data)
+    //     if(Array.isArray(data) && data[0]) {
+    //       setTransporterInfo(data[0])
+    //       // return API.get(`transporters/${values.transporter}/vehicles`);
+    //     } else {
+    //       setApiStatus({ show: true, type: 'error', message: 'Transporter Code not found!'});
+    //       return { data: null };
+    //     }
+    //   })
+    apiCall(`temp/transporter/info/${values.transporter}`)
+    .then(({ status, data: { data } }) => {
+      console.log('>>', status, data)
+      if(Array.isArray(data) && data[0]) {
+        setTransporterInfo(data[0])
+        // return API.get(`transporters/${values.transporter}/vehicles`);
+      } else {
+        setApiStatus({ show: true, type: 'error', message: 'Transporter Code not found!'});
+        return { data: null };
+      }
+    })
       // .then(({ data }) => {
       //   if(data === null) {
 

@@ -10,6 +10,7 @@ import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { setAllUsers } from '../../store/dashboard/dashboard.actions';
 
+
 const Users = ({ currentUser, allUsers, setAllUsersData }) => {
   usePageTitle('All Users');
   

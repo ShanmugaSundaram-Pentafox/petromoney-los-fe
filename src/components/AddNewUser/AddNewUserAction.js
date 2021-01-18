@@ -29,7 +29,7 @@ const AddNewUserAction = () => {
         variant="contained"
         onClick={() => setOpenModal(true)}
       >
-        Create New User
+      Create New User
       </Button>
 
       <FormDialog

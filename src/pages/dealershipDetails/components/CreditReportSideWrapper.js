@@ -16,6 +16,7 @@ import { logger } from '../../../config/logger';
 import CreditReportForm from './CreditReportForm';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
+import apiCall from '../../../utils/api.util';
 
 const useStyles = makeStyles(theme => ({
   sidePanelTitle: {
@@ -65,10 +66,10 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
   const [apiStatus, setApiStatus] = useState({});
 
   const getCreditReport = () => {
-    API.get(`${URL.dealership}/${dealershipId}/credit/report`)
-      .then(({ data }) => {
-        if(data.status === "SUCCESS") {
-          setApiData(data.data[0] || {});
+    apiCall(`${URL.dealership}/${dealershipId}/credit/report`)
+      .then(({ status ,data }) => {
+        if(status === "SUCCESS") {
+          setApiData(data[0] || {});
         } else {
           // reject(data.message);
         }
@@ -99,11 +100,13 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
       if(id) {
         reqData = apiData;
       }
-      API.post(`${URL.dealership}/${dealershipId}/credit/report`, { ...reqData, ...values, id, user_id: currentUser.id })
-        .then(({ data }) => {
-          if(data.status == 'SUCCESS') {
+      apiCall(`${URL.dealership}/${dealershipId}/credit/report`, { ...reqData, ...values, id, user_id: currentUser.id } ,{
+        method:'POST'
+      })
+        .then(({ status,message }) => {
+          if(status == 'SUCCESS') {
             getCreditReport();
-            setApiStatus({ type: 'success', message: data.message || 'Report details updated' })
+            setApiStatus({ type: 'success', message: message || 'Report details updated' })
             setLoading(false);
             // handleReset();
           }

@@ -1,19 +1,74 @@
-import React, { useMemo } from "react"
-// import { NavLink as RouterLink } from "react-router-dom"
+import React, { useMemo, useState } from "react"
 import { makeStyles } from "@material-ui/styles"
 import MUIDataTable from "mui-datatables"
-import Typography from "@material-ui/core/Typography"
-// import Box from "@material-ui/core/Box"
+import Typography from "@material-ui/core/Typography";
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
+import { Button } from "@material-ui/core";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Tooltip from '@material-ui/core/Tooltip';
+import {deleteUser} from '../../../services/users.service';
+import { logger } from '../../../config/logger';
+
+
 
 const useStyles = makeStyles((theme) => ({
   title: {
     fontWeight: 500,
   },
+  button: {
+    backgroundColor: '#CE2029',
+    color:'white',
+    '&hover': {
+      color: 'black',
+    }
+  },
+  head: {
+    fontSize :'24px',
+    fontWeight :700,
+  },
+  text: {
+    fontWeight:700,
+  },
 }))
-
 const UsersTable = ({ title, data, withRole }) => {
   const classes = useStyles()
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState({});
+  const [apiStatus, setApiStatus] = useState({});
+  const [userId,setuserId] = useState({});
 
+
+  const handleClickOpen = (value) => {
+    setuserId(value);
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const deleteUserRecord = (userId) => {
+  setOpen(false);
+    setLoading(true);
+      deleteUser(userId)
+      .then(({ message }) => {
+        setLoading(false);
+        setApiStatus({ status: 'success', message });
+        setTimeout(() => {
+          setConfirmDelete(userId)
+        }, 700);
+      })
+      .catch(e => {
+        setLoading(false);
+        setApiStatus({status: 'error', message: e});
+        logger(e);
+      })
+
+  }
   const columns = useMemo(() => {
     const d = [
       {
@@ -39,9 +94,33 @@ const UsersTable = ({ title, data, withRole }) => {
           filter: false,
           sort: true,
         },
-      }
+      },
+      
     ];
-
+    const actionColumnData ={
+      label:"Action",
+      name: 'id',
+      options: {
+        filter: false,
+        sort: false,
+        setCellProps: () => ({
+          align: 'center',
+        }),
+        customBodyRender: (value) => {
+          return (
+            <div>
+              <div>
+                <Button onClick={() =>handleClickOpen(value)}>
+                <Tooltip title="deactivate" aria-label="add">
+                <DeleteOutlinedIcon style={{ width: "20px", color: "#ff6666" }} />
+                </Tooltip>
+                </Button>
+              </div>
+            </div>
+          )
+        }
+      }
+    }
     return withRole ? [
       ...d,
       {
@@ -51,8 +130,8 @@ const UsersTable = ({ title, data, withRole }) => {
           filter: true,
           sort: true,
         },
-      },
-    ] : d;
+      },actionColumnData,
+    ] : [...d, actionColumnData];;
   }, [withRole])
 
   const options = {
@@ -63,7 +142,6 @@ const UsersTable = ({ title, data, withRole }) => {
     rowsPerPage: 10,
     isRowSelectable: () => false,
   }
-
   return (
     <div>
       {Array.isArray(data) && data.length ? (
@@ -78,6 +156,21 @@ const UsersTable = ({ title, data, withRole }) => {
           options={options}
         />
       ) : null}
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle>{"Are you sure"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText className={classes.text}>you want to delete the user..?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} variant="contained" >Cancel</Button>
+          <Button onClick={() => deleteUserRecord(userId)} className={classes.button} >yes</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   )
 }

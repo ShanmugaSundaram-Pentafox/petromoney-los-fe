@@ -18,6 +18,7 @@ import { API } from '../../config/api';
 import { URL } from '../../config/serverUrls';
 import { logger } from '../../config/logger';
 import { setCurrentUser } from '../../store/user/user.actions';
+import apiCall from '../../utils/api.util';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -70,10 +71,13 @@ const Login = ({ setCurrentUser }) => {
 
   const submitAction = useCallback(e => {
     e.preventDefault();
-    API.post(URL.login, { mobile, password })
+    // API.post(URL.login, { mobile, password })
+    apiCall(URL.login, {
+      method: 'POST',
+      body: mobile, password })
       .then(({ status, data }) => {
-        logger(status, data.data);
-        setCurrentUser(data.data);
+        logger(status, data);
+        setCurrentUser(data);
       })
       .catch(e => {
         logger(e);

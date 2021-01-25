@@ -16,12 +16,12 @@ import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepButton from '@material-ui/core/StepButton';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { getVehicleDocuments, getVehicleLoans, getVehicleServiceDetails } from "../../../services/transports.service"
+import { getVehicleDocuments, getVehicleLoans, getVehicleServiceDetails, updateVehicleServiceDetails } from "../../../services/transports.service"
 import { logger } from "../../../config/logger"
 import Button from "../../../components/CommonComponents/Button/Button"
 import NewVehicleLoanAction from "../../../components/NewVehicleLoan/NewVehicleLoanAction"
 import FormDialog from "../../../components/CommonComponents/FormDialog/FormDialog"
-import UpdateServiceForm from "../../../components/UpdateServiceForm/UpdateServiceForm"
+import TrackerUpdateModal from "./TrackerUpdateModal"
 
 const Accordion = withStyles({
   root: {
@@ -153,6 +153,21 @@ export default function VehicleInfo({ id, data, currentUser }) {
       });
   }
 
+
+  const openServiceModal = (data) => {
+    setServiceModal({
+      open: true,
+      data,
+    })
+  }
+
+  const closeTrackingStatusModal = fetchStatus => {
+    setServiceModal({ open: false })
+    if(fetchStatus) {
+      getServiceStatus({...serviceData, id: serviceData.loan_id });
+    }
+  }
+
   return (
     <div>
       {data.map((vehicleInfo) => {
@@ -267,9 +282,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
                                   <Step key={item.status_id} {...stepProps}>
                                     <StepButton
                                       onClick={() => {
-                                        setServiceModal({
-                                          open: true
-                                        })
+                                        openServiceModal(item);
                                       }}
                                       // completed={isStepComplete(index)}
                                       {...buttonProps}
@@ -299,9 +312,11 @@ export default function VehicleInfo({ id, data, currentUser }) {
         {imageModal.image && <img src={imageModal.image} alt="image-viewer" />}
       </FormDialog>
 
-      <FormDialog title={"Update Service Status"} open={serviceModal.open} onClose={() => setServiceModal({ open: false })}>
+      {/* <FormDialog title={"Update Service Status"} open={serviceModal.open} onClose={() => setServiceModal({ open: false })}>
         <UpdateServiceForm data={serviceData} callback={() => null} />
-      </FormDialog>
+      </FormDialog> */}
+
+      <TrackerUpdateModal statusId={serviceModal?.data?.status_id} data={serviceModal.data} serviceData={serviceData} onClose={closeTrackingStatusModal} />
     </div>
   )
 }

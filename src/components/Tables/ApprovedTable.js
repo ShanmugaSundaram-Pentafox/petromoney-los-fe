@@ -1,10 +1,12 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from "mui-datatables";
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@material-ui/core/IconButton';
+import AssignmentIcon from '@material-ui/icons/Assignment';
+import DescriptionIcon from '@material-ui/icons/Description';
 import GetAppOutlinedIcon from '@material-ui/icons/GetAppOutlined';
 import { useMount } from 'react-use';
 import Paper from '@material-ui/core/Paper';
@@ -15,6 +17,8 @@ import clsx from 'clsx';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
 import Currency from '../Number/Currency';
+// import { URL } from '../../config/serverUrls';
+import SignRequestLayout from '../Leegality/SignRequestLayout';
 // import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles(theme => ({
@@ -50,6 +54,8 @@ const useStyles = makeStyles(theme => ({
 
 const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const classes = useStyles();
+  const [ dealershipId, setDealershipId ] = useState();
+  const [ modalVisible, setModalVisible ] = useState(false);
 
   useMount(() => {
     if(!loans || !loans.length) {
@@ -120,7 +126,8 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
         }
       },
       {
-        name: 'Documents',
+        label: 'Documents',
+        name: 'dealership_id',
         options: {
           filter: false,
           sort: false,
@@ -129,11 +136,23 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
           }),
           customBodyRender: (value, tableMeta, updateValue) => {
             return (
-              <a className={classes.anchorTag} href={`http://salesapi.petromoney.in/api/loans/sanction/${tableMeta.rowData[0]}`} download={'Sanction_Letter'}>
-                  <Tooltip title='Sanction Letter'>
-                    <GetAppOutlinedIcon style={{ width: '20px' }}> </GetAppOutlinedIcon>
-                   </Tooltip>
-              </a>
+              <>
+                <Tooltip title="Sanction Letter">
+                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setDealershipId(value); setModalVisible(true); }}>
+                    <DescriptionIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Loan Agreement">
+                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setDealershipId(value); setModalVisible(true); }}>
+                    <DescriptionIcon />
+                  </IconButton>
+                </Tooltip>
+              </>
+              // <a className={classes.anchorTag} href={`${URL.base}loans/sanction/${tableMeta.rowData[0]}`} download={'Sanction_Letter'}>
+              //   <Tooltip title='Sanction Letter'>
+              //     <GetAppOutlinedIcon style={{ width: '20px' }}> </GetAppOutlinedIcon>
+              //   </Tooltip>
+              // </a>
             )
           }
         }
@@ -164,6 +183,13 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
           />
         ) : <Paper style={{ padding: 10 }}>No Approved Applications</Paper> 
       }
+
+      <SignRequestLayout
+        open={modalVisible}
+        dealershipId={dealershipId}
+        title={'eSign Application Form'}
+        onClose={() => setModalVisible(false)}
+      />
     </div>
   )
 }

@@ -34,22 +34,23 @@ const NewVehicleLoanForm = ({ vehicleId, callback, currentUser }) => {
       remarks: Yup.string(),
     }),
     onSubmit: formData => {
+      const d = loanOptions.find(d => d.id === formData?.credit_head);
       if(Number(formData.credit_head) === 5 && !formData.remarks) {
         setErrors({ remarks: "Please enter remarks" });
         setSubmitting(false)
         return;
       }
-      if(Number(formData.credit_head) !== 4 && !formData.loan_amount) {
+      if(!d.is_service && !formData.loan_amount) {
         setErrors({ loan_amount: "Please enter loan amount" });
         setSubmitting(false)
         return;
       }
-      const d = loanOptions.find(d => d.id === formData.credit_head);
       let remarks = formData.remarks;
       if(!remarks) {
         remarks = d.desc;
       }
       apiCall(`vehicle/${vehicleId}/loan`, {
+        is_service: d.is_service,
         credit_head_id: formData.credit_head,
         loan_amount: formData.loan_amount || 0,
         remarks,

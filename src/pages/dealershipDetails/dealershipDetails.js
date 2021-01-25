@@ -6,8 +6,10 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import Collapse from '@material-ui/core/Collapse';
-// import Divider from "@material-ui/core/Divider";
-// import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
 import Drawer from '@material-ui/core/Drawer';
 import DealershipInfo from "./components/DealershipInfo";
@@ -25,6 +27,7 @@ import InfoBox from "../../components/CommonComponents/InfoBox";
 import SolarEnquiryForm from "./components/SolarEnquiryForm";
 import { tabA11yProps, TabPanel } from "../../components/CommonComponents/Tabs/TabPanel";
 import InfoCard from "../../components/CommonComponents/Cards/InfoCard";
+import LeegalityLayout from "../../components/Leegality/LeegalityLayout";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -74,6 +77,7 @@ const DealershipDetails = ({ currentUser, match }) => {
   const [mainApplicant, setMainApplicant] = useState({})
   const [showCreditReport, setShowCreditReport] = useState();
   const [showSolarForm, setShowSolarForm] = useState();
+  const [leegalityModalVisible, setLeegalityModalVisible] = useState(false);
   const {
     url,
     params: { id },
@@ -119,9 +123,9 @@ const DealershipDetails = ({ currentUser, match }) => {
             content={dealershipData?.address}
           />
         </Grid>
-        <Grid item xs={6} sm={4}>
           {
-            mainApplicant?.first_name ? (
+          mainApplicant?.first_name ? (
+            <Grid item xs={6} sm={4}>
               <InfoCard 
                 title={"Main Dealer Info"}
                 userInitial={`${mainApplicant?.first_name?.charAt(0)}`}
@@ -129,9 +133,20 @@ const DealershipDetails = ({ currentUser, match }) => {
                 description={`+91 ${mainApplicant?.mobile}`}
                 content={`${mainApplicant?.email}`}
               />
+            </Grid>
             ) : null
           }
-        </Grid>
+        {/* <Grid item xs={6} sm={4}>
+          <InfoCard 
+            title={" "}
+            userInitial={`V`}
+            name={`AppVault`}
+            description={`Sign applications`}
+            onClick={() => {
+              setLeegalityModalVisible(true)
+            }}
+          />
+        </Grid> */}
       </Grid>
       <div className={classes.tabsWrapper}>
         <div>
@@ -244,6 +259,25 @@ const DealershipDetails = ({ currentUser, match }) => {
           />
         </div>
       </Drawer>
+
+      <Dialog
+        fullScreen
+        scroll="paper"
+        open={leegalityModalVisible}
+        onClose={() => setLeegalityModalVisible(false)}
+      >
+        <DialogContent>
+          <LeegalityLayout />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setLeegalityModalVisible(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={() => setLeegalityModalVisible(false)} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

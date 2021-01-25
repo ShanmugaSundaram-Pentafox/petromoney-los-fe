@@ -43,6 +43,7 @@ export const InfoWrapper = styled.div`
                 -moz-box-orient: vertical;
                 /* autoprefixer: on */
                 overflow: hidden;
+                text-transform: capitalize;
             }
 
 
@@ -51,6 +52,7 @@ export const InfoWrapper = styled.div`
                 font-size: 16px;
                 line-height: 22px;
                 margin-bottom: 2px;
+                text-transform: capitalize;
             }
 
             &.light {
@@ -83,6 +85,7 @@ export const InfoCardWrapper = styled.div`
         font-size: 16px;
         line-height: 26px;
         margin-bottom: 12px;
+        text-transform: capitalize;
     }
 `;
 

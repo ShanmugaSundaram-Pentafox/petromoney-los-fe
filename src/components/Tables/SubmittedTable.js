@@ -1,10 +1,18 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
+import { useMount } from 'react-use';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from "mui-datatables";
 import Typography from '@material-ui/core/Typography';
-import { useMount } from 'react-use';
+// import Grid from '@material-ui/core/Grid';
+// import Box from '@material-ui/core/Box';
+import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@material-ui/core/IconButton';
+import AssignmentIcon from '@material-ui/icons/Assignment';
+// import CloseIcon from '@material-ui/icons/Close';
+// import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 import Paper from '@material-ui/core/Paper';
+// import Button from "@material-ui/core/Button";
 // import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -12,7 +20,9 @@ import clsx from 'clsx';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
 import Currency from '../Number/Currency';
-import CircularProgress from '@material-ui/core/CircularProgress';
+// import CircularProgress from '@material-ui/core/CircularProgress';
+// import PdfViewer from '../CommonComponents/PdfViewer/PdfViewer';
+import SignRequestLayout from '../Leegality/SignRequestLayout';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -38,12 +48,24 @@ const useStyles = makeStyles(theme => ({
   pills_SOLAR: {
     color: '#51b37f',
     backgroundColor: '#e1f8e5',
-  }
+  },
+  dTitle: {
+    margin: 0,
+    padding: theme.spacing(2),
+  },
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
 }));
 
 const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
-  // const [ data, setData ] = useState([]);
   const classes = useStyles();
+  // const [ data, setData ] = useState([]);
+  const [ dealershipId, setDealershipId ] = useState();
+  const [ modalVisible, setModalVisible ] = useState(false);
 
   useMount(() => {
     if(!loans || !loans.length) {
@@ -112,6 +134,23 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
             </div>
           }
         }
+      },
+      {
+        label: 'eSign',
+        name: 'dealership_id',
+        options: {
+          filter: false,
+          sort: false,
+          customBodyRender: value => {
+            return (
+              <Tooltip title="eSign Application">
+                <IconButton size="small" color="primary" aria-label="application" onClick={() => { setDealershipId(value); setModalVisible(true); }}>
+                  <AssignmentIcon />
+                </IconButton>
+              </Tooltip>
+            )
+          }
+        }
       }
     ]
   }, []);
@@ -139,6 +178,13 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
           />
         ) : <Paper style={{ padding: 10 }}>No Submitted Records</Paper> 
       }
+
+      <SignRequestLayout
+        open={modalVisible}
+        dealershipId={dealershipId}
+        title={'eSign Application Form'}
+        onClose={() => setModalVisible(false)}
+      />
     </div>
   )
 }

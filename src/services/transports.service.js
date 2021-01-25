@@ -122,6 +122,25 @@ export const getVehicleServiceDetails = (vehicleId, serviceId, loanId) => {
   })
 }
 
+export const updateVehicleServiceDetails = (vehicleId, serviceId, loanId, payload) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`vehicle/${vehicleId}/service/${serviceId}/tracker/${loanId}`, {
+      method: 'POST',
+      body: payload
+    })
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
 export const getVehicleLoanOptions = () => {
   return new Promise((resolve, reject) => {
     apiCall(`vehicle/loan/options`)

@@ -74,3 +74,12 @@ export const refreshExperianReportById = (id, type) => {
       })
   });
 }
+
+export const downloadPDF = ({ file, isBase64, name }) => {
+  const linkSource = isBase64 ? `data:application/pdf;base64,${file}` : file;
+  const downloadLink = document.createElement("a");
+  const fileName = `${name}.pdf`;
+  downloadLink.href = linkSource;
+  downloadLink.download = fileName;
+  downloadLink.click();
+}

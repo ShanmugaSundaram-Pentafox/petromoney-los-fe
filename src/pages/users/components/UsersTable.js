@@ -3,7 +3,8 @@ import { makeStyles } from "@material-ui/styles"
 import MUIDataTable from "mui-datatables"
 import Typography from "@material-ui/core/Typography";
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
-import { Button } from "@material-ui/core";
+import LockIcon from '@material-ui/icons/Lock';
+import { Button, TextField } from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -42,6 +43,16 @@ const UsersTable = ({ title, data, withRole }) => {
   const [apiStatus, setApiStatus] = useState({});
   const [userId,setuserId] = useState({});
 
+  const [op , setOp ] = React.useState(false);
+
+  const handleClickOp = (value) => {
+    console.log(value)
+    setOp(true);
+  };
+
+  const handleClose2 = () => {
+    setOp(false);
+  };
 
   const handleClickOpen = (value) => {
     setuserId(value);
@@ -111,9 +122,14 @@ const UsersTable = ({ title, data, withRole }) => {
             <div>
               <div>
                 <Button onClick={() =>handleClickOpen(value)}>
-                <Tooltip title="deactivate" aria-label="add">
-                <DeleteOutlinedIcon style={{ width: "20px", color: "#ff6666" }} />
-                </Tooltip>
+                  <Tooltip title="deactivate" aria-label="add">
+                    <DeleteOutlinedIcon style={{ width: "20px", color: "#ff6666" }} />
+                  </Tooltip>
+                </Button>
+                <Button onClick={() =>handleClickOp(value)} >
+                  <Tooltip title="deactivate" aria-label="add">
+                    <LockIcon style={{ width: "20px", color: "#ff6666" }} />
+                  </Tooltip>
                 </Button>
               </div>
             </div>
@@ -156,9 +172,7 @@ const UsersTable = ({ title, data, withRole }) => {
           options={options}
         />
       ) : null}
-      <Dialog
-        open={open}
-        onClose={handleClose}
+      <Dialog open={open} onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -169,6 +183,55 @@ const UsersTable = ({ title, data, withRole }) => {
         <DialogActions>
           <Button onClick={handleClose} variant="contained" >Cancel</Button>
           <Button onClick={() => deleteUserRecord(userId)} className={classes.button} >yes</Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={op} onClose={handleClose2} 
+        aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">Update</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Form to Update data
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Name"
+            type="text"
+            fullWidth
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="email"
+            label="Email Address"
+            type="email"
+            fullWidth
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="phone"
+            label="Mobile Number"
+            type="text"
+            fullWidth
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="password"
+            label="Password"
+            type="password"
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose2} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleClose2} color="primary">
+            Update
+          </Button>
         </DialogActions>
       </Dialog>
     </div>

@@ -9,7 +9,42 @@ import UsersTable from './components/UsersTable';
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { setAllUsers } from '../../store/dashboard/dashboard.actions';
+import ChartCard from '../../components/CommonComponents/ChartCard/ChartCard';
+import { CHART_COLORS } from '../../config/constants';
+import { VictoryPie } from 'victory';
 
+import { makeStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import MenuItem from '@material-ui/core/MenuItem';
+import { Paper } from '@material-ui/core';
+
+const currencies = [
+  
+  {
+    value: 'Field Officiers', label: 'Field Officiers',
+  }, 
+  {
+    value: 'Dealers', label: 'Dealers',
+  },
+  {
+    value: 'Sales Head (Regional)', label: 'Sales Head (Regional)',
+  },
+  {
+    value: 'Transporters', label: 'Transporters',
+  },
+  {
+    value: 'Other Users', label: 'Other Users',
+  },
+];
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    '& .MuiTextField-root': {
+      margin: theme.spacing(1),
+      width: '25ch',
+    },
+  },
+}));
 
 const Users = ({ currentUser, allUsers, setAllUsersData }) => {
   usePageTitle('All Users');
@@ -32,6 +67,31 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
   const dealers = getUsersByRole(allUsers, "DEALER");
   const others = allUsers.filter(user => !(["FIELD_OFFICER", "TRANSPORTER", "DEALER", "SALES_HEAD_STATE", "SALES_HEAD_REGIONAL"].includes(user.role_name)));
 
+  const classes = useStyles();
+  const [currency, setCurrency] = React.useState('Field Officiers');
+
+  const handleChange = (event) => {
+    setCurrency(event.target.value);
+  };
+
+  let button;
+  if (currency==="Field Officiers") {
+    button = <UsersTable title="Field Officiers" data={fo} />;
+  } else if (currency==="Dealers") {
+    button = <UsersTable title="Dealers" data={dealers} />;
+  } else if (currency==="Sales Head (State)") {
+    button = <UsersTable title="Sales Head (State)" data={getUsersByRole(allUsers, "SALES_HEAD_STATE")} />;
+  } else if (currency==="Sales Head (Regional)") {
+    button = <UsersTable title="Sales Head (Regional)" data={getUsersByRole(allUsers, "SALES_HEAD_REGIONAL")} />;
+  } else if (currency==="Transporters") {
+    button = <UsersTable title="Transporters" data={trans} />;
+  } else if (currency==="Other Users") {
+    button = <UsersTable withRole title="Other Users" data={others} />;
+  }
+
+
+
+
   return (
     <div>
       {
@@ -49,39 +109,68 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
           </Grid>
         ) : (
           <Grid container spacing={2}>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
+              <ChartCard 
+                labels={[
+                  { label: 'Field Officiers', value: fo.length },
+                  { label: 'Dealers', value: dealers.length },
+                  { label: 'Transporters', value: trans.length },
+                  { label: 'Other Users', value: others.length },
+                ]}
+              >
+                <VictoryPie
+                  innerRadius={75}
+                  colorScale={CHART_COLORS}
+                  labels={[]}
+                  data={[
+                    { y: fo.length },
+                    { y: dealers.length },
+                    { y: trans.length },
+                    { y: others.length },
+                  ]}
+                />
+              </ChartCard>
+            </Grid>
+            <Grid item xs={6}>
               <Box p={2} borderRadius={4} bgcolor="background.paper">
                 {/* <Typography variant="h5">Credit Book</Typography> */}
                 <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="wrap">
                   <DashCard text="Field Officers" value={fo.length} />
-                  <DashCard text="Dealers" value={dealers.length} />
+                  <DashCard text="Dealers" value={dealers.length} /> 
                   <DashCard text="Transporters" value={trans.length} />
                   <DashCard noBorder text="Other Users" value={others.length} />
                 </Box>
               </Box>
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <UsersTable title="Field Officiers" data={fo} />
+            
+            <Grid item xs={12} sm={12}>
+              <Paper>
+              <form className={classes.root} noValidate autoComplete="off">
+                <div>
+                  <TextField
+                    id="standard-select-currency"
+                    select
+                    label="Select"
+                    value={currency}
+                    onChange={handleChange}
+                    helperText="Please select your currency"
+                  >
+                    {currencies.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </div>
+              </form>
+            
+              </Paper>
+            </Grid>      
+
+            <Grid item xs={12} sm={12}>
+              {button}
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <UsersTable title="Dealers" data={dealers} />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <UsersTable title="Sales Head (State)" data={getUsersByRole(allUsers, "SALES_HEAD_STATE")} />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <UsersTable title="Sales Head (Regional)" data={getUsersByRole(allUsers, "SALES_HEAD_REGIONAL")} />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <UsersTable title="Transporters" data={trans} />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <UsersTable
-                withRole
-                title="Other Users"
-                data={others}
-                />
-            </Grid>
+            
           </Grid>
         )
       }

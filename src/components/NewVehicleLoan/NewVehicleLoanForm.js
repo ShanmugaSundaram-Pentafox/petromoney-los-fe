@@ -50,11 +50,14 @@ const NewVehicleLoanForm = ({ vehicleId, callback, currentUser }) => {
         remarks = d.desc;
       }
       apiCall(`vehicle/${vehicleId}/loan`, {
-        is_service: d.is_service,
-        credit_head_id: formData.credit_head,
-        loan_amount: formData.loan_amount || 0,
-        remarks,
-        user_id: currentUser.id
+        method: 'POST',
+        body: {
+          is_service: d.is_service,
+          credit_head_id: formData.credit_head,
+          loan_amount: formData.loan_amount || 0,
+          remarks,
+          user_id: currentUser.id,
+        }
       })
       .then(res => {
         console.log(res);

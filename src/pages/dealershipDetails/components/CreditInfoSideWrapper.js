@@ -122,9 +122,15 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
       // return null;
       const resData = apiData.find(n => n.dealer_id === data[activeStep].id) || {};
       
-      apiCall(`${URL.dealership}/${dealershipId}/credit/info`, { ...values, id: resData.id || undefined, user_id: currentUser.id, dealer_id: data[activeStep].id }, {
+      apiCall(`${URL.dealership}/${dealershipId}/credit/info`, {
         method: 'POST',
-        body:data
+        body: {
+          ...values,
+          id: resData.id || undefined,
+          user_id:
+          currentUser.id,
+          dealer_id: data[activeStep].id
+        },
       })
         .then(({ data }) => {
           // console.log(data, data.status, data.status == 'SUCCESS')

@@ -156,9 +156,9 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
       };
       data.append('user_id', currentUser.id);
       // API.post(url, data)
-      apiCall({
+      apiCall(url, {
         method : 'POST',
-        body:data,url
+        body: data,
       })
         .then(res => {
           setLoading(false);

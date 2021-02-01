@@ -132,16 +132,16 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
           dealer_id: data[activeStep].id
         },
       })
-        .then(({ data }) => {
+        .then(({ status, data, message }) => {
           // console.log(data, data.status, data.status == 'SUCCESS')
-          if(data.status == 'SUCCESS') {
+          if(status == 'SUCCESS') {
             // setApiStatus({ type: 'success', message: message || `Credit Info updated for ${data[activeStep].id}` })
             setLoading(false);
             handleReset();
             setActiveStep(activeStep+1);
           }
           else {
-            setApiStatus({ show: true, type: 'error', message: data.message || 'Unable to save the details. Please try again later' })
+            setApiStatus({ show: true, type: 'error', message: message || 'Unable to save the details. Please try again later' })
             setLoading(false);
           }
         })

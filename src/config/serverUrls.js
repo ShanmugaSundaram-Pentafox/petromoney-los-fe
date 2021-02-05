@@ -1,6 +1,6 @@
 export const URL = {
-  base: "https://api-uat.petromoney.in/api/",
-  base2: "http://127.0.0.1:5000/api/",
+  base1: "https://api-uat.petromoney.in/api/",
+  base: "http://127.0.0.1:5000/api/",
   login: "login/user",
   allUsers: "users",
   userRoles: "user/roles",
@@ -25,4 +25,10 @@ export const URL = {
   ls2_metrices: "business/metrics/ls2",
   loanBook: 'business/loanbook',
   loanMetrics: "metrics/loan/stats",
+  region:"regions",
+  regionMap:"regionMap",
+  regionMapUser:"region-map-user/",
+  regionDel:"region-del/",
+  regionMapAdd:"region-map-add/",
+  passReset:"passReset"
 }

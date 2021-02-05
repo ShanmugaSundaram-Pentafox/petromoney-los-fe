@@ -13,7 +13,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Tooltip from '@material-ui/core/Tooltip';
 import {deleteUser} from '../../../services/users.service';
 import { logger } from '../../../config/logger';
-
+import RightDrawer from './RightDrawer'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -44,15 +44,7 @@ const UsersTable = ({ title, data, withRole }) => {
   const [userId,setuserId] = useState({});
 
   const [op , setOp ] = React.useState(false);
-
-  const handleClickOp = (value) => {
-    console.log(value)
-    setOp(true);
-  };
-
-  const handleClose2 = () => {
-    setOp(false);
-  };
+ 
 
   const handleClickOpen = (value) => {
     setuserId(value);
@@ -126,11 +118,7 @@ const UsersTable = ({ title, data, withRole }) => {
                     <DeleteOutlinedIcon style={{ width: "20px", color: "#ff6666" }} />
                   </Tooltip>
                 </Button>
-                <Button onClick={() =>handleClickOp(value)} >
-                  <Tooltip title="deactivate" aria-label="add">
-                    <LockIcon style={{ width: "20px", color: "#ff6666" }} />
-                  </Tooltip>
-                </Button>
+                <RightDrawer  checked={op} userId={value} />
               </div>
             </div>
           )
@@ -178,62 +166,14 @@ const UsersTable = ({ title, data, withRole }) => {
       >
         <DialogTitle>{"Are you sure"}</DialogTitle>
         <DialogContent>
-          <DialogContentText className={classes.text}>you want to delete the user..?</DialogContentText>
+          <DialogContentText className={classes.text}>you want to delete the user..?{userId}</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} variant="contained" >Cancel</Button>
           <Button onClick={() => deleteUserRecord(userId)} className={classes.button} >yes</Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={op} onClose={handleClose2} 
-        aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Update</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Form to Update data
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Name"
-            type="text"
-            fullWidth
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="email"
-            label="Email Address"
-            type="email"
-            fullWidth
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="phone"
-            label="Mobile Number"
-            type="text"
-            fullWidth
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="password"
-            label="Password"
-            type="password"
-            fullWidth
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose2} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleClose2} color="primary">
-            Update
-          </Button>
-        </DialogActions>
-      </Dialog>
+       
     </div>
   )
 }

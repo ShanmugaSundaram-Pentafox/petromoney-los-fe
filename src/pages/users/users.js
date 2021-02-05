@@ -18,8 +18,7 @@ import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import { Paper } from '@material-ui/core';
 
-const currencies = [
-  
+const currencies = [ 
   {
     value: 'Field Officiers', label: 'Field Officiers',
   }, 

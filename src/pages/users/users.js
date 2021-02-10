@@ -73,6 +73,10 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
     setCurrency(event.target.value);
   };
 
+  const getUserById = id => {
+    return allUsers.find(item => item.id === id) || {};
+  }
+
   let button;
   if (currency==="Field Officiers") {
     button = <UsersTable title="Field Officiers" data={fo} />;
@@ -87,8 +91,6 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
   } else if (currency==="Other Users") {
     button = <UsersTable withRole title="Other Users" data={others} />;
   }
-
-
 
 
   return (

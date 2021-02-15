@@ -17,8 +17,16 @@ import { useMount } from 'react-use';
 import { getRegionMap, passReset } from '../../../services/users.service';
 import MultipleList from './MultipleList'
 import { DialogContentText, TextField, Typography } from '@material-ui/core';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 
 const useStyles = makeStyles({
+  root: {
+    width: '100%',
+    '& > * + *': {
+      marginTop: 2,
+    },
+  },
   list: {
     width: '50%',
   },
@@ -48,22 +56,50 @@ const useStyles = makeStyles({
   },
 });
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 export default function TemporaryDrawer({userId, data}) {
+  const [open, setOpen] = React.useState(false);
+
+  const handleClick = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  const checkPassword = () => {
+    if(password === confirmPassword){
+      passReset(password,userId)
+    } else {
+      console.log("ASDA")
+      handleClick({ vertical: 'top', horizontal: 'center' })
+    }
+  }
+
   const classes = useStyles();
   const [showUserEditDrawer, setShowUserEditDrawer] = useState(false);
   const [region , setRegion] = React.useState([])
   
   const [password , setPassword] = React.useState("")
+  const [confirmPassword , SetConfirmPassword] = React.useState("")
  
-    useMount(() => { 
-        getRegionMap()
-            .then(data => {
-                setRegion(data)
-            })
-            .catch(e => {
-                console.log(e);
-            })
-    })
+  useMount(() => { 
+      getRegionMap()
+          .then(data => {
+              setRegion(data)
+          })
+          .catch(e => {
+              console.log(e);
+          })
+  })
     
   const toggleDrawer = () => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -72,6 +108,7 @@ export default function TemporaryDrawer({userId, data}) {
 
     setShowUserEditDrawer(st => !st);
   };
+
 
   return (
     <>
@@ -114,17 +151,23 @@ export default function TemporaryDrawer({userId, data}) {
               id="password"
               label="Confirm New Password"
               type="password"
-              value={password}
+              value={confirmPassword}
               className={classes.textFieldStyle}
-              onChange={e=>setPassword(e.target.value)}
+              onChange={e=>SetConfirmPassword(e.target.value)}
             />
 
-            <Button variant={"contained"} color="primary" onClick={ e=> passReset(password,userId) }>
+            <Button variant={"contained"} color="primary" onClick={ e=> checkPassword() }>
               Update Password
             </Button>
+            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+              <Alert onClose={handleClose} severity="warning">
+                Password does not match
+              </Alert>
+            </Snackbar>
           </Box>
         </Box>
       </Drawer>
     </>
   );
+  
 }

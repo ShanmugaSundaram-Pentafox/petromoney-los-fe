@@ -1,4 +1,3 @@
-import { API } from "../config/api";
 import { URL } from "../config/serverUrls";
 import apiCall from "../utils/api.util";
 import { decrypt } from "./crypto.service";
@@ -96,12 +95,12 @@ export const postDealershipIncomeById = (id, body) => {
       method : 'POST',
       body:body
     })
-      .then(async ({ data }) => {
-        if (data.status === "SUCCESS") {
+      .then(async ({ status, data, message }) => {
+        if (status === "SUCCESS") {
           const res = await getDealershipIncomeById(id);
           resolve(res);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch((e) => {
@@ -117,12 +116,12 @@ export const updateDealershipIncomeById = (id, body) => {
       method : 'POST',
       body :body
     })
-      .then(async ({ data }) => {
-        if (data.status === "SUCCESS") {
+      .then(async ({ status, data, message }) => {
+        if (status === "SUCCESS") {
           const res = await getDealershipIncomeById(id);
           resolve(res);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch((e) => {
@@ -155,12 +154,12 @@ export const postDealershipExpensesById = (id, body) => {
       method : 'POST',
       body :body
     })
-      .then(async ({ data }) => {
-        if (data.status === "SUCCESS") {
+      .then(async ({ status, data, message }) => {
+        if (status === "SUCCESS") {
           const res = await getDealershipExpensesById(id)
           resolve(res);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch((e) => {
@@ -176,12 +175,12 @@ export const updateDealershipExpenseById = (id, body) => {
       method :'POST',
       body :body
     })
-      .then(async ({ data }) => {
-        if (data.status === "SUCCESS") {
+      .then(async ({ status, data, message }) => {
+        if (status === "SUCCESS") {
           const res = await getDealershipExpensesById(id);
           resolve(res);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch((e) => {
@@ -215,12 +214,12 @@ export const postDealershipSalesById = (id, body) => {
       method :'POST',
       body:body
     })
-      .then(async ({ data }) => {
-        if (data.status === "SUCCESS") {
+      .then(async ({ status, data, message }) => {
+        if (status === "SUCCESS") {
           const res = await getDealershipSalesById(id)
           resolve(res);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch((e) => {
@@ -286,12 +285,12 @@ export const postDealershipFinancialsById = (id, body) => {
       method : 'POST',
       body: body
     })
-      .then(async ({ data }) => {
-        if (data.status === "SUCCESS") {
+      .then(async ({ status, data, message }) => {
+        if (status === "SUCCESS") {
           const res = await getDealershipFinancialsById(id);
           resolve(res);
         } else {
-          reject(data.message);
+          reject(message);
         }
       })
       .catch((e) => {

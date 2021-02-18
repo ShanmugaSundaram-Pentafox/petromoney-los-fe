@@ -1,6 +1,6 @@
 export const URL = {
-  base1: "https://api-uat.petromoney.in/api/",
-  base: "http://127.0.0.1:5000/api/",
+  base: "https://api-uat.petromoney.in/api/",
+  base2: "http://127.0.0.1:5000/api/",
   login: "login/user",
   allUsers: "users",
   userRoles: "user/roles",

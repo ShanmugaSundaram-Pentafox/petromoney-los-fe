@@ -21,6 +21,7 @@ const apiCall = async (route, options = {}) => {
 
   let headerObject = {
     "Content-Type": "application/json",
+    "Access-Control-Allow-Credentials":"no-cors"
   };
 
   if (customHeader && !_.isEmpty(customHeader)) {

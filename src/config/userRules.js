@@ -1,4 +1,4 @@
-export const rulesList = {
+ export const rulesList = {
   "dashboard": "dashboard",
   "users_view": "users:view",
   "loan_approval": "loan:approval",

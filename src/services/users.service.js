@@ -61,6 +61,7 @@ export const addNewUser = (data, type) => {
     })
   })
 }
+
 export const deleteUser = (mobile) => {
   return new Promise((resolve, reject) => {
     apiCall(`user/${mobile}`, {
@@ -70,6 +71,131 @@ export const deleteUser = (mobile) => {
         if(status === "SUCCESS") {
           const res=getAllUsers(mobile);
           resolve({ data: res, message });
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const getRegion = ( ) => {
+  let apiUrl = URL.region;
+
+  return new Promise((resolve, reject) => {
+    apiCall(apiUrl, {
+      method: 'GET',
+    })
+    .then(({ status, data }) => {
+      if (status === "SUCCESS") {
+        console.log(data)
+        resolve(data)
+      } else {
+        reject(data)
+      }
+    })
+    .catch((e) => {
+      reject(e.data)
+    })
+  })
+}
+ 
+export const getRegionMap = () => {
+  let apiUrl = URL.regionMap 
+  console.log(apiUrl)
+  return new Promise((resolve, reject) => { 
+    apiCall(apiUrl, {
+      method: "GET"
+    })
+      .then(async ({ status,  data }) => {
+        if(status === "SUCCESS") {
+          resolve(data);
+        } else {
+          reject(data);
+        }
+      })
+      .catch(e => {
+        reject(e.data);
+      })
+  });
+}
+
+export const regionMapUser = (s) => {
+   let apiUrl = URL.regionMapUser + s
+   console.log(apiUrl)
+   return new Promise((resolve, reject) => { 
+     apiCall(apiUrl, {
+       method: "POST"
+     })
+       .then(async ({ status,  message }) => {
+         if(status === "SUCCESS") {
+           resolve(message);
+         } else {
+           reject(message);
+         }
+       })
+       .catch(e => {
+         reject(e.message);
+       })
+   });
+}
+
+export const regionDel = (user,region) => {
+  let apiUrl = URL.regionDel +user+'/'+region;
+  console.log(apiUrl )
+  return new Promise((resolve, reject) => { 
+    apiCall(apiUrl, {
+      method: "POST"
+    })
+      .then(async ({ status,  message }) => {
+        if(status === "SUCCESS") {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const regionMapAdd = (user,region) => {
+  let apiUrl = URL.regionMapAdd +user+'/'+region;
+  console.log(apiUrl,"@!)(#")
+  return new Promise((resolve, reject) => { 
+    apiCall(apiUrl, {
+      method: "POST"
+    })
+      .then(async ({ status,  message }) => {
+        if(status === "SUCCESS") {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const passReset = (password,userId) => {
+  let apiUrl = URL.passReset
+  console.log(apiUrl,password,userId)
+  const data={
+    password,userId
+  }
+  return new Promise((resolve, reject) => { 
+    apiCall(apiUrl, {
+      method: "POST",
+      body:data
+    })
+      .then(async ({ status,  message }) => {
+        if(status === "SUCCESS") {
+          resolve(message);
         } else {
           reject(message);
         }

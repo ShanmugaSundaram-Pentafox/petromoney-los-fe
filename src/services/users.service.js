@@ -79,3 +79,18 @@ export const deleteUser = (mobile) => {
       })
   });
 }
+export const getReport = () => {
+  return new Promise((resolve, reject) => {
+    apiCall(URL.report )
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}

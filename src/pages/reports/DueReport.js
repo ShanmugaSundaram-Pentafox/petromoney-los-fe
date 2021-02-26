@@ -6,6 +6,8 @@ import Paper from '@material-ui/core/Paper';
 import Currency from '../../components/Number/Currency';
 import { getReport } from '../../services/users.service';
 import usePageTitle from '../../hooks/usePageTitle';
+import Skeleton from '@material-ui/lab/Skeleton';
+import { Grid } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -34,32 +36,21 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const DisbursedTable = () => {
+const DueTable = () => {
   const classes = useStyles();
 
   const [loans , setLoans]= useState([])
   useMount( async () => {
       var a = await getReport()
-      setLoans(a.due)
-      console.log(a.due)
+      setLoans(a.due) 
   })
-  usePageTitle('Due Report')
+  usePageTitle('Report')
   const columns = useMemo(() => {
     return [
-      { name: 'applicant_code', label: 'Applicant Code'  },
-      { name: 'applicant_name', label: 'Applicant Name', minWidth: 100 },
-      {
-        name: 'cust_code',
-        label: 'Customer Code',
-        minWidth: 170,
-        align: 'right', 
-      },
-      {
-        name: 'cust_region',
-        label: 'Customer Region',
-        minWidth: 170,
-        align: 'right', 
-      },
+      { name: 'applicant_code', label: 'Applicant Code' },
+      { name: 'applicant_name', label: 'Applicant Name' },
+      { name: 'cust_code', label: 'Customer Code' },
+      { name: 'cust_region', label: 'Customer Region' },
       {
         name: 'duedate',
         label: 'Due Date', 
@@ -95,22 +86,39 @@ const DisbursedTable = () => {
   const options = { 
     selectableRowsHeader: false,
     selectableRows: 'none', 
+    rowsPerPage: 15,
+    rowsPerPageOptions: [15,20,30],
   };
 
-  return (
+  if (loans.length===0){
+    return(
     <div className={classes.root}>
-      {
-        Array.isArray(loans) && loans.length ? (
-          <MUIDataTable
-            title={"DUE"}
-            data={loans}
-            columns={columns}
-            options={options}
-          />
-        ) : <Paper style={{ padding: 10 }}>No Due Loans</Paper> 
-      }
+      <Grid item xs={12}>
+        <Skeleton variant="rect" width="100%" height={600} />
+      </Grid>
     </div>
-  )
+    )
+  }
+  else{
+    return (
+      <div className={classes.root}>
+        {(loans.length===0)?(
+          <Grid item xs={12}>
+            <Skeleton variant="rect" width="100%" height={400} />
+          </Grid>
+        ):(
+          Array.isArray(loans) && loans.length ? (
+            <MUIDataTable
+              title={"Due Reports"}
+              data={loans}
+              columns={columns}
+              options={options}
+            />
+          ) : <Paper style={{ padding: 10 }}>No Due Loans</Paper> 
+        )}
+      </div>
+    )
+  } 
 }
 
-export default DisbursedTable 
+export default DueTable 

@@ -18,8 +18,8 @@ import Solar from '../pages/solar/solar';
 import Users from '../pages/users/users';
 import { permissionCheck } from '../components/UserCan/UserCan';
 import { rulesList } from '../config/userRules';
-import Due from '../pages/reports/due';
-import OverDue from '../pages/reports/overDue';
+import Due from '../pages/reports/DueReport';
+import OverDue from '../pages/reports/OverDueReport';
 
 const Routes = ({ currentUser }) => {
   return (

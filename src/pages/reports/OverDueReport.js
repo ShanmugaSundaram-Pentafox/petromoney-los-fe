@@ -6,6 +6,8 @@ import Paper from '@material-ui/core/Paper';
 import Currency from '../../components/Number/Currency';
 import { getReport } from '../../services/users.service';
 import usePageTitle from '../../hooks/usePageTitle';
+import { Grid } from '@material-ui/core';
+import Skeleton from '@material-ui/lab/Skeleton';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -38,26 +40,15 @@ const OverDueTable = () => {
   const [loans , setLoans]= useState([])
   useMount( async () => {
       var a = await getReport()
-      setLoans(a.overdue)
-      console.log(a.overdue)
+      setLoans(a.overdue) 
   })
-  usePageTitle('Due Report')
+  usePageTitle('Report')
   const columns = useMemo(() => {
     return [
-      { name: 'applicant_code', label: 'Applicant Code'  },
-      { name: 'applicant_name', label: 'Applicant Name', minWidth: 100 },
-      {
-        name: 'cust_code',
-        label: 'Customer Code',
-        minWidth: 170,
-        align: 'right', 
-      },
-      {
-        name: 'cust_region',
-        label: 'Customer Region',
-        minWidth: 170,
-        align: 'right', 
-      },
+      { name: 'applicant_code', label: 'Applicant Code' },
+      { name: 'applicant_name', label: 'Applicant Name' },
+      { name: 'cust_code',label: 'Customer Code' },
+      { name: 'cust_region', label: 'Customer Region' },
       {
         name: 'penal_overdue',
         label: 'Penal Overdue', 
@@ -92,21 +83,27 @@ const OverDueTable = () => {
 
   const options = { 
     selectableRowsHeader: false,
-    selectableRows: 'none', 
+    selectableRows: 'none',  
+    rowsPerPage: 15,
+    rowsPerPageOptions: [15,20,30],
   };
 
   return (
     <div className={classes.root}>
-      {
+      {(loans.length===0)?(
+          <Grid item xs={12}>
+            <Skeleton variant="rect" width="100%" height={600} />
+          </Grid>
+        ):(
         Array.isArray(loans) && loans.length ? (
           <MUIDataTable
-            title={"OVER DUE"}
+            title={"Over Due Reports"}
             data={loans}
             columns={columns}
             options={options}
           />
-        ) : <Paper style={{ padding: 10 }}>No Disbursed Loans</Paper> 
-      }
+        ) : <Paper style={{ padding: 10 }}>No Over Due Reports</Paper> 
+      )}
     </div>
   )
 }

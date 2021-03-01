@@ -25,5 +25,11 @@ export const URL = {
   ls2_metrices: "business/metrics/ls2",
   loanBook: 'business/loanbook',
   loanMetrics: "metrics/loan/stats",
-  report:"loan/report"
+  report:"loan/report",
+  region:"regions",
+  regionMap:"regionMap",
+  regionMapUser:"region-map-user/",
+  regionDel:"region-del/",
+  regionMapAdd:"region-map-add/",
+  passReset:"passReset"
 }

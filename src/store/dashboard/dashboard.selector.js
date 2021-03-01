@@ -11,3 +11,8 @@ export const selectLayouts = createSelector(
   [selectDashboard],
   dashboard => dashboard.layouts
 );
+
+export const selectAllUsers = createSelector(
+  [selectDashboard],
+  dashboard => dashboard.allUsers
+);

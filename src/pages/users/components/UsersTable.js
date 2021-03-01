@@ -3,7 +3,8 @@ import { makeStyles } from "@material-ui/styles"
 import MUIDataTable from "mui-datatables"
 import Typography from "@material-ui/core/Typography";
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
-import { Button } from "@material-ui/core";
+import LockIcon from '@material-ui/icons/Lock';
+import { Button, TextField } from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -12,7 +13,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Tooltip from '@material-ui/core/Tooltip';
 import {deleteUser} from '../../../services/users.service';
 import { logger } from '../../../config/logger';
-
+import RightDrawer from './RightDrawer'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -42,6 +43,8 @@ const UsersTable = ({ title, data, withRole }) => {
   const [apiStatus, setApiStatus] = useState({});
   const [userId,setuserId] = useState({});
 
+  const [op , setOp ] = React.useState(false);
+ 
 
   const handleClickOpen = (value) => {
     setuserId(value);
@@ -111,10 +114,11 @@ const UsersTable = ({ title, data, withRole }) => {
             <div>
               <div>
                 <Button onClick={() =>handleClickOpen(value)}>
-                <Tooltip title="deactivate" aria-label="add">
-                <DeleteOutlinedIcon style={{ width: "20px", color: "#ff6666" }} />
-                </Tooltip>
+                  <Tooltip title="deactivate" aria-label="add">
+                    <DeleteOutlinedIcon style={{ width: "20px", color: "#ff6666" }} />
+                  </Tooltip>
                 </Button>
+                <RightDrawer checked={op} userId={value} data={data.find(item => item.id === value)} />
               </div>
             </div>
           )
@@ -156,21 +160,20 @@ const UsersTable = ({ title, data, withRole }) => {
           options={options}
         />
       ) : null}
-      <Dialog
-        open={open}
-        onClose={handleClose}
+      <Dialog open={open} onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle>{"Are you sure"}</DialogTitle>
         <DialogContent>
-          <DialogContentText className={classes.text}>you want to delete the user..?</DialogContentText>
+          <DialogContentText className={classes.text}>you want to delete the user..?{userId}</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} variant="contained" >Cancel</Button>
           <Button onClick={() => deleteUserRecord(userId)} className={classes.button} >yes</Button>
         </DialogActions>
       </Dialog>
+       
     </div>
   )
 }

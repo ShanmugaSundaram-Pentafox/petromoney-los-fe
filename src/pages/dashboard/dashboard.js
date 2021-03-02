@@ -27,7 +27,6 @@ const DataCharts = styled.div`
     border-radius: 6px;
   }
 `;
-
 const Dashboard = ({ currentUser, dashboardView }) => {
   usePageTitle('Dashboard');
   const [chartData, setChartData] = useState([{}, {}, {}, {}, {}, {}]);

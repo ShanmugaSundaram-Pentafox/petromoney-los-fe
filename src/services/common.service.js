@@ -83,3 +83,119 @@ export const downloadPDF = ({ file, isBase64, name }) => {
   downloadLink.download = fileName;
   downloadLink.click();
 }
+export const getAllRegion = () => {
+  return new Promise((resolve, reject) => {
+    apiCall(`regions`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+export const getMappedRegion = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`user/${id}/map/region`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+export const updateMappedRegion = (data, id) => {
+
+  return new Promise((resolve, reject) => {
+    apiCall(`user/${id}/map/region`, {
+      method: 'POST',
+      body: {
+        "regions": data
+      }
+    })
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+export const deleteMappedRegion = (data, id) => {
+  console.log(data, "data while deleting");
+  return new Promise((resolve, reject) => {
+    apiCall(`user/${id}/map/region`, {
+      method: 'DELETE',
+      body: {
+        "regions": data
+      }
+    })
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+export const updatePassword = (password, mobile, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`user/${id}/update`, {
+      method: 'POST',
+      body: {
+        mobile,
+        password
+      }
+    })
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+export const updateUserDetails = (name, mail, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`user/${id}/update`, {
+      method: 'POST',
+      body: {
+        "name": name,
+        "email": mail
+      }
+    })
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

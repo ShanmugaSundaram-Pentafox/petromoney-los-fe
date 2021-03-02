@@ -59,7 +59,6 @@ const Demolist = (data) => {
             setRegion(d => { d.splice(n, 1); return d; });
         }
         else {
-            
             setRegion(d => { return d.concat(val); })
         }
         console.log("number",region)
@@ -96,7 +95,7 @@ const Demolist = (data) => {
         <Box mt={2} mb={2} bgcolor={"#fafafa"}>
             <Typography variant="h4" component="h3">Regions Mapped</Typography>
             <Grid container spacing={2}  >
-                <Grid item className={classes.root}>
+                <Grid item xs={5} className={classes.root}>
                     {allRegion.map(item => {
                         return (
                             <Paper>
@@ -116,7 +115,7 @@ const Demolist = (data) => {
                         )
                     })}
                 </Grid>
-                <Grid item >
+                <Grid item xs={2} >
                     <Grid container direction="column" alignItems="center">
                         <Button
                             variant="outlined"
@@ -136,7 +135,7 @@ const Demolist = (data) => {
                         </Button>
                     </Grid>
                 </Grid>
-                <Grid item className={classes.root} >
+                <Grid item xs={5} className={classes.root} >
                     <Paper direction="column"  >
                         {mappedRegion.map(item => {
                             return (

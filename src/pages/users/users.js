@@ -12,7 +12,6 @@ import { setAllUsers } from '../../store/dashboard/dashboard.actions';
 import ChartCard from '../../components/CommonComponents/ChartCard/ChartCard';
 import { CHART_COLORS } from '../../config/constants';
 import { VictoryPie } from 'victory';
-
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -65,7 +64,6 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
   const trans = getUsersByRole(allUsers, "TRANSPORTER");
   const dealers = getUsersByRole(allUsers, "DEALER");
   const others = allUsers.filter(user => !(["FIELD_OFFICER", "TRANSPORTER", "DEALER", "SALES_HEAD_STATE", "SALES_HEAD_REGIONAL"].includes(user.role_name)));
-
   const classes = useStyles();
   const [currency, setCurrency] = React.useState('Field Officiers');
 
@@ -132,9 +130,9 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
                 />
               </ChartCard>
             </Grid>
-            <Grid item xs={6}>
+            {/* <Grid item xs={6}>
               <Box p={2} borderRadius={4} bgcolor="background.paper">
-                {/* <Typography variant="h5">Credit Book</Typography> */}
+                 <Typography variant="h5">Credit Book</Typography> 
                 <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="wrap">
                   <DashCard text="Field Officers" value={fo.length} />
                   <DashCard text="Dealers" value={dealers.length} /> 
@@ -142,9 +140,9 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
                   <DashCard noBorder text="Other Users" value={others.length} />
                 </Box>
               </Box>
-            </Grid>
+            </Grid> */}
             
-            <Grid item xs={12} sm={12}>
+            {/* <Grid item xs={12} sm={12}>
               <Paper>
               <form className={classes.root} noValidate autoComplete="off">
                 <div>
@@ -166,7 +164,7 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
               </form>
             
               </Paper>
-            </Grid>      
+            </Grid>       */}
 
             <Grid item xs={12} sm={12}>
               {button}

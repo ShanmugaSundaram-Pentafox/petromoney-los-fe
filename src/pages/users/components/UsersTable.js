@@ -98,6 +98,14 @@ const UsersTable = ({ title, data, withRole }) => {
           sort: true,
         },
       },
+       {
+        label: "Role",
+        name: "role_name",
+        options: {
+          filter: true,
+          sort: true,
+        },
+      },
       
     ];
     const actionColumnData ={
@@ -139,7 +147,7 @@ const UsersTable = ({ title, data, withRole }) => {
   }, [withRole])
 
   const options = {
-    filter: withRole ? true : false,
+    filter: true,
     // filterType: 'checkbox',
     selectableRowsHeader: false,
     selectableRows: "none",

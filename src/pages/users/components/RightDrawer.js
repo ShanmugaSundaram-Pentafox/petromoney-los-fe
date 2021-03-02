@@ -1,24 +1,17 @@
 import React, { useState } from 'react';
-import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import IconButton from '@material-ui/core/IconButton';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
-import { useMount } from 'react-use';
-import { getRegionMap, passReset } from '../../../services/users.service';
-import MultipleList from './MultipleList'
+import { updatePassword, updateUserDetails } from '../../../services/common.service';
 import { DialogContentText, TextField, Typography } from '@material-ui/core';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
+import DemoList from './DemoList';
 
 const useStyles = makeStyles({
   root: {
@@ -62,6 +55,14 @@ function Alert(props) {
 
 export default function TemporaryDrawer({userId, data}) {
   const [open, setOpen] = React.useState(false);
+  const classes = useStyles();
+  const [showUserEditDrawer, setShowUserEditDrawer] = useState(false);
+  const [region , setRegion] = React.useState([])
+  const [password , setPassword] = React.useState("")
+  const [userName, setUserName] = useState("")
+  const [userMail, setUserMail] = useState("")
+  const [confirmPassword , SetConfirmPassword] = React.useState("")
+ 
 
   const handleClick = () => {
     setOpen(true);
@@ -74,33 +75,20 @@ export default function TemporaryDrawer({userId, data}) {
 
     setOpen(false);
   };
+  const saveProfile = () => {
+    updateUserDetails(userName, userMail)
+  }
 
   const checkPassword = () => {
     if(password === confirmPassword){
-      passReset(password,userId)
+      updatePassword(password, data.mobile)
+
     } else {
       console.log("ASDA")
       handleClick({ vertical: 'top', horizontal: 'center' })
     }
   }
 
-  const classes = useStyles();
-  const [showUserEditDrawer, setShowUserEditDrawer] = useState(false);
-  const [region , setRegion] = React.useState([])
-  
-  const [password , setPassword] = React.useState("")
-  const [confirmPassword , SetConfirmPassword] = React.useState("")
- 
-  useMount(() => { 
-      getRegionMap()
-          .then(data => {
-              setRegion(data)
-          })
-          .catch(e => {
-              console.log(e);
-          })
-  })
-    
   const toggleDrawer = () => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
@@ -112,51 +100,71 @@ export default function TemporaryDrawer({userId, data}) {
 
   return (
     <>
-      <Button onClick={toggleDrawer()}>EDIT</Button>
+     <Button onClick={toggleDrawer()}><VisibilityOutlinedIcon style={{ width: "20px", color: "#000A0" }} /> </Button>
       <Drawer anchor={"right"} open={showUserEditDrawer} onClose={toggleDrawer()}>
-        <Box p={2} px={3} bgcolor={"#f1f1f1"} display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="h3" component="h2">User Info</Typography>
+        <Box p={2} borderRadius={4} bgcolor={"#f1f1f1"} display="flex" justifyContent="space-between" alignItems="center">
+          <Typography variant="h3" component="h2">User Information</Typography>
           <IconButton size="small" onClick={toggleDrawer()}>
             <CloseRoundedIcon />
           </IconButton>
         </Box>
         <Box p={2} pl={3}>
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <Typography variant="h4" component="h3">Profile Information</Typography>
+          </Box>
           <Box mb={2}>
-            <Box mb={1}>
-              <label style={{ fontSize: 12, fontWeight: 600, color: '#666', marginBottom: 10 }}>Name</label>
-              <p style={{ fontSize: 16 }}>{data.name}</p>
-            </Box>
-            <Box mb={1}>
-              <label style={{ fontSize: 12, fontWeight: 600, color: '#666', marginBottom: 10 }}>Mobile</label>
-              <p style={{ fontSize: 16 }}>{data.mobile}</p>
-            </Box>
+            <form>
+              <Box mb={1}>
+                <label style={{ fontSize: 12, fontWeight: 600, color: '#666', marginBottom: 10 }}>Name</label>
+                <p><TextField
+                  id="standard-basic"
+                  defaultValue={data.name}
+                  className={classes.textFieldStyle}
+                  onChange={e => setUserName(e.target.value)}
+                /></p>
+              </Box>
+              <Box mb={1}>
+                <label style={{ fontSize: 12, fontWeight: 600, color: '#666', marginBottom: 10 }}>Mobile</label>
+                <p style={{ fontSize: 16 }}>{data.mobile}</p>
+              </Box>
+              <Box mb={1}>
+                <label style={{ fontSize: 12, fontWeight: 600, color: '#666', marginBottom: 10 }}>Email</label>
+                <p><TextField
+                  id="standard-basic"
+                  defaultValue={data.email}
+                  className={classes.textFieldStyle}
+                  onChange={e => setUserMail(e.target.value)}
+                /></p>
+              </Box>
+            </form>
+            <div>
+              <Button variant={"contained"} color="primary" onClick={() => saveProfile()}>Save</Button>
+            </div>
           </Box>
           <Divider />
-          <MultipleList userId={userId} region={region}/>   
-          
-          <Box p={2} bgcolor={"#fafafa"} borderRadius={4}>
-            <Typography variant="h5" component="h5">Update Passowrd</Typography>
-
-            <TextField 
+          <DemoList data={data}></DemoList>
+          <Divider />
+          <Box mt={2} mb={2} bgcolor={"#fafafa"}>
+            <Typography variant="h4" component="h3">Reset Password</Typography>
+            <TextField
               margin="dense"
               id="password"
-              label="New Password"
+              label="Enter New Password"
               type="password"
               value={password}
               className={classes.textFieldStyle}
-              onChange={e=>setPassword(e.target.value)}
+              onChange={e => setPassword(e.target.value)}
             />
-            <TextField 
+            <TextField
               margin="dense"
               id="password"
               label="Confirm New Password"
               type="password"
               value={confirmPassword}
               className={classes.textFieldStyle}
-              onChange={e=>SetConfirmPassword(e.target.value)}
+              onChange={e => SetConfirmPassword(e.target.value)}
             />
-
-            <Button variant={"contained"} color="primary" onClick={ e=> checkPassword() }>
+            <Button variant={"contained"} color="primary" onClick={e => checkPassword()}>
               Update Password
             </Button>
             <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
@@ -167,6 +175,7 @@ export default function TemporaryDrawer({userId, data}) {
           </Box>
         </Box>
       </Drawer>
+      
     </>
   );
   

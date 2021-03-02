@@ -2,11 +2,9 @@ import React from 'react';
 import { useMount } from 'react-use';
 import { connect } from 'react-redux';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getAllUsers, getUsersByRole } from '../../services/users.service';
 import UsersTable from './components/UsersTable';
-import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { setAllUsers } from '../../store/dashboard/dashboard.actions';
 import ChartCard from '../../components/CommonComponents/ChartCard/ChartCard';
@@ -16,6 +14,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import { Paper } from '@material-ui/core';
+
 
 const currencies = [ 
   {
@@ -65,7 +64,7 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
   const dealers = getUsersByRole(allUsers, "DEALER");
   const others = allUsers.filter(user => !(["FIELD_OFFICER", "TRANSPORTER", "DEALER", "SALES_HEAD_STATE", "SALES_HEAD_REGIONAL"].includes(user.role_name)));
   const classes = useStyles();
-  const [currency, setCurrency] = React.useState('Field Officiers');
+  const [currency, setCurrency] = React.useState();
 
   const handleChange = (event) => {
     setCurrency(event.target.value);
@@ -76,6 +75,7 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
   }
 
   let button;
+  currencies.map((value) => {
   if (currency==="Field Officiers") {
     button = <UsersTable title="Field Officiers" data={fo} />;
   } else if (currency==="Dealers") {
@@ -89,7 +89,10 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
   } else if (currency==="Other Users") {
     button = <UsersTable withRole title="Other Users" data={others} />;
   }
+  else
+    button =<UsersTable title="Users" data={allUsers}/>
 
+  })
 
   return (
     <div>

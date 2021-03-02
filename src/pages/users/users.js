@@ -12,7 +12,6 @@ import { setAllUsers } from '../../store/dashboard/dashboard.actions';
 import ChartCard from '../../components/CommonComponents/ChartCard/ChartCard';
 import { CHART_COLORS } from '../../config/constants';
 import { VictoryPie } from 'victory';
-
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -47,7 +46,6 @@ const useStyles = makeStyles((theme) => ({
 
 const Users = ({ currentUser, allUsers, setAllUsersData }) => {
   usePageTitle('All Users');
-  
   useMount(() => {
     // allow only if current user is admin
     if(currentUser.role_id === 1 && !allUsers.length) {
@@ -60,19 +58,15 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
         })
     }
   })
-
   const fo = getUsersByRole(allUsers, "FIELD_OFFICER");
   const trans = getUsersByRole(allUsers, "TRANSPORTER");
   const dealers = getUsersByRole(allUsers, "DEALER");
   const others = allUsers.filter(user => !(["FIELD_OFFICER", "TRANSPORTER", "DEALER", "SALES_HEAD_STATE", "SALES_HEAD_REGIONAL"].includes(user.role_name)));
-
   const classes = useStyles();
   const [currency, setCurrency] = React.useState('Field Officiers');
-
   const handleChange = (event) => {
     setCurrency(event.target.value);
   };
-
   const getUserById = id => {
     return allUsers.find(item => item.id === id) || {};
   }

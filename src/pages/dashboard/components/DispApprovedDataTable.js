@@ -58,7 +58,6 @@ const useStyles = makeStyles(theme => ({
 
 const DispApprovedDataTable = ({ id, loanData }) => {
   const classes = useStyles();
-
   const [dispHistory, setDispHistory] = useState({});
   const [modalData, setModalData] = useState({});
   const [loading, setLoading] = useState(false);
@@ -82,10 +81,8 @@ const DispApprovedDataTable = ({ id, loanData }) => {
       prospect_code: Yup.string().min(2).required("Enter Prospect code"),
       disbursement_date: Yup.string().required("Enter Disbursement date"),
       amount: Yup.string().required("Enter Amount"),
-      // disbursement_remarks: Yup.string(),
     }),
     onSubmit: values => {
-      // console.log('>> DISP APPR MODAL >> ', values);
       const data = values.applicant_code ? values : { ...values, applicant_code: dispHistory.applicant_code };
       setLoading(true);
       updateLoanApprovalStatusById(id, loanData.id, data)
@@ -152,19 +149,19 @@ const DispApprovedDataTable = ({ id, loanData }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-        {
-          dispHistory?.disbursement_details?.map((row, i) => (
-            <TableRow key={i}>
-              <TableCell scope="row" component="th">{row.prospect_code}</TableCell>
-              <TableCell align="center">{row.disbursement_date}</TableCell>
-              <TableCell align="right"><Currency value={row.amount} /></TableCell>
-              <TableCell align="right">
-                <Button variant="outlined" size="small" onClick={() => onRowEdit(row)}>Edit</Button>
-                <Button variant="outlined" size="small" onClick={() => onRowDelete(row)}>Delete</Button>
-              </TableCell>
-            </TableRow>
-          ))
-        }
+          {
+            dispHistory?.disbursement_details?.map((row, i) => (
+              <TableRow key={i}>
+                <TableCell scope="row" component="th">{row.prospect_code}</TableCell>
+                <TableCell align="center">{row.disbursement_date}</TableCell>
+                <TableCell align="right"><Currency value={row.amount} /></TableCell>
+                <TableCell align="right">
+                  <Button variant="outlined" size="small" onClick={() => onRowEdit(row)}>Edit</Button>
+                  <Button variant="outlined" size="small" onClick={() => onRowDelete(row)}>Delete</Button>
+                </TableCell>
+              </TableRow>
+            ))
+          }
         </TableBody>
         <TableFooter>
           <TableRow>
@@ -197,23 +194,23 @@ const DispApprovedDataTable = ({ id, loanData }) => {
               >
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
-                  {
-                    dispHistory.applicant_code ? (
-                      <Typography variant="h5" style={{ marginBottom: 12 }}><span style={{ color: "#888", fontSize: 14 }}>Applicant Code:</span> {dispHistory.applicant_code || "?"}</Typography>
-                    ) : (
-                      <TextInput
-                        direction
-                        alignTop
-                        required
-                        name={"applicant_code"}
-                        labelText="Applicant Code"
-                        error={errors.applicant_code}
-                        helperText={errors.applicant_code}
-                        defaultValue={values.applicant_code}
-                        onChange={handleChange}
-                        />
-                    )
-                  }
+                    {
+                      dispHistory.applicant_code ? (
+                        <Typography variant="h5" style={{ marginBottom: 12 }}><span style={{ color: "#888", fontSize: 14 }}>Applicant Code:</span> {dispHistory.applicant_code || "?"}</Typography>
+                      ) : (
+                          <TextInput
+                            direction
+                            alignTop
+                            required
+                            name={"applicant_code"}
+                            labelText="Applicant Code"
+                            error={errors.applicant_code}
+                            helperText={errors.applicant_code}
+                            defaultValue={values.applicant_code}
+                            onChange={handleChange}
+                          />
+                        )
+                    }
                   </Grid>
                   <Grid item sm={6}>
                     <TextInput
@@ -226,7 +223,7 @@ const DispApprovedDataTable = ({ id, loanData }) => {
                       helperText={errors.prospect_code}
                       defaultValue={values.prospect_code}
                       onChange={handleChange}
-                      />
+                    />
                   </Grid>
                   <Grid item sm={6}>
                     <InputMask
@@ -235,25 +232,25 @@ const DispApprovedDataTable = ({ id, loanData }) => {
                       value={values.disbursement_date}
                       error={errors.disbursement_date}
                       onChange={handleChange}
-                      >
-                        {
-                          ({ inputProps }) => (
-                            <TextInput
-                              direction
-                              alignTop
-                              required
-                              name={"disbursement_date"}
-                              labelText="Disbursement Date"
-                              placeholder="Example (YYYY/MM/DD)"
-                              error={errors.disbursement_date}
-                              helperText={errors.disbursement_date}
-                              // value={values.disbursement_date}
-                              {...inputProps}
-                              // onChange={dataValue => handleChange(moment(dataValue).format("YYYY/MM/DD"))}
-                              />
-                          )
-                        }
-                      </InputMask>
+                    >
+                      {
+                        ({ inputProps }) => (
+                          <TextInput
+                            direction
+                            alignTop
+                            required
+                            name={"disbursement_date"}
+                            labelText="Disbursement Date"
+                            placeholder="Example (YYYY/MM/DD)"
+                            error={errors.disbursement_date}
+                            helperText={errors.disbursement_date}
+                            // value={values.disbursement_date}
+                            {...inputProps}
+                          // onChange={dataValue => handleChange(moment(dataValue).format("YYYY/MM/DD"))}
+                          />
+                        )
+                      }
+                    </InputMask>
                   </Grid>
                   <Grid item sm={6}>
                     <TextInput
@@ -267,7 +264,7 @@ const DispApprovedDataTable = ({ id, loanData }) => {
                       error={errors.amount}
                       helperText={errors.amount}
                       onChange={handleChange}
-                      />
+                    />
                   </Grid>
                   {/* <Grid item sm={12}>
                     <TextInput

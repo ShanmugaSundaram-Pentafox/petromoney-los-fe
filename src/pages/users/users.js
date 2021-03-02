@@ -11,9 +11,6 @@ import ChartCard from '../../components/CommonComponents/ChartCard/ChartCard';
 import { CHART_COLORS } from '../../config/constants';
 import { VictoryPie } from 'victory';
 import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import MenuItem from '@material-ui/core/MenuItem';
-import { Paper } from '@material-ui/core';
 
 
 const currencies = [ 
@@ -65,15 +62,12 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
   const others = allUsers.filter(user => !(["FIELD_OFFICER", "TRANSPORTER", "DEALER", "SALES_HEAD_STATE", "SALES_HEAD_REGIONAL"].includes(user.role_name)));
   const classes = useStyles();
   const [currency, setCurrency] = React.useState();
-
   const handleChange = (event) => {
     setCurrency(event.target.value);
   };
-
   const getUserById = id => {
     return allUsers.find(item => item.id === id) || {};
   }
-
   let button;
   currencies.map((value) => {
   if (currency==="Field Officiers") {
@@ -91,9 +85,7 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
   }
   else
     button =<UsersTable title="Users" data={allUsers}/>
-
   })
-
   return (
     <div>
       {
@@ -144,7 +136,6 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
                 </Box>
               </Box>
             </Grid> */}
-            
             {/* <Grid item xs={12} sm={12}>
               <Paper>
               <form className={classes.root} noValidate autoComplete="off">
@@ -165,7 +156,6 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
                   </TextField>
                 </div>
               </form>
-            
               </Paper>
             </Grid>       */}
 

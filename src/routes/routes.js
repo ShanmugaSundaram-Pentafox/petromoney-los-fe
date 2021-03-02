@@ -18,6 +18,8 @@ import Solar from '../pages/solar/solar';
 import Users from '../pages/users/users';
 import { permissionCheck } from '../components/UserCan/UserCan';
 import { rulesList } from '../config/userRules';
+import Due from '../pages/reports/DueReport';
+import OverDue from '../pages/reports/OverDueReport';
 
 const Routes = ({ currentUser }) => {
   return (
@@ -32,6 +34,8 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/transports/:id?" component={TransportsDetails} />
       <ProtectedRoute allow exact path="/dealership/:id/credit-form" component={CreditForm} />
       <ProtectedRoute allow exact path="/settings" component={Settings} />
+      <ProtectedRoute allow exact path="/reports/due" component={Due} />
+      <ProtectedRoute allow exact path="/reports/overdue" component={OverDue} />
       <ProtectedRoute
         exact
         path="/users"

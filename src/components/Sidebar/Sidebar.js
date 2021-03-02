@@ -96,7 +96,7 @@ const Sidebar = props => {
       title: 'Loans',
       href: '/loans',
       icon: <AccountBoxIcon />
-    },
+    }, 
     {
       title: 'Dealerships',
       href: '/dealership',

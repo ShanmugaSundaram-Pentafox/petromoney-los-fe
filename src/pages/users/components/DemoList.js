@@ -52,13 +52,15 @@ const Demolist = (data) => {
             })
     })
     const getValue = (e) => {
-        if(region.includes(parseInt(e.target.value))) {
-            var n = region.indexOf(parseInt(e.target.value))
+        const val = parseInt(e?.target?.value);
+        if(!val) return;
+        if(region.includes(val)) {
+            var n = region.indexOf(val)
             setRegion(d => { d.splice(n, 1); return d; });
         }
         else {
             
-            setRegion(d => { return d.concat(parseInt(e.target.value)); })
+            setRegion(d => { return d.concat(val); })
         }
         console.log("number",region)
     }

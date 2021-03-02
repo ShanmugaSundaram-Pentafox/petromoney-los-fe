@@ -6,6 +6,7 @@ Axios.defaults.xsrfCookieName = "access_token_cookie"
 
 export const API = Axios.create({
   baseURL: URL.base,
-  // xsrfCookieName: 'access_token_cookie',
-  // xsrfHeaderName: 'X-CSRF-TOKEN'
+  xsrfCookieName: 'access_token_cookie',
+  xsrfHeaderName: 'X-CSRF-TOKEN',
+  'Access-Control-Allow-Origin': '*',
 });

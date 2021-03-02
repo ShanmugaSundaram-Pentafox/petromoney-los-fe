@@ -13,6 +13,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
 import DemoList from './DemoList';
 
+
 const useStyles = makeStyles({
   root: {
     width: '100%',
@@ -26,10 +27,14 @@ const useStyles = makeStyles({
   fullList: {
     width: '100%',
   },
+  drawerStyle: {
+    minWidth:'40vw',
+
+  },
   textFieldStyle: {
     marginBottom: '12px',
     display: 'block',
-    
+
     '& .MuiInputLabel-formControl': {
       fontSize: '16px',
       lineHeight: '140%',
@@ -45,7 +50,6 @@ const useStyles = makeStyles({
       lineHeight: '140%',
       width: '100%',
     }
-    
   },
 });
 
@@ -53,34 +57,31 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export default function TemporaryDrawer({userId, data}) {
+export default function TemporaryDrawer({ userId, data }) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
   const [showUserEditDrawer, setShowUserEditDrawer] = useState(false);
-  const [region , setRegion] = React.useState([])
-  const [password , setPassword] = React.useState("")
+  const [region, setRegion] = React.useState([])
+  const [password, setPassword] = React.useState("")
   const [userName, setUserName] = useState("")
   const [userMail, setUserMail] = useState("")
-  const [confirmPassword , SetConfirmPassword] = React.useState("")
- 
+  const [confirmPassword, SetConfirmPassword] = React.useState("")
 
   const handleClick = () => {
     setOpen(true);
   };
-
+  console.log("data data data", data)
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
-
     setOpen(false);
   };
   const saveProfile = () => {
     updateUserDetails(userName, userMail)
   }
-
   const checkPassword = () => {
-    if(password === confirmPassword){
+    if (password === confirmPassword) {
       updatePassword(password, data.mobile)
 
     } else {
@@ -88,21 +89,17 @@ export default function TemporaryDrawer({userId, data}) {
       handleClick({ vertical: 'top', horizontal: 'center' })
     }
   }
-
   const toggleDrawer = () => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
-
     setShowUserEditDrawer(st => !st);
   };
-
-
   return (
     <>
-     <Button onClick={toggleDrawer()}><VisibilityOutlinedIcon style={{ width: "20px", color: "#000A0" }} /> </Button>
-      <Drawer anchor={"right"} open={showUserEditDrawer} onClose={toggleDrawer()}>
-        <Box p={2} borderRadius={4} bgcolor={"#f1f1f1"} display="flex" justifyContent="space-between" alignItems="center">
+      <Button onClick={toggleDrawer()}><VisibilityOutlinedIcon style={{ width: "20px", color: "#000A0" }} /> </Button>
+      <Drawer anchor={"right"}  open={showUserEditDrawer} onClose={toggleDrawer()}>
+        <Box p={2} borderRadius={4} bgcolor={"#f1f1f1"} className={classes.drawerStyle} display="flex" justifyContent="space-between" alignItems="center">
           <Typography variant="h3" component="h2">User Information</Typography>
           <IconButton size="small" onClick={toggleDrawer()}>
             <CloseRoundedIcon />
@@ -142,7 +139,9 @@ export default function TemporaryDrawer({userId, data}) {
             </div>
           </Box>
           <Divider />
-          <DemoList data={data}></DemoList>
+          {
+            data.role_desc==="Field Officer" ? <DemoList data={data}></DemoList> : null
+          }
           <Divider />
           <Box mt={2} mb={2} bgcolor={"#fafafa"}>
             <Typography variant="h4" component="h3">Reset Password</Typography>
@@ -175,8 +174,8 @@ export default function TemporaryDrawer({userId, data}) {
           </Box>
         </Box>
       </Drawer>
-      
+
     </>
   );
-  
+
 }

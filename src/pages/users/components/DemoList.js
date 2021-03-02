@@ -10,13 +10,14 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import Checkbox from '@material-ui/core/Checkbox';
 import Paper from '@material-ui/core/Paper';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        marginTop:10,
+        marginTop: 10,
         minWidth: '15vw',
-        maxHeight:300,
-        overflowY:'auto',
+        maxHeight: 300,
+        overflowY: 'auto',
     },
     paper: {
         width: 'auto',
@@ -32,7 +33,9 @@ const Demolist = (data) => {
     const [allRegion, setAllRegion] = useState([])
     const [mappedRegion, setMappedRegion] = useState([])
     const [region, setRegion] = useState([])
+    const [loading, setLoading] = useState(false);
     useMount(() => {
+        setLoading(true);
         getAllRegion()
             .then(data => {
                 setAllRegion(data);
@@ -43,6 +46,7 @@ const Demolist = (data) => {
     })
     useMount(() => {
         const id = data.data.id
+        setLoading(true);
         getMappedRegion(id)
             .then(data => {
                 setMappedRegion(data);
@@ -53,43 +57,43 @@ const Demolist = (data) => {
     })
     const getValue = (e) => {
         const val = parseInt(e?.target?.value);
-        if(!val) return;
-        if(region.includes(val)) {
+        if (!val) return;
+        if (region.includes(val)) {
             var n = region.indexOf(val)
             setRegion(d => { d.splice(n, 1); return d; });
         }
         else {
             setRegion(d => { return d.concat(val); })
         }
-        console.log("number",region)
     }
     const updateValue = async () => {
         const id = data.data.id
-        console.log("regions",region)
         updateMappedRegion(region, id)
-        console.log("after deletion regions",region)
-        await 
-        getMappedRegion(id)
-            .then(data => {
-                setMappedRegion(data);
-            })
-            .catch(e => {
-                console.log(e);
-            })
-
-    }
-    const deleteValue =  async () => {
-        const id = data.data.id
-        deleteMappedRegion(region, id)
+        setLoading(true);
         await getMappedRegion(id)
             .then(data => {
+                setLoading(false);
                 setMappedRegion(data);
             })
             .catch(e => {
                 console.log(e);
             })
-        
+            setLoading(false);
 
+    }
+    const deleteValue = async () => {
+        const id = data.data.id
+        deleteMappedRegion(region, id)
+        setLoading(true);
+        setLoading(false);
+        await getMappedRegion(id)
+            .then(data => {
+                setLoading(false);
+                setMappedRegion(data);
+            })
+            .catch(e => {
+                console.log(e);
+            })
     }
     return (
         <Box mt={2} mb={2} bgcolor={"#fafafa"}>
@@ -114,6 +118,7 @@ const Demolist = (data) => {
                             </Paper>
                         )
                     })}
+                    
                 </Grid>
                 <Grid item xs={2} >
                     <Grid container direction="column" alignItems="center">
@@ -153,6 +158,7 @@ const Demolist = (data) => {
                                 </FormGroup>
                             )
                         })}
+                        
                     </Paper>
                 </Grid>
             </Grid>

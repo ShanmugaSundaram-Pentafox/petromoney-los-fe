@@ -53,7 +53,6 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick }) => {
         .catch(e => null)
     }
   });
-  
   const columns = useMemo(() => {
     return [
       {

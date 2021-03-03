@@ -2,20 +2,16 @@ import React from 'react';
 import { useMount } from 'react-use';
 import { connect } from 'react-redux';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getAllUsers, getUsersByRole } from '../../services/users.service';
 import UsersTable from './components/UsersTable';
-import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { setAllUsers } from '../../store/dashboard/dashboard.actions';
 import ChartCard from '../../components/CommonComponents/ChartCard/ChartCard';
 import { CHART_COLORS } from '../../config/constants';
 import { VictoryPie } from 'victory';
 import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import MenuItem from '@material-ui/core/MenuItem';
-import { Paper } from '@material-ui/core';
+
 
 const currencies = [ 
   {
@@ -63,15 +59,15 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
   const dealers = getUsersByRole(allUsers, "DEALER");
   const others = allUsers.filter(user => !(["FIELD_OFFICER", "TRANSPORTER", "DEALER", "SALES_HEAD_STATE", "SALES_HEAD_REGIONAL"].includes(user.role_name)));
   const classes = useStyles();
-  const [currency, setCurrency] = React.useState('Field Officiers');
+  const [currency, setCurrency] = React.useState();
   const handleChange = (event) => {
     setCurrency(event.target.value);
   };
   const getUserById = id => {
     return allUsers.find(item => item.id === id) || {};
   }
-
   let button;
+  currencies.map((value) => {
   if (currency==="Field Officiers") {
     button = <UsersTable title="Field Officiers" data={fo} />;
   } else if (currency==="Dealers") {
@@ -85,8 +81,9 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
   } else if (currency==="Other Users") {
     button = <UsersTable withRole title="Other Users" data={others} />;
   }
-
-
+  else
+    button =<UsersTable title="Users" data={allUsers}/>
+  })
   return (
     <div>
       {
@@ -126,9 +123,9 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
                 />
               </ChartCard>
             </Grid>
-            <Grid item xs={6}>
+            {/* <Grid item xs={6}>
               <Box p={2} borderRadius={4} bgcolor="background.paper">
-                {/* <Typography variant="h5">Credit Book</Typography> */}
+                 <Typography variant="h5">Credit Book</Typography> 
                 <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="wrap">
                   <DashCard text="Field Officers" value={fo.length} />
                   <DashCard text="Dealers" value={dealers.length} /> 
@@ -136,9 +133,8 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
                   <DashCard noBorder text="Other Users" value={others.length} />
                 </Box>
               </Box>
-            </Grid>
-            
-            <Grid item xs={12} sm={12}>
+            </Grid> */}
+            {/* <Grid item xs={12} sm={12}>
               <Paper>
               <form className={classes.root} noValidate autoComplete="off">
                 <div>
@@ -158,9 +154,8 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
                   </TextField>
                 </div>
               </form>
-            
               </Paper>
-            </Grid>      
+            </Grid>       */}
 
             <Grid item xs={12} sm={12}>
               {button}

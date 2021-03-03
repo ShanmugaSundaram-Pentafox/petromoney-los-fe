@@ -55,7 +55,6 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
         })
     }
   })
-
   const fo = getUsersByRole(allUsers, "FIELD_OFFICER");
   const trans = getUsersByRole(allUsers, "TRANSPORTER");
   const dealers = getUsersByRole(allUsers, "DEALER");

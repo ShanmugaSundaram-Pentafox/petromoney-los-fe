@@ -8,6 +8,7 @@ export const URL = {
   addNewTransporter: "signup/transporter",
   addNewDealer: "signup/dealer",
   loans: "loans",
+  exceptions:"loans/exceptions",
   sanction: "loans/sanction",
   dealership: "dealership",
   transport: 'transporterslist',

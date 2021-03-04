@@ -35,7 +35,12 @@ const useStyles = makeStyles((theme) => ({
       margin: theme.spacing(4),
     },
     MailIcon: {
-      width:"10vw"
+      width: "10vw"
+    },
+    active: {
+      backgroundColor: 'white',
+    color: "rgba(34, 36, 68, 1)"
+
     }
   },
 }));
@@ -47,6 +52,13 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   const [ls2_metrices, setLs2Metrices] = useState([]);
   const [daysChartData, setdaysChartData] = useState(['Days', 'Amount']);
   const [totalForRegion, setTotalForRegion] = useState(0)
+  const [value, setValue] = useState("Submitted");
+
+  const handleClick = (name) => {
+    console.log("name....................", value)
+    setValue(name)
+  }
+
 
   useMount(() => {
     getLoanStats()
@@ -117,7 +129,9 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                 <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="wrap">
                   {
                     chartData.map((item, i) => (
-                      <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name} />
+                      <div onClick={() => handleClick(item.name)} activeClassName={classes.active}>
+                        <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name}  />
+                      </div>
                     ))
                   }
                 </Box>
@@ -196,7 +210,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
 
       {
         dashboardView === "LOS" && (
-          <LoansTable currentUser={currentUser} />
+          <LoansTable currentUser={currentUser} value={value} />
         )
       }
 

@@ -75,48 +75,52 @@ const MapRegion = (data) => {
   };
   const updateValue = async () => {
     const id = data.data.id;
-    setLoading(true);
-    updateMappedRegion(region, id)
-      .then((res) => {
-        getMappedRegion(id)
-          .then((data) => {
-            setLoading(false);
-            setMappedRegion(data);
-          })
-          .catch((e) => {
-            console.log(e);
-            setLoading(false);
-          });
-        setRegion([])
-      })
-      .catch((err) => {
-        setLoading(false);
-      });
+    if (region.length !== 0) {
+      setLoading(true);
+      updateMappedRegion(region, id)
+        .then((res) => {
+          getMappedRegion(id)
+            .then((data) => {
+              setLoading(false);
+              setMappedRegion(data);
+            })
+            .catch((e) => {
+              console.log(e);
+              setLoading(false);
+            });
+          setRegion([])
+        })
+        .catch((err) => {
+          setLoading(false);
+        });
+    }
   };
   const deleteValue = async () => {
     const id = data.data.id;
-    setLoading(true);
-    deleteMappedRegion(region, id)
-      .then((res) => {
-        getMappedRegion(id)
-          .then((data) => {
-            setLoading(false);
-            setMappedRegion(data);
-          })
-          .catch((e) => {
-            setLoading(false);
-            console.log(e);
-          });
-        setRegion([]);
-      })
-      .catch((err) => {
-        setLoading(false);
-      });
+    if (region.length !== 0) {
+      setLoading(true);
+      deleteMappedRegion(region, id)
+        .then((res) => {
+          getMappedRegion(id)
+            .then((data) => {
+              setLoading(false);
+              setMappedRegion(data);
+            })
+            .catch((e) => {
+              setLoading(false);
+              console.log(e);
+            });
+          setRegion([]);
+        })
+        .catch((err) => {
+          setLoading(false);
+        });
+    }
   };
 
   const regionList = (allRegion || []).filter((r) => {
     // console.log(mappedRegion, r.region, await !mappedRegion.find(rg => rg.region_id === r.region))
-    if(!mappedRegion.find(rg => rg.region_id === r.region))
+    if (!mappedRegion.find(rg => rg.region_id === r.region))
       return true
     else return false;
     // return !mappedRegion.find(rg => rg.region_id === r.region);

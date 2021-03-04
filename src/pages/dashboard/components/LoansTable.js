@@ -21,6 +21,10 @@ import DisbursementReqestTable from '../../../components/Tables/DisbursementReqe
 import UserCan from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import DisbursementApprovedTable from '../../../components/Tables/DisbursementApprovedTable';
+import ApprovedTable from '../../../components/Tables/ApprovedTable';
+import RejectedTable from '../../../components/Tables/RejectedTable'
+import DisbursedTable from '../../../components/Tables/DisbursedTable';
+
 
 const useStyles = makeStyles(theme => ({
   tableContainer: {
@@ -84,7 +88,7 @@ const useStyles = makeStyles(theme => ({
 
 // const convertToCurrency = value => <Currency value={value} />;
 
-const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
+const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
   const classes = useStyles();
   const [showPanel, setShowPanel] = useState({
     status: false,
@@ -93,7 +97,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
   const [dealershipData, setDealershipData] = useState();
   const [loansData, setLoansData] = useState();
   // const [dealersData, setDealersData] = useState();
-  
+
   const showDealershipInfo = (id, selectedLoanData, status) => {
     setLoansData(selectedLoanData);
     getDealershipById(id)
@@ -104,12 +108,12 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
     // getDealershipLoansById(id)
     //   .then(data => setLoansData(data))
     //   .catch(e => null)
-  
+
     // getDealersByDealershipId(id)
     //   .then(data => setDealersData(data))
     //   .catch(e => null)
 
-    setShowPanel({ status: true, data: status});
+    setShowPanel({ status: true, data: status });
   }
 
   return (
@@ -119,26 +123,61 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
         perform={rulesList.loan_approval}
         yes={() => (
           <Grid container spacing={2}>
-            <Grid item md={6}>
-              <Paper className={classes.tableContainer}>
-                <ApprovalReqestTable title={"Pending for Initial Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} />
-              </Paper>
-            </Grid>
-            <Grid item md={6}>
-              <Paper className={classes.tableContainer}>
-                <DisbursementReqestTable title={"Pending for Disbursement Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} />
-              </Paper>
-            </Grid>
-            <Grid item xs={12}>
-              <Paper className={classes.tableContainer}>
-                <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
-              </Paper>
-            </Grid>
-            <Grid item xs={12}>
-              <Paper className={classes.tableContainer}>
-                <DisbursementApprovedTable title={"Disbursement Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
-              </Paper>
-            </Grid>
+            {
+              value === "Pending Approval" ? (
+                <Grid item md={6}>
+                  <Paper className={classes.tableContainer}>
+                    <ApprovalReqestTable title={"Pending for Initial Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                  </Paper>
+                </Grid>
+              ) : null
+            }
+            {
+              value === "Pending Disbursement Approval" ? (
+                <Grid item md={6}>
+                  <Paper className={classes.tableContainer}>
+                    <DisbursementReqestTable title={"Pending for Disbursement Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                  </Paper>
+                </Grid>
+              ) : null
+            }
+            {
+              value === "Submitted" ? (
+                <Grid item xs={12}>
+                  <Paper className={classes.tableContainer}>
+                    <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                  </Paper>
+                </Grid>
+              ) : null
+            }
+            {
+              value === "Approved" ? (
+                <Grid item xs={12}>
+                  <Paper className={classes.tableContainer}>
+                    <ApprovedTable title={"Disbursement Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                  </Paper>
+                </Grid>
+
+              ) : null
+            }
+            {
+              value === "Rejected" ? (
+                <Grid item xs={12}>
+                  <Paper className={classes.tableContainer}>
+                    <RejectedTable title={"Rejected Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                  </Paper>
+                </Grid>
+              ) : null
+            }
+            {
+              value === "Disbursed" ? (
+                <Grid item xs={12}>
+                  <Paper className={classes.tableContainer}>
+                    <DisbursedTable title={"Disbursed Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                  </Paper>
+                </Grid>
+              ) : null
+            }
           </Grid>
         )}
         no={() => (
@@ -165,7 +204,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
             status={showPanel.data}
             currentUser={currentUser}
             onClose={() => { setShowPanel({ status: false }) }}
-            />
+          />
         </div>
       </Drawer>
     </Box>

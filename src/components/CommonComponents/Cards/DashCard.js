@@ -9,6 +9,9 @@ const DashCardWrapper = styled.div`
   /* box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.034),
     0 6.7px 5.3px rgba(0, 0, 0, 0.048); */
   color: #343434;
+  :hover {
+    background:#3f51b5;
+  }
   /* width: 100%; */
   flex: 1;
   min-width: 140px;
@@ -23,9 +26,17 @@ const DashCardWrapper = styled.div`
     /* margin-bottom: 8px; */
 
     .stat-number {
-      font-size: 30px;
+      font-size: 40px;
       font-weight: 600;
       flex: 1;
+    }
+    active: {
+      backgroundColor: 'rgba(248, 213, 138, 1)',
+      color: colors.blueGrey[800],
+      fontWeight: theme.typography.fontWeightMedium,
+      '& $icon': {
+        color: 'rgba(34, 36, 68, 1)'
+      }
     }
 
     .stat-icon {

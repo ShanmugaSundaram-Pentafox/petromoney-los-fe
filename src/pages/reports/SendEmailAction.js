@@ -105,16 +105,13 @@ const SendEmailAction = () => {
             <div id="">
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
-                    <h3>Are you sure...?</h3>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <p>You want to send mail</p>
+                    <h3>Would you like to send the reports over an email?</h3>
                   </Grid>
                   <Grid item xs={12} className={classes.actionFooter}>
-                    <Button disabled={loading} variant="outlined" size="medium" color="default" onClick={() => setModalData({})}>Cancel</Button>
+                    <Button disabled={loading} variant="outlined" size="medium" color="default" onClick={() => setModalData({})}>No</Button>
                     <Button disabled={loading} className={classes.actionButton} onClick={() => sendEmail()} type="submit" variant="outlined" size="medium" color="primary">
                       {
-                        loading ? <CircularProgress /> : 'Send'
+                        loading ? <CircularProgress /> : 'Yes'
                       }
                     </Button>
                   </Grid>

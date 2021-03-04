@@ -1,6 +1,6 @@
 /* eslint-disable react/no-multi-comp */
 /* eslint-disable react/display-name */
-import React, { forwardRef } from 'react';
+import React, { useState, forwardRef } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
@@ -12,10 +12,16 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ReportIcon from '@material-ui/icons/Report';
 import ReportProblemIcon from '@material-ui/icons/ReportProblem';
+import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
+import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
+import { getAllExceptions } from '../../../services/loans.service';
+import { useMount } from "react-use";
+import Badge from '@material-ui/core/Badge';
+
 
 const useStyles = makeStyles(theme => ({
   block1: {
-    display: 'flex', 
+    display: 'flex',
   },
   block2: {
     display: 'flex',
@@ -50,7 +56,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     marginRight: theme.spacing(1)
   },
-  iconArrow: { 
+  iconArrow: {
     width: 24,
     height: 24,
     display: 'flex',
@@ -80,9 +86,23 @@ const SidebarNav = props => {
   const { pages, className, ...rest } = props;
   const classes = useStyles();
   const [checked, setChecked] = React.useState(false);
+  const [exceptions, setExceptions] = useState([]);
+  const [check, setCheck] = React.useState(false);
 
+  useMount(() => {
+    getAllExceptions()
+      .then((data) => {
+        setExceptions(data)
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  });
   const handleChange = () => {
     setChecked((prev) => !prev);
+  };
+  const handleClick = () => {
+    setCheck((prev) => !prev);
   };
   return (
     <List
@@ -90,82 +110,145 @@ const SidebarNav = props => {
       className={clsx(classes.root, className)}
     >
       {pages.map(page => (
+        page.title != "Loans" ? (
+          <ListItem
+            className={classes.item}
+            disableGutters
+            key={page.title}
+          >
+            <Button
+              activeClassName={classes.active}
+              className={classes.button}
+              component={CustomRouterLink}
+              to={page.href}
+              exact
+            >
+              <div className={classes.icon}>{page.icon}</div>
+              {page.title}
+            </Button>
+          </ListItem>) : (
+            <>
+              <ListItem
+                className={classes.item}
+                disableGutters
+                key={page.title}
+              >
+                <Button
+                  activeClassName={classes.active}
+                  className={classes.button}
+                  onClick={handleClick}
+                  // to={page.href}
+                  exact
+                >
+                  <div className={classes.icon}>{page.icon}</div>
+                  {page.title}
+                  {(check) ?
+                    <div className={classes.iconArrow}><ExpandLessIcon /></div>
+                    :
+                    <div className={classes.iconArrow}><ExpandMoreIcon /></div>
+                  }
+                </Button>
+              </ListItem>
+              <Collapse in={check} >
+                <ListItem
+                  className={classes.itemSub}
+                  disableGutters
+                  key={'All'}
+                >
+                  <Button
+                    activeClassName={classes.active}
+                    className={classes.button}
+                    component={CustomRouterLink}
+                    to={page.href}
+                    exact
+                  >
+                    <div className={classes.icon}><BookmarkBorderIcon /></div>
+                    {'All Loans'}
+                  </Button>
+                </ListItem>
+                <ListItem
+                  className={classes.itemSub}
+                  disableGutters
+                  key={'LosLms'}
+                >
+                  <Button
+                    className={classes.button}
+                    activeClassName={classes.active}
+                    component={CustomRouterLink}
+                    to={'/loans/losLms'}
+                    exact
+                  >
+                    <Badge badgeContent={exceptions.length} max={999} style={{paddingLeft:"10px"}} color="primary">
+                      <div className={classes.icon}><AssessmentOutlinedIcon /></div>
+                      Exceptions &nbsp;
+                    </Badge>
+                  </Button>
+
+                </ListItem>
+              </Collapse>
+            </>
+          )
+      ))}
+      <ListItem
+        className={classes.item}
+        disableGutters
+        key={'Reports'}
+      >
+        <Button
+          activeClassName={classes.active}
+          className={classes.button}
+          onClick={handleChange}
+          exact
+        >
+          <div className={classes.block1}>
+            <div className={classes.block2}>
+              <div className={classes.icon}><AssessmentIcon /></div>
+              {'Report'}
+            </div>
+            {(checked) ?
+              <div className={classes.iconArrow}><ExpandLessIcon /></div>
+              :
+              <div className={classes.iconArrow}><ExpandMoreIcon /></div>
+            }
+
+          </div>
+        </Button>
+      </ListItem>
+      <Collapse in={checked} >
         <ListItem
-          className={classes.item}
+          className={classes.itemSub}
           disableGutters
-          key={page.title}
+          key={'Due'}
         >
           <Button
             activeClassName={classes.active}
             className={classes.button}
             component={CustomRouterLink}
-            to={page.href}
+            to={'/reports/due'}
             exact
           >
-            <div className={classes.icon}>{page.icon}</div>
-            {page.title}
+            <div className={classes.icon}><ReportIcon /></div>
+            {'Loan Due'}
           </Button>
         </ListItem>
-      ))}
         <ListItem
-          className={classes.item}
+          className={classes.itemSub}
           disableGutters
-          key={'Reports'}
+          key={'Overdue'}
         >
           <Button
-            activeClassName={classes.active}
             className={classes.button}
-            onClick={handleChange}
+            activeClassName={classes.active}
+            component={CustomRouterLink}
+            to={'/reports/overdue'}
             exact
           >
-            <div className={classes.block1}>
-              <div className={classes.block2}>
-                <div className={classes.icon}><AssessmentIcon/></div>
-                {'Report'}
-              </div>
-              {(checked)?
-              <div className={classes.iconArrow}><ExpandLessIcon /></div>
-              :
-              <div className={classes.iconArrow}><ExpandMoreIcon /></div>
-              }
-
-            </div>
+            <div className={classes.icon}><ReportProblemIcon /></div>
+            {'Loan Overdue'}
           </Button>
+
         </ListItem>
-        <Collapse in={checked} >
-          <ListItem
-            className={classes.itemSub}
-            disableGutters
-            key={'Due'}
-          >
-            <Button
-              activeClassName={classes.active}
-              className={classes.button}
-              component={CustomRouterLink}
-              to={'/reports/due'}
-              exact
-            >
-              <div className={classes.icon}><ReportIcon/></div>
-              {'Loan Due'}
-            </Button>
-          </ListItem>
-          <ListItem
-            className={classes.itemSub}
-            disableGutters
-            key={'Overdue'}
-          >
-            <Button
-              className={classes.button}
-              activeClassName={classes.active}
-              component={CustomRouterLink}
-              to={'/reports/overdue'}
-              exact
-            >
-              <div className={classes.icon}><ReportProblemIcon/></div>
-              {'Loan Overdue'}
-            </Button>
-          </ListItem>
-        </Collapse>
+      </Collapse>
     </List>
   );
 };

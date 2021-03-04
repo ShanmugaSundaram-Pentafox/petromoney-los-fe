@@ -78,7 +78,6 @@ const useStyles = makeStyles(theme => ({
 
 const Sidebar = props => {
   const { open, variant, onClose, className, user, logout, currentUser, ...rest } = props;
-
   const classes = useStyles();
 
   const pages = [

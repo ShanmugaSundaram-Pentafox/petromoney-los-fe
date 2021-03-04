@@ -65,6 +65,7 @@ const useStyles = makeStyles(theme => {
 const Topbar = props => {
   const { className, onSidebarOpen, pageTitle, user, logout, match, history, goBackIcon, appBarProps, dashboardView, updateDashboardView } = props;
   const classes = useStyles();
+  console.log("open",onSidebarOpen)
 
   // const [notifications] = useState([]);
 

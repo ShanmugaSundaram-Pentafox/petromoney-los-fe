@@ -40,15 +40,15 @@ const MainLayout = props => {
   const [openSidebar, setOpenSidebar] = useState(false);
 
   const handleSidebarOpen = () => {
+    alert("checking");
     setOpenSidebar(true);
   };
 
   const handleSidebarClose = () => {
+    alert("checking");
     setOpenSidebar(false);
   };
-
   const shouldOpenSidebar = isDesktop ? true : openSidebar;
-
   return (
     <div
       className={clsx({
@@ -67,8 +67,9 @@ const MainLayout = props => {
       <main className={classes.content}>
         <Topbar user={currentUser} logout={logout} appBarProps={{
           position: "sticky",
-          onSidebarOpen: handleSidebarOpen,
-        }}  />
+        }}  
+        onSidebarOpen= {handleSidebarOpen}
+        />
         <Box p={2}>
           {children}
         </Box>

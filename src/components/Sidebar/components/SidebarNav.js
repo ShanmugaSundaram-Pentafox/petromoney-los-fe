@@ -246,7 +246,6 @@ const SidebarNav = props => {
             <div className={classes.icon}><ReportProblemIcon /></div>
             {'Loan Overdue'}
           </Button>
-
         </ListItem>
       </Collapse>
     </List>

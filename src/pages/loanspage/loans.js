@@ -25,6 +25,9 @@ import SubmittedTable from '../../components/Tables/SubmittedTable';
 import ApprovedTable from '../../components/Tables/ApprovedTable';
 import DisbursedTable from '../../components/Tables/DisbursedTable';
 import RejectedTable from '../../components/Tables/RejectedTable';
+import DashCard from '../../components/CommonComponents/Cards/DashCard';
+import { Typography } from '@material-ui/core';
+import Box from '@material-ui/core/Box';
 import UserCan from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 

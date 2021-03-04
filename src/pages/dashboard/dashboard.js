@@ -18,6 +18,7 @@ import { getLoanStats, getAll_ls1_Metrices, getAll_ls2_Metrices } from '../../se
 import { SummaryTile, PieChartData, BarChartData } from './components/MetricsComponents';
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import { Typography } from '@material-ui/core';
+import { yellow } from '@material-ui/core/colors';
 
 
 const DataCharts = styled.div`
@@ -38,12 +39,11 @@ const useStyles = makeStyles((theme) => ({
       width: "10vw"
     },
     active: {
-      backgroundColor: 'white',
-    color: "rgba(34, 36, 68, 1)"
-
+      coloe:yellow
     }
   },
 }));
+
 const Dashboard = ({ currentUser, dashboardView }) => {
   const classes = useStyles();
   usePageTitle('Dashboard');
@@ -55,7 +55,6 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   const [value, setValue] = useState("Submitted");
 
   const handleClick = (name) => {
-    console.log("name....................", value)
     setValue(name)
   }
 
@@ -129,8 +128,8 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                 <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="wrap">
                   {
                     chartData.map((item, i) => (
-                      <div onClick={() => handleClick(item.name)} activeClassName={classes.active}>
-                        <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name}  />
+                      <div onClick={() => handleClick(item.name)} >
+                        <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name} cardName={value}  />
                       </div>
                     ))
                   }

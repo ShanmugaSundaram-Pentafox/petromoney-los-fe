@@ -30,7 +30,6 @@ const useStyles = makeStyles(theme => ({
 
 const MainLayout = props => {
   const { children, currentUser, logout } = props;
-
   const classes = useStyles();
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'), {
@@ -40,12 +39,10 @@ const MainLayout = props => {
   const [openSidebar, setOpenSidebar] = useState(false);
 
   const handleSidebarOpen = () => {
-    alert("checking");
     setOpenSidebar(true);
   };
 
   const handleSidebarClose = () => {
-    alert("checking");
     setOpenSidebar(false);
   };
   const shouldOpenSidebar = isDesktop ? true : openSidebar;

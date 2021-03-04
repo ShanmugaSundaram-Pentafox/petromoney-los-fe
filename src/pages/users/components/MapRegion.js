@@ -41,26 +41,20 @@ const MapRegion = (data) => {
   const [region, setRegion] = useState([]);
   const [loading, setLoading] = useState(false);
   useMount(() => {
-    setLoading(true);
-    getAllRegion()
-    .then((data) => {
-        setLoading(false);
-        setAllRegion(data);
-      })
-      .catch((e) => {
-        setLoading(false);
-        console.log(e);
-      });
-  });
-  useMount(() => {
     const id = data.data.id;
     setLoading(true);
     getMappedRegion(id)
-      .then((data) => {
-        setMappedRegion(data);
+      .then((d) => {
+        setMappedRegion(d);
+        return getAllRegion()
+      })
+      .then((d) => {
+        setLoading(false);
+        setAllRegion(d);
       })
       .catch((e) => {
         console.log(e);
+        setLoading(false);
       });
   });
   const getValue = (e) => {
@@ -93,6 +87,7 @@ const MapRegion = (data) => {
             console.log(e);
             setLoading(false);
           });
+        setRegion([])
       })
       .catch((err) => {
         setLoading(false);
@@ -112,11 +107,20 @@ const MapRegion = (data) => {
             setLoading(false);
             console.log(e);
           });
+        setRegion([]);
       })
       .catch((err) => {
         setLoading(false);
       });
   };
+
+  const regionList = (allRegion || []).filter((r) => {
+    // console.log(mappedRegion, r.region, await !mappedRegion.find(rg => rg.region_id === r.region))
+    if(!mappedRegion.find(rg => rg.region_id === r.region))
+      return true
+    else return false;
+    // return !mappedRegion.find(rg => rg.region_id === r.region);
+  })
   return (
     <Box mt={2} mb={2} bgcolor={"#fafafa"} position={"relative"}>
       {
@@ -131,12 +135,13 @@ const MapRegion = (data) => {
       </Typography>
       <Grid container spacing={2}>
         <Grid item xs={5} className={classes.root}>
-          {allRegion.map((item) => {
+          {regionList.map((item) => {
             return (
-              <Paper>
+              <Paper key={item.region}>
                 <FormGroup>
                   <FormControlLabel
-                    control={<Checkbox color="primary" value={item.region} onChange={(e) => getValue(e)} />}
+                    key={item.region}
+                    control={<Checkbox key={item.region} color="primary" value={item.region} onChange={(e) => getValue(e)} />}
                     label={item.name}
                     value={item.region}
                   />
@@ -146,17 +151,18 @@ const MapRegion = (data) => {
           })}
         </Grid>
         <Grid item xs={2}>
-          <Grid container direction="column" alignItems="center" justify={"space-around"}>
+          <Grid container direction="column" alignItems="center" justify={"center"}>
             <Button
-              variant="outlined"
+              // variant="outlined"
               size="small"
               aria-label="move selected right"
               onClick={() => updateValue()}
+              style={{ marginBottom: 10 }}
             >
               &gt;
             </Button>
             <Button
-              variant="outlined"
+              // variant="outlined"
               size="small"
               aria-label="move selected left"
               onClick={() => deleteValue()}
@@ -169,9 +175,10 @@ const MapRegion = (data) => {
           <Paper direction="column">
             {mappedRegion.map((item) => {
               return (
-                <FormGroup>
+                <FormGroup key={item.region_id}>
                   <FormControlLabel
-                    control={<Checkbox color="primary" value={item.region_id} onChange={(e) => getValue(e)} />}
+                    key={item.region_id}
+                    control={<Checkbox color="primary" key={item.region_id} value={item.region_id} onChange={(e) => getValue(e)} />}
                     label={item.region_name}
                     value={item.region_id}
                   />

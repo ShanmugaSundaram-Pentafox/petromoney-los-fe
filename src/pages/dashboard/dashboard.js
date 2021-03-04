@@ -30,22 +30,7 @@ const DataCharts = styled.div`
     border-radius: 6px;
   }
 `;
-const useStyles = makeStyles((theme) => ({
-  root: {
-    '& > *': {
-      margin: theme.spacing(4),
-    },
-    MailIcon: {
-      width: "10vw"
-    },
-    active: {
-      coloe:yellow
-    }
-  },
-}));
-
 const Dashboard = ({ currentUser, dashboardView }) => {
-  const classes = useStyles();
   usePageTitle('Dashboard');
   const [chartData, setChartData] = useState([{}, {}, {}, {}, {}, {}]);
   const [ls1_metrices, setLs1Metrices] = useState({});

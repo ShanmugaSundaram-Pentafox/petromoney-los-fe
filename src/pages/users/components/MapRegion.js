@@ -125,8 +125,8 @@ const MapRegion = (data) => {
     <Box mt={2} mb={2} bgcolor={"#fafafa"} position={"relative"}>
       {
         loading && (
-          <Box p={2} pt={10} mx={'auto'} bgcolor={"rgba(207, 216, 220, .25)"} textAlign={"center"} position={"absolute"} top={0} bottom={0} width={'100%'}>
-            <CircularProgress />
+          <Box p={2} pt={10} mx={'auto'} bgcolor={"rgba(207, 216, 220, .25)"} textAlign={"center"} position={"absolute"} zIndex={10} top={0} bottom={0} width={'100%'}>
+            <CircularProgress color="secondary" />
           </Box>
         )
       }
@@ -153,16 +153,18 @@ const MapRegion = (data) => {
         <Grid item xs={2}>
           <Grid container direction="column" alignItems="center" justify={"center"}>
             <Button
-              // variant="outlined"
+              variant="contained"
+              color="primary"
               size="small"
               aria-label="move selected right"
               onClick={() => updateValue()}
-              style={{ marginBottom: 10 }}
+              style={{ marginTop: 60, marginBottom: 20 }}
             >
               &gt;
             </Button>
             <Button
-              // variant="outlined"
+              variant="contained"
+              color="primary"
               size="small"
               aria-label="move selected left"
               onClick={() => deleteValue()}

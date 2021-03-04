@@ -6,6 +6,7 @@ import LoansTable from './components/LoansTable';
 import usePageTitle from '../../hooks/usePageTitle';
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
+import { makeStyles } from '@material-ui/core/styles';
 // import { InfoBoxContainer, InfoBoxWrapper } from '../../components/CommonComponents/InfoBox';
 import styled from 'styled-components';
 import Grid from '@material-ui/core/Grid';
@@ -18,6 +19,7 @@ import { SummaryTile, PieChartData, BarChartData } from './components/MetricsCom
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import { Typography } from '@material-ui/core';
 
+
 const DataCharts = styled.div`
   /* padding: 20px 24px 8px; */
   border-radius: 2px;
@@ -27,13 +29,24 @@ const DataCharts = styled.div`
     border-radius: 6px;
   }
 `;
+const useStyles = makeStyles((theme) => ({
+  root: {
+    '& > *': {
+      margin: theme.spacing(4),
+    },
+    MailIcon: {
+      width:"10vw"
+    }
+  },
+}));
 const Dashboard = ({ currentUser, dashboardView }) => {
+  const classes = useStyles();
   usePageTitle('Dashboard');
   const [chartData, setChartData] = useState([{}, {}, {}, {}, {}, {}]);
-  const [ ls1_metrices, setLs1Metrices ] = useState({});
-  const [ ls2_metrices, setLs2Metrices ] = useState([]);
-  const [ daysChartData, setdaysChartData ] = useState(['Days', 'Amount']);
-  const [ totalForRegion, setTotalForRegion ] = useState(0)
+  const [ls1_metrices, setLs1Metrices] = useState({});
+  const [ls2_metrices, setLs2Metrices] = useState([]);
+  const [daysChartData, setdaysChartData] = useState(['Days', 'Amount']);
+  const [totalForRegion, setTotalForRegion] = useState(0)
 
   useMount(() => {
     getLoanStats()
@@ -55,36 +68,36 @@ const Dashboard = ({ currentUser, dashboardView }) => {
         console.log(err);
       })
 
-      setTimeout(() => {
-        getAll_ls1_Metrices().then(res => {
-          const result = res[0] || {};
-          setLs1Metrices(result);
-          let overallData = [
-            ['Days', 'Amount'],
-            ['>=90 Days', result.gt90_days],
-            ['60-90 Days', result.gt60lt90_days],
-            ['30-60 Days', result.gt30lt60_days],
-            ['15-30 Days', result.gt15lt30_days],
-            ['4-15 Days', result.gt4lt15_days],
-            ['<=3 Days', result.lt3_days]
-          ]
-          setdaysChartData(overallData);
-        }).catch(err => {
-  
-        })
+    setTimeout(() => {
+      getAll_ls1_Metrices().then(res => {
+        const result = res[0] || {};
+        setLs1Metrices(result);
+        let overallData = [
+          ['Days', 'Amount'],
+          ['>=90 Days', result.gt90_days],
+          ['60-90 Days', result.gt60lt90_days],
+          ['30-60 Days', result.gt30lt60_days],
+          ['15-30 Days', result.gt15lt30_days],
+          ['4-15 Days', result.gt4lt15_days],
+          ['<=3 Days', result.lt3_days]
+        ]
+        setdaysChartData(overallData);
+      }).catch(err => {
 
-        getAll_ls2_Metrices().then(res => {
-          const result =  res;
-          let total = 0;
-          const dataSource = result.map((item, index) => {
-            total += item.od_amount;
-            return [item.cust_region, item.od_amount]
-          });
-          dataSource.length && dataSource.unshift(['Region', 'Amount']);
-          setTotalForRegion(total);
-          setLs2Metrices(dataSource);
-        })
-      }, 4000)
+      })
+
+      getAll_ls2_Metrices().then(res => {
+        const result = res;
+        let total = 0;
+        const dataSource = result.map((item, index) => {
+          total += item.od_amount;
+          return [item.cust_region, item.od_amount]
+        });
+        dataSource.length && dataSource.unshift(['Region', 'Amount']);
+        setTotalForRegion(total);
+        setLs2Metrices(dataSource);
+      })
+    }, 4000)
   });
 
   // const CustomizedAxisTick = ({ x, y, payload }) => {
@@ -102,22 +115,21 @@ const Dashboard = ({ currentUser, dashboardView }) => {
               <Box p={2} borderRadius={4} bgcolor="background.paper">
                 <Typography variant="h5">Loans' Statistics</Typography>
                 <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="wrap">
-                {
-                  chartData.map((item, i) => (
-                    <DashCard key={i} noBorder={i === chartData.length-1} value={item.count} text={item.name} />
-                  ))
-                }
+                  {
+                    chartData.map((item, i) => (
+                      <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name} />
+                    ))
+                  }
                 </Box>
               </Box>
             )
           }
-
           {
             dashboardView === "LMS" ? (
               <Box p={2} borderRadius={4} bgcolor="background.paper">
                 <Typography variant="h5">Credit Book</Typography>
                 <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">
-                  <DashCard text="Date (Opening)" value={ls1_metrices.opening ? moment(new Date(ls1_metrices.opening)).format('DD MMM, YYYY') : '-' } />
+                  <DashCard text="Date (Opening)" value={ls1_metrices.opening ? moment(new Date(ls1_metrices.opening)).format('DD MMM, YYYY') : '-'} />
                   <DashCard text="Loan Book (in Crs)" value={Number(ls1_metrices.loan_book)?.toFixed(2)} />
                   <DashCard text="Overdue (in Crs)" value={Number(ls1_metrices.overdue)?.toFixed(2)} />
                   <DashCard text="Due (in Crs)" value={Number(ls1_metrices.due)?.toFixed(2)} />
@@ -166,16 +178,16 @@ const Dashboard = ({ currentUser, dashboardView }) => {
           dashboardView === "LMS" && (<>
             <Grid item md={6}>
               <DataCharts>
-                {ls2_metrices.length ? <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion}/> : <Paper style={{ padding: 10 }}>No Data Found. Check if EOD has been completed</Paper> }
+                {ls2_metrices.length ? <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion} /> : <Paper style={{ padding: 10 }}>No Data Found. Check if EOD has been completed</Paper>}
               </DataCharts>
             </Grid>
             <Grid item md={6}>
               <DataCharts>
-                <BarChartData daysChartData={daysChartData}/>
+                <BarChartData daysChartData={daysChartData} />
               </DataCharts>
             </Grid>
             <Grid item xs={12}>
-              <LoanBookTable title={"Loan Book"} currentUser={currentUser}/>
+              <LoanBookTable title={"Loan Book"} currentUser={currentUser} />
             </Grid>
           </>
           )

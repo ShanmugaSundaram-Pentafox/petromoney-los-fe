@@ -30,7 +30,6 @@ const useStyles = makeStyles(theme => ({
 
 const MainLayout = props => {
   const { children, currentUser, logout } = props;
-
   const classes = useStyles();
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'), {
@@ -46,9 +45,7 @@ const MainLayout = props => {
   const handleSidebarClose = () => {
     setOpenSidebar(false);
   };
-
   const shouldOpenSidebar = isDesktop ? true : openSidebar;
-
   return (
     <div
       className={clsx({
@@ -67,8 +64,9 @@ const MainLayout = props => {
       <main className={classes.content}>
         <Topbar user={currentUser} logout={logout} appBarProps={{
           position: "sticky",
-          onSidebarOpen: handleSidebarOpen,
-        }}  />
+        }}  
+        onSidebarOpen= {handleSidebarOpen}
+        />
         <Box p={2}>
           {children}
         </Box>

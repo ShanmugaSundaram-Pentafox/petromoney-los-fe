@@ -11,7 +11,7 @@ import { TextField, Typography } from '@material-ui/core';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
-import DemoList from './MapRegion';
+import MapRegion from './MapRegion';
 import Skeleton from '@material-ui/lab/Skeleton';
 import Grid from '@material-ui/core/Grid';
 
@@ -159,7 +159,7 @@ export default function TemporaryDrawer({ userId, data }) {
                   </Box>
                   <Divider />
                   {
-                    data.role_desc === "Field Officer" ? <DemoList data={data}></DemoList> : null
+                    [6, 7, 12].includes(data.role_id) ? <MapRegion data={data} /> : null
                   }
                   <Divider />
                   <Box mt={2} mb={2} bgcolor={"#fafafa"}>

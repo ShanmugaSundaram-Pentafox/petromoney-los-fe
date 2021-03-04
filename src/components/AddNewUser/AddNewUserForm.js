@@ -103,7 +103,7 @@ const AddNewUserForm = ({ callback }) => {
           <Grid item md={6}>
             <TextInput
               {...inputProps}
-              type="number"
+              type="mobile"
               name="mobile"
               labelText="Mobile"
               value={values.mobile}

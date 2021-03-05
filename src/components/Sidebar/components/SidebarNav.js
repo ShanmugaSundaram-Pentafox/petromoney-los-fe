@@ -178,7 +178,7 @@ const SidebarNav = props => {
                     to={'/loans/losLms'}
                     exact
                   >
-                    <Badge badgeContent={exceptions.length} max={999} style={{paddingLeft:"10px"}} color="primary">
+                    <Badge badgeContent={exceptions.length} max={999} color="primary">
                       <div className={classes.icon}><AssessmentOutlinedIcon /></div>
                       Exceptions &nbsp;
                     </Badge>

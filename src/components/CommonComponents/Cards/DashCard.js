@@ -9,12 +9,28 @@ const DashCardWrapper = styled.div`
   /* box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.034),
     0 6.7px 5.3px rgba(0, 0, 0, 0.048); */
   color: #343434;
-  .root {
-    color:#3f51b5;
+  position: relative;
+  cursor: pointer;
+
+  &::after {
+    content: '';
+    transition: all .5s ease-in-out;
   }
-  :hover {
+
+  :hover,
+  .active {
     color:#3f51b5;
-    border-bottom : 1px solid #3f51b5;
+    &::after {
+      content: '';
+      width: 80%;
+      height: 5px;
+      position: absolute;
+      bottom: -15px;
+      left: 10%;
+      background-color : #3f51b5;
+      border-radius: 3px;
+      opacity: 0.75;
+    }
   }
   /* width: 100%; */
   flex: 1;
@@ -51,7 +67,7 @@ const DashCard = ({
   classes,
   styles,
   value,
-  cardName,
+  selected,
   text,
   icon,
   noBorder,
@@ -59,7 +75,7 @@ const DashCard = ({
 }) => {
   return (
     <DashCardWrapper noBorder={noBorder} style={styles} onClick={action}>
-      <div  className={cardName === text ? 'root' : ' '}>
+      <div  className={selected ? 'active' : ' '}>
         <div className="stat-number-block">
           <div className="stat-number">
             {value || '-'}

@@ -37,10 +37,10 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   const [ls2_metrices, setLs2Metrices] = useState([]);
   const [daysChartData, setdaysChartData] = useState(['Days', 'Amount']);
   const [totalForRegion, setTotalForRegion] = useState(0)
-  const [value, setValue] = useState("Submitted");
+  const [selectedStatsCard, setSelectedStatsCard] = useState("Submitted");
 
   const handleClick = (name) => {
-    setValue(name)
+    setSelectedStatsCard(name)
   }
 
 
@@ -113,9 +113,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                 <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="wrap">
                   {
                     chartData.map((item, i) => (
-                      <div onClick={() => handleClick(item.name)} >
-                        <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name} cardName={value}  />
-                      </div>
+                      <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name} selected={item.name === selectedStatsCard} action={() => handleClick(item.name)} />
                     ))
                   }
                 </Box>
@@ -194,7 +192,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
 
       {
         dashboardView === "LOS" && (
-          <LoansTable currentUser={currentUser} value={value} />
+          <LoansTable currentUser={currentUser} value={selectedStatsCard} />
         )
       }
 

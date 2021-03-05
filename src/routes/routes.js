@@ -20,6 +20,7 @@ import { permissionCheck } from '../components/UserCan/UserCan';
 import { rulesList } from '../config/userRules';
 import Due from '../pages/reports/DueReport';
 import OverDue from '../pages/reports/OverDueReport';
+import LmsLos from '../pages/loanspage/lmsLosTable';
 
 const Routes = ({ currentUser }) => {
   return (
@@ -29,6 +30,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/solar/feasibility" component={Solar} />
       <ProtectedRoute allow exact path="/dealership" component={Dealership} />
       <ProtectedRoute allow exact path="/loans" component={Loans} />
+      <ProtectedRoute allow exact path="/loans/losLms" component={LmsLos} />
       <ProtectedRoute allow exact path="/dealership/:id?" component={DealershipDetails} />
       <ProtectedRoute allow exact path='/transports' component={Transport} />
       <ProtectedRoute allow exact path="/transports/:id?" component={TransportsDetails} />

@@ -18,6 +18,7 @@ import { getLoanStats, getAll_ls1_Metrices, getAll_ls2_Metrices } from '../../se
 import { SummaryTile, PieChartData, BarChartData } from './components/MetricsComponents';
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import { Typography } from '@material-ui/core';
+import { yellow } from '@material-ui/core/colors';
 
 
 const DataCharts = styled.div`
@@ -29,25 +30,18 @@ const DataCharts = styled.div`
     border-radius: 6px;
   }
 `;
-const useStyles = makeStyles((theme) => ({
-  root: {
-    '& > *': {
-      margin: theme.spacing(4),
-    },
-    MailIcon: {
-      width:"10vw"
-    }
-  },
-}));
 const Dashboard = ({ currentUser, dashboardView }) => {
-  const classes = useStyles();
   usePageTitle('Dashboard');
   const [chartData, setChartData] = useState([{}, {}, {}, {}, {}, {}]);
   const [ls1_metrices, setLs1Metrices] = useState({});
   const [ls2_metrices, setLs2Metrices] = useState([]);
   const [daysChartData, setdaysChartData] = useState(['Days', 'Amount']);
   const [totalForRegion, setTotalForRegion] = useState(0)
+  const [selectedStatsCard, setSelectedStatsCard] = useState("Submitted");
 
+  const handleClick = (name) => {
+    setSelectedStatsCard(name)
+  }
   useMount(() => {
     getLoanStats()
       .then(data => {
@@ -117,7 +111,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                 <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="wrap">
                   {
                     chartData.map((item, i) => (
-                      <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name} />
+                      <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name} selected={item.name === selectedStatsCard} action={() => handleClick(item.name)} />
                     ))
                   }
                 </Box>
@@ -196,7 +190,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
 
       {
         dashboardView === "LOS" && (
-          <LoansTable currentUser={currentUser} />
+          <LoansTable currentUser={currentUser} value={selectedStatsCard} />
         )
       }
 

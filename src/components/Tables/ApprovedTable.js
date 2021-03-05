@@ -174,7 +174,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
   return (
     <div className={classes.root}>
       {
-        Array.isArray(loans) && loans.length ? (
+        Array.isArray(loans) && loans.length!==0 ? (
           <MUIDataTable
             title={title ? <Typography className={classes.title} variant="h4" component="h4">{title} ({loans.length})</Typography> : null}
             data={loans}

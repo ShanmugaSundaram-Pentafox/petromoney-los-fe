@@ -5,7 +5,7 @@ import Modal from '@material-ui/core/Modal';
 import Grid from '@material-ui/core/Grid';
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import SendReports from '../../services/common.service';
+import {SendReports} from '../../services/common.service';
 
 
 
@@ -39,7 +39,7 @@ const SendEmailAction = () => {
   const sendEmail = () => {
     setOpen(false);
     SendReports()
-    
+
     setModalData({});
     alert("mail send")
   }

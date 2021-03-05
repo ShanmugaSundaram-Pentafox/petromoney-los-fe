@@ -39,86 +39,86 @@ const useStyles = makeStyles(theme => ({
 const DueTable = () => {
   const classes = useStyles();
 
-  const [loans , setLoans]= useState([])
-  useMount( async () => {
-      var a = await getReport()
-      setLoans(a.due) 
+  const [loans, setLoans] = useState([])
+  useMount(async () => {
+    var a = await getReport()
+    setLoans(a.due)
   })
   usePageTitle('Report')
   const columns = useMemo(() => {
     return [
       { name: 'applicant_code', label: 'Applicant Code' },
       { name: 'applicant_name', label: 'Applicant Name' },
-      { name: 'cust_code', label: 'Customer Code' },
+      { name: 'cust_code', label: 'Dealership ID' },
       { name: 'cust_region', label: 'Customer Region' },
       {
         name: 'duedate',
-        label: 'Due Date', 
-        options: { 
-          filter: false, 
+        label: 'Due Date',
+        options: {
+          filter: false,
         }
       },
       {
         name: 'disb_amt',
-        label: 'disburse Amt', 
-        options: { 
+        label: 'disburse Amt',
+        options: {
           filter: false,
           sort: true,
           customBodyRender: value => {
-            return <Currency value={value}/>
+            return <Currency value={value} />
           }
         }
       },
       {
         name: 'tot_due',
-        label: 'Total Due', 
-        options: { 
+        label: 'Total Due',
+        options: {
           filter: false,
           sort: true,
           customBodyRender: value => {
-            return <Currency value={value}/>
+            return <Currency value={value} />
           }
         }
       },
     ]
   }, []);
 
-  const options = { 
+  const options = {
     selectableRowsHeader: false,
-    selectableRows: 'none', 
+    selectableRows: 'none',
     rowsPerPage: 15,
-    rowsPerPageOptions: [15,20,30],
+    rowsPerPageOptions: [15, 20, 30],
   };
 
-  if (loans.length===0){
-    return(
-    <div className={classes.root}>
-      <Grid item xs={12}>
-        <Skeleton variant="rect" width="100%" height={600} />
-      </Grid>
-    </div>
-    )
-  }
-  else{
+  if (loans.length === 0) {
     return (
       <div className={classes.root}>
-        {(loans.length===0)?(
+        <Grid item xs={12}>
+          <Skeleton variant="rect" width="100%" height={600} />
+        </Grid>
+      </div>
+    )
+  }
+  else {
+    return (
+      <div className={classes.root}>
+        {(loans.length === 0) ? (
           <Grid item xs={12}>
             <Skeleton variant="rect" width="100%" height={400} />
           </Grid>
-        ):(
-          Array.isArray(loans) && loans.length ? (
-            <MUIDataTable
-              title={"Due Reports"}
-              data={loans}
-              columns={columns}
-              options={options}
-            />
-          ) : <Paper style={{ padding: 10 }}>No Due Loans</Paper> 
-        )}
+        ) : (
+            Array.isArray(loans) && loans.length ? (
+              <MUIDataTable
+                title={"Due Reports"}
+                data={loans}
+                columns={columns}
+                options={options}
+              />
+            ) : <Paper style={{ padding: 10 }}>No Due Loans</Paper>
+          )}
       </div>
     )
-  } 
+  }
 }
 
 export default DueTable 

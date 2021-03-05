@@ -42,7 +42,6 @@ const useStyles = makeStyles((theme) => ({
 
 const Users = ({ currentUser, allUsers, setAllUsersData }) => {
   usePageTitle('All Users');
-  
   useMount(() => {
     // allow only if current user is admin
     if(currentUser.role_id === 1 && !allUsers.length) {

@@ -17,49 +17,50 @@ import NotificationSidebar from '../CommonComponents/NotificationSidebar';
 import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 import { setDashboardView } from '../../store/common/common.actions';
 import AddNewUserAction from '../AddNewUser/AddNewUserAction';
+import SendEmailAction from '../../pages/reports/SendEmailAction';
 // import Searchbox from '../CommonComponents/Searchbox';
 
 const useStyles = makeStyles(theme => {
   return ({
-  root: {
-    boxShadow: 'none',
-    color: theme.palette.primary.dark,
-    backgroundColor: 'transparent',
-    boxShadow: '0 0 0 1px rgba(63,63,68,0.05), 0 1px 2px 0 rgba(63,63,68,0.15)',
-    backgroundColor: theme.palette.white,
-    borderBottomColor: theme.palette.grey
-  },
-  flexGrow: {
-    flexGrow: 1
-  },
-  signOutButton: {
-    marginLeft: theme.spacing(1)
-  },
-  logoLink: {
-    backgroundColor: theme.palette.white
-  },
-  title: {
-    ...theme.typography.h2,
-    fontSize: 18,
-    display: 'flex',
-    alignItems: 'center',
-  },
-  optionsContainer: {
-    paddingRight: theme.spacing(2),
-    paddingLeft: theme.spacing(2),
-    marginLeft: theme.spacing(1),
-    borderRadius: 20,
-    boxShadow: `inset 0 0 8px 0px #cdcdcd`,
-  },
-  actionsContainer: {
-    paddingRight: theme.spacing(2),
-    paddingLeft: theme.spacing(2),
-    marginLeft: theme.spacing(1),
-  },
-  goback: {
-    marginRight: theme.spacing(1)
-  }
-})
+    root: {
+      boxShadow: 'none',
+      color: theme.palette.primary.dark,
+      backgroundColor: 'transparent',
+      boxShadow: '0 0 0 1px rgba(63,63,68,0.05), 0 1px 2px 0 rgba(63,63,68,0.15)',
+      backgroundColor: theme.palette.white,
+      borderBottomColor: theme.palette.grey
+    },
+    flexGrow: {
+      flexGrow: 1
+    },
+    signOutButton: {
+      marginLeft: theme.spacing(1)
+    },
+    logoLink: {
+      backgroundColor: theme.palette.white
+    },
+    title: {
+      ...theme.typography.h2,
+      fontSize: 18,
+      display: 'flex',
+      alignItems: 'center',
+    },
+    optionsContainer: {
+      paddingRight: theme.spacing(2),
+      paddingLeft: theme.spacing(2),
+      marginLeft: theme.spacing(1),
+      borderRadius: 20,
+      boxShadow: `inset 0 0 8px 0px #cdcdcd`,
+    },
+    actionsContainer: {
+      paddingRight: theme.spacing(2),
+      paddingLeft: theme.spacing(2),
+      marginLeft: theme.spacing(1),
+    },
+    goback: {
+      marginRight: theme.spacing(1)
+    }
+  })
 });
 
 const Topbar = props => {
@@ -127,13 +128,30 @@ const Topbar = props => {
                 </span>
               )
             }
+            {
+              match?.path?.toLowerCase() == "/reports/due" && (
+                <span className={classes.actionsContainer}>
+                  <SendEmailAction />
+                </span>
+              )
+            }
+            {
+              match?.path?.toLowerCase() == "/reports/overdue" && (
+                <span className={classes.actionsContainer}>
+                  <SendEmailAction />
+                </span>
+              )
+
+            }
+
+
           </h2>
           <div className={classes.flexGrow} />
           <Hidden mdDown>
             {/* <Searchbox /> */}
             {/* <NotificationsBell action={() => setShowNotificationSidebar(true)} /> */}
             <LoginUserInfo user={user} logout={logout} />
-  
+
             {/* <Tooltip title="Logout">
               <IconButton
                 className={classes.signOutButton}
@@ -154,7 +172,7 @@ const Topbar = props => {
           </Hidden>
         </Toolbar>
       </AppBar>
-  
+
       <NotificationSidebar showNotification={showNotificationSidebar} closeButton={() => setShowNotificationSidebar(false)} />
     </Fragment>
   );

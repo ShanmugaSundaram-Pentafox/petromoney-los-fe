@@ -199,3 +199,23 @@ export const updateUserDetails = (name, mail, id) => {
       })
   });
 }
+export const SendReports = () => {
+  return new Promise((resolve, reject) => {
+    apiCall(`loan/report/1`, {
+      method: 'POST',
+    })
+      .then(({ status, message }) => {
+
+        if (status === "SUCCESS") {   
+        console.log(status,"status")
+        console.log(message,"status")
+          resolve({status,message});
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

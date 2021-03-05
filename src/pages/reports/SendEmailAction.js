@@ -5,12 +5,12 @@ import Modal from '@material-ui/core/Modal';
 import Grid from '@material-ui/core/Grid';
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import {SendReports} from '../../services/common.service';
+import { SendReports } from '../../services/common.service';
 
 
 
 const useStyles = makeStyles(theme => ({
-  
+
   modal: {
     display: 'flex',
     alignItems: 'center',
@@ -35,18 +35,17 @@ const SendEmailAction = () => {
   const [open, setOpen] = React.useState(false);
   const [modalData, setModalData] = useState({});
   const [loading, setLoading] = useState(false);
-  const [title, setTitle] =useState("Would you like to send the reports over an email?")
+  const [title, setTitle] = useState("Yes")
 
   const sendEmail = async () => {
-    setTitle("Email Sending...")
-     await SendReports()
-    setTitle("Mail Sent successfully")
+    setTitle("Sending...")
+    await SendReports()
+    setTitle("Mail Sent")
     setTimeout(() => {
-    setOpen(false);
-    setModalData({})
-    setTitle("Would you like to send the reports over an email?")
+      setOpen(false);
+      setModalData({})
+      setTitle("Yes")
     }, 2000)
-    
   }
 
   return (
@@ -68,14 +67,16 @@ const SendEmailAction = () => {
           <div id="">
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <h3>{title}</h3>
+                <h3>Would you like to send the reports over an email ?</h3>
               </Grid>
               <Grid item xs={12} className={classes.actionFooter}>
-                <Button disabled={loading} variant="outlined" size="medium" color="default" onClick={() => setModalData({})}>No</Button>
+                {
+                  title === "Yes" ?
+                    (
+                      <Button disabled={loading} variant="outlined" size="medium" color="default" onClick={() => setModalData({})}>No</Button>
+                    ) : null}
                 <Button disabled={loading} className={classes.actionButton} onClick={() => sendEmail()} type="submit" variant="outlined" size="medium" color="primary">
-                  {
-                    loading ? <CircularProgress /> : 'Yes'
-                  }
+                  {title}
                 </Button>
               </Grid>
             </Grid>

@@ -31,6 +31,9 @@ import Box from '@material-ui/core/Box';
 import UserCan from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import { useMount } from 'react-use';
+import ApprovalReqestTable from '../../components/Tables/ApprovalReqestTable';
+import DisbursementReqestTable from '../../components/Tables/DisbursementReqestTable';
+
 
 const useStyles = makeStyles(theme => ({
     tableContainer: {
@@ -143,7 +146,6 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
     const handleClick = (name) => {
         setSelectedStatsCard(name)
     }
-
     const showDealershipInfo = (id, selectedLoanData, status) => {
         setLoansData(selectedLoanData);
         getDealershipById(id)
@@ -151,7 +153,6 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
                 setDealershipData(data)
             })
             .catch(e => null);
-
         // getDealershipLoansById(id)
         //   .then(data => setLoansData(data))
         //   .catch(e => null)
@@ -162,34 +163,32 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
 
         setShowPanel({ status: true, data: status });
     }
-
     useMount(() => {
-      if(!all_loans.length) {
-        getAllLoans()
-          .then(data => {
-            setAllLoans(data);
-          })
-          .catch(e => null)
-      }
-
-      getLoanStats()
-        .then(data => {
-            // const data = _countBy(res, item => {
-            //   return item.status?.toLowerCase()
-            // });
-            let cdata = [
-            { name: 'Submitted', count: data.submitted_count },
-            { name: 'Pending Approval', count: data.loan_approval_count || 0 },
-            { name: 'Pending Disbursement Approval', count: data.disbursement_approval_count || 0 },
-            { name: 'Approved', count: data.approved_count },
-            { name: 'Rejected', count: data.rejected_count },
-            { name: 'Disbursed', count: data.disbursed_count },
-            ];
-            setChartData(cdata);
-        })
-        .catch(err => {
-            console.log(err);
-        })
+        if (!all_loans.length) {
+            getAllLoans()
+                .then(data => {
+                    setAllLoans(data);
+                })
+                .catch(e => null)
+        }
+        getLoanStats()
+            .then(data => {
+                // const data = _countBy(res, item => {
+                //   return item.status?.toLowerCase()
+                // });
+                let cdata = [
+                    { name: 'Submitted', count: data.submitted_count },
+                    { name: 'Pending Approval', count: data.loan_approval_count || 0 },
+                    { name: 'Pending Disbursement Approval', count: data.disbursement_approval_count || 0 },
+                    { name: 'Approved', count: data.approved_count },
+                    { name: 'Rejected', count: data.rejected_count },
+                    { name: 'Disbursed', count: data.disbursed_count },
+                ];
+                setChartData(cdata);
+            })
+            .catch(err => {
+                console.log(err);
+            })
     })
 
     return (
@@ -209,21 +208,79 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
         )}
         no={() => null}
       /> */}
-        {
-            Array.isArray(chartData) && (
-              <Box p={2} mb={2} borderRadius={4} bgcolor="background.paper">
-                <Typography variant="h5">Loans' Statistics</Typography>
-                <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="wrap">
-                  {
-                    chartData.map((item, i) => (
-                      <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name} selected={item.name === selectedStatsCard} action={() => handleClick(item.name)} />
-                    ))
-                  }
-                </Box>
-              </Box>
-            )
-          }
-            <Paper elevation={1} className={classes.tableContainer}>
+            {
+                Array.isArray(chartData) && (
+                    <Box p={2} mb={2} borderRadius={4} bgcolor="background.paper">
+                        <Typography variant="h5">Loans' Statistics</Typography>
+                        <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="wrap"   >
+                            {
+                                chartData.map((item, i) => (
+                                        <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name} selected={item.name === selectedStatsCard} action={() => handleClick(item.name)} />
+                                ))
+                            }
+                        </Box>
+                    </Box>
+                )
+            }
+            <Grid container spacing={2}>
+                {
+                    selectedStatsCard === "Pending Approval" ? (
+                        <Grid item md={6}>
+                            <Paper className={classes.tableContainer}>
+                                <ApprovalReqestTable title={"Pending for Initial Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                            </Paper>
+                        </Grid>
+                    ) : null
+                }
+                {
+                    selectedStatsCard === "Pending Disbursement Approval" ? (
+                        <Grid item md={6}>
+                            <Paper className={classes.tableContainer}>
+                                <DisbursementReqestTable title={"Pending for Disbursement Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                            </Paper>
+                        </Grid>
+                    ) : null
+                }
+                {
+                    selectedStatsCard === "Submitted" ? (
+                        <Grid item xs={12}>
+                            <Paper className={classes.tableContainer}>
+                                <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                            </Paper>
+                        </Grid>
+                    ) : null
+                }
+                {
+                    selectedStatsCard === "Approved" ? (
+                        <Grid item xs={12}>
+                            <Paper className={classes.tableContainer}>
+                                <ApprovedTable title={"Disbursement Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                            </Paper>
+                        </Grid>
+
+                    ) : null
+                }
+                {
+                    selectedStatsCard === "Rejected" ? (
+                        <Grid item xs={12}>
+                            <Paper className={classes.tableContainer}>
+                                <RejectedTable title={"Rejected Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                            </Paper>
+                        </Grid>
+                    ) : null
+                }
+                {
+                    selectedStatsCard === "Disbursed" ? (
+                        <Grid item xs={12}>
+                            <Paper className={classes.tableContainer}>
+                                <DisbursedTable title={"Disbursed Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                            </Paper>
+                        </Grid>
+                    ) : null
+                }
+            </Grid>
+
+            {/* <Paper elevation={1} className={classes.tableContainer}>
                 <ApprovedTable title={"Approved Loans"} currentUser={currentUser} onRowClick={showDealershipInfo} />
             </Paper>
             <Paper elevation={1} className={classes.tableContainer}>
@@ -231,7 +288,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
             </Paper>
             <Paper elevation={1} className={classes.tableContainer}>
                 <RejectedTable title={"Rejected Loans"} currentUser={currentUser} onRowClick={showDealershipInfo} />
-            </Paper>
+            </Paper> */}
             <Drawer
                 anchor="right"
                 // elevation={4}

@@ -204,9 +204,12 @@ export const SendReports = () => {
     apiCall(`loan/report/1`, {
       method: 'POST',
     })
-      .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
-          resolve(data);
+      .then(({ status, message }) => {
+
+        if (status === "SUCCESS") {   
+        console.log(status,"status")
+        console.log(message,"status")
+          resolve({status,message});
         } else {
           reject(message);
         }

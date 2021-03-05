@@ -39,51 +39,62 @@ const SendEmailAction = () => {
 
   const sendEmail = async () => {
     setTitle("Sending...")
-    await SendReports()
-    setTitle("Mail Sent")
-    setTimeout(() => {
-      setOpen(false);
-      setModalData({})
-      setTitle("Yes")
-    }, 2000)
-  }
-
-  return (
-    <div>
-      <Button variant="contained" color="primary" onClick={() => setModalData({ open: true })}>
-        Send Email
+    SendReports()
+      .then((res) => {
+        console.log();
+        if (res.status=== "SUCCESS") {
+          setTitle(res.message)
+          setTimeout(() => {
+            setOpen(false);
+            setModalData({})
+            setTitle("Yes")
+          }, 2000)
+        } 
+        else {
+          setTitle(res.message)
+        }
+      })
+      .catch((err) => {
+        setTitle('Yes');
+      });
+  };
+  
+return (
+  <div>
+    <Button variant="contained" color="primary" onClick={() => setModalData({ open: true })}>
+      Send Email
       </Button>
-      <Modal
-        className={classes.modal}
-        open={modalData.open}
-        onClose={() => setModalData({})}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 300,
-        }}
-      >
-        <div className={classes.paper}>
-          <div id="">
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <h3>Would you like to send the reports over an email ?</h3>
-              </Grid>
-              <Grid item xs={12} className={classes.actionFooter}>
-                {
-                  title === "Yes" ?
-                    (
-                      <Button disabled={loading} variant="outlined" size="medium" color="default" onClick={() => setModalData({})}>No</Button>
-                    ) : null}
-                <Button disabled={loading} className={classes.actionButton} onClick={() => sendEmail()} type="submit" variant="outlined" size="medium" color="primary">
-                  {title}
-                </Button>
-              </Grid>
+    <Modal
+      className={classes.modal}
+      open={modalData.open}
+      onClose={() => setModalData({})}
+      closeAfterTransition
+      BackdropComponent={Backdrop}
+      BackdropProps={{
+        timeout: 300,
+      }}
+    >
+      <div className={classes.paper}>
+        <div id="">
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <h3>Would you like to send the reports over an email ?</h3>
             </Grid>
-          </div>
+            <Grid item xs={12} className={classes.actionFooter}>
+              {
+                title === "Yes" ?
+                  (
+                    <Button disabled={loading} variant="outlined" size="medium" color="default" onClick={() => setModalData({})}>No</Button>
+                  ) : null}
+              <Button disabled={loading} className={classes.actionButton} onClick={() => sendEmail()} type="submit" variant="outlined" size="medium" color="primary">
+                {title}
+              </Button>
+            </Grid>
+          </Grid>
         </div>
-      </Modal>
-    </div>
-  );
+      </div>
+    </Modal>
+  </div>
+);
 }
 export default SendEmailAction;

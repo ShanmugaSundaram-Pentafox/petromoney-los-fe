@@ -42,7 +42,6 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   const handleClick = (name) => {
     setSelectedStatsCard(name)
   }
-
   useMount(() => {
     getLoanStats()
       .then(data => {

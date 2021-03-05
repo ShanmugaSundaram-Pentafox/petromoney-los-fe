@@ -11,7 +11,7 @@ import { makeStyles } from '@material-ui/styles';
 import Grid from '@material-ui/core/Grid';
 import { selectAllLoans } from '../../store/loans/loans.selector';
 import { setAllLoans } from '../../store/loans/loans.actions';
-import { getAllLoans } from '../../services/loans.service';
+import { getAllLoans, getLoanStats } from '../../services/loans.service';
 import Currency from '../../components/Number/Currency';
 import Drawer from '@material-ui/core/Drawer';
 import Paper from '@material-ui/core/Paper';
@@ -26,10 +26,11 @@ import ApprovedTable from '../../components/Tables/ApprovedTable';
 import DisbursedTable from '../../components/Tables/DisbursedTable';
 import RejectedTable from '../../components/Tables/RejectedTable';
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
-import { Typography } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import UserCan from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
+import { useMount } from 'react-use';
 
 const useStyles = makeStyles(theme => ({
     tableContainer: {
@@ -129,6 +130,7 @@ const convertToCurrency = value => <Currency value={value} />;
 const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
     usePageTitle('Loans List');
     const classes = useStyles();
+    const [chartData, setChartData] = useState([{}, {}, {}, {}, {}, {}]);
     const [showPanel, setShowPanel] = useState({
         status: false,
         data: ""
@@ -136,6 +138,11 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
     const [dealershipData, setDealershipData] = useState();
     const [loansData, setLoansData] = useState();
     const [dealersData, setDealersData] = useState();
+    const [selectedStatsCard, setSelectedStatsCard] = useState("Submitted");
+
+    const handleClick = (name) => {
+        setSelectedStatsCard(name)
+    }
 
     const showDealershipInfo = (id, selectedLoanData, status) => {
         setLoansData(selectedLoanData);
@@ -156,15 +163,34 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
         setShowPanel({ status: true, data: status });
     }
 
-    // useMount(() => {
-    //   if(!all_loans.length) {
-    //     getAllLoans()
-    //       .then(data => {
-    //         setAllLoans(data);
-    //       })
-    //       .catch(e => null)
-    //   }
-    // })
+    useMount(() => {
+      if(!all_loans.length) {
+        getAllLoans()
+          .then(data => {
+            setAllLoans(data);
+          })
+          .catch(e => null)
+      }
+
+      getLoanStats()
+        .then(data => {
+            // const data = _countBy(res, item => {
+            //   return item.status?.toLowerCase()
+            // });
+            let cdata = [
+            { name: 'Submitted', count: data.submitted_count },
+            { name: 'Pending Approval', count: data.loan_approval_count || 0 },
+            { name: 'Pending Disbursement Approval', count: data.disbursement_approval_count || 0 },
+            { name: 'Approved', count: data.approved_count },
+            { name: 'Rejected', count: data.rejected_count },
+            { name: 'Disbursed', count: data.disbursed_count },
+            ];
+            setChartData(cdata);
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    })
 
     return (
         <div>
@@ -183,6 +209,20 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
         )}
         no={() => null}
       /> */}
+        {
+            Array.isArray(chartData) && (
+              <Box p={2} mb={2} borderRadius={4} bgcolor="background.paper">
+                <Typography variant="h5">Loans' Statistics</Typography>
+                <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="wrap">
+                  {
+                    chartData.map((item, i) => (
+                      <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name} selected={item.name === selectedStatsCard} action={() => handleClick(item.name)} />
+                    ))
+                  }
+                </Box>
+              </Box>
+            )
+          }
             <Paper elevation={1} className={classes.tableContainer}>
                 <ApprovedTable title={"Approved Loans"} currentUser={currentUser} onRowClick={showDealershipInfo} />
             </Paper>

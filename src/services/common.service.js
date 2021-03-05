@@ -201,7 +201,7 @@ export const updateUserDetails = (name, mail, id) => {
 }
 export const SendReports = () => {
   return new Promise((resolve, reject) => {
-    apiCall(`/loan/report/1`, {
+    apiCall(`loan/report/1`, {
       method: 'POST',
     })
       .then(({ status, data, message }) => {

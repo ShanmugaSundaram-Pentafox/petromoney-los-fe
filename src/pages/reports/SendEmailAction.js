@@ -35,13 +35,18 @@ const SendEmailAction = () => {
   const [open, setOpen] = React.useState(false);
   const [modalData, setModalData] = useState({});
   const [loading, setLoading] = useState(false);
+  const [title, setTitle] =useState("Would you like to send the reports over an email?")
 
-  const sendEmail = () => {
+  const sendEmail = async () => {
+    setTitle("Email Sending...")
+     await SendReports()
+    setTitle("Mail Sent successfully")
+    setTimeout(() => {
     setOpen(false);
-    SendReports()
-
-    setModalData({});
-    alert("mail send")
+    setModalData({})
+    setTitle("Would you like to send the reports over an email?")
+    }, 2000)
+    
   }
 
   return (
@@ -63,7 +68,7 @@ const SendEmailAction = () => {
           <div id="">
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <h3>Would you like to send the reports over an email?</h3>
+                <h3>{title}</h3>
               </Grid>
               <Grid item xs={12} className={classes.actionFooter}>
                 <Button disabled={loading} variant="outlined" size="medium" color="default" onClick={() => setModalData({})}>No</Button>

@@ -141,7 +141,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
     const [dealershipData, setDealershipData] = useState();
     const [loansData, setLoansData] = useState();
     const [dealersData, setDealersData] = useState();
-    const [selectedStatsCard, setSelectedStatsCard] = useState("Submitted");
+    const [selectedStatsCard, setSelectedStatsCard] = useState("Approved");
 
     const handleClick = (name) => {
         setSelectedStatsCard(name)

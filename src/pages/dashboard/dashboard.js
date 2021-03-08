@@ -51,10 +51,10 @@ const Dashboard = ({ currentUser, dashboardView }) => {
         let cdata = [
           { name: 'Submitted', count: data.submitted_count },
           { name: 'Pending Approval', count: data.loan_approval_count || 0 },
-          { name: 'Pending Disbursement Approval', count: data.disbursement_approval_count || 0 },
           { name: 'Approved', count: data.approved_count },
-          { name: 'Rejected', count: data.rejected_count },
+          { name: 'Pending Disbursement Approval', count: data.disbursement_approval_count || 0 },
           { name: 'Disbursed', count: data.disbursed_count },
+          { name: 'Rejected', count: data.rejected_count },
         ];
         setChartData(cdata);
       })

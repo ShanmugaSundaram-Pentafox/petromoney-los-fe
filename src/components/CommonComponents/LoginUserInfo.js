@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PropTypes from 'prop-types';
 import styled, { css } from "styled-components";
 
@@ -113,13 +113,24 @@ export const LoginUserInfo = ({
     logout
 }) => {
     const [show, setShow] = useState();
+    let ref= useRef();
+    useEffect(() => {
+        let handler = (event)=> {
+            if(!ref.current.contains(event.target)) {
+                setShow(false);
+            }
+        }
+        document.addEventListener("mousedown",handler);
+        return () => {
+            document.removeEventListener("mousedown",handler);
+        }
+    });
     return (
-        <LoginUserInfoWrapper open={show} onClick={() => setShow(!show)}>
+        <LoginUserInfoWrapper open={show} ref={ref} onClick={() => setShow(!show)}>
             <p>
             {user.name}
             {/* <span>{user.mobile}</span> */}
             </p>
-            
             {/* user image style */}
             {/* <img src="https://i.imgur.com/JBj1jMv.png" alt="user-img" /> */}
 

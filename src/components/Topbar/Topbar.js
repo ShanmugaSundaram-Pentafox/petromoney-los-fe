@@ -10,7 +10,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 // import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 // import InputIcon from '@material-ui/icons/Input';
 import { connect } from 'react-redux';
-import { resetCurrentUser } from '../../store/user/user.actions';
+import { resetCurrentUser, setCurrentUser } from '../../store/user/user.actions';
 // import NotificationsBell from '../CommonComponents/NotificationsBell';
 import LoginUserInfo from '../CommonComponents/LoginUserInfo';
 import NotificationSidebar from '../CommonComponents/NotificationSidebar';
@@ -63,16 +63,14 @@ const useStyles = makeStyles(theme => {
   })
 });
 
-const Topbar = props => {
+const Topbar = (props) => {
   const { className, onSidebarOpen, pageTitle, user, logout, match, history, goBackIcon, appBarProps, dashboardView, updateDashboardView } = props;
   const classes = useStyles();
   // const [notifications] = useState([]);
-
   const [showNotificationSidebar, setShowNotificationSidebar] = useState(false);
   useEffect(() => {
 
   }, [dashboardView])
-
   return (
     <Fragment>
       <AppBar
@@ -99,7 +97,7 @@ const Topbar = props => {
           <h2 className={classes.title}>
             {pageTitle}
             {
-              pageTitle?.toLowerCase() == "dashboard" && (
+              pageTitle?.toLowerCase() == "dashboard" && user.role_name != "DEALER" ? (
                 <span className={classes.optionsContainer}>
                   <RadioGroup onChange={(e, v) => updateDashboardView(v)} row aria-label="dashboard-view-type" name="dashboard-view-type" defaultValue={dashboardView}>
                     <Tooltip title="Loan Origination System">
@@ -118,7 +116,7 @@ const Topbar = props => {
                     </Tooltip>
                   </RadioGroup>
                 </span>
-              )
+              ) :null
             }
 
             {

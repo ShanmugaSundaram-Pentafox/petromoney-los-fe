@@ -8,6 +8,7 @@
   "dealership_credit_edit": "dealership:credit:edit",
   "dealer_credit_view": "dealer:credit:view",
   "dealership_credit_view": "dealership:credit:view",
+  "dealer_view":"dealer:view"
 }
 
 export const rulesForUserRoles = {
@@ -65,6 +66,11 @@ export const rulesForUserRoles = {
       rulesList.dealer_edit,
       rulesList.dealer_credit_edit,
       rulesList.dealership_credit_edit,
+    ]
+  },
+  DEALER: {
+    static:[
+      rulesList.dealer_view,
     ]
   }
 }

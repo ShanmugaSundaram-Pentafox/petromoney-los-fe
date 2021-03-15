@@ -38,7 +38,6 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   const [daysChartData, setdaysChartData] = useState(['Days', 'Amount']);
   const [totalForRegion, setTotalForRegion] = useState(0)
   const [selectedStatsCard, setSelectedStatsCard] = useState("Submitted");
-
   const handleClick = (name) => {
     setSelectedStatsCard(name)
   }
@@ -102,98 +101,74 @@ const Dashboard = ({ currentUser, dashboardView }) => {
 
   return (
     <div style={{ flexGrow: 1 }}>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          {
-            Array.isArray(chartData) && dashboardView === "LOS" && (
-              <Box p={2} borderRadius={4} bgcolor="background.paper">
-                <Typography variant="h5">Loans' Statistics</Typography>
-                <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="wrap">
-                  {
-                    chartData.map((item, i) => (
-                      <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name} selected={item.name === selectedStatsCard} action={() => handleClick(item.name)} />
-                    ))
-                  }
-                </Box>
-              </Box>
-            )
-          }
-          {
-            dashboardView === "LMS" ? (
-              <Box p={2} borderRadius={4} bgcolor="background.paper">
-                <Typography variant="h5">Credit Book</Typography>
-                <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">
-                  <DashCard text="Date (Opening)" value={ls1_metrices.opening ? moment(new Date(ls1_metrices.opening)).format('DD MMM, YYYY') : '-'} />
-                  <DashCard text="Loan Book (in Crs)" value={Number(ls1_metrices.loan_book)?.toFixed(2)} />
-                  <DashCard text="Overdue (in Crs)" value={Number(ls1_metrices.overdue)?.toFixed(2)} />
-                  <DashCard text="Due (in Crs)" value={Number(ls1_metrices.due)?.toFixed(2)} />
-                  <DashCard noBorder text="Current (in Crs)" value={Number(ls1_metrices.current1)?.toFixed(2)} />
-                </Box>
-              </Box>
-            ) : null
-          }
-        </Grid>
-        {/* {
-          dashboardView === "LMS" && (
-            <Grid item md={6}>
-              <DataCharts>
-                {Object.keys(ls1_metrices).length ? <SummaryTile ls1Data={ls1_metrices}/> : <Paper style={{ padding: 10 }}>No Data Found</Paper> }
-              </DataCharts>
-            </Grid>
-          )
-        } */}
-        {/* <Grid item md={6}>
-          <DataCharts>
-            {
-              chartData.length ? (
-                <InfoBoxWrapper style={{ width: '100%'}}>
-                  <p>Loans</p>
-                  <BarChart
-                    width={540}
-                    height={260}
-                    data={chartData}
-                    style={{ fontSize: '14px'}}
-                    label
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" interval={0} tick={<CustomizedAxisTick />} height={40} />
-                    <YAxis type="number" domain={[0, 200]}/>
-                    <Tooltip />
-                    <Bar dataKey="count" fill="rgb(66, 133, 244)" barSize={30}>
-                      <LabelList position="top" />
-                    </Bar>
-                  </BarChart>
-                </InfoBoxWrapper>
-              ) : null
-            }
-          </DataCharts>
-        </Grid> */}
-        {
-          dashboardView === "LMS" && (<>
-            <Grid item md={6}>
-              <DataCharts>
-                {ls2_metrices.length ? <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion} /> : <Paper style={{ padding: 10 }}>No Data Found. Check if EOD has been completed</Paper>}
-              </DataCharts>
-            </Grid>
-            <Grid item md={6}>
-              <DataCharts>
-                <BarChartData daysChartData={daysChartData} />
-              </DataCharts>
-            </Grid>
-            <Grid item xs={12}>
-              <LoanBookTable title={"Loan Book"} currentUser={currentUser} />
-            </Grid>
-          </>
-          )
-        }
-      </Grid>
-
       {
-        dashboardView === "LOS" && (
-          <LoansTable currentUser={currentUser} value={selectedStatsCard} />
-        )
-      }
+        currentUser.role_name === "DEALER" ? (
+          <>
+            <h1>WORKING WITH THE DASHBOARD</h1>
+          </>
 
+        ) : (
+            <>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  {
+                    Array.isArray(chartData) && dashboardView === "LOS" && (
+                      <Box p={2} borderRadius={4} bgcolor="background.paper">
+                        <Typography variant="h5">Loans' Statistics</Typography>
+                        <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="wrap">
+                          {
+                            chartData.map((item, i) => (
+                              <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name} selected={item.name === selectedStatsCard} action={() => handleClick(item.name)} />
+                            ))
+                          }
+                        </Box>
+                      </Box>
+                    )
+                  }
+                  {
+                    dashboardView === "LMS" ? (
+                      <Box p={2} borderRadius={4} bgcolor="background.paper">
+                        <Typography variant="h5">Credit Book</Typography>
+                        <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">
+                          <DashCard text="Date (Opening)" value={ls1_metrices.opening ? moment(new Date(ls1_metrices.opening)).format('DD MMM, YYYY') : '-'} />
+                          <DashCard text="Loan Book (in Crs)" value={Number(ls1_metrices.loan_book)?.toFixed(2)} />
+                          <DashCard text="Overdue (in Crs)" value={Number(ls1_metrices.overdue)?.toFixed(2)} />
+                          <DashCard text="Due (in Crs)" value={Number(ls1_metrices.due)?.toFixed(2)} />
+                          <DashCard noBorder text="Current (in Crs)" value={Number(ls1_metrices.current1)?.toFixed(2)} />
+                        </Box>
+                      </Box>
+                    ) : null
+                  }
+                </Grid>
+                {
+                  dashboardView === "LMS" && (<>
+                    <Grid item md={6}>
+                      <DataCharts>
+                        {ls2_metrices.length ? <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion} /> : <Paper style={{ padding: 10 }}>No Data Found. Check if EOD has been completed</Paper>}
+                      </DataCharts>
+                    </Grid>
+                    <Grid item md={6}>
+                      <DataCharts>
+                        <BarChartData daysChartData={daysChartData} />
+                      </DataCharts>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <LoanBookTable title={"Loan Book"} currentUser={currentUser} />
+                    </Grid>
+                  </>
+                  )
+                }
+              </Grid>
+              {
+                dashboardView === "LOS" && (
+                  <LoansTable currentUser={currentUser} value={selectedStatsCard} />
+                )
+              }
+            </>
+
+
+          )
+      }
     </div>
   );
 }

@@ -101,3 +101,19 @@ export const getDealersWithCoapplicants = dealershipId => {
       })
   });
 }
+export const getDealerDetails = () => {
+  return new Promise((resolve, reject) => {
+    apiCall(`loan/report`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

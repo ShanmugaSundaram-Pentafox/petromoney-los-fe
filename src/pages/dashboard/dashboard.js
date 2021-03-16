@@ -19,6 +19,10 @@ import { SummaryTile, PieChartData, BarChartData } from './components/MetricsCom
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import { Typography } from '@material-ui/core';
 import { yellow } from '@material-ui/core/colors';
+import { getDealerDetails } from '../../services/dealers.service';
+import UserDueTable from './components/userDueTable';
+import Currency from '../../../src/components/Number/Currency';
+
 
 
 const DataCharts = styled.div`
@@ -38,8 +42,12 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   const [daysChartData, setdaysChartData] = useState(['Days', 'Amount']);
   const [totalForRegion, setTotalForRegion] = useState(0)
   const [selectedStatsCard, setSelectedStatsCard] = useState("Submitted");
+  const [selectedReportStatsCard, setSelectedReportStatsCard] = useState("Due");
+  const [dealerDetail, setDealerDetail] = useState({});
+  const [dealerChartData, setDealerChartData] = useState([]);
   const handleClick = (name) => {
     setSelectedStatsCard(name)
+    setSelectedReportStatsCard(name)
   }
   useMount(() => {
     getLoanStats()
@@ -60,6 +68,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
       .catch(err => {
         console.log(err);
       })
+
 
     setTimeout(() => {
       getAll_ls1_Metrices().then(res => {
@@ -92,21 +101,53 @@ const Dashboard = ({ currentUser, dashboardView }) => {
       })
     }, 4000)
   });
+  useMount(() => {
+    getDealerDetails()
+      .then((data) => {
+        setDealerDetail(data);
+        let tot_count =0;
+        data.due.map(tot => {
+          tot_count+=tot.tot_due
+        })
+        let dData = [
+          { name: "Active Loans", count: data.due.length+data.overdue.length},
+          { name: "Total Due Amount", count: tot_count}
+        ]
+        setDealerChartData(dData)
+      })
+
+      .catch((e) => {
+        console.log(e);
+      });
+  });
+
 
   // const CustomizedAxisTick = ({ x, y, payload }) => {
   //   return (
   //     <Text x={x} y={y} fill='#666' width={70} fontSize='12' fontWeight='bold' textAnchor="middle" verticalAnchor="start">{payload.value}</Text>
   //   )
   // }
-
   return (
     <div style={{ flexGrow: 1 }}>
       {
         currentUser.role_name === "DEALER" ? (
           <>
-            <h1>WORKING WITH THE DASHBOARD</h1>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <Box p={2} borderRadius={4} bgcolor="background.paper">
+                  <Typography variant="h5">Sanctioned Loan : <Currency value={dealerDetail.sanctioned_loan_amount} /></Typography>
+                  <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="wrap">
+                    {
+                      dealerChartData.map((item, i) => (
+                        <DashCard key={i} noBorder={i === dealerChartData.length - 1} value={item.name!="Active Loans" ?(<Currency value={item.count} />):item.count} text={item.name} selected={item.name === selectedReportStatsCard} action={() => handleClick(item.name)} />
+                      ))
+                    }
+                  </Box>
+                </Box>
+              </Grid>
+            </Grid>
+            <LoansTable currentUser={currentUser} value={ selectedReportStatsCard} />
           </>
-
         ) : (
             <>
               <Grid container spacing={2}>

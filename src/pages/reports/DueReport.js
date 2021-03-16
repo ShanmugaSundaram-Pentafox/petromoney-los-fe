@@ -44,7 +44,6 @@ const DueTable = () => {
     var a = await getReport()
     setLoans(a.due)
   })
-  usePageTitle('Report')
   const columns = useMemo(() => {
     return [
       { name: 'applicant_code', label: 'Applicant Code' },

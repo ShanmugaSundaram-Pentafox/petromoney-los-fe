@@ -166,10 +166,9 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
         setReportDetails(selectedLoanData)
       })
       .catch(e => null);
-    setModalData({ open: true })
+      setModalData({ open: true })
   }
   let input = reportDetails.duedate;
-  console.log("detailssss", reportDetails)
   return (
     <Box pt={2}>
       <UserCan
@@ -282,8 +281,8 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
           <div id="">
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <Typography style={{ textAlign: 'center', marginBottom: 20 }}>Loan ID <strong>{reportDetails.prospectcode}</strong></Typography>
-                <Typography>Dealership &nbsp; {reportDetails.cust_code} - {reportDetails.applicant_name}</Typography>
+                <Typography>Loan ID &nbsp; &nbsp; &nbsp; &nbsp;<strong>{reportDetails.prospectcode}</strong></Typography>
+                <Typography>Dealership &nbsp;  {reportDetails.cust_code} - {reportDetails.applicant_name}</Typography>
                 <Typography style={{ paddingBottom: 50 }}>Sales Area &nbsp; {reportDetails.cust_salesarea}</Typography>
                 <Box borderBottom={1} display="flex" className={classes.box} >
                   <Box borderRight={1} className={classes.details}>
@@ -314,20 +313,20 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
                   </Box>
                   <Box borderRight={1} className={classes.details}>
                     <div>
-                    <strong><Currency value={reportDetails.int_due} /></strong>
-                    <p>Interest Due</p>
+                      <strong><Currency value={reportDetails.int_due} /></strong>
+                      <p>Interest Due</p>
                     </div>
                   </Box>
                   <Box item md={4} className={classes.details}>
                     <div>
-                    <strong>{Moment(reportDetails.disb_date, 'DD-MM-YYYY').toNow(input, 'DD-MM-YYYY')}</strong>
-                    <p>Days Remaining</p>
+                      <strong>{Moment(reportDetails.disb_date, 'DD-MM-YYYY').toNow(input, 'DD-MM-YYYY')}</strong>
+                      <p>Days Remaining</p>
                     </div>
                   </Box>
                 </Box>
                 <div style={{ textAlign: 'center' }}>
                   <Typography>Total Due Amount</Typography>
-                  <Typography style={{ color: '#00EE76', marginBottom: 20 }}><Currency value={reportDetails.tot_due} /></Typography>
+                  <Typography style={{ marginBottom: 20 }}><Currency value={reportDetails.tot_due} /></Typography>
                   <Button variant="contained" size="medium" style={{ backgroundColor: '#008B45', color: 'white' }}>Pay Now</Button>
                 </div>
 

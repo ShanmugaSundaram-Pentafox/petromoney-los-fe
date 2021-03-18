@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: '#e1f8e5',
     }
 }));
-const OverDueTable = ({onRowClick}) => {
+const OverDueTable = ({ onRowClick }) => {
 
     const classes = useStyles();
     const [loans, setLoans] = useState([])
@@ -48,19 +48,8 @@ const OverDueTable = ({onRowClick}) => {
             { name: 'prospectcode', label: 'Loan ID' },
             { name: 'applicant_code', label: 'Applicant Code' },
             { name: 'applicant_name', label: 'Applicant Name' },
-            { name: 'cust_code', label: 'Customer Code' },
+            { name: 'cust_code', label: 'Dealership ID' },
             { name: 'cust_region', label: 'Customer Region' },
-            {
-                name: 'penal_overdue',
-                label: 'Penal Overdue',
-                options: {
-                    filter: false,
-                    sort: true,
-                    customBodyRender: value => {
-                        return <Currency value={value} />
-                    }
-                }
-            },
             {
                 name: 'duedate',
                 label: 'Due Date',

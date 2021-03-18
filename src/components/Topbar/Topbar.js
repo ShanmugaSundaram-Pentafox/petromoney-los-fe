@@ -18,6 +18,8 @@ import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 import { setDashboardView } from '../../store/common/common.actions';
 import AddNewUserAction from '../AddNewUser/AddNewUserAction';
 import SendEmailAction from '../../pages/reports/SendEmailAction';
+import { permissionCheck } from '../UserCan/UserCan';
+import { rulesList } from '../../config/userRules';
 // import Searchbox from '../CommonComponents/Searchbox';
 
 const useStyles = makeStyles(theme => {
@@ -71,6 +73,7 @@ const Topbar = (props) => {
   useEffect(() => {
 
   }, [dashboardView])
+  const editable = permissionCheck(user.role_name, rulesList.dealer_edit)
   return (
     <Fragment>
       <AppBar
@@ -86,7 +89,8 @@ const Topbar = (props) => {
             />
           </RouterLink> */}
           {
-            goBackIcon && (
+            
+            goBackIcon && editable && (
               <Tooltip title="Go Back">
                 <IconButton edge="start" className={classes.goback} color="inherit" aria-label="goback" onClick={history.goBack}>
                   <ArrowBackIosRoundedIcon />

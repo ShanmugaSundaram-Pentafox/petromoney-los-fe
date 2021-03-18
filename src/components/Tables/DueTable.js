@@ -121,7 +121,7 @@ const DueTable = ({onRowClick}) => {
                   columns={columns}
                   options={options}
                 />
-              ) : <Paper style={{ padding: 10 }}>No Due Loans</Paper>
+              ) : <Paper style={{ padding: 10 }}>No Due Reports</Paper>
             )}
         </div>
       </>

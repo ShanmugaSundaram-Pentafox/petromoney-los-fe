@@ -42,7 +42,6 @@ const OverDueTable = ({ onRowClick }) => {
         var a = await getReport()
         setLoans(a.overdue)
     })
-    console.log("loanssss", loans)
     const columns = useMemo(() => {
         return [
             { name: 'prospectcode', label: 'Loan ID' },
@@ -82,20 +81,16 @@ const OverDueTable = ({ onRowClick }) => {
     };
     return (
         <div className={classes.root}>
-            {(loans.length === 0) ? (
-                <Grid item xs={12}>
-                    <Skeleton variant="rect" width="100%" height={600} />
-                </Grid>
-            ) : (
-                    Array.isArray(loans) && loans.length ? (
-                        <MUIDataTable
-                            title={"Over Due Reports"}
-                            data={loans}
-                            columns={columns}
-                            options={options}
-                        />
-                    ) : <Paper style={{ marginTop: 10, padding: 10 }}>No Over Due Reports</Paper>
-                )}
+            {
+                Array.isArray(loans) && loans.length ? (
+                    <MUIDataTable
+                        title={"Over Due Reports"}
+                        data={loans}
+                        columns={columns}
+                        options={options}
+                    />
+                ) : <Paper style={{ marginTop: 10, padding: 10 }}>No Over Due Reports</Paper>
+            }
         </div>
     )
 }

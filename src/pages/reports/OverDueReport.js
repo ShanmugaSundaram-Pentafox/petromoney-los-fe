@@ -90,7 +90,7 @@ const OverDueTable = () => {
 
   return (
     <div className={classes.root}>
-      {(loans.length!==0)?(
+      {(loans.length ===0)?(
           <Grid item xs={12}>
             <Skeleton variant="rect" width="100%" height={600} />
           </Grid>

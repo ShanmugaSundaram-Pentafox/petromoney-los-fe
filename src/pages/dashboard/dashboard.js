@@ -20,7 +20,6 @@ import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import { Typography } from '@material-ui/core';
 import { yellow } from '@material-ui/core/colors';
 import { getDealerDetails } from '../../services/dealers.service';
-import UserDueTable from './components/userDueTable';
 import Currency from '../../../src/components/Number/Currency';
 
 

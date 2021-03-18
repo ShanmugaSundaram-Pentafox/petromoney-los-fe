@@ -136,7 +136,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
         }
       },
       {
-        label: 'eSign',
+        label: 'Documents',
         name: 'dealership_id',
         options: {
           filter: false,

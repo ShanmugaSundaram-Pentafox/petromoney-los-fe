@@ -12,12 +12,13 @@ import WbSunnyRoundedIcon from '@material-ui/icons/WbSunnyRounded';
 // import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 // import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import PersonOutlineRoundedIcon from '@material-ui/icons/PersonOutlineRounded';
-
+import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
 // import Profile from './components/Profile';
 import SidebarNav from './components/SidebarNav';
 // import { resetCurrentUser } from '../../store/user/user.actions';
 import { permissionCheck } from '../UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
+import ListIcon from '@material-ui/icons/List';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -122,7 +123,19 @@ const Sidebar = props => {
     // }
   ];
   if (permissionCheck(currentUser.role_name, rulesList.dealer_view)) {
-    pages.splice(1,pages.length+1)
+    pages.splice(1, pages.length + 1)
+    pages.push(
+      {
+        title: 'Profile',
+        href: `/dealership/${currentUser.dealership_id}`,
+        icon: <PersonOutlineIcon />
+      },
+      {
+        title: 'Passbook',
+        href: '/passbook',
+        icon: <ListIcon />
+      },
+    )
   }
 
   if (permissionCheck(currentUser.role_name, rulesList.users_view)) {

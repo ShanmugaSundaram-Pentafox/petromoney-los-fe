@@ -238,7 +238,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
           currentUser.role_name === "DEALER" ? (
             <>
               <DueTable onRowClick={showReportsInfo} />
-              <OverDueTable />
+              <OverDueTable onRowClick={showReportsInfo} />
 
             </>
           ) : (

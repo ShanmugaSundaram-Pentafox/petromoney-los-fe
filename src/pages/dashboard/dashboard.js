@@ -139,7 +139,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                   <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="wrap">
                     {
                       dealerChartData.map((item, i) => (
-                        <DashCard key={i} noBorder={i === dealerChartData.length - 1} value={item.name!="Active Loans" ?(<Currency value={item.count} />):item.count} text={item.name} selected={item.name === selectedReportStatsCard} action={() => handleClick(item.name)} />
+                        <DashCard key={i} noBorder={i === dealerChartData.length - 1} value={item.name!="Active Loans" ?(<Currency value={item.count} />):item.count} text={item.name}  action={() => handleClick(item.name)} />
                       ))
                     }
                   </Box>

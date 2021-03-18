@@ -81,7 +81,6 @@ const DueTable = () => {
       },
     ]
   }, []);
-
   const options = {
     selectableRowsHeader: false,
     selectableRows: 'none',

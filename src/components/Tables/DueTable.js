@@ -18,6 +18,7 @@ import { getDealerDetails } from '../../services/dealers.service';
 
 const useStyles = makeStyles(theme => ({
   root: {
+    paddingBottom:20
     // padding: theme.spacing(3),
     // paddingTop: 0,
   },
@@ -89,7 +90,7 @@ const DueTable = ({onRowClick}) => {
     selectableRows: 'none',
     isRowSelectable: () => true,
     onRowClick: (rowData, { dataIndex }) => {
-      onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'loan_approval')
+      onRowClick(loans[dataIndex].dealership_id, loans[dataIndex])
     },
     rowsPerPage: 15,
     rowsPerPageOptions: [15, 20, 30],

@@ -219,3 +219,18 @@ export const SendReports = () => {
       })
   });
 }
+export const getPassbookDetails = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`passbook/dealership/${id}`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

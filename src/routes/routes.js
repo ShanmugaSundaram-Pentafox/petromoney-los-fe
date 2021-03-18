@@ -21,6 +21,8 @@ import { rulesList } from '../config/userRules';
 import Due from '../pages/reports/DueReport';
 import OverDue from '../pages/reports/OverDueReport';
 import LmsLos from '../pages/loanspage/lmsLosTable';
+import ProfilePage from '../pages/users/dealer/ProfilePage';
+import PassbookDetails from '../pages/users/dealer/PassbookDetails';
 
 const Routes = ({ currentUser }) => {
   return (
@@ -43,6 +45,19 @@ const Routes = ({ currentUser }) => {
         path="/users"
         component={Users}
         allow={permissionCheck(currentUser?.role_name, rulesList.users_view)}
+        />
+        <ProtectedRoute
+        allow
+        exact
+        path="/passbook"
+        component={PassbookDetails}
+        allow={permissionCheck(currentUser?.role_name, rulesList.dealer_view)}
+        />
+        <ProtectedRoute
+        exact
+        path="/dealership/:id?"
+        component={ProfilePage}
+        allow={permissionCheck(currentUser?.role_name, rulesList.dealer_view)}
         />
       <Route exact path="/survey" render={props => <Survey {...props} />} />
       

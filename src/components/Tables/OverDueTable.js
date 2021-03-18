@@ -11,6 +11,7 @@ import Skeleton from '@material-ui/lab/Skeleton';
 
 const useStyles = makeStyles(theme => ({
     root: {
+        paddingBottom: 20
     },
     title: {
         fontWeight: 500
@@ -33,7 +34,7 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: '#e1f8e5',
     }
 }));
-const OverDueTable = () => {
+const OverDueTable = ({onRowClick}) => {
 
     const classes = useStyles();
     const [loans, setLoans] = useState([])
@@ -41,11 +42,12 @@ const OverDueTable = () => {
         var a = await getReport()
         setLoans(a.overdue)
     })
+    console.log("loanssss", loans)
     const columns = useMemo(() => {
         return [
-            {name:'prospectcode', label: 'Loan ID'},
-            { name: 'applicant_code', label: 'Applicant Code'},
-            { name: 'applicant_name', label: 'Applicant Name'},
+            { name: 'prospectcode', label: 'Loan ID' },
+            { name: 'applicant_code', label: 'Applicant Code' },
+            { name: 'applicant_name', label: 'Applicant Name' },
             { name: 'cust_code', label: 'Customer Code' },
             { name: 'cust_region', label: 'Customer Region' },
             {
@@ -79,17 +81,19 @@ const OverDueTable = () => {
             },
         ]
     }, []);
-
     const options = {
         selectableRowsHeader: false,
         selectableRows: 'none',
+        isRowSelectable: () => true,
+        onRowClick: (rowData, { dataIndex }) => {
+            onRowClick(loans[dataIndex].dealership_id, loans[dataIndex])
+        },
         rowsPerPage: 15,
         rowsPerPageOptions: [15, 20, 30],
     };
-
     return (
         <div className={classes.root}>
-            {(loans.length !== 0) ? (
+            {(loans.length === 0) ? (
                 <Grid item xs={12}>
                     <Skeleton variant="rect" width="100%" height={600} />
                 </Grid>

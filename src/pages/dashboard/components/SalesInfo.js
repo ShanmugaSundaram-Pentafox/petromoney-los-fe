@@ -15,7 +15,7 @@ import Popover from '@material-ui/core/Popover';
 import { makeStyles } from '@material-ui/core';
 import { getDealershipSalesById, postDealershipSalesById } from '../../../services/dealerships.service';
 import TextInput from '../../../components/TextInput/TextInput';
-import UserCan from '../../../components/UserCan/UserCan';
+import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 
 /**
@@ -158,7 +158,7 @@ const SalesInfo = ({
   //       </div>
   //     </SalesInfoWrapper>
   //   );
-
+  const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit)
   return (
     <SalesInfoWrapper>
       <Popover
@@ -258,35 +258,40 @@ const SalesInfo = ({
                     </TableCell>
                   </TableRow>
                 ) : (
-                  <TableRow key={i}>
-                    <TableCell scope="row" component="th">{row.from_year} - {row.to_year}
-                      {row.to_year >= 2020 ? <InfoOutlinedIcon
-                        className={classes.infoIcon}
-                        color='primary'
-                        aria-haspopup="true"
-                        aria-owns={open ? 'mouse-over-popover' : undefined}
-                        onMouseEnter={handlePopoverOpen}
-                        onMouseLeave={handlePopoverClose} />
-                        : null}</TableCell>
-                    {row.to_year >= 2020 ?
-                      <TableCell align="center" colSpan={2}>{row.ms?.toFixed(2)}</TableCell>
-                      : <>
-                        <TableCell align="right">{row.ms?.toFixed(2)}</TableCell>
-                        <TableCell align="right">{row.hsd?.toFixed(2)}</TableCell>
-                      </>}
-                    <TableCell align="right">{(row.ms + row.hsd)?.toFixed(2)}</TableCell>
-                    <TableCell align="right">
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        color="success"
-                        className={classes.btnSuccess}
-                        onClick={() => editSalesRow(row, i)}>
-                        Edit
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
+                    <TableRow key={i}>
+                      <TableCell scope="row" component="th">{row.from_year} - {row.to_year}
+                        {row.to_year >= 2020 ? <InfoOutlinedIcon
+                          className={classes.infoIcon}
+                          color='primary'
+                          aria-haspopup="true"
+                          aria-owns={open ? 'mouse-over-popover' : undefined}
+                          onMouseEnter={handlePopoverOpen}
+                          onMouseLeave={handlePopoverClose} />
+                          : null}</TableCell>
+                      {row.to_year >= 2020 ?
+                        <TableCell align="center" colSpan={2}>{row.ms?.toFixed(2)}</TableCell>
+                        : <>
+                          <TableCell align="right">{row.ms?.toFixed(2)}</TableCell>
+                          <TableCell align="right">{row.hsd?.toFixed(2)}</TableCell>
+                        </>}
+                      <TableCell align="right">{(row.ms + row.hsd)?.toFixed(2)}</TableCell>
+                      <TableCell align="right">
+                        {
+                          editable ? (
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              color="success"
+                              className={classes.btnSuccess}
+                              onClick={() => editSalesRow(row, i)}>
+                              Edit
+                            </Button>
+                          ) : null
+                      }
+
+                      </TableCell>
+                    </TableRow>
+                  ))
               }
               {
                 addNewRow && (

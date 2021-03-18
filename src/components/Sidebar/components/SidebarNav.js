@@ -110,7 +110,7 @@ const SidebarNav = props => {
       className={clsx(classes.root, className)}
     >
       {pages.map(page => (
-        page.title != "Loans" ? (
+        page.title != "Loans" && page.title != "Report" ? (
           <ListItem
             className={classes.item}
             disableGutters
@@ -126,7 +126,7 @@ const SidebarNav = props => {
               <div className={classes.icon}>{page.icon}</div>
               {page.title}
             </Button>
-          </ListItem>) : (
+          </ListItem>) : page.title == "Loans" ? (
             <>
               <ListItem
                 className={classes.item}
@@ -187,71 +187,74 @@ const SidebarNav = props => {
                 </ListItem>
               </Collapse>
             </>
-          )
-      ))}
-      <ListItem
-        className={classes.item}
-        disableGutters
-        key={'Reports'}
-      >
-        <Button
-          activeClassName={classes.active}
-          className={classes.button}
-          onClick={handleChange}
-          exact
-        >
-          <div className={classes.block1}>
-            <div className={classes.block2}>
-              <div className={classes.icon}><AssessmentIcon /></div>
-              {'Report'}
-            </div>
-            {(checked) ?
-              <div className={classes.iconArrow}><ExpandLessIcon /></div>
-              :
-              <div className={classes.iconArrow}><ExpandMoreIcon /></div>
-            }
+          ) : page.title ? (
+            <>
+              <ListItem
+                className={classes.item}
+                disableGutters
+                key={'Reports'}
+              >
+                <Button
+                  activeClassName={classes.active}
+                  className={classes.button}
+                  onClick={handleChange}
+                  exact
+                >
+                  <div className={classes.block1}>
+                    <div className={classes.block2}>
+                      <div className={classes.icon}><AssessmentIcon /></div>
+                      {'Report'}
+                    </div>
+                    {(checked) ?
+                      <div className={classes.iconArrow}><ExpandLessIcon /></div>
+                      :
+                      <div className={classes.iconArrow}><ExpandMoreIcon /></div>
+                    }
 
-          </div>
-        </Button>
-      </ListItem>
-      <Collapse in={checked} >
-        <ListItem
-          className={classes.itemSub}
-          disableGutters
-          key={'Due'}
-        >
-          <Button
-            activeClassName={classes.active}
-            className={classes.button}
-            component={CustomRouterLink}
-            to={'/reports/due'}
-            exact
-          >
-            <div className={classes.icon}><ReportIcon /></div>
-            {'Loan Due'}
-          </Button>
-        </ListItem>
-        <ListItem
-          className={classes.itemSub}
-          disableGutters
-          key={'Overdue'}
-        >
-          <Button
-            className={classes.button}
-            activeClassName={classes.active}
-            component={CustomRouterLink}
-            to={'/reports/overdue'}
-            exact
-          >
-            <div className={classes.icon}><ReportProblemIcon /></div>
-            {'Loan Overdue'}
-          </Button>
-        </ListItem>
-      </Collapse>
+                  </div>
+                </Button>
+              </ListItem>
+              <Collapse in={checked} >
+                <ListItem
+                  className={classes.itemSub}
+                  disableGutters
+                  key={'Due'}
+                >
+                  <Button
+                    activeClassName={classes.active}
+                    className={classes.button}
+                    component={CustomRouterLink}
+                    to={'/reports/due'}
+                    exact
+                  >
+                    <div className={classes.icon}><ReportIcon /></div>
+                    {'Loan Due'}
+                  </Button>
+                </ListItem>
+                <ListItem
+                  className={classes.itemSub}
+                  disableGutters
+                  key={'Overdue'}
+                >
+                  <Button
+                    className={classes.button}
+                    activeClassName={classes.active}
+                    component={CustomRouterLink}
+                    to={'/reports/overdue'}
+                    exact
+                  >
+                    <div className={classes.icon}><ReportProblemIcon /></div>
+                    {'Loan Overdue'}
+                  </Button>
+                </ListItem>
+              </Collapse>
+            </>
+
+          ):null
+      ))}
     </List>
   );
 };
-
 SidebarNav.propTypes = {
   className: PropTypes.string,
   pages: PropTypes.array.isRequired

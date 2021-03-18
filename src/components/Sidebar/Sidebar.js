@@ -12,12 +12,13 @@ import WbSunnyRoundedIcon from '@material-ui/icons/WbSunnyRounded';
 // import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 // import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import PersonOutlineRoundedIcon from '@material-ui/icons/PersonOutlineRounded';
-
+import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
 // import Profile from './components/Profile';
 import SidebarNav from './components/SidebarNav';
 // import { resetCurrentUser } from '../../store/user/user.actions';
 import { permissionCheck } from '../UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
+import ListIcon from '@material-ui/icons/List';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -30,7 +31,7 @@ const useStyles = makeStyles(theme => ({
   root: {
     // backgroundColor: theme.palette.white,
     // backgroundColor: "#050712",
-    
+
     backgroundColor: "#FFF",
     color: theme.palette.black,
     display: 'flex',
@@ -79,7 +80,6 @@ const useStyles = makeStyles(theme => ({
 const Sidebar = props => {
   const { open, variant, onClose, className, user, logout, currentUser, ...rest } = props;
   const classes = useStyles();
-
   const pages = [
     {
       title: 'Dashboard',
@@ -95,16 +95,21 @@ const Sidebar = props => {
       title: 'Loans',
       href: '/loans',
       icon: <AccountBoxIcon />
-    }, 
+    },
     {
       title: 'Dealerships',
       href: '/dealership',
       icon: <PeopleIcon />
     },
     {
-      title:'Transports',
+      title: 'Transports',
       href: '/transports',
-      icon: <LocalShippingIcon/>
+      icon: <LocalShippingIcon />
+    },
+    {
+      title: 'Report',
+      href: '/reports',
+      icon: <LocalShippingIcon />
     }
     // {
     //   title: 'Account',
@@ -117,8 +122,23 @@ const Sidebar = props => {
     //   icon: <SettingsIcon />
     // }
   ];
+  if (permissionCheck(currentUser.role_name, rulesList.dealer_view)) {
+    pages.splice(1, pages.length + 1)
+    pages.push(
+      {
+        title: 'Profile',
+        href: `/dealership/${currentUser.dealership_id}`,
+        icon: <PersonOutlineIcon />
+      },
+      {
+        title: 'Passbook',
+        href: '/passbook',
+        icon: <ListIcon />
+      },
+    )
+  }
 
-  if(permissionCheck(currentUser.role_name, rulesList.users_view)) {
+  if (permissionCheck(currentUser.role_name, rulesList.users_view)) {
     pages.push({
       title: 'Users',
       href: '/users',
@@ -149,20 +169,20 @@ const Sidebar = props => {
         <Divider light className={classes.divider} />
         <div>
           <List>
-              <ListItem
-                className={classes.item}
-                disableGutters
+            <ListItem
+              className={classes.item}
+              disableGutters
+            >
+              <Button
+                activeClassName={classes.active}
+                className={classes.button}
               >
-                <Button
-                  activeClassName={classes.active}
-                  className={classes.button}
-                >
-                  <div className={classes.icon}>
-                    <PersonOutlineRoundedIcon />
-                  </div>
-                    {currentUser.role_name}
-                </Button>
-              </ListItem>
+                <div className={classes.icon}>
+                  <PersonOutlineRoundedIcon />
+                </div>
+                {currentUser.role_name}
+              </Button>
+            </ListItem>
           </List>
         </div>
         <SidebarNav

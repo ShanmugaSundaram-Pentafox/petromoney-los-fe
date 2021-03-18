@@ -10,7 +10,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 // import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 // import InputIcon from '@material-ui/icons/Input';
 import { connect } from 'react-redux';
-import { resetCurrentUser } from '../../store/user/user.actions';
+import { resetCurrentUser, setCurrentUser } from '../../store/user/user.actions';
 // import NotificationsBell from '../CommonComponents/NotificationsBell';
 import LoginUserInfo from '../CommonComponents/LoginUserInfo';
 import NotificationSidebar from '../CommonComponents/NotificationSidebar';
@@ -18,6 +18,8 @@ import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 import { setDashboardView } from '../../store/common/common.actions';
 import AddNewUserAction from '../AddNewUser/AddNewUserAction';
 import SendEmailAction from '../../pages/reports/SendEmailAction';
+import { permissionCheck } from '../UserCan/UserCan';
+import { rulesList } from '../../config/userRules';
 // import Searchbox from '../CommonComponents/Searchbox';
 
 const useStyles = makeStyles(theme => {
@@ -63,16 +65,15 @@ const useStyles = makeStyles(theme => {
   })
 });
 
-const Topbar = props => {
+const Topbar = (props) => {
   const { className, onSidebarOpen, pageTitle, user, logout, match, history, goBackIcon, appBarProps, dashboardView, updateDashboardView } = props;
   const classes = useStyles();
   // const [notifications] = useState([]);
-
   const [showNotificationSidebar, setShowNotificationSidebar] = useState(false);
   useEffect(() => {
 
   }, [dashboardView])
-
+  const editable = permissionCheck(user.role_name, rulesList.dealer_edit)
   return (
     <Fragment>
       <AppBar
@@ -88,7 +89,8 @@ const Topbar = props => {
             />
           </RouterLink> */}
           {
-            goBackIcon && (
+            
+            goBackIcon && editable && (
               <Tooltip title="Go Back">
                 <IconButton edge="start" className={classes.goback} color="inherit" aria-label="goback" onClick={history.goBack}>
                   <ArrowBackIosRoundedIcon />
@@ -99,7 +101,7 @@ const Topbar = props => {
           <h2 className={classes.title}>
             {pageTitle}
             {
-              pageTitle?.toLowerCase() == "dashboard" && (
+              pageTitle?.toLowerCase() == "dashboard" && user.role_name != "DEALER" ? (
                 <span className={classes.optionsContainer}>
                   <RadioGroup onChange={(e, v) => updateDashboardView(v)} row aria-label="dashboard-view-type" name="dashboard-view-type" defaultValue={dashboardView}>
                     <Tooltip title="Loan Origination System">
@@ -118,7 +120,7 @@ const Topbar = props => {
                     </Tooltip>
                   </RadioGroup>
                 </span>
-              )
+              ) :null
             }
 
             {

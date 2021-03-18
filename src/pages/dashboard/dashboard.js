@@ -19,6 +19,9 @@ import { SummaryTile, PieChartData, BarChartData } from './components/MetricsCom
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import { Typography } from '@material-ui/core';
 import { yellow } from '@material-ui/core/colors';
+import { getDealerDetails } from '../../services/dealers.service';
+import Currency from '../../../src/components/Number/Currency';
+
 
 
 const DataCharts = styled.div`
@@ -38,9 +41,12 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   const [daysChartData, setdaysChartData] = useState(['Days', 'Amount']);
   const [totalForRegion, setTotalForRegion] = useState(0)
   const [selectedStatsCard, setSelectedStatsCard] = useState("Submitted");
-
+  const [selectedReportStatsCard, setSelectedReportStatsCard] = useState("Due");
+  const [dealerDetail, setDealerDetail] = useState({});
+  const [dealerChartData, setDealerChartData] = useState([]);
   const handleClick = (name) => {
     setSelectedStatsCard(name)
+    setSelectedReportStatsCard(name)
   }
   useMount(() => {
     getLoanStats()
@@ -61,6 +67,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
       .catch(err => {
         console.log(err);
       })
+
 
     setTimeout(() => {
       getAll_ls1_Metrices().then(res => {
@@ -93,107 +100,115 @@ const Dashboard = ({ currentUser, dashboardView }) => {
       })
     }, 4000)
   });
+  useMount(() => {
+    getDealerDetails()
+      .then((data) => {
+        setDealerDetail(data);
+        let tot_count =0;
+        data.due.map(tot => {
+          tot_count+=tot.tot_due
+        })
+        let dData = [
+          { name: "Active Loans", count: data.due.length+data.overdue.length},
+          { name: "Total Due Amount", count: tot_count}
+        ]
+        setDealerChartData(dData)
+      })
+
+      .catch((e) => {
+        console.log(e);
+      });
+  });
+
 
   // const CustomizedAxisTick = ({ x, y, payload }) => {
   //   return (
   //     <Text x={x} y={y} fill='#666' width={70} fontSize='12' fontWeight='bold' textAnchor="middle" verticalAnchor="start">{payload.value}</Text>
   //   )
   // }
-
   return (
     <div style={{ flexGrow: 1 }}>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          {
-            Array.isArray(chartData) && dashboardView === "LOS" && (
-              <Box p={2} borderRadius={4} bgcolor="background.paper">
-                <Typography variant="h5">Loans' Statistics</Typography>
-                <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="wrap">
-                  {
-                    chartData.map((item, i) => (
-                      <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name} selected={item.name === selectedStatsCard} action={() => handleClick(item.name)} />
-                    ))
-                  }
-                </Box>
-              </Box>
-            )
-          }
-          {
-            dashboardView === "LMS" ? (
-              <Box p={2} borderRadius={4} bgcolor="background.paper">
-                <Typography variant="h5">Credit Book</Typography>
-                <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">
-                  <DashCard text="Date (Opening)" value={ls1_metrices.opening ? moment(new Date(ls1_metrices.opening)).format('DD MMM, YYYY') : '-'} />
-                  <DashCard text="Loan Book (in Crs)" value={Number(ls1_metrices.loan_book)?.toFixed(2)} />
-                  <DashCard text="Overdue (in Crs)" value={Number(ls1_metrices.overdue)?.toFixed(2)} />
-                  <DashCard text="Due (in Crs)" value={Number(ls1_metrices.due)?.toFixed(2)} />
-                  <DashCard noBorder text="Current (in Crs)" value={Number(ls1_metrices.current1)?.toFixed(2)} />
-                </Box>
-              </Box>
-            ) : null
-          }
-        </Grid>
-        {/* {
-          dashboardView === "LMS" && (
-            <Grid item md={6}>
-              <DataCharts>
-                {Object.keys(ls1_metrices).length ? <SummaryTile ls1Data={ls1_metrices}/> : <Paper style={{ padding: 10 }}>No Data Found</Paper> }
-              </DataCharts>
-            </Grid>
-          )
-        } */}
-        {/* <Grid item md={6}>
-          <DataCharts>
-            {
-              chartData.length ? (
-                <InfoBoxWrapper style={{ width: '100%'}}>
-                  <p>Loans</p>
-                  <BarChart
-                    width={540}
-                    height={260}
-                    data={chartData}
-                    style={{ fontSize: '14px'}}
-                    label
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" interval={0} tick={<CustomizedAxisTick />} height={40} />
-                    <YAxis type="number" domain={[0, 200]}/>
-                    <Tooltip />
-                    <Bar dataKey="count" fill="rgb(66, 133, 244)" barSize={30}>
-                      <LabelList position="top" />
-                    </Bar>
-                  </BarChart>
-                </InfoBoxWrapper>
-              ) : null
-            }
-          </DataCharts>
-        </Grid> */}
-        {
-          dashboardView === "LMS" && (<>
-            <Grid item md={6}>
-              <DataCharts>
-                {ls2_metrices.length ? <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion} /> : <Paper style={{ padding: 10 }}>No Data Found. Check if EOD has been completed</Paper>}
-              </DataCharts>
-            </Grid>
-            <Grid item md={6}>
-              <DataCharts>
-                <BarChartData daysChartData={daysChartData} />
-              </DataCharts>
-            </Grid>
-            <Grid item xs={12}>
-              <LoanBookTable title={"Loan Book"} currentUser={currentUser} />
-            </Grid>
-          </>
-          )
-        }
-      </Grid>
-
       {
-        dashboardView === "LOS" && (
-          <LoansTable currentUser={currentUser} value={selectedStatsCard} />
-        )
-      }
+        currentUser.role_name === "DEALER" ? (
+          <>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <Box p={2} borderRadius={4} bgcolor="background.paper">
+                  <Typography variant="h5">Sanctioned Loan : <Currency value={dealerDetail.sanctioned_loan_amount} /></Typography>
+                  <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="wrap">
+                    {
+                      dealerChartData.map((item, i) => (
+                        <DashCard key={i} noBorder={i === dealerChartData.length - 1} value={item.name!="Active Loans" ?(<Currency value={item.count} />):item.count} text={item.name}  action={() => handleClick(item.name)} />
+                      ))
+                    }
+                  </Box>
+                </Box>
+              </Grid>
+            </Grid>
+            <LoansTable currentUser={currentUser} value={ selectedReportStatsCard} />
+          </>
+        ) : (
+            <>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  {
+                    Array.isArray(chartData) && dashboardView === "LOS" && (
+                      <Box p={2} borderRadius={4} bgcolor="background.paper">
+                        <Typography variant="h5">Loans' Statistics</Typography>
+                        <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="wrap">
+                          {
+                            chartData.map((item, i) => (
+                              <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name} selected={item.name === selectedStatsCard} action={() => handleClick(item.name)} />
+                            ))
+                          }
+                        </Box>
+                      </Box>
+                    )
+                  }
+                  {
+                    dashboardView === "LMS" ? (
+                      <Box p={2} borderRadius={4} bgcolor="background.paper">
+                        <Typography variant="h5">Credit Book</Typography>
+                        <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">
+                          <DashCard text="Date (Opening)" value={ls1_metrices.opening ? moment(new Date(ls1_metrices.opening)).format('DD MMM, YYYY') : '-'} />
+                          <DashCard text="Loan Book (in Crs)" value={Number(ls1_metrices.loan_book)?.toFixed(2)} />
+                          <DashCard text="Overdue (in Crs)" value={Number(ls1_metrices.overdue)?.toFixed(2)} />
+                          <DashCard text="Due (in Crs)" value={Number(ls1_metrices.due)?.toFixed(2)} />
+                          <DashCard noBorder text="Current (in Crs)" value={Number(ls1_metrices.current1)?.toFixed(2)} />
+                        </Box>
+                      </Box>
+                    ) : null
+                  }
+                </Grid>
+                {
+                  dashboardView === "LMS" && (<>
+                    <Grid item md={6}>
+                      <DataCharts>
+                        {ls2_metrices.length ? <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion} /> : <Paper style={{ padding: 10 }}>No Data Found. Check if EOD has been completed</Paper>}
+                      </DataCharts>
+                    </Grid>
+                    <Grid item md={6}>
+                      <DataCharts>
+                        <BarChartData daysChartData={daysChartData} />
+                      </DataCharts>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <LoanBookTable title={"Loan Book"} currentUser={currentUser} />
+                    </Grid>
+                  </>
+                  )
+                }
+              </Grid>
+              {
+                dashboardView === "LOS" && (
+                  <LoansTable currentUser={currentUser} value={selectedStatsCard} />
+                )
+              }
+            </>
 
+
+          )
+      }
     </div>
   );
 }

@@ -1,6 +1,5 @@
 export const URL = {
-  base: "https://api-uat.petromoney.in/api/",
-  base2: "http://127.0.0.1:5000/api/",
+  base: process.env.REACT_APP_API_BASE,
   login: "login/user",
   allUsers: "users",
   userRoles: "user/roles",

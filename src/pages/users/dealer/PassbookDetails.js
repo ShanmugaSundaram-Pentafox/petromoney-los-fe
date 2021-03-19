@@ -8,6 +8,7 @@ import { getDealerDetails } from '../../../services/dealers.service';
 import MUIDataTable from "mui-datatables";
 import Paper from '@material-ui/core/Paper';
 import Skeleton from '@material-ui/lab/Skeleton';
+import moment from 'moment';
 import { Grid } from '@material-ui/core';
 import DisbursementApprovedTable from '../../../components/Tables/DisbursementApprovedTable';
 import CallMadeIcon from '@material-ui/icons/CallMade';
@@ -68,7 +69,6 @@ const PassbookDetails = ({ CurrentUser }) => {
         console.log(e);
       });
   });
-  console.log("dataaaaaaaaaaaaaaa",data)
   const columns = useMemo(() => {
     return [
       { name: 'cust_code', label: 'Dealership ID' },
@@ -78,11 +78,16 @@ const PassbookDetails = ({ CurrentUser }) => {
         label: 'Date',
         options: {
           filter: false,
+          customBodyRender: value => {
+            return <div style={{width:80}}>
+              {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
+            </div>
+          }
         }
       },
       {
         name: 'disbursement',
-        label: 'Amount',
+        label: 'Credit',
         options: {
           filter: false,
           sort: false,
@@ -104,11 +109,11 @@ const PassbookDetails = ({ CurrentUser }) => {
       },
       {
         name: 'disbursement',
-        label: 'Detail',
+        label: ' ',
         options: {
           customBodyRender: value => <span>{value === 0 ? <div className={classes.credit}><CallMadeIcon /></div> : <div className={classes.debit}><CallReceivedIcon /></div>}</span>
         }
-        },
+      },
     ]
   }, []);
   const options = {
@@ -116,7 +121,6 @@ const PassbookDetails = ({ CurrentUser }) => {
     selectableRows: 'none',
     rowsPerPage: 15,
     rowsPerPageOptions: [15, 20, 30],
-    calculation : 'repayment',
 
   };
   usePageTitle("Passbook")

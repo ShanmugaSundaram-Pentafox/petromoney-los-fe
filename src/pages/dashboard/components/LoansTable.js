@@ -161,14 +161,9 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
     setShowPanel({ status: true, data: status });
   }
   const showReportsInfo = (id, selectedLoanData, status) => {
-    getDealerDetails()
-      .then(data => {
-        setReportDetails(selectedLoanData)
-      })
-      .catch(e => null);
-      setModalData({ open: true })
+    setReportDetails(selectedLoanData)
+    setModalData({ open: true })
   }
-  let input = reportDetails.duedate;
   return (
     <Box pt={2}>
       <UserCan
@@ -293,7 +288,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
                   </Box>
                   <Box borderRight={1} className={classes.details}>
                     <div>
-                      <strong>{Moment(input, 'DD-MM-YYY').format('DD MMM YY')}</strong>
+                      <strong>{Moment(reportDetails.duedate, 'DD-MM-YYY').format('DD MMM YY')}</strong>
                       <p>Due Date</p>
                     </div>
                   </Box>
@@ -319,7 +314,8 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
                   </Box>
                   <Box item md={4} className={classes.details}>
                     <div>
-                      <strong>{Moment(reportDetails.disb_date, 'DD-MM-YYYY').toNow(input, 'DD-MM-YYYY')}</strong>
+                      <strong>{
+                      Moment(reportDetails.duedate,'DD-MM-YYYY').diff(Moment(),'days')}</strong>
                       <p>Days Remaining</p>
                     </div>
                   </Box>

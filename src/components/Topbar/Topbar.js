@@ -36,6 +36,7 @@ const useStyles = makeStyles(theme => {
       flexGrow: 1
     },
     signOutButton: {
+      color: '#DC143C',
       marginLeft: theme.spacing(1)
     },
     logoLink: {

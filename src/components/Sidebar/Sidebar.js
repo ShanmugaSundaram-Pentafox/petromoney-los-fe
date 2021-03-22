@@ -9,7 +9,7 @@ import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import LocalShippingIcon from '@material-ui/icons/LocalShipping';
 import WbSunnyRoundedIcon from '@material-ui/icons/WbSunnyRounded';
 // import SettingsIcon from '@material-ui/icons/Settings';
-// import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 // import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import PersonOutlineRoundedIcon from '@material-ui/icons/PersonOutlineRounded';
 import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
@@ -19,6 +19,7 @@ import SidebarNav from './components/SidebarNav';
 import { permissionCheck } from '../UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import ListIcon from '@material-ui/icons/List';
+import { ExitToApp } from '@material-ui/icons';
 
 const useStyles = makeStyles(theme => ({
   drawer: {

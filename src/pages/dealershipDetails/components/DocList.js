@@ -14,6 +14,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import FileUpload from "../../../components/FileUpload";
 import { getDealershipCheckList, uploadDocument } from "../../../services/dealerships.service";
 import { getFileNameFromUrl } from "../../../utils/strings.util";
+import { URL } from '../../../config/serverUrls'
+
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -33,7 +35,7 @@ const Docs = ({ data }) => {
   return data.map((file, i) => {
     temp += file.file_url ? 1 : 0;
     return file.file_url ? (
-    <a style={{ display: 'inline-block', borderRadius: 4, lineHeight: 1, marginRight: 8, marginBottom: 8, padding: 8, backgroundColor: '#f0f0f0' }} href={file.file_url} target="_blank" title={file.name}>{getFileNameFromUrl(file?.file_url)}</a>
+      <a style={{ display: 'inline-block', borderRadius: 4, lineHeight: 1, marginRight: 8, marginBottom: 8, padding: 8, backgroundColor: '#f0f0f0' }} href={file.file_url} target="_blank" title={file.name}>{getFileNameFromUrl(file?.file_url)}</a>
     ) : null
   });
 }
@@ -48,7 +50,7 @@ const DocList = ({ id }) => {
     setShowUpload(false);
   }
 
-  const onView = () => {};
+  const onView = () => { };
 
   const onDocUpload = (row) => {
     setShowUpload(true);
@@ -61,7 +63,7 @@ const DocList = ({ id }) => {
       .catch((e) => null);
   });
 
- 
+
   const handleSave = (files) => {
     const formData = new FormData();
     const dealerShipId = id;
@@ -72,19 +74,33 @@ const DocList = ({ id }) => {
       formData.append(`fileName`, fileName);
       formData.append(`id`, rowData.doc_id);
     });
-    uploadDocument(dealerShipId, docID, formData)
+    fetch(`https://api-uat.petromoney.in/api/${URL.checklist}/${dealerShipId}/doc/${docID}`, {
+      method: 'POST',
+      body: formData
+    })
       .then(data => {
         enqueueSnackbar('File Upload Success', { variant: "success" });
         onCloseUploader();
       })
-      .catch(e => {
+      .catch(error => {
+        console.error(error)
         enqueueSnackbar('File Upload Failed', { variant: "error" });
-      });
+
+      })
+
+    // uploadDocument(dealerShipId, docID, formData)
+    //   .then(data => {
+    //     enqueueSnackbar('File Upload Success', { variant: "success" });
+    //     onCloseUploader();
+    //   })
+    //   .catch(e => {
+    //     enqueueSnackbar('File Upload Failed', { variant: "error" });
+    //   });
   };
 
   return (
     <div className={classes.wrapper}>
-      {showUpload && <FileUpload handleSave={handleSave} id={id} data={rowData} open={showUpload} onCloseUploader={onCloseUploader}/>}
+      {showUpload && <FileUpload handleSave={handleSave} id={id} data={rowData} open={showUpload} onCloseUploader={onCloseUploader} />}
       {/* <Typography variant="h5" align={"center"} className={classes.title}>
         Dealership Documents
       </Typography> */}

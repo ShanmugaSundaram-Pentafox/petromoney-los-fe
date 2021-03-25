@@ -58,3 +58,15 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `yarn build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+###Steps to make a build live in UAT:
+1. Build the latest repo changes: yarn build
+1. Create an archive out of it: tar -cf petromall-fe.tar build/
+1. Upload the file to temp directory of the mdm-uat server: scp -i <pem_key-path> petromall-fe.tar ubuntu@13.233.162.6:/tmp
+1. Log into the mdm-uat server: 
+1. Go to /var/www
+1. Rename the html directory html_bkp_<date>: mv html/ 25_03_html-bkp/
+1. Copy the uploaded latest build to the /var/www path: sudo cp /tmp/petromall-fe.tar /var/www/ 
+1. Extract the build: tar -xf petromall-fe.tar
+1. Ensure the extracted folder is renamed as html. To rename use, mv <source_folder_name> html
+

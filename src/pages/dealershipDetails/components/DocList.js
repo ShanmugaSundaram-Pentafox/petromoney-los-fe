@@ -74,7 +74,7 @@ const DocList = ({ id }) => {
       formData.append(`fileName`, fileName);
       formData.append(`id`, rowData.doc_id);
     });
-    fetch(`https://api-uat.petromoney.in/api/${URL.checklist}/${dealerShipId}/doc/${docID}`, {
+    fetch(`${URL.base}${URL.checklist}/${dealerShipId}/doc/${docID}`, {
       method: 'POST',
       body: formData
     })
@@ -83,7 +83,6 @@ const DocList = ({ id }) => {
         onCloseUploader();
       })
       .catch(error => {
-        console.error(error)
         enqueueSnackbar('File Upload Failed', { variant: "error" });
 
       })

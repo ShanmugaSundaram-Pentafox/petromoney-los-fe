@@ -37,75 +37,74 @@ const useStyles = makeStyles(theme => ({
 const OverDueTable = () => {
   const classes = useStyles();
 
-  const [loans , setLoans]= useState([])
-  useMount( async () => {
-      var a = await getReport()
-      setLoans(a.overdue) 
+  const [loans, setLoans] = useState([])
+  useMount(async () => {
+    var a = await getReport()
+    setLoans(a.overdue)
   })
   usePageTitle('Report')
   const columns = useMemo(() => {
     return [
       { name: 'applicant_code', label: 'Applicant Code' },
       { name: 'applicant_name', label: 'Applicant Name' },
-      { name: 'cust_code',label: 'Customer Code' },
+      { name: 'cust_code', label: 'Customer Code' },
       { name: 'cust_region', label: 'Customer Region' },
       {
         name: 'penal_overdue',
-        label: 'Penal Overdue', 
-        options: { 
+        label: 'Penal Overdue',
+        options: {
           filter: false,
           sort: true,
           customBodyRender: value => {
-            return <Currency value={value}/>
+            return <Currency value={value} />
           }
         }
       },
       {
         name: 'duedate',
-        label: 'Due Date', 
-        options: { 
-          filter: false, 
+        label: 'Due Date',
+        options: {
+          filter: false,
         }
       },
       {
         name: 'tot_due',
-        label: 'Total Due', 
-        options: { 
+        label: 'Total Due',
+        options: {
           filter: false,
           sort: true,
           customBodyRender: value => {
-            return <Currency value={value}/>
+            return <Currency value={value} />
           }
         }
       },
     ]
   }, []);
 
-  const options = { 
+  const options = {
     selectableRowsHeader: false,
-    selectableRows: 'none',  
+    selectableRows: 'none',
     rowsPerPage: 15,
-    rowsPerPageOptions: [15,20,30],
+    rowsPerPageOptions: [15, 20, 30],
   };
 
   return (
     <div className={classes.root}>
-      {(loans.length ===0)?(
-          <Grid item xs={12}>
-            <Skeleton variant="rect" width="100%" height={600} />
-          </Grid>
-        ):(
-        Array.isArray(loans) && loans.length ? (
-          <MUIDataTable
-            title={"Over Due Reports"}
-            data={loans}
-            columns={columns}
-            options={options}
-          />
-        ) : <Paper style={{marginTop:10, padding: 10 }}>No Over Due Reports</Paper> 
-      )}
+      {(loans.length === 0) ? (
+        <Grid item xs={12}>
+          <Skeleton variant="rect" width="100%" height={400} />
+        </Grid>
+      ) : Array.isArray(loans) && loans.length ? (
+        <MUIDataTable
+          title={"Due Reports"}
+          data={loans}
+          columns={columns}
+          options={options}
+        />
+      ) : <Paper style={{ padding: 10 }}>No Due Loans</Paper>
+      }
     </div>
   )
 }
 
-export default OverDueTable 
+export default OverDueTable

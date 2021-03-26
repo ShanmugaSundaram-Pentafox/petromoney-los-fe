@@ -88,35 +88,24 @@ const DueTable = () => {
     rowsPerPageOptions: [15, 20, 30],
   };
 
-  if (loans.length === 0) {
-    return (
-      <div className={classes.root}>
-        <Grid item xs={12}>
-          <Skeleton variant="rect" width="100%" height={600} />
-        </Grid>
-      </div>
-    )
-  }
-  else {
-    return (
-      <div className={classes.root}>
-        {(loans.length === 0) ? (
+  return (
+    <div className={classes.root}>
+      {
+        (loans.length === 0) ? (
           <Grid item xs={12}>
             <Skeleton variant="rect" width="100%" height={400} />
           </Grid>
-        ) : (
-            Array.isArray(loans) && loans.length ? (
-              <MUIDataTable
-                title={"Due Reports"}
-                data={loans}
-                columns={columns}
-                options={options}
-              />
-            ) : <Paper style={{ padding: 10 }}>No Due Loans</Paper>
-          )}
-      </div>
-    )
-  }
+        ) : Array.isArray(loans) && loans.length ? (
+          <MUIDataTable
+            title={"Due Reports"}
+            data={loans}
+            columns={columns}
+            options={options}
+          />
+        ) : <Paper style={{ padding: 10 }}>No Due Loans</Paper>
+      }
+    </div>
+  )
 }
 
-export default DueTable 
+export default DueTable

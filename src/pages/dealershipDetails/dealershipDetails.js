@@ -131,7 +131,7 @@ const DealershipDetails = ({ currentUser, match }) => {
                 userInitial={`${mainApplicant?.first_name?.charAt(0)}`}
                 name={`${mainApplicant?.first_name} ${mainApplicant?.last_name || ''}`}
                 description={`+91 ${mainApplicant?.mobile}`}
-                content={`${mainApplicant?.email}`}
+                content={`${mainApplicant?.email || ''}`}
               />
             </Grid>
             ) : null

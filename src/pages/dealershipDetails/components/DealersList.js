@@ -116,7 +116,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   }
 
   const dealersClickRow = (e, row, type) => {
-    if (e.target.tagName == 'A') {
+    if (e.target.tagName === 'A') {
       return null;
     }
     setModelType(type);

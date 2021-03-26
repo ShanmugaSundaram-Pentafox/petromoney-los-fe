@@ -166,7 +166,7 @@ const SolarEnquiryForm = ({ solarTab, onChangeTab, dealershipId, mainApplicant, 
                     }
                   }}
                 >
-                  Save & Continue
+                  Save &amp; Continue
                 </Button>
               </Grid>
             </Grid>
@@ -227,7 +227,7 @@ const SolarEnquiryForm = ({ solarTab, onChangeTab, dealershipId, mainApplicant, 
                     }
                   }}
                 >
-                  Save & Continue
+                  Save &amp; Continue
                 </Button>
               </Grid>
             </Grid>
@@ -288,7 +288,7 @@ const SolarEnquiryForm = ({ solarTab, onChangeTab, dealershipId, mainApplicant, 
                     }
                   }}
                 >
-                  Save & Continue
+                  Save &amp; Continue
                 </Button>
               </Grid>
             </Grid>
@@ -349,7 +349,7 @@ const SolarEnquiryForm = ({ solarTab, onChangeTab, dealershipId, mainApplicant, 
                     }
                   }}
                 >
-                  Save & Continue
+                  Save &amp; Continue
                 </Button>
               </Grid>
             </Grid>

@@ -122,7 +122,7 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
     if(!dealerships.length) {
       getAllDealership()
         .then(data => {
-          console.log(data);
+          // console.log(data);
           setAllDealerships(data);
           // setData(data)
         })

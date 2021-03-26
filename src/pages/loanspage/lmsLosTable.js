@@ -11,6 +11,7 @@ import usePageTitle from '../../hooks/usePageTitle';
 import { getAllExceptions } from '../../services/loans.service';
 import { useMount } from "react-use";
 import Grid from '@material-ui/core/Grid';
+import Skeleton from '@material-ui/lab/Skeleton';
 
 const useStyles = makeStyles({
     table: {
@@ -35,26 +36,32 @@ const LmsLosTable = () => {
 
     return (
         <Grid item xs={6}>
-            <TableContainer component={Paper}>
-                <Table className={classes.table} aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align="center">Applicant Code</TableCell>
-                            <TableCell align="center">Applicant Name</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {exceptions.map((item) => (
-                            <TableRow key={item.applicant_code}>
-                                <TableCell align="center" component="th" scope="row">
-                                    {item.applicant_code}
-                                </TableCell>
-                                <TableCell align="center">{item.applicant_name}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            {
+             Array.isArray(exceptions) && exceptions.length ? (
+                    <TableContainer component={Paper}>
+                        <Table className={classes.table} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell align="center">Applicant Code</TableCell>
+                                    <TableCell align="center">Applicant Name</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {exceptions.map((item) => (
+                                    <TableRow key={item.applicant_code}>
+                                        <TableCell align="center" component="th" scope="row">
+                                            {item.applicant_code}
+                                        </TableCell>
+                                        <TableCell align="center">{item.applicant_name}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+
+                ) : <Paper style={{ padding: 10 }}>No Exceptions Found</Paper>
+            }
+
         </Grid>
     );
 }

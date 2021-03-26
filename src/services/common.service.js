@@ -1,5 +1,5 @@
 // import { API } from "../config/api"
-// import { URL } from "../config/serverUrls"
+import { URL } from "../config/serverUrls"
 // import { store } from "../store";
 import apiCall from "../utils/api.util";
 
@@ -84,8 +84,9 @@ export const downloadPDF = ({ file, isBase64, name }) => {
   downloadLink.click();
 }
 export const getAllRegion = () => {
+  
   return new Promise((resolve, reject) => {
-    apiCall(`regions`)
+    apiCall(URL.region)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data);

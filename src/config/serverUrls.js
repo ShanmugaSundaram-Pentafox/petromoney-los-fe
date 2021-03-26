@@ -26,7 +26,7 @@ export const URL = {
   loanBook: 'business/loanbook',
   loanMetrics: "metrics/loan/stats",
   report:"loan/report",
-  region:"regions",
+  region:"regions/all",
   regionMap:"regionMap",
   regionMapUser:"region-map-user/",
   regionDel:"region-del/",

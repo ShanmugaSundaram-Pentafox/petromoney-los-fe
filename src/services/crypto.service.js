@@ -23,7 +23,7 @@ export const decrypt = cipher => {
     return result || cipher;
   } catch(e) {
     
-    console.log(cipher, e)
+    // console.log(cipher, e)
     return cipher;
   }
 }

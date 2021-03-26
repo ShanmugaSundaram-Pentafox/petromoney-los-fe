@@ -7,12 +7,12 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
-import Typography from "@material-ui/core/Typography";
+// import Typography from "@material-ui/core/Typography";
 import { useSnackbar } from 'notistack';
-import Chip from '@material-ui/core/Chip';
+// import Chip from '@material-ui/core/Chip';
 import { makeStyles } from "@material-ui/core/styles";
 import FileUpload from "../../../components/FileUpload";
-import { getDealershipCheckList, uploadDocument } from "../../../services/dealerships.service";
+import { getDealershipCheckList} from "../../../services/dealerships.service";
 import { getFileNameFromUrl } from "../../../utils/strings.util";
 import { URL } from '../../../config/serverUrls'
 
@@ -81,6 +81,7 @@ const DocList = ({ id }) => {
       .then(data => {
         enqueueSnackbar('File Upload Success', { variant: "success" });
         onCloseUploader();
+        window.location.reload();
       })
       .catch(error => {
         enqueueSnackbar('File Upload Failed', { variant: "error" });

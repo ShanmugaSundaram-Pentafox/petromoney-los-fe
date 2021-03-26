@@ -10,7 +10,7 @@ import { selectAllDealerships } from '../../../store/dealership/dealership.selec
 import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
 import { setAllDealerships } from '../../../store/dealership/dealership.actions';
-import { decrypt } from '../../../services/crypto.service';
+// import { decrypt } from '../../../services/crypto.service';
 
 const useStyles = makeStyles(theme => ({
   root: {},

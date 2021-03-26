@@ -110,7 +110,7 @@ const SidebarNav = props => {
       className={clsx(classes.root, className)}
     >
       {pages.map(page => (
-        page.title != "Loans" && page.title != "Report" ? (
+        page.title !== "Loans" && page.title !== "Report" ? (
           <ListItem
             className={classes.item}
             disableGutters
@@ -126,7 +126,7 @@ const SidebarNav = props => {
               <div className={classes.icon}>{page.icon}</div>
               {page.title}
             </Button>
-          </ListItem>) : page.title == "Loans" ? (
+          </ListItem>) : page.title === "Loans" ? (
             <>
               <ListItem
                 className={classes.item}

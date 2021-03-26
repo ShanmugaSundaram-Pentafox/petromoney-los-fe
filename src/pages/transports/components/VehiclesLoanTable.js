@@ -55,7 +55,7 @@ const VehiclesLoanTable = () => {
           filter: true,
           sort: true,
           customBodyRender: (value, tableMeta) => {
-            console.log(tableMeta)
+            // console.log(tableMeta)
             return value
           },
         },

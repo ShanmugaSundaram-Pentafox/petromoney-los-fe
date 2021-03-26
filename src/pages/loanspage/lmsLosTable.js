@@ -27,7 +27,6 @@ const LmsLosTable = () => {
         getAllExceptions()
             .then((data) => {
                 setExceptions(data)
-                console.log("exceptions data", data)
             })
             .catch((e) => {
                 console.log(e);

@@ -45,7 +45,7 @@ const DashCardWrapper = styled.div`
     /* margin-bottom: 8px; */
 
     .stat-number {
-      font-size: 40px;
+      font-size: 32px;
       font-weight: 600;
       flex: 1;
     }

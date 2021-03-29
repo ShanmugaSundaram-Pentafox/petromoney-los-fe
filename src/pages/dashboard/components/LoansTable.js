@@ -226,6 +226,15 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
                 </Grid>
               ) : null
             }
+            {
+              value === "Disbursement Approved" ? (
+                <Grid item xs={12}>
+                  <Paper className={classes.tableContainer}>
+                    <DisbursementApprovedTable  title={"Disbursement Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                  </Paper>
+                </Grid>
+              ) : null
+            }
           </Grid>
         )}
         no={() => (

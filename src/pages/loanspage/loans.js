@@ -33,6 +33,7 @@ import { rulesList } from '../../config/userRules';
 import { useMount } from 'react-use';
 import ApprovalReqestTable from '../../components/Tables/ApprovalReqestTable';
 import DisbursementReqestTable from '../../components/Tables/DisbursementReqestTable';
+import DisbursementApprovedTable from '../../components/Tables/DisbursementApprovedTable';
 
 
 const useStyles = makeStyles(theme => ({
@@ -181,9 +182,10 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
                     { name: 'Pending Approval', count: data.loan_approval_count || 0 },
                     { name: 'Approved', count: data.approved_count },
                     { name: 'Pending Disbursement Approval', count: data.disbursement_approval_count || 0 },
+                    { name: 'Disbursement Approved', count: data.disbursement_approved_count || 0 },
                     { name: 'Disbursed', count: data.disbursed_count },
                     { name: 'Rejected', count: data.rejected_count },
-                  ];
+                ];
                 setChartData(cdata);
             })
             .catch(err => {
@@ -212,10 +214,10 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
                 Array.isArray(chartData) && (
                     <Box p={2} mb={2} borderRadius={4} bgcolor="background.paper">
                         <Typography variant="h5">Loans' Statistics</Typography>
-                        <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="wrap"   >
+                        <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="nowrap"   >
                             {
                                 chartData.map((item, i) => (
-                                        <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name} selected={item.name === selectedStatsCard} action={() => handleClick(item.name)} />
+                                    <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name} selected={item.name === selectedStatsCard} action={() => handleClick(item.name)} />
                                 ))
                             }
                         </Box>
@@ -274,6 +276,15 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
                         <Grid item xs={12}>
                             <Paper className={classes.tableContainer}>
                                 <DisbursedTable title={"Disbursed Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                            </Paper>
+                        </Grid>
+                    ) : null
+                }
+                {
+                    selectedStatsCard === "Disbursement Approved" ? (
+                        <Grid item xs={12}>
+                            <Paper className={classes.tableContainer}>
+                                <DisbursementApprovedTable title={"Disbursement Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
                             </Paper>
                         </Grid>
                     ) : null

@@ -59,6 +59,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
           { name: 'Pending Approval', count: data.loan_approval_count || 0 },
           { name: 'Approved', count: data.approved_count },
           { name: 'Pending Disbursement Approval', count: data.disbursement_approval_count || 0 },
+          { name: 'Disbursement Approved',count:data.disbursement_approved_count || 0 },
           { name: 'Disbursed', count: data.disbursed_count },
           { name: 'Rejected', count: data.rejected_count },
         ];
@@ -135,7 +136,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
               <Grid item xs={12} md={6}>
                 <Box p={2} borderRadius={4} bgcolor="background.paper">
                   <Typography variant="h5">Sanctioned Loan : <Currency value={dealerDetail.sanctioned_loan_amount} /></Typography>
-                  <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="wrap">
+                  <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="nowrap">
                     {
                       dealerChartData.map((item, i) => (
                         <DashCard key={i} noBorder={i === dealerChartData.length - 1} value={item.name!="Active Loans" ?(<Currency value={item.count} />):item.count} text={item.name}  action={() => handleClick(item.name)} />
@@ -155,7 +156,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                     Array.isArray(chartData) && dashboardView === "LOS" && (
                       <Box p={2} borderRadius={4} bgcolor="background.paper">
                         <Typography variant="h5">Loans' Statistics</Typography>
-                        <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="wrap">
+                        <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="nowrap">
                           {
                             chartData.map((item, i) => (
                               <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name} selected={item.name === selectedStatsCard} action={() => handleClick(item.name)} />

@@ -29,8 +29,8 @@ const NewVehicleLoanForm = ({ vehicleId, callback, currentUser }) => {
     initialValues: {},
     validateOnChange: false,
     validationSchema: Yup.object().shape({
-      credit_head: Yup.number().required('Choose Proper User Role'),
-      loan_amount: Yup.number(),
+      credit_head: Yup.number().required('Choose Loan Type'),
+      loan_amount: Yup.number().required('Enter Loan Amount'),
       remarks: Yup.string(),
     }),
     onSubmit: formData => {

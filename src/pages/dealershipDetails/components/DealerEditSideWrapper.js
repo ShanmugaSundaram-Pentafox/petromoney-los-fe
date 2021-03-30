@@ -89,8 +89,8 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
   let coApplicantFields = {};
   if (modelType === 'COAPPLICANT') {
     coApplicantFields = {
-      dealer_id: Yup.number().required(),
-      relationship: Yup.string().min(2).required(),
+      dealer_id: Yup.number().required("Enter Dealer ID"),
+      relationship: Yup.string().min(2).required("Enter Relationship Type"),
     }
   }
 
@@ -100,8 +100,8 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
     gender: Yup.string().required("Enter gender"),
     dob: Yup.string().required("Choose date of birth"),
     address: Yup.string().min(6).required("Enter valid address"),
-    residing_since: Yup.number().required(),
-    marital_status: Yup.string(),
+    residing_since: Yup.number().required("Enter the year"),
+    marital_status: Yup.string("Enter your Marital status"),
     mobile: Yup.string().matches(/^\d{10}$/).required("Enter valid mobile number"),
     pan: Yup.string().matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, "Invalid PAN").required("Enter PAN").uppercase(),
     aadhar: Yup.string().matches(/^(\d{12})$|^(\d{16})$/, "Invalid aadhar").required("Enter valid aadhar"),

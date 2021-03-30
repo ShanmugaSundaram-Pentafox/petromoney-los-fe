@@ -71,8 +71,8 @@ const TrackerUpdateModal = ({ statusId, onClose, data, serviceData }) => {
     const d = JSON.parse(serviceData?.tracking_details?.[1]?.details || "{}");
 
     const _vSchema = Yup.object().shape({
-      amount: Yup.number().required('Choose Proper User Role'),
-      date: Yup.string().required('Enter first name'),
+      amount: Yup.number().required('Enter Amount'),
+      date: Yup.string().required('Enter valid Date'),
       utr: Yup.string().required('Enter UTR'),
     });
     return (

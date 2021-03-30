@@ -150,7 +150,22 @@ const Topbar = (props) => {
 
           </h2>
           <div className={classes.flexGrow} />
-          <Hidden mdUp>
+          <Hidden mdDown>
+            {/* <Searchbox /> */}
+            {/* <NotificationsBell action={() => setShowNotificationSidebar(true)} /> */}
+            <LoginUserInfo user={user} logout={logout} />
+  
+            {/* <Tooltip title="Logout">
+              <IconButton
+                className={classes.signOutButton}
+                color="inherit"
+                onClick={logout}
+              >
+                <InputIcon />
+              </IconButton>
+            </Tooltip> */}
+          </Hidden>
+          <Hidden lgUp>
             {/* <Searchbox /> */}
             {/* <NotificationsBell action={() => setShowNotificationSidebar(true)} /> */}
             {/* <LoginUserInfo user={user} logout={logout} /> */}

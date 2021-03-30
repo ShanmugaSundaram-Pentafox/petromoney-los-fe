@@ -44,6 +44,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
       let gst = values?.gst ? encrypt(values.gst) : values?.gst;
       setLoading(true);
       setApiStatus({});
+      console.log("iddddddddddd",values.id);
       apiCall(`${URL.dealership}/${values.id}`, {
         method: "POST",
         body: {
@@ -55,7 +56,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
       })
         .then(({ status, message, data }) => {
           if(status == 'success') {
-            setApiStatus({ type: 'success', message: message || 'Unable to save the details. Please try again later' })
+            setApiStatus({ type: 'success', message: message || 'Details updated successfully' })
             setLoading(false);
           }
           else {

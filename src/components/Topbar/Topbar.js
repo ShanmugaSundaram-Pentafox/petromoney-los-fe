@@ -165,10 +165,10 @@ const Topbar = (props) => {
               </IconButton>
             </Tooltip> */}
           </Hidden>
-          <Hidden lgUp>
-            {/* <Searchbox /> */}
-            {/* <NotificationsBell action={() => setShowNotificationSidebar(true)} /> */}
-            {/* <LoginUserInfo user={user} logout={logout} /> */}
+          {/* <Hidden lgUp>
+            <Searchbox />
+            <NotificationsBell action={() => setShowNotificationSidebar(true)} />
+            <LoginUserInfo user={user} logout={logout} />
             <Tooltip title="Logout">
               <IconButton
                 className={classes.signOutButton}
@@ -178,7 +178,7 @@ const Topbar = (props) => {
                 <InputIcon />
               </IconButton>
             </Tooltip>
-          </Hidden>
+          </Hidden> */}
           <Hidden lgUp>
             <IconButton
               color="inherit"

@@ -5,7 +5,8 @@ import { NavLink as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
-import { List, ListItem, Button, colors } from '@material-ui/core';
+import InputIcon from '@material-ui/icons/Input';
+import { List, ListItem, IconButton, Button, colors, Hidden } from '@material-ui/core';
 import Collapse from '@material-ui/core/Collapse';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -17,6 +18,8 @@ import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
 import { getAllExceptions } from '../../../services/loans.service';
 import { useMount } from "react-use";
 import Badge from '@material-ui/core/Badge';
+import { connect } from 'react-redux';
+import { resetCurrentUser } from '../../../store/user/user.actions';
 
 
 const useStyles = makeStyles(theme => ({
@@ -83,12 +86,12 @@ const CustomRouterLink = forwardRef((props, ref) => (
 ));
 
 const SidebarNav = props => {
-  const { pages, className, ...rest } = props;
+  const { pages, className, logout, ...rest } = props;
   const classes = useStyles();
   const [checked, setChecked] = React.useState(false);
   const [exceptions, setExceptions] = useState([]);
   const [check, setCheck] = React.useState(false);
-
+  console.log("logout", logout)
   useMount(() => {
     getAllExceptions()
       .then((data) => {
@@ -248,10 +251,26 @@ const SidebarNav = props => {
                   </Button>
                 </ListItem>
               </Collapse>
+
             </>
 
-          ):null
+          ) : null
       ))}
+      <Hidden lgUp>
+        <ListItem
+          className={classes.item}
+          disableGutters
+        >
+          <Button
+            className={classes.button}
+            color="inherit"
+            onClick={logout}
+          >
+            <div className={classes.icon}><InputIcon /></div>
+            {'Logout'}
+          </Button>
+        </ListItem>
+      </Hidden>
     </List>
   );
 };
@@ -259,5 +278,9 @@ SidebarNav.propTypes = {
   className: PropTypes.string,
   pages: PropTypes.array.isRequired
 };
+const mapDispatchToProps = dispatch => ({
+  logout: () => dispatch(resetCurrentUser())
+})
 
-export default SidebarNav;
+
+export default connect(undefined, mapDispatchToProps)(SidebarNav);

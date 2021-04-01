@@ -15,12 +15,12 @@ import PersonOutlineRoundedIcon from '@material-ui/icons/PersonOutlineRounded';
 import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
 // import Profile from './components/Profile';
 import SidebarNav from './components/SidebarNav';
-import { resetCurrentUser } from '../../store/user/user.actions';
+// import { resetCurrentUser } from '../../store/user/user.actions';
 import { permissionCheck } from '../UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import ListIcon from '@material-ui/icons/List';
-import { ExitToApp } from '@material-ui/icons';
-import { connect } from 'formik';
+// import { ExitToApp } from '@material-ui/icons';
+// import { connect } from 'formik';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -224,4 +224,4 @@ Sidebar.propTypes = {
 };
 
 
-export default  (Sidebar);
+export default  Sidebar;

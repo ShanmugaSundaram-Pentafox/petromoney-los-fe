@@ -16,19 +16,35 @@ import { deleteDocsImage, getDealershipCheckList } from "../../../services/deale
 import { getFileNameFromUrl } from "../../../utils/strings.util";
 import { URL } from '../../../config/serverUrls';
 import Modal from '@material-ui/core/Modal';
-import { Checkbox, FormControlLabel, FormGroup, Paper } from "@material-ui/core";
-import { styled } from '@material-ui/core/styles';
+import { Box, Checkbox, FormControlLabel, FormGroup, IconButton, Paper, Typography } from "@material-ui/core";
+import CloseIcon from '@material-ui/icons/Close';
+import ButtonComp from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
 
+const DeleteButton = withStyles(theme => ({
+  root: {
+    background: '#DC143C',
+    textTransform: 'none',
+    lineHeight: 1.5,
+    border: 0,
+    borderRadius: 3,
+    color: 'white',
+    height: 38,
+    padding: '0 30px',
+    marginBottom: '8px',
 
-const DeleteButton = styled(Button)({
-  background: '#DC143C',
-  border: 0,
-  borderRadius: 3,
-  color: 'white',
-  height: 38,
-  padding: '0 30px',
+    '&:hover': {
+      background: '#DC143C',
+    },
+    '&:focus': {
 
-});
+    },
+    '&:active': {
+
+    },
+  }
+}))(ButtonComp)
+
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -48,9 +64,14 @@ const useStyles = makeStyles((theme) => ({
   },
   inner_modal: {
     backgroundColor: theme.palette.background.paper,
+    minWidth: 600,
+
+
+  },
+  content: {
     padding: theme.spacing(4),
     fontSize: 14,
-    minWidth: 600
+
   },
   modal_title: {
     marginBottom: 20,
@@ -215,31 +236,39 @@ const DocList = ({ id }) => {
 
       >
         <div className={classes.inner_modal}>
-          <h3 className={classes.modal_title}>{description}</h3>
-          <div className={classes.list}>
-            <div>
-              {
-                modalData.map(item => {
-                  return (
-                    < Paper key={item.file_id} >
-                      <FormGroup>
-                        <FormControlLabel
-                          key={item.file_id}
-                          control={<Checkbox key={item.region} color="primary" value={item.file_id} onChange={(e) => getValue(e)} />}
-                          label={getFileNameFromUrl(item?.file_url)}
-                          value={getFileNameFromUrl(item?.file_url)}
-                        />
-                      </FormGroup>
-                    </Paper>
-                  )
+          <Box p={2} borderRadius={4} bgcolor={"#f0f0f0"} display="flex" justifyContent="space-between" alignItems="center">
+            <Typography variant="h3" component="h2">{description}</Typography>
+            <IconButton size="small">
+              <CloseIcon onClick={() => setOpenModal(false)} />
+            </IconButton>
+          </Box>
+          <div className={classes.content}>
 
-                })
-              }
+            <div className={classes.list}>
+              <div>
+                {
+                  modalData.map(item => {
+                    return (
+                      < Paper key={item.file_id} >
+                        <FormGroup>
+                          <FormControlLabel
+                            key={item.file_id}
+                            control={<Checkbox key={item.region} color="primary" value={item.file_id} onChange={(e) => getValue(e)} />}
+                            label={getFileNameFromUrl(item?.file_url)}
+                            value={getFileNameFromUrl(item?.file_url)}
+                          />
+                        </FormGroup>
+                      </Paper>
+                    )
+
+                  })
+                }
+              </div>
             </div>
+            {
+              array.length !== 0 ? <DeleteButton className={classes.button} variant="contained" onClick={() => DeleteDocs()}>Delete</DeleteButton> : null
+            }
           </div>
-          {
-            array.length !== 0 ? <DeleteButton className={classes.button} variant="contained" onClick={() => DeleteDocs()}>Delete</DeleteButton> : null
-          }
         </div>
       </Modal>
     </div >

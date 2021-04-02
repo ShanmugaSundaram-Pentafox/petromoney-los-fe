@@ -44,9 +44,6 @@ const UsersTable = ({ title, data, withRole }) => {
   const [userId, setuserId] = useState({});
 
   const [op, setOp] = React.useState(false);
-  console.log("user name", data.name)
-  console.log("user email", data.email)
-
   const handleClickOpen = (value) => {
     setuserId(value);
     setOpen(true);

@@ -123,7 +123,7 @@ const UsersTable = ({ title, data, withRole }) => {
                     <DeleteOutlinedIcon style={{ width: "20px", color: "#ff6666" }} />
                   </Tooltip>
                 </Button>
-                <RightDrawer checked={op} userId={value} data={data[0]} />
+                <RightDrawer checked={op} userId={value} data={data} />
               </div>
             </div>
           )

@@ -138,7 +138,6 @@ export const updateMappedRegion = (data, id) => {
   });
 }
 export const deleteMappedRegion = (data, id) => {
-  console.log(data, "data while deleting");
   return new Promise((resolve, reject) => {
     apiCall(`user/${id}/map/region`, {
       method: 'DELETE',

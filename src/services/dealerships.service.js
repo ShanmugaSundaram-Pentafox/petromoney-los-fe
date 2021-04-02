@@ -298,3 +298,23 @@ export const postDealershipFinancialsById = (id, body) => {
       });
   });
 };
+export const deleteDocsImage = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`document/checklist/${id}`, {
+      method: 'DELETE',
+      body: {
+        "data": data
+      }
+    })
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

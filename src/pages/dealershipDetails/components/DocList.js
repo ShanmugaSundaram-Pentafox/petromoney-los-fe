@@ -20,6 +20,7 @@ import { Box, Checkbox, FormControlLabel, FormGroup, IconButton, Paper, Typograp
 import CloseIcon from '@material-ui/icons/Close';
 import ButtonComp from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
+import FormDialog from "../../../components/CommonComponents/FormDialog/FormDialog";
 
 const DeleteButton = withStyles(theme => ({
   root: {
@@ -65,11 +66,9 @@ const useStyles = makeStyles((theme) => ({
   inner_modal: {
     backgroundColor: theme.palette.background.paper,
     minWidth: 600,
-
-
   },
   content: {
-    padding: theme.spacing(4),
+    padding: '0 40px 40px 40px',
     fontSize: 14,
 
   },
@@ -81,6 +80,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
   },
   button: {
+    marginTop : 20,
     float: "right",
   }
 }));
@@ -109,7 +109,6 @@ const DocList = ({ id }) => {
   const [array, setArray] = useState([]);
   const [description, setDescription] = useState();
 
-  let temp = 0;
   const getValue = (e) => {
     const val = e?.target?.value;
     if (!val) return;
@@ -228,11 +227,45 @@ const DocList = ({ id }) => {
           ))}
         </TableBody>
       </Table>
-      <Modal
+      <FormDialog
+        title={description}
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+
+      >
+        <div className={classes.content}>
+          <div className={classes.list}>
+            <div>
+              {
+                modalData.map(item => {
+                  return (
+                    < Paper key={item.file_id} >
+                      <FormGroup>
+                        <FormControlLabel
+                          key={item.file_id}
+                          control={<Checkbox key={item.region} color="primary" value={item.file_id} onChange={(e) => getValue(e)} />}
+                          label={getFileNameFromUrl(item?.file_url)}
+                          value={getFileNameFromUrl(item?.file_url)}
+                        />
+                      </FormGroup>
+                    </Paper>
+                  )
+
+                })
+              }
+            </div>
+          </div>
+          {
+            array.length !== 0 ? <DeleteButton className={classes.button} variant="contained" onClick={() => DeleteDocs()}>Delete</DeleteButton> : null
+          }
+        </div>
+      </FormDialog>
+      {/* <Modal
         className={classes.modal}
         open={openModal}
         onClose={() => setOpenModal(false)}
         closeAfterTransition
+        action={array.length !== 0 ? <DeleteButton className={classes.button} variant="contained" onClick={() => DeleteDocs()}>Delete</DeleteButton> : null}
 
       >
         <div className={classes.inner_modal}>
@@ -242,35 +275,10 @@ const DocList = ({ id }) => {
               <CloseIcon onClick={() => setOpenModal(false)} />
             </IconButton>
           </Box>
-          <div className={classes.content}>
-
-            <div className={classes.list}>
-              <div>
-                {
-                  modalData.map(item => {
-                    return (
-                      < Paper key={item.file_id} >
-                        <FormGroup>
-                          <FormControlLabel
-                            key={item.file_id}
-                            control={<Checkbox key={item.region} color="primary" value={item.file_id} onChange={(e) => getValue(e)} />}
-                            label={getFileNameFromUrl(item?.file_url)}
-                            value={getFileNameFromUrl(item?.file_url)}
-                          />
-                        </FormGroup>
-                      </Paper>
-                    )
-
-                  })
-                }
-              </div>
-            </div>
-            {
-              array.length !== 0 ? <DeleteButton className={classes.button} variant="contained" onClick={() => DeleteDocs()}>Delete</DeleteButton> : null
-            }
+          
           </div>
         </div>
-      </Modal>
+      </Modal> */}
     </div >
 
   );

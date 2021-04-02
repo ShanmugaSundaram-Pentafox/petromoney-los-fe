@@ -44,8 +44,6 @@ const UsersTable = ({ title, data, withRole }) => {
   const [userId, setuserId] = useState({});
 
   const [op, setOp] = React.useState(false);
-
-
   const handleClickOpen = (value) => {
     setuserId(value);
     setOpen(true);
@@ -70,7 +68,6 @@ const UsersTable = ({ title, data, withRole }) => {
         setApiStatus({ status: 'error', message: e });
         logger(e);
       })
-
   }
   const columns = useMemo(() => {
     const d = [
@@ -126,7 +123,7 @@ const UsersTable = ({ title, data, withRole }) => {
                     <DeleteOutlinedIcon style={{ width: "20px", color: "#ff6666" }} />
                   </Tooltip>
                 </Button>
-                  <RightDrawer checked={op} userId={value} data={data.find(item => item.id === value)} />
+                <RightDrawer checked={op} userId={value} data={data.find(item => item.id === value)} />
               </div>
             </div>
           )

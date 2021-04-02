@@ -91,7 +91,6 @@ const SidebarNav = props => {
   const [checked, setChecked] = React.useState(false);
   const [exceptions, setExceptions] = useState([]);
   const [check, setCheck] = React.useState(false);
-  console.log("logout", logout)
   useMount(() => {
     getAllExceptions()
       .then((data) => {

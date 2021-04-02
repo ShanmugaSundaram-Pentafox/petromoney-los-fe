@@ -22,19 +22,29 @@ import { yellow } from '@material-ui/core/colors';
 import { getDealerDetails } from '../../services/dealers.service';
 import Currency from '../../../src/components/Number/Currency';
 
-
-
+const useStyles = makeStyles(theme =>({
+  card :{
+    [theme.breakpoints.up('sm')]: {
+     flexWrap:"wrap",
+     [theme.breakpoints.up('md')]: {
+      flexWrap:"nowrap",
+     }
+    }
+    
+  }
+}))
 const DataCharts = styled.div`
   /* padding: 20px 24px 8px; */
   border-radius: 2px;
   width: 100%;
-
   svg {
     border-radius: 6px;
   }
 `;
 const Dashboard = ({ currentUser, dashboardView }) => {
   usePageTitle('Dashboard');
+  const classes = useStyles();
+
   const [chartData, setChartData] = useState([{}, {}, {}, {}, {}, {}]);
   const [ls1_metrices, setLs1Metrices] = useState({});
   const [ls2_metrices, setLs2Metrices] = useState([]);
@@ -136,7 +146,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
               <Grid item xs={12} md={6}>
                 <Box p={2} borderRadius={4} bgcolor="background.paper">
                   <Typography variant="h5">Sanctioned Loan : <Currency value={dealerDetail.sanctioned_loan_amount} /></Typography>
-                  <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="nowrap">
+                  <Box className={classes.card} borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="nowrap">
                     {
                       dealerChartData.map((item, i) => (
                         <DashCard key={i} noBorder={i === dealerChartData.length - 1} value={item.name!="Active Loans" ?(<Currency value={item.count} />):item.count} text={item.name}  action={() => handleClick(item.name)} />
@@ -156,7 +166,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                     Array.isArray(chartData) && dashboardView === "LOS" && (
                       <Box p={2} borderRadius={4} bgcolor="background.paper">
                         <Typography variant="h5">Loans' Statistics</Typography>
-                        <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="nowrap">
+                        <Box className={classes.card} borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="nowrap">
                           {
                             chartData.map((item, i) => (
                               <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name} selected={item.name === selectedStatsCard} action={() => handleClick(item.name)} />

@@ -70,7 +70,6 @@ export default function TemporaryDrawer({ userId, data }) {
   const [confirmPassword, SetConfirmPassword] = useState("")
   const [passwordSuccess, setPasswordSuccess] = useState(false)
   const [profileSuccess, setProfileSuccess] = useState(false)
-
   const handleClick = () => {
     setOpen(true);
   };

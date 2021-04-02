@@ -44,7 +44,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
       let gst = values?.gst ? encrypt(values.gst) : values?.gst;
       setLoading(true);
       setApiStatus({});
-      console.log("iddddddddddd",values.id);
       apiCall(`${URL.dealership}/${values.id}`, {
         method: "POST",
         body: {

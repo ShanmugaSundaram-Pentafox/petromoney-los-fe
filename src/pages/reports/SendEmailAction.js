@@ -41,7 +41,6 @@ const SendEmailAction = () => {
     setTitle("Sending...")
     SendReports()
       .then((res) => {
-        console.log();
         if (res.status=== "SUCCESS") {
           setTitle(res.message)
           setTimeout(() => {

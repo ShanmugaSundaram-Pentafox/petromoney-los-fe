@@ -22,9 +22,11 @@ import Due from '../pages/reports/DueReport';
 import OverDue from '../pages/reports/OverDueReport';
 import LmsLos from '../pages/loanspage/lmsLosTable';
 import PassbookDetails from '../pages/users/dealer/PassbookDetails';
+import EnvTag from '../components/CommonComponents/EnvTag/EnvTag';
 
 const Routes = ({ currentUser }) => {
-  return (
+  return (<>
+    <EnvTag />
     <Switch>
       <ProtectedRoute allow exact path="/" component={Dashboard} />
       <ProtectedRoute allow exact path="/solar" component={Solar} />
@@ -64,6 +66,7 @@ const Routes = ({ currentUser }) => {
         return <Login {...props} />
       }} />
     </Switch>
+    </>
   )
 }
 

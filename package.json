@@ -13,6 +13,7 @@
     "axios": "^0.19.2",
     "clsx": "^1.1.0",
     "crypto-es": "^1.2.6",
+    "env-cmd": "^10.1.0",
     "formik": "^2.1.4",
     "lodash": "^4.17.15",
     "match-sorter": "^4.0.2",
@@ -49,6 +50,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "yarn public-css && react-scripts build",
+    "build-uat": "env-cmd -f .env.development yarn build",
+    "build-prod": "env-cmd -f .env.production yarn build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "build-css": "node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/",

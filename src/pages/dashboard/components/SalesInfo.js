@@ -48,6 +48,8 @@ const useStyles = makeStyles(theme => ({
 
 const SalesInfoWrapper = styled.div`
   padding-top: 8px;
+  margin-bottom:10px;
+  overflow-y:auto;
   h5 {
     // margin-top: 12px;
     // font-size: 18px;

@@ -28,7 +28,8 @@ export default {
     },
     '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline': {
       borderStyle: 'dotted',
-      borderColor: 'rgba(0, 0, 0, 0.1)'
+      borderColor: 'rgba(0, 0, 0, 0.5)',
+      background: 'rgba(0,0,0,0.03)'
     },
     '& .MuiOutlinedInput-root': {
       '& fieldset': {

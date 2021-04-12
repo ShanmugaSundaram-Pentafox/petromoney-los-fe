@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
-    height: '100vh'
+    height: '100vh',
   },
   contentWrapper: {
     flex: 1,
@@ -58,8 +58,11 @@ const useStyles = makeStyles(theme => ({
     boxShadow: '0px 0px 4px #8d8d8d',
   },
   gridItemStyle: {
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1)
+    // paddingTop: theme.spacing(1),
+    // paddingBottom: theme.spacing(1)
+  },
+  fieldItemStyle:{
+    // marginBottom:theme.spacing(2)
   },
   actionFooter: {
     // justifyContent: 'flex-end',
@@ -181,7 +184,7 @@ const LoanInfo = ({
         </Table>
       </LoanInfoWrapper>
       <Grid container>
-        <Grid item xs={6} className={classes.gridItemStyle}>
+        <Grid item xs={12} className={classes.gridItemStyle}>
           Recommendation Remarks(for Approval):
           <TextInput
             disabled
@@ -339,6 +342,7 @@ const DealershipDetails = ({
     direction: "column",
     alignTop: true,
     readOnly,
+    className:classes.fieldItemStyle
   }
 
 
@@ -346,7 +350,7 @@ const DealershipDetails = ({
     <div className={classes.wrapper}>
       <Typography className={classes.title} variant="h4" component="h4">{values.id}</Typography>
       <div className={classes.contentWrapper}>
-        <Grid container>
+        <Grid container >
           <Grid {...gridProps}>
             <TextInput
               labelText="Name"
@@ -356,7 +360,7 @@ const DealershipDetails = ({
               {...fieldProps}
             />
           </Grid>
-          <Grid {...gridProps}>
+          <Grid {...gridProps} md={6} >
             <TextInput
               labelText="Address"
               value={values.address}
@@ -368,7 +372,7 @@ const DealershipDetails = ({
           </Grid>
           {
             values.pincode && (
-              <Grid item xs={12}>
+              <Grid item xs={12} md={6}>
                 <TextInput
                   labelText="Pincode"
                   type="number"
@@ -382,7 +386,7 @@ const DealershipDetails = ({
           }
           {
             values.pan && (
-              <Grid {...gridProps}>
+              <Grid {...gridProps} md={6}>
                 <TextInput
                   labelText="PAN"
                   value={values.pan}
@@ -395,7 +399,7 @@ const DealershipDetails = ({
           }
           {
             values.gst && (
-              <Grid {...gridProps}>
+              <Grid {...gridProps} md={6}>
                 <TextInput
                   labelText="GST"
                   value={values.gst}
@@ -408,7 +412,7 @@ const DealershipDetails = ({
           }
           {
             values.region && (
-              <Grid {...gridProps}>
+              <Grid {...gridProps} md={6}>
                 <TextInput
                   labelText="Region"
                   value={values.region}
@@ -421,7 +425,7 @@ const DealershipDetails = ({
           }
           {
             values.sales_area && (
-              <Grid {...gridProps}>
+              <Grid {...gridProps} md={6}>
                 <TextInput
                   labelText="Sales Area"
                   value={values.sales_area}
@@ -466,10 +470,10 @@ const DealershipDetails = ({
           {
             status == "disbursement_approval" ? (
               <Grid container>
-                <Grid {...gridProps} md={6}>
+                <Grid {...gridProps} md={12}>
                   Remarks(Approval)
                 </Grid>
-                <Grid {...gridProps} md={6}>
+                <Grid {...gridProps} md={12}>
                   <TextInput
                     disabled
                     readOnly

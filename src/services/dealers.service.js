@@ -117,3 +117,19 @@ export const getDealerDetails = () => {
       })
   });
 }
+export const getDealerTransportsList = () => {
+  return new Promise((resolve, reject) => {
+    apiCall(`transporters`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

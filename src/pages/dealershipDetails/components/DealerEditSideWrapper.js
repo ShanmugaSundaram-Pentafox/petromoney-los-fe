@@ -156,10 +156,20 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
       };
       data.append('user_id', currentUser.id);
       // API.post(url, data)
-      apiCall(url, {
-        method : 'POST',
+      fetch(`${URL.base}${url}`, {
+        method: 'POST',
         body: data,
+        headers: {
+          'Authorization': `Bearer ${currentUser.token}`
+        }
       })
+        .then(res => {
+          return res.json()
+        })
+      // apiCall(url, {
+      //   method : 'POST',
+      //   body: data,
+      // })
         .then(res => {
           setLoading(false);
           setApicallStatus('success');

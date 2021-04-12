@@ -73,6 +73,9 @@
     ]
   },
   "devDependencies": {
+    "@babel/helper-builder-react-jsx": "^7.12.13",
+    "@babel/helper-builder-react-jsx-experimental": "^7.12.11",
+    "@babel/helper-regex": "^7.10.5",
     "node-sass-chokidar": "^1.4.0",
     "sass": "^1.25.0"
   }

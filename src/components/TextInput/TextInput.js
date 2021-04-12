@@ -7,7 +7,6 @@ const InputWrapper = styled.div`
   display: flex;
   align-items: ${props => props.top ? 'flex-start' : 'center'};
   justify-content: flex-end;
-  margin-right:8px;
   flex-direction: ${props => props.direction ? 'column' : 'row'};
 
   .input-label {

@@ -48,10 +48,11 @@ const useStyles = makeStyles(theme => ({
 
 const SalesInfoWrapper = styled.div`
   padding-top: 8px;
+  margin-bottom:10px;
+  overflow-y:auto;
   h5 {
     // margin-top: 12px;
     // font-size: 18px;
-    padding-left: 8px;
   }
 `;
 
@@ -61,7 +62,6 @@ const SalesTableWrapper = styled.div`
   flex-direction: ${props => props.column ? 'column' : 'row'};
 
   > div {
-    padding: 8px;
     &:last-child {
       // flex: 1;
       // padding-left: 12px;

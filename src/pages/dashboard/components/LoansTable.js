@@ -94,7 +94,7 @@ const useStyles = makeStyles(theme => ({
     color: '#333'
   },
   sidePanelWrapper: {
-    width: '60vw',
+    width: '70vw',
     maxWidth: '80vw'
   },
   modal: {

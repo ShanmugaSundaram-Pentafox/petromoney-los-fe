@@ -227,7 +227,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
             <Grid container spacing={2}>
                 {
                     selectedStatsCard === "Pending Approval" ? (
-                        <Grid item md={6}>
+                        <Grid item md={12}>
                             <Paper className={classes.tableContainer}>
                                 <ApprovalReqestTable title={"Pending for Initial Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} />
                             </Paper>
@@ -236,7 +236,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
                 }
                 {
                     selectedStatsCard === "Pending Disbursement Approval" ? (
-                        <Grid item md={6}>
+                        <Grid item md={12}>
                             <Paper className={classes.tableContainer}>
                                 <DisbursementReqestTable title={"Pending for Disbursement Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} />
                             </Paper>

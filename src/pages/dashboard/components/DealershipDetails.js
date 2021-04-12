@@ -91,7 +91,10 @@ const useStyles = makeStyles(theme => ({
     }
   }
 }));
-
+const fieldProps = {
+  direction: "column",
+  alignTop: true,
+}
 const LoanInfo = ({
   data: row,
   status,
@@ -141,38 +144,38 @@ const LoanInfo = ({
                       no={() => "-"}
                     />
                   )
-                  : <Currency value={row.amount_approved} /> 
+                    : <Currency value={row.amount_approved} />
                 }
               </TableCell>
-                {
-                  status === "disbursement_approval" ? (
-                    <TableCell align="right">
-                      <UserCan
-                        role={currentUser.role_name}
-                        perform={rulesList.loan_approval}
-                        yes={() => (
-                          <TextInput
-                            money
-                            type="number"
-                            fullWidth={false}
-                            value={newInfo.amount_disbursed}
-                            onChange={e => {
-                              updateNewLoanInfo({
-                                ...newInfo,
-                                amount_disbursed: e.target.value
-                              })
-                            }}
-                          />
-                        )}
-                        no={() => "-"}
-                      />
-                    </TableCell>
-                  ) : (status == "disbursed" ? (
-                    <TableCell align="right">
-                      <Currency value={row.amount_disbursed} />
-                    </TableCell>
-                  )  : null)
-                }
+              {
+                status === "disbursement_approval" ? (
+                  <TableCell align="right">
+                    <UserCan
+                      role={currentUser.role_name}
+                      perform={rulesList.loan_approval}
+                      yes={() => (
+                        <TextInput
+                          money
+                          type="number"
+                          fullWidth={false}
+                          value={newInfo.amount_disbursed}
+                          onChange={e => {
+                            updateNewLoanInfo({
+                              ...newInfo,
+                              amount_disbursed: e.target.value
+                            })
+                          }}
+                        />
+                      )}
+                      no={() => "-"}
+                    />
+                  </TableCell>
+                ) : (status == "disbursed" ? (
+                  <TableCell align="right">
+                    <Currency value={row.amount_disbursed} />
+                  </TableCell>
+                ) : null)
+              }
             </TableRow>
           </TableBody>
         </Table>
@@ -180,8 +183,6 @@ const LoanInfo = ({
       <Grid container>
         <Grid item xs={6} className={classes.gridItemStyle}>
           Recommendation Remarks(for Approval):
-        </Grid>
-        <Grid item xs={6} className={classes.gridItemStyle}>
           <TextInput
             disabled
             readOnly
@@ -190,7 +191,8 @@ const LoanInfo = ({
             rows={4}
             // rowsMax={8}
             value={row.recommendation_remarks}
-            />
+            {...fieldProps}
+          />
         </Grid>
       </Grid>
       {
@@ -198,8 +200,6 @@ const LoanInfo = ({
           <Grid container>
             <Grid item xs={6} className={classes.gridItemStyle}>
               Recommendation Remarks(for Disbursement):
-            </Grid>
-            <Grid item xs={6} className={classes.gridItemStyle}>
               <TextInput
                 disabled
                 readOnly
@@ -208,7 +208,7 @@ const LoanInfo = ({
                 rows={4}
                 // rowsMax={8}
                 value={row.disbursement_recommendation_remarks}
-                />
+              />
             </Grid>
           </Grid>
         )
@@ -229,11 +229,11 @@ const DealershipDetails = ({
   const [apiStatus, setApiStatus] = useState({});
   const [readOnly, setReadOnly] = useState(true);
   const [newLoanInfo, setNewLoanInfo] = useState({});
-  
+
   const classes = useStyles();
 
   useEffect(() => {
-    if(loanData?.id && data?.id) {
+    if (loanData?.id && data?.id) {
       getLoanById(data.id, loanData.id)
         .then(res => {
           setLoanInfo(res);
@@ -250,21 +250,21 @@ const DealershipDetails = ({
   }, [data, loanData]);
 
   useEffect(() => {
-    if(data) setValues(data);
+    if (data) setValues(data);
   }, [data]);
 
   // useEffect(() => {
   //   if(loanData) {
-      // setLoanInfo(loanData)
-      // setNewLoanInfo({
-      //   ...loanData,
-      //   amount_approved: loanData.amount_requested,
-      //   amount_disbursed: loanData.amount_approved,
-      // });
+  // setLoanInfo(loanData)
+  // setNewLoanInfo({
+  //   ...loanData,
+  //   amount_approved: loanData.amount_requested,
+  //   amount_disbursed: loanData.amount_approved,
+  // });
   //   };
   // }, [loanData]);
-  
-  if(!data) return null;
+
+  if (!data) return null;
 
   const updateLoanStatus = submitStatus => {
     // if(!newLoanInfo.approval_remarks) {
@@ -277,33 +277,33 @@ const DealershipDetails = ({
       user_id: currentUser.id
     };
     let resMsg = '';
-    
-    if(status === "loan_approval") {
+
+    if (status === "loan_approval") {
       reqBody.approval_remarks = newLoanInfo.approval_remarks;
     }
-    if(submitStatus === "approved") {
-      if(status === "loan_approval") {
+    if (submitStatus === "approved") {
+      if (status === "loan_approval") {
         resMsg = 'Successfully Approved Loan Request';
         reqBody.amount_approved = newLoanInfo.amount_approved;
-      } else if(status === "disbursement_approval") {
+      } else if (status === "disbursement_approval") {
         reqBody.status = 'disbursement_approved';
         resMsg = 'Successfully Approved Loan for Disbursement';
         reqBody.amount_disbursed = newLoanInfo.amount_disbursed;
       }
     }
-    if(status === "disbursement_approval") {
+    if (status === "disbursement_approval") {
       reqBody.disbursement_approval_remarks = newLoanInfo.disbursement_approval_remarks;
     }
 
-    if(submitStatus === 'rejected') {
+    if (submitStatus === 'rejected') {
       resMsg = 'Request got rejected successfully';
     }
     // if(submitStatus === "disbursed") {
-      // if (loanData.amount_disbursed === newLoanInfo.amount_disbursed) {
-      //   setApiStatus({ type: 'error', message: 'Please check Disburse amount. We see no change in Disburse amount!' })
-      //   return null;
-      // }
-      
+    // if (loanData.amount_disbursed === newLoanInfo.amount_disbursed) {
+    //   setApiStatus({ type: 'error', message: 'Please check Disburse amount. We see no change in Disburse amount!' })
+    //   return null;
+    // }
+
     // }
     updateLoanApprovalStatusById(values.id, loanData.id, reqBody)
       .then(res => {
@@ -335,6 +335,12 @@ const DealershipDetails = ({
       ...d
     });
   }
+  const fieldProps = {
+    direction: "column",
+    alignTop: true,
+    readOnly,
+  }
+
 
   return (
     <div className={classes.wrapper}>
@@ -347,6 +353,7 @@ const DealershipDetails = ({
               value={values.name}
               readOnly={readOnly}
               onChange={handleChange}
+              {...fieldProps}
             />
           </Grid>
           <Grid {...gridProps}>
@@ -356,6 +363,7 @@ const DealershipDetails = ({
               readOnly={readOnly}
               onChange={handleChange}
               multiline
+              {...fieldProps}
             />
           </Grid>
           {
@@ -367,6 +375,7 @@ const DealershipDetails = ({
                   value={values.pincode}
                   readOnly={readOnly}
                   onChange={handleChange}
+                  {...fieldProps}
                 />
               </Grid>
             )
@@ -379,6 +388,7 @@ const DealershipDetails = ({
                   value={values.pan}
                   readOnly={readOnly}
                   onChange={handleChange}
+                  {...fieldProps}
                 />
               </Grid>
             )
@@ -391,6 +401,7 @@ const DealershipDetails = ({
                   value={values.gst}
                   readOnly={readOnly}
                   onChange={handleChange}
+                  {...fieldProps}
                 />
               </Grid>
             )
@@ -403,6 +414,7 @@ const DealershipDetails = ({
                   value={values.region}
                   readOnly={readOnly}
                   onChange={handleChange}
+                  {...fieldProps}
                 />
               </Grid>
             )
@@ -415,6 +427,7 @@ const DealershipDetails = ({
                   value={values.sales_area}
                   readOnly={readOnly}
                   onChange={handleChange}
+                  {...fieldProps}
                 />
               </Grid>
             )
@@ -424,7 +437,7 @@ const DealershipDetails = ({
             {values.id ? <SalesInfo id={values.id} currentUser={currentUser} /> : null}
             <LoanInfo data={loanInfo} status={status} newInfo={newLoanInfo} currentUser={currentUser} updateNewLoanInfo={updateNewLoanInfo} />
           </Grid>
-          
+
           {
             status == "loan_approval" ? (
               <Grid {...gridProps}>
@@ -443,11 +456,13 @@ const DealershipDetails = ({
                       approval_remarks: e.target.value
                     })
                   }}
+                  {...fieldProps}
+
                 />
               </Grid>
             ) : null
           }
-          
+
           {
             status == "disbursement_approval" ? (
               <Grid container>
@@ -463,7 +478,8 @@ const DealershipDetails = ({
                     rows={4}
                     // rowsMax={8}
                     value={loanInfo.approval_remarks}
-                    />
+                    {...fieldProps}
+                  />
                   {/* <Typography variant="p" component={'p'}>
                     {loanInfo.approval_remarks}
                   </Typography> */}
@@ -485,6 +501,7 @@ const DealershipDetails = ({
                         disbursement_approval_remarks: e.target.value
                       })
                     }}
+                    {...fieldProps}
                   />
                 </Grid>
               </Grid>
@@ -494,44 +511,46 @@ const DealershipDetails = ({
           {
             status == 'disbursement_approved' || status == 'disbursed' ? (
               <>
-              <Grid container>
-                <Grid {...gridProps} md={6}>
-                  Remarks(Approval)
+                <Grid container>
+                  <Grid {...gridProps} md={6}>
+                    Remarks(Approval)
                 </Grid>
-                <Grid {...gridProps} md={6}>
-                  {/* <Typography variant="p" component={'p'}>
+                  <Grid {...gridProps} md={6}>
+                    {/* <Typography variant="p" component={'p'}>
                     {loanInfo.approval_remarks}
                   </Typography> */}
-                  <TextInput
-                    disabled
-                    readOnly
-                    alignTop
-                    multiline
-                    rows={4}
-                    // rowsMax={8}
-                    value={loanInfo.approval_remarks}
+                    <TextInput
+                      disabled
+                      readOnly
+                      alignTop
+                      multiline
+                      rows={4}
+                      // rowsMax={8}
+                      value={loanInfo.approval_remarks}
+                      {...fieldProps}
                     />
+                  </Grid>
+                  <Grid {...gridProps} md={6}>
+                    Remarks(Disbursement)
                 </Grid>
-                <Grid {...gridProps} md={6}>
-                  Remarks(Disbursement)
-                </Grid>
-                <Grid {...gridProps} md={6}>
-                  {/* <Typography variant="p" component={'p'}>
+                  <Grid {...gridProps} md={6}>
+                    {/* <Typography variant="p" component={'p'}>
                     {loanInfo.disbursement_approval_remarks}
                   </Typography> */}
-                  <TextInput
-                    disabled
-                    readOnly
-                    alignTop
-                    multiline
-                    rows={4}
-                    value={loanInfo.disbursement_approval_remarks}
+                    <TextInput
+                      disabled
+                      readOnly
+                      alignTop
+                      multiline
+                      rows={4}
+                      value={loanInfo.disbursement_approval_remarks}
+                      {...fieldProps}
                     />
+                  </Grid>
                 </Grid>
-              </Grid>
-              <Grid {...gridProps}>
-                <DispApprovedDataTable id={values.id} loanData={loanInfo} />
-              </Grid>
+                <Grid {...gridProps}>
+                  <DispApprovedDataTable id={values.id} loanData={loanInfo} />
+                </Grid>
               </>
             ) : null
           }

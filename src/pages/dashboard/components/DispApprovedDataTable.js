@@ -77,8 +77,8 @@ const DispApprovedDataTable = ({ id, loanData }) => {
       status: "disbursed"
     },
     validationSchema: Yup.object().shape({
-      applicant_code: Yup.string().min(2).required("Enter valid Applicant code").matches(/^CN0000[0-9]+$/,"Enter Valid Applicant code"),
-      prospect_code: Yup.string().min(2).required("Enter Prospect code"),
+      applicant_code: Yup.string().required("Enter valid Applicant code").matches(/^CN0000[0-9]+$/,"Enter Valid Applicant code"),
+      prospect_code: Yup.string().required("Enter Prospect code"),
       disbursement_date: Yup.string().required("Enter Disbursement date"),
       amount: Yup.string().required("Enter Amount"),
     }),

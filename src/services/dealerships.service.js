@@ -300,10 +300,10 @@ export const postDealershipFinancialsById = (id, body) => {
 };
 export const deleteDocsImage = (data, id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`document/checklist/${id}`, {
+    apiCall(`${URL.checklist}/${id}`, {
       method: 'DELETE',
       body: {
-        "data": data
+        id: data
       }
     })
       .then(({ status, data, message }) => {

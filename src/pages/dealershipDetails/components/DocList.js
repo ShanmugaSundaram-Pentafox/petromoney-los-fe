@@ -152,9 +152,15 @@ const DocList = ({ id }) => {
   const DeleteDocs = () => {
     deleteDocsImage(array, id)
       .then((res) => {
-        console.log(res);
+        setOpenModal(false)
+        setModalData([])
+        setArray([])
+        getDealershipCheckList(id)
+          .then((data) => setCheckListData(data))
+          .catch((e) => null);
       })
       .catch((err) => {
+        alert(err?.message)
         console.log(err);
       });
 

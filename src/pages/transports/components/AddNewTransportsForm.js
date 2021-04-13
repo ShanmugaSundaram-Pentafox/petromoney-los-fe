@@ -48,18 +48,16 @@ const AddNewTransportsForm = ({ data }) => {
             id: Yup.number().required('Please enter transporter code'),
             name: Yup.string().required('Please enter transporter name'),
             omc: Yup.string().required('Please Choose OMC'),
-            bussiness_type: Yup.string().required('Please choose bussiness type'),
+            business_type: Yup.string().required('Please choose bussiness type'),
             region: Yup.string().required('Please choose region'),
             address: Yup.string().required('Please enter address'),
             state: Yup.string().required('Please choose state'),
             district: Yup.string().required('Please choose district'),
-            pincode: Yup.number().required("Enter pincode"),
-            gst:Yup.number().min(15)
+            pincode: Yup.number().min(6,'Pincode must be 6 digits').required("Enter pincode"),
+            gst: Yup.number().min(15,'Enter valid GST')
         }),
         onSubmit: formData => {
-            setApiStatus({ type: 'info', message: 'Creating a new user. Please wait...' })
-            const userID = data.pm_user_id;
-            addNewTransport(formData, userID)
+            addNewTransport(formData)
                 .then(message => {
                     setApiStatus({ type: 'success', message: message })
                 })
@@ -67,17 +65,6 @@ const AddNewTransportsForm = ({ data }) => {
                     setApiStatus({ type: 'error', message: e })
                     console.log(e);
                 })
-            //   addNewUser(formData, userType.role_name)
-            //     .then(message => {
-            //       setApiStatus({ type: 'success', message: 'Successfully created new user.' });
-            //       callback && setTimeout(() => {
-            //         callback();
-            //       }, 1000)
-            //     })
-            // .catch(e => {
-            //   setApiStatus({ type: 'error', message: e })
-            //   console.log(e);
-            // })
         }
     });
     const inputProps = {
@@ -129,10 +116,10 @@ const AddNewTransportsForm = ({ data }) => {
                         <TextInput
                             {...inputProps}
                             select
-                            name="bussiness_type"
-                            labelText="Bussiness Type"
-                            value={values.bussiness_type}
-                            error={errors.bussiness_type}
+                            name="business_type"
+                            labelText="Business Type"
+                            value={values.business_type}
+                            error={errors.business_type}
                         >
                             <option value="">Choose bussiness type</option>
                             {

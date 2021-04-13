@@ -172,9 +172,9 @@ export const getAllVehicleLoans = () => {
       })
   })
 }
-export const addNewTransport = (data, id) => {
+export const addNewTransport = (data) => {
   return new Promise((resolve, reject) => {
-    apiCall(`transporters/${data.id}`, {
+    apiCall(`transporters`, {
       method: 'POST',
       body: data
     })

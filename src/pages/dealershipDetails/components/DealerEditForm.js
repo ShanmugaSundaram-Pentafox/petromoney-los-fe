@@ -266,7 +266,6 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                     label="Residing Since"
                     name="residing_since"
                     value={values.residing_since}
-                    helperText={errors.residing_since}
                     error={errors.residing_since}
                     onChange={onChange}
                     disabled={readOnly}

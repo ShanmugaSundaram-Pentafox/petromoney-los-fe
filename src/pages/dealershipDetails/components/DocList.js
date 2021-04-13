@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 600,
   },
   content: {
-    padding: '0 40px 40px 40px',
+    padding: '10px 40px',
     fontSize: 14,
 
   },
@@ -152,9 +152,15 @@ const DocList = ({ id }) => {
   const DeleteDocs = () => {
     deleteDocsImage(array, id)
       .then((res) => {
-        console.log(res);
+        setOpenModal(false)
+        setModalData([])
+        setArray([])
+        getDealershipCheckList(id)
+          .then((data) => setCheckListData(data))
+          .catch((e) => null);
       })
       .catch((err) => {
+        alert(err?.message)
         console.log(err);
       });
 
@@ -219,7 +225,11 @@ const DocList = ({ id }) => {
               <TableCell align="right">
                 <Docs data={Array.isArray(row.file_data) && row.file_data.length ? row.file_data : []} />
                 <ButtonGroup size="small" aria-label="dealer action buttons">
-                  <Button onClick={() => handleModal(row.file_data, row.description)}>Delete</Button>
+                  {
+                    Array.isArray(row.file_data) && row.file_data.length && row.file_data[0].file_id ? 
+                      <Button onClick={() => handleModal(row.file_data, row.description)}>Delete</Button>
+                      : null
+                  }
                   <Button onClick={(e) => onDocUpload(row)}>Upload</Button>
                 </ButtonGroup>
               </TableCell>
@@ -231,6 +241,11 @@ const DocList = ({ id }) => {
         title={description}
         open={openModal}
         onClose={() => setOpenModal(false)}
+        actions={
+          array.length !== 0 ?
+            <DeleteButton className={classes.button} variant="contained" onClick={() => DeleteDocs()}>Delete</DeleteButton>
+            : null
+        }
       >
         <div className={classes.content}>
           <div className={classes.list}>
@@ -254,9 +269,9 @@ const DocList = ({ id }) => {
               }
             </div>
           </div>
-          {
+          {/* {
             array.length !== 0 ? <DeleteButton className={classes.button} variant="contained" onClick={() => DeleteDocs()}>Delete</DeleteButton> : null
-          }
+          } */}
         </div>
       </FormDialog>
       {/* <Modal

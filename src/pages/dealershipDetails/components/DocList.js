@@ -231,7 +231,6 @@ const DocList = ({ id }) => {
         title={description}
         open={openModal}
         onClose={() => setOpenModal(false)}
-
       >
         <div className={classes.content}>
           <div className={classes.list}>

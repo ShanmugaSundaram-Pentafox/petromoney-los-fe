@@ -8,9 +8,10 @@ import TextInput from '../../../components/TextInput/TextInput';
 import Button from '../../../components/CommonComponents/Button/Button';
 import { useMount } from 'react-use';
 import { getAllRegion, getBusinessTypes, getOmcList } from '../../../services/common.service';
-import { getDistricts,getFormattedStatesList } from '../../../utils/indianStates.util';
+import { getDistricts, getFormattedStatesList } from '../../../utils/indianStates.util';
+import { addNewTransport } from '../../../services/transports.service';
 
-const AddNewTransportsForm = () => {
+const AddNewTransportsForm = ({ data }) => {
     const [apiStatus, setApiStatus] = useState({});
     const [omcs, setOmcs] = useState([]);
     const [bussinessType, setBussinessType] = useState([]);
@@ -44,19 +45,28 @@ const AddNewTransportsForm = () => {
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
-            trans_code: Yup.number().required('Please enter transporter code'),
+            id: Yup.number().required('Please enter transporter code'),
             name: Yup.string().required('Please enter transporter name'),
+            omc: Yup.string().required('Please Choose OMC'),
+            bussiness_type: Yup.string().required('Please choose bussiness type'),
+            region: Yup.string().required('Please choose region'),
             address: Yup.string().required('Please enter address'),
-            pincode:Yup.number().required("Enter pincode"),
             state: Yup.string().required('Please choose state'),
             district: Yup.string().required('Please choose district'),
-            omc: Yup.string().required('Please Choose OMC'),
-            bussiness_type:Yup.string().required('Please choose bussiness type'),
-            region:Yup.string().required('Please choose region')
+            pincode: Yup.number().required("Enter pincode"),
+            gst:Yup.number().min(15)
         }),
         onSubmit: formData => {
             setApiStatus({ type: 'info', message: 'Creating a new user. Please wait...' })
-            // const userType = userRoles.find(role => role.id === Number(formData.role_id));
+            const userID = data.pm_user_id;
+            addNewTransport(formData, userID)
+                .then(message => {
+                    setApiStatus({ type: 'success', message: message })
+                })
+                .catch(e => {
+                    setApiStatus({ type: 'error', message: e })
+                    console.log(e);
+                })
             //   addNewUser(formData, userType.role_name)
             //     .then(message => {
             //       setApiStatus({ type: 'success', message: 'Successfully created new user.' });
@@ -64,10 +74,10 @@ const AddNewTransportsForm = () => {
             //         callback();
             //       }, 1000)
             //     })
-            //     .catch(e => {
-            //       setApiStatus({ type: 'error', message: e })
-            //       console.log(e);
-            //     })
+            // .catch(e => {
+            //   setApiStatus({ type: 'error', message: e })
+            //   console.log(e);
+            // })
         }
     });
     const inputProps = {
@@ -83,10 +93,10 @@ const AddNewTransportsForm = () => {
                         <TextInput
                             {...inputProps}
                             labelText="Transporter Code"
-                            name="trans_code"
-                            value={values.trans_code}
-                            error={errors.trans_code}
-                            helperText={errors.trans_code}
+                            name="id"
+                            value={values.id}
+                            error={errors.id}
+                            helperText={errors.id}
                         >
                         </TextInput>
                     </Grid>
@@ -99,6 +109,51 @@ const AddNewTransportsForm = () => {
                             error={errors.name}
                             helperText={errors.name}
                         />
+                    </Grid>
+                    <Grid item md={6}>
+                        <TextInput
+                            {...inputProps}
+                            select
+                            name="omc"
+                            labelText="OMC"
+                            value={values.omc}
+                            error={errors.omc}
+                        >
+                            <option value="">Choose OMC</option>
+                            {
+                                omcs.map(omc => <option key={omcs.id} value={omcs.id}>{omc.name}</option>)
+                            }
+                        </TextInput>
+                    </Grid>
+                    <Grid item md={6}>
+                        <TextInput
+                            {...inputProps}
+                            select
+                            name="bussiness_type"
+                            labelText="Bussiness Type"
+                            value={values.bussiness_type}
+                            error={errors.bussiness_type}
+                        >
+                            <option value="">Choose bussiness type</option>
+                            {
+                                bussinessType.map(type => <option key={type.id} value={type.name}>{type.name}</option>)
+                            }
+                        </TextInput>
+                    </Grid>
+                    <Grid item md={6}>
+                        <TextInput
+                            {...inputProps}
+                            select
+                            name="region"
+                            labelText="Region"
+                            value={values.region}
+                            error={errors.region}
+                        >
+                            <option value="">Choose region</option>
+                            {
+                                regions.map(region => <option key={region.region} value={region.name} >{region.name}</option>)
+                            }
+                        </TextInput>
                     </Grid>
                     <Grid item md={6}>
                         <TextInput
@@ -153,46 +208,14 @@ const AddNewTransportsForm = () => {
                     <Grid item md={6}>
                         <TextInput
                             {...inputProps}
-                            select
-                            name="omc"
-                            labelText="OMC"
-                            value={values.omc}
-                            error={errors.omc}
-                        >
-                            <option value="">Choose OMC</option>
-                            {
-                                omcs.map(omc => <option key={omcs.id} value={omcs.id}>{omc.name}</option>)
-                            }
-                        </TextInput>
-                    </Grid><Grid item md={6}>
-                        <TextInput
-                            {...inputProps}
-                            select
-                            name="bussiness type"
-                            labelText="Bussiness Type"
-                            value={values.bussiness_type}
-                            error={errors.bussiness_type}
-                        >
-                            <option value="">Choose bussiness type</option>
-                            {
-                                bussinessType.map(type => <option key={type.id} value={type.name}>{type.name}</option>)
-                            }
-                        </TextInput>
-                    </Grid><Grid item md={6}>
-                        <TextInput
-                            {...inputProps}
-                            select
-                            name="region"
-                            labelText="Region"
-                            value={values.region}
-                            error={errors.region}
-                        >
-                            <option value="">Choose region</option>
-                            {
-                                regions.map(region => <option key={region.region} value={region.name} >{region.name}</option>)
-                            }
-                        </TextInput>
+                            name="gst"
+                            labelText="GST"
+                            value={values.gst}
+                            error={errors.gst}
+                            helperText={errors.gst}
+                        />
                     </Grid>
+
                     <Grid item xs={12} justify="flex-end" alignItems="flex-end">
                         <Button
                             size="large"
@@ -201,13 +224,13 @@ const AddNewTransportsForm = () => {
                             variant="contained"
                         >
                             Create New Transport
-            </Button>
+                        </Button>
                     </Grid>
                 </Grid>
             </form>
-            {apiStatus.type && (
+            {/* {apiStatus.type && (
                 <Alert severity={apiStatus.type}>{apiStatus.message}</Alert>
-            )}
+            )} */}
         </Box>
     )
 }

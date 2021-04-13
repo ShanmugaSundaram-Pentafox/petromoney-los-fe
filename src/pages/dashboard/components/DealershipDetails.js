@@ -17,6 +17,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import Select from '@material-ui/core/Select';
 import Currency from '../../../components/Number/Currency';
 import SalesInfo from './SalesInfo';
 import TextInput from '../../../components/TextInput/TextInput';
@@ -27,6 +28,7 @@ import { createStructuredSelector } from 'reselect';
 import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import Alert from '@material-ui/lab/Alert';
 import DispApprovedDataTable from './DispApprovedDataTable';
+import apiCall from '../../../utils/api.util';
 
 const LoanInfoWrapper = styled.div`
   padding: 12px;
@@ -98,6 +100,20 @@ const fieldProps = {
   direction: "column",
   alignTop: true,
 }
+
+const testProducts = [
+  {
+    product_id: 1,
+    product_name: "FUEL 18",
+    interest: 18
+  },
+  {
+    product_id: 2,
+    product_name: "FUEL 28",
+    interest: 28
+  },
+];
+
 const LoanInfo = ({
   data: row,
   status,
@@ -106,6 +122,21 @@ const LoanInfo = ({
   updateNewLoanInfo
 }) => {
   const classes = useStyles();
+  const [products, setProducts] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState({});
+
+  useEffect(() => {
+    apiCall(`business/products`)
+    .then(res => {
+      if(res.status === 'SUCCESS') {
+        setProducts(res.data || testProducts);
+      }
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }, []);
+
   return (
     <>
       <LoanInfoWrapper>
@@ -113,6 +144,7 @@ const LoanInfo = ({
           <TableHead>
             <TableRow>
               <TableCell>Loan Type</TableCell>
+              <TableCell>Interest</TableCell>
               <TableCell align="right">Req. Amount</TableCell>
               <TableCell align="right">Amount Approved</TableCell>
               {
@@ -122,7 +154,25 @@ const LoanInfo = ({
           </TableHead>
           <TableBody>
             <TableRow key={row.id}>
-              <TableCell scope="row" component="th"><strong>{row.type}</strong></TableCell>
+              <TableCell scope="row" component="th">
+                <Select
+                  fullWidth
+                  placeholder={"Select Loan Product"}
+                  value={selectedProduct?.product_id}
+                  onChange={e => {
+                  const d = products.find(i => i.product_id === e.target.value)
+                  setSelectedProduct(d)
+                  updateNewLoanInfo({
+                    ...newInfo,
+                    product_id: e.target.value
+                  })
+                }}>
+                  {
+                    products.map(item => <option value={item.product_id}>{item.product_name}</option>)
+                  }
+                </Select>
+              </TableCell>
+              <TableCell scope="row" component="th"><strong>{selectedProduct?.interest}</strong></TableCell>
               <TableCell align="right"><Currency value={row.amount_requested} /></TableCell>
               <TableCell align="right">
                 {
@@ -350,7 +400,7 @@ const DealershipDetails = ({
     <div className={classes.wrapper}>
       <Typography className={classes.title} variant="h4" component="h4">{values.id}</Typography>
       <div className={classes.contentWrapper}>
-        <Grid container >
+        <Grid container spacing={1}>
           <Grid {...gridProps}>
             <TextInput
               labelText="Name"

@@ -69,20 +69,20 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
   let button;
   currencies.map((value) => {
   if (currency==="Field Officiers") {
-    button = <UsersTable title="Field Officiers" data={fo} />;
+    button = <UsersTable currentUser={currentUser} title="Field Officiers" data={fo} />;
   } else if (currency==="Dealers") {
-    button = <UsersTable title="Dealers" data={dealers} />;
+    button = <UsersTable currentUser={currentUser} title="Dealers" data={dealers} />;
   } else if (currency==="Sales Head (State)") {
-    button = <UsersTable title="Sales Head (State)" data={getUsersByRole(allUsers, "SALES_HEAD_STATE")} />;
+    button = <UsersTable currentUser={currentUser} title="Sales Head (State)" data={getUsersByRole(allUsers, "SALES_HEAD_STATE")} />;
   } else if (currency==="Sales Head (Regional)") {
-    button = <UsersTable title="Sales Head (Regional)" data={getUsersByRole(allUsers, "SALES_HEAD_REGIONAL")} />;
+    button = <UsersTable currentUser={currentUser} title="Sales Head (Regional)" data={getUsersByRole(allUsers, "SALES_HEAD_REGIONAL")} />;
   } else if (currency==="Transporters") {
-    button = <UsersTable title="Transporters" data={trans} />;
+    button = <UsersTable currentUser={currentUser} title="Transporters" data={trans} />;
   } else if (currency==="Other Users") {
-    button = <UsersTable withRole title="Other Users" data={others} />;
+    button = <UsersTable currentUser={currentUser} withRole title="Other Users" data={others} />;
   }
   else
-    button =<UsersTable title="Users" data={allUsers}/>
+    button =<UsersTable currentUser={currentUser} title="Users" data={allUsers}/>
   })
   return (
     <div>

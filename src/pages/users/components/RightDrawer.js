@@ -14,6 +14,8 @@ import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
 import MapRegion from './MapRegion';
 import Skeleton from '@material-ui/lab/Skeleton';
 import Grid from '@material-ui/core/Grid';
+import UserCan from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
 
 
 
@@ -60,7 +62,7 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export default function TemporaryDrawer({ userId, data }) {
+export default function TemporaryDrawer({ userId, data, currentUser }) {
   const [open, setOpen] = useState(false);
   const classes = useStyles();
   const [showUserEditDrawer, setShowUserEditDrawer] = useState(false);
@@ -201,8 +203,15 @@ export default function TemporaryDrawer({ userId, data }) {
                   </div>
                 </Box>
                 <Divider />
+                <UserCan
+                  role={currentUser.role}
+                  perform={rulesList.region_map}
+                  yes={() => (
+                    [1, 6, 7, 12].includes(data.role_id) ? <MapRegion data={data} /> : null
+                  )}
+                  no={() => null}
+                />
                 {
-                  [6, 7, 12].includes(data.role_id) ? <MapRegion data={data} /> : null
                 }
                 <Divider />
                 <Box mt={2} mb={2} bgcolor={"#fafafa"}>

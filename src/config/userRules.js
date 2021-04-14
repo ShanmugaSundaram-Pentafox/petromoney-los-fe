@@ -8,7 +8,8 @@
   "dealership_credit_edit": "dealership:credit:edit",
   "dealer_credit_view": "dealer:credit:view",
   "dealership_credit_view": "dealership:credit:view",
-  "dealer_view":"dealer:view"
+  "dealer_view":"dealer:view",
+  "region_map": "region:map",
 }
 
 export const rulesForUserRoles = {
@@ -37,6 +38,7 @@ export const rulesForUserRoles = {
       rulesList.dealer_credit_edit,
       rulesList.dealership_credit_edit,
       rulesList.users_view,
+      rulesList.region_map,
     ]
   },
   CFO: {

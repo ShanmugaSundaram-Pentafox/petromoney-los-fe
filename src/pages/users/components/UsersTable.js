@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 700,
   },
 }))
-const UsersTable = ({ title, data, withRole }) => {
+const UsersTable = ({ title, data, withRole, currentUser }) => {
   const classes = useStyles()
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -123,7 +123,7 @@ const UsersTable = ({ title, data, withRole }) => {
                     <DeleteOutlinedIcon style={{ width: "20px", color: "#ff6666" }} />
                   </Tooltip>
                 </Button>
-                <RightDrawer checked={op} userId={value} data={data.find(item => item.id === value)} />
+                <RightDrawer checked={op} userId={value} currentUser={currentUser} data={data.find(item => item.id === value)} />
               </div>
             </div>
           )

@@ -202,7 +202,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
               value === "Approved" ? (
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
-                    <ApprovedTable title={"Disbursement Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                    <ApprovedTable title={"Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
                   </Paper>
                 </Grid>
 

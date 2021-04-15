@@ -30,8 +30,8 @@ const AddNewUserForm = ({ callback }) => {
     validationSchema: Yup.object().shape({
       role_id: Yup.number().required('Choose Proper User Role'),
       first_name: Yup.string().required('Enter first name'),
-      last_name: Yup.string(),
-      mobile: Yup.number().required('Enter Mobile number'),
+      last_name: Yup.string().min(1).required('Enter last name'),
+      mobile: Yup.number().min(10,'Enter valid mobile number').required('Enter Mobile number'),
       email: Yup.string().email("Enter valid email"),
       password: Yup.string(),
     }),

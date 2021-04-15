@@ -15,7 +15,7 @@ import Paper from '@material-ui/core/Paper';
 // import Button from "@material-ui/core/Button";
 // import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
-import moment from 'moment';
+// import moment from 'moment';
 import clsx from 'clsx';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
@@ -23,6 +23,7 @@ import Currency from '../Number/Currency';
 // import CircularProgress from '@material-ui/core/CircularProgress';
 // import PdfViewer from '../CommonComponents/PdfViewer/PdfViewer';
 import SignRequestLayout from '../Leegality/SignRequestLayout';
+import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -64,11 +65,11 @@ const useStyles = makeStyles(theme => ({
 const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const classes = useStyles();
   // const [ data, setData ] = useState([]);
-  const [ dealershipId, setDealershipId ] = useState();
-  const [ modalVisible, setModalVisible ] = useState(false);
+  const [dealershipId, setDealershipId] = useState();
+  const [modalVisible, setModalVisible] = useState(false);
 
   useMount(() => {
-    if(!loans || !loans.length) {
+    if (!loans || !loans.length) {
       getLoansByStatus('submitted')
         .then(data => {
           setLoansData('submitted', data);
@@ -76,7 +77,6 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
         .catch(e => null)
     }
   });
-  
   const columns = useMemo(() => {
     return [
       {
@@ -129,8 +129,10 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
             align: 'center',
           }),
           customBodyRender: value => {
+            // moment(new Date(value)).format('DD MMM, YYYY')
             return <div>
-              {value ? moment(new Date(value)).format('DD MMM, YYYY') : '-'}
+              {/* {value ? moment(new Date(value)).format('DD MMM, YYYY') : '-'} */}
+              {value ? value : '-'}
             </div>
           }
         }
@@ -145,7 +147,13 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
             return (
               <Tooltip title="eSign Application">
                 <IconButton size="small" color="primary" aria-label="application" onClick={() => { setDealershipId(value); setModalVisible(true); }}>
-                  <AssignmentIcon />
+                  <div>
+                    <ESignIcon width={24} />
+                    {/* <img
+                      alt="Under development"
+                      src={eSign}
+                    /> */}
+                  </div>
                 </IconButton>
               </Tooltip>
             )
@@ -160,6 +168,9 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
     selectableRowsHeader: false,
     selectableRows: 'none',
     isRowSelectable: () => false,
+    // downloadOptions: {
+    //   customCSVdata: loans,
+    // },
     // onRowClick: (rowData, { dataIndex }) => {
     //   // console.log(rowData, rowMeta);
     //   onRowClick(loans[dataIndex].dealership_id, 'submitted')
@@ -176,7 +187,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
             columns={columns}
             options={options}
           />
-        ) : <Paper style={{ padding: 10 }}>No Submitted Records</Paper> 
+        ) : <Paper style={{ padding: 10 }}>No Submitted Records</Paper>
       }
 
       <SignRequestLayout
@@ -194,7 +205,7 @@ const mapStateToProps = ({ loans }) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setLoansData : (status, data) => dispatch(setLoansByStatus(status, data))
+  setLoansData: (status, data) => dispatch(setLoansByStatus(status, data))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SubmittedTable);

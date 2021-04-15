@@ -137,6 +137,11 @@ const Sidebar = props => {
         href: '/passbook',
         icon: <ListIcon />
       },
+      {
+        title: 'Transports',
+        href: '/transports',
+        icon: <LocalShippingIcon />
+      },
     )
   }
 
@@ -224,4 +229,4 @@ Sidebar.propTypes = {
 };
 
 
-export default  Sidebar;
+export default Sidebar;

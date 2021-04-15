@@ -45,7 +45,7 @@ const RejectedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const classes = useStyles();
 
   useMount(() => {
-    if(!loans || !loans.length) {
+    if (!loans || !loans.length) {
       getLoansByStatus('rejected')
         .then(data => {
           setLoansData('rejected', data);
@@ -53,7 +53,7 @@ const RejectedTable = ({ title, loans, setLoansData, onRowClick }) => {
         .catch(e => null)
     }
   });
-  
+
   const columns = useMemo(() => {
     return [
       {
@@ -107,7 +107,8 @@ const RejectedTable = ({ title, loans, setLoansData, onRowClick }) => {
           }),
           customBodyRender: value => {
             return <div>
-              {value ? moment(new Date(value)).format('DD MMM, YYYY') : '-'}
+              {/* {value ? moment(new Date(value)).format('DD MMM, YYYY') : '-'} */}
+              {value ? value : '-'}
             </div>
           }
         }
@@ -136,7 +137,7 @@ const RejectedTable = ({ title, loans, setLoansData, onRowClick }) => {
             columns={columns}
             options={options}
           />
-        ) : <Paper style={{ padding: 10 }}>No Rejected Applications</Paper> 
+        ) : <Paper style={{ padding: 10 }}>No Rejected Applications</Paper>
       }
     </div>
   )
@@ -147,7 +148,7 @@ const mapStateToProps = ({ loans }) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setLoansData : (status, data) => dispatch(setLoansByStatus(status, data))
+  setLoansData: (status, data) => dispatch(setLoansByStatus(status, data))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(RejectedTable);

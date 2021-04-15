@@ -20,6 +20,8 @@ import Currency from '../Number/Currency';
 // import { URL } from '../../config/serverUrls';
 import SignRequestLayout from '../Leegality/SignRequestLayout';
 // import CircularProgress from '@material-ui/core/CircularProgress';
+import { ReactComponent as LoanAgreementIcon } from '../../icons/loan_agreement.svg';
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -54,11 +56,11 @@ const useStyles = makeStyles(theme => ({
 
 const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const classes = useStyles();
-  const [ dealershipId, setDealershipId ] = useState();
-  const [ modalVisible, setModalVisible ] = useState(false);
+  const [dealershipId, setDealershipId] = useState();
+  const [modalVisible, setModalVisible] = useState(false);
 
   useMount(() => {
-    if(!loans || !loans.length) {
+    if (!loans || !loans.length) {
       getLoansByStatus('approved')
         .then(data => {
           setLoansData('approved', data);
@@ -66,7 +68,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
         .catch(e => null)
     }
   });
-  
+
   const columns = useMemo(() => {
     return [
       {
@@ -120,7 +122,8 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
           }),
           customBodyRender: value => {
             return <div>
-              {value ? moment(new Date(value)).format('DD MMM, YYYY') : '-'}
+              {/* {value ? moment(new Date(value)).format('DD MMM, YYYY') : '-'} */}
+              {value ? value : '-'}
             </div>
           }
         }
@@ -144,7 +147,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
                 </Tooltip>
                 <Tooltip title="Loan Agreement">
                   <IconButton size="small" color="primary" aria-label="application" onClick={() => { setDealershipId(value); setModalVisible(true); }}>
-                    <DescriptionIcon />
+                    <LoanAgreementIcon width={14} />
                   </IconButton>
                 </Tooltip>
               </>
@@ -174,14 +177,14 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
   return (
     <div className={classes.root}>
       {
-        Array.isArray(loans) && loans.length!==0 ? (
+        Array.isArray(loans) && loans.length !== 0 ? (
           <MUIDataTable
             title={title ? <Typography className={classes.title} variant="h4" component="h4">{title} ({loans.length})</Typography> : null}
             data={loans}
             columns={columns}
             options={options}
           />
-        ) : <Paper style={{ padding: 10 }}>No Approved Applications</Paper> 
+        ) : <Paper style={{ padding: 10 }}>No Approved Applications</Paper>
       }
 
       <SignRequestLayout
@@ -199,7 +202,7 @@ const mapStateToProps = ({ loans }) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setLoansData : (status, data) => dispatch(setLoansByStatus(status, data))
+  setLoansData: (status, data) => dispatch(setLoansByStatus(status, data))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ApprovedTable);

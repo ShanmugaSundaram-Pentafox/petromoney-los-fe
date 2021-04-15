@@ -53,8 +53,8 @@ const AddNewTransportsForm = ({ data }) => {
             address: Yup.string().required('Please enter address'),
             state: Yup.string().required('Please choose state'),
             district: Yup.string().required('Please choose district'),
-            pincode: Yup.number().min(6,'Pincode must be 6 digits').required("Enter pincode"),
-            gst: Yup.number().min(15,'Enter valid GST')
+            pincode: Yup.number().min(6, 'Pincode must be 6 digits').required("Enter pincode"),
+            gst: Yup.number().min(15, 'Enter valid GST')
         }),
         onSubmit: formData => {
             addNewTransport(formData)
@@ -210,7 +210,7 @@ const AddNewTransportsForm = ({ data }) => {
                             color="primary"
                             variant="contained"
                         >
-                            Create New Transport
+                            Add New Transport
                         </Button>
                     </Grid>
                 </Grid>

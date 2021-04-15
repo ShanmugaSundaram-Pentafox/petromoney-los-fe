@@ -174,7 +174,7 @@ export const getAllVehicleLoans = () => {
 }
 export const addNewTransport = (data) => {
   return new Promise((resolve, reject) => {
-    apiCall(`transporters`, {
+    apiCall(`${URL.vehicleInfo}`, {
       method: 'POST',
       body: data
     })

@@ -119,7 +119,7 @@ export const getDealerDetails = () => {
 }
 export const getDealerTransportsList = () => {
   return new Promise((resolve, reject) => {
-    apiCall(`transporters`)
+    apiCall(`${URL.vehicleInfo}`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data);

@@ -6,6 +6,7 @@ const Currency = ({ value, ...props }) => (
     prefix="₹"
     thousandSeparator
     displayType="text"
+    decimalScale={2}
     {...props}
     value={Number(value || 0)}
   />

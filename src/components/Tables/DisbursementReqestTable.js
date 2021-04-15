@@ -7,7 +7,7 @@ import Paper from '@material-ui/core/Paper';
 import { useMount } from 'react-use';
 // import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
-import moment from 'moment';
+// import moment from 'moment';
 import clsx from 'clsx';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
@@ -112,7 +112,8 @@ const DisbursementReqestTable = ({ title, loans, setLoansData, onRowClick }) => 
           }),
           customBodyRender: value => {
             return <div>
-              {value ? moment(new Date(value)).format('DD MMM, YYYY') : '-'}
+              {/* {value ? moment(new Date(value)).format('DD MMM, YYYY') : '-'} */}
+              {value ? value :'-'}
             </div>
           }
         }

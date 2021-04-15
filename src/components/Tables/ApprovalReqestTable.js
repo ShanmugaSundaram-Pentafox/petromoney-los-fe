@@ -112,7 +112,8 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick }) => {
           }),
           customBodyRender: value => {
             return <div>
-              {value ? moment(new Date(value)).format('DD MMM, YYYY') : '-'}
+              {/* {value ? moment(new Date(value)).format('DD MMM, YYYY') : '-'} */}
+              {value ? value :'-'}
             </div>
           }
         }

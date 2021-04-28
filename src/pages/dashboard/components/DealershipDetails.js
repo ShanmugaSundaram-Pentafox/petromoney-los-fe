@@ -144,7 +144,7 @@ const LoanInfo = ({
           <TableHead>
             <TableRow>
               <TableCell>Loan Type</TableCell>
-              <TableCell>Interest</TableCell>
+              <TableCell>Interest %</TableCell>
               <TableCell align="right">Req. Amount</TableCell>
               <TableCell align="right">Amount Approved</TableCell>
               {
@@ -157,16 +157,18 @@ const LoanInfo = ({
               <TableCell scope="row" component="th">
                 <Select
                   fullWidth
+                  native
                   placeholder={"Select Loan Product"}
                   value={selectedProduct?.product_id}
                   onChange={e => {
-                  const d = products.find(i => i.product_id === e.target.value)
+                  const d = products.find(i => i.product_id == e.target.value)
                   setSelectedProduct(d)
                   updateNewLoanInfo({
                     ...newInfo,
                     product_id: e.target.value
                   })
                 }}>
+                  <option value="">Choose Loan type</option>
                   {
                     products.map(item => <option value={item.product_id}>{item.product_name}</option>)
                   }

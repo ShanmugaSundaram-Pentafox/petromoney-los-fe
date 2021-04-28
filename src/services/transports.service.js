@@ -172,4 +172,22 @@ export const getAllVehicleLoans = () => {
       })
   })
 }
+export const addNewTransport = (data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${URL.vehicleInfo}`, {
+      method: 'POST',
+      body: data
+    })
+    .then(({ status, message }) => {
+      if (status === "SUCCESS") {
+        resolve(message)
+      } else {
+        reject(message)
+      }
+    })
+    .catch((e) => {
+      reject(e.message)
+    })
+  })
+}
 

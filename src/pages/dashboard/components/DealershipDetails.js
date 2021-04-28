@@ -238,7 +238,6 @@ const LoanInfo = ({
           Recommendation Remarks(for Approval):
           <TextInput
             disabled
-            readOnly
             alignTop
             multiline
             rows={4}
@@ -502,7 +501,6 @@ const DealershipDetails = ({
                   labelText="Remarks*"
                   alignTop
                   placeholder="Enter your remarks here."
-                  readOnly={!permissionCheck(currentUser.role_name, rulesList.loan_approval)}
                   value={newLoanInfo.approval_remarks}
                   onChange={e => {
                     setNewLoanInfo({
@@ -511,6 +509,7 @@ const DealershipDetails = ({
                     })
                   }}
                   {...fieldProps}
+                  readOnly={!permissionCheck(currentUser.role_name, rulesList.loan_approval)}
 
                 />
               </Grid>
@@ -547,7 +546,6 @@ const DealershipDetails = ({
                     labelText="Remarks*"
                     alignTop
                     placeholder="Enter your remarks here."
-                    readOnly={!permissionCheck(currentUser.role_name, rulesList.loan_approval)}
                     value={newLoanInfo.disbursement_approval_remarks}
                     onChange={e => {
                       setNewLoanInfo({
@@ -556,6 +554,7 @@ const DealershipDetails = ({
                       })
                     }}
                     {...fieldProps}
+                    readOnly={!permissionCheck(currentUser.role_name, rulesList.loan_approval)}
                   />
                 </Grid>
               </Grid>
@@ -575,7 +574,6 @@ const DealershipDetails = ({
                   </Typography> */}
                     <TextInput
                       disabled
-                      readOnly
                       alignTop
                       multiline
                       rows={4}
@@ -593,7 +591,6 @@ const DealershipDetails = ({
                   </Typography> */}
                     <TextInput
                       disabled
-                      readOnly
                       alignTop
                       multiline
                       rows={4}

@@ -325,15 +325,21 @@ const DealershipDetails = ({
     //   setApiStatus({ type: 'error', message: 'Please enter your remarks/comments.' });
     //   return null
     // }
+    
     setApiStatus({ loading: true, type: 'info', message: 'We are processing your request, Please wait...' });
     let reqBody = {
       status: submitStatus,
-      user_id: currentUser.id
+      user_id: currentUser.id,
     };
     let resMsg = '';
 
     if (status === "loan_approval") {
+      if(!newLoanInfo.product_id) {
+        setApiStatus({ loading: false, type: 'error', message: 'Please choose loan type.' });
+        return null
+      }
       reqBody.approval_remarks = newLoanInfo.approval_remarks;
+      reqBody.product_id = newLoanInfo.product_id;
     }
     if (submitStatus === "approved") {
       if (status === "loan_approval") {

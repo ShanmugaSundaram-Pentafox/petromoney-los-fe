@@ -29,6 +29,7 @@ import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loa
 import Alert from '@material-ui/lab/Alert';
 import DispApprovedDataTable from './DispApprovedDataTable';
 import apiCall from '../../../utils/api.util';
+import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 
 const LoanInfoWrapper = styled.div`
   padding: 12px;
@@ -123,6 +124,7 @@ const LoanInfo = ({
 }) => {
   const classes = useStyles();
   const [products, setProducts] = useState([]);
+  const [showRemarksModal, setShowRemarksModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState({});
 
   useEffect(() => {
@@ -145,6 +147,7 @@ const LoanInfo = ({
             <TableRow>
               <TableCell>Loan Type</TableCell>
               <TableCell>Interest %</TableCell>
+              <TableCell>Penal Interest %</TableCell>
               <TableCell align="right">Req. Amount</TableCell>
               <TableCell align="right">Amount Approved</TableCell>
               {
@@ -175,6 +178,7 @@ const LoanInfo = ({
                 </Select>
               </TableCell>
               <TableCell scope="row" component="th"><strong>{selectedProduct?.interest}</strong></TableCell>
+              <TableCell scope="row" component="th"><strong>{selectedProduct?.penal_interest}</strong></TableCell>
               <TableCell align="right"><Currency value={row.amount_requested} /></TableCell>
               <TableCell align="right">
                 {
@@ -236,7 +240,7 @@ const LoanInfo = ({
         </Table>
       </LoanInfoWrapper>
       <Grid container>
-        <Grid item xs={12} className={classes.gridItemStyle}>
+        <Grid item xs={12} className={classes.gridItemStyle} style={{ position: 'relative' }}>
           Recommendation Remarks(for Approval):
           <TextInput
             disabled
@@ -247,8 +251,32 @@ const LoanInfo = ({
             value={row.recommendation_remarks}
             {...fieldProps}
           />
+          {
+            row.recommendation_remarks?.length >= 500 ? (
+              <div
+                onClick={() => setShowRemarksModal(row.recommendation_remarks)}
+                style={{
+                  position: 'absolute',
+                  bottom: 5,
+                  width: '100%',
+                  textAlign: 'center',
+                  padding: 5,
+                  paddingTop: 15,
+                  fontWeight: 600,
+                  fontSize: 14,
+                  cursor: 'pointer',
+                  background: 'linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(176,176,176,0.75) 100%)',
+                }}
+              >
+                View more
+              </div>
+            ) : null
+          }
         </Grid>
       </Grid>
+      <FormDialog open={showRemarksModal} title="Remarks" onClose={() => setShowRemarksModal(false)}>
+        <p>{showRemarksModal}</p>
+      </FormDialog>
       {
         row.disbursement_recommendation_remarks && (
           <Grid container>

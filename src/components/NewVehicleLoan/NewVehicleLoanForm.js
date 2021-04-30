@@ -30,11 +30,11 @@ const NewVehicleLoanForm = ({ vehicleId, callback, currentUser }) => {
     validateOnChange: false,
     validationSchema: Yup.object().shape({
       credit_head: Yup.number().required('Choose Loan Type'),
-      loan_amount: Yup.number().required('Enter Loan Amount'),
+      loan_amount: Yup.number(),
       remarks: Yup.string(),
     }),
     onSubmit: formData => {
-      const d = loanOptions.find(d => d.id === formData?.credit_head);
+      const d = loanOptions.find(d => d.id == formData?.credit_head);
       if(Number(formData.credit_head) === 5 && !formData.remarks) {
         setErrors({ remarks: "Please enter remarks" });
         setSubmitting(false)
@@ -53,7 +53,7 @@ const NewVehicleLoanForm = ({ vehicleId, callback, currentUser }) => {
         method: 'POST',
         body: {
           is_service: d.is_service,
-          credit_head_id: formData.credit_head,
+          credit_head_id: parseInt(formData.credit_head),
           loan_amount: formData.loan_amount || 0,
           remarks,
           user_id: currentUser.id,

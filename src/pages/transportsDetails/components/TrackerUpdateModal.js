@@ -166,10 +166,10 @@ const TrackerUpdateModal = ({ statusId, onClose, data, serviceData }) => {
     return (
       <FormDialog
         open={status}
-        title={'FastTAG Issued'}
+        title={'FASTag Issued'}
         onClose={onCloseModal}
         >
-        <Typography>Enter tag number if new fastTag is issued,</Typography>
+        <Typography>Enter tag number if new FASTag is issued,</Typography>
         <Formik validationSchema={_vSchema} initialValues={d} onSubmit={v => {
           postServiceStatus({
             status_id: status,

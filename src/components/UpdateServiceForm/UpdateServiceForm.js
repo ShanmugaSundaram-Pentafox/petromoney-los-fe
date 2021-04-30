@@ -111,9 +111,9 @@ const UpdateServiceForm = ({ data, callback }) => {
           </Box>
         </li>
         <li>
-          <Typography variant="h5">FastTAG Issued</Typography>
+          <Typography variant="h5">FASTag Issued</Typography>
           <Box mt={2}>
-            <Typography>Enter tag number if new fastTag is issued,</Typography>
+            <Typography>Enter tag number if new FASTag is issued,</Typography>
             <Grid container spacing={1}>
               <Grid item md={12}>
                 <TextInput
@@ -138,9 +138,9 @@ const UpdateServiceForm = ({ data, callback }) => {
           </Box>
         </li>
         <li>
-          <Typography variant="h5">FastTAG Affixed</Typography>
+          <Typography variant="h5">FASTag Affixed</Typography>
           <Box mt={2}>
-            <Typography>Upload photo of the FastTag affixed</Typography>
+            <Typography>Upload photo of the FASTag affixed</Typography>
             <FileUpload inline handleSave={() => null}  />
           </Box>
         </li>

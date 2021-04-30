@@ -168,10 +168,10 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
     selectableRowsHeader: false,
     selectableRows: 'none',
     isRowSelectable: () => false,
-    // onRowClick: (rowData, { dataIndex }) => {
-    //   // console.log(rowData, rowMeta);
-    //   onRowClick(loans[dataIndex].dealership_id, 'approved')
-    // }
+    onRowClick: (rowData, { dataIndex }) => {
+      // console.log(rowData, rowMeta);
+      onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'approved')
+    }
   };
 
   return (

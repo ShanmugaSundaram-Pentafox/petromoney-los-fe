@@ -38,6 +38,24 @@ const LoanInfoWrapper = styled.div`
   background-color: rgba(0, 160, 0, 0.15);
 `;
 
+const ViewMoreBtn = styled.div`
+  position: absolute;
+  bottom: 5px;
+  width: 100%;
+  text-align: center;
+  padding: 5px;
+  padding-top: 15px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  background: linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(176,176,176,0.75) 100%);
+  transition: all .35s ease-in-out;
+
+  &:hover {
+    background: linear-gradient(180deg, rgba(255,255,255,0.50) 0%, rgba(176,176,176,0.90) 100%);
+  }
+`;
+
 const useStyles = makeStyles(theme => ({
   wrapper: {
     padding: 24,
@@ -252,42 +270,18 @@ const LoanInfo = ({
             {...fieldProps}
           />
           {
-            row.recommendation_remarks?.length >= 500 ? (
-              <div
-                onClick={() => setShowRemarksModal(row.recommendation_remarks)}
-                style={{
-                  position: 'absolute',
-                  bottom: 5,
-                  width: '100%',
-                  textAlign: 'center',
-                  padding: 5,
-                  paddingTop: 15,
-                  fontWeight: 600,
-                  fontSize: 14,
-                  cursor: 'pointer',
-                  background: 'linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(176,176,176,0.75) 100%)',
-                }}
-              >
+            row.recommendation_remarks?.length >= 300 ? (
+              <ViewMoreBtn onClick={() => setShowRemarksModal(row.recommendation_remarks)}>
                 View more
-              </div>
+              </ViewMoreBtn>
             ) : null
           }
         </Grid>
       </Grid>
-      <FormDialog open={showRemarksModal} title="Remarks" onClose={() => setShowRemarksModal(false)}>
-        <TextInput
-          disabled
-          alignTop
-          multiline
-          readOnly
-          value={showRemarksModal}
-          style={{ width: '40vw', minWidth: 400 }}
-          />
-      </FormDialog>
       {
         row.disbursement_recommendation_remarks && (
           <Grid container>
-            <Grid item xs={6} className={classes.gridItemStyle}>
+            <Grid item xs={12} className={classes.gridItemStyle} style={{ position: 'relative' }}>
               Recommendation Remarks(for Disbursement):
               <TextInput
                 disabled
@@ -298,10 +292,27 @@ const LoanInfo = ({
                 // rowsMax={8}
                 value={row.disbursement_recommendation_remarks}
               />
+              {
+                row.disbursement_recommendation_remarks?.length >= 300 ? (
+                  <ViewMoreBtn onClick={() => setShowRemarksModal(row.disbursement_recommendation_remarks)}>
+                    View more
+                  </ViewMoreBtn>
+                ) : null
+              }
             </Grid>
           </Grid>
         )
       }
+      <FormDialog open={showRemarksModal} title="Remarks" onClose={() => setShowRemarksModal(false)}>
+        <TextInput
+          disabled
+          alignTop
+          multiline
+          readOnly
+          value={showRemarksModal}
+          style={{ width: '40vw', minWidth: 400 }}
+          />
+      </FormDialog>
     </>
   )
 }
@@ -317,6 +328,7 @@ const DealershipDetails = ({
   const [loanInfo, setLoanInfo] = useState({});
   const [apiStatus, setApiStatus] = useState({});
   const [readOnly, setReadOnly] = useState(true);
+  const [showRemarksModal, setShowRemarksModal] = useState(false);
   const [newLoanInfo, setNewLoanInfo] = useState({});
 
   const classes = useStyles();
@@ -442,7 +454,7 @@ const DealershipDetails = ({
     <div className={classes.wrapper}>
       <Typography className={classes.title} variant="h4" component="h4">{values.id}</Typography>
       <div className={classes.contentWrapper}>
-        <Grid container spacing={1}>
+        <Grid container spacing={2}>
           <Grid {...gridProps}>
             <TextInput
               labelText="Name"
@@ -560,12 +572,34 @@ const DealershipDetails = ({
           }
 
           {
+            status == "approved" || status == "rejected" ? (
+              <Grid {...gridProps} style={{ position: 'relative' }}>
+                <TextInput
+                  multiline
+                  rows={4}
+                  rowsMax={8}
+                  labelText="Remarks*"
+                  alignTop
+                  value={newLoanInfo.approval_remarks}
+                  disabled
+                  {...fieldProps}
+                />
+                {
+                  loanInfo.approval_remarks?.length >= 300 ? (
+                    <ViewMoreBtn onClick={() => setShowRemarksModal(loanInfo.approval_remarks)}>
+                      View more
+                    </ViewMoreBtn>
+                  ) : null
+                }
+              </Grid>
+            ) : null
+          }
+
+          {
             status == "disbursement_approval" ? (
-              <Grid container>
-                <Grid {...gridProps} md={12}>
+              <>
+                <Grid {...gridProps} style={{ position: 'relative' }}>
                   Remarks(Approval)
-                </Grid>
-                <Grid {...gridProps} md={12}>
                   <TextInput
                     disabled
                     readOnly
@@ -576,9 +610,17 @@ const DealershipDetails = ({
                     value={loanInfo.approval_remarks}
                     {...fieldProps}
                   />
+                  {
+                      loanInfo.approval_remarks?.length >= 300 ? (
+                        <ViewMoreBtn onClick={() => setShowRemarksModal(loanInfo.approval_remarks)}>
+                          View more
+                        </ViewMoreBtn>
+                      ) : null
+                    }
                   {/* <Typography variant="p" component={'p'}>
                     {loanInfo.approval_remarks}
                   </Typography> */}
+                  
                 </Grid>
 
                 <Grid {...gridProps}>
@@ -600,47 +642,55 @@ const DealershipDetails = ({
                     readOnly={!permissionCheck(currentUser.role_name, rulesList.loan_approval)}
                   />
                 </Grid>
-              </Grid>
+              </>
             ) : null
           }
 
           {
             status == 'disbursement_approved' || status == 'disbursed' ? (
               <>
-                <Grid container>
-                  <Grid {...gridProps} md={6}>
-                    Remarks(Approval)
+                <Grid {...gridProps} style={{ position: 'relative' }}>
+                  Remarks(Approval)
+                  {/* <Typography variant="p" component={'p'}>
+                  {loanInfo.approval_remarks}
+                </Typography> */}
+                  <TextInput
+                    disabled
+                    alignTop
+                    multiline
+                    rows={4}
+                    // rowsMax={8}
+                    value={loanInfo.approval_remarks}
+                    {...fieldProps}
+                  />
+                  {
+                    loanInfo.approval_remarks?.length >= 300 ? (
+                      <ViewMoreBtn onClick={() => setShowRemarksModal(loanInfo.approval_remarks)}>
+                        View more
+                      </ViewMoreBtn>
+                    ) : null
+                  }
                 </Grid>
-                  <Grid {...gridProps} md={6}>
-                    {/* <Typography variant="p" component={'p'}>
-                    {loanInfo.approval_remarks}
-                  </Typography> */}
-                    <TextInput
-                      disabled
-                      alignTop
-                      multiline
-                      rows={4}
-                      // rowsMax={8}
-                      value={loanInfo.approval_remarks}
-                      {...fieldProps}
-                    />
-                  </Grid>
-                  <Grid {...gridProps} md={6}>
-                    Remarks(Disbursement)
-                </Grid>
-                  <Grid {...gridProps} md={6}>
+                <Grid {...gridProps} style={{ position: 'relative' }}>
+                  Remarks(Disbursement)
                     {/* <Typography variant="p" component={'p'}>
                     {loanInfo.disbursement_approval_remarks}
                   </Typography> */}
-                    <TextInput
-                      disabled
-                      alignTop
-                      multiline
-                      rows={4}
-                      value={loanInfo.disbursement_approval_remarks}
-                      {...fieldProps}
-                    />
-                  </Grid>
+                  <TextInput
+                    disabled
+                    alignTop
+                    multiline
+                    rows={4}
+                    value={loanInfo.disbursement_approval_remarks}
+                    {...fieldProps}
+                  />
+                  {
+                    loanInfo.disbursement_approval_remarks?.length >= 300 ? (
+                      <ViewMoreBtn onClick={() => setShowRemarksModal(loanInfo.disbursement_approval_remarks)}>
+                        View more
+                      </ViewMoreBtn>
+                    ) : null
+                  }
                 </Grid>
                 <Grid {...gridProps}>
                   <DispApprovedDataTable id={values.id} loanData={loanInfo} />
@@ -699,6 +749,16 @@ const DealershipDetails = ({
           </div>
         </div>
       </div>
+      <FormDialog open={showRemarksModal} title="Remarks" onClose={() => setShowRemarksModal(false)}>
+        <TextInput
+          disabled
+          alignTop
+          multiline
+          readOnly
+          value={showRemarksModal}
+          style={{ width: '40vw', minWidth: 400 }}
+          />
+      </FormDialog>
     </div>
   )
 }

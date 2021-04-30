@@ -275,7 +275,14 @@ const LoanInfo = ({
         </Grid>
       </Grid>
       <FormDialog open={showRemarksModal} title="Remarks" onClose={() => setShowRemarksModal(false)}>
-        <p>{showRemarksModal}</p>
+        <TextInput
+          disabled
+          alignTop
+          multiline
+          readOnly
+          value={showRemarksModal}
+          style={{ width: '40vw', minWidth: 400 }}
+          />
       </FormDialog>
       {
         row.disbursement_recommendation_remarks && (

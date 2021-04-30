@@ -144,18 +144,22 @@ const LoanInfo = ({
   const [products, setProducts] = useState([]);
   const [showRemarksModal, setShowRemarksModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState({});
-
+  
   useEffect(() => {
     apiCall(`business/products`)
     .then(res => {
       if(res.status === 'SUCCESS') {
         setProducts(res.data || testProducts);
+        if(row.product_id) {
+          const re = res.data.find(d => d.product_id == row.product_id)
+          setSelectedProduct({ ...re, disabled: status !== "loan_approval" } || {})
+        }
       }
     })
     .catch(err => {
       console.log(err)
     })
-  }, []);
+  }, [row.product_id]);
 
   return (
     <>
@@ -181,6 +185,7 @@ const LoanInfo = ({
                   native
                   placeholder={"Select Loan Product"}
                   value={selectedProduct?.product_id}
+                  disabled={selectedProduct?.disabled}
                   onChange={e => {
                   const d = products.find(i => i.product_id == e.target.value)
                   setSelectedProduct(d)

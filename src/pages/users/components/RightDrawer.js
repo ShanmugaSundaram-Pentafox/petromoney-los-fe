@@ -204,7 +204,7 @@ export default function TemporaryDrawer({ userId, data, currentUser }) {
                 </Box>
                 <Divider />
                 <UserCan
-                  role={currentUser.role}
+                  role={currentUser.role_name}
                   perform={rulesList.region_map}
                   yes={() => (
                     [1, 6, 7, 12].includes(data.role_id) ? <MapRegion data={data} /> : null

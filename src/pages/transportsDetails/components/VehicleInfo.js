@@ -146,7 +146,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
   const getServiceStatus = serviceData => {
     getVehicleServiceDetails(serviceData.vehicle_id, serviceData.credit_head_id, serviceData.id)
       .then(res => {
-        setServiceData(res);
+        setServiceData(st => ({ ...st, [`${serviceData.vehicle_id}_${serviceData.credit_head_id}_${serviceData.id}`]: res }));
       })
       .catch(e => {
         console.log(e);
@@ -161,10 +161,10 @@ export default function VehicleInfo({ id, data, currentUser }) {
     })
   }
 
-  const closeTrackingStatusModal = fetchStatus => {
+  const closeTrackingStatusModal = (fetchStatus, d) => {
     setServiceModal({ open: false })
     if(fetchStatus) {
-      getServiceStatus({...serviceData, id: serviceData.loan_id });
+      getServiceStatus({...d, id: d.loan_id });
     }
   }
 
@@ -264,8 +264,8 @@ export default function VehicleInfo({ id, data, currentUser }) {
                               <Button size="small" variant="outlined" onClick={() => getServiceStatus(row)}>Check status</Button>
                             </Box>
                             <Box>
-                            <Stepper alternativeLabel nonLinear activeStep={false}>
-                              {serviceData?.steps?.map((item, index) => {
+                            <Stepper key={vehicleInfo.vehicle_id} alternativeLabel nonLinear activeStep={false}>
+                              {serviceData[`${row.vehicle_id}_${row.credit_head_id}_${row.id}`]?.steps?.map((item, index) => {
                                 const stepProps = {
                                   completed: false
                                 };
@@ -275,14 +275,18 @@ export default function VehicleInfo({ id, data, currentUser }) {
                                 // if (isStepOptional(index)) {
                                 //   buttonProps.optional = <Typography variant="caption">Optional</Typography>;
                                 // }
-                                if (serviceData.tracking_details[index]) {
+                                if (serviceData[`${row.vehicle_id}_${row.credit_head_id}_${row.id}`]?.tracking_details[index]) {
                                   stepProps.completed = true;
                                 }
                                 return (
                                   <Step key={item.status_id} {...stepProps}>
                                     <StepButton
                                       onClick={() => {
-                                        openServiceModal(item);
+                                        openServiceModal({
+                                          item,
+                                          completed: stepProps.completed, 
+                                          serviceData: serviceData[`${row.vehicle_id}_${row.credit_head_id}_${row.id}`]
+                                        });
                                       }}
                                       // completed={isStepComplete(index)}
                                       {...buttonProps}
@@ -316,7 +320,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
         <UpdateServiceForm data={serviceData} callback={() => null} />
       </FormDialog> */}
 
-      <TrackerUpdateModal statusId={serviceModal?.data?.status_id} data={serviceModal.data} serviceData={serviceData} onClose={closeTrackingStatusModal} />
+      <TrackerUpdateModal statusId={serviceModal?.data?.item?.status_id} data={serviceModal.data?.item} serviceData={serviceModal.data?.serviceData} completed={serviceModal.data?.completed} onClose={closeTrackingStatusModal} />
     </div>
   )
 }

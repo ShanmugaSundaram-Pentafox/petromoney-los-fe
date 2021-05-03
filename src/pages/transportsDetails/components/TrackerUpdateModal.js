@@ -15,7 +15,7 @@ const inputProps = {
   alignTop: true,
 }
 
-const TrackerUpdateModal = ({ statusId, onClose, data, serviceData }) => {
+const TrackerUpdateModal = ({ statusId, onClose, data, serviceData, completed }) => {
   const [status, setStatus] = useState(statusId);
   
   useEffect(() => {
@@ -26,9 +26,9 @@ const TrackerUpdateModal = ({ statusId, onClose, data, serviceData }) => {
     return null;
   }
 
-  const onCloseModal = fetchStatus => {
+  const onCloseModal = (fetchStatus=false, d={}) => {
     setStatus(false);
-    onClose(fetchStatus);
+    onClose(fetchStatus, d);
   }
 
   const postServiceStatus = (payload) => {
@@ -36,7 +36,7 @@ const TrackerUpdateModal = ({ statusId, onClose, data, serviceData }) => {
     updateVehicleServiceDetails(serviceData.vehicle_id, serviceData.credit_head_id, serviceData.loan_id, payload)
       .then(res => {
         console.log('postServiceStatus >> ', res);
-        onCloseModal(true);
+        onCloseModal(true, serviceData);
       })
       .catch(e => {
         console.log(e);
@@ -46,7 +46,7 @@ const TrackerUpdateModal = ({ statusId, onClose, data, serviceData }) => {
   const Actions = ({ btnText='OK', id }) => {
     return (
       <Box textAlign="right">
-        <Button size="small" onClick={onCloseModal}>Cancel</Button>
+        <Button size="small" onClick={() => onCloseModal()}>Cancel</Button>
         <Button color="primary" size="small" onClick={() => {
           postServiceStatus({ status_id: id, details: { status: true } })
         }}>{btnText}</Button>
@@ -59,10 +59,16 @@ const TrackerUpdateModal = ({ statusId, onClose, data, serviceData }) => {
       <FormDialog
         open={status}
         title={'Consent Letter'}
-        onClose={onCloseModal}
-        actions={<Actions id={status} data={data} />}
+        onClose={() => onCloseModal()}
+        actions={!completed && <Actions id={status} data={data} />}
         >
-        <p>Raise request for consent letter</p>
+          {
+            completed ? (
+              <p>Request raised for Consent letter.</p>
+            ) : 
+            <p>Raise request for consent letter</p>
+          }
+
       </FormDialog>
     )
   }
@@ -79,7 +85,7 @@ const TrackerUpdateModal = ({ statusId, onClose, data, serviceData }) => {
       <FormDialog
         open={status}
         title={'Deposit Fee'}
-        onClose={onCloseModal}
+        onClose={() => onCloseModal()}
         >
         <Formik validationSchema={_vSchema} initialValues={d} onSubmit={v => {
           postServiceStatus({ 
@@ -100,6 +106,7 @@ const TrackerUpdateModal = ({ statusId, onClose, data, serviceData }) => {
                     value={values?.amount}
                     error={errors?.amount}
                     helperText={errors?.amount}
+                    disabled={completed}
                     onChange={handleChange}
                   />
                 </Grid>
@@ -111,6 +118,7 @@ const TrackerUpdateModal = ({ statusId, onClose, data, serviceData }) => {
                     value={values?.date}
                     error={errors?.date}
                     helperText={errors?.date}
+                    disabled={completed}
                     onChange={handleChange}
                   />
                 </Grid>
@@ -122,20 +130,25 @@ const TrackerUpdateModal = ({ statusId, onClose, data, serviceData }) => {
                     value={values?.utr}
                     error={errors?.utr}
                     helperText={errors?.utr}
+                    disabled={completed}
                     onChange={handleChange}
                   />
                 </Grid>
-                <Grid item xs={4} justify="flex-end" alignItems="flex-end">
-                  <Button
-                    fullWidth
-                    size="small"
-                    color="primary"
-                    variant="contained"
-                    onClick={handleSubmit}
-                  >
-                    Save
-                  </Button>
-                </Grid>
+                {
+                  completed ? null : (
+                    <Grid item xs={4} justify="flex-end" alignItems="flex-end">
+                      <Button
+                        fullWidth
+                        size="small"
+                        color="primary"
+                        variant="contained"
+                        onClick={handleSubmit}
+                      >
+                        Save
+                      </Button>
+                    </Grid>
+                  )
+                }
               </Grid>
             )
           }
@@ -149,10 +162,15 @@ const TrackerUpdateModal = ({ statusId, onClose, data, serviceData }) => {
       <FormDialog
         open={status}
         title={'Request Paytm'}
-        onClose={onCloseModal}
-        actions={<Actions id={status} />}
+        onClose={() => onCloseModal()}
+        actions={!completed && <Actions id={status} />}
         >
-        <p>Escalate this request to Paytm</p>
+          {
+            completed ? (
+              <p>Already escalated this request to Paytm</p>
+            ) : 
+              <p>Escalate this request to Paytm</p>
+          }
       </FormDialog>
     )
   }
@@ -167,7 +185,7 @@ const TrackerUpdateModal = ({ statusId, onClose, data, serviceData }) => {
       <FormDialog
         open={status}
         title={'FASTag Issued'}
-        onClose={onCloseModal}
+        onClose={() => onCloseModal()}
         >
         <Typography>Enter tag number if new FASTag is issued,</Typography>
         <Formik validationSchema={_vSchema} initialValues={d} onSubmit={v => {
@@ -187,20 +205,25 @@ const TrackerUpdateModal = ({ statusId, onClose, data, serviceData }) => {
                     value={values?.tag_number}
                     error={errors?.tag_number}
                     helperText={errors?.tag_number}
+                    disabled={completed}
                     onChange={handleChange}
                   />
                 </Grid>
-                <Grid item md={4}>
-                  <Button
-                    fullWidth
-                    size="small"
-                    color="primary"
-                    variant="contained"
-                    onClick={handleSubmit}
-                  >
-                    Save
-                  </Button>
-                </Grid>
+                {
+                  completed ? null : (
+                    <Grid item md={4}>
+                      <Button
+                        fullWidth
+                        size="small"
+                        color="primary"
+                        variant="contained"
+                        onClick={handleSubmit}
+                      >
+                        Save
+                      </Button>
+                    </Grid>
+                  )
+                }
               </Grid>
             )
           }
@@ -213,11 +236,11 @@ const TrackerUpdateModal = ({ statusId, onClose, data, serviceData }) => {
     return (
       <FormDialog
         open={status}
-        title={'FastTAG Affixed'}
-        onClose={onCloseModal}
+        title={'FASTag Affixed'}
+        onClose={() => onCloseModal()}
         >
         <div style={{ minWidth: '40vw' }}>
-          <Typography>Upload photo of the FastTag affixed</Typography>
+          <Typography>Upload photo of the FASTag affixed</Typography>
           <Formik initialValues={{}} onSubmit={v => {
             const formData = new FormData();
             formData.append(`status_id`, status);

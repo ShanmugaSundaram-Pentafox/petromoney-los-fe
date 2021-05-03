@@ -1,6 +1,6 @@
 /* eslint-disable react/no-multi-comp */
 /* eslint-disable react/display-name */
-import React, { useState, forwardRef } from 'react';
+import React, { useState, forwardRef, Fragment } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
@@ -129,7 +129,7 @@ const SidebarNav = props => {
               {page.title}
             </Button>
           </ListItem>) : page.title === "Loans" ? (
-            <>
+            <Fragment key={page.title}>
               <ListItem
                 className={classes.item}
                 disableGutters
@@ -188,9 +188,9 @@ const SidebarNav = props => {
 
                 </ListItem>
               </Collapse>
-            </>
+            </Fragment>
           ) : page.title ? (
-            <>
+            <Fragment key={page.title}>
               <ListItem
                 className={classes.item}
                 disableGutters
@@ -251,7 +251,7 @@ const SidebarNav = props => {
                 </ListItem>
               </Collapse>
 
-            </>
+            </Fragment>
 
           ) : null
       ))}

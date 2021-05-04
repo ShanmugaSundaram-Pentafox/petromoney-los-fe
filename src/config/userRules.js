@@ -21,6 +21,24 @@ export const rulesForUserRoles = {
       rulesList.dealership_credit_view,
     ]
   },
+  CDO: {
+    static: [
+      rulesList.dashboard,
+      rulesList.loan_approval,
+      rulesList.dealer_credit_view,
+      rulesList.dealership_credit_view,
+    ]
+  },
+  CFO: {
+    static: [
+      rulesList.dashboard,
+      rulesList.loan_approval,
+      rulesList.dealership_edit,
+      rulesList.dealer_edit,
+      rulesList.dealer_credit_edit,
+      rulesList.dealership_credit_edit,
+    ]
+  },
   CREDIT_HEAD: {
     static: [
       rulesList.dashboard,
@@ -41,16 +59,6 @@ export const rulesForUserRoles = {
       rulesList.region_map,
     ]
   },
-  CFO: {
-    static: [
-      rulesList.loan_approval,
-      rulesList.dashboard,
-      rulesList.dealership_edit,
-      rulesList.dealer_edit,
-      rulesList.dealer_credit_edit,
-      rulesList.dealership_credit_edit,
-    ]
-  },
   CREDIT_EXEC: {
     static: [
       rulesList.loan_approval,
@@ -61,6 +69,20 @@ export const rulesForUserRoles = {
       rulesList.dealership_credit_edit,
     ]
   },
+  OPS_EXEC: {
+    static: [
+      rulesList.dashboard,
+      rulesList.dealer_credit_view,
+      rulesList.dealership_credit_view,
+    ]
+  },
+  OPS_MANAGER: {
+    static: [
+      rulesList.dashboard,
+      rulesList.dealer_credit_view,
+      rulesList.dealership_credit_view,
+    ]
+  },
   CREDIT: {
     static: [
       rulesList.dashboard,
@@ -68,6 +90,13 @@ export const rulesForUserRoles = {
       rulesList.dealer_edit,
       rulesList.dealer_credit_edit,
       rulesList.dealership_credit_edit,
+    ]
+  },
+  SALES_HEAD_STATE: {
+    static: [
+      rulesList.dashboard,
+      rulesList.dealer_credit_view,
+      rulesList.dealership_credit_view,
     ]
   },
   DEALER: {

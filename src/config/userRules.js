@@ -99,6 +99,20 @@ export const rulesForUserRoles = {
       rulesList.dealership_credit_view,
     ]
   },
+  SALES_HEAD_REGIONAL: {
+    static: [
+      rulesList.dashboard,
+      rulesList.dealer_credit_view,
+      rulesList.dealership_credit_view,
+    ]
+  },
+  FIELD_OFFICER: {
+    static: [
+      rulesList.dashboard,
+      rulesList.dealer_credit_view,
+      rulesList.dealership_credit_view,
+    ]
+  },
   DEALER: {
     static:[
       rulesList.dealer_view,

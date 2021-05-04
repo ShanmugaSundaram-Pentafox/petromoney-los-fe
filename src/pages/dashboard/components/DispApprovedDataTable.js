@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const DispApprovedDataTable = ({ id, loanData }) => {
+const DispApprovedDataTable = ({ id, loanData, editable }) => {
   const classes = useStyles();
   const [dispHistory, setDispHistory] = useState({});
   const [modalData, setModalData] = useState({});
@@ -166,7 +166,10 @@ const DispApprovedDataTable = ({ id, loanData }) => {
         <TableFooter>
           <TableRow>
             <TableCell colSpan={4} align="center">
-              <Button variant="outlined" size="medium" color="secondary" onClick={() => setModalData({ open: true })} startIcon={<AddRoundedIcon fontSize="small" />}>Add Disbursed Amount</Button>
+              {
+                editable &&
+                  <Button variant="outlined" size="medium" color="secondary" onClick={() => setModalData({ open: true })} startIcon={<AddRoundedIcon fontSize="small" />}>Add Disbursed Amount</Button>
+              }
             </TableCell>
           </TableRow>
         </TableFooter>

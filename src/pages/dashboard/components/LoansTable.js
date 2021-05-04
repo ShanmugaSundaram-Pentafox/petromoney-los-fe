@@ -18,7 +18,7 @@ import DealershipDetails from './DealershipDetails';
 import SubmittedTable from '../../../components/Tables/SubmittedTable';
 import ApprovalReqestTable from '../../../components/Tables/ApprovalReqestTable';
 import DisbursementReqestTable from '../../../components/Tables/DisbursementReqestTable';
-import UserCan from '../../../components/UserCan/UserCan';
+import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import DisbursementApprovedTable from '../../../components/Tables/DisbursementApprovedTable';
 import ApprovedTable from '../../../components/Tables/ApprovedTable';
@@ -158,7 +158,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
     //   .then(data => setDealersData(data))
     //   .catch(e => null)
 
-    setShowPanel({ status: true, data: status });
+    setShowPanel({ status: true, data: status, editable: permissionCheck(currentUser.role_name, rulesList.loan_approval) });
   }
   const showReportsInfo = (id, selectedLoanData, status) => {
     setReportDetails(selectedLoanData)
@@ -168,7 +168,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
     <Box pt={2}>
       <UserCan
         role={currentUser.role_name}
-        perform={rulesList.loan_approval}
+        perform={rulesList.dashboard}
         yes={() => (
           <Grid container spacing={2}>
             {
@@ -266,6 +266,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
             data={dealershipData}
             loanData={loansData}
             status={showPanel.data}
+            editable={showPanel.editable}
             currentUser={currentUser}
             onClose={() => { setShowPanel({ status: false }) }}
           />

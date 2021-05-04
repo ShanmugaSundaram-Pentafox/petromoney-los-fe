@@ -138,6 +138,7 @@ const LoanInfo = ({
   status,
   newInfo,
   currentUser,
+  editable,
   updateNewLoanInfo
 }) => {
   const classes = useStyles();
@@ -185,15 +186,19 @@ const LoanInfo = ({
                   native
                   placeholder={"Select Loan Product"}
                   value={selectedProduct?.product_id}
-                  disabled={selectedProduct?.disabled}
+                  disabled={selectedProduct?.disabled || !editable}
                   onChange={e => {
-                  const d = products.find(i => i.product_id == e.target.value)
-                  setSelectedProduct(d)
-                  updateNewLoanInfo({
-                    ...newInfo,
-                    product_id: e.target.value
-                  })
-                }}>
+                    const d = products.find(i => i.product_id == e.target.value)
+                    setSelectedProduct(d)
+                    updateNewLoanInfo({
+                      ...newInfo,
+                      product_id: e.target.value
+                    })
+                  }}
+                  style={{
+                    color: '#333'
+                  }}
+                >
                   <option value="">Choose Loan type</option>
                   {
                     products.map(item => <option value={item.product_id}>{item.product_name}</option>)
@@ -223,7 +228,7 @@ const LoanInfo = ({
                           }}
                         />
                       )}
-                      no={() => "-"}
+                      no={() => <Currency value={row.amount_approved} />}
                     />
                   )
                     : <Currency value={row.amount_approved} />
@@ -249,7 +254,7 @@ const LoanInfo = ({
                           }}
                         />
                       )}
-                      no={() => "-"}
+                      no={() => <Currency value={row.amount_disbursed} />}
                     />
                   </TableCell>
                 ) : (status == "disbursed" ? (
@@ -327,7 +332,8 @@ const DealershipDetails = ({
   loanData,
   onClose,
   status,
-  currentUser
+  currentUser,
+  editable,
 }) => {
   const [values, setValues] = useState({});
   const [loanInfo, setLoanInfo] = useState({});
@@ -548,7 +554,7 @@ const DealershipDetails = ({
 
           <Grid {...gridProps}>
             {values.id ? <SalesInfo id={values.id} currentUser={currentUser} /> : null}
-            <LoanInfo data={loanInfo} status={status} newInfo={newLoanInfo} currentUser={currentUser} updateNewLoanInfo={updateNewLoanInfo} />
+            <LoanInfo editable={editable} data={loanInfo} status={status} newInfo={newLoanInfo} currentUser={currentUser} updateNewLoanInfo={updateNewLoanInfo} />
           </Grid>
 
           {
@@ -570,7 +576,6 @@ const DealershipDetails = ({
                   }}
                   {...fieldProps}
                   readOnly={!permissionCheck(currentUser.role_name, rulesList.loan_approval)}
-
                 />
               </Grid>
             ) : null
@@ -698,7 +703,7 @@ const DealershipDetails = ({
                   }
                 </Grid>
                 <Grid {...gridProps}>
-                  <DispApprovedDataTable id={values.id} loanData={loanInfo} />
+                  <DispApprovedDataTable id={values.id} loanData={loanInfo} editable={editable} />
                 </Grid>
               </>
             ) : null
@@ -728,7 +733,7 @@ const DealershipDetails = ({
               className={clsx(classes.btn, classes.btnSuccess)}
               startIcon={<AccountTreeRoundedIcon />}>View more</Button>
             {
-              status && ["loan_approval", "disbursement_approval"].includes(status.toLowerCase()) && (
+              editable && status && ["loan_approval", "disbursement_approval"].includes(status.toLowerCase()) && (
                 <UserCan
                   role={currentUser.role_name}
                   perform={rulesList.loan_approval}

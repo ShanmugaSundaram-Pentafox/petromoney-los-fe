@@ -45,9 +45,9 @@ const Card = styled.div`
 const CardItem = ({ onChange, data }) => {
   const [checked, setChecked] = useState(false);
 
-  const onPressItem = async () => {
-    await setChecked(!checked);
-    onChange(checked, data);
+  const onPressItem = () => {
+    onChange(!checked, data);
+    setChecked(!checked);
   }
 
   return (

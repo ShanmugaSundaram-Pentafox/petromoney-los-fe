@@ -13,6 +13,9 @@ import Typography from '@material-ui/core/Typography';
 import PdfViewer from '../CommonComponents/PdfViewer/PdfViewer';
 import { getCoApplicantByDealershipId, getDealersByDealershipId } from '../../services/dealers.service';
 import CardsCheckList from './components/CardsCheckList';
+import apiCall from '../../utils/api.util';
+import { getDealershipLoansById } from '../../services/dealerships.service';
+import { CompassCalibrationOutlined } from '@material-ui/icons';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -31,11 +34,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const SignRequestLayout = ({ open, onClose, title, dealershipId }) => {
+const SignRequestLayout = ({ open, onClose, title, dealershipId, loanId }) => {
   const classes = useStyles();
   const [dealers, setDealers] = useState([])
   const [applicants, setApplicants] = useState([])
-  const [selectedInvitees, setSelectedInvitees] = useState([])
+  const [selectedDealers, setSelectedDealers] = useState([])
+  const [selectedCoAppicants, setSelectedCoAppicants] = useState([])
   
   useEffect(() => {
     if(dealershipId) {
@@ -57,17 +61,44 @@ const SignRequestLayout = ({ open, onClose, title, dealershipId }) => {
     }
   }, [dealershipId]);
 
-  const updateInviteeList = (selectedStatus, inviteeData) => {
+  const updateSelectedDealers = (selectedStatus, inviteeData) => {
     if(selectedStatus) {
-      setSelectedInvitees([...selectedInvitees, inviteeData])
+      setSelectedDealers([...selectedDealers, inviteeData])
     } else {
-      const result = selectedInvitees.filter(d => d.id !== inviteeData.id)
-      setSelectedInvitees(result)
+      const result = selectedDealers.filter(d => d.id !== inviteeData.id)
+      setSelectedDealers(result)
+    }
+  }
+  const updateSelectedCoAppicants = (selectedStatus, inviteeData) => {
+    if(selectedStatus) {
+      setSelectedCoAppicants([...selectedCoAppicants, inviteeData])
+    } else {
+      const result = selectedCoAppicants.filter(d => d.id !== inviteeData.id)
+      setSelectedCoAppicants(result)
     }
   }
 
   const sendInvitees = () => {
-    
+    apiCall(`document/sign`,{
+      body : {
+        "dealer":selectedDealers,
+        "coapplicants":selectedCoAppicants,
+        "dealership_id":dealershipId,
+        "type": "agreement",
+        "loanId":loanId
+      },
+      method : "POST",
+    })
+    .then(res => {
+      if(res.status === "SUCCESS") {
+        onClose()
+      } else {
+        console.log('>> Document Details status error >> ', res)
+      }
+    })
+    .catch(err => {
+      console.log(err)
+    });
   }
 
   return (
@@ -99,7 +130,7 @@ const SignRequestLayout = ({ open, onClose, title, dealershipId }) => {
               <Box pt={1}>
                 <CardsCheckList
                   data={dealers}
-                  onChange={updateInviteeList}
+                  onChange={updateSelectedDealers}
                 />
               </Box>
             </Box>
@@ -108,7 +139,7 @@ const SignRequestLayout = ({ open, onClose, title, dealershipId }) => {
               <Box pt={1}>
                 <CardsCheckList
                   data={applicants}
-                  onChange={updateInviteeList}
+                  onChange={updateSelectedCoAppicants}
                 />
               </Box>
             </Box>

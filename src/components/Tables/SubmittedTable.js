@@ -65,6 +65,7 @@ const useStyles = makeStyles(theme => ({
 const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const classes = useStyles();
   // const [ data, setData ] = useState([]);
+  const [loanId, setloanId] = useState();
   const [dealershipId, setDealershipId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -143,10 +144,10 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
         options: {
           filter: false,
           sort: false,
-          customBodyRender: value => {
+          customBodyRender: (value, r) => {
             return (
               <Tooltip title="eSign Application">
-                <IconButton size="small" color="primary" aria-label="application" onClick={() => { setDealershipId(value); setModalVisible(true); }}>
+                <IconButton size="small" color="primary" aria-label="application" onClick={() => {  setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setModalVisible(true); }}>
                   <div>
                     <ESignIcon width={24} />
                     {/* <img
@@ -161,7 +162,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
         }
       }
     ]
-  }, []);
+  }, [loans]);
 
   const options = {
     // filterType: 'checkbox',
@@ -193,6 +194,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
       <SignRequestLayout
         open={modalVisible}
         dealershipId={dealershipId}
+        loanId={loanId}
         title={'eSign Application Form'}
         onClose={() => setModalVisible(false)}
       />

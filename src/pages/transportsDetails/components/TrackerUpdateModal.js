@@ -289,46 +289,45 @@ const TrackerUpdateModal = ({ id, currentUser, statusId, onClose, data, serviceD
     )
   }
 
-  if (status === 6) {
-    return (
-      <FormDialog
-        open={status}
-        title={'FASTag Affixed'}
-        onClose={() => onCloseModal()}
-      >
-        <div style={{ minWidth: '40vw' }}>
-          <Typography>Upload photo of the FASTag affixed</Typography>
-          <Formik initialValues={{}} onSubmit={v => {
-            const formData = new FormData();
-            formData.append(`status_id`, status);
-            v.files.map((file, i) => {
-              console.log("file name", file)
-              const fileName = file.name.replace(/[()%.,+\-&]/g, '').toLowerCase().replace(/\s/g, '_');
-              formData.append(`file`, file);
-              formData.append(`fileName`, fileName);
-            });
-            postServiceStatus(formData);
-          }}>
-            {
-              ({ setFieldValue, handleSubmit }) => (
-                <>
-                  <FileUpload inline handleSave={v => { setFieldValue('files', v); }} />
-                  <Button
-                    size="small"
-                    color="primary"
-                    variant="contained"
-                    onClick={handleSubmit}
-                  >
-                    Save
-                  </Button>
-                </>
-              )
-            }
-          </Formik>
-        </div>
-      </FormDialog>
-    )
-  }
+  // if (status === 6) {
+  //   return (
+  //     <FormDialog
+  //       open={status}
+  //       title={'FASTag Affixed'}
+  //       onClose={() => onCloseModal()}
+  //     >
+  //       <div style={{ minWidth: '40vw' }}>
+  //         <Typography>Upload photo of the FASTag affixed</Typography>
+  //         <Formik initialValues={{}} onSubmit={v => {
+  //           const formData = new FormData();
+  //           formData.append(`status_id`, status);
+  //           v.files.map((file, i) => {
+  //             const fileName = file.name.replace(/[()%.,+\-&]/g, '').toLowerCase().replace(/\s/g, '_');
+  //             formData.append(`file`, file);
+  //             formData.append(`fileName`, fileName);
+  //           });
+  //           postServiceStatus(formData);
+  //         }}>
+  //           {
+  //             ({ setFieldValue, handleSubmit }) => (
+  //               <>
+  //                 <FileUpload inline handleSave={v => { setFieldValue('files', v); }} />
+  //                 <Button
+  //                   size="small"
+  //                   color="primary"
+  //                   variant="contained"
+  //                   onClick={handleSubmit}
+  //                 >
+  //                   Save
+  //                 </Button>
+  //               </>
+  //             )
+  //           }
+  //         </Formik>
+  //       </div>
+  //     </FormDialog>
+  //   )
+  // }
   if (status === 5) {
     return (
       <div style={{ minWidth: '40vw' }}>

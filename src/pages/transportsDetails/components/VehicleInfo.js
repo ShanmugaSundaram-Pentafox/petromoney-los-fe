@@ -320,7 +320,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
         <UpdateServiceForm data={serviceData} callback={() => null} />
       </FormDialog> */}
 
-      <TrackerUpdateModal statusId={serviceModal?.data?.item?.status_id} data={serviceModal.data?.item} serviceData={serviceModal.data?.serviceData} completed={serviceModal.data?.completed} onClose={closeTrackingStatusModal} />
+      <TrackerUpdateModal id={id} currentUser={currentUser} statusId={serviceModal?.data?.item?.status_id} data={serviceModal.data?.item} serviceData={serviceModal.data?.serviceData} completed={serviceModal.data?.completed} onClose={closeTrackingStatusModal} />
     </div>
   )
 }

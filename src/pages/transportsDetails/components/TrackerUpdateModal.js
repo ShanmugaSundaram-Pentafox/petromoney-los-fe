@@ -9,41 +9,98 @@ import FormDialog from '../../../components/CommonComponents/FormDialog/FormDial
 import TextInput from '../../../components/TextInput/TextInput';
 import FileUpload from '../../../components/FileUpload';
 import { updateVehicleServiceDetails } from '../../../services/transports.service';
+import { URL } from '../../../config/serverUrls';
+import { useSnackbar } from 'notistack';
+import apiCall from '../../../utils/api.util';
+
 
 const inputProps = {
   direction: "column",
   alignTop: true,
 }
 
-const TrackerUpdateModal = ({ statusId, onClose, data, serviceData, completed }) => {
+const TrackerUpdateModal = ({ id, currentUser, statusId, onClose, data, serviceData, completed }) => {
   const [status, setStatus] = useState(statusId);
-  
+  const [showUpload, setShowUpload] = useState(true);
+  const [openModal, setOpenModal] = useState(false);
+  const [fileUrl, setFileUrl] = useState([]);
+  const [rowData, setRowData] = useState();
+  const { enqueueSnackbar } = useSnackbar();
+
   useEffect(() => {
     setStatus(statusId);
   }, [statusId]);
 
-  if(!status) {
+  if (!status) {
     return null;
   }
+  const onCloseUploader = () => {
+    setShowUpload(false);
+  }
+  const handleSave = (files) => {
+    const formData = new FormData();
+    const dealerShipId = id;
+    files.map(file => {
+      formData.append(`file`, file);
+      formData.append(`document_id`, 18);
+    });
+    fetch(`${URL.base}transporter/${id}/vehicle/${serviceData.vehicle_id}/docs`, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Authorization': `Bearer ${currentUser.token}`
+      }
+    })
+      .then(res => {
+        return res.json()
+      })
+      .then(res => {
+        enqueueSnackbar('File Upload Success', { variant: "success" });
+        fileUrl.push(res.file_url.split(" "))
+        console.log("file url", fileUrl)
+        updateVehicleServiceDetails(id, serviceData.vehicle_id, serviceData.credit_head_id, serviceData.loan_id, { status_id: id, details: { file_url: fileUrl } })
+          .then(res => {
+            console.log('postServiceStatus >> ', res);
+            // onCloseModal(true, serviceData);
+          })
+          .catch(e => {
+            console.log(e);
+          });
+        onCloseUploader();
+      })
+      .catch(error => {
+        enqueueSnackbar('File Upload Failed', { variant: "error" });
 
-  const onCloseModal = (fetchStatus=false, d={}) => {
+      })
+  };
+
+  const onCloseModal = (fetchStatus = false, d = {}) => {
     setStatus(false);
     onClose(fetchStatus, d);
   }
 
-  const postServiceStatus = (payload) => {
 
-    updateVehicleServiceDetails(serviceData.vehicle_id, serviceData.credit_head_id, serviceData.loan_id, payload)
-      .then(res => {
-        console.log('postServiceStatus >> ', res);
-        onCloseModal(true, serviceData);
+  const postServiceStatus = (payload) => {
+    console.log("data", payload)
+    fetch(`${URL.base}transporter/${id}/vehicle/${serviceData.vehicle_id}/docs`, {
+      method: 'POST',
+      body: payload,
+      headers: {
+        'Authorization': `Bearer ${currentUser.token}`
+      }
+    })
+      .then(res => res.json())
+      .then(result => {
+        console.log('Success:', result);
       })
-      .catch(e => {
-        console.log(e);
+      .catch(error => {
+        console.error('Error:', error);
       });
+
+
   }
 
-  const Actions = ({ btnText='OK', id }) => {
+  const Actions = ({ btnText = 'OK', id }) => {
     return (
       <Box textAlign="right">
         <Button size="small" onClick={() => onCloseModal()}>Cancel</Button>
@@ -54,26 +111,26 @@ const TrackerUpdateModal = ({ statusId, onClose, data, serviceData, completed })
     )
   }
 
-  if(status === 1) {
+  if (status === 1) {
     return (
       <FormDialog
         open={status}
         title={'Consent Letter'}
         onClose={() => onCloseModal()}
         actions={!completed && <Actions id={status} data={data} />}
-        >
-          {
-            completed ? (
-              <p>Request raised for Consent letter.</p>
-            ) : 
+      >
+        {
+          completed ? (
+            <p>Request raised for Consent letter.</p>
+          ) :
             <p>Raise request for consent letter</p>
-          }
+        }
 
       </FormDialog>
     )
   }
 
-  if(status === 2) {
+  if (status === 2) {
     const d = JSON.parse(serviceData?.tracking_details?.[1]?.details || "{}");
 
     const _vSchema = Yup.object().shape({
@@ -86,9 +143,9 @@ const TrackerUpdateModal = ({ statusId, onClose, data, serviceData, completed })
         open={status}
         title={'Deposit Fee'}
         onClose={() => onCloseModal()}
-        >
+      >
         <Formik validationSchema={_vSchema} initialValues={d} onSubmit={v => {
-          postServiceStatus({ 
+          postServiceStatus({
             status_id: status,
             details: v
           });
@@ -157,25 +214,25 @@ const TrackerUpdateModal = ({ statusId, onClose, data, serviceData, completed })
     )
   }
 
-  if(status === 3) {
+  if (status === 3) {
     return (
       <FormDialog
         open={status}
         title={'Request Paytm'}
         onClose={() => onCloseModal()}
         actions={!completed && <Actions id={status} />}
-        >
-          {
-            completed ? (
-              <p>Already escalated this request to Paytm</p>
-            ) : 
-              <p>Escalate this request to Paytm</p>
-          }
+      >
+        {
+          completed ? (
+            <p>Already escalated this request to Paytm</p>
+          ) :
+            <p>Escalate this request to Paytm</p>
+        }
       </FormDialog>
     )
   }
 
-  if(status === 4) {
+  if (status === 4) {
     const d = JSON.parse(serviceData?.tracking_details?.[3]?.details || "{}");
     const _vSchema = Yup.object().shape({
       tag_number: Yup.string().required('Enter tag number'),
@@ -186,7 +243,7 @@ const TrackerUpdateModal = ({ statusId, onClose, data, serviceData, completed })
         open={status}
         title={'FASTag Issued'}
         onClose={() => onCloseModal()}
-        >
+      >
         <Typography>Enter tag number if new FASTag is issued,</Typography>
         <Formik validationSchema={_vSchema} initialValues={d} onSubmit={v => {
           postServiceStatus({
@@ -232,21 +289,22 @@ const TrackerUpdateModal = ({ statusId, onClose, data, serviceData, completed })
     )
   }
 
-  if(status === 5) {
+  if (status === 6) {
     return (
       <FormDialog
         open={status}
         title={'FASTag Affixed'}
         onClose={() => onCloseModal()}
-        >
+      >
         <div style={{ minWidth: '40vw' }}>
           <Typography>Upload photo of the FASTag affixed</Typography>
           <Formik initialValues={{}} onSubmit={v => {
             const formData = new FormData();
             formData.append(`status_id`, status);
-            v.map((file, i) => {
+            v.files.map((file, i) => {
+              console.log("file name", file)
               const fileName = file.name.replace(/[()%.,+\-&]/g, '').toLowerCase().replace(/\s/g, '_');
-              formData.append(`file-${i}`, file);
+              formData.append(`file`, file);
               formData.append(`fileName`, fileName);
             });
             postServiceStatus(formData);
@@ -254,7 +312,7 @@ const TrackerUpdateModal = ({ statusId, onClose, data, serviceData, completed })
             {
               ({ setFieldValue, handleSubmit }) => (
                 <>
-                  <FileUpload inline handleSave={v => { setFieldValue('files', v); }}  />
+                  <FileUpload inline handleSave={v => { setFieldValue('files', v); }} />
                   <Button
                     size="small"
                     color="primary"
@@ -271,6 +329,14 @@ const TrackerUpdateModal = ({ statusId, onClose, data, serviceData, completed })
       </FormDialog>
     )
   }
+  if (status === 5) {
+    return (
+      <div style={{ minWidth: '40vw' }}>
+        { <FileUpload handleSave={handleSave} id={id} data={rowData} open={showUpload} onCloseUploader={onCloseUploader} />}
+      </div>
+    )
+  }
+
 
 }
 

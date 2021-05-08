@@ -16,6 +16,7 @@ import CardsCheckList from './components/CardsCheckList';
 import apiCall from '../../utils/api.util';
 import { getDealershipLoansById } from '../../services/dealerships.service';
 import { CompassCalibrationOutlined } from '@material-ui/icons';
+import LeegalityLayout from './LeegalityLayout';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -84,7 +85,7 @@ const SignRequestLayout = ({ open, onClose, title, dealershipId, loanId }) => {
         "dealer":selectedDealers,
         "coapplicants":selectedCoAppicants,
         "dealership_id":dealershipId,
-        "type": "agreement",
+        "type": "sanction",
         "loanId":loanId
       },
       method : "POST",
@@ -92,6 +93,9 @@ const SignRequestLayout = ({ open, onClose, title, dealershipId, loanId }) => {
     .then(res => {
       if(res.status === "SUCCESS") {
         onClose()
+        return(
+          <LeegalityLayout docId="status123"></LeegalityLayout>
+        )
       } else {
         console.log('>> Document Details status error >> ', res)
       }

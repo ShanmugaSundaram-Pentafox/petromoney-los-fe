@@ -57,7 +57,6 @@ const TrackerUpdateModal = ({ id, currentUser, statusId, onClose, data, serviceD
       .then(res => {
         enqueueSnackbar('File Upload Success', { variant: "success" });
         fileUrl.push(res.file_url.split(" "))
-        console.log("file url", fileUrl)
         updateVehicleServiceDetails(id, serviceData.vehicle_id, serviceData.credit_head_id, serviceData.loan_id, { status_id: id, details: { file_url: fileUrl } })
           .then(res => {
             console.log('postServiceStatus >> ', res);

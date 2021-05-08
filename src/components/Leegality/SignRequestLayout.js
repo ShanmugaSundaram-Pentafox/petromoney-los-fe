@@ -41,9 +41,10 @@ const SignRequestLayout = ({ open, onClose, title, dealershipId, loanId }) => {
   const [applicants, setApplicants] = useState([])
   const [selectedDealers, setSelectedDealers] = useState([])
   const [selectedCoAppicants, setSelectedCoAppicants] = useState([])
-  
+  const [docId, setDocId] = useState();
+
   useEffect(() => {
-    if(dealershipId) {
+    if (dealershipId) {
       getDealersByDealershipId(dealershipId)
         .then(res => {
           setDealers(res);
@@ -51,7 +52,7 @@ const SignRequestLayout = ({ open, onClose, title, dealershipId, loanId }) => {
         .catch(err => {
           console.log('getDealersByDealershipId >> ', err);
         });
-  
+
       getCoApplicantByDealershipId(dealershipId)
         .then(res => {
           setApplicants(res);
@@ -63,7 +64,7 @@ const SignRequestLayout = ({ open, onClose, title, dealershipId, loanId }) => {
   }, [dealershipId]);
 
   const updateSelectedDealers = (selectedStatus, inviteeData) => {
-    if(selectedStatus) {
+    if (selectedStatus) {
       setSelectedDealers([...selectedDealers, inviteeData])
     } else {
       const result = selectedDealers.filter(d => d.id !== inviteeData.id)
@@ -71,7 +72,7 @@ const SignRequestLayout = ({ open, onClose, title, dealershipId, loanId }) => {
     }
   }
   const updateSelectedCoAppicants = (selectedStatus, inviteeData) => {
-    if(selectedStatus) {
+    if (selectedStatus) {
       setSelectedCoAppicants([...selectedCoAppicants, inviteeData])
     } else {
       const result = selectedCoAppicants.filter(d => d.id !== inviteeData.id)
@@ -80,29 +81,27 @@ const SignRequestLayout = ({ open, onClose, title, dealershipId, loanId }) => {
   }
 
   const sendInvitees = () => {
-    apiCall(`document/sign`,{
-      body : {
-        "dealer":selectedDealers,
-        "coapplicants":selectedCoAppicants,
-        "dealership_id":dealershipId,
+    apiCall(`document/sign`, {
+      body: {
+        "dealer": selectedDealers,
+        "coapplicants": selectedCoAppicants,
+        "dealership_id": dealershipId,
         "type": "sanction",
-        "loanId":loanId
+        "loanId": loanId
       },
-      method : "POST",
+      method: "POST",
     })
-    .then(res => {
-      if(res.status === "SUCCESS") {
-        onClose()
-        return(
-          <LeegalityLayout docId="status123"></LeegalityLayout>
-        )
-      } else {
-        console.log('>> Document Details status error >> ', res)
-      }
-    })
-    .catch(err => {
-      console.log(err)
-    });
+      .then(res => {
+        if (res.status === "SUCCESS") {
+          setDocId(res.msg.data.documentId)
+          // onClose()
+        } else {
+          console.log('>> Document Details status error >> ', res)
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      });
   }
 
   return (
@@ -119,36 +118,43 @@ const SignRequestLayout = ({ open, onClose, title, dealershipId, loanId }) => {
         </IconButton>
       </DialogTitle>
       <DialogContent dividers>
-        <Grid container spacing={2}>
-          <Grid item sm={6}>
-            <PdfViewer
-              file={'http://docs.petromoney.in/111018/application/15101410_loan_application.pdf'}
-              />
-          </Grid>
-          <Grid item sm={6}>
-            <Box>
-              <Typography variant="h4">Select Invitees</Typography>
-            </Box>
-            <Box pt={2}>
-              <p>Dealers</p>
-              <Box pt={1}>
-                <CardsCheckList
-                  data={dealers}
-                  onChange={updateSelectedDealers}
+        {
+          docId ? (
+            <LeegalityLayout docId={docId} />
+
+          ) : (
+            <Grid container spacing={2}>
+              <Grid item sm={6}>
+                <PdfViewer
+                  file={'http://docs.petromoney.in/111018/application/15101410_loan_application.pdf'}
                 />
-              </Box>
-            </Box>
-            <Box pt={2}>
-              <p>Co-applicants</p>
-              <Box pt={1}>
-                <CardsCheckList
-                  data={applicants}
-                  onChange={updateSelectedCoAppicants}
-                />
-              </Box>
-            </Box>
-          </Grid>
-        </Grid>
+              </Grid>
+              <Grid item sm={6}>
+                <Box>
+                  <Typography variant="h4">Select Invitees</Typography>
+                </Box>
+                <Box pt={2}>
+                  <p>Dealers</p>
+                  <Box pt={1}>
+                    <CardsCheckList
+                      data={dealers}
+                      onChange={updateSelectedDealers}
+                    />
+                  </Box>
+                </Box>
+                <Box pt={2}>
+                  <p>Co-applicants</p>
+                  <Box pt={1}>
+                    <CardsCheckList
+                      data={applicants}
+                      onChange={updateSelectedCoAppicants}
+                    />
+                  </Box>
+                </Box>
+              </Grid>
+            </Grid>
+          )
+        }
       </DialogContent>
       <DialogActions>
         <Box pl={2} pr={2}>

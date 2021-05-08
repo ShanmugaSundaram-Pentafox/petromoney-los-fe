@@ -42,7 +42,7 @@ const Card = styled.div`
   }
 `;
 
-const LeegalityLayout = ({ docId='JoijOnS' }) => {
+const LeegalityLayout = ({ docId }) => {
   const [auditTrails, setAuditTrails] = useState([]);
   const [docDetails, setDocDetails] = useState({});
 

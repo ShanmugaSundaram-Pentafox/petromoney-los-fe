@@ -96,20 +96,20 @@ const DueTable = ({onRowClick}) => {
     rowsPerPageOptions: [15, 20, 30],
   };
 
-  if (loans.length === 0) {
-    return (
-      <div className={classes.root}>
-        <Grid item xs={12}>
-          <Skeleton variant="rect" width="100%" height={600} />
-        </Grid>
-      </div>
-    )
-  }
-  else {
+  // if (loans.length === 0) {
+  //   return (
+  //     <div className={classes.root}>
+  //       <Grid item xs={12}>
+  //         <Skeleton variant="rect" width="100%" height={600} />
+  //       </Grid>
+  //     </div>
+  //   )
+  // }
+  // else {
     return (
       <>
         <div className={classes.root} >
-          {(loans.length === 0) ? (
+          {/* {(loans.length === 0) ? (
             <Grid item xs={12}>
               <Skeleton variant="rect" width="100%" height={400} />
             </Grid>
@@ -122,11 +122,21 @@ const DueTable = ({onRowClick}) => {
                   options={options}
                 />
               ) : <Paper style={{ padding: 10 }}>No Due Reports</Paper>
-            )}
+            )} */}
+            {
+                Array.isArray(loans) && loans.length ? (
+                    <MUIDataTable
+                        title={"Over Due Reports"}
+                        data={loans}
+                        columns={columns}
+                        options={options}
+                    />
+                ) : <Paper style={{ marginTop: 10, padding: 10 }}>No Due Reports</Paper>
+            }
         </div>
       </>
     )
   }
-}
+// }
 
 export default DueTable;

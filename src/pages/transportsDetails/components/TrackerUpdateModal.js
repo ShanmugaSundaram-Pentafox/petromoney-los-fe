@@ -22,8 +22,8 @@ const inputProps = {
 const TrackerUpdateModal = ({ id, currentUser, statusId, onClose, data, serviceData, completed }) => {
   const [status, setStatus] = useState(statusId);
   const [showUpload, setShowUpload] = useState(true);
-  const [openModal, setOpenModal] = useState(false);
-  const [fileUrl, setFileUrl] = useState([]);
+  // const [openModal, setOpenModal] = useState(false);
+  // const [fileUrl, setFileUrl] = useState([]);
   const [rowData, setRowData] = useState();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -56,8 +56,8 @@ const TrackerUpdateModal = ({ id, currentUser, statusId, onClose, data, serviceD
       })
       .then(res => {
         enqueueSnackbar('File Upload Success', { variant: "success" });
-        fileUrl.push(res.file_url.split(" "))
-        updateVehicleServiceDetails(id, serviceData.vehicle_id, serviceData.credit_head_id, serviceData.loan_id, { status_id: id, details: { file_url: fileUrl } })
+        // fileUrl.concat(res.file_url.split(" "))
+        updateVehicleServiceDetails(id, serviceData.vehicle_id, serviceData.credit_head_id, serviceData.loan_id, { status_id: status, details: { file_url: res?.file_url?.split(" ") } })
           .then(res => {
             console.log('postServiceStatus >> ', res);
             // onCloseModal(true, serviceData);
@@ -328,9 +328,10 @@ const TrackerUpdateModal = ({ id, currentUser, statusId, onClose, data, serviceD
   //   )
   // }
   if (status === 5) {
+    const d = JSON.parse((serviceData?.tracking_details?.[4]?.details || "{}").replace(/\'/g,'\"'));
     return (
       <div style={{ minWidth: '40vw' }}>
-        { <FileUpload handleSave={handleSave} id={id} data={rowData} open={showUpload} onCloseUploader={onCloseUploader} />}
+        { <FileUpload handleSave={handleSave} id={id} data={rowData} open={showUpload} onCloseUploader={onCloseUploader} initialFiles={d.file_url || []} />}
       </div>
     )
   }

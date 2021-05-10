@@ -176,3 +176,22 @@ export const getAllExceptions = () => {
       })
   });
 }
+
+export const updateLoanStats = (dealershipId,loanId) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${URL.dealership}/${dealershipId}/loan/${loanId}/resubmit`, {
+      method: "POST",
+    })
+      .then(async ({ status,  message }) => {
+        if(status === "SUCCESS") {
+          resolve( message );
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+

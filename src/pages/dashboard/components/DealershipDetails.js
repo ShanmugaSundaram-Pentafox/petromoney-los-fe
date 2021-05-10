@@ -25,11 +25,12 @@ import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { selectCurrentUser } from '../../../store/user/user.selector';
 import { createStructuredSelector } from 'reselect';
-import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
+import { getLoanById, updateLoanApprovalStatusById,updateLoanStats } from '../../../services/loans.service';
 import Alert from '@material-ui/lab/Alert';
 import DispApprovedDataTable from './DispApprovedDataTable';
 import apiCall from '../../../utils/api.util';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
+import { useSnackbar } from 'notistack';
 // import Button from '../../../components/CommonComponents/Button/Button'
 
 const LoanInfoWrapper = styled.div`
@@ -343,8 +344,16 @@ const DealershipDetails = ({
   const [readOnly, setReadOnly] = useState(true);
   const [showRemarksModal, setShowRemarksModal] = useState(false);
   const [newLoanInfo, setNewLoanInfo] = useState({});
+  const { enqueueSnackbar } = useSnackbar();
+
 
   const classes = useStyles();
+  console.log("data",data)
+  console.log("loanData",loanData.id)
+  console.log("close",onClose)
+  console.log("status",status)
+  console.log("user",currentUser)
+
 
   useEffect(() => {
     if (loanData?.id && data?.id) {
@@ -460,6 +469,18 @@ const DealershipDetails = ({
     alignTop: true,
     readOnly,
     className: classes.fieldItemStyle
+  }
+  const handleResubmit = () => {
+    updateLoanStats(data.id,loanData.id)
+    .then(res => {
+      console.log(res,"result")
+      enqueueSnackbar(res, { variant: "success" });
+
+      // setData(data)
+    })
+    .catch((e) => {
+      console.log(e);
+    })
   }
 
 
@@ -735,7 +756,7 @@ const DealershipDetails = ({
                       variant="contained"
                       disabled={apiStatus.loading}
                       className={clsx(classes.btn, classes.btnError)}
-                      // onClick={() => updateLoanStatus('rejected')}
+                      onClick={handleResubmit}
                     >
                       Re-submit</Button>
                   )}

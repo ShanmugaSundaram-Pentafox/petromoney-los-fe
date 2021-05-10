@@ -22,7 +22,6 @@ const TransportsDetails = ({ currentUser, match }) => {
     url,
     params: { id },
   } = match
-
   useMount(() => {
     getTransporterInfoFromID(id)
       .then(data => {
@@ -46,36 +45,41 @@ const TransportsDetails = ({ currentUser, match }) => {
 
   return (
     <Grid container spacing={2}>
-      <Grid item container spacing={2}>
-        <Grid item md={4} xs={12}>
-          <InfoCard
-            title={"Owner Info"}
-            noMargin
-            userInitial={ownerInfo?.first_name?.charAt(0)}
-            name={ownerInfo?.first_name ? `${ownerInfo?.first_name} ${ownerInfo?.last_name}` : 'Transporter Name'}
-            caption={ownerInfo?.mobile}
-            content={ownerInfo?.email}
-            description={ownerInfo?.address}
-          />
-        </Grid>
-        <Grid item md={4} xs={12}>
-          <InfoCard
-            hover
-            noMargin
-            title={"Transport Info"}
-            userInitial={transportsData?.name?.charAt(0)}
-            name={transportsData?.name}
-            caption={transportsData?.id}
-            content={transportsData?.mobile}
-            onClick={() => setShowModal(true)}
-          />
-          {transportsData && (
-            <FormDialog title="Transport Details" open={showModal} onClose={() => setShowModal(false)}>
-              <TransportsInfo data={transportsData} currentUser={currentUser} />
-            </FormDialog>
-          )}
-        </Grid>
-      </Grid>
+      {
+        currentUser.role_name !== 'DEALER' ? (
+          <Grid item container spacing={2}>
+            <Grid item md={4} xs={12}>
+              <InfoCard
+                title={"Owner Info"}
+                noMargin
+                userInitial={ownerInfo?.first_name?.charAt(0)}
+                name={ownerInfo?.first_name ? `${ownerInfo?.first_name} ${ownerInfo?.last_name}` : 'Transporter Name'}
+                caption={ownerInfo?.mobile}
+                content={ownerInfo?.email}
+                description={ownerInfo?.address}
+              />
+            </Grid>
+            <Grid item md={4} xs={12}>
+              <InfoCard
+                hover
+                noMargin
+                title={"Transport Info"}
+                userInitial={transportsData?.name?.charAt(0)}
+                name={transportsData?.name}
+                caption={transportsData?.id}
+                content={transportsData?.mobile}
+                onClick={() => setShowModal(true)}
+              />
+              {transportsData && (
+                <FormDialog title="Transport Details" open={showModal} onClose={() => setShowModal(false)}>
+                  <TransportsInfo data={transportsData} currentUser={currentUser} />
+                </FormDialog>
+              )}
+            </Grid>
+          </Grid>
+        ) : null
+      }
+
       <Grid item md={6} xs={12}>
         {vehicleData && (
           <VehicleInfo id={id} data={vehicleData} currentUser={currentUser} />

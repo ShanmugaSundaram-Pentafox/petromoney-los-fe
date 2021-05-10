@@ -14,10 +14,12 @@ import Button from '../../../components/CommonComponents/Button/Button';
 import FormDialog from "../../../components/CommonComponents/FormDialog/FormDialog"
 import AddNewTransportsForm from "./AddNewTransportsForm"
 import Tooltip from '@material-ui/core/Tooltip';
-import { getTransporterInfoFromID, getTransportOwnerInfo } from "../../../services/transports.service"
+import { getTransporterInfoFromID, getTransportOwnerInfo, getVehicleInfoFromID } from "../../../services/transports.service"
 import { Grid } from "@material-ui/core"
 import InfoCard from "../../../components/CommonComponents/Cards/InfoCard"
 import { actions } from "react-table"
+import { setDashboardView } from "../../../store/common/common.actions"
+import VehicleInfo from "../../transportsDetails/components/VehicleInfo"
 
 
 
@@ -29,13 +31,16 @@ const useStyles = makeStyles((theme) => ({
     },
 }))
 
-const DealerTransportsTable = () => {
+const DealerTransportsTable = ({ currentUser }) => {
     const [transports, setTransports] = useState([]);
     const [transportsData, setTransportsData] = useState([]);
     const [ownerInfo, setOwnerInfo] = useState([]);
     const [openModal, setOpenModal] = useState(false);
+    const [view, setView] = useState(false);
+    const [id, setId] = useState();
+    const [vehicleData, setVehicleData] = useState()
     const classes = useStyles()
-
+    console.log("user", id)
     useMount(() => {
         getDealerTransportsList()
             .then((data) => {
@@ -58,73 +63,82 @@ const DealerTransportsTable = () => {
             .catch((e) => {
                 console.log(e);
             })
-    })
-    const columns = useMemo(() => {
-        return [
-            {
-                label: "Code",
-                name: "id",
-                options: {
-                    filter: false,
-                    sort: true,
-                    customBodyRender: (value) => {
-                        return <RouterLink to={`/transports/${value}`}>{value}</RouterLink>
-                    },
-                },
-            },
-            {
-                label: "Name",
-                name: "name",
-                options: {
-                    filter: false,
-                    sort: true,
-                },
-            },
-            {
-                label: "Mobile Number",
-                name: "mobile",
-                options: {
-                    filter: false,
-                    sort: true,
-                },
-            },
-            {
-                label: "OMC",
-                name: "omc",
-                options: {
-                    filter: false,
-                    sort: true,
-                },
-            },
-        ]
-    }, [])
-    const options = {
-        filter: false,
-        print: false,
-        download: false,
-        search: false,
-        column: false,
-        viewColumns: false,
-        selectableRowsHeader: false,
-        selectableRows: "none",
-        rowsPerPage: 10,
-        isRowSelectable: () => false,
-        customToolbar: () => {
-            return (
-                <Button
-                    color="primary"
-                    variant="contained"
-                    onClick={() => setOpenModal(true)}
-                >
-                    Add Transport
-                </Button>
-            );
-        }
-    }
+        getVehicleInfoFromID(id)
+            .then((data) => {
+                // console.log(data)
+                setVehicleData(data)
+            })
+            .catch((e) => null)
+})
 
-    return (
-        <>
-            <Grid container spacing={4}>
+const columns = useMemo(() => {
+    return [
+        {
+            label: "Code",
+            name: "id",
+            options: {
+                filter: false,
+                sort: true,
+                customBodyRender: (value) => {
+                    setView(true)
+                    setId(value)
+                    return <RouterLink to={`/transports/${value}`}>{value}</RouterLink>
+                },
+            },
+        },
+        {
+            label: "Name",
+            name: "name",
+            options: {
+                filter: false,
+                sort: true,
+            },
+        },
+        {
+            label: "Mobile Number",
+            name: "mobile",
+            options: {
+                filter: false,
+                sort: true,
+            },
+        },
+        {
+            label: "OMC",
+            name: "omc",
+            options: {
+                filter: false,
+                sort: true,
+            },
+        },
+    ]
+}, [])
+const options = {
+    filter: false,
+    print: false,
+    download: false,
+    search: false,
+    column: false,
+    viewColumns: false,
+    selectableRowsHeader: false,
+    selectableRows: "none",
+    rowsPerPage: 10,
+    isRowSelectable: () => false,
+    customToolbar: () => {
+        return (
+            <Button
+                color="primary"
+                variant="contained"
+                onClick={() => setOpenModal(true)}
+            >
+                Add Transport
+            </Button>
+        );
+    }
+}
+
+return (
+    <>
+        {/* <Grid container spacing={4}>
                 <Grid item md={6}>
                     <InfoCard
                         title={"Owner Info"}
@@ -135,30 +149,35 @@ const DealerTransportsTable = () => {
                         description={ownerInfo?.address}
                     />
                 </Grid>
-            </Grid>
-            <div>
-                {Array.isArray(transports) && transports.length ? (
-                    <MUIDataTable
-                        title={
-                            <Typography className={classes.title} variant="h5" component="h5">Transports List</Typography>
-                        }
-                        data={transports}
-                        columns={columns}
-                        options={options}
-                    />
-                ) : (
-                    <CircularProgress />
-                )}
-            </div>
-            <FormDialog
-                title="Add Transport"
-                open={openModal}
-                onClose={() => setOpenModal(false)}
-            >
-                <AddNewTransportsForm data={transportsData} />
-            </FormDialog>
-        </>
-    )
+            </Grid> */}
+        <div>
+            {Array.isArray(transports) && transports.length ? (
+                <MUIDataTable
+                    title={
+                        <Typography className={classes.title} variant="h5" component="h5">Transports List</Typography>
+                    }
+                    data={transports}
+                    columns={columns}
+                    options={options}
+                />
+            ) : (
+                <CircularProgress />
+            )}
+        </div>
+        <FormDialog
+            title="Add Transport"
+            open={openModal}
+            onClose={() => setOpenModal(false)}
+        >
+            <AddNewTransportsForm data={transportsData} />
+        </FormDialog>
+        {/* {
+            view && vehicleData && (
+                <VehicleInfo id={id} data={vehicleData} currentUser={currentUser} />
+            )
+        } */}
+    </>
+)
 }
 
 const mapStateToProps = createStructuredSelector({

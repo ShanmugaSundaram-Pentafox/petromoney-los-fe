@@ -1,4 +1,4 @@
-import React, { useMemo } from "react"
+import React, { useMemo, useState } from "react"
 import { NavLink as RouterLink } from "react-router-dom"
 import { makeStyles } from "@material-ui/styles"
 import MUIDataTable from "mui-datatables"
@@ -10,15 +10,24 @@ import { selectAllTransports } from "../../../store/transports/transports.select
 import { createStructuredSelector } from "reselect"
 import { connect } from "react-redux"
 import { setAllTransports } from "../../../store/transports/transports.actions"
+import Button from '../../../components/CommonComponents/Button/Button';
+import FormDialog from "../../../components/CommonComponents/FormDialog/FormDialog"
+import AddNewTransportsForm from "./AddNewTransportsForm"
+
 
 const useStyles = makeStyles((theme) => ({
   title: {
     fontWeight: 500,
+    marginRight: 12,
   },
+  button: {
+    display: "flex",
+  }
 }))
 
 const TransportsTable = ({ transports, setAllTransports }) => {
-  // const [ data, setData ] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
+
   const classes = useStyles()
 
   const columns = useMemo(() => {
@@ -78,8 +87,21 @@ const TransportsTable = ({ transports, setAllTransports }) => {
     // filterType: 'checkbox',
     selectableRowsHeader: false,
     selectableRows: "none",
+    print: false,
+    viewColumns: false,
     rowsPerPage: 10,
     isRowSelectable: () => false,
+    customToolbar: () => {
+      return (
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={() => setOpenModal(true)}
+        >
+          Add Transport
+        </Button>
+      );
+    }
   }
 
   return (
@@ -87,9 +109,18 @@ const TransportsTable = ({ transports, setAllTransports }) => {
       {Array.isArray(transports) && transports.length ? (
         <MUIDataTable
           title={
-            <Typography className={classes.title} variant="h5" component="h5">
-              Transports List
+            <div className={classes.button}>
+              <Typography className={classes.title} variant="h5" component="h5">
+                Transports List
             </Typography>
+              {/* <Button
+                color="primary"
+                variant="contained"
+              // onClick={() => setOpenModal(true)}
+              >
+                Add Transport
+        </Button> */}
+            </div>
           }
           data={transports}
           columns={columns}
@@ -98,6 +129,13 @@ const TransportsTable = ({ transports, setAllTransports }) => {
       ) : (
         <CircularProgress />
       )}
+      <FormDialog
+        title="Add Transport"
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+      >
+        <AddNewTransportsForm  />
+      </FormDialog>
     </div>
   )
 }

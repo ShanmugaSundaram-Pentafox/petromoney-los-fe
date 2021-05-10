@@ -25,11 +25,13 @@ import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { selectCurrentUser } from '../../../store/user/user.selector';
 import { createStructuredSelector } from 'reselect';
-import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
+import { getLoanById, updateLoanApprovalStatusById,updateLoanStats } from '../../../services/loans.service';
 import Alert from '@material-ui/lab/Alert';
 import DispApprovedDataTable from './DispApprovedDataTable';
 import apiCall from '../../../utils/api.util';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
+import { useSnackbar } from 'notistack';
+// import Button from '../../../components/CommonComponents/Button/Button'
 
 const LoanInfoWrapper = styled.div`
   padding: 12px;
@@ -82,7 +84,7 @@ const useStyles = makeStyles(theme => ({
     // paddingTop: theme.spacing(1),
     // paddingBottom: theme.spacing(1)
   },
-  fieldItemStyle:{
+  fieldItemStyle: {
     // marginBottom:theme.spacing(2)
   },
   actionFooter: {
@@ -145,21 +147,21 @@ const LoanInfo = ({
   const [products, setProducts] = useState([]);
   const [showRemarksModal, setShowRemarksModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState({});
-  
+
   useEffect(() => {
     apiCall(`business/products`)
-    .then(res => {
-      if(res.status === 'SUCCESS') {
-        setProducts(res.data || testProducts);
-        if(row.product_id) {
-          const re = res.data.find(d => d.product_id == row.product_id)
-          setSelectedProduct({ ...re, disabled: status !== "loan_approval" } || {})
+      .then(res => {
+        if (res.status === 'SUCCESS') {
+          setProducts(res.data || testProducts);
+          if (row.product_id) {
+            const re = res.data.find(d => d.product_id == row.product_id)
+            setSelectedProduct({ ...re, disabled: status !== "loan_approval" } || {})
+          }
         }
-      }
-    })
-    .catch(err => {
-      console.log(err)
-    })
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }, [row.product_id]);
 
   return (
@@ -302,6 +304,7 @@ const LoanInfo = ({
                 // rowsMax={8}
                 value={row.disbursement_recommendation_remarks}
               />
+
               {
                 row.disbursement_recommendation_remarks?.length >= 300 ? (
                   <ViewMoreBtn onClick={() => setShowRemarksModal(row.disbursement_recommendation_remarks)}>
@@ -321,7 +324,7 @@ const LoanInfo = ({
           readOnly
           value={showRemarksModal}
           style={{ width: '40vw', minWidth: 400 }}
-          />
+        />
       </FormDialog>
     </>
   )
@@ -341,8 +344,16 @@ const DealershipDetails = ({
   const [readOnly, setReadOnly] = useState(true);
   const [showRemarksModal, setShowRemarksModal] = useState(false);
   const [newLoanInfo, setNewLoanInfo] = useState({});
+  const { enqueueSnackbar } = useSnackbar();
+
 
   const classes = useStyles();
+  console.log("data",data)
+  console.log("loanData",loanData.id)
+  console.log("close",onClose)
+  console.log("status",status)
+  console.log("user",currentUser)
+
 
   useEffect(() => {
     if (loanData?.id && data?.id) {
@@ -383,7 +394,7 @@ const DealershipDetails = ({
     //   setApiStatus({ type: 'error', message: 'Please enter your remarks/comments.' });
     //   return null
     // }
-    
+
     setApiStatus({ loading: true, type: 'info', message: 'We are processing your request, Please wait...' });
     let reqBody = {
       status: submitStatus,
@@ -392,7 +403,7 @@ const DealershipDetails = ({
     let resMsg = '';
 
     if (status === "loan_approval") {
-      if(!newLoanInfo.product_id) {
+      if (!newLoanInfo.product_id) {
         setApiStatus({ loading: false, type: 'error', message: 'Please choose loan type.' });
         return null
       }
@@ -457,7 +468,19 @@ const DealershipDetails = ({
     direction: "column",
     alignTop: true,
     readOnly,
-    className:classes.fieldItemStyle
+    className: classes.fieldItemStyle
+  }
+  const handleResubmit = () => {
+    updateLoanStats(data.id,loanData.id)
+    .then(res => {
+      console.log(res,"result")
+      enqueueSnackbar(res, { variant: "success" });
+
+      // setData(data)
+    })
+    .catch((e) => {
+      console.log(e);
+    })
   }
 
 
@@ -621,16 +644,16 @@ const DealershipDetails = ({
                     {...fieldProps}
                   />
                   {
-                      loanInfo.approval_remarks?.length >= 300 ? (
-                        <ViewMoreBtn onClick={() => setShowRemarksModal(loanInfo.approval_remarks)}>
-                          View more
-                        </ViewMoreBtn>
-                      ) : null
-                    }
+                    loanInfo.approval_remarks?.length >= 300 ? (
+                      <ViewMoreBtn onClick={() => setShowRemarksModal(loanInfo.approval_remarks)}>
+                        View more
+                      </ViewMoreBtn>
+                    ) : null
+                  }
                   {/* <Typography variant="p" component={'p'}>
                     {loanInfo.approval_remarks}
                   </Typography> */}
-                  
+
                 </Grid>
 
                 <Grid {...gridProps}>
@@ -723,8 +746,26 @@ const DealershipDetails = ({
               variant="contained"
               startIcon={<ArrowBackIosRoundedIcon />}
               onClick={onClose}>Back</Button>
+              {
+              editable && status && ["rejected"].includes(status.toLowerCase()) && (
+                <UserCan
+                  role={currentUser.role_name}
+                  perform={rulesList.loan_approval}
+                  yes={() => (
+                    <Button
+                      variant="contained"
+                      disabled={apiStatus.loading}
+                      className={clsx(classes.btn, classes.btnError)}
+                      onClick={handleResubmit}
+                    >
+                      Re-submit</Button>
+                  )}
+                />
+              )
+            }
           </div>
           <div>
+            
             <Button
               component={RouterLink}
               to={`/dealership/${values.id}`}
@@ -767,7 +808,7 @@ const DealershipDetails = ({
           readOnly
           value={showRemarksModal}
           style={{ width: '40vw', minWidth: 400 }}
-          />
+        />
       </FormDialog>
     </div>
   )

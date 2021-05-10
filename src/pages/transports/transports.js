@@ -16,7 +16,7 @@ const Transport = ({ currentUser }) => {
         editable ? (
           <>
             <Grid item sm={12} md={8}>
-              <DealerTransportsTable />
+              <DealerTransportsTable currentUser={currentUser} />
             </Grid>  
           </>
         ) : (

@@ -53,8 +53,9 @@ const AddNewTransportsForm = ({ data }) => {
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
-            id: Yup.number().required('Please enter transporter code'),
+            // id: Yup.number().required('Please enter transporter code'),
             name: Yup.string().required('Please enter transporter name'),
+            mobile: Yup.number().min(10,'Enter valid mobile number').required('please Enter your mobile number'),
             omc: Yup.string().required('Please Choose OMC'),
             business_type: Yup.string().required('Please choose bussiness type'),
             region: Yup.string().required('Please choose region'),
@@ -88,7 +89,7 @@ const AddNewTransportsForm = ({ data }) => {
             display: 'flex',
         },
         switchBase: {
-            marginBottom:4,
+            marginBottom: 4,
             padding: 2,
             color: theme.palette.grey[500],
             '&$checked': {
@@ -120,8 +121,8 @@ const AddNewTransportsForm = ({ data }) => {
                 <Grid container spacing={2}>
                     <Grid item md={12}>
                         {
-                            <Typography  component="div">
-                                <Grid component="label" container  alignItems="center" spacing={2}>
+                            <Typography component="div">
+                                <Grid component="label" container alignItems="center" spacing={2}>
                                     <Grid item>Transporter Code</Grid>
                                     <Grid item>No</Grid>
                                     <Grid item>
@@ -133,17 +134,17 @@ const AddNewTransportsForm = ({ data }) => {
                         }
                         {
                             checked &&
-                                <TextInput
-                                    {...inputProps}
-                                    // labelText="Transporter Code"
-                                    placeholder="Enter transporter code here"
-                                    name="id"
-                                    value={values.id}
-                                    error={errors.id}
-                                    helperText={errors.id}
-                                >
-                                </TextInput>
-                            
+                            <TextInput
+                                {...inputProps}
+                                // labelText="Transporter Code"
+                                placeholder="Enter transporter code here"
+                                name="id"
+                                value={values.id}
+                                error={errors.id}
+                                helperText={errors.id}
+                            >
+                            </TextInput>
+
                         }
 
                     </Grid>
@@ -155,6 +156,16 @@ const AddNewTransportsForm = ({ data }) => {
                             value={values.name}
                             error={errors.name}
                             helperText={errors.name}
+                        />
+                    </Grid>
+                    <Grid item md={6}>
+                        <TextInput
+                            {...inputProps}
+                            name="mobile"
+                            labelText="Mobile"
+                            value={values.mobile}
+                            error={errors.mobile}
+                            helperText={errors.mobile}
                         />
                     </Grid>
                     <Grid item md={6}>
@@ -275,9 +286,6 @@ const AddNewTransportsForm = ({ data }) => {
                     </Grid>
                 </Grid>
             </form>
-            {/* {apiStatus.type && (
-                <Alert severity={apiStatus.type}>{apiStatus.message}</Alert>
-            )} */}
         </Box>
     )
 }

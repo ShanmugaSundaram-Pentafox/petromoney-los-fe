@@ -22,6 +22,10 @@ import Button from "../../../components/CommonComponents/Button/Button"
 import NewVehicleLoanAction from "../../../components/NewVehicleLoan/NewVehicleLoanAction"
 import FormDialog from "../../../components/CommonComponents/FormDialog/FormDialog"
 import TrackerUpdateModal from "./TrackerUpdateModal"
+import FileUpload from "../../../components/FileUpload"
+import { URL } from "../../../config/serverUrls"
+import { useSnackbar } from 'notistack';
+
 
 const Accordion = withStyles({
   root: {
@@ -80,11 +84,18 @@ export default function VehicleInfo({ id, data, currentUser }) {
   const [serviceData, setServiceData] = useState({})
   const [serviceModal, setServiceModal] = useState({})
   const [imageModal, setImageModal] = useState({})
+  const [fileUpload, setFileUpload] = useState(false)
+  const [showUpload, setShowUpload] = useState(true);
+  const [rowData, setRowData] = useState();
+  const { enqueueSnackbar } = useSnackbar();
+
+  console.log("id", id)
+  console.log("data", data[0])
 
   const handleChange = (vehicleId) => (event, newExpanded) => {
     setExpanded(newExpanded ? vehicleId : false);
-    if(newExpanded) {
-      if(!Array.isArray(docs[vehicleId])) {
+    if (newExpanded) {
+      if (!Array.isArray(docs[vehicleId])) {
         getVehicleDocuments(id, vehicleId)
           .then(res => {
             setDocs({
@@ -95,18 +106,18 @@ export default function VehicleInfo({ id, data, currentUser }) {
           .catch(e => {
             logger(e)
           })
-        
+
         getVehicleLoans(vehicleId)
           .then(res => {
             const s = res.filter(ser => ser.is_service);
-            if(s.length) {
+            if (s.length) {
               setServices({
                 ...services,
                 [vehicleId]: s
               })
             }
             const l = res.filter(ser => !ser.is_service);
-            if(l.length) {
+            if (l.length) {
               setLoans({
                 ...loans,
                 [vehicleId]: l
@@ -119,19 +130,63 @@ export default function VehicleInfo({ id, data, currentUser }) {
       }
     }
   }
+  const handleUpload = () => {
+    setFileUpload(true);
+  }
+  const handleSave = (files) => {
+    const formData = new FormData();
+    const dealerShipId = id;
+    files.map(file => {
+      formData.append(`file`, file);
+      formData.append(`document_id`, 18);
+    });
+    fetch(`${URL.base}transporter/${data[0].vehicle_id}/vehicle/${id}/docs`, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Authorization': `Bearer ${currentUser.token}`
+      }
+    })
+      .then(res => {
+        console.log("res",res)
+        return res.json()
+      })
+      .then(res => {
+        enqueueSnackbar('File Upload Success', { variant: "success" });
+        console.log("data",res)
+        // updateVehicleServiceDetails(id, serviceData.vehicle_id, serviceData.credit_head_id, serviceData.loan_id, { status_id: status, details: { file_url: res?.file_url?.split(" ") } })
+        //   .then(res => {
+        //     console.log('postServiceStatus >> ', res);
+        //     // onCloseModal(true, serviceData);
+        //   })
+        //   .catch(e => {
+        //     console.log(e);
+        //   });
+        // onCloseUploader();
+      })
+      .catch(error => {
+        // enqueueSnackbar('File Upload Failed', { variant: "error" });
+
+      })
+
+  }
+
+  const onCloseUploader = () => {
+    setShowUpload(false);
+  }
 
   const saveAndCloseNewLoan = () => {
     getVehicleLoans(expanded)
       .then(res => {
         const s = res.filter(ser => ser.is_service);
-        if(s.length) {
+        if (s.length) {
           setServices({
             ...services,
             [expanded]: s
           })
         }
         const l = res.filter(ser => !ser.is_service);
-        if(l.length) {
+        if (l.length) {
           setLoans({
             ...loans,
             [expanded]: l
@@ -163,8 +218,8 @@ export default function VehicleInfo({ id, data, currentUser }) {
 
   const closeTrackingStatusModal = (fetchStatus, d) => {
     setServiceModal({ open: false })
-    if(fetchStatus) {
-      getServiceStatus({...d, id: d.loan_id });
+    if (fetchStatus) {
+      getServiceStatus({ ...d, id: d.loan_id });
     }
   }
 
@@ -206,11 +261,14 @@ export default function VehicleInfo({ id, data, currentUser }) {
                             <TableCell>{row.description}</TableCell>
                             <TableCell>
                               <Button onClick={() => setImageModal({ open: true, image: row.file_path })}>
-                                {row.file_path?.split("/")[row.file_path?.split("/").length-1] || '-'}
+                                {row.file_path?.split("/")[row.file_path?.split("/").length - 1] || '-'}
                               </Button>
                             </TableCell>
                             <TableCell>
-                              <Button size="small">
+                              <Button
+                                size="small"
+                                onClick={handleUpload}
+                              >
                                 Upload
                               </Button>
                               <Button size="small">
@@ -255,55 +313,55 @@ export default function VehicleInfo({ id, data, currentUser }) {
                 </Box>
                 <Box mb={2}>
                   <Typography variant="h6" component="h4">Services</Typography>
-                  
-                      {
-                        Array.isArray(services[expanded]) && services[expanded].map(row => (
-                          <Box mt={2} flexDirection="column">
-                            <Box display="flex" flexDirection="row" justifyContent="space-between">
-                              <strong><small>{row.credit_head}</small></strong>
-                              <Button size="small" variant="outlined" onClick={() => getServiceStatus(row)}>Check status</Button>
-                            </Box>
-                            <Box>
-                            <Stepper key={vehicleInfo.vehicle_id} alternativeLabel nonLinear activeStep={false}>
-                              {serviceData[`${row.vehicle_id}_${row.credit_head_id}_${row.id}`]?.steps?.map((item, index) => {
-                                const stepProps = {
-                                  completed: false
-                                };
-                                const buttonProps = {
-                                  // optional: <Typography variant="caption">{item.description}</Typography>
-                                };
-                                // if (isStepOptional(index)) {
-                                //   buttonProps.optional = <Typography variant="caption">Optional</Typography>;
-                                // }
-                                if (serviceData[`${row.vehicle_id}_${row.credit_head_id}_${row.id}`]?.tracking_details[index]) {
-                                  stepProps.completed = true;
-                                }
-                                return (
-                                  <Step key={item.status_id} {...stepProps}>
-                                    <StepButton
-                                      onClick={() => {
-                                        openServiceModal({
-                                          item,
-                                          completed: stepProps.completed, 
-                                          serviceData: serviceData[`${row.vehicle_id}_${row.credit_head_id}_${row.id}`]
-                                        });
-                                      }}
-                                      // completed={isStepComplete(index)}
-                                      {...buttonProps}
-                                      title={item.description}
-                                    >
-                                      {item.status}
-                                      {/* <Tooltip title={item.description}>
+
+                  {
+                    Array.isArray(services[expanded]) && services[expanded].map(row => (
+                      <Box mt={2} flexDirection="column">
+                        <Box display="flex" flexDirection="row" justifyContent="space-between">
+                          <strong><small>{row.credit_head}</small></strong>
+                          <Button size="small" variant="outlined" onClick={() => getServiceStatus(row)}>Check status</Button>
+                        </Box>
+                        <Box>
+                          <Stepper key={vehicleInfo.vehicle_id} alternativeLabel nonLinear activeStep={false}>
+                            {serviceData[`${row.vehicle_id}_${row.credit_head_id}_${row.id}`]?.steps?.map((item, index) => {
+                              const stepProps = {
+                                completed: false
+                              };
+                              const buttonProps = {
+                                // optional: <Typography variant="caption">{item.description}</Typography>
+                              };
+                              // if (isStepOptional(index)) {
+                              //   buttonProps.optional = <Typography variant="caption">Optional</Typography>;
+                              // }
+                              if (serviceData[`${row.vehicle_id}_${row.credit_head_id}_${row.id}`]?.tracking_details[index]) {
+                                stepProps.completed = true;
+                              }
+                              return (
+                                <Step key={item.status_id} {...stepProps}>
+                                  <StepButton
+                                    onClick={() => {
+                                      openServiceModal({
+                                        item,
+                                        completed: stepProps.completed,
+                                        serviceData: serviceData[`${row.vehicle_id}_${row.credit_head_id}_${row.id}`]
+                                      });
+                                    }}
+                                    // completed={isStepComplete(index)}
+                                    {...buttonProps}
+                                    title={item.description}
+                                  >
+                                    {item.status}
+                                    {/* <Tooltip title={item.description}>
                                       </Tooltip> */}
-                                    </StepButton>
-                                  </Step>
-                                );
-                              })}
-                            </Stepper>
-                            </Box>
-                          </Box>
-                        ))
-                      }
+                                  </StepButton>
+                                </Step>
+                              );
+                            })}
+                          </Stepper>
+                        </Box>
+                      </Box>
+                    ))
+                  }
                 </Box>
                 <NewVehicleLoanAction vehicleId={vehicleInfo.vehicle_id} currentUser={currentUser} callback={saveAndCloseNewLoan} />
               </AccordionDetails>
@@ -315,6 +373,13 @@ export default function VehicleInfo({ id, data, currentUser }) {
       <FormDialog title={""} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
         {imageModal.image && <img src={imageModal.image} alt="image-viewer" />}
       </FormDialog>
+      {
+        // const d = JSON.parse((serviceData?.tracking_details?.[4]?.details || "{}").replace(/\'/g,'\"'));
+        fileUpload &&
+        <div style={{ minWidth: '40vw' }}>
+          {<FileUpload handleSave={handleSave} id={id} data={rowData} open={showUpload} onCloseUploader={onCloseUploader} />}
+        </div>
+      }
 
       {/* <FormDialog title={"Update Service Status"} open={serviceModal.open} onClose={() => setServiceModal({ open: false })}>
         <UpdateServiceForm data={serviceData} callback={() => null} />

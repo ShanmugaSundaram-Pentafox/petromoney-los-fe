@@ -8,6 +8,8 @@ import CircularProgress from "@material-ui/core/CircularProgress"
 import { useMount } from "react-use"
 import { getAllVehicleLoans } from "../../../services/transports.service"
 import Currency from "../../../components/Number/Currency"
+import Button from '../../../components/CommonComponents/Button/Button'
+
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -16,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const VehiclesLoanTable = () => {
-  const [ data, setData ] = useState([]);
+  const [data, setData] = useState([]);
   const classes = useStyles()
 
   const columns = useMemo(() => {
@@ -89,7 +91,20 @@ const VehiclesLoanTable = () => {
     selectableRowsHeader: false,
     selectableRows: "none",
     rowsPerPage: 10,
+    viewColumns:false,
+    print:false,
     isRowSelectable: () => false,
+    customToolbar: () => {
+      return (
+        <Button
+          color="primary"
+          variant="contained"
+          // onClick={() => setOpenModal(true)}
+        >
+          Add Vehicle
+        </Button>
+      );
+    }
   }
 
   return (

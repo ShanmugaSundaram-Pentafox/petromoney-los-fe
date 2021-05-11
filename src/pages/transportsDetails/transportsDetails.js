@@ -42,7 +42,6 @@ const TransportsDetails = ({ currentUser, match }) => {
       .catch((e) => null)
   })
   usePageTitle(`${id} - ${transportsData && transportsData?.name}`, true)
-
   return (
     <Grid container spacing={2}>
       {

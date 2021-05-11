@@ -57,10 +57,11 @@ const TrackerUpdateModal = ({ id, currentUser, statusId, onClose, data, serviceD
       .then(res => {
         enqueueSnackbar('File Upload Success', { variant: "success" });
         // fileUrl.concat(res.file_url.split(" "))
-        updateVehicleServiceDetails(id, serviceData.vehicle_id, serviceData.credit_head_id, serviceData.loan_id, { status_id: status, details: { file_url: res?.file_url?.split(" ") } })
+        updateVehicleServiceDetails(id, serviceData.vehicle_id, serviceData.credit_head_id, { status_id: status, details: { file_url: res?.file_url?.split(" ") } }, serviceData.loan_id)
           .then(res => {
             console.log('postServiceStatus >> ', res);
-            // onCloseModal(true, serviceData);
+            window.location.reload(false);
+            onCloseModal(true, serviceData);
           })
           .catch(e => {
             console.log(e);
@@ -77,26 +78,19 @@ const TrackerUpdateModal = ({ id, currentUser, statusId, onClose, data, serviceD
     setStatus(false);
     onClose(fetchStatus, d);
   }
-
-
   const postServiceStatus = (payload) => {
-    console.log("data", payload)
-    fetch(`${URL.base}transporter/${id}/vehicle/${serviceData.vehicle_id}/docs`, {
-      method: 'POST',
-      body: payload,
-      headers: {
-        'Authorization': `Bearer ${currentUser.token}`
-      }
-    })
-      .then(res => res.json())
+    updateVehicleServiceDetails(id, serviceData.vehicle_id, serviceData.credit_head_id, payload, serviceData.loan_id)
       .then(result => {
-        console.log('Success:', result);
+        onCloseModal(true, serviceData);
+
+        // setTimeout(() => {
+        // onCloseModal(true, serviceData);
+        // }, 3000)
+        // window.location.reload(false);
       })
       .catch(error => {
         console.error('Error:', error);
       });
-
-
   }
 
   const Actions = ({ btnText = 'OK', id }) => {
@@ -328,7 +322,7 @@ const TrackerUpdateModal = ({ id, currentUser, statusId, onClose, data, serviceD
   //   )
   // }
   if (status === 5) {
-    const d = JSON.parse((serviceData?.tracking_details?.[4]?.details || "{}").replace(/\'/g,'\"'));
+    const d = JSON.parse((serviceData?.tracking_details?.[4]?.details || "{}").replace(/\'/g, '\"'));
     return (
       <div style={{ minWidth: '40vw' }}>
         { <FileUpload handleSave={handleSave} id={id} data={rowData} open={showUpload} onCloseUploader={onCloseUploader} initialFiles={d.file_url || []} />}

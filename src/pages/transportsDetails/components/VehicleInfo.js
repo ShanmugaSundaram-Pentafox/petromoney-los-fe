@@ -89,8 +89,6 @@ export default function VehicleInfo({ id, data, currentUser }) {
   const [rowData, setRowData] = useState();
   const { enqueueSnackbar } = useSnackbar();
 
-  console.log("id", id)
-  console.log("data", data[0])
 
   const handleChange = (vehicleId) => (event, newExpanded) => {
     setExpanded(newExpanded ? vehicleId : false);

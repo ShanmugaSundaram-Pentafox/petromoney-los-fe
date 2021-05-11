@@ -93,7 +93,8 @@ const SignRequestLayout = ({ open, onClose, title, dealershipId, loanId }) => {
     })
       .then(res => {
         if (res.status === "SUCCESS") {
-          setDocId(res.msg.data.documentId)
+          // console.log("ressssss",res.message.data.documentId)
+          setDocId(res.message.data.documentId)
           // onClose()
         } else {
           console.log('>> Document Details status error >> ', res)

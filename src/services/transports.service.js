@@ -122,7 +122,7 @@ export const getVehicleServiceDetails = (vehicleId, serviceId, loanId) => {
   })
 }
 
-export const updateVehicleServiceDetails = (id,vehicleId, serviceId, loanId, data) => {
+export const updateVehicleServiceDetails = (id,vehicleId, serviceId,data, loanId) => {
   return new Promise((resolve, reject) => {
     apiCall(`vehicle/${vehicleId}/service/${serviceId}/tracker/${loanId}`, {
       method: 'POST',

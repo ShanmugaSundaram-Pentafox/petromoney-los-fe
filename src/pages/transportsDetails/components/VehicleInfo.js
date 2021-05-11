@@ -146,12 +146,12 @@ export default function VehicleInfo({ id, data, currentUser }) {
       }
     })
       .then(res => {
-        console.log("res",res)
+        // console.log("res",res)
         return res.json()
       })
       .then(res => {
         enqueueSnackbar('File Upload Success', { variant: "success" });
-        console.log("data",res)
+        // console.log("data",res)
         // updateVehicleServiceDetails(id, serviceData.vehicle_id, serviceData.credit_head_id, serviceData.loan_id, { status_id: status, details: { file_url: res?.file_url?.split(" ") } })
         //   .then(res => {
         //     console.log('postServiceStatus >> ', res);

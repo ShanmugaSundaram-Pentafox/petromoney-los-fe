@@ -348,11 +348,6 @@ const DealershipDetails = ({
 
 
   const classes = useStyles();
-  console.log("data",data)
-  console.log("loanData",loanData.id)
-  console.log("close",onClose)
-  console.log("status",status)
-  console.log("user",currentUser)
 
 
   useEffect(() => {

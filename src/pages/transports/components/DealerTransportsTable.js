@@ -20,6 +20,7 @@ import InfoCard from "../../../components/CommonComponents/Cards/InfoCard"
 import { actions } from "react-table"
 import { setDashboardView } from "../../../store/common/common.actions"
 import VehicleInfo from "../../transportsDetails/components/VehicleInfo"
+import { Paper } from "@material-ui/core"
 
 
 
@@ -40,7 +41,6 @@ const DealerTransportsTable = ({ currentUser }) => {
     const [id, setId] = useState();
     const [vehicleData, setVehicleData] = useState()
     const classes = useStyles()
-    console.log("user", id)
     useMount(() => {
         getDealerTransportsList()
             .then((data) => {
@@ -161,7 +161,8 @@ return (
                     options={options}
                 />
             ) : (
-                <CircularProgress />
+                // <CircularProgress />
+                <Paper style={{ marginTop: 10, padding: 10 }}>No Transporters found</Paper>
             )}
         </div>
         <FormDialog

@@ -35,7 +35,8 @@ const TrackerUpdateModal = ({ id, currentUser, statusId, onClose, data, serviceD
     return null;
   }
   const onCloseUploader = () => {
-    setShowUpload(false);
+    // setShowUpload(false);
+    onCloseModal(true,serviceData)
   }
   const handleSave = (files) => {
     const formData = new FormData();
@@ -325,7 +326,7 @@ const TrackerUpdateModal = ({ id, currentUser, statusId, onClose, data, serviceD
     const d = JSON.parse((serviceData?.tracking_details?.[4]?.details || "{}").replace(/\'/g, '\"'));
     return (
       <div style={{ minWidth: '40vw' }}>
-        { <FileUpload handleSave={handleSave} id={id} data={rowData} open={showUpload} onCloseUploader={onCloseUploader} initialFiles={d.file_url || []} />}
+        <FileUpload handleSave={handleSave} id={id} data={rowData} open={showUpload} onCloseUploader={onCloseUploader} initialFiles={d.file_url || []} />
       </div>
     )
   }

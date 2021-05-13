@@ -180,7 +180,7 @@ export const updatePassword = (password, mobile, id) => {
 }
 export const updateUserDetails = (name, mail, id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`user/${id}/update`, {
+    apiCall(`user/${id}`, {
       method: 'POST',
       body: {
         "name": name,

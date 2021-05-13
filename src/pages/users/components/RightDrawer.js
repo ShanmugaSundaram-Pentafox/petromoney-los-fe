@@ -83,12 +83,12 @@ export default function TemporaryDrawer({ userId, data, currentUser }) {
   };
   const saveProfile = () => {
     updateUserDetails(userName, userMail, userId)
-      .then(
-        setProfileSuccess(true),
+      .then(() => {
+        setProfileSuccess(true);
         setTimeout(() => {
           setProfileSuccess(false)
-        }, 2000),
-      )
+        }, 2000)
+      })
       .catch(err => {
         console.log(err)
       })

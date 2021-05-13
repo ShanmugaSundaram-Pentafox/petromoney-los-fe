@@ -12,9 +12,11 @@ import {
 import VehicleInfo from "./components/VehicleInfo"
 import InfoCard from "../../components/CommonComponents/Cards/InfoCard"
 import FormDialog from "../../components/CommonComponents/FormDialog/FormDialog"
+import AddNewVehicleForm from '../transports/components/AddNewVehicleForm'
 
 const TransportsDetails = ({ currentUser, match }) => {
   const [ownerInfo, setOwnerInfo] = useState()
+  const [openModal, setOpenModal] = useState(false);
   const [transportsData, setTransportsData] = useState()
   const [vehicleData, setVehicleData] = useState()
   const [showModal, setShowModal] = useState(false)
@@ -43,48 +45,65 @@ const TransportsDetails = ({ currentUser, match }) => {
   })
   usePageTitle(`${id} - ${transportsData && transportsData?.name}`, true)
   return (
-    <Grid container spacing={2}>
-      {
-        currentUser.role_name !== 'DEALER' ? (
-          <Grid item container spacing={2}>
-            <Grid item md={4} xs={12}>
-              <InfoCard
-                title={"Owner Info"}
-                noMargin
-                userInitial={ownerInfo?.first_name?.charAt(0)}
-                name={ownerInfo?.first_name ? `${ownerInfo?.first_name} ${ownerInfo?.last_name}` : 'Transporter Name'}
-                caption={ownerInfo?.mobile}
-                content={ownerInfo?.email}
-                description={ownerInfo?.address}
-              />
+    <>
+      <Grid container spacing={2}>
+        {
+          currentUser.role_name !== 'DEALER' ? (
+            <Grid item container spacing={2}>
+              <Grid item md={4} xs={12}>
+                <InfoCard
+                  hover
+                  noMargin
+                  title={"Transport Info"}
+                  userInitial={transportsData?.name?.charAt(0)}
+                  name={transportsData?.name}
+                  caption={transportsData?.id}
+                  content={transportsData?.mobile}
+                  onClick={() => setShowModal(true)}
+                />
+                {transportsData && (
+                  <FormDialog title="Transport Details" open={showModal} onClose={() => setShowModal(false)}>
+                    <TransportsInfo data={transportsData} currentUser={currentUser} />
+                  </FormDialog>
+                )}
+              </Grid>
+              <Grid item md={4} xs={12}>
+                <InfoCard
+                  title={"Owner Info"}
+                  noMargin
+                  userInitial={ownerInfo?.first_name?.charAt(0)}
+                  name={ownerInfo?.first_name ? `${ownerInfo?.first_name} ${ownerInfo?.last_name}` : 'Transporter Name'}
+                  caption={ownerInfo?.mobile}
+                  content={ownerInfo?.email}
+                  description={ownerInfo?.address}
+                />
+              </Grid>
             </Grid>
-            <Grid item md={4} xs={12}>
-              <InfoCard
-                hover
-                noMargin
-                title={"Transport Info"}
-                userInitial={transportsData?.name?.charAt(0)}
-                name={transportsData?.name}
-                caption={transportsData?.id}
-                content={transportsData?.mobile}
-                onClick={() => setShowModal(true)}
-              />
-              {transportsData && (
-                <FormDialog title="Transport Details" open={showModal} onClose={() => setShowModal(false)}>
-                  <TransportsInfo data={transportsData} currentUser={currentUser} />
-                </FormDialog>
-              )}
-            </Grid>
-          </Grid>
-        ) : null
-      }
-
-      <Grid item md={6} xs={12}>
-        {vehicleData && (
-          <VehicleInfo id={id} data={vehicleData} currentUser={currentUser} />
-        )}
+          ) : null
+        }
+        <Grid item xs={12} md={12}>
+          <Button
+            color="primary"
+            variant="contained"
+          onClick={() => setOpenModal(true)}
+          >
+            Add Vehicle
+        </Button>
+        </Grid>
+        <Grid item md={6} xs={12}>
+          {vehicleData && (
+            <VehicleInfo id={id} data={vehicleData} currentUser={currentUser} />
+          )}
+        </Grid>
       </Grid>
-    </Grid>
+      <FormDialog
+        title="Add Transport"
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+      >
+        <AddNewVehicleForm />
+      </FormDialog>
+    </>
   )
 }
 

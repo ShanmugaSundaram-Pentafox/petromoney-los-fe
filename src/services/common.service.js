@@ -179,6 +179,8 @@ export const updatePassword = (password, mobile, id) => {
   });
 }
 export const updateUserDetails = (name, mail, id) => {
+  console.log("api name",name)
+  console.log("api mail",mail)
   return new Promise((resolve, reject) => {
     apiCall(`user/${id}/update`, {
       method: 'POST',

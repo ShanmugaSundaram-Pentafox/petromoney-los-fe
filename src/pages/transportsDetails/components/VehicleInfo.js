@@ -25,6 +25,9 @@ import TrackerUpdateModal from "./TrackerUpdateModal"
 import FileUpload from "../../../components/FileUpload"
 import { URL } from "../../../config/serverUrls"
 import { useSnackbar } from 'notistack';
+import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
+import AddNewVehicleForm from "../../transports/components/AddNewVehicleForm"
 
 
 const Accordion = withStyles({
@@ -241,6 +244,16 @@ export default function VehicleInfo({ id, data, currentUser }) {
                 <Typography>
                   Credit Limit: <Currency value={vehicleInfo.credit_limit} />
                 </Typography>
+                <Tooltip title="Edit vehicle">
+                  <Typography>
+                    <EditOutlinedIcon fontSize="medium" />
+                  </Typography>
+                </Tooltip>
+                <Tooltip title="Delete vehicle">
+                  <Typography>
+                    <DeleteOutlineOutlinedIcon fontSize="medium" />
+                  </Typography>
+                </Tooltip>
               </AccordionSummary>
               <AccordionDetails>
                 <Box mb={2}>
@@ -371,7 +384,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
           </div>
         )
       })}
-
+      
       <FormDialog title={""} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
         {imageModal.image && <img src={imageModal.image} alt="image-viewer" />}
       </FormDialog>

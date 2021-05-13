@@ -12,6 +12,7 @@ import Button from '../../../components/CommonComponents/Button/Button'
 import FormDialog from "../../../components/CommonComponents/FormDialog/FormDialog"
 import AddNewTransportsForm from "./AddNewTransportsForm"
 import AddNewVehicleForm from "./AddNewVehicleForm"
+import { Grid } from "@material-ui/core"
 // import AddNewVehicleForm from "./AddNewVehicleForm"
 
 
@@ -98,21 +99,21 @@ const VehiclesLoanTable = () => {
     viewColumns: false,
     print: false,
     isRowSelectable: () => false,
-    customToolbar: () => {
-      return (
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={() => setOpenModal(true)}
-        >
-          Add Vehicle
-        </Button>
-      );
-    }
+    // customToolbar: () => {
+    //   return (
+    //     <Button
+    //       color="primary"
+    //       variant="contained"
+    //       onClick={() => setOpenModal(true)}
+    //     >
+    //       Add Vehicle
+    //     </Button>
+    //   );
+    // }
   }
 
   return (
-    <div>
+    <Grid item md={12}>
       {Array.isArray(data) && data.length ? (
         <MUIDataTable
           title={
@@ -134,7 +135,7 @@ const VehiclesLoanTable = () => {
       >
         <AddNewVehicleForm  />
       </FormDialog>
-    </div>
+    </Grid>
   )
 }
 

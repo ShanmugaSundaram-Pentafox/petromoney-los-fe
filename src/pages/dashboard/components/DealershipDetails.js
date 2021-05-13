@@ -349,7 +349,6 @@ const DealershipDetails = ({
 
   const classes = useStyles();
 
-
   useEffect(() => {
     if (loanData?.id && data?.id) {
       getLoanById(data.id, loanData.id)
@@ -742,7 +741,7 @@ const DealershipDetails = ({
               startIcon={<ArrowBackIosRoundedIcon />}
               onClick={onClose}>Back</Button>
               {
-              editable && status && ["rejected"].includes(status.toLowerCase()) && (
+              editable && status && ["rejected","approved","disbursment_approval","loan_approval"].includes(status.toLowerCase()) && (
                 <UserCan
                   role={currentUser.role_name}
                   perform={rulesList.loan_approval}

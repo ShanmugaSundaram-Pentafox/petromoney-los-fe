@@ -81,7 +81,7 @@ function DefaultColumnFilter({
 // This is a custom filter UI for selecting
 // a unique option from a list
 function SelectColumnFilter({
-  column: { filterValue, setFilter, preFilteredRows, id },
+  column: { filterValue,  setFilter, preFilteredRows, id },
 }) {
   // Calculate the options for filtering
   // using the preFilteredRows

@@ -25,7 +25,7 @@ const Transport = ({ currentUser }) => {
               <TransportTable />
             </Grid>
             <Grid item sm={12} md={6}>
-              <VehiclesLoanTable />
+              <VehiclesLoanTable  />
             </Grid>
           </>
 

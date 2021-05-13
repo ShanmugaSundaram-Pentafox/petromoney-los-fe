@@ -11,6 +11,7 @@ import Currency from "../../../components/Number/Currency"
 import Button from '../../../components/CommonComponents/Button/Button'
 import FormDialog from "../../../components/CommonComponents/FormDialog/FormDialog"
 import AddNewTransportsForm from "./AddNewTransportsForm"
+import AddNewVehicleForm from "./AddNewVehicleForm"
 // import AddNewVehicleForm from "./AddNewVehicleForm"
 
 
@@ -127,11 +128,11 @@ const VehiclesLoanTable = () => {
         <CircularProgress />
       )}
       <FormDialog
-        title="Add Transport"
+        title="Add Vehicle"
         open={openModal}
         onClose={() => setOpenModal(false)}
       >
-        {/* <AddNewVehicleForm  /> */}
+        <AddNewVehicleForm  />
       </FormDialog>
     </div>
   )

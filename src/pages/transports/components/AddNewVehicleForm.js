@@ -39,8 +39,8 @@ const AddNewVehicleForm = ({ data }) => {
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
-            transport: Yup.number().required('Please enter transporter code'),
-            tt_no: Yup.string().required('Please enter transporter name'),
+            transport: Yup.number().required('Please Choose the transport'),
+            tt_no: Yup.string().required('Please enter vehicle number'),
         }),
         onSubmit: formData => {
             addNewVehicle(formData)

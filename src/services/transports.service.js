@@ -190,4 +190,22 @@ export const addNewTransport = (data) => {
     })
   })
 }
+export const addNewVehicle = (data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`transporters/${data.transport}/vehicles`, {
+      method: 'POST',
+      body:{ tt_no :data.tt_no}
+    })
+    .then(({ status, message }) => {
+      if (status === "SUCCESS") {
+        resolve(message)
+      } else {
+        reject(message)
+      }
+    })
+    .catch((e) => {
+      reject(e.message)
+    })
+  })
+}
 

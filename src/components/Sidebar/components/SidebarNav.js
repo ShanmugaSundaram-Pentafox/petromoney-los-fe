@@ -165,7 +165,23 @@ const SidebarNav = props => {
                     exact
                   >
                     <div className={classes.icon}><BookmarkBorderIcon /></div>
-                    {'All Loans'}
+                    {'Fuel Loans'}
+                  </Button>
+                </ListItem>
+                <ListItem
+                  className={classes.itemSub}
+                  disableGutters
+                  key={'All'}
+                >
+                  <Button
+                    activeClassName={classes.active}
+                    className={classes.button}
+                    component={CustomRouterLink}
+                    to={'/vehicle-loan'}
+                    exact
+                  >
+                    <div className={classes.icon}><BookmarkBorderIcon /></div>
+                    {'Vehicle Loans'}
                   </Button>
                 </ListItem>
                 <ListItem

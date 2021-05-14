@@ -86,6 +86,7 @@ export default function TemporaryDrawer({ userId, data, currentUser }) {
       .then(() => {
         setProfileSuccess(true);
         setTimeout(() => {
+          window.location.reload(false);
           setProfileSuccess(false)
         }, 2000)
       })

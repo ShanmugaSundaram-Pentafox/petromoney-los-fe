@@ -9,6 +9,11 @@ import { useMount } from "react-use"
 import { getAllVehicleLoans } from "../../../services/transports.service"
 import Currency from "../../../components/Number/Currency"
 import Button from '../../../components/CommonComponents/Button/Button'
+import FormDialog from "../../../components/CommonComponents/FormDialog/FormDialog"
+import AddNewTransportsForm from "./AddNewTransportsForm"
+import AddNewVehicleForm from "./AddNewVehicleForm"
+import { Grid } from "@material-ui/core"
+// import AddNewVehicleForm from "./AddNewVehicleForm"
 
 
 const useStyles = makeStyles((theme) => ({
@@ -19,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
 
 const VehiclesLoanTable = () => {
   const [data, setData] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
   const classes = useStyles()
 
   const columns = useMemo(() => {
@@ -85,30 +91,29 @@ const VehiclesLoanTable = () => {
         console.log(e);
       })
   })
-
   const options = {
     // filterType: 'checkbox',
     selectableRowsHeader: false,
     selectableRows: "none",
     rowsPerPage: 10,
-    viewColumns:false,
-    print:false,
+    viewColumns: false,
+    print: false,
     isRowSelectable: () => false,
-    customToolbar: () => {
-      return (
-        <Button
-          color="primary"
-          variant="contained"
-          // onClick={() => setOpenModal(true)}
-        >
-          Add Vehicle
-        </Button>
-      );
-    }
+    // customToolbar: () => {
+    //   return (
+    //     <Button
+    //       color="primary"
+    //       variant="contained"
+    //       onClick={() => setOpenModal(true)}
+    //     >
+    //       Add Vehicle
+    //     </Button>
+    //   );
+    // }
   }
 
   return (
-    <div>
+    <Grid item md={12}>
       {Array.isArray(data) && data.length ? (
         <MUIDataTable
           title={
@@ -123,7 +128,14 @@ const VehiclesLoanTable = () => {
       ) : (
         <CircularProgress />
       )}
-    </div>
+      <FormDialog
+        title="Add Vehicle"
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+      >
+        <AddNewVehicleForm  />
+      </FormDialog>
+    </Grid>
   )
 }
 

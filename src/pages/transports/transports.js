@@ -21,12 +21,12 @@ const Transport = ({ currentUser }) => {
           </>
         ) : (
           <>
-            <Grid item sm={12} md={6}>
+            <Grid item sm={12} md={9}>
               <TransportTable />
             </Grid>
-            <Grid item sm={12} md={6}>
-              <VehiclesLoanTable />
-            </Grid>
+            {/* <Grid item sm={12} md={6}>
+              <VehiclesLoanTable  />
+            </Grid> */}
           </>
 
         )

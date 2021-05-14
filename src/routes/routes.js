@@ -23,6 +23,7 @@ import OverDue from '../pages/reports/OverDueReport';
 import LmsLos from '../pages/loanspage/lmsLosTable';
 import PassbookDetails from '../pages/users/dealer/PassbookDetails';
 import EnvTag from '../components/CommonComponents/EnvTag/EnvTag';
+import VehiclesLoanTable from '../pages/transports/components/VehiclesLoanTable';
 
 const Routes = ({ currentUser }) => {
   return (<>
@@ -41,6 +42,8 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/settings" component={Settings} />
       <ProtectedRoute allow exact path="/reports/due" component={Due} />
       <ProtectedRoute allow exact path="/reports/overdue" component={OverDue} />
+      <ProtectedRoute allow exact path="/vehicle-loan" component={VehiclesLoanTable} />
+
       <ProtectedRoute
         exact
         path="/users"

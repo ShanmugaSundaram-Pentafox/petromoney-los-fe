@@ -25,6 +25,9 @@ import TrackerUpdateModal from "./TrackerUpdateModal"
 import FileUpload from "../../../components/FileUpload"
 import { URL } from "../../../config/serverUrls"
 import { useSnackbar } from 'notistack';
+import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
+import AddNewVehicleForm from "../../transports/components/AddNewVehicleForm"
 
 
 const Accordion = withStyles({
@@ -86,6 +89,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
   const [imageModal, setImageModal] = useState({})
   const [fileUpload, setFileUpload] = useState(false)
   const [showUpload, setShowUpload] = useState(true);
+  const [tracking, setTracking] = useState([])
   const [rowData, setRowData] = useState();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -171,6 +175,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
 
   const onCloseUploader = () => {
     setShowUpload(false);
+    setFileUpload(false)
   }
 
   const saveAndCloseNewLoan = () => {
@@ -199,14 +204,13 @@ export default function VehicleInfo({ id, data, currentUser }) {
   const getServiceStatus = serviceData => {
     getVehicleServiceDetails(serviceData.vehicle_id, serviceData.credit_head_id, serviceData.id)
       .then(res => {
+        setTracking(res.tracking_details);
         setServiceData(st => ({ ...st, [`${serviceData.vehicle_id}_${serviceData.credit_head_id}_${serviceData.id}`]: res }));
       })
       .catch(e => {
         console.log(e);
       });
   }
-
-
   const openServiceModal = (data) => {
     setServiceModal({
       open: true,
@@ -240,6 +244,16 @@ export default function VehicleInfo({ id, data, currentUser }) {
                 <Typography>
                   Credit Limit: <Currency value={vehicleInfo.credit_limit} />
                 </Typography>
+                <Tooltip title="Edit vehicle">
+                  <Typography>
+                    <EditOutlinedIcon fontSize="medium" />
+                  </Typography>
+                </Tooltip>
+                <Tooltip title="Delete vehicle">
+                  <Typography>
+                    <DeleteOutlineOutlinedIcon fontSize="medium" />
+                  </Typography>
+                </Tooltip>
               </AccordionSummary>
               <AccordionDetails>
                 <Box mb={2}>
@@ -338,11 +352,14 @@ export default function VehicleInfo({ id, data, currentUser }) {
                                 <Step key={item.status_id} {...stepProps}>
                                   <StepButton
                                     onClick={() => {
-                                      openServiceModal({
-                                        item,
-                                        completed: stepProps.completed,
-                                        serviceData: serviceData[`${row.vehicle_id}_${row.credit_head_id}_${row.id}`]
-                                      });
+                                      if (tracking.length === index) {
+                                        openServiceModal({
+                                          item,
+                                          completed: stepProps.completed,
+                                          serviceData: serviceData[`${row.vehicle_id}_${row.credit_head_id}_${row.id}`]
+                                        });
+
+                                      }
                                     }}
                                     // completed={isStepComplete(index)}
                                     {...buttonProps}
@@ -367,7 +384,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
           </div>
         )
       })}
-
+      
       <FormDialog title={""} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
         {imageModal.image && <img src={imageModal.image} alt="image-viewer" />}
       </FormDialog>

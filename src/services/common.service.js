@@ -7,7 +7,7 @@ export const getBusinessTypes = () => {
   return new Promise((resolve, reject) => {
     apiCall("business/types")
       .then(({ status, data, message }) => {
-        if(status === "SUCCESS") {
+        if (status === "SUCCESS") {
           resolve(data);
         } else {
           reject(message);
@@ -23,7 +23,7 @@ export const getOmcList = () => {
   return new Promise((resolve, reject) => {
     apiCall("omcs")
       .then(({ status, data, message }) => {
-        if(status === "SUCCESS") {
+        if (status === "SUCCESS") {
           resolve(data);
         } else {
           reject(message);
@@ -39,7 +39,7 @@ export const getExperianReportById = (id, type) => {
   return new Promise((resolve, reject) => {
     apiCall(`experian/report/${id}/${type}`)
       .then(({ status, data, message }) => {
-        if(status === "SUCCESS") {
+        if (status === "SUCCESS") {
           resolve(data);
         } else {
           reject(message);
@@ -63,7 +63,7 @@ export const refreshExperianReportById = (id, type) => {
      */
     apiCall(`refresh/experian/report/consumer/${id}`)
       .then(({ status, data, message }) => {
-        if(status === "SUCCESS") {
+        if (status === "SUCCESS") {
           resolve(data);
         } else {
           reject(message);
@@ -84,7 +84,7 @@ export const downloadPDF = ({ file, isBase64, name }) => {
   downloadLink.click();
 }
 export const getAllRegion = () => {
-  
+
   return new Promise((resolve, reject) => {
     apiCall(URL.region)
       .then(({ status, data, message }) => {
@@ -159,10 +159,9 @@ export const deleteMappedRegion = (data, id) => {
 }
 export const updatePassword = (password, mobile, id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`user/${id}/update`, {
+    apiCall(`user/${id}`, {
       method: 'POST',
       body: {
-        mobile,
         password
       }
     })
@@ -179,10 +178,8 @@ export const updatePassword = (password, mobile, id) => {
   });
 }
 export const updateUserDetails = (name, mail, id) => {
-  console.log("api name",name)
-  console.log("api mail",mail)
   return new Promise((resolve, reject) => {
-    apiCall(`user/${id}/update`, {
+    apiCall(`user/${id}`, {
       method: 'POST',
       body: {
         "name": name,
@@ -208,10 +205,10 @@ export const SendReports = () => {
     })
       .then(({ status, message }) => {
 
-        if (status === "SUCCESS") {   
-        console.log(status,"status")
-        console.log(message,"status")
-          resolve({status,message});
+        if (status === "SUCCESS") {
+          console.log(status, "status")
+          console.log(message, "status")
+          resolve({ status, message });
         } else {
           reject(message);
         }

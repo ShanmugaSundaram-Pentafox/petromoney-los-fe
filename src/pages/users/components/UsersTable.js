@@ -115,15 +115,20 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
           align: 'center',
         }),
         customBodyRender: (value) => {
+          const d = data.find(item => item.id === value) || {};
           return (
-            <div>
+            <div key={`vi-${value}`}>
               <div>
                 <Button onClick={() => handleClickOpen(value)}>
                   <Tooltip title="deactivate" aria-label="add">
                     <DeleteOutlinedIcon style={{ width: "20px", color: "#ff6666" }} />
                   </Tooltip>
                 </Button>
-                <RightDrawer checked={op} userId={value} currentUser={currentUser} data={data.find(item => item.id === value)} />
+                {
+                  d?.id ? 
+                    <RightDrawer key={value} checked={op} userId={value} currentUser={currentUser} data={d} />
+                    : null
+                }
               </div>
             </div>
           )

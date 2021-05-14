@@ -86,12 +86,12 @@ export default function TemporaryDrawer({ userId, data, currentUser }) {
     console.log("name",userName)
     console.log("mail",userMail)
     updateUserDetails(userName, userMail, userId)
-      .then(
-        setProfileSuccess(true),
+      .then(() => {
+        setProfileSuccess(true);
         setTimeout(() => {
           setProfileSuccess(false)
-        }, 2000),
-      )
+        }, 2000)
+      })
       .catch(err => {
         console.log(err)
       })

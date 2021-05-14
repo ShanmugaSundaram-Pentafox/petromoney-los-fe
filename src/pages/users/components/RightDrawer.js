@@ -82,13 +82,11 @@ export default function TemporaryDrawer({ userId, data, currentUser }) {
     setOpen(false);
   };
   const saveProfile = () => {
-  console.log("data",data)
-    console.log("name",userName)
-    console.log("mail",userMail)
     updateUserDetails(userName, userMail, userId)
       .then(() => {
         setProfileSuccess(true);
         setTimeout(() => {
+          window.location.reload(false);
           setProfileSuccess(false)
         }, 2000)
       })

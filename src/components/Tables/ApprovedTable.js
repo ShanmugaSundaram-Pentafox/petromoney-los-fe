@@ -14,7 +14,7 @@ import Paper from '@material-ui/core/Paper';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import clsx from 'clsx';
-import { getAllLoans, getLoansByStatus } from '../../services/loans.service';
+import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
 import Currency from '../Number/Currency';
 // import { URL } from '../../config/serverUrls';
@@ -57,8 +57,9 @@ const useStyles = makeStyles(theme => ({
 const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const classes = useStyles();
   const [dealershipId, setDealershipId] = useState();
-  const [loanId, setloanId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
+  const [loanId, setloanId] = useState();
+
 
   useMount(() => {
     if (!loans || !loans.length) {
@@ -169,11 +170,17 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
     selectableRowsHeader: false,
     selectableRows: 'none',
     isRowSelectable: () => false,
-    onRowClick: (rowData, { dataIndex }) => {
-      // console.log(rowData, rowMeta);
-      onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'approved')
-    }
+    onCellClick: (colData, cellMeta) => {
+      if (cellMeta.colIndex !== 5) {
+        onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'approved')
+      }
+    },
+    // onRowClick: (rowData, { dataIndex }) => {
+    //   // console.log(rowData, rowMeta);
+    //   onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'approved')
+    // }
   };
+
   return (
     <div className={classes.root}>
       {

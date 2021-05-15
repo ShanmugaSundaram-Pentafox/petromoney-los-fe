@@ -68,7 +68,6 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const [loanId, setloanId] = useState();
   const [dealershipId, setDealershipId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
-
   useMount(() => {
     if (!loans || !loans.length) {
       getLoansByStatus('submitted')

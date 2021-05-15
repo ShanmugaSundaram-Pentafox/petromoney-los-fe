@@ -49,34 +49,33 @@ const LeegalityLayout = ({ docId }) => {
   useEffect(() => {
 
     apiCall(`document/details/${docId}`)
-    .then(res => {
-      if(res.status === "SUCCESS") {
-        if(res.data?.status) {
-          setDocDetails(res?.data?.data)
+      .then(res => {
+        if (res.status === "SUCCESS") {
+          if (res.data?.status) {
+            setDocDetails(res?.data?.data)
+          }
+        } else {
+          console.log('>> Document Details status error >> ', res)
         }
-      } else {
-        console.log('>> Document Details status error >> ', res)
-      }
-    })
-    .catch(err => {
-      console.log(err)
-    });
+      })
+      .catch(err => {
+        console.log(err)
+      });
 
     apiCall(`document/trail/${docId}`)
-    .then(res => {
-      if(res.status === "SUCCESS") {
-        if(res.data?.status) {
-          setAuditTrails(res?.data?.data.auditTrails)
+      .then(res => {
+        if (res.status === "SUCCESS") {
+          if (res.data?.status) {
+            setAuditTrails(res?.data?.data.auditTrails)
+          }
+        } else {
+          console.log('>> Document Trail Status error >> ', res);
         }
-      } else {
-        console.log('>> Document Trail Status error >> ', res);
-      }
-    })
-    .catch(err => {
-      console.log(err)
-    });
+      })
+      .catch(err => {
+        console.log(err)
+      });
   }, [])
-
   return (
     <Box bgcolor="#fbfbfb">
       <Grid container spacing={2}>
@@ -127,7 +126,7 @@ const LeegalityLayout = ({ docId }) => {
                         <p><strong>{item.name}</strong></p>
                         {item.email && <p><small>{item.email}</small></p>}
                         {item.phone && <p><small>{item.phone}</small></p>}
-                        <div style={{ flex:1, justifyContent: 'space-between' }}>
+                        <div style={{ flex: 1, justifyContent: 'space-between' }}>
                           <Chip style={{ marginRight: 10, border: 0 }} variant="outlined" size="small" label="Signed" icon={item.signed ? <CheckCircleOutlineRoundedIcon style={{ color: 'green' }} /> : <HighlightOffRoundedIcon style={{ color: 'red' }} />} />
                           {
                             !item.signed && (
@@ -141,6 +140,12 @@ const LeegalityLayout = ({ docId }) => {
                       </Box>
                     </div>
                     <div className="card-footer">
+                      {
+                        item.active ?
+                          <Button variant="outlined" color="secondary" size="small">Resend Notification</Button>
+                          :
+                          <Button variant="outlined" color="secondary" size="small">Activate</Button>
+                      }
                       <Button variant="outlined" color="secondary" size="small">Details</Button>
                     </div>
                   </Card>
@@ -153,7 +158,7 @@ const LeegalityLayout = ({ docId }) => {
           <Box>
             {
               auditTrails.map((item, i) => (
-                <ActivityBox key={'act-'+i} {...item} />
+                <ActivityBox key={'act-' + i} {...item} />
               ))
             }
           </Box>

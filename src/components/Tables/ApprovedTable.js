@@ -14,7 +14,7 @@ import Paper from '@material-ui/core/Paper';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import clsx from 'clsx';
-import { getLoansByStatus } from '../../services/loans.service';
+import { getAllLoans, getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
 import Currency from '../Number/Currency';
 // import { URL } from '../../config/serverUrls';
@@ -57,6 +57,7 @@ const useStyles = makeStyles(theme => ({
 const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const classes = useStyles();
   const [dealershipId, setDealershipId] = useState();
+  const [loanId, setloanId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
 
   useMount(() => {
@@ -137,11 +138,11 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
           setCellProps: () => ({
             align: 'center',
           }),
-          customBodyRender: (value, tableMeta, updateValue) => {
+          customBodyRender: (value, r) => {
             return (
               <>
                 <Tooltip title="Sanction Letter">
-                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setDealershipId(value); setModalVisible(true); }}>
+                  <IconButton size="small" color="primary" aria-label="application" onClick={() => {setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setModalVisible(true); }}>
                     <DescriptionIcon />
                   </IconButton>
                 </Tooltip>
@@ -161,7 +162,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
         }
       }
     ]
-  }, []);
+  }, [loans]);
 
   const options = {
     // filterType: 'checkbox',
@@ -173,7 +174,6 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
       onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'approved')
     }
   };
-
   return (
     <div className={classes.root}>
       {
@@ -190,7 +190,8 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
       <SignRequestLayout
         open={modalVisible}
         dealershipId={dealershipId}
-        title={'eSign Application Form'}
+        loanId={loanId}
+        title={'Sanction Letter'}
         onClose={() => setModalVisible(false)}
       />
     </div>

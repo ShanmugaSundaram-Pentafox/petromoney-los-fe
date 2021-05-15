@@ -125,12 +125,12 @@ const SignRequestLayout = ({ open, onClose, title, dealershipId, loanId }) => {
 
           ) : (
             <Grid container spacing={2}>
-              <Grid item sm={6}>
+              <Grid item sm={8}>
                 <PdfViewer
                   file={'http://docs.petromoney.in/111018/application/15101410_loan_application.pdf'}
                 />
               </Grid>
-              <Grid item sm={6}>
+              <Grid item sm={3}>
                 <Box>
                   <Typography variant="h4">Select Invitees</Typography>
                 </Box>

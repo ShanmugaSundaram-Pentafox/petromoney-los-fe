@@ -33,6 +33,10 @@ const useStyles = makeStyles(theme => ({
     top: theme.spacing(1),
     color: theme.palette.grey[500],
   },
+  sendButton: {
+    padding: "10px 20px",
+
+  }
 }));
 
 const SignRequestLayout = ({ open, onClose, title, dealershipId, loanId }) => {
@@ -42,6 +46,7 @@ const SignRequestLayout = ({ open, onClose, title, dealershipId, loanId }) => {
   const [selectedDealers, setSelectedDealers] = useState([])
   const [selectedCoAppicants, setSelectedCoAppicants] = useState([])
   const [docId, setDocId] = useState();
+  const [status, setStatus] = useState(false);
 
   useEffect(() => {
     if (dealershipId) {
@@ -81,28 +86,37 @@ const SignRequestLayout = ({ open, onClose, title, dealershipId, loanId }) => {
   }
 
   const sendInvitees = () => {
-    apiCall(`document/sign`, {
-      body: {
-        "dealer": selectedDealers,
-        "coapplicants": selectedCoAppicants,
-        "dealership_id": dealershipId,
-        "type": "sanction",
-        "loanId": loanId
-      },
-      method: "POST",
-    })
-      .then(res => {
-        if (res.status === "SUCCESS") {
-          // console.log("ressssss",res.message.data.documentId)
-          setDocId(res.message.data.documentId)
-          // onClose()
-        } else {
-          console.log('>> Document Details status error >> ', res)
-        }
+    if (selectedCoAppicants.length !== 0 && selectedDealers.length !== 0) {
+      apiCall(`document/sign`, {
+        body: {
+          "dealer": selectedDealers,
+          "coapplicants": selectedCoAppicants,
+          "dealership_id": dealershipId,
+          "type": "sanction",
+          "loanId": loanId
+        },
+        method: "POST",
       })
-      .catch(err => {
-        console.log(err)
-      });
+        .then(res => {
+          if (res.status === "SUCCESS") {
+            // console.log("ressssss",res.message.data.documentId)
+            setDocId(res.message.data.documentId)
+            // onClose()
+          } else {
+            console.log('>> Document Details status error >> ', res)
+          }
+        })
+        .catch(err => {
+          console.log(err)
+        });
+    }
+    else {
+      setStatus(true);
+      setTimeout(() => {
+      setStatus(false);
+      }, 3000)
+    
+    }
   }
 
   return (
@@ -125,7 +139,7 @@ const SignRequestLayout = ({ open, onClose, title, dealershipId, loanId }) => {
 
           ) : (
             <Grid container spacing={2}>
-              <Grid item sm={8}>
+              <Grid item sm={8} style={{ display: "flex" }}>
                 <PdfViewer
                   file={'http://docs.petromoney.in/111018/application/15101410_loan_application.pdf'}
                 />
@@ -152,16 +166,30 @@ const SignRequestLayout = ({ open, onClose, title, dealershipId, loanId }) => {
                     />
                   </Box>
                 </Box>
+                {
+                  status && (
+                    <Box pt={2} pl={3} color="error.main"  >
+                      You must select Dealers &amp; CoApplicants...
+                    </Box>
+                  )
+                }
               </Grid>
+
             </Grid>
           )
         }
       </DialogContent>
       <DialogActions>
         <Box pl={2} pr={2}>
-          <Button onClick={onClose} color="primary">
+          {/* <Button onClick={onClose} color="primary">
             Cancel
-          </Button>
+          </Button> */}
+          {/* {
+            selectedDealers.length !== 0 && selectedCoAppicants.length !== 0 ?
+              (<Button variant="contained" className={classes.sendButton} onClick={sendInvitees} color="primary">
+                Send
+              </Button>) : null
+          } */}
           <Button variant="contained" onClick={sendInvitees} color="primary">
             Send
           </Button>

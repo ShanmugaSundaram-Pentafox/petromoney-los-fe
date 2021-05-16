@@ -59,7 +59,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const [dealershipId, setDealershipId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
   const [loanId, setloanId] = useState();
-
+  const [type,setType] =useState("");
 
   useMount(() => {
     if (!loans || !loans.length) {
@@ -143,12 +143,12 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
             return (
               <>
                 <Tooltip title="Sanction Letter">
-                  <IconButton size="small" color="primary" aria-label="application" onClick={() => {setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setModalVisible(true); }}>
+                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType("sanction"); setModalVisible(true); }}>
                     <DescriptionIcon />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Loan Agreement">
-                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setDealershipId(value); setModalVisible(true); }}>
+                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType("agreement"); setModalVisible(true); }}>
                     <LoanAgreementIcon width={14} />
                   </IconButton>
                 </Tooltip>
@@ -180,7 +180,6 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
     //   onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'approved')
     // }
   };
-
   return (
     <div className={classes.root}>
       {
@@ -198,6 +197,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
         open={modalVisible}
         dealershipId={dealershipId}
         loanId={loanId}
+        type={type}
         title={'Sanction Letter'}
         onClose={() => setModalVisible(false)}
       />

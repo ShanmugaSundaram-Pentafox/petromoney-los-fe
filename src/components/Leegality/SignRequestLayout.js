@@ -11,12 +11,18 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Typography from '@material-ui/core/Typography';
 import PdfViewer from '../CommonComponents/PdfViewer/PdfViewer';
-import { getCoApplicantByDealershipId, getDealersByDealershipId } from '../../services/dealers.service';
+import { getCoApplicantByDealershipId, getDealersByDealershipId, getSanctionLetterPdf } from '../../services/dealers.service';
 import CardsCheckList from './components/CardsCheckList';
 import apiCall from '../../utils/api.util';
 import { getDealershipLoansById } from '../../services/dealerships.service';
 import { CompassCalibrationOutlined } from '@material-ui/icons';
 import LeegalityLayout from './LeegalityLayout';
+import { TableContainer } from '@material-ui/core';
+import { Table } from '@material-ui/core';
+import { TableBody } from '@material-ui/core';
+import { TableRow } from '@material-ui/core';
+import { TableCell } from '@material-ui/core';
+import { getLoanById } from '../../services/loans.service';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -35,11 +41,13 @@ const useStyles = makeStyles(theme => ({
   },
   sendButton: {
     padding: "10px 20px",
-
+  },
+  content: {
+    overflowY: "auto",
   }
 }));
 
-const SignRequestLayout = ({ open, onClose, title, dealershipId, loanId }) => {
+const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId }) => {
   const classes = useStyles();
   const [dealers, setDealers] = useState([])
   const [applicants, setApplicants] = useState([])
@@ -47,7 +55,8 @@ const SignRequestLayout = ({ open, onClose, title, dealershipId, loanId }) => {
   const [selectedCoAppicants, setSelectedCoAppicants] = useState([])
   const [docId, setDocId] = useState();
   const [status, setStatus] = useState(false);
-
+  const [sanctionUrl, setSanctionUrl] = useState();
+  const [loansData, setLoansData] = useState([]);
   useEffect(() => {
     if (dealershipId) {
       getDealersByDealershipId(dealershipId)
@@ -57,6 +66,14 @@ const SignRequestLayout = ({ open, onClose, title, dealershipId, loanId }) => {
         .catch(err => {
           console.log('getDealersByDealershipId >> ', err);
         });
+      getLoanById(dealershipId, loanId)
+        .then(res => {
+          setLoansData(res);
+        })
+        .catch(err => {
+          console.log('getLoansData >> ', err)
+        })
+
 
       getCoApplicantByDealershipId(dealershipId)
         .then(res => {
@@ -65,9 +82,15 @@ const SignRequestLayout = ({ open, onClose, title, dealershipId, loanId }) => {
         .catch(err => {
           console.log('getCoApplicantByDealershipId >> ', err)
         })
+      getSanctionLetterPdf(loanId, dealershipId)
+        .then(res => {
+          setSanctionUrl(res);
+        })
+        .catch(err => {
+          console.log('getSanctionLetterPDF >> ', err)
+        })
     }
-  }, [dealershipId]);
-
+  }, [dealershipId, loanId]);
   const updateSelectedDealers = (selectedStatus, inviteeData) => {
     if (selectedStatus) {
       setSelectedDealers([...selectedDealers, inviteeData])
@@ -113,17 +136,15 @@ const SignRequestLayout = ({ open, onClose, title, dealershipId, loanId }) => {
     else {
       setStatus(true);
       setTimeout(() => {
-      setStatus(false);
+        setStatus(false);
       }, 3000)
-    
+
     }
   }
-
   return (
     <Dialog
       fullWidth
       maxWidth={"lg"}
-      scroll="paper"
       open={open}
     >
       <DialogTitle disableTypography className={classes.dTitle}>
@@ -132,18 +153,139 @@ const SignRequestLayout = ({ open, onClose, title, dealershipId, loanId }) => {
           <CloseIcon />
         </IconButton>
       </DialogTitle>
-      <DialogContent dividers>
+      <DialogContent dividers className={classes.content}>
         {
           docId ? (
             <LeegalityLayout docId={docId} />
-
           ) : (
             <Grid container spacing={2}>
-              <Grid item sm={8} style={{ display: "flex" }}>
-                <PdfViewer
-                  file={'http://docs.petromoney.in/111018/application/15101410_loan_application.pdf'}
-                />
-              </Grid>
+              {
+                type === "sanction" || type=="esign" ? (
+                  <Grid item sm={8} >
+                    <PdfViewer
+                      file={'http://docs.petromoney.in/111018/application/15101410_loan_application.pdf'}
+                    />
+                  </Grid>) : (
+                  <Grid item sm={8} >
+                    <Grid container spacing={2}>
+                      <Grid item sm={10} >
+                        <Box pt={2}>
+                          <TableContainer>
+                            <Table>
+                              <TableBody>
+                                <TableRow>
+                                  <TableCell>Date of Agreement</TableCell>
+                                  <TableCell></TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell>Place of execution of Agreement</TableCell>
+                                  <TableCell>Chennai</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell>Name of the borrower</TableCell>
+                                  {
+                                    dealers.map(item => {
+                                      return <TableCell>{item.first_name}</TableCell>
+                                    })
+                                  }
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell>Dealership Address</TableCell>
+                                  {
+                                    dealers?.map(item => {
+                                      return <TableCell>{item.address}</TableCell>
+                                    })
+                                  }
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell>Residence Address</TableCell>
+                                  {
+                                    dealers?.map(item => {
+                                      return <TableCell>{item.address}</TableCell>
+                                    })
+                                  }
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell>Name of Co-borrower</TableCell>
+                                  {
+                                    applicants.map(item => {
+                                      return <TableCell>{item.first_name}</TableCell>
+                                    })
+                                  }
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell>E-mail Address of Co-borrower</TableCell>
+                                  {
+                                    applicants.map(item => {
+                                      return <TableCell>{item.email}</TableCell>
+                                    })
+                                  }
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell>Contact Number of Co-borrower</TableCell>
+                                  {
+                                    applicants.map(item => {
+                                      return <TableCell>{item.mobile}</TableCell>
+                                    })
+                                  }
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell>Office/Residential Address of Co-borrower</TableCell>
+                                  {
+                                    applicants.map(item => {
+                                      return <TableCell>{item.address}</TableCell>
+                                    })
+                                  }
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell>Name of Guarantor</TableCell>
+                                  <TableCell></TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell>E-mail Address of Guarantor</TableCell>
+                                  <TableCell></TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell>Contact Number of Guarantor</TableCell>
+                                  <TableCell></TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell>Loan Amount</TableCell>
+                                  <TableCell></TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell>Loan Amount (In Words)</TableCell>
+                                  <TableCell></TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell>Office/ Residential Address of Guarantor</TableCell>
+                                  <TableCell></TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell>Loan Cycle</TableCell>
+                                  <TableCell></TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell>Interest rate</TableCell>
+                                  <TableCell></TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell>Overdue Interest</TableCell>
+                                  <TableCell></TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell>Facility of Tenor</TableCell>
+                                  <TableCell></TableCell>
+                                </TableRow>
+                              </TableBody>
+                            </Table>
+                          </TableContainer>
+                        </Box>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                )
+              }
               <Grid item sm={3}>
                 <Box>
                   <Typography variant="h4">Select Invitees</Typography>
@@ -190,9 +332,14 @@ const SignRequestLayout = ({ open, onClose, title, dealershipId, loanId }) => {
                 Send
               </Button>) : null
           } */}
-          <Button variant="contained" onClick={sendInvitees} color="primary">
-            Send
-          </Button>
+          {
+            docId ? null : (
+              <Button variant="contained" onClick={sendInvitees} color="primary">
+                Send
+              </Button>
+            )
+          }
+
         </Box>
       </DialogActions>
     </Dialog>

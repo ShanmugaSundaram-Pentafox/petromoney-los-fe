@@ -68,6 +68,8 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const [loanId, setloanId] = useState();
   const [dealershipId, setDealershipId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
+  const [type,setType] =useState("");
+
   useMount(() => {
     if (!loans || !loans.length) {
       getLoansByStatus('submitted')
@@ -146,7 +148,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
           customBodyRender: (value, r) => {
             return (
               <Tooltip title="eSign Application">
-                <IconButton size="small" color="primary" aria-label="application" onClick={() => {  setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setModalVisible(true); }}>
+                <IconButton size="small" color="primary" aria-label="application" onClick={() => {  setloanId(loans?.[r.rowIndex]['id']); setType("esign"); setDealershipId(value); setModalVisible(true); }}>
                   <div>
                     <ESignIcon width={24} />
                     {/* <img
@@ -194,6 +196,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
         open={modalVisible}
         dealershipId={dealershipId}
         loanId={loanId}
+        type={type}
         title={'eSign Application Form'}
         onClose={() => setModalVisible(false)}
       />

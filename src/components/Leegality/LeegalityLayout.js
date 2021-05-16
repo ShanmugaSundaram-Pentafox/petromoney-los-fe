@@ -76,6 +76,25 @@ const LeegalityLayout = ({ docId }) => {
         console.log(err)
       });
   }, [])
+
+  const ResendNotification = () => {
+    apiCall(`/document/resend`)
+    .then(res => {
+      console.log("res",res)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
+  const ActivateDealer = () => {
+    apiCall(`/document/reactivate/${docId}`)
+    .then(res => {
+        console.log("res",res)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
   return (
     <Box bgcolor="#fbfbfb">
       <Grid container spacing={2}>
@@ -85,7 +104,6 @@ const LeegalityLayout = ({ docId }) => {
         <Grid item sm={3}>
           <Box pt={2}>
             <TableContainer>
-
               <Table aria-label="leegality table">
                 <TableBody>
                   <TableRow>
@@ -142,9 +160,9 @@ const LeegalityLayout = ({ docId }) => {
                     <div className="card-footer">
                       {
                         item.active ?
-                          <Button variant="outlined" color="secondary" size="small">Resend Notification</Button>
+                          <Button variant="outlined" color="secondary" onClick={ResendNotification} size="small">Resend Notification</Button>
                           :
-                          <Button variant="outlined" color="secondary" size="small">Activate</Button>
+                          <Button variant="outlined" color="secondary" onClick={ActivateDealer} size="small">Activate</Button>
                       }
                       <Button variant="outlined" color="secondary" size="small">Details</Button>
                     </div>

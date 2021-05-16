@@ -14,7 +14,7 @@ import { downloadPDF } from '../../../services/common.service';
 
 const Wrapper = styled.div`
   position: relative;
-  flex:1;
+  display:flex;
   .react-pdf__Page__svg {
     box-shadow: 0 0 5px rgba(0,0,0,.2);
     border: 1px solid #d3d3d3;
@@ -62,7 +62,7 @@ const PdfViewer = ({ title, file, isBase64, height='100Vh', showDownload }) => {
 
   return (
     <Wrapper>
-      <Box p={2} bgcolor="#f8f8f8" height={height} style={{ overflowY: 'hidden'}}>
+      <Box p={2} bgcolor="#f8f8f8" height={height} style={{flex:1}} >
         <iframe src={isBase64 ? `data:application/pdf;base64,${file}` : file} width="100%" height="100%" frameBorder="0" ></iframe>
         {/* <Document
           renderMode="svg"

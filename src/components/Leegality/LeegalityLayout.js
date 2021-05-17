@@ -17,6 +17,7 @@ import CheckCircleOutlineRoundedIcon from '@material-ui/icons/CheckCircleOutline
 import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
 import PdfViewer from '../CommonComponents/PdfViewer/PdfViewer';
 import apiCall from '../../utils/api.util';
+import { DockTwoTone } from '@material-ui/icons';
 
 const Card = styled.div`
   background-color: #fff;
@@ -45,7 +46,10 @@ const Card = styled.div`
 const LeegalityLayout = ({ docId }) => {
   const [auditTrails, setAuditTrails] = useState([]);
   const [docDetails, setDocDetails] = useState({});
+  const [successStatus, setSuccessStatus] = useState(false);
+  const [signUrl, setSignUrl] = useState();
 
+  console.log("doc details", docDetails.invitations);
   useEffect(() => {
 
     apiCall(`document/details/${docId}`)
@@ -77,23 +81,44 @@ const LeegalityLayout = ({ docId }) => {
       });
   }, [])
 
-  const ResendNotification = () => {
-    apiCall(`/document/resend`)
-    .then(res => {
-      console.log("res",res)
+  const ResendNotification = (docDetails) => {
+    apiCall(`document/resend`, {
+
+      method: "POST",
+      data: docDetails,
     })
-    .catch(err => {
-      console.log(err)
-    })
+      .then(res => {
+        setTimeout(() => {
+          setSuccessStatus(res.message || 'Notification send successfully')
+        }, 1500)
+        console.log("res", res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
   const ActivateDealer = () => {
-    apiCall(`/document/reactivate/${docId}`)
-    .then(res => {
-        console.log("res",res)
-    })
-    .catch(err => {
-      console.log(err)
-    })
+    apiCall(`document/reactivate/${docId}`)
+      .then(res => {
+        console.log("res", res)
+        apiCall(`document/details/${docId}`)
+          .then(res => {
+            if (res.status === "SUCCESS") {
+              if (res.data?.status) {
+                setDocDetails(res?.data?.data)
+              }
+            } else {
+              console.log('>> Document Details status error >> ', res)
+            }
+          })
+          .catch(err => {
+            console.log(err)
+          });
+
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
   return (
     <Box bgcolor="#fbfbfb">
@@ -160,7 +185,7 @@ const LeegalityLayout = ({ docId }) => {
                     <div className="card-footer">
                       {
                         item.active ?
-                          <Button variant="outlined" color="secondary" onClick={ResendNotification} size="small">Resend Notification</Button>
+                          <Button variant="outlined" color="secondary" onClick={() => ResendNotification(item.signUrl)} size="small">Resend Notification</Button>
                           :
                           <Button variant="outlined" color="secondary" onClick={ActivateDealer} size="small">Activate</Button>
                       }
@@ -178,6 +203,13 @@ const LeegalityLayout = ({ docId }) => {
               auditTrails.map((item, i) => (
                 <ActivityBox key={'act-' + i} {...item} />
               ))
+            }
+            {
+              successStatus && (
+                <Box pt={2} pl={3} color="success.main"  >
+                  {successStatus}
+                </Box>
+              )
             }
           </Box>
         </Grid>

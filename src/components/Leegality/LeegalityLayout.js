@@ -49,7 +49,6 @@ const LeegalityLayout = ({ docId }) => {
   const [successStatus, setSuccessStatus] = useState(false);
   const [signUrl, setSignUrl] = useState();
 
-  console.log("doc details", docDetails.invitations);
   useEffect(() => {
 
     apiCall(`document/details/${docId}`)
@@ -91,7 +90,6 @@ const LeegalityLayout = ({ docId }) => {
         setTimeout(() => {
           setSuccessStatus(res.message || 'Notification send successfully')
         }, 1500)
-        console.log("res", res)
       })
       .catch(err => {
         console.log(err)
@@ -100,7 +98,6 @@ const LeegalityLayout = ({ docId }) => {
   const ActivateDealer = () => {
     apiCall(`document/reactivate/${docId}`)
       .then(res => {
-        console.log("res", res)
         apiCall(`document/details/${docId}`)
           .then(res => {
             if (res.status === "SUCCESS") {

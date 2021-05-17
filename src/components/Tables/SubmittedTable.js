@@ -71,7 +71,6 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [type,setType] =useState("");
   const [ loading, setLoading ] = useState(false);
-console.log("submitted loans",loans);
   useMount(() => {
     if (!loans || !loans.length) {
       setLoading(true);

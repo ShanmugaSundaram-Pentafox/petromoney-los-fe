@@ -51,7 +51,6 @@ const OverDueTable = () => {
         console.log(e);
       });
   })
-  console.log("over due reports", loans)
   usePageTitle('Report')
   const columns = useMemo(() => {
     return [

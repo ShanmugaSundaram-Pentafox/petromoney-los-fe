@@ -21,6 +21,8 @@ import Currency from '../Number/Currency';
 import SignRequestLayout from '../Leegality/SignRequestLayout';
 // import CircularProgress from '@material-ui/core/CircularProgress';
 import { ReactComponent as LoanAgreementIcon } from '../../icons/loan_agreement.svg';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 
 
 const useStyles = makeStyles(theme => ({
@@ -58,16 +60,22 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const classes = useStyles();
   const [dealershipId, setDealershipId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [loanId, setloanId] = useState();
-  const [type,setType] =useState("");
+  const [type, setType] = useState("");
 
   useMount(() => {
     if (!loans || !loans.length) {
+      setLoading(true);
       getLoansByStatus('approved')
         .then(data => {
           setLoansData('approved', data);
+          setLoading(false);
+
         })
-        .catch(e => null)
+        .catch(e => {
+          setLoading(false);
+        })
     }
   });
 
@@ -190,9 +198,11 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
             columns={columns}
             options={options}
           />
-        ) : <Paper style={{ padding: 10 }}>No Approved Applications</Paper>
+        ) :(!loading && <Paper style={{ padding: 10 }}>No Approved Applications</Paper>)
       }
-
+      {
+        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
+      }
       <SignRequestLayout
         open={modalVisible}
         dealershipId={dealershipId}

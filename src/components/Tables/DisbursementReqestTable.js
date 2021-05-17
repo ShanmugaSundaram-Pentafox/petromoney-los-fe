@@ -142,7 +142,7 @@ const DisbursementReqestTable = ({ title, loans, setLoansData, onRowClick }) => 
             columns={columns}
             options={options}
           />
-        ) : <Paper style={{ padding: 10 }} >No Pending Disbursement Approvals</Paper>   
+        ) : (!loading && <Paper style={{ padding: 10 }} >No Pending Disbursement Approvals</Paper>)
       }
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>

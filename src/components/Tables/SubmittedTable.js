@@ -24,6 +24,7 @@ import Currency from '../Number/Currency';
 // import PdfViewer from '../CommonComponents/PdfViewer/PdfViewer';
 import SignRequestLayout from '../Leegality/SignRequestLayout';
 import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -69,14 +70,19 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const [dealershipId, setDealershipId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
   const [type,setType] =useState("");
+  const [ loading, setLoading ] = useState(false);
 
   useMount(() => {
     if (!loans || !loans.length) {
+      setLoading(true);
       getLoansByStatus('submitted')
         .then(data => {
           setLoansData('submitted', data);
+          setLoading(false);
         })
-        .catch(e => null)
+        .catch(e => {
+          setLoading(false);
+        })
     }
   });
   const columns = useMemo(() => {
@@ -189,9 +195,11 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
             columns={columns}
             options={options}
           />
-        ) : <Paper style={{ padding: 10 }}>No Submitted Records</Paper>
+        ) : ( !loading && <Paper style={{ padding: 10 }}>No Submitted Records</Paper>)
       }
-
+      {
+        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
+      }
       <SignRequestLayout
         open={modalVisible}
         dealershipId={dealershipId}

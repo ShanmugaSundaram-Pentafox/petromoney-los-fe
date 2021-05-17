@@ -13,6 +13,7 @@ import FormDialog from "../../../components/CommonComponents/FormDialog/FormDial
 import AddNewTransportsForm from "./AddNewTransportsForm"
 import AddNewVehicleForm from "./AddNewVehicleForm"
 import { Grid } from "@material-ui/core"
+import { Paper } from "@material-ui/core"
 // import AddNewVehicleForm from "./AddNewVehicleForm"
 
 
@@ -25,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
 const VehiclesLoanTable = () => {
   const [data, setData] = useState([]);
   const [openModal, setOpenModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   const classes = useStyles()
 
   const columns = useMemo(() => {
@@ -83,11 +85,14 @@ const VehiclesLoanTable = () => {
   }, [])
 
   useMount(() => {
+    setLoading(true)
     getAllVehicleLoans()
       .then((data) => {
         setData(data)
+        setLoading(false)
       })
       .catch((e) => {
+        setLoading(false)
         console.log(e);
       })
   })
@@ -125,15 +130,17 @@ const VehiclesLoanTable = () => {
           columns={columns}
           options={options}
         />
-      ) : (
-        <CircularProgress />
-      )}
+      ) : ( !loading &&  <Paper style={{ padding: 10 }}>No Vehicle Loans</Paper>)
+      }
+      {
+        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
+      }
       <FormDialog
         title="Add Vehicle"
         open={openModal}
         onClose={() => setOpenModal(false)}
       >
-        <AddNewVehicleForm  />
+        <AddNewVehicleForm />
       </FormDialog>
     </Grid>
   )

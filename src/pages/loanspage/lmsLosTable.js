@@ -12,6 +12,7 @@ import { getAllExceptions } from '../../services/loans.service';
 import { useMount } from "react-use";
 import Grid from '@material-ui/core/Grid';
 import Skeleton from '@material-ui/lab/Skeleton';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles({
     table: {
@@ -22,13 +23,17 @@ const LmsLosTable = () => {
     usePageTitle('Exceptions');
     const classes = useStyles();
     const [exceptions, setExceptions] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     useMount(() => {
+        setLoading(true)
         getAllExceptions()
             .then((data) => {
                 setExceptions(data)
+                setLoading(false);
             })
             .catch((e) => {
+                setLoading(false);
                 console.log(e);
             });
     });
@@ -36,7 +41,7 @@ const LmsLosTable = () => {
     return (
         <Grid item xs={6}>
             {
-             Array.isArray(exceptions) && exceptions.length ? (
+                Array.isArray(exceptions) && exceptions.length ? (
                     <TableContainer component={Paper}>
                         <Table className={classes.table} aria-label="simple table">
                             <TableHead>
@@ -58,7 +63,10 @@ const LmsLosTable = () => {
                         </Table>
                     </TableContainer>
 
-                ) : <Paper style={{ padding: 10 }}>No Exceptions Found</Paper>
+                ) : (!loading && <Paper style={{ padding: 10 }}>No Exceptions Found</Paper>)
+            }
+            {
+                loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
             }
 
         </Grid>

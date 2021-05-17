@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from "mui-datatables";
@@ -24,17 +24,22 @@ const useStyles = makeStyles(theme => ({
 
 const LoanBookTable = ({ title, loanBookData, setLoanBookData }) => {
   const classes = useStyles();
+  const [loading, setLoading] = useState(false);
 
   useMount(() => {
-    if(!loanBookData || !loanBookData.length) {
+    if (!loanBookData || !loanBookData.length) {
+      setLoading(true);
       getLoanBookData()
         .then(data => {
-            setLoanBookData(data);
+          setLoanBookData(data);
+          setLoading(false);
         })
-        .catch(e => null)
+        .catch(e => {
+          setLoading(false);
+        })
     }
   });
-  
+
   const columns = useMemo(() => {
     return [
       {
@@ -197,8 +202,12 @@ const LoanBookTable = ({ title, loanBookData, setLoanBookData }) => {
             columns={columns}
             options={options}
           />
-        ) : <Paper style={{ padding: 10 }} >No Loan Book Records</Paper> 
+        ) : (!loading && <Paper style={{ padding: 10 }} >No Loan Book Records</Paper>)
       }
+      {
+        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
+      }
+
     </div>
   )
 }
@@ -208,7 +217,7 @@ const mapStateToProps = ({ loans }) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    setLoanBookData : (data) => dispatch(setLoanBook(data))
+  setLoanBookData: (data) => dispatch(setLoanBook(data))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoanBookTable);

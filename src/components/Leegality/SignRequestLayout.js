@@ -23,6 +23,7 @@ import { TableBody } from '@material-ui/core';
 import { TableRow } from '@material-ui/core';
 import { TableCell } from '@material-ui/core';
 import { getLoanById } from '../../services/loans.service';
+import { getAllGuarantor, getSanctionLetter } from '../../services/leegality.service';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -55,8 +56,11 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId })
   const [selectedCoAppicants, setSelectedCoAppicants] = useState([])
   const [docId, setDocId] = useState();
   const [status, setStatus] = useState(false);
-  const [sanctionUrl, setSanctionUrl] = useState();
   const [loansData, setLoansData] = useState([]);
+  const [sanctionUrl, setSanctionUrl] = useState();
+  const [guarantor, setGuarantor] = useState([]);
+
+
   useEffect(() => {
     if (dealershipId) {
       getDealersByDealershipId(dealershipId)
@@ -73,8 +77,6 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId })
         .catch(err => {
           console.log('getLoansData >> ', err)
         })
-
-
       getCoApplicantByDealershipId(dealershipId)
         .then(res => {
           setApplicants(res);
@@ -82,12 +84,23 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId })
         .catch(err => {
           console.log('getCoApplicantByDealershipId >> ', err)
         })
-      getSanctionLetterPdf(loanId, dealershipId)
+      getSanctionLetter(loanId, dealershipId)
         .then(res => {
+          console.log("sanction letter 1",res);
           setSanctionUrl(res);
+        })
+        .then(res => {
+          console.log("sanction letter",res);
         })
         .catch(err => {
           console.log('getSanctionLetterPDF >> ', err)
+        })
+      getAllGuarantor(dealershipId)
+        .then(res => {
+          setGuarantor(res);
+        })
+        .catch(err => {
+          console.log('getAllGuarantor >>', err)
         })
     }
   }, [dealershipId, loanId]);
@@ -99,6 +112,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId })
       setSelectedDealers(result)
     }
   }
+  console.log("guarantor details", guarantor);
   const updateSelectedCoAppicants = (selectedStatus, inviteeData) => {
     if (selectedStatus) {
       setSelectedCoAppicants([...selectedCoAppicants, inviteeData])
@@ -122,9 +136,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId })
       })
         .then(res => {
           if (res.status === "SUCCESS") {
-            // console.log("ressssss",res.message.data.documentId)
-            setDocId(res.message.data.documentId)
-            // onClose()
+            setDocId(res.message.data.document_id)
           } else {
             console.log('>> Document Details status error >> ', res)
           }
@@ -160,9 +172,10 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId })
           ) : (
             <Grid container spacing={2}>
               {
-                type === "sanction" || type=="esign" ? (
+                type === "sanction" || type == "esign" ? (
                   <Grid item sm={8} >
                     <PdfViewer
+                  
                       file={'http://docs.petromoney.in/111018/application/15101410_loan_application.pdf'}
                     />
                   </Grid>) : (

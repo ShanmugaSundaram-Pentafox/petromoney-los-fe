@@ -47,15 +47,22 @@ const useStyles = makeStyles(theme => ({
 
 const DueTable = ({ onRowClick }) => {
   const classes = useStyles();
-
   const [loans, setLoans] = useState({})
   const [modalData, setModalData] = useState({});
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState("Yes")
 
   useMount(async () => {
-    var a = await getDealerDetails()
-    setLoans(a.due)
+    setLoading(true)
+    getReport()
+      .then((data) => {
+        setLoans(data.overdue)
+        setLoading(false);
+      })
+      .catch((e) => {
+        setLoading(false);
+        console.log(e);
+      });
   })
   const columns = useMemo(() => {
     return [
@@ -95,46 +102,22 @@ const DueTable = ({ onRowClick }) => {
     rowsPerPage: 15,
     rowsPerPageOptions: [15, 20, 30],
   };
-
-  // if (loans.length === 0) {
-  //   return (
-  //     <div className={classes.root}>
-  //       <Grid item xs={12}>
-  //         <Skeleton variant="rect" width="100%" height={600} />
-  //       </Grid>
-  //     </div>
-  //   )
-  // }
-  // else {
   return (
     <>
       <div className={classes.root} >
-        {/* {(loans.length === 0) ? (
+        {
+          loading ? (
             <Grid item xs={12}>
               <Skeleton variant="rect" width="100%" height={400} />
             </Grid>
-          ) : (
-              Array.isArray(loans) && loans.length ? (
-                <MUIDataTable
-                  title={"Due Reports"}
-                  data={loans}
-                  columns={columns}
-                  options={options}
-                />
-              ) : <Paper style={{ padding: 10 }}>No Due Reports</Paper>
-            )} */}
-        {
-          Array.isArray(loans) && loans.length ? (
+          ) : Array.isArray(loans) && loans.length ? (
             <MUIDataTable
-              title={"Over Due Reports"}
+              title={"Due Reports"}
               data={loans}
               columns={columns}
               options={options}
             />
-          ) :(!loading && <Paper style={{ marginTop: 10, padding: 10 }}>No Due Reports</Paper>)
-        }
-        {
-          loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
+          ) : <Paper style={{ padding: 10 }}>No overdue Reports found</Paper>
         }
       </div>
     </>

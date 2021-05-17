@@ -63,7 +63,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const [loading, setLoading] = useState(false);
   const [loanId, setloanId] = useState();
   const [type, setType] = useState("");
-
+console.log("approved loans",loans);
   useMount(() => {
     if (!loans || !loans.length) {
       setLoading(true);

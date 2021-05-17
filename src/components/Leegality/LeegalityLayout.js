@@ -108,7 +108,7 @@ const LeegalityLayout = ({ docId }) => {
                 <TableBody>
                   <TableRow>
                     <TableCell>Document ID</TableCell>
-                    <TableCell>{docDetails?.documentId}</TableCell>
+                    <TableCell>{docDetails?.document_id}</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>Name</TableCell>

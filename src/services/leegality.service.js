@@ -40,9 +40,9 @@ export const getAllGuarantor = (dealerId) => {
 export const getSanctionLetter = (loanId,dealerId) => {
     return new Promise((resolve, reject) => {
       apiCall(`loans/${loanId}/${dealerId}/sanction`)
-        .then(({ status, data, message }) => {
+        .then(({ status, file, message }) => {
           if(status === "SUCCESS") {
-            resolve(data);
+            resolve(file);
           } else {
             reject(message);
           }

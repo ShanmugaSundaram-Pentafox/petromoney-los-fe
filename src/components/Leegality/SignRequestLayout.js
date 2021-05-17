@@ -56,6 +56,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId })
   const [selectedCoAppicants, setSelectedCoAppicants] = useState([])
   const [docId, setDocId] = useState();
   const [status, setStatus] = useState(false);
+  const [successStatus, setSuccessStatus] = useState(false);
   const [loansData, setLoansData] = useState([]);
   const [sanctionUrl, setSanctionUrl] = useState();
   const [guarantor, setGuarantor] = useState([]);
@@ -73,6 +74,9 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId })
       getLoanById(dealershipId, loanId)
         .then(res => {
           setLoansData(res);
+          if(res?.document_id) {
+            setDocId(res?.document_id)
+          }
         })
         .catch(err => {
           console.log('getLoansData >> ', err)
@@ -88,9 +92,6 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId })
         .then(res => {
           console.log("sanction letter 1",res);
           setSanctionUrl(res);
-        })
-        .then(res => {
-          console.log("sanction letter",res);
         })
         .catch(err => {
           console.log('getSanctionLetterPDF >> ', err)
@@ -136,7 +137,10 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId })
       })
         .then(res => {
           if (res.status === "SUCCESS") {
-            setDocId(res.message.data.document_id)
+            setSuccessStatus(res.message || 'eSign request send successfully')
+            setTimeout(() => {
+              setDocId(res?.data?.document_id)
+            }, 1500);
           } else {
             console.log('>> Document Details status error >> ', res)
           }
@@ -174,10 +178,14 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId })
               {
                 type === "sanction" || type == "esign" ? (
                   <Grid item sm={8} >
-                    <PdfViewer
-                  
-                      file={'http://docs.petromoney.in/111018/application/15101410_loan_application.pdf'}
-                    />
+                    {
+                      sanctionUrl ? 
+                        <PdfViewer
+                          isBase64
+                          file={sanctionUrl}
+                        />
+                        : null
+                    }
                   </Grid>) : (
                   <Grid item sm={8} >
                     <Grid container spacing={2}>
@@ -325,6 +333,13 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId })
                   status && (
                     <Box pt={2} pl={3} color="error.main"  >
                       You must select Dealers &amp; CoApplicants...
+                    </Box>
+                  )
+                }
+                {
+                  successStatus && (
+                    <Box pt={2} pl={3} color="success.main"  >
+                      {successStatus}
                     </Box>
                   )
                 }

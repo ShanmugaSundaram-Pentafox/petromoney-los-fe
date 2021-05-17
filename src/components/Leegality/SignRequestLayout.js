@@ -74,9 +74,9 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId })
       getLoanById(dealershipId, loanId)
         .then(res => {
           setLoansData(res);
-          // if(res?.document_id) {
-          //   setDocId(res?.document_id)
-          // }
+          if(res?.document_id) {
+            setDocId(res?.document_id)
+          }
         })
         .catch(err => {
           console.log('getLoansData >> ', err)

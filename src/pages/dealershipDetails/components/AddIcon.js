@@ -11,7 +11,7 @@ import Popper from '@material-ui/core/Popper';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 
-const options = ['Add Dealer', 'Add Co-Applicants'];
+const options = ['Add Dealer', 'Add Co-Applicants', 'Add Guarantor'];
 
 const AddIconButton = ({ onClickAddMenu }) => {
   const [open, setOpen] = React.useState(false);

@@ -63,7 +63,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const [loading, setLoading] = useState(false);
   const [loanId, setloanId] = useState();
   const [type, setType] = useState("");
-  console.log("approved table",loans)
+  console.log("approved table",loans);
   useMount(() => {
     if (!loans || !loans.length) {
       setLoading(true);
@@ -71,7 +71,6 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
         .then(data => {
           setLoansData('approved', data);
           setLoading(false);
-
         })
         .catch(e => {
           setLoading(false);
@@ -198,7 +197,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
             columns={columns}
             options={options}
           />
-        ) :(!loading && <Paper style={{ padding: 10 }}>No Approved Applications</Paper>)
+        ) : (!loading && <Paper style={{ padding: 10 }}>No Approved Applications</Paper>)
       }
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>

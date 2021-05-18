@@ -60,7 +60,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId })
   const [loansData, setLoansData] = useState([]);
   const [sanctionUrl, setSanctionUrl] = useState();
   const [guarantor, setGuarantor] = useState([]);
-
+console.log("typeeeeeeeeee",type)
 
   useEffect(() => {
     if (dealershipId) {
@@ -74,7 +74,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId })
       getLoanById(dealershipId, loanId)
         .then(res => {
           setLoansData(res);
-          if(res?.document_id) {
+          if (res?.document_id) {
             setDocId(res?.document_id)
           }
         })
@@ -162,7 +162,10 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId })
       open={open}
     >
       <DialogTitle disableTypography className={classes.dTitle}>
-        <strong>{title}</strong>
+        {
+          type === 'sanction' ? (<strong>Sanction Letter</strong>) : type === 'agreement' ? <strong>Loan Agreement</strong> : <strong>{title}</strong>
+        }
+        {/* <strong>{title}</strong> */}
         <IconButton size="small" aria-label="close" className={classes.closeButton} onClick={onClose}>
           <CloseIcon />
         </IconButton>
@@ -177,7 +180,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId })
                 type === "sanction" || type == "esign" ? (
                   <Grid item sm={8} >
                     {
-                      sanctionUrl ? 
+                      sanctionUrl ?
                         <PdfViewer
                           isBase64
                           file={sanctionUrl}
@@ -258,15 +261,27 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId })
                                 </TableRow>
                                 <TableRow>
                                   <TableCell>Name of Guarantor</TableCell>
-                                  <TableCell></TableCell>
+                                  {
+                                    guarantor.length !== 0 ? guarantor.map(item => {
+                                      return <TableCell>{item.first_name}</TableCell>
+                                    }) : <TableCell> - </TableCell>
+                                  }
                                 </TableRow>
                                 <TableRow>
                                   <TableCell>E-mail Address of Guarantor</TableCell>
-                                  <TableCell></TableCell>
+                                  {
+                                    guarantor.length !== 0 ? guarantor.map(item => {
+                                      return <TableCell>{item.email}</TableCell>
+                                    }) : <TableCell> - </TableCell>
+                                  }
                                 </TableRow>
                                 <TableRow>
                                   <TableCell>Contact Number of Guarantor</TableCell>
-                                  <TableCell></TableCell>
+                                  {
+                                    guarantor.length !== 0 ? guarantor.map(item => {
+                                      return <TableCell>{item.mobile}</TableCell>
+                                    }) : <TableCell> - </TableCell>
+                                  }
                                 </TableRow>
                                 <TableRow>
                                   <TableCell>Loan Amount</TableCell>
@@ -278,23 +293,27 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId })
                                 </TableRow>
                                 <TableRow>
                                   <TableCell>Office/ Residential Address of Guarantor</TableCell>
-                                  <TableCell></TableCell>
+                                  {
+                                    guarantor.length !== 0 ? guarantor.map(item => {
+                                      return <TableCell>{item.address}</TableCell>
+                                    }) : <TableCell> - </TableCell>
+                                  }
                                 </TableRow>
                                 <TableRow>
                                   <TableCell>Loan Cycle</TableCell>
-                                  <TableCell></TableCell>
+                                  <TableCell>15 Days - Revolving Credit</TableCell>
                                 </TableRow>
                                 <TableRow>
                                   <TableCell>Interest rate</TableCell>
-                                  <TableCell></TableCell>
+                                  <TableCell>18 % P.A.</TableCell>
                                 </TableRow>
                                 <TableRow>
                                   <TableCell>Overdue Interest</TableCell>
-                                  <TableCell></TableCell>
+                                  <TableCell>30 % P.A.</TableCell>
                                 </TableRow>
                                 <TableRow>
                                   <TableCell>Facility of Tenor</TableCell>
-                                  <TableCell></TableCell>
+                                  <TableCell>12 Months</TableCell>
                                 </TableRow>
                               </TableBody>
                             </Table>
@@ -365,7 +384,6 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId })
               </Button>
             )
           }
-
         </Box>
       </DialogActions>
     </Dialog>

@@ -94,15 +94,15 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
   }
 
   const validationSchema = Yup.object().shape({
-    first_name: Yup.string().min(2,'first name must be atleast 2 characters').required("Enter first name"),
+    first_name: Yup.string().min(2, 'first name must be atleast 2 characters').required("Enter first name"),
     last_name: Yup.string().min(1).required("Enter last name"),
     gender: Yup.string().required("Enter gender"),
     dob: Yup.string().required("Choose date of birth"),
-    email:Yup.string().email('Enter valid email').required("Enter email"),
-    address: Yup.string().min(6,'address must be atleast 6 characters').required("Enter address"),
+    email: Yup.string().email('Enter valid email').required("Enter email"),
+    address: Yup.string().min(6, 'address must be atleast 6 characters').required("Enter address"),
     residing_since: Yup.number().required("Enter the year"),
     marital_status: Yup.string("Enter your Marital status"),
-    mobile: Yup.string().matches(/^\d{10}$/,'Invalid mobile number').required("Enter valid mobile number"),
+    mobile: Yup.string().matches(/^\d{10}$/, 'Invalid mobile number').required("Enter valid mobile number"),
     pan: Yup.string().matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, "Invalid PAN").required("Enter PAN").uppercase(),
     aadhar: Yup.string().matches(/^(\d{12})$|^(\d{16})$/, "Invalid aadhar").required("Enter valid aadhar"),
     ...coApplicantFields
@@ -189,7 +189,7 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
 
   return (
     <div className={classes.sidePanelFormWrapper}>
-      <Typography className={classes.sidePanelTitle} variant="h4">{modelType === 'DEALER' ? 'Dealer Edit Form' : 'CoApplicant Edit Form'}</Typography>
+      <Typography className={classes.sidePanelTitle} variant="h4">{modelType === 'DEALER' ? 'Dealer Edit Form' : modelType === 'COAPPLICANT' ? 'CoApplicant Edit Form' : 'Guarantor Edit Form'}</Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <Stepper activeStep={activeStep} orientation="vertical" className={classes.stepperRoot}>
           <Step key={data.id}>

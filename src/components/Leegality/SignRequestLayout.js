@@ -416,7 +416,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId })
             )
           }
           {
-            !loading && loansData?.document_id ? null : (
+            !successStatus && !loading && loansData?.document_id ? null : (
               <Button variant="contained" onClick={sendInvitees} color="primary">
                 Send
               </Button>

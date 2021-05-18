@@ -120,6 +120,22 @@ export const getLoanById = (dealershipId, loanId) => {
   });
 }
 
+export const getLoanDocumentHistoryById = (loanId, type) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`document/history/${loanId}?document_type=${type}`)
+      .then(({ status, data, message }) => {
+        if(status === "SUCCESS") {
+          resolve(data[0] || {});
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
 export const updateLoanApprovalStatusById = (dealershipId, loanId, body) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.dealership}/${dealershipId}/loan/${loanId}/approval`, {

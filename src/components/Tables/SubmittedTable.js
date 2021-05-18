@@ -153,7 +153,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
           customBodyRender: (value, r) => {
             return (
               <Tooltip title="eSign Application">
-                <IconButton size="small" color="primary" aria-label="application" onClick={() => {  setloanId(loans?.[r.rowIndex]['id']); setType("esign"); setDealershipId(value); setModalVisible(true); }}>
+                <IconButton size="small" color="primary" aria-label="application" onClick={() => {  setloanId(loans?.[r.rowIndex]['id']); setType("application"); setDealershipId(value); setModalVisible(true); }}>
                   <div>
                     <ESignIcon width={24} />
                     {/* <img

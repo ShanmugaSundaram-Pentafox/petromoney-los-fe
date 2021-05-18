@@ -37,9 +37,9 @@ export const getAllGuarantor = (dealerId) => {
 //         })
 //     });
 //   }
-export const getSanctionLetter = (loanId,dealerId) => {
+export const getPdfContent = (loanId, dealerId, type) => {
     return new Promise((resolve, reject) => {
-      apiCall(`loans/${loanId}/${dealerId}/sanction`)
+      apiCall(`loans/${loanId}/${dealerId}/${type}`)
         .then(({ status, file, message }) => {
           if(status === "SUCCESS") {
             resolve(file);

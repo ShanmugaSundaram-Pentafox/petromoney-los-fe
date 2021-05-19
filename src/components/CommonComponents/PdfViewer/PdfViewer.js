@@ -14,6 +14,7 @@ import { downloadPDF } from '../../../services/common.service';
 
 const Wrapper = styled.div`
   position: relative;
+  display:flex;
   .react-pdf__Page__svg {
     box-shadow: 0 0 5px rgba(0,0,0,.2);
     border: 1px solid #d3d3d3;
@@ -33,7 +34,7 @@ const FooterActions = styled.div`
   align-items: center;
 `;
 
-const PdfViewer = ({ title, file, isBase64, height='85vh', showDownload }) => {
+const PdfViewer = ({ title, file, isBase64, height='100Vh', showDownload }) => {
   // const pdfWrapperRef = useRef()
   // const [width, setWidth] = useState(400);
   // const [numPages, setNumPages] = useState(null);
@@ -61,8 +62,8 @@ const PdfViewer = ({ title, file, isBase64, height='85vh', showDownload }) => {
 
   return (
     <Wrapper>
-      <Box p={2} bgcolor="#f8f8f8" height={height} style={{ overflowY: 'auto' }}>
-        <iframe src={isBase64 ? `data:application/pdf;base64,${file}` : file} width="100%" height="100%" ></iframe>
+      <Box p={2} bgcolor="#f8f8f8" height={height} style={{flex:1}} >
+        <iframe src={isBase64 ? `data:application/pdf;base64,${file}` : file} width="100%" height="100%" frameBorder="0" ></iframe>
         {/* <Document
           renderMode="svg"
           file={isBase64 ? `data:application/pdf;base64,${file}` : file}

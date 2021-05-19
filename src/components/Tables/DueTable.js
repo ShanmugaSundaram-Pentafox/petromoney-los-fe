@@ -18,7 +18,7 @@ import { getDealerDetails } from '../../services/dealers.service';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    paddingBottom:20
+    paddingBottom: 20
     // padding: theme.spacing(3),
     // paddingTop: 0,
   },
@@ -42,20 +42,27 @@ const useStyles = makeStyles(theme => ({
     color: '#51b37f',
     backgroundColor: '#e1f8e5',
   },
-  
+
 }));
 
-const DueTable = ({onRowClick}) => {
+const DueTable = ({ onRowClick }) => {
   const classes = useStyles();
-
   const [loans, setLoans] = useState({})
   const [modalData, setModalData] = useState({});
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState("Yes")
 
   useMount(async () => {
-    var a = await getDealerDetails()
-    setLoans(a.due)
+    setLoading(true)
+    getReport()
+      .then((data) => {
+        setLoans(data.overdue)
+        setLoading(false);
+      })
+      .catch((e) => {
+        setLoading(false);
+        console.log(e);
+      });
   })
   const columns = useMemo(() => {
     return [
@@ -95,48 +102,27 @@ const DueTable = ({onRowClick}) => {
     rowsPerPage: 15,
     rowsPerPageOptions: [15, 20, 30],
   };
-
-  // if (loans.length === 0) {
-  //   return (
-  //     <div className={classes.root}>
-  //       <Grid item xs={12}>
-  //         <Skeleton variant="rect" width="100%" height={600} />
-  //       </Grid>
-  //     </div>
-  //   )
-  // }
-  // else {
-    return (
-      <>
-        <div className={classes.root} >
-          {/* {(loans.length === 0) ? (
+  return (
+    <>
+      <div className={classes.root} >
+        {
+          loading ? (
             <Grid item xs={12}>
               <Skeleton variant="rect" width="100%" height={400} />
             </Grid>
-          ) : (
-              Array.isArray(loans) && loans.length ? (
-                <MUIDataTable
-                  title={"Due Reports"}
-                  data={loans}
-                  columns={columns}
-                  options={options}
-                />
-              ) : <Paper style={{ padding: 10 }}>No Due Reports</Paper>
-            )} */}
-            {
-                Array.isArray(loans) && loans.length ? (
-                    <MUIDataTable
-                        title={"Over Due Reports"}
-                        data={loans}
-                        columns={columns}
-                        options={options}
-                    />
-                ) : <Paper style={{ marginTop: 10, padding: 10 }}>No Due Reports</Paper>
-            }
-        </div>
-      </>
-    )
-  }
+          ) : Array.isArray(loans) && loans.length ? (
+            <MUIDataTable
+              title={"Due Reports"}
+              data={loans}
+              columns={columns}
+              options={options}
+            />
+          ) : <Paper style={{ padding: 10 }}>No overdue Reports found</Paper>
+        }
+      </div>
+    </>
+  )
+}
 // }
 
 export default DueTable;

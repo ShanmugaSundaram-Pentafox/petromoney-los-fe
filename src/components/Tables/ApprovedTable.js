@@ -21,6 +21,8 @@ import Currency from '../Number/Currency';
 import SignRequestLayout from '../Leegality/SignRequestLayout';
 // import CircularProgress from '@material-ui/core/CircularProgress';
 import { ReactComponent as LoanAgreementIcon } from '../../icons/loan_agreement.svg';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 
 
 const useStyles = makeStyles(theme => ({
@@ -58,14 +60,21 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const classes = useStyles();
   const [dealershipId, setDealershipId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
-
+  const [loading, setLoading] = useState(false);
+  const [loanId, setloanId] = useState();
+  const [type, setType] = useState("");
+  console.log("approved table",loans);
   useMount(() => {
     if (!loans || !loans.length) {
+      setLoading(true);
       getLoansByStatus('approved')
         .then(data => {
           setLoansData('approved', data);
+          setLoading(false);
         })
-        .catch(e => null)
+        .catch(e => {
+          setLoading(false);
+        })
     }
   });
 
@@ -137,16 +146,16 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
           setCellProps: () => ({
             align: 'center',
           }),
-          customBodyRender: (value, tableMeta, updateValue) => {
+          customBodyRender: (value, r) => {
             return (
               <>
                 <Tooltip title="Sanction Letter">
-                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setDealershipId(value); setModalVisible(true); }}>
+                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType("sanction"); setModalVisible(true); }}>
                     <DescriptionIcon />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Loan Agreement">
-                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setDealershipId(value); setModalVisible(true); }}>
+                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType("agreement"); setModalVisible(true); }}>
                     <LoanAgreementIcon width={14} />
                   </IconButton>
                 </Tooltip>
@@ -161,19 +170,23 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
         }
       }
     ]
-  }, []);
+  }, [loans]);
 
   const options = {
     // filterType: 'checkbox',
     selectableRowsHeader: false,
     selectableRows: 'none',
     isRowSelectable: () => false,
-    onRowClick: (rowData, { dataIndex }) => {
-      // console.log(rowData, rowMeta);
-      onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'approved')
-    }
+    onCellClick: (colData, cellMeta) => {
+      if (cellMeta.colIndex !== 5) {
+        onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'approved')
+      }
+    },
+    // onRowClick: (rowData, { dataIndex }) => {
+    //   // console.log(rowData, rowMeta);
+    //   onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'approved')
+    // }
   };
-
   return (
     <div className={classes.root}>
       {
@@ -184,13 +197,17 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
             columns={columns}
             options={options}
           />
-        ) : <Paper style={{ padding: 10 }}>No Approved Applications</Paper>
+        ) : (!loading && <Paper style={{ padding: 10 }}>No Approved Applications</Paper>)
       }
-
+      {
+        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
+      }
       <SignRequestLayout
         open={modalVisible}
         dealershipId={dealershipId}
-        title={'eSign Application Form'}
+        loanId={loanId}
+        type={type}
+        title={'Sanction Letter'}
         onClose={() => setModalVisible(false)}
       />
     </div>

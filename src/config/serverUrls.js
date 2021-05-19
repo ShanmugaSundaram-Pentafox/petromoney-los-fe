@@ -31,5 +31,6 @@ export const URL = {
   regionMapUser:"region-map-user/",
   regionDel:"region-del/",
   regionMapAdd:"region-map-add/",
-  passReset:"passReset"
+  passReset:"passReset",
+  guarantor:"guarantor"
 }

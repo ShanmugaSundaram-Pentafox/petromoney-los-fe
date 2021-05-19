@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from "mui-datatables";
@@ -12,7 +12,7 @@ import clsx from 'clsx';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
 import Currency from '../Number/Currency';
-// import CircularProgress from '@material-ui/core/CircularProgress';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -43,14 +43,20 @@ const useStyles = makeStyles(theme => ({
 
 const DisbursedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const classes = useStyles();
+  const [loading, setLoading] = useState(false);
+
 
   useMount(() => {
     if (!loans || !loans.length) {
+      setLoading(true);
       getLoansByStatus('disbursed')
         .then(data => {
           setLoansData('disbursed', data);
+          setLoading(false);
         })
-        .catch(e => null)
+        .catch(e => {
+          setLoading(false);
+        })
     }
   });
   const columns = useMemo(() => {
@@ -136,7 +142,10 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick }) => {
             columns={columns}
             options={options}
           />
-        ) : <Paper style={{ padding: 10 }}>No Disbursed Loans</Paper>
+        ) : ( !loading && <Paper style={{ padding: 10 }}>No Disbursed Loans</Paper>)
+      }
+      {
+        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
       }
     </div>
   )

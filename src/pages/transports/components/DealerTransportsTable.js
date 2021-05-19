@@ -20,7 +20,9 @@ import InfoCard from "../../../components/CommonComponents/Cards/InfoCard"
 import { actions } from "react-table"
 import { setDashboardView } from "../../../store/common/common.actions"
 import VehicleInfo from "../../transportsDetails/components/VehicleInfo"
-import { Paper } from "@material-ui/core"
+import { Paper } from "@material-ui/core";
+import Skeleton from '@material-ui/lab/Skeleton';
+
 
 
 
@@ -39,23 +41,28 @@ const DealerTransportsTable = ({ currentUser }) => {
     const [openModal, setOpenModal] = useState(false);
     const [view, setView] = useState(false);
     const [id, setId] = useState();
-    const [vehicleData, setVehicleData] = useState()
+    const [vehicleData, setVehicleData] = useState();
+    const [loading, setLoading] = useState(false)
     const classes = useStyles()
     useMount(() => {
         getDealerTransportsList()
             .then((data) => {
                 setTransports(data)
                 let id = data[0].id;
+                setLoading(true);
                 getTransporterInfoFromID(id)
                     .then(data => {
                         setTransportsData(data);
+                        setLoading(false);
                         return data.pm_user_id
                     })
                     .then(getTransportOwnerInfo)
                     .then(data => {
                         setOwnerInfo(data)
                     })
-                    .catch((e) => null)
+                    .catch((e) => {
+                        setLoading(false);
+                    })
                     .catch((e) => {
                         console.log(e);
                     })
@@ -69,76 +76,76 @@ const DealerTransportsTable = ({ currentUser }) => {
                 setVehicleData(data)
             })
             .catch((e) => null)
-})
+    })
 
-const columns = useMemo(() => {
-    return [
-        {
-            label: "Code",
-            name: "id",
-            options: {
-                filter: false,
-                sort: true,
-                customBodyRender: (value) => {
-                    setView(true)
-                    setId(value)
-                    return <RouterLink to={`/transports/${value}`}>{value}</RouterLink>
+    const columns = useMemo(() => {
+        return [
+            {
+                label: "Code",
+                name: "id",
+                options: {
+                    filter: false,
+                    sort: true,
+                    customBodyRender: (value) => {
+                        setView(true)
+                        setId(value)
+                        return <RouterLink to={`/transports/${value}`}>{value}</RouterLink>
+                    },
                 },
             },
-        },
-        {
-            label: "Name",
-            name: "name",
-            options: {
-                filter: false,
-                sort: true,
+            {
+                label: "Name",
+                name: "name",
+                options: {
+                    filter: false,
+                    sort: true,
+                },
             },
-        },
-        {
-            label: "Mobile Number",
-            name: "mobile",
-            options: {
-                filter: false,
-                sort: true,
+            {
+                label: "Mobile Number",
+                name: "mobile",
+                options: {
+                    filter: false,
+                    sort: true,
+                },
             },
-        },
-        {
-            label: "OMC",
-            name: "omc",
-            options: {
-                filter: false,
-                sort: true,
+            {
+                label: "OMC",
+                name: "omc",
+                options: {
+                    filter: false,
+                    sort: true,
+                },
             },
-        },
-    ]
-}, [])
-const options = {
-    filter: false,
-    print: false,
-    download: false,
-    search: false,
-    column: false,
-    viewColumns: false,
-    selectableRowsHeader: false,
-    selectableRows: "none",
-    rowsPerPage: 10,
-    isRowSelectable: () => false,
-    customToolbar: () => {
-        return (
-            <Button
-                color="primary"
-                variant="contained"
-                onClick={() => setOpenModal(true)}
-            >
-                Add Transport
-            </Button>
-        );
+        ]
+    }, [])
+    const options = {
+        filter: false,
+        print: false,
+        download: false,
+        search: false,
+        column: false,
+        viewColumns: false,
+        selectableRowsHeader: false,
+        selectableRows: "none",
+        rowsPerPage: 10,
+        isRowSelectable: () => false,
+        customToolbar: () => {
+            return (
+                <Button
+                    color="primary"
+                    variant="contained"
+                    onClick={() => setOpenModal(true)}
+                >
+                    Add Transport
+                </Button>
+            );
+        }
     }
-}
 
-return (
-    <>
-        {/* <Grid container spacing={4}>
+    return (
+        <>
+            {/* <Grid container spacing={4}>
                 <Grid item md={6}>
                     <InfoCard
                         title={"Owner Info"}
@@ -150,35 +157,41 @@ return (
                     />
                 </Grid>
             </Grid> */}
-        <div>
-            {Array.isArray(transports) && transports.length ? (
-                <MUIDataTable
-                    title={
-                        <Typography className={classes.title} variant="h5" component="h5">Transports List</Typography>
-                    }
-                    data={transports}
-                    columns={columns}
-                    options={options}
-                />
-            ) : (
-                // <CircularProgress />
-                <Paper style={{ marginTop: 10, padding: 10 }}>No Transporters found</Paper>
-            )}
-        </div>
-        <FormDialog
-            title="Add Transport"
-            open={openModal}
-            onClose={() => setOpenModal(false)}
-        >
-            <AddNewTransportsForm data={transportsData} />
-        </FormDialog>
-        {/* {
+            <div>
+                {
+                    loading ? (
+                        <Grid item xs={12}>
+                            <Skeleton variant="rect" width="100%" height={400} />
+                        </Grid>
+                    ) :
+                        Array.isArray(transports) && transports.length ? (
+                            <MUIDataTable
+                                title={
+                                    <Typography className={classes.title} variant="h5" component="h5">Transports List</Typography>
+                                }
+                                data={transports}
+                                columns={columns}
+                                options={options}
+                            />
+                        ) : (
+                            <Paper style={{ marginTop: 10, padding: 10 }}>No Transporters found</Paper>
+                        )
+                }
+            </div>
+            <FormDialog
+                title="Add Transport"
+                open={openModal}
+                onClose={() => setOpenModal(false)}
+            >
+                <AddNewTransportsForm data={transportsData} />
+            </FormDialog>
+            {/* {
             view && vehicleData && (
                 <VehicleInfo id={id} data={vehicleData} currentUser={currentUser} />
             )
         } */}
-    </>
-)
+        </>
+    )
 }
 
 const mapStateToProps = createStructuredSelector({

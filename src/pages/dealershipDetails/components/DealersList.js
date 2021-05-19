@@ -12,6 +12,9 @@ import CoApplicantsTable from './CoApplicantsTable';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import ExperianReport from './ExperianReport';
+import GuarantorsTable from './GuarantorsTable';
+import { getAllGuarantor } from '../../../services/leegality.service';
+import { get } from 'lodash-es';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -74,6 +77,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
 
   const [dealerData, setDealersData] = useState();
   const [coApplicantsData, setCoApplicantsData] = useState([]);
+  const [guarantorsData, setGuarantorsData] = useState([]);
   const [dealerCoApplicantData, setDealerCoApplicantData] = useState([]);
 
   const getCoApplicantApiCall = (id) => {
@@ -93,10 +97,17 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
       })
       .catch(e => null)
   }
+  const getGuarantorApiCall = () => {
+    getAllGuarantor(id)
+      .then(data => {
+        setGuarantorsData(data);
+      })
+  }
 
   useMount(() => {
     getDealerApiCall(id);
     getCoApplicantApiCall(id);
+    getGuarantorApiCall(id);
   });
 
   const openCloseCreditForm = () => {
@@ -108,6 +119,8 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
       setModelType('DEALER')
     } else if (modelType === 'COAPPLICANT') {
       setModelType('COAPPLICANT')
+    } else if (modelType === 'GUARANTOR') {
+      setModelType('GUARANTOR')
     }
     setFormType('Add');
     setRowData({})
@@ -129,7 +142,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
     setShowDealerEditForm(false)
   }
 
-  const getExperianData = type => (event ,id) => {
+  const getExperianData = type => (event, id) => {
     event.preventDefault();
     event.stopPropagation()
     setExperianData({ show: true, id, type });
@@ -176,6 +189,21 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         getExperianData={getExperianData("coapplicant")}
         showDealerEditForm={showDealerEditForm} />
 
+      <GuarantorsTable
+        id={id}
+        editable={editable}
+        titleAlign={titleAlign}
+        guarantorsData={guarantorsData}
+        formType={formType}
+        rowData={rowData}
+        titleAlign={titleAlign}
+        showCreditForm={showCreditForm}
+        openCloseCreditForm={openCloseCreditForm}
+        editFormClose={editFormClose}
+        dealersClickRow={dealersClickRow}
+        onClickAddMenu={onClickAddMenu}
+        getExperianData={getExperianData("guarantor")}
+        showDealerEditForm={showDealerEditForm} />
       <Drawer
         anchor="right"
         open={experianData.show}
@@ -206,7 +234,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
             getCoApplicantApiCall={getCoApplicantApiCall}
             isAdd={formType}
             modelType={modelType}
-            dealershipId={id} 
+            dealershipId={id}
             data={rowData}
             currentUser={currentUser}
             onClose={() => editFormClose(modelType)} />
@@ -214,7 +242,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
       </Drawer>
 
       {
-        editable && ((dealerData || []).length || (coApplicantsData || []).length) && (
+        editable && ((dealerData || []).length || (coApplicantsData || []).length || (guarantorsData || [] ).length) && (
           <div className={classes.footer}>
             <div className={classes.actionButtons}>
               <Button color="primary" variant="contained" size="small" onClick={() => openCloseCreditForm()}>View/Edit Credit Information</Button>

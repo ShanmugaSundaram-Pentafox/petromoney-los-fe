@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from "mui-datatables";
@@ -43,14 +43,19 @@ const useStyles = makeStyles(theme => ({
 
 const RejectedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const classes = useStyles();
+  const [ loading, setLoading ] = useState(false);
 
   useMount(() => {
     if (!loans || !loans.length) {
+      setLoading(true);
       getLoansByStatus('rejected')
         .then(data => {
           setLoansData('rejected', data);
+          setLoading(false);
         })
-        .catch(e => null)
+        .catch(e => {
+          setLoading(false);
+        })
     }
   });
 
@@ -137,7 +142,10 @@ const RejectedTable = ({ title, loans, setLoansData, onRowClick }) => {
             columns={columns}
             options={options}
           />
-        ) : <Paper style={{ padding: 10 }}>No Rejected Applications</Paper>
+        ) :( !loading && <Paper style={{ padding: 10 }}>No Rejected Applications</Paper>)
+      }
+      {
+        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
       }
     </div>
   )

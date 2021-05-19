@@ -38,9 +38,18 @@ const OverDueTable = () => {
   const classes = useStyles();
 
   const [loans, setLoans] = useState([])
+  const [loading, setLoading] = useState(false)
   useMount(async () => {
-    var a = await getReport()
-    setLoans(a.overdue)
+    setLoading(true)
+    getReport()
+      .then((data) => {
+        setLoading(false);
+        setLoans(data.overdue)
+      })
+      .catch((e) => {
+        setLoading(false);
+        console.log(e);
+      });
   })
   usePageTitle('Report')
   const columns = useMemo(() => {
@@ -90,19 +99,20 @@ const OverDueTable = () => {
 
   return (
     <div className={classes.root}>
-      {/* {(loans.length === 0) ? (
-        <Grid item xs={12}>
-          <Skeleton variant="rect" width="100%" height={400} />
-        </Grid>
-      ) : Array.isArray(loans) && loans.length ? (
-        <MUIDataTable
-          title={"Due Reports"}
-          data={loans}
-          columns={columns}
-          options={options}
-        />
-      ) : <Paper style={{ padding: 10 }}>No Due Loans</Paper>
-      } */}
+      {
+        loading ? (
+          <Grid item xs={12}>
+            <Skeleton variant="rect" width="100%" height={400} />
+          </Grid>
+        ) : Array.isArray(loans) && loans.length ? (
+          <MUIDataTable
+            title={"Due Reports"}
+            data={loans}
+            columns={columns}
+            options={options}
+          />
+        ) : <Paper style={{ padding: 10 }}>No overdue Reports found</Paper>
+      }
     </div>
   )
 }

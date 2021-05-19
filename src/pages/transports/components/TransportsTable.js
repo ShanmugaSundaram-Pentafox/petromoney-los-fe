@@ -13,6 +13,9 @@ import { setAllTransports } from "../../../store/transports/transports.actions"
 import Button from '../../../components/CommonComponents/Button/Button';
 import FormDialog from "../../../components/CommonComponents/FormDialog/FormDialog"
 import AddNewTransportsForm from "./AddNewTransportsForm"
+import { Grid } from "@material-ui/core"
+import { Paper } from "@material-ui/core";
+import Skeleton from '@material-ui/lab/Skeleton';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -27,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
 
 const TransportsTable = ({ transports, setAllTransports }) => {
   const [openModal, setOpenModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const classes = useStyles()
 
@@ -72,13 +76,16 @@ const TransportsTable = ({ transports, setAllTransports }) => {
 
   useMount(() => {
     if (!transports.length) {
+      setLoading(true)
       getAllTransport()
         .then((data) => {
           setAllTransports(data)
+          setLoading(false)
           // setData(data)
         })
         .catch((e) => {
           console.log(e);
+          setLoading(false);
         })
     }
   })
@@ -106,35 +113,41 @@ const TransportsTable = ({ transports, setAllTransports }) => {
 
   return (
     <div>
-      {Array.isArray(transports) && transports.length ? (
-        <MUIDataTable
-          title={
-            <div className={classes.button}>
-              <Typography className={classes.title} variant="h5" component="h5">
-                Transports List
-            </Typography>
-              {/* <Button
+      {
+        loading ? (
+          <Grid item xs={12}>
+            <Skeleton variant="rect" width="100%" height={400} />
+          </Grid>
+        ) :
+          Array.isArray(transports) && transports.length ? (
+            <MUIDataTable
+              title={
+                <div className={classes.button}>
+                  <Typography className={classes.title} variant="h5" component="h5">
+                    Transports List
+                  </Typography>
+                  {/* <Button
                 color="primary"
                 variant="contained"
               // onClick={() => setOpenModal(true)}
               >
                 Add Transport
-        </Button> */}
-            </div>
-          }
-          data={transports}
-          columns={columns}
-          options={options}
-        />
-      ) : (
-        <CircularProgress />
-      )}
+              </Button> */}
+                </div>
+              }
+              data={transports}
+              columns={columns}
+              options={options}
+            />
+          ) : (
+            <Paper style={{ marginTop: 10, padding: 10 }}>No Transporters found</Paper>
+          )}
       <FormDialog
         title="Add Transport"
         open={openModal}
         onClose={() => setOpenModal(false)}
       >
-        <AddNewTransportsForm  />
+        <AddNewTransportsForm />
       </FormDialog>
     </div>
   )

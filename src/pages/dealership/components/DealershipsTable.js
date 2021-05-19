@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from "mui-datatables";
@@ -11,6 +11,10 @@ import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
 import { setAllDealerships } from '../../../store/dealership/dealership.actions';
 // import { decrypt } from '../../../services/crypto.service';
+import { Grid } from "@material-ui/core"
+import { Paper } from "@material-ui/core";
+import Skeleton from '@material-ui/lab/Skeleton';
+
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -20,40 +24,41 @@ const useStyles = makeStyles(theme => ({
 }));
 /*
 {
-	"address": "HPCL DEALERS ANAVATHIL COCHIN 682002",
-	"address_2": "Address",
-	"auto": "No",
-	"business_property": "",
-	"business_type": "",
-	"created_date": "Thu, 28 Nov 2019 11:54:34 GMT",
-	"deal_status": "",
-	"district": "KL-ERNAKULAM",
-	"doi": "",
-	"gst": "",
-	"gst_file_url": "",
-	"id": 11727030,
-	"is_microatm": "",
-	"latitude": 0.0,
-	"location": "COCHIN                   ",
-	"longtitude": 0.0,
-	"modified_date": "Thu, 06 Feb 2020 02:36:25 GMT",
-	"name": "MS/HSD PETROLEUM AGENCIES",
-	"nhsh": "NA",
-	"pan": "",
-	"pan_file_url": "",
-	"pincode": "682002",
-	"region": "COCHIN Retail RO",
-	"sales_area": "Ernakulam Retail S.A.",
-	"state": "Kerala",
-	"urh": "Urban",
-	"visit_status": 0,
-	"zone": "South"
+  "address": "HPCL DEALERS ANAVATHIL COCHIN 682002",
+  "address_2": "Address",
+  "auto": "No",
+  "business_property": "",
+  "business_type": "",
+  "created_date": "Thu, 28 Nov 2019 11:54:34 GMT",
+  "deal_status": "",
+  "district": "KL-ERNAKULAM",
+  "doi": "",
+  "gst": "",
+  "gst_file_url": "",
+  "id": 11727030,
+  "is_microatm": "",
+  "latitude": 0.0,
+  "location": "COCHIN                   ",
+  "longtitude": 0.0,
+  "modified_date": "Thu, 06 Feb 2020 02:36:25 GMT",
+  "name": "MS/HSD PETROLEUM AGENCIES",
+  "nhsh": "NA",
+  "pan": "",
+  "pan_file_url": "",
+  "pincode": "682002",
+  "region": "COCHIN Retail RO",
+  "sales_area": "Ernakulam Retail S.A.",
+  "state": "Kerala",
+  "urh": "Urban",
+  "visit_status": 0,
+  "zone": "South"
 }
 */
 const DealershipsTable = ({ dealerships, setAllDealerships }) => {
   // const [ data, setData ] = useState([]);
   const classes = useStyles();
-  
+  const [loading, setLoading] = useState(false);
+
   const columns = useMemo(() => {
     return [
       {
@@ -119,14 +124,18 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
   }, []);
 
   useMount(() => {
-    if(!dealerships.length) {
+    if (!dealerships.length) {
+      setLoading(true)
       getAllDealership()
         .then(data => {
           // console.log(data);
           setAllDealerships(data);
+          setLoading(false)
           // setData(data)
         })
-        .catch(e => null)
+        .catch(e => {
+          setLoading(false);
+        })
     }
   })
 
@@ -141,14 +150,21 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
   return (
     <div>
       {
-        Array.isArray(dealerships) && dealerships.length ? (
-          <MUIDataTable
-            title={<Typography className={classes.title} variant="h5" component="h5">Dealership List</Typography>}
-            data={dealerships}
-            columns={columns}
-            options={options}
-          />
-        ) : <CircularProgress />
+        loading ? (
+          <Grid item xs={12}>
+            <Skeleton variant="rect" width="100%" height={400} />
+          </Grid>
+        ) :
+          Array.isArray(dealerships) && dealerships.length ? (
+            <MUIDataTable
+              title={<Typography className={classes.title} variant="h5" component="h5">Dealership List</Typography>}
+              data={dealerships}
+              columns={columns}
+              options={options}
+            />
+          ) : (
+            <Paper style={{ marginTop: 10, padding: 10 }}>No Transporters found</Paper>
+          )
       }
     </div>
   )
@@ -159,7 +175,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setAllDealerships : data => dispatch(setAllDealerships(data))
+  setAllDealerships: data => dispatch(setAllDealerships(data))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(DealershipsTable);

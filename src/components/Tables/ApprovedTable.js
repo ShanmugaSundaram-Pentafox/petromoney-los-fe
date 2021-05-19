@@ -63,7 +63,8 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const [loading, setLoading] = useState(false);
   const [loanId, setloanId] = useState();
   const [type, setType] = useState("");
-  console.log("approved table",loans);
+
+  
   useMount(() => {
     if (!loans || !loans.length) {
       setLoading(true);
@@ -77,6 +78,17 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
         })
     }
   });
+  const getLoansTable = () => {
+    setLoading(true);
+    getLoansByStatus('approved')
+      .then(data => {
+        setLoansData('approved', data);
+        setLoading(false);
+      })
+      .catch(e => {
+        setLoading(false);
+      })
+  }
 
   const columns = useMemo(() => {
     return [
@@ -209,6 +221,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
         type={type}
         title={'Sanction Letter'}
         onClose={() => setModalVisible(false)}
+        callback={getLoansTable}
       />
     </div>
   )

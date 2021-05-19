@@ -467,7 +467,6 @@ const DealershipDetails = ({
   const handleResubmit = () => {
     updateLoanStats(data.id,loanData.id)
     .then(res => {
-      console.log(res,"result")
       enqueueSnackbar(res, { variant: "success" });
 
       // setData(data)

@@ -17,6 +17,7 @@ import CheckCircleOutlineRoundedIcon from '@material-ui/icons/CheckCircleOutline
 import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
 import PdfViewer from '../CommonComponents/PdfViewer/PdfViewer';
 import apiCall from '../../utils/api.util';
+import { useSnackbar } from 'notistack';
 import { DockTwoTone } from '@material-ui/icons';
 
 const Card = styled.div`
@@ -48,6 +49,7 @@ const LeegalityLayout = ({ docId }) => {
   const [docDetails, setDocDetails] = useState({});
   const [successStatus, setSuccessStatus] = useState(false);
   const [signUrl, setSignUrl] = useState();
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
 
@@ -87,9 +89,17 @@ const LeegalityLayout = ({ docId }) => {
       data: docDetails,
     })
       .then(res => {
-        setTimeout(() => {
-          setSuccessStatus(res.message || 'Notification send successfully')
-        }, 1500)
+        enqueueSnackbar(res.message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        }
+        )
+        // setTimeout(() => {
+        //   setSuccessStatus(res.message || 'Notification send successfully')
+        // }, 1500)
       })
       .catch(err => {
         console.log(err)

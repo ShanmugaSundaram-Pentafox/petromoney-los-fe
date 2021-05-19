@@ -8,7 +8,6 @@ const NewVehicleLoanAction = ({ vehicleId, callback, currentUser }) => {
   
   const onSaveCallback = () => {
     callback();
-
     setOpenModal(false);
   }
   

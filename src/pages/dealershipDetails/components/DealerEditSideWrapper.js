@@ -92,20 +92,28 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
       relationship: Yup.string().min(2).required("Enter Relationship Type"),
     }
   }
+  let dealerFields = {};
+  if (modelType === 'Dealer') {
+
+    dealerFields = {
+      dob: Yup.string().required("Choose date of birth"),
+      residing_since: Yup.number().required("Enter the year"),
+      marital_status: Yup.string("Enter your Marital status"),
+      pan: Yup.string().matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, "Invalid PAN").required("Enter PAN").uppercase(),
+      aadhar: Yup.string().matches(/^(\d{12})$|^(\d{16})$/, "Invalid aadhar").required("Enter valid aadhar"),
+    }
+
+  }
 
   const validationSchema = Yup.object().shape({
     first_name: Yup.string().min(2, 'first name must be atleast 2 characters').required("Enter first name"),
     last_name: Yup.string().min(1).required("Enter last name"),
     gender: Yup.string().required("Enter gender"),
-    dob: Yup.string().required("Choose date of birth"),
     email: Yup.string().email('Enter valid email').required("Enter email"),
     address: Yup.string().min(6, 'address must be atleast 6 characters').required("Enter address"),
-    residing_since: Yup.number().required("Enter the year"),
-    marital_status: Yup.string("Enter your Marital status"),
     mobile: Yup.string().matches(/^\d{10}$/, 'Invalid mobile number').required("Enter valid mobile number"),
-    pan: Yup.string().matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, "Invalid PAN").required("Enter PAN").uppercase(),
-    aadhar: Yup.string().matches(/^(\d{12})$|^(\d{16})$/, "Invalid aadhar").required("Enter valid aadhar"),
-    ...coApplicantFields
+    ...coApplicantFields,
+    ...dealerFields
   })
 
   const deleteFile = (type) => {
@@ -149,47 +157,67 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
       Object.keys(values).forEach(key => {
         data.append(key, values[key]);
       })
-      const apiURL = modelType === "DEALER" ? URL.dealers : URL.coApplicants;
-      let url = `${apiURL}/${dealershipId}`;
-      if (values.id) {
-        url += `/${values.id}`;
-      };
-      data.append('user_id', currentUser.id);
-      // API.post(url, data)
-      fetch(`${URL.base}${url}`, {
-        method: 'POST',
-        body: data,
-        headers: {
-          'Authorization': `Bearer ${currentUser.token}`
-        }
-      })
-        .then(res => {
-          return res.json()
+      console.log("valuesssssssssssss", values)
+      if (modelType === "GUARANTOR") {
+        apiCall(`guarantor/${dealershipId}`, {
+          method: 'POST',
+          body: values
         })
-        // apiCall(url, {
-        //   method : 'POST',
-        //   body: data,
-        // })
-        .then(res => {
-          setLoading(false);
-          setApicallStatus('success');
-          setApiCallMessage(isAdd ? 'Dealer Added' : 'Dealer Updated');
-          onClose();
-          modelType === "DEALER" ? getDealerApiCall(dealershipId) : getCoApplicantApiCall(dealershipId);
+          .then(res => {
+            if (res.status === "SUCCESS") {
+            setLoading(false);
+              console.log("guarantor addedd succesfully")
+            } else {
+              console.log('>> Document Details status error >> ', res)
+            }
+          })
+          .catch(err => {
+            console.log(err)
+          });
+      }
+      else {
+        const apiURL = modelType === "DEALER" ? URL.dealers : URL.coApplicants;
+        let url = `${apiURL}/${dealershipId}`;
+        if (values.id) {
+          url += `/${values.id}`;
+        };
+        data.append('user_id', currentUser.id);
+        // API.post(url, data)
+        fetch(`${URL.base}${url}`, {
+          method: 'POST',
+          body: data,
+          headers: {
+            'Authorization': `Bearer ${currentUser.token}`
+          }
         })
-        .catch(err => {
-          setReadOnly(false);
-          setLoading(false);
-          setApicallStatus('error');
-          setApiCallMessage('Sorry! Unable to add or Update. Try again later.')
-          logger(err);
-        })
+          .then(res => {
+            return res.json()
+          })
+          // apiCall(url, {
+          //   method : 'POST',
+          //   body: data,
+          // })
+          .then(res => {
+            setLoading(false);
+            setApicallStatus('success');
+            setApiCallMessage(isAdd ? 'Dealer Added' : 'Dealer Updated');
+            onClose();
+            modelType === "DEALER" ? getDealerApiCall(dealershipId) : getCoApplicantApiCall(dealershipId);
+          })
+          .catch(err => {
+            setReadOnly(false);
+            setLoading(false);
+            setApicallStatus('error');
+            setApiCallMessage('Sorry! Unable to add or Update. Try again later.')
+            logger(err);
+          })
+      }
     }
   });
 
   return (
     <div className={classes.sidePanelFormWrapper}>
-      <Typography className={classes.sidePanelTitle} variant="h4">{modelType === 'DEALER' ? 'Dealer Edit Form' : modelType === 'COAPPLICANT' ? 'CoApplicant Edit Form' : 'Guarantor Edit Form'}</Typography>
+      <Typography className={classes.sidePanelTitle} variant="h4">{modelType === 'DEALER' ? 'Dealer Edit Form' : modelType === 'GUARANTOR' ? 'Guarantor Edit Form' : 'CoApplicant Edit Form'}</Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <Stepper activeStep={activeStep} orientation="vertical" className={classes.stepperRoot}>
           <Step key={data.id}>

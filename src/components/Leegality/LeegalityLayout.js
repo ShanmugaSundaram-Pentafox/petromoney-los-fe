@@ -196,7 +196,7 @@ const LeegalityLayout = ({ docId }) => {
                           :
                           <Button variant="outlined" color="secondary" onClick={ActivateDealer} size="small">Activate</Button>
                       }
-                      <Button variant="outlined" color="secondary" size="small">Details</Button>
+                      {/* <Button variant="outlined" color="secondary" size="small">Details</Button> */}
                     </div>
                   </Card>
                 ))

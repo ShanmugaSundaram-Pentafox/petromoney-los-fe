@@ -133,19 +133,19 @@ export const getDealerTransportsList = () => {
       })
   });
 }
-export const getSanctionLetterPdf = (loan_id,id) => {
-  return new Promise((resolve, reject) => {
-    apiCall(`loans/${loan_id}/${id}/sanction`)
-      .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
-          resolve(data);
+// export const getSanctionLetterPdf = (loan_id,id) => {
+//   return new Promise((resolve, reject) => {
+//     apiCall(`loans/${loan_id}/${id}/sanction`)
+//       .then(({ status, data, message }) => {
+//         if (status === "SUCCESS") {
+//           resolve(data);
 
-        } else {
-          reject(message);
-        }
-      })
-      .catch(e => {
-        reject(e.message);
-      })
-  });
-}
+//         } else {
+//           reject(message);
+//         }
+//       })
+//       .catch(e => {
+//         reject(e.message);
+//       })
+//   });
+// }

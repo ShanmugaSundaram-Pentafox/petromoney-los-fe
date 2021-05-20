@@ -25,6 +25,7 @@ import { TableRow } from '@material-ui/core';
 import { TableCell } from '@material-ui/core';
 import { getLoanById, getLoanDocumentHistoryById } from '../../services/loans.service';
 import { getAllGuarantor, getPdfContent } from '../../services/leegality.service';
+import { useSnackbar } from 'notistack';
 
 
 const useStyles = makeStyles(theme => ({
@@ -56,15 +57,18 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
   const [applicants, setApplicants] = useState([])
   const [selectedDealers, setSelectedDealers] = useState([])
   const [selectedCoAppicants, setSelectedCoAppicants] = useState([])
+  const [selectedGuarantors, setSelectedGuarantors] = useState([])
   // const [docId, setDocId] = useState();
   const [status, setStatus] = useState(false);
   const [successStatus, setSuccessStatus] = useState(false);
   const [loansData, setLoansData] = useState({});
   const [pdfUrl, setPdfUrl] = useState();
-  const [signedLetterUrl,setSignedLetterUrl] = useState();
+  const [signedLetterUrl, setSignedLetterUrl] = useState();
   const [guarantor, setGuarantor] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hideSend, setHideSend] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
+
 
   useEffect(() => {
     if (loanId) {
@@ -118,7 +122,6 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
         })
     }
   }, [dealershipId, loanId, type]);
-  console.log("loanssssssssss dataaaaaaaaaaaaaaa", loansData)
   const updateSelectedDealers = (selectedStatus, inviteeData) => {
     if (selectedStatus) {
       setSelectedDealers([...selectedDealers, inviteeData])
@@ -135,6 +138,14 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
       setSelectedCoAppicants(result)
     }
   }
+  const updateSelectedGuarantors = (selectedStatus, inviteeData) => {
+    if (selectedStatus) {
+      setSelectedGuarantors([...selectedGuarantors, inviteeData])
+    } else {
+      const result = selectedGuarantors.filter(d => d.id !== inviteeData.id)
+      setSelectedGuarantors(result)
+    }
+  }
   const ReloadData = () => {
     getLoanDocumentHistoryById(loanId, type)
       .then(res => {
@@ -144,7 +155,6 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
       .catch(err => {
         console.log('getLoansData >> ', err)
       })
-
   }
 
   const sendInvitees = () => {
@@ -154,6 +164,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
         body: {
           dealer: selectedDealers,
           coapplicants: selectedCoAppicants,
+          guarantor: selectedGuarantors,
           dealership_id: dealershipId,
           type: type,
           loanId: loanId,
@@ -162,9 +173,21 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
       })
         .then(res => {
           if (res.status === "SUCCESS") {
-            setSuccessStatus(res.message || 'eSign request send successfully')
-            ReloadData();
-            onClose();
+            enqueueSnackbar(res.message, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'success',
+            }
+            )
+            // setSuccessStatus(res.message || 'eSign request send successfully')
+            setTimeout(() => {
+              ReloadData();
+              onClose();
+              setHideSend(false);
+            }, 3000);
+
             // callback();
             // setTimeout(() => {
             //   setDocId(res?.data?.document_id)
@@ -183,290 +206,303 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
       setStatus(true);
       setTimeout(() => {
         setStatus(false);
-      }, 1000)
+      }, 2000)
 
     }
   }
   return (
-    <>
+    <Dialog
+      fullWidth
+      maxWidth={"lg"}
+      open={open}
+      onClose={() => {
+        setLoansData({});
+      }}
+    >
+      <DialogTitle disableTypography className={classes.dTitle}>
+        {
+          type === 'sanction' ? (<strong>Sanction Letter</strong>) : type === 'agreement' ? <strong>Loan Agreement</strong> : <strong>{title}</strong>
+        }
+        {/* <strong>{title}</strong> */}
+        <IconButton size="small" aria-label="close" className={classes.closeButton} onClick={onClose}>
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
       {
-        loansData.is_sanction_signed ?
-          (
-            <Grid container>
+        loansData.is_signed ? (
+          <DialogContent dividers className={classes.content}>
+
+            <Grid container spacing={2}>
               <Grid item sm={8}>
                 {
-                  signedLetterUrl ?
+                  loansData.document_url ? (
                     <PdfViewer
-                      isBase64
-                      file={signedLetterUrl}
+                      file={loansData.document_url}
                     />
-                    : <h1>No url found</h1>
+                  ) : null
                 }
               </Grid>
             </Grid>
-          ) : (
-            <Dialog
-              fullWidth
-              maxWidth={"lg"}
-              open={open}
-              onClose={() => {
-                setLoansData({});
-              }}
-            >
-              <DialogTitle disableTypography className={classes.dTitle}>
-                {
-                  type === 'sanction' ? (<strong>Sanction Letter</strong>) : type === 'agreement' ? <strong>Loan Agreement</strong> : <strong>{title}</strong>
-                }
-                {/* <strong>{title}</strong> */}
-                <IconButton size="small" aria-label="close" className={classes.closeButton} onClick={onClose}>
-                  <CloseIcon />
-                </IconButton>
-              </DialogTitle>
-              <DialogContent dividers className={classes.content}>
-                {
-                  loading ? (
-                    <CircularProgress className="circular-progress-color" variant="determinate" color="green" />
-                  ) : (loansData?.document_id ? (
-                    <LeegalityLayout docId={loansData.document_id} />
-                  ) : (
-                    <Grid container spacing={2}>
-                      {
-                        type === "sanction" || type == "application" ? (
-                          <Grid item sm={8} >
-                            {
-                              pdfUrl ?
-                                <PdfViewer
-                                  isBase64
-                                  file={pdfUrl}
-                                />
-                                : null
-                            }
-                          </Grid>) : (
-                          <Grid item sm={8} >
-                            <Grid container spacing={2}>
-                              <Grid item sm={10} >
-                                <Box pt={2}>
-                                  <TableContainer>
-                                    <Table>
-                                      <TableBody>
-                                        <TableRow>
-                                          <TableCell>Date of Agreement</TableCell>
-                                          <TableCell></TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                          <TableCell>Place of execution of Agreement</TableCell>
-                                          <TableCell>Chennai</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                          <TableCell>Name of the borrower</TableCell>
-                                          <TableCell>
-                                            {
-                                              dealers.map(item => {
-                                                return item.first_name
-                                              }).join(', ')
-                                            }
-                                          </TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                          <TableCell>Dealership Address</TableCell>
-                                          <TableCell>
-                                            {
-                                              dealers?.map(item => {
-                                                return item.address
-                                              }).join(', ')
-                                            }
-                                          </TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                          <TableCell>Residence Address</TableCell>
-                                          <TableCell>
-                                            {
-                                              dealers?.map(item => {
-                                                return item.address
-                                              }).join(', ')
-                                            }
-                                          </TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                          <TableCell>Name of Co-borrower</TableCell>
-                                          <TableCell>
-                                            {
-                                              applicants.map(item => {
-                                                return item.first_name
-                                              }).join(', ')
-                                            }
-                                          </TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                          <TableCell>E-mail Address of Co-borrower</TableCell>
-                                          <TableCell>
-                                            {
-                                              applicants.map(item => {
-                                                return item.email
-                                              }).join(', ')
-                                            }
-                                          </TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                          <TableCell>Contact Number of Co-borrower</TableCell>
-                                          <TableCell>
-                                            {
-                                              applicants.map(item => {
-                                                return item.mobile
-                                              }).join(', ')
-                                            }
-                                          </TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                          <TableCell>Office/Residential Address of Co-borrower</TableCell>
-                                          <TableCell>
-                                            {
-                                              applicants.map(item => {
-                                                return item.address
-                                              }).join(', ')
-                                            }
-                                          </TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                          <TableCell>Name of Guarantor</TableCell>
-                                          <TableCell>
-                                            {
-                                              guarantor?.map(item => {
-                                                return item.first_name
-                                              }).join(', ')
-                                            }
-                                          </TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                          <TableCell>E-mail Address of Guarantor</TableCell>
-                                          <TableCell>
-                                            {
-                                              guarantor?.map(item => {
-                                                return item.email
-                                              }).join(', ')
-                                            }
-                                          </TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                          <TableCell>Contact Number of Guarantor</TableCell>
-                                          <TableCell>
-                                            {
-                                              guarantor?.map(item => {
-                                                return item.mobile
-                                              }).join(', ')
-                                            }
-                                          </TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                          <TableCell>Loan Amount</TableCell>
-                                          <TableCell></TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                          <TableCell>Loan Amount (In Words)</TableCell>
-                                          <TableCell></TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                          <TableCell>Office/ Residential Address of Guarantor</TableCell>
-                                          <TableCell>
-                                            {
-                                              guarantor?.map(item => {
-                                                return item.address
-                                              }).join(', ')
-                                            }
-                                          </TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                          <TableCell>Loan Cycle</TableCell>
-                                          <TableCell>15 Days - Revolving Credit</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                          <TableCell>Interest rate</TableCell>
-                                          <TableCell>18 % P.A.</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                          <TableCell>Overdue Interest</TableCell>
-                                          <TableCell>30 % P.A.</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                          <TableCell>Facility of Tenor</TableCell>
-                                          <TableCell>12 Months</TableCell>
-                                        </TableRow>
-                                      </TableBody>
-                                    </Table>
-                                  </TableContainer>
-                                </Box>
-                              </Grid>
-                            </Grid>
+          </DialogContent>
+
+        ) : (
+          <DialogContent dividers className={classes.content}>
+            {
+              loading ? (
+                <CircularProgress className="circular-progress-color" variant="determinate" color="green" />
+              ) : (loansData?.document_id ? (
+                <LeegalityLayout docId={loansData.document_id} />
+              ) : (
+                <Grid container spacing={2}>
+                  {
+                    type === "sanction" || type == "application" ? (
+                      <Grid item sm={12} >
+                        {
+                          pdfUrl ?
+                            <PdfViewer
+                              isBase64
+                              file={pdfUrl}
+                            />
+                            : null
+                        }
+                      </Grid>) : (
+                      <Grid item sm={8} >
+                        <Grid container spacing={2}>
+                          <Grid item sm={10} >
+                            <Box pt={2}>
+                              <TableContainer>
+                                <Table>
+                                  <TableBody>
+                                    <TableRow>
+                                      <TableCell>Date of Agreement</TableCell>
+                                      <TableCell></TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell>Place of execution of Agreement</TableCell>
+                                      <TableCell>Chennai</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell>Name of the borrower</TableCell>
+                                      <TableCell>
+                                        {
+                                          dealers.map(item => {
+                                            return item.first_name
+                                          }).join(', ')
+                                        }
+                                      </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell>Dealership Address</TableCell>
+                                      <TableCell>
+                                        {
+                                          dealers?.map(item => {
+                                            return item.address
+                                          }).join(', ')
+                                        }
+                                      </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell>Residence Address</TableCell>
+                                      <TableCell>
+                                        {
+                                          dealers?.map(item => {
+                                            return item.address
+                                          }).join(', ')
+                                        }
+                                      </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell>Name of Co-borrower</TableCell>
+                                      <TableCell>
+                                        {
+                                          applicants.map(item => {
+                                            return item.first_name
+                                          }).join(', ')
+                                        }
+                                      </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell>E-mail Address of Co-borrower</TableCell>
+                                      <TableCell>
+                                        {
+                                          applicants.map(item => {
+                                            return item.email
+                                          }).join(', ')
+                                        }
+                                      </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell>Contact Number of Co-borrower</TableCell>
+                                      <TableCell>
+                                        {
+                                          applicants.map(item => {
+                                            return item.mobile
+                                          }).join(', ')
+                                        }
+                                      </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell>Office/Residential Address of Co-borrower</TableCell>
+                                      <TableCell>
+                                        {
+                                          applicants.map(item => {
+                                            return item.address
+                                          }).join(', ')
+                                        }
+                                      </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell>Name of Guarantor</TableCell>
+                                      <TableCell>
+                                        {
+                                          guarantor?.map(item => {
+                                            return item.first_name
+                                          }).join(', ')
+                                        }
+                                      </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell>E-mail Address of Guarantor</TableCell>
+                                      <TableCell>
+                                        {
+                                          guarantor?.map(item => {
+                                            return item.email
+                                          }).join(', ')
+                                        }
+                                      </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell>Contact Number of Guarantor</TableCell>
+                                      <TableCell>
+                                        {
+                                          guarantor?.map(item => {
+                                            return item.mobile
+                                          }).join(', ')
+                                        }
+                                      </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell>Loan Amount</TableCell>
+                                      <TableCell></TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell>Loan Amount (In Words)</TableCell>
+                                      <TableCell></TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell>Office/ Residential Address of Guarantor</TableCell>
+                                      <TableCell>
+                                        {
+                                          guarantor?.map(item => {
+                                            return item.address
+                                          }).join(', ')
+                                        }
+                                      </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell>Loan Cycle</TableCell>
+                                      <TableCell>15 Days - Revolving Credit</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell>Interest rate</TableCell>
+                                      <TableCell>18 % P.A.</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell>Overdue Interest</TableCell>
+                                      <TableCell>30 % P.A.</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell>Facility of Tenor</TableCell>
+                                      <TableCell>12 Months</TableCell>
+                                    </TableRow>
+                                  </TableBody>
+                                </Table>
+                              </TableContainer>
+                            </Box>
                           </Grid>
-                        )
-                      }
-                      <Grid item sm={3}>
-                        <Box>
-                          <Typography variant="h4">Select Invitees</Typography>
-                        </Box>
-                        <Box pt={2}>
-                          <p>Dealers</p>
-                          <Box pt={1}>
-                            <CardsCheckList
-                              data={dealers}
-                              onChange={updateSelectedDealers}
-                            />
-                          </Box>
-                        </Box>
-                        <Box pt={2}>
-                          <p>Co-applicants</p>
-                          <Box pt={1}>
-                            <CardsCheckList
-                              data={applicants}
-                              onChange={updateSelectedCoAppicants}
-                            />
-                          </Box>
-                        </Box>
+                        </Grid>
                       </Grid>
-                    </Grid>
-                  ))
-                }
-              </DialogContent>
-              <DialogActions>
-                <Box pl={2} pr={2} style={{ display: "flex" }}>
-                  {/* <Button onClick={onClose} color="primary">
+                    )
+                  }
+                  <Grid item sm={3}>
+                    <Box>
+                      <Typography variant="h4">Select Invitees</Typography>
+                    </Box>
+                    <Box pt={2}>
+                      <p>Dealers</p>
+                      <Box pt={1}>
+                        <CardsCheckList
+                          data={dealers}
+                          onChange={updateSelectedDealers}
+                        />
+                      </Box>
+                    </Box>
+                    <Box pt={2}>
+                      <p>Co-applicants</p>
+                      <Box pt={1}>
+                        <CardsCheckList
+                          data={applicants}
+                          onChange={updateSelectedCoAppicants}
+                        />
+                      </Box>
+                    </Box>
+                    {
+                      type === 'agreement' && guarantor.length !==0 &&
+                      <Box pt={2}>
+                        <p>Guarantors</p>
+                        <Box pt={1}>
+                          <CardsCheckList
+                            data={guarantor}
+                            onChange={updateSelectedGuarantors}
+                          />
+                        </Box>
+                      </Box>
+                    }
+                  </Grid>
+                </Grid>
+              ))
+            }
+          </DialogContent>
+        )
+      }
+      <DialogActions>
+        <Box pl={2} pr={2} style={{ display: "flex" }}>
+          {/* <Button onClick={onClose} color="primary">
             Cancel
           </Button> */}
-                  {/* {
+          {/* {
             selectedDealers.length !== 0 && selectedCoAppicants.length !== 0 ?
               (<Button variant="contained" className={classes.sendButton} onClick={sendInvitees} color="primary">
                 Send
               </Button>) : null
           } */}
-                  <div style={{ marginRight: "20px" }}>
+          <div style={{ marginRight: "20px" }}>
 
-                    {
-                      status && (
-                        <Box pt={2} pl={3} color="error.main"  >
-                          You must select Dealers &amp; CoApplicants...
-                        </Box>
-                      )
-                    }
-                    {
-                      successStatus && (
-                        <Box pt={2} pl={3} color="success.main"  >
-                          {successStatus}
-                        </Box>
-                      )
-                    }
-                  </div>
-                  {
-                    !loading && loansData?.document_id ? null : hideSend ? null : (
-                      <Button variant="contained" onClick={sendInvitees} color="primary">
-                        Send
-                      </Button>
-                    )
-                  }
+            {
+              status && (
+                <Box pt={2} pl={3} color="error.main"  >
+                  You must select Dealers &amp; CoApplicants...
                 </Box>
-              </DialogActions>
-            </Dialog>
-          )}
-    </>
+              )
+            }
+            {
+              successStatus && (
+                <Box pt={2} pl={3} color="success.main"  >
+                  {successStatus}
+                </Box>
+              )
+            }
+          </div>
+          {
+            !loading && loansData?.document_id ? null : hideSend ? null : (
+              <Button variant="contained" onClick={sendInvitees} color="primary">
+                Send
+              </Button>
+            )
+          }
+        </Box>
+      </DialogActions>
+    </Dialog>
   )
 }
 

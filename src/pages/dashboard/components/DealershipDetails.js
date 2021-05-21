@@ -25,7 +25,7 @@ import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { selectCurrentUser } from '../../../store/user/user.selector';
 import { createStructuredSelector } from 'reselect';
-import { getLoanById, updateLoanApprovalStatusById,updateLoanStats } from '../../../services/loans.service';
+import { getLoanById, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
 import Alert from '@material-ui/lab/Alert';
 import DispApprovedDataTable from './DispApprovedDataTable';
 import apiCall from '../../../utils/api.util';
@@ -465,16 +465,18 @@ const DealershipDetails = ({
     className: classes.fieldItemStyle
   }
   const handleResubmit = () => {
-    updateLoanStats(data.id,loanData.id)
-    .then(res => {
-      console.log(res,"result")
-      enqueueSnackbar(res, { variant: "success" });
+    updateLoanStats(data.id, loanData.id)
+      .then(res => {
+        enqueueSnackbar(res, { variant: "success" });
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000)
 
-      // setData(data)
-    })
-    .catch((e) => {
-      console.log(e);
-    })
+        // setData(data)
+      })
+      .catch((e) => {
+        console.log(e);
+      })
   }
 
 
@@ -740,8 +742,8 @@ const DealershipDetails = ({
               variant="contained"
               startIcon={<ArrowBackIosRoundedIcon />}
               onClick={onClose}>Back</Button>
-              {
-              editable && status && ["rejected","approved","disbursment_approval","loan_approval"].includes(status.toLowerCase()) && (
+            {
+              editable && status && ["rejected", "approved", "disbursment_approval", "loan_approval"].includes(status.toLowerCase()) && (
                 <UserCan
                   role={currentUser.role_name}
                   perform={rulesList.loan_approval}
@@ -759,7 +761,7 @@ const DealershipDetails = ({
             }
           </div>
           <div>
-            
+
             <Button
               component={RouterLink}
               to={`/dealership/${values.id}`}

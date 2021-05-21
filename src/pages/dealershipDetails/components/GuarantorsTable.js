@@ -50,22 +50,21 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const GuarantorsTable = ({id, editable, guarantorsData, titleAlign, getExperianData, onClickAddMenu, formType, openCloseCreditForm, rowData, currentUser, showDealerEditForm, dealersClickRow, editFormClose }) => {
+const GuarantorsTable = ({ id, editable, guarantorsData, titleAlign, getExperianData, onClickAddMenu, formType, openCloseCreditForm, rowData, currentUser, showDealerEditForm, dealersClickRow, editFormClose }) => {
   const classes = useStyles();
-    
   if (!guarantorsData || !guarantorsData.length)
-  return (
-    <div className={classes.wrapper}>
-      <Typography variant="h5" align={titleAlign} className={classes.title}>No Guarantors Found</Typography>
-      {
-        editable && (
-          <div style={{ textAlign: 'center', marginTop: 8 }}>
-            <Button color="primary" variant="outlined" size="small" onClick={() => onClickAddMenu('GUARANTOR')}>Add Guarantor</Button>
-          </div>
-        )
-      }
-    </div>
-  );
+    return (
+      <div className={classes.wrapper}>
+        <Typography variant="h5" align={titleAlign} className={classes.title}>No Guarantors Found</Typography>
+        {
+          editable && (
+            <div style={{ textAlign: 'center', marginTop: 8 }}>
+              <Button color="primary" variant="outlined" size="small" onClick={() => onClickAddMenu('GUARANTOR')}>Add Guarantor</Button>
+            </div>
+          )
+        }
+      </div>
+    );
 
   return (
     <div className={classes.wrapper}>
@@ -77,7 +76,6 @@ const GuarantorsTable = ({id, editable, guarantorsData, titleAlign, getExperianD
           <TableRow>
             <TableCell>Guarantor Name</TableCell>
             <TableCell align="center">Mobile</TableCell>
-            <TableCell align="center">Documents</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -88,26 +86,6 @@ const GuarantorsTable = ({id, editable, guarantorsData, titleAlign, getExperianD
                 <Chip size="small" label="Experian Report" onClick={(e) => getExperianData(e, row.id)} />
               </TableCell>
               <TableCell align="center">{row.mobile}</TableCell>
-              <TableCell align="center">
-                {row.aadhar_f_file_url && <TableCell style={{ border: 0 }} align="center">
-                  <a className={classes.document}
-                    href={row.aadhar_f_file_url} target="_blank" title={'Aadhar Front'}>{'Aadhar Front'}</a>
-
-                </TableCell>}
-                {row.aadhar_b_file_url && <TableCell style={{ border: 0 }} align="center">
-                  <a className={classes.document}
-                    href={row.aadhar_b_file_url} target="_blank" title={'Aadhar Back'}>{'Aadhar Back'}</a>
-
-                </TableCell>}
-                {row.pan_file_url && <TableCell style={{ border: 0 }} align="center">
-                  <a className={classes.document}
-                    href={row.pan_file_url} target="_blank" title={'PAN'}>{'PAN'}</a>
-                </TableCell>}
-                {!row.pan_file_url && !row.aadhar_b_file_url && !row.aadhar_f_file_url &&
-                  <TableCell style={{ border: 0 }} align="center">
-                    -
-                  </TableCell>}
-              </TableCell>
             </TableRow>
           ))}
         </TableBody>

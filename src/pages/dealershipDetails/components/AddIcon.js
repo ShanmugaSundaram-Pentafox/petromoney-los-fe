@@ -66,7 +66,7 @@ const AddIconButton = ({ onClickAddMenu }) => {
                       <MenuItem
                         key={option}
                         onClick={(event) => {
-                          const text = event.target.textContent === 'Add Dealer' ? 'DEALER' : 'COAPPLICANT'
+                          const text = event.target.textContent === 'Add Dealer' ? 'DEALER' : event.target.textContent==='Add Guarantor' ? 'GUARANTOR' : 'COAPPLICANT'
                           handleMenuItemClick(event, index, text)
                         }}
                       >

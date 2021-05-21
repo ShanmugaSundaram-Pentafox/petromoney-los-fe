@@ -39,7 +39,7 @@ export const getAllGuarantor = (dealerId) => {
 //   }
 export const getPdfContent = (loanId, dealerId, type) => {
     return new Promise((resolve, reject) => {
-      apiCall(`loans/${loanId}/${dealerId}/${type}`)
+      apiCall(`loans/dealership/${dealerId}/loans/${loanId}/${type}`)
         .then(({ status, file, message }) => {
           if(status === "SUCCESS") {
             resolve(file);

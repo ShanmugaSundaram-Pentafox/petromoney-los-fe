@@ -48,7 +48,7 @@ const LeegalityLayout = ({ docId }) => {
   const [auditTrails, setAuditTrails] = useState([]);
   const [docDetails, setDocDetails] = useState({});
   const [successStatus, setSuccessStatus] = useState(false);
-  const [signUrl, setSignUrl] = useState();
+  // const [signUrl, setSignUrl] = useState();
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
@@ -82,11 +82,11 @@ const LeegalityLayout = ({ docId }) => {
       });
   }, [])
 
-  const ResendNotification = (docDetails) => {
+  const ResendNotification = (signUrl) => {
     apiCall(`document/resend`, {
 
       method: "POST",
-      data: docDetails,
+      body: {"sign_url":signUrl},
     })
       .then(res => {
         enqueueSnackbar(res.message, {

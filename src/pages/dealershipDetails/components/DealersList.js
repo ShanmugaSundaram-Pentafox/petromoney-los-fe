@@ -74,7 +74,6 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   const [formType, setFormType] = useState('');
   const [modelType, setModelType] = useState('');
   const [rowData, setRowData] = useState({});
-
   const [dealerData, setDealersData] = useState();
   const [coApplicantsData, setCoApplicantsData] = useState([]);
   const [guarantorsData, setGuarantorsData] = useState([]);
@@ -149,7 +148,6 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   }
 
   const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit);
-
   return (
     <>
       {
@@ -242,7 +240,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
       </Drawer>
 
       {
-        editable && ((dealerData || []).length || (coApplicantsData || []).length || (guarantorsData || [] ).length) && (
+        editable && ((dealerData || []).length || (coApplicantsData || []).length || (guarantorsData || []).length) && (
           <div className={classes.footer}>
             <div className={classes.actionButtons}>
               <Button color="primary" variant="contained" size="small" onClick={() => openCloseCreditForm()}>View/Edit Credit Information</Button>

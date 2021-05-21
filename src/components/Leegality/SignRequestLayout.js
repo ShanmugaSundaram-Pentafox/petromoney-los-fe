@@ -256,7 +256,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
                 <Grid container spacing={2}>
                   {
                     type === "sanction" || type == "application" ? (
-                      <Grid item sm={12} >
+                      <Grid item sm={8} >
                         {
                           pdfUrl ?
                             <PdfViewer

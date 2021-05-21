@@ -80,7 +80,6 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
   const [loading, setLoading] = useState(false);
   const [apicallStatus, setApicallStatus] = useState(null);
   const [apiCallMessage, setApiCallMessage] = useState('');
-
   const handleEdit = () => {
     setReadOnly(!readOnly)
   };
@@ -157,23 +156,41 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
       Object.keys(values).forEach(key => {
         data.append(key, values[key]);
       })
-      console.log("valuesssssssssssss", values)
+      delete values.created_date
+      delete values.modified_date
       if (modelType === "GUARANTOR") {
-        apiCall(`guarantor/${dealershipId}`, {
-          method: 'POST',
-          body: values
-        })
-          .then(res => {
-            if (res.status === "SUCCESS") {
-            setLoading(false);
-              console.log("guarantor addedd succesfully")
-            } else {
-              console.log('>> Document Details status error >> ', res)
-            }
+        if (isAdd === "Add") {
+          apiCall(`guarantor/${dealershipId}`, {
+            method: 'POST',
+            body: data
           })
-          .catch(err => {
-            console.log(err)
-          });
+            .then(res => {
+              if (res.status === "SUCCESS") {
+                setLoading(false);
+              } else {
+                console.log('>> Document Details status error >> ', res)
+              }
+            })
+            .catch(err => {
+              console.log(err)
+            });
+        }
+        else {
+          apiCall(`guarantor/${dealershipId}/${values.id}`, {
+            method: 'POST',
+            body: values
+          })
+            .then(res => {
+              if (res.status === "SUCCESS") {
+                setLoading(false);
+              } else {
+                console.log('>> Document Details status error >> ', res)
+              }
+            })
+            .catch(err => {
+              console.log(err)
+            });
+        }
       }
       else {
         const apiURL = modelType === "DEALER" ? URL.dealers : URL.coApplicants;

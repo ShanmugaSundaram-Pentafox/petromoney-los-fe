@@ -144,6 +144,23 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
           }
         }
       },
+      
+      {
+        label: 'Application state',
+        name: 'application_state',
+        options: {
+          filter: true,
+          sort: true,
+          setCellProps: () => ({
+            align: 'center',
+          }),
+          customBodyRender: value => {
+            return <div>
+              {value ? value : '-'}
+            </div>
+          }
+        }
+      },
       {
         label: 'Documents',
         name: 'dealership_id',

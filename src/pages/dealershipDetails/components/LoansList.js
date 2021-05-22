@@ -19,8 +19,10 @@ import { useMount } from 'react-use';
 import { getDealershipLoansById } from '../../../services/dealerships.service';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-import { updateLoanApprovalStatusById } from '../../../services/loans.service';
+import { getApplicationStatusById, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import TextInput from '../../../components/TextInput/TextInput';
+import { Select } from '@material-ui/core';
+import apiCall from '../../../utils/api.util';
 
 const useStyles = makeStyles({
   wrapper: {
@@ -42,16 +44,21 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
   const [loading, setLoading] = useState(false);
   const [remarks, setRemarks] = useState();
   const [dialogState, setDialogState] = useState({});
-  
+  const [status, setStatus] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useState();
   useMount(() => {
     getDealershipLoansById(id)
       .then(data => setLoansData(data))
       .catch(e => null)
+    getApplicationStatusById(id)
+      .then(data => setStatus(data))
+      .catch(e => null)
+
   });
 
   const processLoan = loan => {
     let status, remarksObj = {};
-    if(loan.status.toLowerCase() === "submitted") {
+    if (loan.status.toLowerCase() === "submitted") {
       setLoading(true);
       status = 'loan_approval';
       remarksObj.recommendation_remarks = remarks;
@@ -83,8 +90,28 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
   const submitRemarks = () => {
     processLoan({ ...dialogState.data });
   }
+  const updateApplicationStatus = (state) => {
+    apiCall(`dealership/${id}/loans/${data[0].id}`, {
+      method: "POST",
+      body: state,
+    })
+      .then(res => {
+        // enqueueSnackbar(res.message, {
+        //   anchorOrigin: {
+        //     vertical: 'top',
+        //     horizontal: 'right',
+        //   },
+        //   variant: 'success',
+        // }
+        // )
+      })
+      .catch(err => {
+        console.log(err)
+      })
 
-  if(!data || !data.length)
+  }
+
+  if (!data || !data.length)
     return (
       <div className={classes.wrapper}>
         <Typography variant="h5" align={titleAlign} className={classes.title}>No Loan details found</Typography>
@@ -102,6 +129,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
             <TableCell align="right">Appr</TableCell>
             <TableCell align="right">Disb</TableCell>
             <TableCell align="center">Status</TableCell>
+            <TableCell align="center">App. Status</TableCell>
             <TableCell align="center">Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -122,6 +150,26 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
               </TableCell>
               <TableCell align="center">{row.status}</TableCell>
               <TableCell align="center">
+                <Select
+                  fullWidth
+                  native
+                  placeholder={"Select status"}
+                  value={selectedStatus?.id}
+                  onChange={e => {
+                    const d = status.find(i => i.id == e.target.value)
+                    setSelectedStatus(d)
+                    updateApplicationStatus({
+                      application_state: e.target.value
+                    })
+                  }}
+                >
+                  <option>Choose Status</option>
+                  {
+                    status.map(item => <option value={item.id}>{item.application_state}</option>)
+                  }
+                </Select>
+              </TableCell>
+              <TableCell align="center">
                 {
                   row.status.toLowerCase() === "submitted" && editable && (
                     <Button
@@ -131,10 +179,10 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
                       disabled={loading}
                       className={classes.btnSuccess}
                       onClick={getRemarks(row)}>
-                        {
-                          loading ? 'Pleaes wait...' : 'Send for Approval'
-                        }
-                      </Button>
+                      {
+                        loading ? 'Pleaes wait...' : 'Send for Approval'
+                      }
+                    </Button>
                   )
                 }
                 {
@@ -146,9 +194,9 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
                       disabled={loading}
                       className={classes.btnSuccess}
                       onClick={getRemarks(row)}>
-                        {
-                          loading ? 'Pleaes wait...' : 'Send for Disbursement Approval'
-                        }
+                      {
+                        loading ? 'Pleaes wait...' : 'Send for Disbursement Approval'
+                      }
                     </Button>
                   )
                 }

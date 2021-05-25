@@ -226,4 +226,22 @@ export const updateVehicle = (data, transId, vehicleId) => {
       })
   })
 }
+export const deleteVehicleStatus = (id, vehicleId) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`transporters/${id}/vehicles/${vehicleId}`, {
+      method: 'POST',
+      body: { status:0 }
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
 

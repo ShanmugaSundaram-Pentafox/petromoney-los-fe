@@ -91,8 +91,10 @@ export default function VehicleInfo({ id, data, currentUser }) {
   const [showUpload, setShowUpload] = useState(true);
   const [tracking, setTracking] = useState([])
   const [rowData, setRowData] = useState();
+  const [openModal, setOpenModal] = useState(false);
+  const [vehicleNumber, setVehicleNumber] = useState();
+  const [vehicleId, setVehicleId] = useState();
   const { enqueueSnackbar } = useSnackbar();
-
 
   const handleChange = (vehicleId) => (event, newExpanded) => {
     setExpanded(newExpanded ? vehicleId : false);
@@ -224,6 +226,12 @@ export default function VehicleInfo({ id, data, currentUser }) {
       getServiceStatus({ ...d, id: d.loan_id });
     }
   }
+  const modalOpen = (number,id) => {
+    setVehicleNumber(number)
+    setVehicleId(id);
+    setOpenModal(true);
+
+  }
 
   return (
     <div>
@@ -244,16 +252,18 @@ export default function VehicleInfo({ id, data, currentUser }) {
                 <Typography>
                   Credit Limit: <Currency value={vehicleInfo.credit_limit} />
                 </Typography>
-                <Tooltip title="Edit vehicle">
-                  <Typography>
-                    <EditOutlinedIcon fontSize="medium" />
-                  </Typography>
-                </Tooltip>
-                <Tooltip title="Delete vehicle">
-                  <Typography>
-                    <DeleteOutlineOutlinedIcon fontSize="medium" />
-                  </Typography>
-                </Tooltip>
+                <div style={{ display: "flex" }}>
+                  <Tooltip title="Edit vehicle">
+                    <Typography style={{ marginRight: '7px', color: "#4770C1" }} onClick={()=>modalOpen(vehicleInfo.tt_no,vehicleInfo.vehicle_id)}>
+                      <EditOutlinedIcon fontSize="medium" />
+                    </Typography>
+                  </Tooltip>
+                  <Tooltip title="Delete vehicle">
+                    <Typography style={{ color: '#ff6666' }}>
+                      <DeleteOutlineOutlinedIcon fontSize="medium" />
+                    </Typography>
+                  </Tooltip>
+                </div>
               </AccordionSummary>
               <AccordionDetails>
                 <Box mb={2}>
@@ -384,7 +394,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
           </div>
         )
       })}
-      
+
       <FormDialog title={""} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
         {imageModal.image && <img src={imageModal.image} alt="image-viewer" />}
       </FormDialog>
@@ -401,6 +411,13 @@ export default function VehicleInfo({ id, data, currentUser }) {
       </FormDialog> */}
 
       <TrackerUpdateModal id={id} currentUser={currentUser} statusId={serviceModal?.data?.item?.status_id} data={serviceModal.data?.item} serviceData={serviceModal.data?.serviceData} completed={serviceModal.data?.completed} onClose={closeTrackingStatusModal} />
+      <FormDialog
+        title="Add Vehicle"
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+      >
+        <AddNewVehicleForm id={id} number={vehicleNumber} trans_id={vehicleId} />
+      </FormDialog>
     </div>
   )
 }

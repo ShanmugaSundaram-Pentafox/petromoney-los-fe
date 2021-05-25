@@ -39,12 +39,12 @@ export const getTransportOwnerInfo = (pm_user_id) => {
   return new Promise((resolve, reject) => {
     apiCall(`transport/profile?pm_user_id=${pm_user_id}`)
       .then(({ status, data, message }) => {
-        if(status === "SUCCESS") {
+        if (status === "SUCCESS") {
           const result = data[0];
-          if(result?.pan) {
+          if (result?.pan) {
             result.pan = decrypt(result.pan);
           }
-          if(result?.aadhar) {
+          if (result?.aadhar) {
             result.aadhar = decrypt(result.aadhar);
           }
           resolve(result)
@@ -122,7 +122,7 @@ export const getVehicleServiceDetails = (vehicleId, serviceId, loanId) => {
   })
 }
 
-export const updateVehicleServiceDetails = (id,vehicleId, serviceId,data, loanId) => {
+export const updateVehicleServiceDetails = (id, vehicleId, serviceId, data, loanId) => {
   return new Promise((resolve, reject) => {
     apiCall(`vehicle/${vehicleId}/service/${serviceId}/tracker/${loanId}`, {
       method: 'POST',
@@ -178,34 +178,52 @@ export const addNewTransport = (data) => {
       method: 'POST',
       body: data
     })
-    .then(({ status, message }) => {
-      if (status === "SUCCESS") {
-        resolve(message)
-      } else {
-        reject(message)
-      }
-    })
-    .catch((e) => {
-      reject(e.message)
-    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
   })
 }
-export const addNewVehicle = (data) => {
+export const addNewVehicle = (data, transId) => {
   return new Promise((resolve, reject) => {
-    apiCall(`transporters/${data.transport}/vehicles`, {
+    apiCall(`transporters/${transId}/vehicles`, {
       method: 'POST',
-      body:{ tt_no :data.tt_no}
+      body: { tt_no: data.tt_no }
     })
-    .then(({ status, message }) => {
-      if (status === "SUCCESS") {
-        resolve(message)
-      } else {
-        reject(message)
-      }
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+export const updateVehicle = (data, transId, vehicleId) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`transporters/${transId}/vehicles/${vehicleId}`, {
+      method: 'POST',
+      body: { tt_no: data.tt_no }
     })
-    .catch((e) => {
-      reject(e.message)
-    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
   })
 }
 

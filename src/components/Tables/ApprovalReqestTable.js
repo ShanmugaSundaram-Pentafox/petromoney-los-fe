@@ -42,11 +42,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick }) => {
-  const [ loading, setLoading ] = useState(false);
+  const [loading, setLoading] = useState(false);
   const classes = useStyles();
 
   useMount(() => {
-    if(!loans || !loans.length) {
+    if (!loans || !loans.length) {
       setLoading(true);
       getLoansByStatus('loan_approval')
         .then(data => {
@@ -58,7 +58,7 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick }) => {
         })
     }
   });
-  
+
   const columns = useMemo(() => {
     return [
       {
@@ -90,6 +90,16 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick }) => {
         }
       },
       {
+        label: 'Region',
+        name: 'region',
+        options: {
+          filter: true,
+          sort: true,
+          customBodyRender: value => (<strong>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</strong>)
+        }
+
+      },
+      {
         label: 'Req. Amount',
         name: 'amount_requested',
         options: {
@@ -112,8 +122,8 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick }) => {
           }),
           customBodyRender: value => {
             return <div>
-              {/* {value ? moment(new Date(value)).format('DD MMM, YYYY') : '-'} */}
-              {value ? value :'-'}
+              {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
+              {/* {value ? value : '-'} */}
             </div>
           }
         }
@@ -155,7 +165,7 @@ const mapStateToProps = ({ loans }) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setLoansData : (status, data) => dispatch(setLoansByStatus(status, data))
+  setLoansData: (status, data) => dispatch(setLoansByStatus(status, data))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ApprovalReqestTable);

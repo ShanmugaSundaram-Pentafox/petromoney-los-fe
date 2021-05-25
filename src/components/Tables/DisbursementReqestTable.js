@@ -7,7 +7,7 @@ import Paper from '@material-ui/core/Paper';
 import { useMount } from 'react-use';
 // import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
-// import moment from 'moment';
+import moment from 'moment';
 import clsx from 'clsx';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
@@ -43,10 +43,10 @@ const useStyles = makeStyles(theme => ({
 
 const DisbursementReqestTable = ({ title, loans, setLoansData, onRowClick }) => {
   const classes = useStyles();
-  const [ loading, setLoading ] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useMount(() => {
-    if(!loans || !loans.length) {
+    if (!loans || !loans.length) {
       setLoading(true);
       getLoansByStatus('disbursement_approval')
         .then(data => {
@@ -58,7 +58,7 @@ const DisbursementReqestTable = ({ title, loans, setLoansData, onRowClick }) => 
         })
     }
   });
-  
+
   const columns = useMemo(() => {
     return [
       {
@@ -90,6 +90,16 @@ const DisbursementReqestTable = ({ title, loans, setLoansData, onRowClick }) => 
         }
       },
       {
+        label: 'Region',
+        name: 'region',
+        options: {
+          filter: true,
+          sort: true,
+          customBodyRender: value => (<strong>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</strong>)
+        }
+
+      },
+      {
         label: 'Approved Amount',
         name: 'amount_approved',
         options: {
@@ -112,8 +122,8 @@ const DisbursementReqestTable = ({ title, loans, setLoansData, onRowClick }) => 
           }),
           customBodyRender: value => {
             return <div>
-              {/* {value ? moment(new Date(value)).format('DD MMM, YYYY') : '-'} */}
-              {value ? value :'-'}
+              {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
+              {/* {value ? value : '-'} */}
             </div>
           }
         }
@@ -156,7 +166,7 @@ const mapStateToProps = ({ loans }) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setLoansData : (status, data) => dispatch(setLoansByStatus(status, data))
+  setLoansData: (status, data) => dispatch(setLoansByStatus(status, data))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(DisbursementReqestTable);

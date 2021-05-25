@@ -90,6 +90,16 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick }) => {
         }
       },
       {
+        label: 'Region',
+        name: 'region',
+        options: {
+          filter: true,
+          sort: true,
+          customBodyRender: value => (<strong>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</strong>)
+        }
+
+      },
+      {
         label: 'Disbursed Amount',
         name: 'amount_disbursed',
         options: {
@@ -112,8 +122,8 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick }) => {
           }),
           customBodyRender: value => {
             return <div>
-              {/* {value ? moment(new Date(value)).format('DD MMM, YYYY') : '-'} */}
-              {value ? value : '-'}
+              {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
+              {/* {value ? value : '-'} */}
             </div>
           }
         }
@@ -142,7 +152,7 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick }) => {
             columns={columns}
             options={options}
           />
-        ) : ( !loading && <Paper style={{ padding: 10 }}>No Disbursed Loans</Paper>)
+        ) : (!loading && <Paper style={{ padding: 10 }}>No Disbursed Loans</Paper>)
       }
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>

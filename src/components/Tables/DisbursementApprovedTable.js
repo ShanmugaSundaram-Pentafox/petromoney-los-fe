@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
 
 const DisbursementApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const classes = useStyles();
-  const [ loading, setLoading ] = useState(false);
+  const [loading, setLoading] = useState(false);
 
 
   useMount(() => {
@@ -95,6 +95,16 @@ const DisbursementApprovedTable = ({ title, loans, setLoansData, onRowClick }) =
         }
       },
       {
+        label: 'Region',
+        name: 'region',
+        options: {
+          filter: true,
+          sort: true,
+          customBodyRender: value => (<strong>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</strong>)
+        }
+
+      },
+      {
         label: 'Disbursed Amount',
         name: 'amount_disbursed',
         options: {
@@ -117,8 +127,8 @@ const DisbursementApprovedTable = ({ title, loans, setLoansData, onRowClick }) =
           }),
           customBodyRender: value => {
             return <div>
-              {/* {value ? moment(new Date(value)).format('DD MMM, YYYY') : '-'} */}
-              {value ? value : '-'}
+              {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
+              {/* {value ? value : '-'} */}
             </div>
           }
         }
@@ -147,7 +157,7 @@ const DisbursementApprovedTable = ({ title, loans, setLoansData, onRowClick }) =
             columns={columns}
             options={options}
           />
-        ) : ( !loading && <Paper style={{ padding: 10 }}>No pending Disbursement Approved applications</Paper>)
+        ) : (!loading && <Paper style={{ padding: 10 }}>No pending Disbursement Approved applications</Paper>)
       }
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>

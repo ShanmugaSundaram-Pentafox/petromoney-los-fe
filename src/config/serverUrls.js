@@ -32,5 +32,5 @@ export const URL = {
   regionDel:"region-del/",
   regionMapAdd:"region-map-add/",
   passReset:"passReset",
-  guarantor:"guarantor"
+  guarantor:"guarantors"
 }

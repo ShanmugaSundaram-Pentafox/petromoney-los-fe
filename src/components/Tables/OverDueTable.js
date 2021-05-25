@@ -8,6 +8,8 @@ import { getReport } from '../../services/users.service';
 import usePageTitle from '../../hooks/usePageTitle';
 import { Grid } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
+import moment from 'moment';
+
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -54,6 +56,11 @@ const OverDueTable = ({ onRowClick }) => {
                 label: 'Due Date',
                 options: {
                     filter: false,
+                },
+                customBodyRender: value => {
+                    return <div>
+                        {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
+                    </div>
                 }
             },
             {

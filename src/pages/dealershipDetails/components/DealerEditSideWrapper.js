@@ -22,6 +22,8 @@ import { URL } from '../../../config/serverUrls';
 import { logger } from '../../../config/logger';
 import DealerEditForm from './DealerEditForm';
 import apiCall from '../../../utils/api.util';
+import { useSnackbar } from 'notistack';
+
 
 const useStyles = makeStyles(theme => ({
   sidePanelTitle: {
@@ -80,6 +82,8 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
   const [loading, setLoading] = useState(false);
   const [apicallStatus, setApicallStatus] = useState(null);
   const [apiCallMessage, setApiCallMessage] = useState('');
+  const { enqueueSnackbar } = useSnackbar();
+
   const handleEdit = () => {
     setReadOnly(!readOnly)
   };
@@ -91,18 +95,6 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
       relationship: Yup.string().min(2).required("Enter Relationship Type"),
     }
   }
-  let dealerFields = {};
-  if (modelType === 'Dealer') {
-
-    dealerFields = {
-      dob: Yup.string().required("Choose date of birth"),
-      residing_since: Yup.number().required("Enter the year"),
-      marital_status: Yup.string("Enter your Marital status"),
-      pan: Yup.string().matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, "Invalid PAN").required("Enter PAN").uppercase(),
-      aadhar: Yup.string().matches(/^(\d{12})$|^(\d{16})$/, "Invalid aadhar").required("Enter valid aadhar"),
-    }
-
-  }
 
   const validationSchema = Yup.object().shape({
     first_name: Yup.string().min(2, 'first name must be atleast 2 characters').required("Enter first name"),
@@ -111,8 +103,12 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
     email: Yup.string().email('Enter valid email').required("Enter email"),
     address: Yup.string().min(6, 'address must be atleast 6 characters').required("Enter address"),
     mobile: Yup.string().matches(/^\d{10}$/, 'Invalid mobile number').required("Enter valid mobile number"),
+    dob: Yup.string().required("Choose date of birth"),
+    residing_since: Yup.number().required("Enter the year"),
+    marital_status: Yup.string("Enter your Marital status"),
+    pan: Yup.string().matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, "Invalid PAN").required("Enter PAN").uppercase(),
+    aadhar: Yup.string().matches(/^(\d{12})$|^(\d{16})$/, "Invalid aadhar").required("Enter valid aadhar"),
     ...coApplicantFields,
-    ...dealerFields
   })
 
   const deleteFile = (type) => {
@@ -156,79 +152,47 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
       Object.keys(values).forEach(key => {
         data.append(key, values[key]);
       })
-      delete values.created_date
-      delete values.modified_date
-      if (modelType === "GUARANTOR") {
-        if (isAdd === "Add") {
-          apiCall(`guarantor/${dealershipId}`, {
-            method: 'POST',
-            body: data
-          })
-            .then(res => {
-              if (res.status === "SUCCESS") {
-                setLoading(false);
-              } else {
-                console.log('>> Document Details status error >> ', res)
-              }
-            })
-            .catch(err => {
-              console.log(err)
-            });
-        }
-        else {
-          apiCall(`guarantor/${dealershipId}/${values.id}`, {
-            method: 'POST',
-            body: values
-          })
-            .then(res => {
-              if (res.status === "SUCCESS") {
-                setLoading(false);
-              } else {
-                console.log('>> Document Details status error >> ', res)
-              }
-            })
-            .catch(err => {
-              console.log(err)
-            });
-        }
-      }
-      else {
-        const apiURL = modelType === "DEALER" ? URL.dealers : URL.coApplicants;
-        let url = `${apiURL}/${dealershipId}`;
-        if (values.id) {
-          url += `/${values.id}`;
-        };
+      // delete values.created_date
+      // delete values.modified_date
+      const apiURL = modelType === "DEALER" ? URL.dealers : modelType === "GUARANTOR" ? URL.guarantor : URL.coApplicants;
+      let url = `${apiURL}/${dealershipId}`;
+      if (values.id) {
+        url += `/${values.id}`;
+      };
+      if (modelType !== "GUARANTOR") {
         data.append('user_id', currentUser.id);
-        // API.post(url, data)
-        fetch(`${URL.base}${url}`, {
-          method: 'POST',
-          body: data,
-          headers: {
-            'Authorization': `Bearer ${currentUser.token}`
-          }
-        })
-          .then(res => {
-            return res.json()
-          })
-          // apiCall(url, {
-          //   method : 'POST',
-          //   body: data,
-          // })
-          .then(res => {
-            setLoading(false);
-            setApicallStatus('success');
-            setApiCallMessage(isAdd ? 'Dealer Added' : 'Dealer Updated');
-            onClose();
-            modelType === "DEALER" ? getDealerApiCall(dealershipId) : getCoApplicantApiCall(dealershipId);
-          })
-          .catch(err => {
-            setReadOnly(false);
-            setLoading(false);
-            setApicallStatus('error');
-            setApiCallMessage('Sorry! Unable to add or Update. Try again later.')
-            logger(err);
-          })
       }
+      // data.append('is_whatsapp', checkedA);
+      // data.append('is_pan', checkedB);
+      // API.post(url, data)
+      fetch(`${URL.base}${url}`, {
+        method: 'POST',
+        body: data,
+        headers: {
+          'Authorization': `Bearer ${currentUser.token}`
+        }
+      })
+        .then(res => {
+          return res.json()
+        })
+        // apiCall(url, {
+        //   method : 'POST',
+        //   body: data,
+        // })
+        .then(res => {
+          setLoading(false);
+          setApicallStatus('success');
+          setApiCallMessage(isAdd ? 'Dealer Added' : 'Dealer Updated');
+          onClose();
+          modelType === "DEALER" ? getDealerApiCall(dealershipId) : getCoApplicantApiCall(dealershipId);
+        })
+        .catch(err => {
+          setReadOnly(false);
+          setLoading(false);
+          setApicallStatus('error');
+          setApiCallMessage('Sorry! Unable to add or Update. Try again later.')
+          logger(err);
+        })
     }
   });
 
@@ -247,7 +211,8 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
                 data={data}
                 values={values}
                 errors={errors}
-                onChange={handleChange} />
+                onChange={handleChange}
+              />
             </StepContent>
           </Step>
         </Stepper>

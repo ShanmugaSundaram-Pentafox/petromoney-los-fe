@@ -97,11 +97,11 @@ const TransportsDetails = ({ currentUser, match }) => {
         </Grid>
       </Grid>
       <FormDialog
-        title="Add Transport"
+        title="Add Vehicle"
         open={openModal}
         onClose={() => setOpenModal(false)}
       >
-        <AddNewVehicleForm />
+        <AddNewVehicleForm data={transportsData} />
       </FormDialog>
     </>
   )

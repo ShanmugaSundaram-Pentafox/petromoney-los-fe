@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import clsx from 'clsx';
 import moment from 'moment';
 import Tooltip from '@material-ui/core/Tooltip';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles, withStyles } from '@material-ui/styles';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -10,10 +10,10 @@ import IconButton from '@material-ui/core/IconButton';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import TextInput from '../../../components/TextInput/TextInput';
 import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
-
 import FileUpload from "../../../components/FileUpload";
 import Typography from '@material-ui/core/Typography'
 import { useFormik } from 'formik';
+import Switch from '@material-ui/core/Switch';
 
 const useStyles = makeStyles({
     row: {
@@ -31,6 +31,14 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
     const [showUpload, setShowUpload] = useState(false);
     const [currentFileUpload, setCurrentFileUpload] = useState('');
     const [formValue, setformValue] = useState(values);
+    const [state, setState] = React.useState({
+        checkedA: true,
+        checkedB: true,
+    });
+    const handleChange = (event) => {
+        setState({ ...state, [event.target.name]: event.target.checked });
+    };
+
     const gridItem = {
         md: 12,
         item: true,
@@ -91,408 +99,398 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                 href={data.pan_file_url} target="_blank" title={'PAN Attachment'}>{'PAN Attachment'}</a>
         )
     }
+    const AntSwitch = withStyles((theme) => ({
+        root: {
+            width: 28,
+            height: 16,
+            padding: 0,
+            display: 'flex',
+        },
+        switchBase: {
+            marginBottom: 4,
+            padding: 2,
+            color: theme.palette.grey[500],
+            '&$checked': {
+                transform: 'translateX(12px)',
+                color: theme.palette.common.white,
+                '& + $track': {
+                    opacity: 1,
+                    backgroundColor: theme.palette.primary.main,
+                    borderColor: theme.palette.primary.main,
+                },
+            },
+        },
+        thumb: {
+            width: 12,
+            height: 12,
+            boxShadow: 'none',
+        },
+        track: {
+            border: `1px solid ${theme.palette.grey[500]}`,
+            borderRadius: 16 / 2,
+            opacity: 1,
+            backgroundColor: theme.palette.common.white,
+        },
+        checked: {},
+    }))(Switch);
 
     return (
         <Grid container>
-            {
-                modelType === "GUARANTOR" ? (
+            <>
+                <Grid {...gridItem} md={6}>
+                    <TextInput
+                        label="First Name"
+                        name="first_name"
+                        error={errors.first_name}
+                        readOnly={readOnly}
+                        defaultValue={values.first_name}
+                        helperText={errors.first_name}
+                        onChange={onChange}
+                    />
+                </Grid>
+                <Grid {...gridItem} md={6}>
+                    <TextInput
+                        label="Last Name"
+                        name="last_name"
+                        readOnly={readOnly}
+                        error={errors.last_name}
+                        helperText={errors.last_name}
+                        defaultValue={values.last_name}
+                        onChange={onChange}
+                    />
+                </Grid>
+                <Grid {...gridItem} md={6}>
+                    <TextInput
+                        select
+                        label="Gender"
+                        name="gender"
+                        error={errors.gender}
+                        helperText={errors.gender}
+                        value={values.gender}
+                        disabled={readOnly}
+                        onChange={onChange}
+                        SelectProps={{
+                            native: true,
+                        }}
+                    >
+                        <option value="null">Select Gender</option>
+                        <option value={'MALE'}>Male</option>
+                        <option value={'FEMALE'}>Female</option>
+                    </TextInput>
+                </Grid>
+                <Grid {...gridItem} md={6}>
+                    <TextInput
+                        id="date"
+                        label="Date of Birth"
+                        name="dob"
+                        error={errors.dob}
+                        helperText={errors.dob}
+                        readOnly={readOnly}
+                        defaultValue={values.dob}
+                        onChange={onChange}
+                        InputLabelProps={{ shrink: true }}
+                    />
+                </Grid>
+                {modelType === 'COAPPLICANT' || modelType === 'GUARANTOR' ?
                     <>
                         <Grid {...gridItem} md={6}>
                             <TextInput
-                                label="First Name"
-                                name="first_name"
-                                error={errors.first_name}
-                                readOnly={readOnly}
-                                defaultValue={values.first_name}
-                                helperText={errors.first_name}
-                                onChange={onChange}
-                            />
-                        </Grid>
-                        <Grid {...gridItem} md={6}>
-                            <TextInput
-                                label="Last Name"
-                                name="last_name"
-                                readOnly={readOnly}
-                                error={errors.last_name}
-                                helperText={errors.last_name}
-                                defaultValue={values.last_name}
-                                onChange={onChange}
-                            />
-                        </Grid>
-                        <Grid {...gridItem} md={6}>
-                            <TextInput
                                 select
-                                label="Gender"
-                                name="gender"
-                                error={errors.gender}
-                                helperText={errors.gender}
-                                value={values.gender}
-                                disabled={readOnly}
+                                label="Relation To"
+                                name="dealer_id"
+                                error={errors.dealer_id}
+                                helperText={errors.dealer_id}
+                                readOnly={readOnly}
+                                value={values.dealer_id}
                                 onChange={onChange}
+                                disabled={readOnly}
                                 SelectProps={{
                                     native: true,
                                 }}
                             >
-                                <option value="null">Select Gender</option>
-                                <option value={'MALE'}>Male</option>
-                                <option value={'FEMALE'}>Female</option>
+                                <option value="null">Choose Relative</option>
+                                {
+                                    dealersList.map((item, i) => {
+                                        return (
+                                            <option value={item.id}>{item.first_name} {item.last_name}</option>
+                                        )
+                                    })
+                                }
                             </TextInput>
-                        </Grid>
-                        <Grid {...gridItem} md={6}>
-                            <TextInput
-                                label="Email"
-                                name="email"
-                                readOnly={readOnly}
-                                error={errors.email}
-                                helperText={errors.email}
-                                defaultValue={values.email}
-                                onChange={onChange}
-                            />
-                        </Grid>
-                        <Grid {...gridItem}>
-                            <TextInput
-                                label="Address"
-                                name="address"
-                                readOnly={readOnly}
-                                defaultValue={values.address}
-                                error={errors.address}
-                                helperText={errors.address}
-                                onChange={onChange}
-                                rows={3}
-                                multiline={true}
-                            />
-                        </Grid>
-                        <Grid {...gridItem} md={6}>
-                            <TextInput
-                                label="Mobile"
-                                name="mobile"
-                                readOnly={readOnly}
-                                value={values.mobile}
-                                onChange={onChange}
-                                error={errors.mobile}
-                                helperText={errors.mobile}
-                                type='number'
-                            ></TextInput>
-                        </Grid>
-                    </>
-                ) : (
-                    <>
-                        <Grid {...gridItem} md={6}>
-                            <TextInput
-                                label="First Name"
-                                name="first_name"
-                                error={errors.first_name}
-                                readOnly={readOnly}
-                                defaultValue={values.first_name}
-                                helperText={errors.first_name}
-                                onChange={onChange}
-                            />
-                        </Grid>
-                        <Grid {...gridItem} md={6}>
-                            <TextInput
-                                label="Last Name"
-                                name="last_name"
-                                readOnly={readOnly}
-                                error={errors.last_name}
-                                helperText={errors.last_name}
-                                defaultValue={values.last_name}
-                                onChange={onChange}
-                            />
                         </Grid>
                         <Grid {...gridItem} md={6}>
                             <TextInput
                                 select
-                                label="Gender"
-                                name="gender"
-                                error={errors.gender}
-                                helperText={errors.gender}
-                                value={values.gender}
-                                disabled={readOnly}
+                                label="Relationship type"
+                                name="relationship"
+                                error={errors.relationship}
+                                helperText={errors.relationship}
+                                readOnly={readOnly}
+                                value={values.relationship}
                                 onChange={onChange}
+                                disabled={readOnly}
                                 SelectProps={{
                                     native: true,
                                 }}
-                            >
-                                <option value="null">Select Gender</option>
-                                <option value={'MALE'}>Male</option>
-                                <option value={'FEMALE'}>Female</option>
-                            </TextInput>
-                        </Grid>
-                        <Grid {...gridItem} md={6}>
-                            <TextInput
-                                id="date"
-                                label="Date of Birth"
-                                name="dob"
-                                error={errors.dob}
-                                helperText={errors.dob}
-                                readOnly={readOnly}
-                                defaultValue={values.dob}
-                                onChange={onChange}
                                 InputLabelProps={{ shrink: true }}
-                            />
-                        </Grid>
-                        <Grid {...gridItem} md={6}>
-                            <TextInput
-                                label="Email"
-                                name="email"
-                                readOnly={readOnly}
-                                error={errors.email}
-                                helperText={errors.email}
-                                defaultValue={values.email}
-                                onChange={onChange}
-                            />
-                        </Grid>
-                        <Grid {...gridItem} md={6}>
-                            <TextInput
-                                select
-                                label="Marital Status"
-                                name="marital_status"
-                                error={errors.marital_status}
-                                helperText={errors.marital_status}
-                                readOnly={readOnly}
-                                value={values.marital_status}
-                                onChange={onChange}
-                                disabled={readOnly}
-                                SelectProps={{
-                                    native: true,
-                                }}
-                            >
-                                <option value="null">Choose Marital Status</option>
-                                <option value="Single">Single</option>
-                                <option value="Married">Married</option>
-                                <option value="Divorced">Divorced</option>
-                                <option value="Widowed">Widowed</option>
-                            </TextInput>
-                        </Grid>
-                        {modelType === 'COAPPLICANT' ?
-                            <>
-                                <Grid {...gridItem} md={6}>
-                                    <TextInput
-                                        select
-                                        label="Relation To"
-                                        name="dealer_id"
-                                        error={errors.dealer_id}
-                                        helperText={errors.dealer_id}
-                                        readOnly={readOnly}
-                                        value={values.dealer_id}
-                                        onChange={onChange}
-                                        disabled={readOnly}
-                                        SelectProps={{
-                                            native: true,
-                                        }}
-                                    >
-                                        <option value="null">Choose Relative</option>
-                                        {
-                                            dealersList.map((item, i) => {
-                                                return (
-                                                    <option value={item.id}>{item.first_name} {item.last_name}</option>
-                                                )
-                                            })
-                                        }
-                                    </TextInput>
-                                </Grid>
-                                <Grid {...gridItem} md={6}>
-                                    <TextInput
-                                        select
-                                        label="Relationship type"
-                                        name="relationship"
-                                        error={errors.relationship}
-                                        helperText={errors.relationship}
-                                        readOnly={readOnly}
-                                        value={values.relationship}
-                                        onChange={onChange}
-                                        disabled={readOnly}
-                                        SelectProps={{
-                                            native: true,
-                                        }}
-                                        InputLabelProps={{ shrink: true }}
-                                    >
-                                        {
-                                            relationShipOptions.map((item, i) => {
-                                                return (
-                                                    <option value={item.value}>{item.label}</option>
-                                                )
-                                            })
-                                        }
-                                    </TextInput>
-                                </Grid>
-                            </> : null}
-
-                        <Grid {...gridItem}>
-                            <TextInput
-                                label="Address"
-                                name="address"
-                                readOnly={readOnly}
-                                defaultValue={values.address}
-                                error={errors.address}
-                                helperText={errors.address}
-                                onChange={onChange}
-                                rows={3}
-                                multiline={true}
-                            />
-                        </Grid>
-                        <Grid {...gridItem} md={6}>
-                            <TextInput
-                                label="Mobile"
-                                name="mobile"
-                                readOnly={readOnly}
-                                value={values.mobile}
-                                onChange={onChange}
-                                error={errors.mobile}
-                                helperText={errors.mobile}
-                                type='number'
-                            ></TextInput>
-                        </Grid>
-                        <Grid {...gridItem} md={6}>
-                            <TextInput
-                                select
-                                label="Residing Since"
-                                name="residing_since"
-                                value={values.residing_since}
-                                error={errors.residing_since}
-                                onChange={onChange}
-                                disabled={readOnly}
-                                SelectProps={{
-                                    native: true,
-                                }}
                             >
                                 {
-                                    <>
-                                        <option value="null">Residing Since</option>
-                                        {[...Array(currentYearDiff)].map((_, i) => {
-                                            return (
-                                                <option value={currentYear - i}>{currentYear - i}</option>
-                                            )
-                                        })}
-                                    </>
+                                    relationShipOptions.map((item, i) => {
+                                        return (
+                                            <option value={item.value}>{item.label}</option>
+                                        )
+                                    })
                                 }
                             </TextInput>
                         </Grid>
-                        <Grid {...gridItem} md={6}>
-                            <TextInput
-                                label="Aadhar"
-                                name="aadhar"
-                                value={values.aadhar}
-                                helperText={errors.aadhar}
-                                readOnly={readOnly}
-                                error={errors.aadhar}
-                                onChange={onChange}
-                            >
-                            </TextInput>
+                    </> : null}
+                <Grid {...gridItem}>
+                    <TextInput
+                        label="Address"
+                        name="address"
+                        readOnly={readOnly}
+                        defaultValue={values.address}
+                        error={errors.address}
+                        helperText={errors.address}
+                        onChange={onChange}
+                        rows={3}
+                        multiline={true}
+                    />
+                </Grid>
+                <Grid {...gridItem} md={6}>
+                    <TextInput
+                        select
+                        label="Residing Since"
+                        name="residing_since"
+                        value={values.residing_since}
+                        error={errors.residing_since}
+                        onChange={onChange}
+                        disabled={readOnly}
+                        SelectProps={{
+                            native: true,
+                        }}
+                    >
+                        {
+                            <>
+                                <option value="null">Residing Since</option>
+                                {[...Array(currentYearDiff)].map((_, i) => {
+                                    return (
+                                        <option value={currentYear - i}>{currentYear - i}</option>
+                                    )
+                                })}
+                            </>
+                        }
+                    </TextInput>
+                </Grid>
+                <Grid {...gridItem} md={6}>
+                    <TextInput
+                        select
+                        label="Marital Status"
+                        name="marital_status"
+                        error={errors.marital_status}
+                        helperText={errors.marital_status}
+                        readOnly={readOnly}
+                        value={values.marital_status}
+                        onChange={onChange}
+                        disabled={readOnly}
+                        SelectProps={{
+                            native: true,
+                        }}
+                    >
+                        <option value="null">Choose Marital Status</option>
+                        <option value="Single">Single</option>
+                        <option value="Married">Married</option>
+                        <option value="Divorced">Divorced</option>
+                        <option value="Widowed">Widowed</option>
+                    </TextInput>
+                </Grid>
+                <Grid {...gridItem} md={6}>
+                    <TextInput
+                        label="Mobile"
+                        name="mobile"
+                        readOnly={readOnly}
+                        value={values.mobile}
+                        onChange={onChange}
+                        error={errors.mobile}
+                        helperText={errors.mobile}
+                        type='number'
+                    ></TextInput>
+                </Grid>
+                <Grid {...gridItem} md={6}>
+                    <TextInput
+                        label="Email"
+                        name="email"
+                        readOnly={readOnly}
+                        error={errors.email}
+                        helperText={errors.email}
+                        defaultValue={values.email}
+                        onChange={onChange}
+                    />
+                </Grid>
+                <Grid {...gridItem} md={6}>
+                    <Typography component="div">
+                        <Grid component="label" container alignItems="center" style={{marginBottom:'10px',marginTop:'6px'}} spacing={2}>
+                            <Grid md={12} style={{paddingLeft:'8px'}}>Mobile number on Whatsapp?</Grid>
+                            <Grid style={{paddingLeft:'8px'}}>No</Grid>
+                            <Grid>
+                                <Switch
+                                    checked={state.checkedA}
+                                    onChange={handleChange}
+                                    name="checkedA"
+                                    color="primary"
+                                    inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                />
+                            </Grid>
+                            <Grid>Yes</Grid>
                         </Grid>
-                        <Grid {...gridItem} md={6}>
-                            <TextInput
-                                label="PAN Number"
-                                name="pan"
-                                value={values.pan}
-                                error={errors.pan}
-                                helperText={errors.pan}
-                                readOnly={readOnly}
-                                onChange={onChange}
-                            >
-                            </TextInput>
+                    </Typography>
+                </Grid>
+                <Grid item md={6}>
+                    <Typography component="div" >
+                        <Grid component="label" container style={{marginBottom:'8px',marginTop:'6px'}} alignItems="center" spacing={2}>
+                            <Grid md={12} style={{paddingLeft:'8px'}}>PAN linked to AADHAR?</Grid>
+                            <Grid style={{paddingLeft:'8px'}}>No</Grid>
+                            <Grid>
+                                <Switch
+                                    checked={state.checkedB}
+                                    onChange={handleChange}
+                                    color="primary"
+                                    name="checkedB"
+                                    inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                />
+                            </Grid>
+                            <Grid>Yes</Grid>
                         </Grid>
+                    </Typography>
+                </Grid>
 
-                        <Grid {...gridItem} md={6}>
-                            <Typography variant="subtitle2" component="subtitle2">
-                                PAN File: {(readOnly) ?
-                                    <>
-                                        {data.pan_file_url ?
-                                            panAttachment()
-                                            : <Typography variant="subtitle2" component="subtitle2">
-                                                <Tooltip title={'Click Edit and attach'}>
-                                                    <AttachFileRoundedIcon disabled={readOnly} />
-                                                </Tooltip> Attach PAN
+                <Grid {...gridItem} md={6}>
+                    <TextInput
+                        label="Aadhar"
+                        name="aadhar"
+                        value={values.aadhar}
+                        helperText={errors.aadhar}
+                        readOnly={readOnly}
+                        error={errors.aadhar}
+                        onChange={onChange}
+                    >
+                    </TextInput>
+                </Grid>
+                <Grid {...gridItem} md={6}>
+                    <TextInput
+                        label="PAN Number"
+                        name="pan"
+                        value={values.pan}
+                        error={errors.pan}
+                        helperText={errors.pan}
+                        readOnly={readOnly}
+                        onChange={onChange}
+                    >
+                    </TextInput>
+                </Grid>
+                <Grid md={12} style={{ marginBottom: '16px' }}>
+                    <Typography variant="title">Files </Typography>
+                </Grid>
+                <Grid {...gridItem} md={12}>
+                    <Typography variant="subtitle2" component="subtitle2">
+                        PAN File: {(readOnly) ?
+                            <>
+                                {data.pan_file_url ?
+                                    panAttachment()
+                                    : <Typography variant="subtitle2" component="subtitle2">
+                                        <Tooltip title={'Click Edit and attach'}>
+                                            <AttachFileRoundedIcon disabled={readOnly} />
+                                        </Tooltip> Attach PAN
                                 </Typography>}
-                                    </> :
+                            </> :
+                            <>
+                                {data.pan_file_url ? panAttachment() :
                                     <>
-                                        {data.pan_file_url ? panAttachment() :
-                                            <>
-                                                <TextInput
-                                                    type="file"
-                                                    accept="image/*"
-                                                    name="pan_file_url"
-                                                    value={data.pan_file_url}
-                                                    onChange={(event) => {
-                                                        values[event.target.name] = event.currentTarget.files[0];
-                                                    }}
-                                                    InputLabelProps={{ shrink: true }}
-                                                ></TextInput>
-                                            </>
-                                        }
+                                        <TextInput
+                                            type="file"
+                                            accept="image/*"
+                                            name="pan_file_url"
+                                            value={data.pan_file_url}
+                                            onChange={(event) => {
+                                                values[event.target.name] = event.currentTarget.files[0];
+                                            }}
+                                            InputLabelProps={{ shrink: true }}
+                                        ></TextInput>
                                     </>
                                 }
-                            </Typography>
-                        </Grid>
-
-                        <Grid {...gridItem} md={6}>
-                            <Typography variant="subtitle2" component="subtitle2">
-                                Aadhar Front: {(readOnly) ?
-                                    <>
-                                        {data.aadhar_f_file_url ?
-                                            aadharFront()
-                                            : <Typography variant="subtitle2" component="subtitle2">
-                                                <Tooltip title={'Click Edit and attach'}>
-                                                    <AttachFileRoundedIcon disabled={readOnly} />
-                                                </Tooltip> Front
+                            </>
+                        }
+                    </Typography>
+                </Grid>
+                <Grid md={12} style={{ marginBottom: '8px' }}>
+                    <Typography variant="subtitle1">Aadhar </Typography>
+                </Grid>
+                <Grid {...gridItem} md={6}>
+                    <Typography variant="subtitle2" component="subtitle2">
+                        Front: {(readOnly) ?
+                            <>
+                                {data.aadhar_f_file_url ?
+                                    aadharFront()
+                                    : <Typography variant="subtitle2" component="subtitle2">
+                                        <Tooltip title={'Click Edit and attach'}>
+                                            <AttachFileRoundedIcon disabled={readOnly} />
+                                        </Tooltip> Front
                                 </Typography>}
-                                    </> :
+                            </> :
+                            <>
+                                {data.aadhar_f_file_url ? aadharFront() :
                                     <>
-                                        {data.aadhar_f_file_url ? aadharFront() :
-                                            <>
-                                                <TextInput
-                                                    type="file"
-                                                    accept="image/*"
-                                                    name="aadhar_f_file_url"
-                                                    value={data.aadhar_f_file_url}
-                                                    onChange={(event) => {
-                                                        values[event.target.name] = event.currentTarget.files[0];
-                                                    }}
-                                                    InputLabelProps={{ shrink: true }}
-                                                ></TextInput>
-                                            </>
-                                        }
+                                        <TextInput
+                                            type="file"
+                                            accept="image/*"
+                                            name="aadhar_f_file_url"
+                                            value={data.aadhar_f_file_url}
+                                            onChange={(event) => {
+                                                values[event.target.name] = event.currentTarget.files[0];
+                                            }}
+                                            InputLabelProps={{ shrink: true }}
+                                        ></TextInput>
                                     </>
                                 }
-                            </Typography>
-                        </Grid>
-                        <Grid {...gridItem} md={6}>
-                            <Typography variant="subtitle2" component="subtitle2">
-                                Aadhar Back: {(readOnly) ?
-                                    <>
-                                        {data.aadhar_b_file_url ?
-                                            aadharBack()
-                                            :
-                                            <Typography variant="subtitle2" component="subtitle2">
-                                                <Tooltip title={'Click Edit and attach'}>
-                                                    <AttachFileRoundedIcon disabled={readOnly} />
-                                                </Tooltip> Back
+                            </>
+                        }
+                    </Typography>
+                </Grid>
+                <Grid {...gridItem} md={6}>
+                    <Typography variant="subtitle2" component="subtitle2">
+                        Back: {(readOnly) ?
+                            <>
+                                {data.aadhar_b_file_url ?
+                                    aadharBack()
+                                    :
+                                    <Typography variant="subtitle2" component="subtitle2">
+                                        <Tooltip title={'Click Edit and attach'}>
+                                            <AttachFileRoundedIcon disabled={readOnly} />
+                                        </Tooltip> Back
                                     </Typography>
-                                        }
-                                    </> :
+                                }
+                            </> :
+                            <>
+                                {data.aadhar_b_file_url ?
+                                    aadharBack() :
                                     <>
-                                        {data.aadhar_b_file_url ?
-                                            aadharBack() :
-                                            <>
-                                                <TextInput
-                                                    type="file"
-                                                    accept="image/*"
-                                                    name="aadhar_b_file_url"
-                                                    value={data.aadhar_b_file_url}
-                                                    onChange={(event) => {
-                                                        values[event.target.name] = event.currentTarget.files[0];
-                                                    }}
-                                                    InputLabelProps={{ shrink: true }}
-                                                ></TextInput>
-                                            </>
-                                        }
+                                        <TextInput
+                                            type="file"
+                                            accept="image/*"
+                                            name="aadhar_b_file_url"
+                                            value={data.aadhar_b_file_url}
+                                            onChange={(event) => {
+                                                values[event.target.name] = event.currentTarget.files[0];
+                                            }}
+                                            InputLabelProps={{ shrink: true }}
+                                        ></TextInput>
                                     </>
                                 }
-                            </Typography>
-                        </Grid>
-                    </>
-                )
-            }
+                            </>
+                        }
+                    </Typography>
+                </Grid>
+            </>
         </Grid>
     )
 }

@@ -16,7 +16,7 @@ import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepButton from '@material-ui/core/StepButton';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { getVehicleDocuments, getVehicleLoans, getVehicleServiceDetails, updateVehicleServiceDetails } from "../../../services/transports.service"
+import { getVehicleDocuments, getVehicleLoans, getVehicleServiceDetails, deleteVehicleStatus, updateVehicleServiceDetails } from "../../../services/transports.service"
 import { logger } from "../../../config/logger"
 import Button from "../../../components/CommonComponents/Button/Button"
 import NewVehicleLoanAction from "../../../components/NewVehicleLoan/NewVehicleLoanAction"
@@ -27,7 +27,8 @@ import { URL } from "../../../config/serverUrls"
 import { useSnackbar } from 'notistack';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
-import AddNewVehicleForm from "../../transports/components/AddNewVehicleForm"
+import AddNewVehicleForm from "../../transports/components/AddNewVehicleForm";
+
 
 
 const Accordion = withStyles({
@@ -91,6 +92,10 @@ export default function VehicleInfo({ id, data, currentUser }) {
   const [showUpload, setShowUpload] = useState(true);
   const [tracking, setTracking] = useState([])
   const [rowData, setRowData] = useState();
+  const [openModal, setOpenModal] = useState(false);
+  const [vehicleNumber, setVehicleNumber] = useState();
+  const [vehicleId, setVehicleId] = useState();
+  const [modalType, setModalType] = useState("");
   const { enqueueSnackbar } = useSnackbar();
 
 
@@ -224,7 +229,38 @@ export default function VehicleInfo({ id, data, currentUser }) {
       getServiceStatus({ ...d, id: d.loan_id });
     }
   }
+  const modalOpen = (number, id) => {
+    setVehicleNumber(number)
+    setVehicleId(id);
+    setOpenModal(true);
+    setModalType("EDIT");
+  }
+  const deleteVehicle = (vehicleId) => {
+    deleteVehicleStatus(id, vehicleId)
+      .then(res => {
+        // if (res.status ==="SUCCESS") {
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
 
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000)
+      })
+      .catch(e => {
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+      })
+  }
   return (
     <div>
       {data.map((vehicleInfo) => {
@@ -244,16 +280,18 @@ export default function VehicleInfo({ id, data, currentUser }) {
                 <Typography>
                   Credit Limit: <Currency value={vehicleInfo.credit_limit} />
                 </Typography>
-                <Tooltip title="Edit vehicle">
-                  <Typography>
-                    <EditOutlinedIcon fontSize="medium" />
-                  </Typography>
-                </Tooltip>
-                <Tooltip title="Delete vehicle">
-                  <Typography>
-                    <DeleteOutlineOutlinedIcon fontSize="medium" />
-                  </Typography>
-                </Tooltip>
+                <div style={{ display: "flex" }}>
+                  <Tooltip title="Edit vehicle">
+                    <Typography style={{ marginRight: '7px', color: "#4770C1" }} onClick={() => modalOpen(vehicleInfo.tt_no, vehicleInfo.vehicle_id)}>
+                      <EditOutlinedIcon fontSize="medium" />
+                    </Typography>
+                  </Tooltip>
+                  <Tooltip title="Delete vehicle">
+                    <Typography style={{ color: '#ff6666' }}>
+                      <DeleteOutlineOutlinedIcon fontSize="medium" onClick={() => deleteVehicle(vehicleInfo.vehicle_id)} />
+                    </Typography>
+                  </Tooltip>
+                </div>
               </AccordionSummary>
               <AccordionDetails>
                 <Box mb={2}>
@@ -384,7 +422,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
           </div>
         )
       })}
-      
+
       <FormDialog title={""} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
         {imageModal.image && <img src={imageModal.image} alt="image-viewer" />}
       </FormDialog>
@@ -401,6 +439,13 @@ export default function VehicleInfo({ id, data, currentUser }) {
       </FormDialog> */}
 
       <TrackerUpdateModal id={id} currentUser={currentUser} statusId={serviceModal?.data?.item?.status_id} data={serviceModal.data?.item} serviceData={serviceModal.data?.serviceData} completed={serviceModal.data?.completed} onClose={closeTrackingStatusModal} />
+      <FormDialog
+        title="Add Vehicle"
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+      >
+        <AddNewVehicleForm id={id} number={vehicleNumber} trans_id={vehicleId} modalType={modalType} />
+      </FormDialog>
     </div>
   )
 }

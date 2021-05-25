@@ -64,7 +64,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const [loanId, setloanId] = useState();
   const [type, setType] = useState("");
 
-  
+
   useMount(() => {
     if (!loans || !loans.length) {
       setLoading(true);
@@ -121,6 +121,16 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
         }
       },
       {
+        label: 'Region',
+        name: 'region',
+        options: {
+          filter: true,
+          sort: true,
+          customBodyRender: value => (<strong>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</strong>)
+        }
+
+      },
+      {
         label: 'Approved Amount',
         name: 'amount_approved',
         options: {
@@ -143,8 +153,8 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
           }),
           customBodyRender: value => {
             return <div>
-              {/* {value ? moment(new Date(value)).format('DD MMM, YYYY') : '-'} */}
-              {value ? value : '-'}
+              {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
+              {/* {value ? value : '-'} */}
             </div>
           }
         }

@@ -91,7 +91,7 @@ const LoanBookTable = ({ title, loanBookData, setLoanBookData }) => {
           sort: true,
           customBodyRender: value => {
             return <div>
-              {value ? moment(new Date(value)).format('DD MMM, YYYY') : '-'}
+              {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
             </div>
           }
         }
@@ -112,7 +112,7 @@ const LoanBookTable = ({ title, loanBookData, setLoanBookData }) => {
           sort: true,
           customBodyRender: value => {
             return <div>
-              {value ? moment(new Date(value)).format('DD MMM, YYYY') : '-'}
+              {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
             </div>
           }
         }
@@ -125,7 +125,7 @@ const LoanBookTable = ({ title, loanBookData, setLoanBookData }) => {
           sort: true,
           customBodyRender: value => {
             return <div>
-              {value ? moment(new Date(value)).format('DD MMM, YYYY') : '-'}
+              {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
             </div>
           }
         }

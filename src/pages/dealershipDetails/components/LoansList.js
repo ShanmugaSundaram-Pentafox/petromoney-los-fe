@@ -23,6 +23,8 @@ import { getApplicationStatusById, updateLoanApprovalStatusById } from '../../..
 import TextInput from '../../../components/TextInput/TextInput';
 import { Select } from '@material-ui/core';
 import apiCall from '../../../utils/api.util';
+import { useSnackbar } from 'notistack';
+
 
 const useStyles = makeStyles({
   wrapper: {
@@ -46,6 +48,8 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
   const [dialogState, setDialogState] = useState({});
   const [status, setStatus] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState();
+  const { enqueueSnackbar } = useSnackbar();
+
   useMount(() => {
     getDealershipLoansById(id)
       .then(data => setLoansData(data))
@@ -96,14 +100,14 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
       body: state,
     })
       .then(res => {
-        // enqueueSnackbar(res.message, {
-        //   anchorOrigin: {
-        //     vertical: 'top',
-        //     horizontal: 'right',
-        //   },
-        //   variant: 'success',
-        // }
-        // )
+        enqueueSnackbar(res.profile_status, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        }
+        )
       })
       .catch(err => {
         console.log(err)

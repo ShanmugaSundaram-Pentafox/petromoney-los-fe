@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
 
 const RejectedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const classes = useStyles();
-  const [ loading, setLoading ] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useMount(() => {
     if (!loans || !loans.length) {
@@ -90,6 +90,16 @@ const RejectedTable = ({ title, loans, setLoansData, onRowClick }) => {
         }
       },
       {
+        label: 'Region',
+        name: 'region',
+        options: {
+          filter: true,
+          sort: true,
+          customBodyRender: value => (<strong>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</strong>)
+        }
+
+      },
+      {
         label: 'Approved Amount',
         name: 'amount_approved',
         options: {
@@ -112,8 +122,8 @@ const RejectedTable = ({ title, loans, setLoansData, onRowClick }) => {
           }),
           customBodyRender: value => {
             return <div>
-              {/* {value ? moment(new Date(value)).format('DD MMM, YYYY') : '-'} */}
-              {value ? value : '-'}
+              {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
+              {/* {value ? value : '-'} */}
             </div>
           }
         }
@@ -142,7 +152,7 @@ const RejectedTable = ({ title, loans, setLoansData, onRowClick }) => {
             columns={columns}
             options={options}
           />
-        ) :( !loading && <Paper style={{ padding: 10 }}>No Rejected Applications</Paper>)
+        ) : (!loading && <Paper style={{ padding: 10 }}>No Rejected Applications</Paper>)
       }
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>

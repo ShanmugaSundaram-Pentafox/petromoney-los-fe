@@ -15,7 +15,7 @@ import Paper from '@material-ui/core/Paper';
 // import Button from "@material-ui/core/Button";
 // import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
-// import moment from 'moment';
+import moment from 'moment';
 import clsx from 'clsx';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
@@ -69,8 +69,8 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const [loanId, setloanId] = useState();
   const [dealershipId, setDealershipId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
-  const [type,setType] =useState("");
-  const [ loading, setLoading ] = useState(false);
+  const [type, setType] = useState("");
+  const [loading, setLoading] = useState(false);
   useMount(() => {
     if (!loans || !loans.length) {
       setLoading(true);
@@ -115,6 +115,16 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
         }
       },
       {
+        label: 'Region',
+        name: 'region',
+        options: {
+          filter: true,
+          sort: true,
+          customBodyRender: value => (<strong>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</strong>)
+        }
+
+      },
+      {
         label: 'Req. Amount',
         name: 'amount_requested',
         options: {
@@ -138,13 +148,13 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
           customBodyRender: value => {
             // moment(new Date(value)).format('DD MMM, YYYY')
             return <div>
-              {/* {value ? moment(new Date(value)).format('DD MMM, YYYY') : '-'} */}
-              {value ? value : '-'}
+              {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
+              {/* {value ? value : '-'} */}
             </div>
           }
         }
       },
-      
+
       {
         label: 'Application state',
         name: 'application_state',
@@ -170,7 +180,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
           customBodyRender: (value, r) => {
             return (
               <Tooltip title="eSign Application">
-                <IconButton size="small" color="primary" aria-label="application" onClick={() => {  setloanId(loans?.[r.rowIndex]['id']); setType("application"); setDealershipId(value); setModalVisible(true); }}>
+                <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setType("application"); setDealershipId(value); setModalVisible(true); }}>
                   <div>
                     <ESignIcon width={24} />
                     {/* <img
@@ -211,7 +221,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
             columns={columns}
             options={options}
           />
-        ) : ( !loading && <Paper style={{ padding: 10 }}>No Submitted Records</Paper>)
+        ) : (!loading && <Paper style={{ padding: 10 }}>No Submitted Records</Paper>)
       }
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>

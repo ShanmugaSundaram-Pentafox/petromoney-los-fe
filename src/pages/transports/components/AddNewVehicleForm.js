@@ -12,19 +12,23 @@ import Button from '../../../components/CommonComponents/Button/Button';
 import { useMount } from 'react-use';
 import { getAllRegion, getBusinessTypes, getOmcList } from '../../../services/common.service';
 import { getDistricts, getFormattedStatesList } from '../../../utils/indianStates.util';
-import { addNewVehicle, getAllTransport } from '../../../services/transports.service';
+import { addNewVehicle, getAllTransport, updateVehicle } from '../../../services/transports.service';
+import { useSnackbar } from 'notistack';
 
-const AddNewVehicleForm = ({ data }) => {
+
+const AddNewVehicleForm = ({ data, id, number, trans_id,modalType }) => {
     const [apiStatus, setApiStatus] = useState({});
     const [transport, setTransport] = useState([]);
     const [bussinessType, setBussinessType] = useState([]);
     const [regions, setRegions] = useState([]);
+    const [openModal, setOpenModal] = useState(false);
     const [checked, setChecked] = useState(false);
+    const { enqueueSnackbar } = useSnackbar();
+
 
     const handleClick = () => {
         setChecked(!checked);
     };
-
     useMount(() => {
         getAllTransport()
             .then(data => {
@@ -39,24 +43,67 @@ const AddNewVehicleForm = ({ data }) => {
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
-            transport: Yup.number().required('Please Choose the transport'),
+            // transport: Yup.number().required('Please Choose the transport'),
             tt_no: Yup.string().required('Please enter vehicle number'),
         }),
         onSubmit: formData => {
-            addNewVehicle(formData)
-                .then(message => {
-                    setApiStatus({ type: 'success', message: message })
-                })
-                .catch(e => {
-                    setApiStatus({ type: 'error', message: e })
-                    console.log(e);
-                })
+            if (modalType==="EDIT") {
+                updateVehicle(formData, id, trans_id)
+                    .then(message => {
+                        enqueueSnackbar(message, {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'right',
+                            },
+                            variant: 'success',
+                        })
+                        window.location.reload();
+
+                        // setApiStatus({ type: 'success', message: message })
+                    })
+                    .catch(e => {
+                        // setApiStatus({ type: 'error', message: e })
+                        enqueueSnackbar(e, {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'right',
+                            },
+                            variant: 'error',
+                        })
+                        // console.log(e);
+                    })
+            }
+            else {
+                addNewVehicle(formData, data.id)
+                    .then(message => {
+                        enqueueSnackbar(message, {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'right',
+                            },
+                            variant: 'success',
+                        })
+                        window.location.reload();
+
+                        // setApiStatus({ type: 'success', message: message })
+                    })
+                    .catch(e => {
+                        // setApiStatus({ type: 'error', message: e })
+                        enqueueSnackbar(e, {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'right',
+                            },
+                            variant: 'error',
+                        })
+                        // console.log(e);
+                    })
+            }
         }
     });
     const inputProps = {
         direction: "column",
         alignTop: true,
-        onChange: handleChange,
     }
     const AntSwitch = withStyles((theme) => ({
         root: {
@@ -97,7 +144,7 @@ const AddNewVehicleForm = ({ data }) => {
             <form onSubmit={handleSubmit}>
                 <Grid container spacing={2}>
                     <Grid item md={12}>
-                        <TextInput
+                        {/* <TextInput
                             {...inputProps}
                             select
                             name="transport"
@@ -109,17 +156,34 @@ const AddNewVehicleForm = ({ data }) => {
                             {
                                 transport.map(transport => <option key={transport.id} value={transport.id}>{transport.name}</option>)
                             }
-                        </TextInput>
+                        </TextInput> */}
                     </Grid>
                     <Grid item md={6}>
-                        <TextInput
-                            {...inputProps}
-                            name="tt_no"
-                            labelText="Vehicle Number"
-                            value={values.tt_no}
-                            error={errors.tt_no}
-                            helperText={errors.tt_no}
-                        />
+                        {
+                            number && trans_id ? (
+                                <TextInput
+                                    {...inputProps}
+                                    name="tt_no"
+                                    labelText="Vehicle Number"
+                                    value={values.tt_no}
+                                    error={errors.tt_no}
+                                    helperText={errors.tt_no}
+                                    onChange={handleChange}
+                                />
+
+                            ) : (
+                                <TextInput
+                                    {...inputProps}
+                                    name="tt_no"
+                                    labelText="Vehicle Number"
+                                    value={values.tt_no}
+                                    error={errors.tt_no}
+                                    helperText={errors.tt_no}
+                                    onChange={handleChange}
+                                />
+                            )
+                        }
+
                     </Grid>
                     <Grid item xs={12} justify="flex-end" alignItems="flex-end">
                         <Button
@@ -128,7 +192,7 @@ const AddNewVehicleForm = ({ data }) => {
                             color="primary"
                             variant="contained"
                         >
-                            Add New Transport
+                            Add New Vehicle
                         </Button>
                     </Grid>
                 </Grid>

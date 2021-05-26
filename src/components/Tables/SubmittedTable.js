@@ -120,7 +120,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
         options: {
           filter: true,
           sort: true,
-          customBodyRender: value => (<strong>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</strong>)
+          customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
         }
 
       },
@@ -160,6 +160,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
         name: 'application_state',
         options: {
           filter: true,
+          filterWidth:"100%",
           sort: true,
           setCellProps: () => ({
             align: 'center',

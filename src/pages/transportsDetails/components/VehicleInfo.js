@@ -28,6 +28,11 @@ import { useSnackbar } from 'notistack';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import AddNewVehicleForm from "../../transports/components/AddNewVehicleForm";
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 
 
@@ -84,6 +89,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
   const [expanded, setExpanded] = useState("")
   const [docs, setDocs] = useState({})
   const [loans, setLoans] = useState({})
+  const [open, setOpen] = useState(false)
   const [services, setServices] = useState({})
   const [serviceData, setServiceData] = useState({})
   const [serviceModal, setServiceModal] = useState({})
@@ -235,15 +241,23 @@ export default function VehicleInfo({ id, data, currentUser }) {
     setOpenModal(true);
     setModalType("EDIT");
   }
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
   const deleteVehicle = (vehicleId) => {
     deleteVehicleStatus(id, vehicleId)
       .then(res => {
         // if (res.status ==="SUCCESS") {
+          setOpen(false)
         enqueueSnackbar(res, {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',
           },
+          autoHideDuration: 3000,
           variant: 'success',
         })
 
@@ -288,7 +302,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
                   </Tooltip>
                   <Tooltip title="Delete vehicle">
                     <Typography style={{ color: '#ff6666' }}>
-                      <DeleteOutlineOutlinedIcon fontSize="medium" onClick={() => deleteVehicle(vehicleInfo.vehicle_id)} />
+                      <DeleteOutlineOutlinedIcon fontSize="medium" onClick={handleClickOpen} />
                     </Typography>
                   </Tooltip>
                 </div>
@@ -419,10 +433,30 @@ export default function VehicleInfo({ id, data, currentUser }) {
                 <NewVehicleLoanAction vehicleId={vehicleInfo.vehicle_id} currentUser={currentUser} callback={saveAndCloseNewLoan} />
               </AccordionDetails>
             </Accordion>
+            <Dialog
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              {/* <DialogTitle id="alert-dialog-title">{"Are you sure...?"}</DialogTitle> */}
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  Did you want to delete the vehicle with vehicle number {vehicleInfo.tt_no} ?
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} color="primary">
+                  No
+                </Button>
+                <Button onClick={() => deleteVehicle(vehicleInfo.vehicle_id)} color="primary" autoFocus>
+                  Yes
+                </Button>
+              </DialogActions>
+            </Dialog>
           </div>
         )
       })}
-
       <FormDialog title={""} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
         {imageModal.image && <img src={imageModal.image} alt="image-viewer" />}
       </FormDialog>

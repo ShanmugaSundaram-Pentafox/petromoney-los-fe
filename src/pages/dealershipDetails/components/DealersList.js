@@ -106,7 +106,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   useMount(() => {
     getDealerApiCall(id);
     getCoApplicantApiCall(id);
-    // getGuarantorApiCall(id);
+    getGuarantorApiCall(id);
   });
 
   const openCloseCreditForm = () => {
@@ -187,7 +187,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         getExperianData={getExperianData("coapplicant")}
         showDealerEditForm={showDealerEditForm} />
 
-      {/* <GuarantorsTable
+      <GuarantorsTable
         id={id}
         editable={editable}
         titleAlign={titleAlign}
@@ -201,7 +201,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         dealersClickRow={dealersClickRow}
         onClickAddMenu={onClickAddMenu}
         getExperianData={getExperianData("guarantor")}
-        showDealerEditForm={showDealerEditForm} /> */}
+        showDealerEditForm={showDealerEditForm} />
       <Drawer
         anchor="right"
         open={experianData.show}

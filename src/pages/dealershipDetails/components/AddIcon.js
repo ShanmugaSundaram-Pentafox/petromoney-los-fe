@@ -14,7 +14,7 @@ import MenuList from '@material-ui/core/MenuList';
 const options = [
   'Add Dealer',
   'Add Co-Applicants',
-  // 'Add Guarantor'
+  'Add Guarantor'
 ];
 
 const AddIconButton = ({ onClickAddMenu }) => {

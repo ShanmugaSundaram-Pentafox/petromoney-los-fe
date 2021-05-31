@@ -148,30 +148,30 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
         logger(e);
       })
   }
-  const handleDayChange = (selectedDay, modifiers, dayPickerInput) => {
-    // const input = dayPickerInput.getInput();
-    // setSelectDate(selectedDay)
-    setSelectedDate(dayPickerInput.state.value)
-  }
-  const OverlayComponent = ({ children, ...props }) => {
-    return (
-      <TextInput
-        direction
-        alignTop
-        required
-        name={"disbursement_date"}
-        labelText="Disbursement Date"
-        placeholder="Example (YYYY/MM/DD)"
-        error={errors.disbursement_date}
-        helperText={errors.disbursement_date}
-        value={values.disbursement_date}
-        onDayChange={handleDayChange}
-      />
-    )
+  // const handleDayChange = (selectedDay, modifiers, dayPickerInput) => {
+  //   const input = dayPickerInput.getInput();
+  //   setSelectDate(selectedDay)
+  //   setSelectedDate(dayPickerInput.state.value)
+  // }
+  // const OverlayComponent = ({ children, ...props }) => {
+  //   return (
+  //     <TextInput
+  //       direction
+  //       alignTop
+  //       required
+  //       name={"disbursement_date"}
+  //       labelText="Disbursement Date"
+  //       placeholder="Example (YYYY/MM/DD)"
+  //       error={errors.disbursement_date}
+  //       helperText={errors.disbursement_date}
+  //       value={values.disbursement_date}
+  //       onDayChange={handleDayChange}
+  //     />
+  //   )
 
 
 
-  }
+  // }
 
   return (
     <div className={classes.root}>

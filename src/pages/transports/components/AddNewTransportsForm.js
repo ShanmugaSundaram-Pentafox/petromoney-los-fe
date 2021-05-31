@@ -14,7 +14,7 @@ import { getAllRegion, getBusinessTypes, getOmcList } from '../../../services/co
 import { getDistricts, getFormattedStatesList } from '../../../utils/indianStates.util';
 import { addNewTransport } from '../../../services/transports.service';
 
-const AddNewTransportsForm = ({ data }) => {
+const AddNewTransportsForm = ({ handleNext, handleBack }) => {
     const [apiStatus, setApiStatus] = useState({});
     const [omcs, setOmcs] = useState([]);
     const [bussinessType, setBussinessType] = useState([]);
@@ -55,7 +55,7 @@ const AddNewTransportsForm = ({ data }) => {
         validationSchema: Yup.object().shape({
             // id: Yup.number().required('Please enter transporter code'),
             name: Yup.string().required('Please enter transporter name'),
-            mobile: Yup.number().min(10,'Enter valid mobile number').required('please Enter your mobile number'),
+            mobile: Yup.number().min(10, 'Enter valid mobile number').required('please Enter your mobile number'),
             omc: Yup.string().required('Please Choose OMC'),
             business_type: Yup.string().required('Please choose bussiness type'),
             region: Yup.string().required('Please choose region'),
@@ -273,20 +273,27 @@ const AddNewTransportsForm = ({ data }) => {
                             helperText={errors.gst}
                         />
                     </Grid>
-
-                    <Grid item xs={12} justify="flex-end" alignItems="flex-end">
+                    <Grid item md={12} style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <Button
                             size="large"
-                            type="submit"
+                            variant="outlined"
+                            onClick={handleBack}
+                        >
+                            Back
+                        </Button>
+                        <Button
+                            size="large"
+                            // type="submit"
                             color="primary"
                             variant="contained"
+                            onClick={handleNext}
                         >
-                            Add New Transport
+                            Add Transport
                         </Button>
                     </Grid>
                 </Grid>
             </form>
-        </Box>
+        </Box >
     )
 }
 

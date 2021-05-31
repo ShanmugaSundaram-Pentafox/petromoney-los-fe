@@ -28,11 +28,8 @@ import Currency from '../../../components/Number/Currency';
 import { logger } from '../../../config/logger';
 import TextInput from '../../../components/TextInput/TextInput';
 import { updateLoanApprovalStatusById, deleteLoanDisbursementRecord } from '../../../services/loans.service';
-import InputMask from 'react-input-mask';
-import DayPickerInput from "react-day-picker/DayPickerInput";
 import CircularProgress from '@material-ui/core/CircularProgress';
-import 'react-day-picker/lib/style.css';
-import { Label } from 'recharts';
+import DatePicker from 'react-date-picker';
 import { useFlexLayout } from 'react-table';
 
 
@@ -77,7 +74,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
   const [loading, setLoading] = useState(false);
   const [apiStatus, setApiStatus] = useState({});
   const [confirmDelete, setConfirmDelete] = useState({});
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState();
 
   useEffect(() => {
     setDispHistory({
@@ -89,16 +86,18 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
   const { values, errors, handleChange, handleSubmit, setValues } = useFormik({
     initialValues: {
       disbursement_status: 1,
-      status: "disbursed"
+      status: "disbursed",
+      disbursement_date: selectedDate
     },
     validationSchema: Yup.object().shape({
       applicant_code: Yup.string().required("Enter valid Applicant code").matches(/^CN0000[0-9]+$/, "Enter Valid Applicant code"),
       prospect_code: Yup.string().required("Enter Prospect code"),
-      disbursement_date: Yup.date().required("Enter Disbursement date"),
+      disbursement_date: Yup.string().required("Enter Disbursement date"),
       amount: Yup.string().required("Enter Amount"),
     }),
     onSubmit: values => {
-      const data = values.applicant_code ? { ...values, disbursement_date: selectedDate } : { ...values, applicant_code: dispHistory.applicant_code, disbursement_date: selectedDate };
+      const date = moment(selectedDate).format('YYYY/MM/DD')
+      const data = values.applicant_code ? { ...values, disbursement_date: date} : { ...values, applicant_code: dispHistory.applicant_code, disbursement_date: date};
       setLoading(true);
       updateLoanApprovalStatusById(id, loanData.id, data)
         .then(({ data, message }) => {
@@ -272,17 +271,14 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                     className={classes.gridStyle}
                   >
                     <div className={classes.label}><label >Disbursement Date</label></div>
-                    <DayPickerInput
-                      required
-                      format="YYYY/MM/DD"
+                    <DatePicker
                       name={"disbursement_date"}
-                      label="Disbursement Date"
-                      placeholder="(YYYY/MM/DD)"
+                      labelText="Disbursement Date"
+                      format="y/MM/dd"
+                      value={selectedDate}
                       error={errors.disbursement_date}
-                      value={values.disbursement_date}
                       helperText={errors.disbursement_date}
-                      onDayChange={handleDayChange}
-                      classNames={classes.input}
+                      onChange={(e)=>setSelectedDate(e)}
                     />
                     {/* <InputMask
                       mask="9999/99/99"
@@ -298,11 +294,11 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                               direction
                               alignTop
                               required
-                              // name={"disbursement_date"}
+                              name={"disbursement_date"}
                               labelText="Disbursement Date"
                               // placeholder="Example (YYYY/MM/DD)"
                               // error={errors.disbursement_date}
-                              // helperText={errors.disbursement_date}
+                              helperText={errors.disbursement_date}
                               // value={values.disbursement_date}
                               // {...inputProps}
                               // onChange={dataValue => handleChange(moment(dataValue).format("YYYY/MM/DD"))}

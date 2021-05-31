@@ -31,6 +31,7 @@ import DispApprovedDataTable from './DispApprovedDataTable';
 import apiCall from '../../../utils/api.util';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import { useSnackbar } from 'notistack';
+import CloseIcon from '@material-ui/icons/Close';
 // import Button from '../../../components/CommonComponents/Button/Button'
 
 const LoanInfoWrapper = styled.div`
@@ -60,8 +61,8 @@ const ViewMoreBtn = styled.div`
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
-    padding: 24,
-    paddingTop: 48,
+    padding: '0 24px 24px 24px',
+    // paddingTop: 48,
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
@@ -71,14 +72,22 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
     overflow: 'auto'
   },
+  wrapperTitle: {
+    display:'flex',
+    justifyContent:'space-between',
+    marginRight:24,
+  },
   title: {
-    position: 'absolute',
+    // position: 'absolute',
     top: 0,
     left: 0,
     padding: '8px 16px',
     background: theme.palette.grey[300],
     borderBottomRightRadius: 12,
     boxShadow: '0px 0px 4px #8d8d8d',
+  },
+  closeIcon:{
+    marginTop:8,
   },
   gridItemStyle: {
     // paddingTop: theme.spacing(1),
@@ -482,7 +491,10 @@ const DealershipDetails = ({
 
   return (
     <div className={classes.wrapper}>
-      <Typography className={classes.title} variant="h4" component="h4">{values.id}</Typography>
+      <div className={classes.wrapperTitle}>
+        <Typography className={classes.title} variant="h4" component="h4">{values.id}</Typography>
+        <CloseIcon className={classes.closeIcon} onClick={onClose} />
+      </div>
       <div className={classes.contentWrapper}>
         <Grid container spacing={2}>
           <Grid {...gridProps}>

@@ -16,12 +16,15 @@ import { logger } from '../../../config/logger';
 import CreditReportForm from './CreditReportForm';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
+import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 import apiCall from '../../../utils/api.util';
 
 const useStyles = makeStyles(theme => ({
   sidePanelTitle: {
     textAlign: 'center',
     padding: '12px 16px',
+    display:'flex',
+    justifyContent:'space-between',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
@@ -67,8 +70,8 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
 
   const getCreditReport = () => {
     apiCall(`${URL.dealership}/${dealershipId}/credit/report`)
-      .then(({ status ,data }) => {
-        if(status === "SUCCESS") {
+      .then(({ status, data }) => {
+        if (status === "SUCCESS") {
           setApiData(data[0] || {});
         } else {
           // reject(data.message);
@@ -97,15 +100,15 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
       // return null;
       const id = apiData.id || undefined;
       let reqData = {};
-      if(id) {
+      if (id) {
         reqData = apiData;
       }
       apiCall(`${URL.dealership}/${dealershipId}/credit/report`, {
-        method:'POST',
+        method: 'POST',
         body: { ...reqData, ...values, id, user_id: currentUser.id }
       })
-        .then(({ status,message }) => {
-          if(status == 'SUCCESS') {
+        .then(({ status, message }) => {
+          if (status == 'SUCCESS') {
             getCreditReport();
             setApiStatus({ type: 'success', message: message || 'Report details updated' })
             setLoading(false);
@@ -129,13 +132,17 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
 
   return (
     <div className={classes.sidePanelFormWrapper}>
-      <Typography className={classes.sidePanelTitle} variant="h4">Credit Report: Dealership</Typography>
+      <div className={classes.sidePanelTitle}>
+        <Typography  variant="h4">Credit Report: Dealership</Typography>
+        <CloseRoundedIcon onClick={onClose} />
+      </div>
+
       <div className={classes.sidePanelFormContentWrapper}>
         <CreditReportForm
           editable={editable}
           id={dealershipId}
           data={data}
-          values={{ ...apiData, ...values}}
+          values={{ ...apiData, ...values }}
           errors={errors}
           onChange={handleChange}
           setValues={setValues}
@@ -166,7 +173,7 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
                   className={clsx(classes.btn, classes.btnSuccess)}
                   startIcon={<NavigateNextRoundedIcon />}
                   disabled={loading}
-                  onClick={loading ? () => null : handleSubmit}>{loading ? <CircularProgress size={20} /> :`Save`}</Button>
+                  onClick={loading ? () => null : handleSubmit}>{loading ? <CircularProgress size={20} /> : `Save`}</Button>
               )
             }
           </div>

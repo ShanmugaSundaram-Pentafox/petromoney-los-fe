@@ -14,6 +14,7 @@ import FileUpload from "../../../components/FileUpload";
 import Typography from '@material-ui/core/Typography'
 import { useFormik } from 'formik';
 import Switch from '@material-ui/core/Switch';
+import DatePicker from 'react-date-picker';
 
 const useStyles = makeStyles({
     row: {
@@ -179,7 +180,7 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                     </TextInput>
                 </Grid>
                 <Grid {...gridItem} md={6}>
-                    <TextInput
+                    {/* <TextInput
                         id="date"
                         label="Date of Birth"
                         name="dob"
@@ -189,6 +190,18 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                         defaultValue={values.dob}
                         onChange={onChange}
                         InputLabelProps={{ shrink: true }}
+                    /> */}
+                    <DatePicker
+
+                        label="Date of Birth"
+                        name="dob"
+                        error={errors.dob}
+                        helperText={errors.dob}
+                        readOnly={readOnly}
+                        defaultValue={values.dob}
+                        onChange={onChange}
+                        InputLabelProps={{ shrink: true }}
+                    //   onChange={(e)=>setSelectedDate(e)}
                     />
                 </Grid>
                 {modelType === 'COAPPLICANT' || modelType === 'GUARANTOR' ?
@@ -329,9 +342,9 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                 </Grid>
                 <Grid {...gridItem} md={6}>
                     <Typography component="div">
-                        <Grid component="label" container alignItems="center" style={{marginBottom:'10px',marginTop:'6px'}} spacing={2}>
-                            <Grid md={12} style={{paddingLeft:'8px'}}>Mobile number on Whatsapp?</Grid>
-                            <Grid style={{paddingLeft:'8px'}}>No</Grid>
+                        <Grid component="label" container alignItems="center" style={{ marginBottom: '10px', marginTop: '6px' }} spacing={2}>
+                            <Grid md={12} style={{ paddingLeft: '8px' }}>Mobile number on Whatsapp?</Grid>
+                            <Grid style={{ paddingLeft: '8px' }}>No</Grid>
                             <Grid>
                                 <Switch
                                     checked={state.checkedA}
@@ -347,9 +360,9 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                 </Grid>
                 <Grid item md={6}>
                     <Typography component="div" >
-                        <Grid component="label" container style={{marginBottom:'8px',marginTop:'6px'}} alignItems="center" spacing={2}>
-                            <Grid md={12} style={{paddingLeft:'8px'}}>PAN linked to AADHAR?</Grid>
-                            <Grid style={{paddingLeft:'8px'}}>No</Grid>
+                        <Grid component="label" container style={{ marginBottom: '8px', marginTop: '6px' }} alignItems="center" spacing={2}>
+                            <Grid md={12} style={{ paddingLeft: '8px' }}>PAN linked to AADHAR?</Grid>
+                            <Grid style={{ paddingLeft: '8px' }}>No</Grid>
                             <Grid>
                                 <Switch
                                     checked={state.checkedB}

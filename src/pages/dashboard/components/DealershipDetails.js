@@ -31,7 +31,9 @@ import DispApprovedDataTable from './DispApprovedDataTable';
 import apiCall from '../../../utils/api.util';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import { useSnackbar } from 'notistack';
-import CloseIcon from '@material-ui/icons/Close';
+// import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@material-ui/icons/CloseRounded';
+
 // import Button from '../../../components/CommonComponents/Button/Button'
 
 const LoanInfoWrapper = styled.div`

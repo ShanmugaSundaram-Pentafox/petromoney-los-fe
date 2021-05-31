@@ -16,7 +16,7 @@ import { addNewVehicle, getAllTransport, updateVehicle } from '../../../services
 import { useSnackbar } from 'notistack';
 
 
-const AddNewVehicleForm = ({ data, id, number, trans_id,modalType }) => {
+const AddNewVehicleForm = ({ data, id, number, trans_id, modalType }) => {
     const [apiStatus, setApiStatus] = useState({});
     const [transport, setTransport] = useState([]);
     const [bussinessType, setBussinessType] = useState([]);
@@ -47,7 +47,7 @@ const AddNewVehicleForm = ({ data, id, number, trans_id,modalType }) => {
             tt_no: Yup.string().required('Please enter vehicle number'),
         }),
         onSubmit: formData => {
-            if (modalType==="EDIT") {
+            if (modalType === "EDIT") {
                 updateVehicle(formData, id, trans_id)
                     .then(message => {
                         enqueueSnackbar(message, {
@@ -57,8 +57,10 @@ const AddNewVehicleForm = ({ data, id, number, trans_id,modalType }) => {
                             },
                             variant: 'success',
                         })
-                        window.location.reload();
 
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000)
                         // setApiStatus({ type: 'success', message: message })
                     })
                     .catch(e => {
@@ -83,7 +85,9 @@ const AddNewVehicleForm = ({ data, id, number, trans_id,modalType }) => {
                             },
                             variant: 'success',
                         })
-                        window.location.reload();
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000)
 
                         // setApiStatus({ type: 'success', message: message })
                     })

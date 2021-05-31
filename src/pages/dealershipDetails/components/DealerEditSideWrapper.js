@@ -23,12 +23,15 @@ import { logger } from '../../../config/logger';
 import DealerEditForm from './DealerEditForm';
 import apiCall from '../../../utils/api.util';
 import { useSnackbar } from 'notistack';
+import CloseIcon from '@material-ui/icons/Close';
 
 
 const useStyles = makeStyles(theme => ({
   sidePanelTitle: {
-    textAlign: 'center',
+    // textAlign: 'center',
     padding: '12px 16px',
+    display: 'flex',
+    justifyContent: 'space-between',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
@@ -198,7 +201,10 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
 
   return (
     <div className={classes.sidePanelFormWrapper}>
-      <Typography className={classes.sidePanelTitle} variant="h4">{modelType === 'DEALER' ? 'Dealer Edit Form' : modelType === 'GUARANTOR' ? 'Guarantor Edit Form' : 'CoApplicant Edit Form'}</Typography>
+      <Typography className={classes.sidePanelTitle} variant="h4">
+        <div>{modelType === 'DEALER' ? 'Dealer Edit Form' : modelType === 'GUARANTOR' ? 'Guarantor Edit Form' : 'CoApplicant Edit Form'}</div>
+        <CloseIcon onClick={onClose} />
+      </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <Stepper activeStep={activeStep} orientation="vertical" className={classes.stepperRoot}>
           <Step key={data.id}>

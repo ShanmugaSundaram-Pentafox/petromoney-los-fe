@@ -100,7 +100,7 @@ const DisbursementApprovedTable = ({ title, loans, setLoansData, onRowClick }) =
         options: {
           filter: true,
           sort: true,
-          customBodyRender: value => (<strong>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</strong>)
+          customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
         }
 
       },

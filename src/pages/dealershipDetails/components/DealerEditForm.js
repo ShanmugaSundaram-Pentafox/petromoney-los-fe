@@ -329,9 +329,9 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                 </Grid>
                 <Grid {...gridItem} md={6}>
                     <Typography component="div">
-                        <Grid component="label" container alignItems="center" style={{marginBottom:'10px',marginTop:'6px'}} spacing={2}>
-                            <Grid md={12} style={{paddingLeft:'8px'}}>Mobile number on Whatsapp?</Grid>
-                            <Grid style={{paddingLeft:'8px'}}>No</Grid>
+                        <Grid component="label" container alignItems="center" style={{ marginBottom: '10px', marginTop: '6px' }} spacing={2}>
+                            <Grid md={12} style={{ paddingLeft: '8px' }}>Mobile number on Whatsapp?</Grid>
+                            <Grid style={{ paddingLeft: '8px' }}>No</Grid>
                             <Grid>
                                 <Switch
                                     checked={state.checkedA}
@@ -347,9 +347,9 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                 </Grid>
                 <Grid item md={6}>
                     <Typography component="div" >
-                        <Grid component="label" container style={{marginBottom:'8px',marginTop:'6px'}} alignItems="center" spacing={2}>
-                            <Grid md={12} style={{paddingLeft:'8px'}}>PAN linked to AADHAR?</Grid>
-                            <Grid style={{paddingLeft:'8px'}}>No</Grid>
+                        <Grid component="label" container style={{ marginBottom: '8px', marginTop: '6px' }} alignItems="center" spacing={2}>
+                            <Grid md={12} style={{ paddingLeft: '8px' }}>PAN linked to AADHAR?</Grid>
+                            <Grid style={{ paddingLeft: '8px' }}>No</Grid>
                             <Grid>
                                 <Switch
                                     checked={state.checkedB}

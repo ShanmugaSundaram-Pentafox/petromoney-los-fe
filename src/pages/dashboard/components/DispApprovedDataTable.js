@@ -28,8 +28,10 @@ import Currency from '../../../components/Number/Currency';
 import { logger } from '../../../config/logger';
 import TextInput from '../../../components/TextInput/TextInput';
 import { updateLoanApprovalStatusById, deleteLoanDisbursementRecord } from '../../../services/loans.service';
-import InputMask from 'react-input-mask';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import DatePicker from 'react-date-picker';
+import { useFlexLayout } from 'react-table';
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -54,6 +56,15 @@ const useStyles = makeStyles(theme => ({
   actionButton: {
     marginLeft: 12,
   },
+  label: {
+    fontSize: 13,
+    marginTop: 4,
+  },
+  gridStyle: {
+    margin: 'auto',
+    width: '50%',
+    padding: 10,
+  }
 }));
 
 const DispApprovedDataTable = ({ id, loanData, editable }) => {
@@ -63,6 +74,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
   const [loading, setLoading] = useState(false);
   const [apiStatus, setApiStatus] = useState({});
   const [confirmDelete, setConfirmDelete] = useState({});
+  const [selectedDate, setSelectedDate] = useState();
 
   useEffect(() => {
     setDispHistory({
@@ -74,16 +86,18 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
   const { values, errors, handleChange, handleSubmit, setValues } = useFormik({
     initialValues: {
       disbursement_status: 1,
-      status: "disbursed"
+      status: "disbursed",
+      disbursement_date: selectedDate
     },
     validationSchema: Yup.object().shape({
-      applicant_code: Yup.string().required("Enter valid Applicant code").matches(/^CN0000[0-9]+$/,"Enter Valid Applicant code"),
+      applicant_code: Yup.string().required("Enter valid Applicant code").matches(/^CN0000[0-9]+$/, "Enter Valid Applicant code"),
       prospect_code: Yup.string().required("Enter Prospect code"),
       disbursement_date: Yup.string().required("Enter Disbursement date"),
       amount: Yup.string().required("Enter Amount"),
     }),
     onSubmit: values => {
-      const data = values.applicant_code ? values : { ...values, applicant_code: dispHistory.applicant_code };
+      const date = moment(selectedDate).format('YYYY/MM/DD')
+      const data = values.applicant_code ? { ...values, disbursement_date: date} : { ...values, applicant_code: dispHistory.applicant_code, disbursement_date: date};
       setLoading(true);
       updateLoanApprovalStatusById(id, loanData.id, data)
         .then(({ data, message }) => {
@@ -134,6 +148,30 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
         logger(e);
       })
   }
+  // const handleDayChange = (selectedDay, modifiers, dayPickerInput) => {
+  //   const input = dayPickerInput.getInput();
+  //   setSelectDate(selectedDay)
+  //   setSelectedDate(dayPickerInput.state.value)
+  // }
+  // const OverlayComponent = ({ children, ...props }) => {
+  //   return (
+  //     <TextInput
+  //       direction
+  //       alignTop
+  //       required
+  //       name={"disbursement_date"}
+  //       labelText="Disbursement Date"
+  //       placeholder="Example (YYYY/MM/DD)"
+  //       error={errors.disbursement_date}
+  //       helperText={errors.disbursement_date}
+  //       value={values.disbursement_date}
+  //       onDayChange={handleDayChange}
+  //     />
+  //   )
+
+
+
+  // }
 
   return (
     <div className={classes.root}>
@@ -168,7 +206,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
             <TableCell colSpan={4} align="center">
               {
                 editable &&
-                  <Button variant="outlined" size="medium" color="secondary" onClick={() => setModalData({ open: true })} startIcon={<AddRoundedIcon fontSize="small" />}>Add Disbursed Amount</Button>
+                <Button variant="outlined" size="medium" color="secondary" onClick={() => setModalData({ open: true })} startIcon={<AddRoundedIcon fontSize="small" />}>Add Disbursed Amount</Button>
               }
             </TableCell>
           </TableRow>
@@ -201,18 +239,18 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                       dispHistory.applicant_code ? (
                         <Typography variant="h5" style={{ marginBottom: 12 }}><span style={{ color: "#888", fontSize: 14 }}>Applicant Code:</span> {dispHistory.applicant_code || "?"}</Typography>
                       ) : (
-                          <TextInput
-                            direction
-                            alignTop
-                            required
-                            name={"applicant_code"}
-                            labelText="Applicant Code"
-                            error={errors.applicant_code}
-                            helperText={errors.applicant_code}
-                            defaultValue={values.applicant_code}
-                            onChange={handleChange}
-                          />
-                        )
+                        <TextInput
+                          direction
+                          alignTop
+                          required
+                          name={"applicant_code"}
+                          labelText="Applicant Code"
+                          error={errors.applicant_code}
+                          helperText={errors.applicant_code}
+                          defaultValue={values.applicant_code}
+                          onChange={handleChange}
+                        />
+                      )
                     }
                   </Grid>
                   <Grid item sm={6}>
@@ -228,8 +266,21 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                       onChange={handleChange}
                     />
                   </Grid>
-                  <Grid item sm={6}>
-                    <InputMask
+                  <Grid item sm={6}
+                    // style={{ backgroundColor: "green" }}
+                    className={classes.gridStyle}
+                  >
+                    <div className={classes.label}><label >Disbursement Date</label></div>
+                    <DatePicker
+                      name={"disbursement_date"}
+                      labelText="Disbursement Date"
+                      format="y/MM/dd"
+                      value={selectedDate}
+                      error={errors.disbursement_date}
+                      helperText={errors.disbursement_date}
+                      onChange={(e)=>setSelectedDate(e)}
+                    />
+                    {/* <InputMask
                       mask="9999/99/99"
                       placeholder="Example (YYYY/MM/DD)"
                       value={values.disbursement_date}
@@ -238,22 +289,25 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                     >
                       {
                         ({ inputProps }) => (
-                          <TextInput
-                            direction
-                            alignTop
-                            required
-                            name={"disbursement_date"}
-                            labelText="Disbursement Date"
-                            placeholder="Example (YYYY/MM/DD)"
-                            error={errors.disbursement_date}
-                            helperText={errors.disbursement_date}
-                            // value={values.disbursement_date}
-                            {...inputProps}
-                          // onChange={dataValue => handleChange(moment(dataValue).format("YYYY/MM/DD"))}
-                          />
+                          <> */}
+                    {/* <TextInput
+                              direction
+                              alignTop
+                              required
+                              name={"disbursement_date"}
+                              labelText="Disbursement Date"
+                              // placeholder="Example (YYYY/MM/DD)"
+                              // error={errors.disbursement_date}
+                              helperText={errors.disbursement_date}
+                              // value={values.disbursement_date}
+                              // {...inputProps}
+                              // onChange={dataValue => handleChange(moment(dataValue).format("YYYY/MM/DD"))}
+                            /> */}
+
+                    {/* </>
                         )
                       }
-                    </InputMask>
+                    </InputMask> */}
                   </Grid>
                   <Grid item sm={6}>
                     <TextInput

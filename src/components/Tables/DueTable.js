@@ -117,7 +117,7 @@ const DueTable = ({ onRowClick }) => {
               columns={columns}
               options={options}
             />
-          ) : <Paper style={{ padding: 10 }}>No overdue Reports found</Paper>
+          ) : <Paper style={{ padding: 10 }}>No due Reports found</Paper>
         }
       </div>
     </>

@@ -19,12 +19,16 @@ import { API } from '../../../config/api';
 import { URL } from '../../../config/serverUrls';
 import { logger } from '../../../config/logger';
 import apiCall from '../../../utils/api.util';
+import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
+
 
 
 const useStyles = makeStyles(theme => ({
   sidePanelTitle: {
     textAlign: 'center',
     padding: '12px 16px',
+    display:'flex',
+    justifyContent:'space-between',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
@@ -90,8 +94,8 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
   const getCreditInfo = () => {
     return new Promise((resolve, reject) => {
       apiCall(`${URL.dealership}/${dealershipId}/credit/info`)
-        .then(({ status , data ,message }) => {
-          if(status === "SUCCESS") {
+        .then(({ status, data, message }) => {
+          if (status === "SUCCESS") {
             resolve(data);
           } else {
             reject(message);
@@ -121,24 +125,24 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
       // dealership/<int:dealership_id>/credit/info
       // return null;
       const resData = apiData.find(n => n.dealer_id === data[activeStep].id) || {};
-      
+
       apiCall(`${URL.dealership}/${dealershipId}/credit/info`, {
         method: 'POST',
         body: {
           ...values,
           id: resData.id || undefined,
           user_id:
-          currentUser.id,
+            currentUser.id,
           dealer_id: data[activeStep].id
         },
       })
         .then(({ status, data, message }) => {
           // console.log(data, data.status, data.status == 'SUCCESS')
-          if(status == 'SUCCESS') {
+          if (status == 'SUCCESS') {
             // setApiStatus({ type: 'success', message: message || `Credit Info updated for ${data[activeStep].id}` })
             setLoading(false);
             handleReset();
-            setActiveStep(activeStep+1);
+            setActiveStep(activeStep + 1);
           }
           else {
             setApiStatus({ show: true, type: 'error', message: message || 'Unable to save the details. Please try again later' })
@@ -156,7 +160,11 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
 
   return (
     <div className={classes.sidePanelFormWrapper}>
-      <Typography className={classes.sidePanelTitle} variant="h4">Credit Information: All Applicants</Typography>
+      <div className={classes.sidePanelTitle}>
+        <Typography  variant="h4">Credit Information: All Applicants</Typography>
+        <CloseRoundedIcon onClick={onClose} />
+      </div>
+
       <div className={classes.sidePanelFormContentWrapper}>
         <Stepper activeStep={activeStep} orientation="vertical" className={classes.stepperRoot}>
           {
@@ -166,7 +174,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
               const dealerData = { ...(resData || {}), ...values };
               return (
                 <Step key={item.id}>
-                  <StepLabel className={classes.stepTitle} onClick={() => setActiveStep(i)}>{item.first_name}  { dealerData.cibil_score ? <b>({dealerData.cibil_score})</b> : null }</StepLabel>
+                  <StepLabel className={classes.stepTitle} onClick={() => setActiveStep(i)}>{item.first_name}  {dealerData.cibil_score ? <b>({dealerData.cibil_score})</b> : null}</StepLabel>
                   <StepContent>
                     <DealerCreditInfoForm data={item} values={dealerData} errors={errors} onChange={handleChange} />
                   </StepContent>
@@ -201,7 +209,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
               className={clsx(classes.btn, classes.btnSuccess)}
               startIcon={<NavigateNextRoundedIcon />}
               disabled={loading}
-              onClick={loading ? () => null : handleSubmit}>{loading ? <CircularProgress size={20} /> :`Save`}</Button>
+              onClick={loading ? () => null : handleSubmit}>{loading ? <CircularProgress size={20} /> : `Save`}</Button>
           </div>
         </div>
       </div>

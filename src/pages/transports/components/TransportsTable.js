@@ -13,9 +13,17 @@ import { setAllTransports } from "../../../store/transports/transports.actions"
 import Button from '../../../components/CommonComponents/Button/Button';
 import FormDialog from "../../../components/CommonComponents/FormDialog/FormDialog"
 import AddNewTransportsForm from "./AddNewTransportsForm"
+import AddNewTransportsOwnerForm from "./AddNewTransportsOwnerForm"
 import { Grid } from "@material-ui/core"
 import { Paper } from "@material-ui/core";
 import Skeleton from '@material-ui/lab/Skeleton';
+import Drawer from '@material-ui/core/Drawer';
+import CloseIcon from '@material-ui/icons/Close';
+import Stepper from '@material-ui/core/Stepper';
+import Step from '@material-ui/core/Step';
+import StepLabel from '@material-ui/core/StepLabel';
+import StepContent from '@material-ui/core/StepContent';
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -25,10 +33,61 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     display: "flex",
-  }
+  },
+  sidePanelWrapper: {
+    width: '40vw',
+    padding: '10px',
+  },
+  sidePanelTitle: {
+    padding: '12px 16px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    zIndex: 0,
+    marginBottom: 4,
+    boxShadow: '0 1px 4px -3px #333',
+  },
+  transWrapper: {
+    boxShadow: '0 1px 4px -3px #333',
+    // borderBottom: '1px solid green',
+    marginBottom: '8px',
+    padding: '10px'
+  },
+  ownerWrapper: {
+    borderBottom: '1px solid green',
+  },
+  button: {
+    marginTop: theme.spacing(1),
+    marginRight: theme.spacing(1),
+  },
+  actionsContainer: {
+    marginBottom: theme.spacing(2),
+  },
+  resetContainer: {
+    padding: theme.spacing(3),
+  },
 }))
+function getSteps() {
+  return ['Add Transport Owner Information', 'Add Transport Information'];
+}
+
+
 
 const TransportsTable = ({ transports, setAllTransports }) => {
+  const [activeStep, setActiveStep] = React.useState(0);
+  const steps = getSteps();
+
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  const handleReset = () => {
+    setActiveStep(0);
+  };
+
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -110,6 +169,17 @@ const TransportsTable = ({ transports, setAllTransports }) => {
       );
     }
   }
+  function getStepContent(step) {
+    switch (step) {
+      case 0:
+        return <AddNewTransportsOwnerForm handleNext={handleNext} />
+      case 1:
+        return <AddNewTransportsForm handleBack={handleBack} />
+
+      default:
+        return 'Unknown step';
+    }
+  }
 
   return (
     <div>
@@ -126,13 +196,6 @@ const TransportsTable = ({ transports, setAllTransports }) => {
                   <Typography className={classes.title} variant="h5" component="h5">
                     Transports List
                   </Typography>
-                  {/* <Button
-                color="primary"
-                variant="contained"
-              // onClick={() => setOpenModal(true)}
-              >
-                Add Transport
-              </Button> */}
                 </div>
               }
               data={transports}
@@ -142,13 +205,24 @@ const TransportsTable = ({ transports, setAllTransports }) => {
           ) : (
             <Paper style={{ marginTop: 10, padding: 10 }}>No Transporters found</Paper>
           )}
-      <FormDialog
-        title="Add Transport"
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-      >
-        <AddNewTransportsForm />
-      </FormDialog>
+      <Drawer anchor="right" open={openModal} onClose={() => setOpenModal(false)}>
+        <div className={classes.sidePanelWrapper}>
+          <Typography className={classes.sidePanelTitle} variant="h4">
+            <div> Add New Transport Form</div>
+            <CloseIcon onClick={() => setOpenModal(false)} />
+          </Typography>
+          <Stepper activeStep={activeStep} orientation="vertical">
+            {steps.map((label, index) => (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+                <StepContent>
+                  <Typography>{getStepContent(index)}</Typography>
+                </StepContent>
+              </Step>
+            ))}
+          </Stepper>
+        </div>
+      </Drawer>
     </div>
   )
 }

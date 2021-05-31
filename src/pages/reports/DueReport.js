@@ -40,9 +40,18 @@ const DueTable = () => {
   const classes = useStyles();
 
   const [loans, setLoans] = useState([])
-  useMount(async () => {
-    var a = await getReport()
-    setLoans(a.due)
+  const [loading, setLoading] = useState(false)
+
+  useMount(async () => {setLoading(true)
+    getReport()
+      .then((data) => {
+        setLoading(false);
+        setLoans(data.due)
+      })
+      .catch((e) => {
+        setLoading(false);
+        console.log(e);
+      });
   })
   const columns = useMemo(() => {
     return [
@@ -90,7 +99,7 @@ const DueTable = () => {
 
   return (
     <div className={classes.root}>
-      {
+      {/* {
         (loans.length === 0) ? (
           <Grid item xs={12}>
             <Skeleton variant="rect" width="100%" height={400} />
@@ -103,6 +112,20 @@ const DueTable = () => {
             options={options}
           />
         ) : <Paper style={{ padding: 10 }}>No Due Loans</Paper>
+      } */}
+      {
+        loading ? (
+          <Grid item xs={12}>
+            <Skeleton variant="rect" width="100%" height={400} />
+          </Grid>
+        ) : Array.isArray(loans) && loans.length ? (
+          <MUIDataTable
+            title={"Due Reports"}
+            data={loans}
+            columns={columns}
+            options={options}
+          />
+        ) : <Paper style={{ padding: 10 }}>No due Reports found</Paper>
       }
     </div>
   )

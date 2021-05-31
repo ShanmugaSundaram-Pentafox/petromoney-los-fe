@@ -126,7 +126,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
         options: {
           filter: true,
           sort: true,
-          customBodyRender: value => (<strong>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</strong>)
+          customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
         }
 
       },
@@ -200,7 +200,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
     selectableRows: 'none',
     isRowSelectable: () => false,
     onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex !== 5) {
+      if (cellMeta.colIndex !== 6) {
         onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'approved')
       }
     },

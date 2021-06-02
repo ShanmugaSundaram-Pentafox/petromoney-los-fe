@@ -43,6 +43,8 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/reports/due" component={Due} />
       <ProtectedRoute allow exact path="/reports/overdue" component={OverDue} />
       <ProtectedRoute allow exact path="/vehicle-loan" component={VehiclesLoanTable} />
+      <ProtectedRoute allow exact path="/profile" component={VehiclesLoanTable} />
+
 
       <ProtectedRoute
         exact

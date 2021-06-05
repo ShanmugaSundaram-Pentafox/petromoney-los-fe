@@ -26,11 +26,9 @@ import * as Yup from 'yup';
 import clsx from 'clsx';
 import Currency from '../../../components/Number/Currency';
 import { logger } from '../../../config/logger';
-import TextInput from '../../../components/TextInput/TextInput';
+import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
 import { updateLoanApprovalStatusById, deleteLoanDisbursementRecord } from '../../../services/loans.service';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import DatePicker from 'react-date-picker';
-import { useFlexLayout } from 'react-table';
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import {
@@ -285,27 +283,36 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                     // style={{ backgroundColor: "green" }}
                     className={classes.gridStyle}
                   >
-                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <KeyboardDatePicker
-                          disableToolbar
-                          hideTabs={true}
-                          variant='inline'
-                          inputVariant='outlined'
-                          format='MM/dd/yyy'
-                          views={["date", "month", "year"]}
-                          animateYearScrolling={true}
-                          invalidDateMessage='Invalid Date Format'
-                          margin='normal'
-                          id='date-picker'
-                          autoOk={true}
-                          label='Disbursement Date'
-                          value={selectedDate}
-                          onChange={handleDateChange}
-                          keyboardButtonProps={{
-                            'aria-label': 'change date'
-                          }}
-                        />
-                    </MuiPickersUtilsProvider>
+                    <InputWrapper direction top>
+                      <label className="input-label">Disbursement Date</label>
+                      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                          <KeyboardDatePicker
+                            // disableToolbar
+                            hideTabs={true}
+                            variant='inline'
+                            inputVariant='outlined'
+                            format='MM/dd/yyy'
+                            // views={["date", "month", "year"]}
+                            animateYearScrolling={true}
+                            invalidDateMessage='Invalid Date Format'
+                            margin='normal'
+                            id='date-picker'
+                            autoOk={true}
+                            // label='Disbursement Date'
+                            value={selectedDate}
+                            onChange={handleDateChange}
+                            keyboardButtonProps={{
+                              'aria-label': 'change date'
+                            }}
+                            PopoverProps={{
+                              anchorOrigin: {
+                                vertical: 'bottom',
+                                horizontal: 'center',
+                              }
+                            }}
+                          />
+                      </MuiPickersUtilsProvider>
+                    </InputWrapper>
                     {/* <div className={classes.label}><label >Disbursement Date</label></div>
                     <DatePicker
                       name={"disbursement_date"}

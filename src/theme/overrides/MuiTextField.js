@@ -6,6 +6,9 @@ export default {
     // '& .MuiInput-underline:after': {
     //   borderBottomColor: 'green',
     // },
+    '&.MuiFormControl-marginNormal': {
+      margin: '4px 0',
+    },
     '& .MuiInputBase-input': {
       fontSize: 13,
       color: '#222444'
@@ -44,6 +47,12 @@ export default {
       '& input.MuiOutlinedInput-inputMarginDense': {
         padding: 10,
       },
+      '& input.MuiOutlinedInput-input': {
+        padding: 10,
+      },
+      '&.MuiOutlinedInput-adornedEnd': {
+        paddingRight: 0
+      }
     },
     '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
       transform: 'translate(14px, -6px) scale(0.80)',

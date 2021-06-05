@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 
-const InputWrapper = styled.div`
+export const InputWrapper = styled.div`
   display: flex;
   align-items: ${props => props.top ? 'flex-start' : 'center'};
   justify-content: flex-end;

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
-import Alert from "@material-ui/lab/Alert"
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { withStyles } from '@material-ui/core/styles';
@@ -9,13 +8,14 @@ import Switch from '@material-ui/core/Switch';
 import Typography from '@material-ui/core/Typography';
 import TextInput from '../../../components/TextInput/TextInput';
 import Button from '../../../components/CommonComponents/Button/Button';
-import { useMount } from 'react-use';
-import { getAllRegion, getBusinessTypes, getOmcList } from '../../../services/common.service';
-import { getDistricts, getFormattedStatesList } from '../../../utils/indianStates.util';
-import { addNewTransport } from '../../../services/transports.service';
-import { Accordion } from '@material-ui/core';
-import { AccordionSummary } from '@material-ui/core';
-import { ExpandMore } from '@material-ui/icons';
+import { addNewTransport } from '../../../services/transports.service'; 
+import 'date-fns';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+    MuiPickersUtilsProvider,
+    KeyboardDatePicker
+} from '@material-ui/pickers';
+
 
 const AddNewTransportsOwnerForm = ({ handleNext }) => {
     const [apiStatus, setApiStatus] = useState({});
@@ -27,6 +27,12 @@ const AddNewTransportsOwnerForm = ({ handleNext }) => {
         checkedA: true,
         checkedB: true,
     });
+    const [selectedDate, setSelectedDate] = useState(
+        new Date()
+    )
+    const handleDateChange = (date) => {
+        setSelectedDate(date)
+    }
 
 
     const handleClick = () => {
@@ -134,7 +140,36 @@ const AddNewTransportsOwnerForm = ({ handleNext }) => {
                         />
                     </Grid>
                     <Grid item md={6}>
-                        <TextInput
+                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                            <KeyboardDatePicker
+                                // disableToolbar
+                                hideTabs={true}
+                                variant='inline'
+                                inputVariant='outlined'
+                                label="Date of Birth"
+                                format='dd/MM/yyy'
+                                // views={["date", "month", "year"]}
+                                animateYearScrolling={true}
+                                invalidDateMessage='Invalid Date Format'
+                                minDate={Date("01-01-1900")}
+                                margin='normal'
+                                id='date-picker'
+                                autoOk={true}
+                                // label='Disbursement Date'
+                                value={selectedDate}
+                                onChange={handleDateChange}
+                                keyboardButtonProps={{
+                                    'aria-label': 'change date'
+                                }}
+                                PopoverProps={{
+                                    anchorOrigin: {
+                                        vertical: 'bottom',
+                                        horizontal: 'center',
+                                    }
+                                }}
+                            />
+                        </MuiPickersUtilsProvider>
+                        {/* <TextInput
                             id="date"
                             label="Date of Birth"
                             name="dob"
@@ -144,7 +179,7 @@ const AddNewTransportsOwnerForm = ({ handleNext }) => {
                             defaultValue={values.dob}
                             onChange={handleChange}
                             InputLabelProps={{ shrink: true }}
-                        />
+                        /> */}
                     </Grid>
                     <Grid item md={6}>
                         <TextInput

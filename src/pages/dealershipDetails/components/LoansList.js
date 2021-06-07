@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -40,7 +40,7 @@ const useStyles = makeStyles({
   },
 });
 
-const LoansList = ({ id, currentUser, titleAlign }) => {
+const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
   const classes = useStyles();
   const [data, setLoansData] = useState();
   const [loading, setLoading] = useState(false);
@@ -50,15 +50,21 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
   const [selectedStatus, setSelectedStatus] = useState();
   const { enqueueSnackbar } = useSnackbar();
 
-  useMount(() => {
+  useEffect(() => {
     getDealershipLoansById(id)
       .then(data => setLoansData(data))
       .catch(e => null)
     getApplicationStatusById(id)
-      .then(data => setStatus(data))
+      .then(data => {
+        setStatus(data)
+        if (dealerData[0].application_state_id) {
+          const re = data.find(d => d.id == dealerData[0].application_state_id)
+          setSelectedStatus({ ...re, disabled: status !== "loan_approval" } || {})
+        }
+      })
       .catch(e => null)
 
-  });
+  }, [dealerData]);
 
   const processLoan = loan => {
     let status, remarksObj = {};
@@ -121,7 +127,6 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
         <Typography variant="h5" align={titleAlign} className={classes.title}>No Loan details found</Typography>
       </div>
     );
-
   return (
     <div className={classes.wrapper}>
       <Typography variant="h5" align={titleAlign} className={classes.title}>Loans</Typography>
@@ -133,7 +138,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
             <TableCell align="right">Appr</TableCell>
             <TableCell align="right">Disb</TableCell>
             <TableCell align="center">Status</TableCell>
-            <TableCell align="center">App. Status</TableCell>
+            <TableCell align="center">Application Status</TableCell>
             <TableCell align="center">Actions</TableCell>
           </TableRow>
         </TableHead>

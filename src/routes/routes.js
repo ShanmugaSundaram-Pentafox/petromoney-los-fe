@@ -24,6 +24,8 @@ import LmsLos from '../pages/loanspage/lmsLosTable';
 import PassbookDetails from '../pages/users/dealer/PassbookDetails';
 import EnvTag from '../components/CommonComponents/EnvTag/EnvTag';
 import VehiclesLoanTable from '../pages/transports/components/VehiclesLoanTable';
+import Profile from '../pages/profile/Profile';
+import TransportException from '../pages/transports/components/TransportException';
 
 const Routes = ({ currentUser }) => {
   return (<>
@@ -34,16 +36,17 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/solar/feasibility" component={Solar} />
       <ProtectedRoute allow exact path="/dealership" component={Dealership} />
       <ProtectedRoute allow exact path="/loans" component={Loans} />
-      <ProtectedRoute allow exact path="/loans/losLms" component={LmsLos} />
+      <ProtectedRoute allow exact path="/loans/exceptions" component={LmsLos} />
       <ProtectedRoute allow exact path="/dealership/:id?" component={DealershipDetails} />
       <ProtectedRoute allow exact path='/transports' component={Transport} />
       <ProtectedRoute allow exact path="/transports/:id?" component={TransportsDetails} />
+      <ProtectedRoute allow exact path='/transport/exceptions' component={TransportException} />
       <ProtectedRoute allow exact path="/dealership/:id/credit-form" component={CreditForm} />
       <ProtectedRoute allow exact path="/settings" component={Settings} />
       <ProtectedRoute allow exact path="/reports/due" component={Due} />
       <ProtectedRoute allow exact path="/reports/overdue" component={OverDue} />
       <ProtectedRoute allow exact path="/vehicle-loan" component={VehiclesLoanTable} />
-      <ProtectedRoute allow exact path="/profile" component={VehiclesLoanTable} />
+      <ProtectedRoute allow exact path="/profile" component={Profile} />
 
 
       <ProtectedRoute
@@ -51,16 +54,16 @@ const Routes = ({ currentUser }) => {
         path="/users"
         component={Users}
         allow={permissionCheck(currentUser?.role_name, rulesList.users_view)}
-        />
-        <ProtectedRoute
+      />
+      <ProtectedRoute
         allow
         exact
         path="/passbook"
         component={PassbookDetails}
         allow={permissionCheck(currentUser?.role_name, rulesList.dealer_view)}
-        />
+      />
       <Route exact path="/survey" render={props => <Survey {...props} />} />
-      
+
       <Route exact path="/login" render={props => {
         const authUrl = window.sessionStorage.getItem('pm-login-url');
         if (currentUser) {
@@ -71,7 +74,7 @@ const Routes = ({ currentUser }) => {
         return <Login {...props} />
       }} />
     </Switch>
-    </>
+  </>
   )
 }
 

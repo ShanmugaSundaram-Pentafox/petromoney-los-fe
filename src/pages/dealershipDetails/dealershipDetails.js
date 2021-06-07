@@ -14,7 +14,7 @@ import Paper from "@material-ui/core/Paper";
 import Drawer from '@material-ui/core/Drawer';
 import DealershipInfo from "./components/DealershipInfo";
 import { useMount } from "react-use";
-import { getDealershipById } from "../../services/dealerships.service";
+import { getDealershipById, getDealershipLoansById } from "../../services/dealerships.service";
 import { getDealersByDealershipId } from "../../services/dealers.service";
 import DealersList from "./components/DealersList";
 import LoansList from "./components/LoansList";
@@ -78,6 +78,7 @@ const DealershipDetails = ({ currentUser, match }) => {
   const [showCreditReport, setShowCreditReport] = useState();
   const [showSolarForm, setShowSolarForm] = useState();
   const [leegalityModalVisible, setLeegalityModalVisible] = useState(false);
+  const [dealerLoanData,setDealerLoanData] = useState();
   const {
     url,
     params: { id },
@@ -99,7 +100,9 @@ const DealershipDetails = ({ currentUser, match }) => {
     getDealershipById(id)
       .then((data) => setDealershipData(data))
       .catch((e) => null);
-
+    getDealershipLoansById(id)
+      .then(data => setDealerLoanData(data))
+      .catch(e => null)
     getDealersByDealershipId(id)
       .then((data) => {
         setDealersData(data);
@@ -123,10 +126,10 @@ const DealershipDetails = ({ currentUser, match }) => {
             content={dealershipData?.address}
           />
         </Grid>
-          {
+        {
           mainApplicant?.first_name ? (
             <Grid item xs={6} sm={4}>
-              <InfoCard 
+              <InfoCard
                 title={"Main Dealer Info"}
                 userInitial={`${mainApplicant?.first_name?.charAt(0)}`}
                 name={`${mainApplicant?.first_name} ${mainApplicant?.last_name || ''}`}
@@ -134,8 +137,8 @@ const DealershipDetails = ({ currentUser, match }) => {
                 content={`${mainApplicant?.email || ''}`}
               />
             </Grid>
-            ) : null
-          }
+          ) : null
+        }
         {/* <Grid item xs={6} sm={4}>
           <InfoCard 
             title={" "}
@@ -171,7 +174,7 @@ const DealershipDetails = ({ currentUser, match }) => {
               setActiveTab(-1);
               setSolarTab(0);
               setShowSolarForm(true);
-              }}>
+            }}>
               <InfoBox title="Solar Enquiry Form" />
             </div>
             <Collapse in={showSolarForm}>
@@ -211,7 +214,7 @@ const DealershipDetails = ({ currentUser, match }) => {
           <SalesInfo id={id} titleAlign="left" currentUser={currentUser} column />
         </TabPanel>
         <TabPanel activeTab={activeTab} index={3}>
-          <LoansList id={id} titleAlign="left" currentUser={currentUser} />
+          <LoansList id={id} titleAlign="left" currentUser={currentUser} dealerData={dealerLoanData} />
         </TabPanel>
         <TabPanel activeTab={activeTab} index={4}>
           <DealershipDoc id={id} currentUser={currentUser} />
@@ -244,7 +247,7 @@ const DealershipDetails = ({ currentUser, match }) => {
           />
         </div>
       </Drawer> */}
-      
+
       <Drawer
         anchor="right"
         open={showCreditReport}

@@ -33,7 +33,6 @@ import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
-  KeyboardTimePicker,
   KeyboardDatePicker
 } from '@material-ui/pickers';
 
@@ -81,9 +80,8 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
   const [loading, setLoading] = useState(false);
   const [apiStatus, setApiStatus] = useState({});
   const [confirmDelete, setConfirmDelete] = useState({});
-  // const [selectedDate, setSelectedDate] = useState();
   const [selectedDate, setSelectedDate] = useState(
-    new Date("2020-09-11T12:00:00")
+    new Date()
   )
   const handleDateChange = (date) => {
     setSelectedDate(date)
@@ -287,18 +285,15 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                       <label className="input-label">Disbursement Date</label>
                       <MuiPickersUtilsProvider utils={DateFnsUtils}>
                           <KeyboardDatePicker
-                            // disableToolbar
                             hideTabs={true}
                             variant='inline'
                             inputVariant='outlined'
                             format='MM/dd/yyy'
-                            // views={["date", "month", "year"]}
                             animateYearScrolling={true}
                             invalidDateMessage='Invalid Date Format'
                             margin='normal'
                             id='date-picker'
                             autoOk={true}
-                            // label='Disbursement Date'
                             value={selectedDate}
                             onChange={handleDateChange}
                             keyboardButtonProps={{

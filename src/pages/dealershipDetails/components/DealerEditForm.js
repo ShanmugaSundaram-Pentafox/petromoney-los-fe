@@ -8,12 +8,19 @@ import Button from '@material-ui/core/Button';
 import DeleteIcon from '@material-ui/icons/Delete';
 import IconButton from '@material-ui/core/IconButton';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
-import TextInput from '../../../components/TextInput/TextInput';
+import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
 import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
 import FileUpload from "../../../components/FileUpload";
 import Typography from '@material-ui/core/Typography'
 import { useFormik } from 'formik';
 import Switch from '@material-ui/core/Switch';
+import 'date-fns';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+    MuiPickersUtilsProvider,
+    KeyboardDatePicker
+} from '@material-ui/pickers';
+
 
 const useStyles = makeStyles({
     row: {
@@ -35,6 +42,10 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
         checkedA: true,
         checkedB: true,
     });
+    const [selectedDate, setSelectedDate] = useState()
+    const handleDateChange = (date) => {
+        setSelectedDate(date)
+    }
     const handleChange = (event) => {
         setState({ ...state, [event.target.name]: event.target.checked });
     };
@@ -179,7 +190,32 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                     </TextInput>
                 </Grid>
                 <Grid {...gridItem} md={6}>
-                    <TextInput
+                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                        <KeyboardDatePicker
+                            hideTabs={true}
+                            variant='inline'
+                            inputVariant='outlined'
+                            label="Date of Birth"
+                            format='MM/dd/yyy'
+                            animateYearScrolling={true}
+                            invalidDateMessage='Invalid Date Format'
+                            margin='normal'
+                            id='date-picker'
+                            autoOk={true}
+                            value={values.disbursement_date}
+                            onChange={handleDateChange}
+                            keyboardButtonProps={{
+                                'aria-label': 'change date'
+                            }}
+                            PopoverProps={{
+                                anchorOrigin: {
+                                    vertical: 'bottom',
+                                    horizontal: 'center',
+                                }
+                            }}
+                        />
+                    </MuiPickersUtilsProvider>
+                    {/* <TextInput
                         id="date"
                         label="Date of Birth"
                         name="dob"
@@ -189,7 +225,7 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                         defaultValue={values.dob}
                         onChange={onChange}
                         InputLabelProps={{ shrink: true }}
-                    />
+                    /> */}
                 </Grid>
                 {modelType === 'COAPPLICANT' || modelType === 'GUARANTOR' ?
                     <>

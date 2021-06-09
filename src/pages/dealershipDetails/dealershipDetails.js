@@ -28,6 +28,8 @@ import SolarEnquiryForm from "./components/SolarEnquiryForm";
 import { tabA11yProps, TabPanel } from "../../components/CommonComponents/Tabs/TabPanel";
 import InfoCard from "../../components/CommonComponents/Cards/InfoCard";
 import LeegalityLayout from "../../components/Leegality/LeegalityLayout";
+import DealershipTransport from "./components/DealershipTransport";
+import FleetOperatorsDetails from "./components/FleetOperatorsDetails";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -123,10 +125,10 @@ const DealershipDetails = ({ currentUser, match }) => {
             content={dealershipData?.address}
           />
         </Grid>
-          {
+        {
           mainApplicant?.first_name ? (
             <Grid item xs={6} sm={4}>
-              <InfoCard 
+              <InfoCard
                 title={"Main Dealer Info"}
                 userInitial={`${mainApplicant?.first_name?.charAt(0)}`}
                 name={`${mainApplicant?.first_name} ${mainApplicant?.last_name || ''}`}
@@ -134,8 +136,8 @@ const DealershipDetails = ({ currentUser, match }) => {
                 content={`${mainApplicant?.email || ''}`}
               />
             </Grid>
-            ) : null
-          }
+          ) : null
+        }
         {/* <Grid item xs={6} sm={4}>
           <InfoCard 
             title={" "}
@@ -164,6 +166,8 @@ const DealershipDetails = ({ currentUser, match }) => {
               <Tab label={<InfoBox active={activeTab === 2} number={3} title="Sales History" />} {...tabA11yProps(2)} />
               <Tab label={<InfoBox active={activeTab === 3} number={4} title="Loans List" />} {...tabA11yProps(3)} />
               <Tab label={<InfoBox active={activeTab === 4} number={5} title="Documents" />} {...tabA11yProps(4)} />
+              <Tab label={<InfoBox active={activeTab === 5} number={6} title="Dealership Transport" />} {...tabA11yProps(5)} />
+              <Tab label={<InfoBox active={activeTab === 6} number={7} title="Fleet Operators" />} {...tabA11yProps(6)} />
             </Tabs>
           </Collapse>
           <div>
@@ -171,7 +175,7 @@ const DealershipDetails = ({ currentUser, match }) => {
               setActiveTab(-1);
               setSolarTab(0);
               setShowSolarForm(true);
-              }}>
+            }}>
               <InfoBox title="Solar Enquiry Form" />
             </div>
             <Collapse in={showSolarForm}>
@@ -216,6 +220,12 @@ const DealershipDetails = ({ currentUser, match }) => {
         <TabPanel activeTab={activeTab} index={4}>
           <DealershipDoc id={id} currentUser={currentUser} />
         </TabPanel>
+        <TabPanel activeTab={activeTab} index={5}>
+          <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
+        </TabPanel>
+        <TabPanel activeTab={activeTab} index={6}>
+          <FleetOperatorsDetails />
+        </TabPanel>
         <SolarEnquiryForm
           dealershipId={id}
           mainApplicant={mainApplicant}
@@ -244,7 +254,7 @@ const DealershipDetails = ({ currentUser, match }) => {
           />
         </div>
       </Drawer> */}
-      
+
       <Drawer
         anchor="right"
         open={showCreditReport}

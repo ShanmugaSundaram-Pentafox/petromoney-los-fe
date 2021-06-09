@@ -180,7 +180,7 @@ const AddNewTransportsOwnerForm = ({ handleNext }) => {
 
                         />
                     </Grid>
-                    <Grid item md={6}>
+                    {/* <Grid item md={6}>
                         <TextInput
                             select
                             label="Residing Since"
@@ -205,6 +205,18 @@ const AddNewTransportsOwnerForm = ({ handleNext }) => {
                                 </>
                             }
                         </TextInput>
+                    </Grid> */}
+                    <Grid item md={6}>
+                        <TextInput
+                            label="Email"
+                            name="email"
+                            // readOnly={readOnly}
+                            error={errors.email}
+                            helperText={errors.email}
+                            defaultValue={values.email}
+                            InputLabelProps={{ shrink: true }}
+                            onChange={handleChange}
+                        />
                     </Grid>
                     <Grid item md={6}>
                         <TextInput
@@ -219,19 +231,7 @@ const AddNewTransportsOwnerForm = ({ handleNext }) => {
                             InputLabelProps={{ shrink: true }}
                         />
                     </Grid>
-                    <Grid item md={6}>
-                        <TextInput
-                            label="Email"
-                            name="email"
-                            // readOnly={readOnly}
-                            error={errors.email}
-                            helperText={errors.email}
-                            defaultValue={values.email}
-                            InputLabelProps={{ shrink: true }}
-                            onChange={handleChange}
-                        />
-                    </Grid>
-                    <Grid item md={6}>
+                    {/* <Grid item md={6}>
                         <TextInput
                             select
                             label="Marital Status"
@@ -252,8 +252,8 @@ const AddNewTransportsOwnerForm = ({ handleNext }) => {
                             <option value="Divorced">Divorced</option>
                             <option value="Widowed">Widowed</option>
                         </TextInput>
-                    </Grid>
-                    <Grid item md={6}>
+                    </Grid> */}
+                    {/* <Grid item md={6}>
                         <Typography component="div">
                             <Grid component="label" container alignItems="center" style={{ marginBottom: '10px', marginTop: '6px' }} spacing={2}>
                                 <Grid md={12} style={{ paddingLeft: '8px' }}>Mobile number on Whatsapp?</Grid>
@@ -270,9 +270,19 @@ const AddNewTransportsOwnerForm = ({ handleNext }) => {
                                 <Grid>Yes</Grid>
                             </Grid>
                         </Typography>
-                    </Grid>
+                    </Grid> */}
 
                     <Grid item md={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <Button
+                            size="large"
+                            color="primary"
+                            variant="contained"
+                            onClick={handleNext}
+                            style={{ marginRight: '4px' }}
+
+                        >
+                            Edit
+                        </Button>
                         <Button
                             size="large"
                             // type="submit"
@@ -281,7 +291,7 @@ const AddNewTransportsOwnerForm = ({ handleNext }) => {
                             onClick={handleNext}
 
                         >
-                            Add Owner
+                            Save
                         </Button>
                     </Grid>
 

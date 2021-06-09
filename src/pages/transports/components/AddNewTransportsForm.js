@@ -144,9 +144,7 @@ const AddNewTransportsForm = ({ handleNext, handleBack }) => {
                                 helperText={errors.id}
                             >
                             </TextInput>
-
                         }
-
                     </Grid>
                     <Grid item md={6}>
                         <TextInput
@@ -274,13 +272,6 @@ const AddNewTransportsForm = ({ handleNext, handleBack }) => {
                         />
                     </Grid>
                     <Grid item md={12} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Button
-                            size="large"
-                            variant="outlined"
-                            onClick={handleBack}
-                        >
-                            Back
-                        </Button>
                         <Button
                             size="large"
                             // type="submit"

@@ -11,7 +11,7 @@ const FileUpload = ({id,data, inline, open, onCloseUploader, handleSave, initial
         previewText="Selected Files"
         onChange={handleSave}
         acceptedFiles={["image/*", ".pdf"]}
-        maxFileSize={5000000}
+        maxFileSize={10000000}
         showAlerts={false}
         initialFiles={initialFiles}
       />
@@ -29,7 +29,7 @@ const FileUpload = ({id,data, inline, open, onCloseUploader, handleSave, initial
       acceptedFiles={["image/jpeg", "image/png", ".pdf", ".xls", ".xlsx", ".csv"]}
       showPreviews={true}
       submitButtonText={'Upload'}
-      maxFileSize={5000000}
+      maxFileSize={10000000}
       onClose={onCloseUploader}
       initialFiles={initialFiles}
     />

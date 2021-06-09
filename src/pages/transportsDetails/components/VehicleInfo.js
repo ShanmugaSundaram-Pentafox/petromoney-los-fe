@@ -41,6 +41,7 @@ const Accordion = withStyles({
     border: "1px solid rgba(0, 0, 0, .125)",
     borderRadius: 4,
     marginBottom: 8,
+    minWidth:'52vw',
     // boxShadow: "none",
     "&:not(:last-child)": {
       borderBottom: 0,

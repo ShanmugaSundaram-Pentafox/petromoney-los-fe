@@ -3,26 +3,18 @@ import { NavLink as RouterLink } from "react-router-dom"
 import { makeStyles } from "@material-ui/styles"
 import MUIDataTable from "mui-datatables"
 import Typography from "@material-ui/core/Typography"
-import CircularProgress from "@material-ui/core/CircularProgress"
 import { useMount } from "react-use"
 import { getAllTransport } from "../../../services/transports.service"
 import { selectAllTransports } from "../../../store/transports/transports.selector"
 import { createStructuredSelector } from "reselect"
 import { connect } from "react-redux"
 import { setAllTransports } from "../../../store/transports/transports.actions"
-import Button from '../../../components/CommonComponents/Button/Button';
-import FormDialog from "../../../components/CommonComponents/FormDialog/FormDialog"
 import AddNewTransportsForm from "./AddNewTransportsForm"
 import AddNewTransportsOwnerForm from "./AddNewTransportsOwnerForm"
 import { Grid } from "@material-ui/core"
 import { Paper } from "@material-ui/core";
 import Skeleton from '@material-ui/lab/Skeleton';
-import Drawer from '@material-ui/core/Drawer';
-import CloseIcon from '@material-ui/icons/Close';
-import Stepper from '@material-ui/core/Stepper';
-import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
-import StepContent from '@material-ui/core/StepContent';
+
 
 
 
@@ -157,17 +149,17 @@ const TransportsTable = ({ transports, setAllTransports }) => {
     viewColumns: false,
     rowsPerPage: 10,
     isRowSelectable: () => false,
-    customToolbar: () => {
-      return (
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={() => setOpenModal(true)}
-        >
-          Add Transport
-        </Button>
-      );
-    }
+    // customToolbar: () => {
+    //   return (
+    //     <Button
+    //       color="primary"
+    //       variant="contained"
+    //       onClick={() => setOpenModal(true)}
+    //     >
+    //       Add Transport
+    //     </Button>
+    //   );
+    // }
   }
   function getStepContent(step) {
     switch (step) {
@@ -205,24 +197,6 @@ const TransportsTable = ({ transports, setAllTransports }) => {
           ) : (
             <Paper style={{ marginTop: 10, padding: 10 }}>No Transporters found</Paper>
           )}
-      <Drawer anchor="right" open={openModal} onClose={() => setOpenModal(false)}>
-        <div className={classes.sidePanelWrapper}>
-          <Typography className={classes.sidePanelTitle} variant="h4">
-            <div> Add New Transport Form</div>
-            <CloseIcon onClick={() => setOpenModal(false)} />
-          </Typography>
-          <Stepper activeStep={activeStep} orientation="vertical">
-            {steps.map((label, index) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-                <StepContent>
-                  <Typography>{getStepContent(index)}</Typography>
-                </StepContent>
-              </Step>
-            ))}
-          </Stepper>
-        </div>
-      </Drawer>
     </div>
   )
 }

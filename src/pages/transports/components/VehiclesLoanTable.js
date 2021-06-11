@@ -33,7 +33,7 @@ const VehiclesLoanTable = () => {
     return [
       {
         label: "Code",
-        name: "transporter_id",
+        name: "id",
         options: {
           filter: false,
           sort: true,

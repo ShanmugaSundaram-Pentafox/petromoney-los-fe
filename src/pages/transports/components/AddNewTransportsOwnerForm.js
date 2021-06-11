@@ -19,10 +19,8 @@ import { ExpandMore } from '@material-ui/icons';
 
 const AddNewTransportsOwnerForm = ({ handleNext }) => {
     const [apiStatus, setApiStatus] = useState({});
-    const [omcs, setOmcs] = useState([]);
-    const [bussinessType, setBussinessType] = useState([]);
-    const [regions, setRegions] = useState([]);
     const [checked, setChecked] = useState(false);
+    const [data, setData] = useState([])
     const [state, setState] = React.useState({
         checkedA: true,
         checkedB: true,
@@ -66,45 +64,34 @@ const AddNewTransportsOwnerForm = ({ handleNext }) => {
                 })
         }
     });
-    const inputProps = {
-        direction: "column",
-        alignTop: true,
-        onChange: handleChange,
+
+    const aadharBack = () => {
+        return (
+            <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
+                href={data.aadhar_b_file_url} target="_blank" title={'Aadhar Back'}>{'Aadhar Back'}</a>
+        )
     }
-    const AntSwitch = withStyles((theme) => ({
-        root: {
-            width: 28,
-            height: 16,
-            padding: 0,
-            display: 'flex',
-        },
-        switchBase: {
-            marginBottom: 4,
-            padding: 2,
-            color: theme.palette.grey[500],
-            '&$checked': {
-                transform: 'translateX(12px)',
-                color: theme.palette.common.white,
-                '& + $track': {
-                    opacity: 1,
-                    backgroundColor: theme.palette.primary.main,
-                    borderColor: theme.palette.primary.main,
-                },
-            },
-        },
-        thumb: {
-            width: 12,
-            height: 12,
-            boxShadow: 'none',
-        },
-        track: {
-            border: `1px solid ${theme.palette.grey[500]}`,
-            borderRadius: 16 / 2,
-            opacity: 1,
-            backgroundColor: theme.palette.common.white,
-        },
-        checked: {},
-    }))(Switch);
+    const profileAttachment = () => {
+        return (
+            <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
+                href={data.profile_image_url} target="_blank" title={'Profile Attachment'}>{'Profile Attachment'}</a>
+        )
+    }
+
+    const aadharFront = () => {
+        return (
+            <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
+                href={data.aadhar_f_file_url} target="_blank" title={'Aadhar Front'}>{'Aadhar Front'}</a>
+        )
+    }
+    const panAttachment = () => {
+        return (
+            <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
+                href={data.pan_file_url} target="_blank" title={'PAN Attachment'}>{'PAN Attachment'}</a>
+        )
+    }
+
+
     return (
         <Box>
             <form onSubmit={handleSubmit}>
@@ -180,7 +167,7 @@ const AddNewTransportsOwnerForm = ({ handleNext }) => {
 
                         />
                     </Grid>
-                    {/* <Grid item md={6}>
+                    <Grid item md={6}>
                         <TextInput
                             select
                             label="Residing Since"
@@ -192,7 +179,6 @@ const AddNewTransportsOwnerForm = ({ handleNext }) => {
                             SelectProps={{
                                 native: true,
                             }}
-
                         >
                             {
                                 <>
@@ -205,40 +191,14 @@ const AddNewTransportsOwnerForm = ({ handleNext }) => {
                                 </>
                             }
                         </TextInput>
-                    </Grid> */}
-                    <Grid item md={6}>
-                        <TextInput
-                            label="Email"
-                            name="email"
-                            // readOnly={readOnly}
-                            error={errors.email}
-                            helperText={errors.email}
-                            defaultValue={values.email}
-                            InputLabelProps={{ shrink: true }}
-                            onChange={handleChange}
-                        />
                     </Grid>
                     <Grid item md={6}>
-                        <TextInput
-                            label="Mobile"
-                            name="mobile"
-                            // readOnly={readOnly}
-                            value={values.mobile}
-                            onChange={handleChange}
-                            error={errors.mobile}
-                            helperText={errors.mobile}
-                            type='number'
-                            InputLabelProps={{ shrink: true }}
-                        />
-                    </Grid>
-                    {/* <Grid item md={6}>
                         <TextInput
                             select
                             label="Marital Status"
                             name="marital_status"
                             error={errors.marital_status}
                             helperText={errors.marital_status}
-                            // readOnly={readOnly}
                             value={values.marital_status}
                             onChange={handleChange}
                             // disabled={readOnly}
@@ -252,11 +212,55 @@ const AddNewTransportsOwnerForm = ({ handleNext }) => {
                             <option value="Divorced">Divorced</option>
                             <option value="Widowed">Widowed</option>
                         </TextInput>
-                    </Grid> */}
-                    {/* <Grid item md={6}>
+                    </Grid>
+                    <Grid item md={6}>
+                        <TextInput
+                            label="Mobile"
+                            name="mobile"
+                            value={values.mobile}
+                            onChange={handleChange}
+                            error={errors.mobile}
+                            helperText={errors.mobile}
+                            type='number'
+                        ></TextInput>
+                    </Grid>
+                    <Grid item md={6}>
+                        <TextInput
+                            label="Email"
+                            name="email"
+                            error={errors.email}
+                            helperText={errors.email}
+                            defaultValue={values.email}
+                            onChange={handleChange}
+                        />
+                    </Grid>
+
+                    <Grid item md={6}>
+                        <TextInput
+                            label="Aadhar"
+                            name="aadhar"
+                            value={values.aadhar}
+                            helperText={errors.aadhar}
+                            error={errors.aadhar}
+                            onChange={handleChange}
+                        >
+                        </TextInput>
+                    </Grid>
+                    <Grid item md={6}>
+                        <TextInput
+                            label="PAN Number"
+                            name="pan"
+                            value={values.pan}
+                            error={errors.pan}
+                            helperText={errors.pan}
+                            onChange={handleChange}
+                        >
+                        </TextInput>
+                    </Grid>
+                    <Grid item md={6}>
                         <Typography component="div">
                             <Grid component="label" container alignItems="center" style={{ marginBottom: '10px', marginTop: '6px' }} spacing={2}>
-                                <Grid md={12} style={{ paddingLeft: '8px' }}>Mobile number on Whatsapp?</Grid>
+                                <Grid md={12} style={{ paddingLeft: '8px',fontSize:'13px' }}>Mobile number on Whatsapp?</Grid>
                                 <Grid style={{ paddingLeft: '8px' }}>No</Grid>
                                 <Grid>
                                     <Switch
@@ -270,9 +274,118 @@ const AddNewTransportsOwnerForm = ({ handleNext }) => {
                                 <Grid>Yes</Grid>
                             </Grid>
                         </Typography>
-                    </Grid> */}
-
-                    <Grid item md={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    </Grid>
+                    <Grid item md={6}>
+                        <Typography component="div" >
+                            <Grid component="label" container style={{ marginBottom: '8px', marginTop: '6px' }} alignItems="center" spacing={2}>
+                                <Grid md={12} style={{ paddingLeft: '8px',fontSize:'13px' }}>Mobile number linked with AADHAR?</Grid>
+                                <Grid style={{ paddingLeft: '8px' }}>No</Grid>
+                                <Grid>
+                                    <Switch
+                                        checked={state.checkedB}
+                                        onChange={handleChange}
+                                        color="primary"
+                                        name="checkedB"
+                                        inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                    />
+                                </Grid>
+                                <Grid>Yes</Grid>
+                            </Grid>
+                        </Typography>
+                    </Grid>
+                    <Grid md={12} style={{ margin: '16px 8px' }}>
+                        <Typography variant="title">Documents </Typography>
+                    </Grid>
+                    <Grid item md={12}>
+                        <Typography variant="subtitle2" component="subtitle2">
+                            Photo :
+                                <>
+                                {
+                                    data.profile_image_url ? profileAttachment() :
+                                        <>
+                                            <TextInput
+                                                type="file"
+                                                accept="image/*"
+                                                name="pan_file_url"
+                                                value={data.profile_image_url}
+                                                onChange={(event) => {
+                                                    values[event.target.name] = event.currentTarget.files[0];
+                                                }}
+                                                InputLabelProps={{ shrink: true }}
+                                            ></TextInput>
+                                        </>
+                                }
+                            </>
+                        </Typography>
+                    </Grid>
+                    <Grid item md={12}>
+                        <Typography variant="subtitle2" component="subtitle2">
+                            PAN :
+                                <>
+                                {data.pan_file_url ? panAttachment() :
+                                    <>
+                                        <TextInput
+                                            type="file"
+                                            accept="image/*"
+                                            name="pan_file_url"
+                                            value={data.pan_file_url}
+                                            onChange={(event) => {
+                                                values[event.target.name] = event.currentTarget.files[0];
+                                            }}
+                                            InputLabelProps={{ shrink: true }}
+                                        ></TextInput>
+                                    </>
+                                }
+                            </>
+                        </Typography>
+                    </Grid>
+                    <Grid item md={12} style={{ marginBottom: '8px' }}>
+                        <Typography variant="subtitle1">Aadhar </Typography>
+                    </Grid>
+                    <Grid item md={6}>
+                        <Typography variant="subtitle2" component="subtitle2">
+                            Front:
+                                <>
+                                {data.aadhar_f_file_url ? aadharFront() :
+                                    <>
+                                        <TextInput
+                                            type="file"
+                                            accept="image/*"
+                                            name="aadhar_f_file_url"
+                                            value={data.aadhar_f_file_url}
+                                            onChange={(event) => {
+                                                values[event.target.name] = event.currentTarget.files[0];
+                                            }}
+                                            InputLabelProps={{ shrink: true }}
+                                        ></TextInput>
+                                    </>
+                                }
+                            </>
+                        </Typography>
+                    </Grid>
+                    <Grid item md={6}>
+                        <Typography variant="subtitle2" component="subtitle2">
+                            Back:
+                                <>
+                                {data.aadhar_b_file_url ?
+                                    aadharBack() :
+                                    <>
+                                        <TextInput
+                                            type="file"
+                                            accept="image/*"
+                                            name="aadhar_b_file_url"
+                                            value={data.aadhar_b_file_url}
+                                            onChange={(event) => {
+                                                values[event.target.name] = event.currentTarget.files[0];
+                                            }}
+                                            InputLabelProps={{ shrink: true }}
+                                        ></TextInput>
+                                    </>
+                                }
+                            </>
+                        </Typography>
+                    </Grid>
+                    {/* <Grid item md={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
                         <Button
                             size="large"
                             color="primary"
@@ -293,7 +406,7 @@ const AddNewTransportsOwnerForm = ({ handleNext }) => {
                         >
                             Save
                         </Button>
-                    </Grid>
+                    </Grid> */}
 
                 </Grid>
             </form>

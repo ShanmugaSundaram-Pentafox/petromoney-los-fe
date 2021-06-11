@@ -85,6 +85,12 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                 href={data.aadhar_b_file_url} target="_blank" title={'Aadhar Back'}>{'Aadhar Back'}</a>
         )
     }
+    const profileAttachment = () => {
+        return (
+            <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
+                href={data.profile_image_url} target="_blank" title={'Profile Attachment'}>{'Profile Attachment'}</a>
+        )
+    }
 
     const aadharFront = () => {
         return (
@@ -99,40 +105,6 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                 href={data.pan_file_url} target="_blank" title={'PAN Attachment'}>{'PAN Attachment'}</a>
         )
     }
-    const AntSwitch = withStyles((theme) => ({
-        root: {
-            width: 28,
-            height: 16,
-            padding: 0,
-            display: 'flex',
-        },
-        switchBase: {
-            marginBottom: 4,
-            padding: 2,
-            color: theme.palette.grey[500],
-            '&$checked': {
-                transform: 'translateX(12px)',
-                color: theme.palette.common.white,
-                '& + $track': {
-                    opacity: 1,
-                    backgroundColor: theme.palette.primary.main,
-                    borderColor: theme.palette.primary.main,
-                },
-            },
-        },
-        thumb: {
-            width: 12,
-            height: 12,
-            boxShadow: 'none',
-        },
-        track: {
-            border: `1px solid ${theme.palette.grey[500]}`,
-            borderRadius: 16 / 2,
-            opacity: 1,
-            backgroundColor: theme.palette.common.white,
-        },
-        checked: {},
-    }))(Switch);
 
     return (
         <Grid container>
@@ -348,7 +320,7 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                 <Grid item md={6}>
                     <Typography component="div" >
                         <Grid component="label" container style={{ marginBottom: '8px', marginTop: '6px' }} alignItems="center" spacing={2}>
-                            <Grid md={12} style={{ paddingLeft: '8px' }}>PAN linked to AADHAR?</Grid>
+                            <Grid md={12} style={{ paddingLeft: '8px' }}>Mobile number linked with AADHAR?</Grid>
                             <Grid style={{ paddingLeft: '8px' }}>No</Grid>
                             <Grid>
                                 <Switch
@@ -363,7 +335,6 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                         </Grid>
                     </Typography>
                 </Grid>
-
                 <Grid {...gridItem} md={6}>
                     <TextInput
                         label="Aadhar"
@@ -389,11 +360,42 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                     </TextInput>
                 </Grid>
                 <Grid md={12} style={{ marginBottom: '16px' }}>
-                    <Typography variant="title">Files </Typography>
+                    <Typography variant="title">Documents </Typography>
                 </Grid>
                 <Grid {...gridItem} md={12}>
                     <Typography variant="subtitle2" component="subtitle2">
-                        PAN File: {(readOnly) ?
+                        Photo : {(readOnly) ?
+                            <>
+                                {data.pan_file_url ?
+                                    profileAttachment()
+                                    : <Typography variant="subtitle2" component="subtitle2">
+                                        <Tooltip title={'Click Edit and attach'}>
+                                            <AttachFileRoundedIcon disabled={readOnly} />
+                                        </Tooltip> Attach PAN
+                                </Typography>}
+                            </> :
+                            <>
+                                {data.profile_image_url ? profileAttachment() :
+                                    <>
+                                        <TextInput
+                                            type="file"
+                                            accept="image/*"
+                                            name="pan_file_url"
+                                            value={data.profile_image_url}
+                                            onChange={(event) => {
+                                                values[event.target.name] = event.currentTarget.files[0];
+                                            }}
+                                            InputLabelProps={{ shrink: true }}
+                                        ></TextInput>
+                                    </>
+                                }
+                            </>
+                        }
+                    </Typography>
+                </Grid>
+                <Grid {...gridItem} md={12}>
+                    <Typography variant="subtitle2" component="subtitle2">
+                        PAN : {(readOnly) ?
                             <>
                                 {data.pan_file_url ?
                                     panAttachment()

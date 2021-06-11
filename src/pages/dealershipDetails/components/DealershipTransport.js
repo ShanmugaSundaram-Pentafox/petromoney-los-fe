@@ -1,10 +1,8 @@
-
 import React, { useState } from 'react';
 import { withStyles } from "@material-ui/core/styles"
 import MuiAccordion from "@material-ui/core/Accordion"
 import MuiAccordionSummary from "@material-ui/core/AccordionSummary"
 import MuiAccordionDetails from "@material-ui/core/AccordionDetails"
-import { useMount } from "react-use";
 import { Typography } from '@material-ui/core';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
@@ -14,17 +12,11 @@ import Drawer from '@material-ui/core/Drawer';
 import CloseIcon from '@material-ui/icons/Close';
 import AddNewTransportsForm from '../../transports/components/AddNewTransportsForm';
 import AddNewTransportsOwnerForm from '../../transports/components/AddNewTransportsOwnerForm';
-import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
-import { Tooltip } from '@material-ui/core';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
-import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
-import {
-    getTransporterInfoFromID,
-    getTransportOwnerInfo,
-    getVehicleInfoFromID,
-} from "../../../services/transports.service";
+import Divider from '@material-ui/core/Divider';
+import clsx from 'clsx';
+import TransportOwnerTable from '../../../components/Tables/TransportOwnerTable';
+
 
 
 const Accordion = withStyles({
@@ -76,26 +68,71 @@ const AccordionDetails = withStyles((theme) => ({
 }))(MuiAccordionDetails)
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-        width: '50vw',
-        padding: 4,
-
-    },
-    mainDiv: {
-        display: 'flex',
-        justifyContent: 'space-between',
-    },
-    sidePanelWrapper: {
-        width: '50vw',
-        padding: '14px',
-    },
     sidePanelTitle: {
-        padding: '12px 16px',
+        // textAlign: 'center',
+        padding: '24px 16px',
         display: 'flex',
         justifyContent: 'space-between',
         zIndex: 0,
-        marginBottom: 4,
-        boxShadow: '0 1px 4px -3px #333',
+        boxShadow: '0 1px 4px -3px #333'
+    },
+    sidePanelFormWrapper: {
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+        width: '40vw'
+    },
+    sidePanelFormContentWrapper: {
+        flex: 1,
+        overflow: 'auto'
+    },
+    wrapper: {
+        padding: 8,
+        width: '50vw',
+    },
+    title: {
+        paddingLeft: 8,
+        marginBottom: 8
+    },
+    table: {
+        // minWidth: 650,
+        padding: 8
+    },
+    header: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        marginBottom: 8
+    },
+    footer: {
+        paddingTop: 8,
+        textAlign: 'right'
+    },
+    sidePanelWrapper: {
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+        width: '40vw',
+    },
+    actionButtons: {
+        // paddingTop: 8
+    },
+    tableRow: {
+        cursor: 'pointer'
+    },
+    document: {
+        display: 'inline-block',
+        borderRadius: 2,
+        lineHeight: 1,
+    },
+    sidePanelWrapper: {
+        width: '40vw',
+        padding: '14px',
+    },
+    stepperRoot: {
+        padding: 16,
+        paddingTop: 8
     },
     transportFormWrapper: {
         padding: theme.spacing(2),
@@ -106,8 +143,8 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: theme.spacing(2),
     },
     ownerWrapper: {
-        padding: theme.spacing(2),
-        marginBottom: theme.spacing(2),
+        flex: 1,
+        overflowY: 'auto'
     },
     button: {
         marginTop: theme.spacing(1),
@@ -119,90 +156,114 @@ const useStyles = makeStyles((theme) => ({
     resetContainer: {
         padding: theme.spacing(3),
     },
+    actionButtonsWrapper: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        padding: '12px 16px'
+    },
+    actionButtons: {
+        // paddingTop: 8
+    },
+    stepperRoot: {
+        padding: 16,
+        paddingTop: 8
+    },
+    stepTitle: {
+        '& .MuiStepLabel-label.MuiStepLabel-active': {
+            fontSize: 15,
+            fontWeight: 600
+        }
+    },
+    editButton: {
+        marginRight: '8px',
+        '&.MuiButton-contained': {
+            backgroundColor: theme.palette.success.main,
+            color: theme.palette.white
+        },
+        '&.MuiButton-contained:hover': {
+            backgroundColor: theme.palette.success.dark
+        }
+    }
 
 }))
-const DealershipTransport = ({ id, currentUser }) => {
+const DealershipTransport = ({ id, currentUser, titleAlign }) => {
     const [openModal, setOpenModal] = useState(false);
     const [openForm, setOpenForm] = useState(false);
     const [ownerInfo, setOwnerInfo] = useState()
     const [transportsData, setTransportsData] = useState()
     const [vehicleData, setVehicleData] = useState()
-
+    const [data, setData] = useState([])
     const classes = useStyles()
 
     const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit)
-    useMount(() => {
-
-    })
 
 
-    console.log("transport details", transportsData);
-    console.log("vehicle info ", vehicleData)
-    console.log("owner info", ownerInfo)
 
     return (
         <div>
-            <div className={classes.root}>
-                <div className={classes.mainDiv}>
-                    <Typography variant="h5">Dealership Transport</Typography>
+            <div className={classes.wrapper}>
+                <div className={classes.header}>
+                    <Typography style={{ width: '70%' }} variant="h5" align={titleAlign} className={classes.title}>Transport Owner</Typography>
                     <Button
                         color="primary"
                         variant="contained"
                         onClick={() => setOpenModal(true)}
                     >
-                        Add Transport
+                        Add Owner
                 </Button>
                 </div>
+                <div>
+                    <TransportOwnerTable  />
+                </div>
             </div>
-            <Drawer anchor="right" open={openModal} onClose={() => setOpenModal(false)}>
-                <div className={classes.sidePanelWrapper}>
+            <Drawer
+                anchor="right"
+                open={openModal}
+                onClose={() => setOpenModal(false)}
+                variant="temporary"
+            >
+                <div className={classes.sidePanelFormWrapper}>
                     <Typography className={classes.sidePanelTitle} variant="h4">
-                        <div> Owner Information</div>
+                        <div>Owner Information</div>
                         <CloseIcon onClick={() => setOpenModal(false)} />
                     </Typography>
-                    <div className={classes.ownerWrapper}>
-                        <AddNewTransportsOwnerForm />
+                    <div className={classes.sidePanelFormContentWrapper}>
+                        <div className={classes.stepperRoot}>
+                            <AddNewTransportsOwnerForm />
+                        </div>
                     </div>
-                    <div className={classes.transportFormWrapper}>
-                        <div className={classes.transWrapper}>
-                            <Typography variant="h3" >Transports</Typography>
-                            <Tooltip title="Add transport">
-                                <AddOutlinedIcon fontSize="large" color="secondary" onClick={() => setOpenForm(true)} />
-                            </Tooltip>
-                        </div>
-                        <div>
-                            <Accordion>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel1d-content"
-                                    id="panel1d-header"
+                    <div className={classes.actionFooter}>
+                        <Divider />
+                        <div className={classes.actionButtonsWrapper}>
+                            <div>
+                                <Button
+                                    variant="outlined"
+                                // startIcon={<NavigateBeforeRoundedIcon />}
+                                // disabled={loading}
+                                // onClick={onClose}
                                 >
-                                    <Typography variant="h6">Erode Lorry Owner Association</Typography>
-                                    <div style={{ display: "flex" }}>
-                                        <Tooltip title="Edit vehicle">
-                                            <Typography style={{ marginRight: '7px', color: "#4770C1" }} >
-                                                <EditOutlinedIcon fontSize="medium" onClick={() => setOpenForm(true)} />
-                                            </Typography>
-                                        </Tooltip>
-                                        <Tooltip title="Delete vehicle">
-                                            <Typography style={{ color: '#ff6666' }}>
-                                                <DeleteOutlineOutlinedIcon fontSize="medium" />
-                                            </Typography>
-                                        </Tooltip>
-                                    </div>
-                                </AccordionSummary>
-                                <AccordionDetails>
-
-                                </AccordionDetails>
-
-                            </Accordion>
+                                    Back
+                                </Button>
+                            </div>
+                            <div>
+                                <Button
+                                    variant="contained"
+                                    className={clsx(classes.btn, classes.editButton)}
+                                // startIcon={!readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />}
+                                // disabled={loading}
+                                // onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
+                                >
+                                    {/* {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` :
+                                        'Save'} */}
+                                        Save
+                                        </Button>
+                            </div>
                         </div>
-
                     </div>
                 </div>
             </Drawer>
             <FormDialog
-                title="New User Form"
+                title="New Transport Form"
                 open={openForm}
                 onClose={() => setOpenForm(false)}
             >

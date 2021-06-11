@@ -1,4 +1,6 @@
 import React, { useState } from "react"
+import { withStyles } from "@material-ui/core/styles"
+import { makeStyles } from "@material-ui/styles"
 import Grid from "@material-ui/core/Grid"
 import Button from "@material-ui/core/Button"
 import TransportsInfo from "./components/transportsInfo"
@@ -13,6 +15,60 @@ import VehicleInfo from "./components/VehicleInfo"
 import InfoCard from "../../components/CommonComponents/Cards/InfoCard"
 import FormDialog from "../../components/CommonComponents/FormDialog/FormDialog"
 import AddNewVehicleForm from '../transports/components/AddNewVehicleForm'
+import { Drawer } from "@material-ui/core";
+import Divider from '@material-ui/core/Divider';
+import clsx from 'clsx';
+import CloseIcon from '@material-ui/icons/Close';
+import { Typography } from "@material-ui/core"
+
+const useStyles = makeStyles((theme) => ({
+  title: {
+    textAlign: 'center',
+    paddingTop: theme.spacing(1),
+    color: '#9e9e9e'
+  },
+  sidePanelTitle: {
+    // textAlign: 'center',
+    padding: '24px 16px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    zIndex: 0,
+    boxShadow: '0 1px 4px -3px #333'
+  },
+  sidePanelFormWrapper: {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    width: '40vw'
+  },
+  sidePanelFormContentWrapper: {
+    flex: 1,
+    overflow: 'auto'
+  },
+  tableRow: {
+    cursor: 'pointer'
+  },
+  stepperRoot: {
+    padding: 16,
+    paddingTop: 8
+  },
+  actionButtonsWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '12px 16px'
+  },
+  editButton: {
+    marginRight: '8px',
+    '&.MuiButton-contained': {
+      backgroundColor: theme.palette.success.main,
+      color: theme.palette.white
+    },
+    '&.MuiButton-contained:hover': {
+      backgroundColor: theme.palette.success.dark
+    }
+  }
+}))
 
 const TransportsDetails = ({ currentUser, match }) => {
   const [ownerInfo, setOwnerInfo] = useState()
@@ -20,6 +76,7 @@ const TransportsDetails = ({ currentUser, match }) => {
   const [transportsData, setTransportsData] = useState()
   const [vehicleData, setVehicleData] = useState()
   const [showModal, setShowModal] = useState(false)
+  const classes = useStyles()
   const {
     url,
     params: { id },
@@ -85,7 +142,7 @@ const TransportsDetails = ({ currentUser, match }) => {
           <Button
             color="primary"
             variant="contained"
-          onClick={() => setOpenModal(true)}
+            onClick={() => setOpenModal(true)}
           >
             Add Vehicle
         </Button>
@@ -96,13 +153,53 @@ const TransportsDetails = ({ currentUser, match }) => {
           )}
         </Grid>
       </Grid>
-      <FormDialog
+      {/* <FormDialog
         title="Add Vehicle"
         open={openModal}
         onClose={() => setOpenModal(false)}
       >
         <AddNewVehicleForm data={transportsData} />
-      </FormDialog>
+      </FormDialog> */}
+      <Drawer
+        anchor="right"
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        variant="temporary"
+      >
+        <div className={classes.sidePanelFormWrapper}>
+          <Typography className={classes.sidePanelTitle} variant="h4">
+            <div>Add New Vehicle Form</div>
+            <CloseIcon onClick={() => setOpenModal(false)} />
+          </Typography>
+          <div className={classes.sidePanelFormContentWrapper}>
+            <div className={classes.stepperRoot}>
+              <AddNewVehicleForm data={transportsData} />
+            </div>
+          </div>
+          <div className={classes.actionFooter}>
+            <Divider />
+            <div className={classes.actionButtonsWrapper}>
+              <div>
+                <Button
+                  variant="outlined"
+                  onClick={() => setOpenModal(false)}
+                >
+                  Back
+                </Button>
+              </div>
+              <div>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  className={clsx(classes.btn, classes.editButton)}
+                >
+                  Add Transport
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Drawer>
     </>
   )
 }

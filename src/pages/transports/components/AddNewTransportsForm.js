@@ -271,7 +271,7 @@ const AddNewTransportsForm = ({ handleNext, handleBack }) => {
                             helperText={errors.gst}
                         />
                     </Grid>
-                    <Grid item md={12} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    {/* <Grid item md={12} style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <Button
                             size="large"
                             // type="submit"
@@ -281,7 +281,7 @@ const AddNewTransportsForm = ({ handleNext, handleBack }) => {
                         >
                             Add Transport
                         </Button>
-                    </Grid>
+                    </Grid> */}
                 </Grid>
             </form>
         </Box >

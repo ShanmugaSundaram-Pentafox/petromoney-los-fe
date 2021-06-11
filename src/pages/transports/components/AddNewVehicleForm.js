@@ -189,7 +189,7 @@ const AddNewVehicleForm = ({ data, id, number, trans_id, modalType }) => {
                         }
 
                     </Grid>
-                    <Grid item xs={12} justify="flex-end" alignItems="flex-end">
+                    {/* <Grid item xs={12} justify="flex-end" alignItems="flex-end">
                         <Button
                             size="large"
                             type="submit"
@@ -198,7 +198,7 @@ const AddNewVehicleForm = ({ data, id, number, trans_id, modalType }) => {
                         >
                             Add New Vehicle
                         </Button>
-                    </Grid>
+                    </Grid> */}
                 </Grid>
             </form>
         </Box>

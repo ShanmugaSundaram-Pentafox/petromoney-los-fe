@@ -166,7 +166,7 @@ const DealershipDetails = ({ currentUser, match }) => {
               <Tab label={<InfoBox active={activeTab === 2} number={3} title="Sales History" />} {...tabA11yProps(2)} />
               <Tab label={<InfoBox active={activeTab === 3} number={4} title="Loans List" />} {...tabA11yProps(3)} />
               <Tab label={<InfoBox active={activeTab === 4} number={5} title="Documents" />} {...tabA11yProps(4)} />
-              <Tab label={<InfoBox active={activeTab === 5} number={6} title="Dealership Transport" />} {...tabA11yProps(5)} />
+              <Tab label={<InfoBox active={activeTab === 5} number={6} title="Transports" />} {...tabA11yProps(5)} />
               <Tab label={<InfoBox active={activeTab === 6} number={7} title="Fleet Operators" />} {...tabA11yProps(6)} />
             </Tabs>
           </Collapse>

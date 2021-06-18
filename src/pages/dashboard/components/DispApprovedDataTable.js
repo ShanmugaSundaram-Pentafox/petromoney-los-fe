@@ -107,6 +107,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
       amount: Yup.string().required("Enter Amount"),
     }),
     onSubmit: values => {
+      alert(JSON.stringify(values, null, 2));
       const date = moment(selectedDate).format('YYYY/MM/DD')
       const data = values.applicant_code ? { ...values, disbursement_date: date } : { ...values, applicant_code: dispHistory.applicant_code, disbursement_date: date };
       setLoading(true);

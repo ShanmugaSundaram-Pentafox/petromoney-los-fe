@@ -4,8 +4,8 @@ import { NavLink as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from "mui-datatables";
 import Paper from '@material-ui/core/Paper';
-import { setLoansByStatus } from '../../store/loans/loans.actions';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { getOwnersById } from '../../services/transports.service';
 
 
 const useStyles = makeStyles(theme => ({
@@ -25,34 +25,28 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const TransportOwnerTable = ({ }) => {
+const TransportOwnerTable = ({ id }) => {
     const classes = useStyles();
     const [loading, setLoading] = useState(false);
-    const [loans, setLoans] = useState([
-        {
-            owner_id: 102211,
-            name: "M C K Vinoj",
-            mobile: 9876543210
+    const [ownerData, setOwnerData] = useState([])
+    useMount(() => {
+        if (!ownerData || !ownerData.length) {
+            setLoading(true);
+            getOwnersById(id)
+                .then(data => {
+                    setOwnerData(data);
+                    setLoading(false);
+                })
+                .catch(e => {
+                    setLoading(false);
+                })
         }
-    ])
-    // useMount(() => {
-    //     if (!loans || !loans.length) {
-    //         setLoading(true);
-    //         getLoansByStatus('submitted')
-    //             .then(data => {
-    //                 setLoansData('submitted', data);
-    //                 setLoading(false);
-    //             })
-    //             .catch(e => {
-    //                 setLoading(false);
-    //             })
-    //     }
-    // });
+    });
     const columns = useMemo(() => {
         return [
             {
                 label: 'Owner Id',
-                name: 'owner_id',
+                name: 't_owner_id',
                 options: {
                     filter: false,
                     sort: true,
@@ -63,7 +57,7 @@ const TransportOwnerTable = ({ }) => {
             },
             {
                 label: 'Name',
-                name: 'name',
+                name: 'first_name',
                 options: {
                     filter: false,
                     sort: true
@@ -76,18 +70,17 @@ const TransportOwnerTable = ({ }) => {
                     filter: true,
                     filterWidth: "100%",
                     sort: true,
-                    // setCellProps: () => ({
-                    //     align: 'center',
-                    // }),
                     customBodyRender: value => {
-                        return <div>
-                            {value ? value : '-'}
-                        </div>
+                        return (
+                            <div>
+                                {value ? value : '-'}
+                            </div>
+                        )
                     }
                 }
             },
         ]
-    }, [loans]);
+    }, [ownerData]);
 
     const options = {
         selectableRowsHeader: false,
@@ -97,25 +90,25 @@ const TransportOwnerTable = ({ }) => {
         search: false,
         download: false,
         viewColumns: false,
-        rowsPerPage: 3,
+        rowsPerPage: 10,
         isRowSelectable: () => false,
         selectableRowsHeader: false,
-        
+
     };
 
     return (
         <div >
             {
-                Array.isArray(loans) && loans.length ? (
+                Array.isArray(ownerData) && ownerData.length ? (
 
                     <MUIDataTable
                         // title={title ? <Typography className={classes.title} variant="h4" component="h4">{title} </Typography> : null}
-                        data={loans}
+                        data={ownerData}
                         columns={columns}
                         options={options}
                     />
                 ) : (
-                    !loading && <Paper style={{ padding: 10 }}>No Submitted Records</Paper>
+                    !loading && <Paper style={{ padding: 10 }}>No Owners found</Paper>
                 )
             }
             {
@@ -124,14 +117,6 @@ const TransportOwnerTable = ({ }) => {
         </div>
     )
 }
-
-const mapStateToProps = ({ loans }) => ({
-    loans: loans.submitted
-});
-
-const mapDispatchToProps = dispatch => ({
-    setLoansData: (status, data) => dispatch(setLoansByStatus(status, data))
-})
 
 
 export default TransportOwnerTable;

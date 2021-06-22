@@ -537,39 +537,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
         onClose={() => setOpenModal(false)}
         variant="temporary"
       >
-        <div className={classes.sidePanelFormWrapper}>
-          <Typography className={classes.sidePanelTitle} variant="h4">
-            <div>Add New Transport Form</div>
-            <CloseIcon onClick={() => setOpenModal(false)} />
-          </Typography>
-          <div className={classes.sidePanelFormContentWrapper}>
-            <div className={classes.stepperRoot}>
-              <AddNewVehicleForm id={id} number={vehicleNumber} trans_id={vehicleId} modalType={modalType} />
-            </div>
-          </div>
-          <div className={classes.actionFooter}>
-            <Divider />
-            <div className={classes.actionButtonsWrapper}>
-              <div>
-                <Button
-                  variant="outlined"
-                  onClick={() => setOpenModal(false)}
-                >
-                  Back
-                </Button>
-              </div>
-              <div>
-                <Button
-                  variant="contained"
-                  type="submit"
-                  className={clsx(classes.btn, classes.editButton)}
-                >
-                  Add Transport
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <AddNewVehicleForm id={id}  number={vehicleNumber} trans_id={vehicleId} modalType={modalType} />
       </Drawer>
     </div>
   )

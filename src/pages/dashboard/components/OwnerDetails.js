@@ -2,6 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { makeStyles } from "@material-ui/styles";
 import { NavLink as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import styled from 'styled-components';
 import MUIDataTable from "mui-datatables";
 import { Typography } from '@material-ui/core';
@@ -21,6 +23,8 @@ import CloseIcon from '@material-ui/icons/Close';
 import AddNewTransportForm from '../../../pages/transports/components/AddNewTransportsForm';
 import AddNewTransportsOwnerForm from '../../transports/components/AddNewTransportsOwnerForm';
 import usePageTitle from '../../../hooks/usePageTitle';
+import { getTransportsByOwnersId, getOwnerDetailsById } from '../../../services/transports.service';
+import { useMount } from 'react-use';
 
 
 const Card = styled.div`
@@ -99,10 +103,16 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-export const OwnerInfoCard = () => {
+export const OwnerInfoCard = ({ id, ownerData,currentUser }) => {
     const classes = useStyles()
     const [openEditModal, setOpenEditModal] = useState(false)
-    usePageTitle(`111222 - Owner's name`,true)
+    const [apiStatus, setApiStatus] = useState({});
+    usePageTitle(`${id} - ${ownerData && (ownerData.first_name || '')}`, true)
+
+    const handleEdit = () => {
+        setOpenEditModal(!openEditModal)
+    }
+
     return (
         <>
             <Card>
@@ -114,11 +124,11 @@ export const OwnerInfoCard = () => {
                         </Avatar>
                     </Box>
                     <Box>
-                        <p><strong>Vignesh S</strong></p>
-                        <p><small>13-11-1998 | Male</small></p>
-                        <p><small>76/7, East street,Salem, 636003 </small></p>
-                        <p><small>9876543212 </small></p>
-                        <p><small>hello@pentafox.in</small></p>
+                        <p><strong>{ownerData.first_name} {ownerData.last_name}</strong></p>
+                        <p><small>{ownerData.dob} | {ownerData.gender}</small></p>
+                        <p><small>{ownerData.address} </small></p>
+                        <p><small>{ownerData.mobile}</small></p>
+                        <p><small>{ownerData.mail}</small></p>
                     </Box>
                 </div>
                 <div className="card-footer">
@@ -132,77 +142,51 @@ export const OwnerInfoCard = () => {
                     </IconButton>
                 </div>
             </Card>
-
             <Drawer
                 anchor="right"
                 open={openEditModal}
                 onClose={() => setOpenEditModal(false)}
                 variant="temporary"
             >
-                <div className={classes.sidePanelFormWrapper}>
-                    <Typography className={classes.sidePanelTitle} variant="h4">
-                        <div>Owner Information</div>
-                        <CloseIcon onClick={() => setOpenEditModal(false)} />
-                    </Typography>
-                    <div className={classes.sidePanelFormContentWrapper}>
-                        <div className={classes.stepperRoot}>
-                            <AddNewTransportsOwnerForm />
-                        </div>
-                    </div>
-                    <div className={classes.actionFooter}>
-                        <Divider />
-                        <div className={classes.actionButtonsWrapper}>
-                            <div>
-                                <Button
-                                    variant="outlined"
-                                    // startIcon={<NavigateBeforeRoundedIcon />}
-                                    // disabled={loading}
-                                    onClick={() => setOpenEditModal(false)}
-                                >
-                                    Back
-                                </Button>
-                            </div>
-                            <div>
-                                <Button
-                                    variant="contained"
-                                    className={clsx(classes.btn, classes.editButton)}
-                                // startIcon={!readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />}
-                                // disabled={loading}
-                                // onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
-                                >
-                                    {/* {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` :
-                                        'Save'} */}
-                                        Save
-                                        </Button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <AddNewTransportsOwnerForm currentUser={currentUser} callback={handleEdit}  form_data={ownerData} id={id} />
             </Drawer>
-
         </>
-
     )
-
-
 }
 
-const OwnerDetails = ({ loading }) => {
+const OwnerDetails = ({ currentUser, match, loading }) => {
     const classes = useStyles()
     const [openModal, setOpenModal] = useState(false)
-    const [loans, setLoans] = useState([
-        {
-            transport_id: 102211,
-            name: "M C K Vinoj",
-            mobile: 9876543210,
-            omc: "Others"
-        }
-    ])
+    const [transportsData, setTransportsData] = useState()
+    const [ownerData, setOwnerData] = useState([]);
+    const {
+        url,
+        params: { id },
+    } = match
+
+
+    useMount(() => {
+        getTransportsByOwnersId(id)
+            .then(data => {
+                setTransportsData(data);
+            })
+            .catch(e => {
+                console.log(e)
+            })
+        getOwnerDetailsById(id)
+            .then(data => {
+                setOwnerData(data[0])
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    })
+
     const columns = useMemo(() => {
         return [
             {
                 label: 'Transport Id',
-                name: 'transport_id',
+                name: 'id',
                 options: {
                     filter: false,
                     sort: true,
@@ -226,9 +210,6 @@ const OwnerDetails = ({ loading }) => {
                     filter: true,
                     filterWidth: "100%",
                     sort: true,
-                    // setCellProps: () => ({
-                    //     align: 'center',
-                    // }),
                     customBodyRender: value => {
                         return <div>
                             {value ? value : '-'}
@@ -245,7 +226,7 @@ const OwnerDetails = ({ loading }) => {
                 }
             },
         ]
-    }, [loans]);
+    }, [transportsData]);
 
     const options = {
         selectableRowsHeader: false,
@@ -255,7 +236,7 @@ const OwnerDetails = ({ loading }) => {
         search: false,
         download: false,
         viewColumns: false,
-        rowsPerPage: 3,
+        rowsPerPage: 10,
         isRowSelectable: () => false,
         selectableRowsHeader: false,
         customToolbar: () => {
@@ -271,26 +252,25 @@ const OwnerDetails = ({ loading }) => {
         }
     };
 
-
     return (
         <>
             <Grid container>
                 <Grid item md={4}>
-                    <OwnerInfoCard />
+                    <OwnerInfoCard id={id} ownerData={ownerData} currentUser={currentUser} />
                 </Grid>
                 <Grid item md={9}>
                     <div >
                         {
-                            Array.isArray(loans) && loans.length ? (
+                            Array.isArray(transportsData) && transportsData.length ? (
 
                                 <MUIDataTable
                                     title={<Typography className={classes.tableTitle} variant="h4" component="h4">Transports List</Typography>}
-                                    data={loans}
+                                    data={transportsData}
                                     columns={columns}
                                     options={options}
                                 />
                             ) : (
-                                !loading && <Paper style={{ padding: 10 }}>No Submitted Records</Paper>
+                                !loading && <Paper style={{ padding: 10 }}>No transports found</Paper>
                             )
                         }
                         {
@@ -305,40 +285,7 @@ const OwnerDetails = ({ loading }) => {
                 onClose={() => setOpenModal(false)}
                 variant="temporary"
             >
-                <div className={classes.sidePanelFormWrapper}>
-                    <Typography className={classes.sidePanelTitle} variant="h4">
-                        <div>Add New Transport Form</div>
-                        <CloseIcon onClick={() => setOpenModal(false)} />
-                    </Typography>
-                    <div className={classes.sidePanelFormContentWrapper}>
-                        <div className={classes.stepperRoot}>
-                            <AddNewTransportForm />
-                        </div>
-                    </div>
-                    <div className={classes.actionFooter}>
-                        <Divider />
-                        <div className={classes.actionButtonsWrapper}>
-                            <div>
-                                <Button
-                                    variant="outlined"
-                                    onClick={() => setOpenModal(false)}
-                                >
-                                    Back
-                                    </Button>
-                            </div>
-                            <div>
-                                <Button
-                                    variant="contained"
-                                    type="submit"
-                                    className={clsx(classes.btn, classes.editButton)}
-                                >
-                                    Add Transport
-                                    </Button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+                <AddNewTransportForm id={id} currentUser={currentUser} />
             </Drawer>
         </>
     )

@@ -1,18 +1,10 @@
 import React, { useState } from 'react';
-import clsx from 'clsx';
-import moment from 'moment';
 import Tooltip from '@material-ui/core/Tooltip';
 import { makeStyles, withStyles } from '@material-ui/styles';
 import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
-import DeleteIcon from '@material-ui/icons/Delete';
-import IconButton from '@material-ui/core/IconButton';
-import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import TextInput from '../../../components/TextInput/TextInput';
 import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
-import FileUpload from "../../../components/FileUpload";
 import Typography from '@material-ui/core/Typography'
-import { useFormik } from 'formik';
 import Switch from '@material-ui/core/Switch';
 
 const useStyles = makeStyles({
@@ -47,7 +39,6 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
     const date = new Date();
     const currentYear = date.getFullYear();
     const currentYearDiff = date.getFullYear() - 1970;
-
     const relationShipOptions = [
         { label: "Choose Relationship", value: "" },
         { label: "Father", value: "FATHER" },
@@ -105,7 +96,8 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                 href={data.pan_file_url} target="_blank" title={'PAN Attachment'}>{'PAN Attachment'}</a>
         )
     }
-
+console.log("valuesssssssss",values
+)
     return (
         <Grid container>
             <>

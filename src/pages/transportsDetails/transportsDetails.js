@@ -145,7 +145,7 @@ const TransportsDetails = ({ currentUser, match }) => {
             onClick={() => setOpenModal(true)}
           >
             Add Vehicle
-        </Button>
+          </Button>
         </Grid>
         <Grid item md={6} xs={12}>
           {vehicleData && (
@@ -166,39 +166,7 @@ const TransportsDetails = ({ currentUser, match }) => {
         onClose={() => setOpenModal(false)}
         variant="temporary"
       >
-        <div className={classes.sidePanelFormWrapper}>
-          <Typography className={classes.sidePanelTitle} variant="h4">
-            <div>Add New Vehicle Form</div>
-            <CloseIcon onClick={() => setOpenModal(false)} />
-          </Typography>
-          <div className={classes.sidePanelFormContentWrapper}>
-            <div className={classes.stepperRoot}>
-              <AddNewVehicleForm data={transportsData} />
-            </div>
-          </div>
-          <div className={classes.actionFooter}>
-            <Divider />
-            <div className={classes.actionButtonsWrapper}>
-              <div>
-                <Button
-                  variant="outlined"
-                  onClick={() => setOpenModal(false)}
-                >
-                  Back
-                </Button>
-              </div>
-              <div>
-                <Button
-                  variant="contained"
-                  type="submit"
-                  className={clsx(classes.btn, classes.editButton)}
-                >
-                  Add Transport
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <AddNewVehicleForm data={transportsData} isEdit='Edit' id={id} />
       </Drawer>
     </>
   )

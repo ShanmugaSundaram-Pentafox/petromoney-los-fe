@@ -8,18 +8,144 @@ import { withStyles } from '@material-ui/core/styles';
 import Switch from '@material-ui/core/Switch';
 import Typography from '@material-ui/core/Typography';
 import TextInput from '../../../components/TextInput/TextInput';
+import clsx from 'clsx';
+import Divider from '@material-ui/core/Divider';
+import { makeStyles } from "@material-ui/styles";
 import Button from '../../../components/CommonComponents/Button/Button';
 import { useMount } from 'react-use';
+import { URL } from '../../../config/serverUrls';
 import { getAllRegion, getBusinessTypes, getOmcList } from '../../../services/common.service';
 import { getDistricts, getFormattedStatesList } from '../../../utils/indianStates.util';
 import { addNewTransport } from '../../../services/transports.service';
 
-const AddNewTransportsForm = ({ handleNext, handleBack }) => {
+const useStyles = makeStyles((theme) => ({
+    sidePanelTitle: {
+        // textAlign: 'center',
+        padding: '24px 16px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        zIndex: 0,
+        boxShadow: '0 1px 4px -3px #333'
+    },
+    sidePanelFormWrapper: {
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+        width: '40vw'
+    },
+    sidePanelFormContentWrapper: {
+        flex: 1,
+        overflow: 'auto'
+    },
+    wrapper: {
+        padding: 8,
+        width: '50vw',
+    },
+    title: {
+        paddingLeft: 8,
+        marginBottom: 8
+    },
+    table: {
+        // minWidth: 650,
+        padding: 8
+    },
+    header: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        marginBottom: 8
+    },
+    footer: {
+        paddingTop: 8,
+        textAlign: 'right'
+    },
+    sidePanelWrapper: {
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+        width: '40vw',
+    },
+    actionButtons: {
+        // paddingTop: 8
+    },
+    tableRow: {
+        cursor: 'pointer'
+    },
+    document: {
+        display: 'inline-block',
+        borderRadius: 2,
+        lineHeight: 1,
+    },
+    sidePanelWrapper: {
+        width: '40vw',
+        padding: '14px',
+    },
+    stepperRoot: {
+        padding: 16,
+        paddingTop: 8
+    },
+    transportFormWrapper: {
+        padding: theme.spacing(2),
+    },
+    transWrapper: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        marginBottom: theme.spacing(2),
+    },
+    ownerWrapper: {
+        flex: 1,
+        overflowY: 'auto'
+    },
+    button: {
+        marginTop: theme.spacing(1),
+        marginRight: theme.spacing(1),
+    },
+    actionsContainer: {
+        marginBottom: theme.spacing(2),
+    },
+    resetContainer: {
+        padding: theme.spacing(3),
+    },
+    actionButtonsWrapper: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        padding: '12px 16px'
+    },
+    actionButtons: {
+        // paddingTop: 8
+    },
+    stepperRoot: {
+        padding: 16,
+        paddingTop: 8
+    },
+    stepTitle: {
+        '& .MuiStepLabel-label.MuiStepLabel-active': {
+            fontSize: 15,
+            fontWeight: 600
+        }
+    },
+    editButton: {
+        marginRight: '8px',
+        '&.MuiButton-contained': {
+            backgroundColor: theme.palette.success.main,
+            color: theme.palette.white
+        },
+        '&.MuiButton-contained:hover': {
+            backgroundColor: theme.palette.success.dark
+        }
+    }
+
+}))
+
+const AddNewTransportsForm = ({ handleNext, handleBack, id, currentUser }) => {
     const [apiStatus, setApiStatus] = useState({});
     const [omcs, setOmcs] = useState([]);
     const [bussinessType, setBussinessType] = useState([]);
     const [regions, setRegions] = useState([]);
     const [checked, setChecked] = useState(false);
+    const classes = useStyles()
+
 
     const handleClick = () => {
         setChecked(!checked);
@@ -65,8 +191,9 @@ const AddNewTransportsForm = ({ handleNext, handleBack }) => {
             pincode: Yup.number().min(6, 'Pincode must be 6 digits').required("Enter pincode"),
             gst: Yup.number().min(15, 'Enter valid GST')
         }),
-        onSubmit: formData => {
-            addNewTransport(formData)
+        onSubmit: values => {
+            const data = { ...values, t_owner_id: id };
+            addNewTransport(data)
                 .then(message => {
                     setApiStatus({ type: 'success', message: message })
                 })
@@ -116,175 +243,204 @@ const AddNewTransportsForm = ({ handleNext, handleBack }) => {
         checked: {},
     }))(Switch);
     return (
-        <Box>
-            <form onSubmit={handleSubmit}>
-                <Grid container spacing={2}>
-                    <Grid item md={12}>
-                        {
-                            <Typography component="div">
-                                <Grid component="label" container alignItems="center" spacing={2}>
-                                    <Grid item>Transporter Code</Grid>
-                                    <Grid item>No</Grid>
-                                    <Grid item>
-                                        <AntSwitch checked={checked} onChange={handleClick} name="checked" />
-                                    </Grid>
-                                    <Grid item>Yes</Grid>
+        <div className={classes.sidePanelFormWrapper}>
+            <Typography className={classes.sidePanelTitle} variant="h4">
+                <div>Add New Transport</div>
+                {/* <CloseIcon onClick={() => setOpenModal(false)} /> */}
+            </Typography>
+            <div className={classes.sidePanelFormContentWrapper}>
+                <div className={classes.stepperRoot}>
+                    <Box>
+                        <form onSubmit={handleSubmit}>
+                            <Grid container spacing={2}>
+                                <Grid item md={12}>
+                                    {
+                                        <Typography component="div">
+                                            <Grid component="label" container alignItems="center" spacing={2}>
+                                                <Grid item>Transporter Code</Grid>
+                                                <Grid item>No</Grid>
+                                                <Grid item>
+                                                    <AntSwitch checked={checked} onChange={handleClick} name="checked" />
+                                                </Grid>
+                                                <Grid item>Yes</Grid>
+                                            </Grid>
+                                        </Typography>
+                                    }
+                                    {
+                                        checked &&
+                                        <TextInput
+                                            {...inputProps}
+                                            // labelText="Transporter Code"
+                                            placeholder="Enter transporter code here"
+                                            name="id"
+                                            value={values.id}
+                                            error={errors.id}
+                                            helperText={errors.id}
+                                        >
+                                        </TextInput>
+                                    }
                                 </Grid>
-                            </Typography>
-                        }
-                        {
-                            checked &&
-                            <TextInput
-                                {...inputProps}
-                                // labelText="Transporter Code"
-                                placeholder="Enter transporter code here"
-                                name="id"
-                                value={values.id}
-                                error={errors.id}
-                                helperText={errors.id}
-                            >
-                            </TextInput>
-                        }
-                    </Grid>
-                    <Grid item md={6}>
-                        <TextInput
-                            {...inputProps}
-                            name="name"
-                            labelText="Transport Name"
-                            value={values.name}
-                            error={errors.name}
-                            helperText={errors.name}
-                        />
-                    </Grid>
-                    <Grid item md={6}>
-                        <TextInput
-                            {...inputProps}
-                            name="mobile"
-                            labelText="Mobile"
-                            value={values.mobile}
-                            error={errors.mobile}
-                            helperText={errors.mobile}
-                        />
-                    </Grid>
-                    <Grid item md={6}>
-                        <TextInput
-                            {...inputProps}
-                            select
-                            name="omc"
-                            labelText="OMC"
-                            value={values.omc}
-                            error={errors.omc}
-                        >
-                            <option value="">Choose OMC</option>
-                            {
-                                omcs.map(omc => <option key={omcs.id} value={omcs.id}>{omc.name}</option>)
-                            }
-                        </TextInput>
-                    </Grid>
-                    <Grid item md={6}>
-                        <TextInput
-                            {...inputProps}
-                            select
-                            name="business_type"
-                            labelText="Business Type"
-                            value={values.business_type}
-                            error={errors.business_type}
-                        >
-                            <option value="">Choose bussiness type</option>
-                            {
-                                bussinessType.map(type => <option key={type.id} value={type.name}>{type.name}</option>)
-                            }
-                        </TextInput>
-                    </Grid>
-                    <Grid item md={6}>
-                        <TextInput
-                            {...inputProps}
-                            select
-                            name="region"
-                            labelText="Region"
-                            value={values.region}
-                            error={errors.region}
-                        >
-                            <option value="">Choose region</option>
-                            {
-                                regions.map(region => <option key={region.region} value={region.name} >{region.name}</option>)
-                            }
-                        </TextInput>
-                    </Grid>
-                    <Grid item md={6}>
-                        <TextInput
-                            {...inputProps}
-                            name="address"
-                            labelText="Address"
-                            value={values.address}
-                            error={errors.address}
-                            helperText={errors.address}
-                        />
-                    </Grid>
-                    <Grid item md={6}>
-                        <TextInput
-                            {...inputProps}
-                            select
-                            name="state"
-                            labelText="State"
-                            value={values.state}
-                            error={errors.state}
-                        >
-                            <option value="">Choose state</option>
-                            {
-                                getFormattedStatesList().map(item => <option key={item.code} value={item.value}>{item.label}</option>)
-                            }
-                        </TextInput>
-                    </Grid>
-                    <Grid item md={6}>
-                        <TextInput
-                            {...inputProps}
-                            select
-                            name="district"
-                            labelText="District"
-                            value={values.district}
-                            error={errors.district}
-                        >
-                            <option value="">Choose District</option>
-                            {
-                                getDistricts(values.state).map(item => <option key={item} value={item}>{item}</option>)
-                            }
-                        </TextInput>
-                    </Grid>
-                    <Grid item md={6}>
-                        <TextInput
-                            {...inputProps}
-                            name="pincode"
-                            labelText="Pincode"
-                            value={values.pincode}
-                            error={errors.pincode}
-                            helperText={errors.pincode}
-                        />
-                    </Grid>
-                    <Grid item md={6}>
-                        <TextInput
-                            {...inputProps}
-                            name="gst"
-                            labelText="GST"
-                            value={values.gst}
-                            error={errors.gst}
-                            helperText={errors.gst}
-                        />
-                    </Grid>
-                    {/* <Grid item md={12} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <Grid item md={6}>
+                                    <TextInput
+                                        {...inputProps}
+                                        name="name"
+                                        labelText="Transport Name"
+                                        value={values.name}
+                                        error={errors.name}
+                                        helperText={errors.name}
+                                    />
+                                </Grid>
+                                <Grid item md={6}>
+                                    <TextInput
+                                        {...inputProps}
+                                        name="mobile"
+                                        labelText="Mobile"
+                                        value={values.mobile}
+                                        error={errors.mobile}
+                                        helperText={errors.mobile}
+                                    />
+                                </Grid>
+                                <Grid item md={6}>
+                                    <TextInput
+                                        {...inputProps}
+                                        select
+                                        name="omc"
+                                        labelText="OMC"
+                                        value={values.omc}
+                                        error={errors.omc}
+                                    >
+                                        <option value="">Choose OMC</option>
+                                        {
+                                            omcs.map(omc => <option key={omcs.id} value={omcs.id}>{omc.name}</option>)
+                                        }
+                                    </TextInput>
+                                </Grid>
+                                <Grid item md={6}>
+                                    <TextInput
+                                        {...inputProps}
+                                        select
+                                        name="business_type"
+                                        labelText="Business Type"
+                                        value={values.business_type}
+                                        error={errors.business_type}
+                                    >
+                                        <option value="">Choose bussiness type</option>
+                                        {
+                                            bussinessType.map(type => <option key={type.id} value={type.name}>{type.name}</option>)
+                                        }
+                                    </TextInput>
+                                </Grid>
+                                <Grid item md={6}>
+                                    <TextInput
+                                        {...inputProps}
+                                        select
+                                        name="region"
+                                        labelText="Region"
+                                        value={values.region}
+                                        error={errors.region}
+                                    >
+                                        <option value="">Choose region</option>
+                                        {
+                                            regions.map(region => <option key={region.region} value={region.name} >{region.name}</option>)
+                                        }
+                                    </TextInput>
+                                </Grid>
+                                <Grid item md={6}>
+                                    <TextInput
+                                        {...inputProps}
+                                        name="address"
+                                        labelText="Address"
+                                        value={values.address}
+                                        error={errors.address}
+                                        helperText={errors.address}
+                                    />
+                                </Grid>
+                                <Grid item md={6}>
+                                    <TextInput
+                                        {...inputProps}
+                                        select
+                                        name="state"
+                                        labelText="State"
+                                        value={values.state}
+                                        error={errors.state}
+                                    >
+                                        <option value="">Choose state</option>
+                                        {
+                                            getFormattedStatesList().map(item => <option key={item.code} value={item.value}>{item.label}</option>)
+                                        }
+                                    </TextInput>
+                                </Grid>
+                                <Grid item md={6}>
+                                    <TextInput
+                                        {...inputProps}
+                                        select
+                                        name="district"
+                                        labelText="District"
+                                        value={values.district}
+                                        error={errors.district}
+                                    >
+                                        <option value="">Choose District</option>
+                                        {
+                                            getDistricts(values.state).map(item => <option key={item} value={item}>{item}</option>)
+                                        }
+                                    </TextInput>
+                                </Grid>
+                                <Grid item md={6}>
+                                    <TextInput
+                                        {...inputProps}
+                                        name="pincode"
+                                        labelText="Pincode"
+                                        value={values.pincode}
+                                        error={errors.pincode}
+                                        helperText={errors.pincode}
+                                    />
+                                </Grid>
+                                <Grid item md={6}>
+                                    <TextInput
+                                        {...inputProps}
+                                        name="gst"
+                                        labelText="GST"
+                                        value={values.gst}
+                                        error={errors.gst}
+                                        helperText={errors.gst}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </form>
+                    </Box >
+                </div>
+            </div>
+            <div className={classes.actionFooter}>
+                <Divider />
+                <div className={classes.actionButtonsWrapper}>
+                    <div>
                         <Button
-                            size="large"
-                            // type="submit"
-                            color="primary"
-                            variant="contained"
-                            onClick={handleNext}
+                            variant="outlined"
+                        // startIcon={<NavigateBeforeRoundedIcon />}
+                        // disabled={loading}
+                        // onClick={onClose}
                         >
-                            Add Transport
+                            Back
                         </Button>
-                    </Grid> */}
-                </Grid>
-            </form>
-        </Box >
+                    </div>
+                    <div>
+                        <Button
+                            variant="contained"
+                            type="submit"
+                            onClick={handleSubmit}
+                            className={clsx(classes.btn, classes.editButton)}
+                        // startIcon={!readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />}
+                        // disabled={loading}
+                        // onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
+                        >
+                            {/* {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` :
+                                        'Save'} */}
+                            Save
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        </div>
     )
 }
 

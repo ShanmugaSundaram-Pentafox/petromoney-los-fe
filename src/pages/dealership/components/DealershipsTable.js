@@ -163,7 +163,7 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
               options={options}
             />
           ) : (
-            <Paper style={{ marginTop: 10, padding: 10 }}>No Transporters found</Paper>
+            <Paper style={{ marginTop: 10, padding: 10 }}>No Dealers found</Paper>
           )
       }
     </div>

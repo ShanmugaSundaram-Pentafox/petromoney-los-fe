@@ -4,6 +4,7 @@ import styled, { css } from "styled-components";
 
 export const InfoWrapper = styled.div`
     display: flex;
+    min-height:17vh;
     max-height:17vh;
 
     .user-initial {

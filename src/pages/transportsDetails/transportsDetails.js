@@ -20,6 +20,7 @@ import Divider from '@material-ui/core/Divider';
 import clsx from 'clsx';
 import CloseIcon from '@material-ui/icons/Close';
 import { Typography } from "@material-ui/core"
+import AddNewTransportsForm from "../transports/components/AddNewTransportsForm"
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -67,6 +68,10 @@ const useStyles = makeStyles((theme) => ({
     '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.success.dark
     }
+  },
+  transportsInfo: {
+    maxWidth: '40vw',
+    padding: theme.spacing(2)
   }
 }))
 
@@ -101,6 +106,9 @@ const TransportsDetails = ({ currentUser, match }) => {
       .catch((e) => null)
   })
   usePageTitle(`${id} - ${transportsData && transportsData?.name}`, true)
+  const handleClose = () => {
+    setShowModal(!showModal)
+  }
   return (
     <>
       <Grid container spacing={2}>
@@ -119,9 +127,15 @@ const TransportsDetails = ({ currentUser, match }) => {
                   onClick={() => setShowModal(true)}
                 />
                 {transportsData && (
-                  <FormDialog title="Transport Details" open={showModal} onClose={() => setShowModal(false)}>
-                    <TransportsInfo data={transportsData} currentUser={currentUser} />
-                  </FormDialog>
+                  <Drawer
+                    anchor="right"
+                    open={showModal}
+                    onClose={() => setShowModal(false)}
+                    variant="temporary"
+                  >
+                    {/* <TransportsInfo data={transportsData} currentUser={currentUser} /> */}
+                    <AddNewTransportsForm callback={handleClose} data={transportsData} />
+                  </Drawer>
                 )}
               </Grid>
               <Grid item md={4} xs={12}>

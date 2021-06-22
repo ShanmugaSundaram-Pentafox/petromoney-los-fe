@@ -13,7 +13,12 @@ import Divider from '@material-ui/core/Divider';
 import { makeStyles } from "@material-ui/styles";
 import Button from '../../../components/CommonComponents/Button/Button';
 import { useMount } from 'react-use';
+import CloseIcon from '@material-ui/icons/Close';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
+import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { URL } from '../../../config/serverUrls';
+import EditIcon from '@material-ui/icons/Edit';
 import { getAllRegion, getBusinessTypes, getOmcList } from '../../../services/common.service';
 import { getDistricts, getFormattedStatesList } from '../../../utils/indianStates.util';
 import { addNewTransport } from '../../../services/transports.service';
@@ -138,8 +143,10 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const AddNewTransportsForm = ({ handleNext, handleBack, id, currentUser }) => {
+const AddNewTransportsForm = ({ handleNext, handleBack, id, data, currentUser, callback, isEdit }) => {
+    const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
     const [apiStatus, setApiStatus] = useState({});
+    const [loading, setLoading] = useState(false)
     const [omcs, setOmcs] = useState([]);
     const [bussinessType, setBussinessType] = useState([]);
     const [regions, setRegions] = useState([]);
@@ -147,10 +154,15 @@ const AddNewTransportsForm = ({ handleNext, handleBack, id, currentUser }) => {
     const classes = useStyles()
 
 
+    const handleEdit = () => {
+        setReadOnly(!readOnly)
+    };
     const handleClick = () => {
         setChecked(!checked);
     };
-
+    const handleClose = () => {
+        callback();
+    }
     useMount(() => {
         getOmcList()
             .then(data => {
@@ -175,7 +187,9 @@ const AddNewTransportsForm = ({ handleNext, handleBack, id, currentUser }) => {
             })
     })
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting } = useFormik({
-        initialValues: {},
+        initialValues: {
+            ...data,
+        },
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
@@ -246,7 +260,7 @@ const AddNewTransportsForm = ({ handleNext, handleBack, id, currentUser }) => {
         <div className={classes.sidePanelFormWrapper}>
             <Typography className={classes.sidePanelTitle} variant="h4">
                 <div>Add New Transport</div>
-                {/* <CloseIcon onClick={() => setOpenModal(false)} /> */}
+                <CloseIcon onClick={handleClose} />
             </Typography>
             <div className={classes.sidePanelFormContentWrapper}>
                 <div className={classes.stepperRoot}>
@@ -274,6 +288,7 @@ const AddNewTransportsForm = ({ handleNext, handleBack, id, currentUser }) => {
                                             placeholder="Enter transporter code here"
                                             name="id"
                                             value={values.id}
+                                            readOnly={readOnly}
                                             error={errors.id}
                                             helperText={errors.id}
                                         >
@@ -286,6 +301,7 @@ const AddNewTransportsForm = ({ handleNext, handleBack, id, currentUser }) => {
                                         name="name"
                                         labelText="Transport Name"
                                         value={values.name}
+                                        readOnly={readOnly}
                                         error={errors.name}
                                         helperText={errors.name}
                                     />
@@ -296,6 +312,7 @@ const AddNewTransportsForm = ({ handleNext, handleBack, id, currentUser }) => {
                                         name="mobile"
                                         labelText="Mobile"
                                         value={values.mobile}
+                                        readOnly={readOnly}
                                         error={errors.mobile}
                                         helperText={errors.mobile}
                                     />
@@ -307,6 +324,8 @@ const AddNewTransportsForm = ({ handleNext, handleBack, id, currentUser }) => {
                                         name="omc"
                                         labelText="OMC"
                                         value={values.omc}
+                                        readOnly={readOnly}
+                                        disabled={readOnly}
                                         error={errors.omc}
                                     >
                                         <option value="">Choose OMC</option>
@@ -321,7 +340,9 @@ const AddNewTransportsForm = ({ handleNext, handleBack, id, currentUser }) => {
                                         select
                                         name="business_type"
                                         labelText="Business Type"
+                                        readOnly={readOnly}
                                         value={values.business_type}
+                                        disabled={readOnly}
                                         error={errors.business_type}
                                     >
                                         <option value="">Choose bussiness type</option>
@@ -336,6 +357,8 @@ const AddNewTransportsForm = ({ handleNext, handleBack, id, currentUser }) => {
                                         select
                                         name="region"
                                         labelText="Region"
+                                        readOnly={readOnly}
+                                        disabled={readOnly}
                                         value={values.region}
                                         error={errors.region}
                                     >
@@ -351,6 +374,8 @@ const AddNewTransportsForm = ({ handleNext, handleBack, id, currentUser }) => {
                                         name="address"
                                         labelText="Address"
                                         value={values.address}
+                                        readOnly={readOnly}
+                                        disabled={readOnly}
                                         error={errors.address}
                                         helperText={errors.address}
                                     />
@@ -361,6 +386,8 @@ const AddNewTransportsForm = ({ handleNext, handleBack, id, currentUser }) => {
                                         select
                                         name="state"
                                         labelText="State"
+                                        readOnly={readOnly}
+                                        disabled={readOnly}
                                         value={values.state}
                                         error={errors.state}
                                     >
@@ -376,6 +403,8 @@ const AddNewTransportsForm = ({ handleNext, handleBack, id, currentUser }) => {
                                         select
                                         name="district"
                                         labelText="District"
+                                        readOnly={readOnly}
+                                        disabled={readOnly}
                                         value={values.district}
                                         error={errors.district}
                                     >
@@ -391,6 +420,8 @@ const AddNewTransportsForm = ({ handleNext, handleBack, id, currentUser }) => {
                                         name="pincode"
                                         labelText="Pincode"
                                         value={values.pincode}
+                                        disabled={readOnly}
+                                        readOnly={readOnly}
                                         error={errors.pincode}
                                         helperText={errors.pincode}
                                     />
@@ -401,6 +432,8 @@ const AddNewTransportsForm = ({ handleNext, handleBack, id, currentUser }) => {
                                         name="gst"
                                         labelText="GST"
                                         value={values.gst}
+                                        readOnly={readOnly}
+                                        disabled={readOnly}
                                         error={errors.gst}
                                         helperText={errors.gst}
                                     />
@@ -416,9 +449,9 @@ const AddNewTransportsForm = ({ handleNext, handleBack, id, currentUser }) => {
                     <div>
                         <Button
                             variant="outlined"
-                        // startIcon={<NavigateBeforeRoundedIcon />}
-                        // disabled={loading}
-                        // onClick={onClose}
+                            startIcon={<NavigateBeforeRoundedIcon />}
+                            // disabled={loading}
+                            onClick={handleClose}
                         >
                             Back
                         </Button>
@@ -429,13 +462,12 @@ const AddNewTransportsForm = ({ handleNext, handleBack, id, currentUser }) => {
                             type="submit"
                             onClick={handleSubmit}
                             className={clsx(classes.btn, classes.editButton)}
-                        // startIcon={!readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />}
-                        // disabled={loading}
-                        // onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
+                            startIcon={!readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />}
+                            // disabled={loading}
+                            onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
                         >
-                            {/* {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` :
-                                        'Save'} */}
-                            Save
+                            {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` :
+                                'Save'}
                         </Button>
                     </div>
                 </div>

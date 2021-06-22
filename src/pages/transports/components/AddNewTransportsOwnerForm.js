@@ -155,7 +155,6 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
     };
     const handleClose = () => {
         callback();
-
     }
     const { enqueueSnackbar } = useSnackbar();
     const date = new Date();

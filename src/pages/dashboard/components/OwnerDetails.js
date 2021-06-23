@@ -1,0 +1,295 @@
+import React, { useMemo, useState } from 'react';
+import { makeStyles } from "@material-ui/styles";
+import { NavLink as RouterLink } from 'react-router-dom';
+import clsx from 'clsx';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import styled from 'styled-components';
+import MUIDataTable from "mui-datatables";
+import { Typography } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Box from '@material-ui/core/Box';
+import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
+import Avatar from '@material-ui/core/Avatar';
+import EditIcon from '@material-ui/icons/Edit';
+import IconButton from '@material-ui/core/IconButton';
+import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
+import Button from '../../../components/CommonComponents/Button/Button';
+import Drawer from '@material-ui/core/Drawer';
+import Divider from '@material-ui/core/Divider';
+import CloseIcon from '@material-ui/icons/Close';
+import AddNewTransportForm from '../../../pages/transports/components/AddNewTransportsForm';
+import AddNewTransportsOwnerForm from '../../transports/components/AddNewTransportsOwnerForm';
+import usePageTitle from '../../../hooks/usePageTitle';
+import { getTransportsByOwnersId, getOwnerDetailsById } from '../../../services/transports.service';
+import { useMount } from 'react-use';
+
+
+const Card = styled.div`
+  background-color: #fff;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  position: relative;
+  box-shadow: 0 1px 5px 0 rgba(0,0,0,.4);
+  max-width:22vw;
+  min-height:25vh;
+
+  .card-body {
+    display: flex;
+    justify-content:flex-start;
+    align-items: center;
+    padding: 10px 15px;
+  }
+
+  .card-footer {
+    background-color: #f9f9f9;
+    padding-left: 10px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    border-radius: 0 0 4px 4px;
+  }
+`;
+
+
+const useStyles = makeStyles((theme) => ({
+    title: {
+        textAlign: 'center',
+        paddingTop: theme.spacing(1),
+        color: '#9e9e9e'
+    },
+    sidePanelTitle: {
+        // textAlign: 'center',
+        padding: '24px 16px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        zIndex: 0,
+        boxShadow: '0 1px 4px -3px #333'
+    },
+    sidePanelFormWrapper: {
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+        width: '40vw'
+    },
+    sidePanelFormContentWrapper: {
+        flex: 1,
+        overflow: 'auto'
+    },
+    tableRow: {
+        cursor: 'pointer'
+    },
+    stepperRoot: {
+        padding: 16,
+        paddingTop: 8
+    },
+    actionButtonsWrapper: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        padding: '12px 16px'
+    },
+    editButton: {
+        marginRight: '8px',
+        '&.MuiButton-contained': {
+            backgroundColor: theme.palette.success.main,
+            color: theme.palette.white
+        },
+        '&.MuiButton-contained:hover': {
+            backgroundColor: theme.palette.success.dark
+        }
+    }
+}))
+
+export const OwnerInfoCard = ({ id, ownerData,currentUser }) => {
+    const classes = useStyles()
+    const [openEditModal, setOpenEditModal] = useState(false)
+    const [apiStatus, setApiStatus] = useState({});
+    usePageTitle(`${id} - ${ownerData && (ownerData.first_name || '')}`, true)
+
+    const handleEdit = () => {
+        setOpenEditModal(!openEditModal)
+    }
+
+    return (
+        <>
+            <Card>
+                <Typography variant="h4" color="action" className={classes.title}>Owner Info</Typography>
+                <div className="card-body">
+                    <Box pr={2}>
+                        <Avatar>
+                            <AccountCircleRoundedIcon />
+                        </Avatar>
+                    </Box>
+                    <Box>
+                        <p><strong>{ownerData.first_name} {ownerData.last_name}</strong></p>
+                        <p><small>{ownerData.dob} | {ownerData.gender}</small></p>
+                        <p><small>{ownerData.address} </small></p>
+                        <p><small>{ownerData.mobile}</small></p>
+                        <p><small>{ownerData.mail}</small></p>
+                    </Box>
+                </div>
+                <div className="card-footer">
+                    <IconButton
+                        color="primary"
+                        aria-label="edit owner"
+                        component="span"
+                        onClick={() => setOpenEditModal(true)}
+                    >
+                        <EditIcon fontSize="small" />
+                    </IconButton>
+                </div>
+            </Card>
+            <Drawer
+                anchor="right"
+                open={openEditModal}
+                onClose={() => setOpenEditModal(false)}
+                variant="temporary"
+            >
+                <AddNewTransportsOwnerForm currentUser={currentUser} callback={handleEdit}  form_data={ownerData} id={id} />
+            </Drawer>
+        </>
+    )
+}
+
+const OwnerDetails = ({ currentUser, match, loading }) => {
+    const classes = useStyles()
+    const [openModal, setOpenModal] = useState(false)
+    const [transportsData, setTransportsData] = useState()
+    const [ownerData, setOwnerData] = useState([]);
+    const {
+        url,
+        params: { id },
+    } = match
+
+
+    useMount(() => {
+        getTransportsByOwnersId(id)
+            .then(data => {
+                setTransportsData(data);
+            })
+            .catch(e => {
+                console.log(e)
+            })
+        getOwnerDetailsById(id)
+            .then(data => {
+                setOwnerData(data[0])
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    })
+
+    const columns = useMemo(() => {
+        return [
+            {
+                label: 'Transport Id',
+                name: 'id',
+                options: {
+                    filter: false,
+                    sort: true,
+                    customBodyRender: value => {
+                        return <RouterLink to={`/transports/${value}`}>{value}</RouterLink>
+                    }
+                }
+            },
+            {
+                label: 'Name',
+                name: 'name',
+                options: {
+                    filter: false,
+                    sort: true
+                }
+            },
+            {
+                label: 'Mobile',
+                name: 'mobile',
+                options: {
+                    filter: true,
+                    filterWidth: "100%",
+                    sort: true,
+                    customBodyRender: value => {
+                        return <div>
+                            {value ? value : '-'}
+                        </div>
+                    }
+                }
+            },
+            {
+                label: 'OMC',
+                name: 'omc',
+                options: {
+                    filter: false,
+                    sort: true
+                }
+            },
+        ]
+    }, [transportsData]);
+
+    const options = {
+        selectableRowsHeader: false,
+        selectableRows: "none",
+        print: false,
+        filter: false,
+        search: false,
+        download: false,
+        viewColumns: false,
+        rowsPerPage: 10,
+        isRowSelectable: () => false,
+        selectableRowsHeader: false,
+        customToolbar: () => {
+            return (
+                <Button
+                    color="primary"
+                    variant="contained"
+                    onClick={() => setOpenModal(true)}
+                >
+                    Add Transport
+                </Button>
+            );
+        }
+    };
+
+    return (
+        <>
+            <Grid container>
+                <Grid item md={4}>
+                    <OwnerInfoCard id={id} ownerData={ownerData} currentUser={currentUser} />
+                </Grid>
+                <Grid item md={9}>
+                    <div >
+                        {
+                            Array.isArray(transportsData) && transportsData.length ? (
+
+                                <MUIDataTable
+                                    title={<Typography className={classes.tableTitle} variant="h4" component="h4">Transports List</Typography>}
+                                    data={transportsData}
+                                    columns={columns}
+                                    options={options}
+                                />
+                            ) : (
+                                !loading && <Paper style={{ padding: 10 }}>No transports found</Paper>
+                            )
+                        }
+                        {
+                            loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
+                        }
+                    </div>
+                </Grid>
+            </Grid>
+            <Drawer
+                anchor="right"
+                open={openModal}
+                onClose={() => setOpenModal(false)}
+                variant="temporary"
+            >
+                <AddNewTransportForm id={id} currentUser={currentUser} />
+            </Drawer>
+        </>
+    )
+
+}
+
+export default OwnerDetails;

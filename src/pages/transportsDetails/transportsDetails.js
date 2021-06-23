@@ -1,4 +1,6 @@
 import React, { useState } from "react"
+import { withStyles } from "@material-ui/core/styles"
+import { makeStyles } from "@material-ui/styles"
 import Grid from "@material-ui/core/Grid"
 import Button from "@material-ui/core/Button"
 import TransportsInfo from "./components/transportsInfo"
@@ -13,6 +15,65 @@ import VehicleInfo from "./components/VehicleInfo"
 import InfoCard from "../../components/CommonComponents/Cards/InfoCard"
 import FormDialog from "../../components/CommonComponents/FormDialog/FormDialog"
 import AddNewVehicleForm from '../transports/components/AddNewVehicleForm'
+import { Drawer } from "@material-ui/core";
+import Divider from '@material-ui/core/Divider';
+import clsx from 'clsx';
+import CloseIcon from '@material-ui/icons/Close';
+import { Typography } from "@material-ui/core"
+import AddNewTransportsForm from "../transports/components/AddNewTransportsForm"
+
+const useStyles = makeStyles((theme) => ({
+  title: {
+    textAlign: 'center',
+    paddingTop: theme.spacing(1),
+    color: '#9e9e9e'
+  },
+  sidePanelTitle: {
+    // textAlign: 'center',
+    padding: '24px 16px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    zIndex: 0,
+    boxShadow: '0 1px 4px -3px #333'
+  },
+  sidePanelFormWrapper: {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    width: '40vw'
+  },
+  sidePanelFormContentWrapper: {
+    flex: 1,
+    overflow: 'auto'
+  },
+  tableRow: {
+    cursor: 'pointer'
+  },
+  stepperRoot: {
+    padding: 16,
+    paddingTop: 8
+  },
+  actionButtonsWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '12px 16px'
+  },
+  editButton: {
+    marginRight: '8px',
+    '&.MuiButton-contained': {
+      backgroundColor: theme.palette.success.main,
+      color: theme.palette.white
+    },
+    '&.MuiButton-contained:hover': {
+      backgroundColor: theme.palette.success.dark
+    }
+  },
+  transportsInfo: {
+    maxWidth: '40vw',
+    padding: theme.spacing(2)
+  }
+}))
 
 const TransportsDetails = ({ currentUser, match }) => {
   const [ownerInfo, setOwnerInfo] = useState()
@@ -20,6 +81,7 @@ const TransportsDetails = ({ currentUser, match }) => {
   const [transportsData, setTransportsData] = useState()
   const [vehicleData, setVehicleData] = useState()
   const [showModal, setShowModal] = useState(false)
+  const classes = useStyles()
   const {
     url,
     params: { id },
@@ -44,6 +106,9 @@ const TransportsDetails = ({ currentUser, match }) => {
       .catch((e) => null)
   })
   usePageTitle(`${id} - ${transportsData && transportsData?.name}`, true)
+  const handleClose = () => {
+    setShowModal(!showModal)
+  }
   return (
     <>
       <Grid container spacing={2}>
@@ -62,9 +127,15 @@ const TransportsDetails = ({ currentUser, match }) => {
                   onClick={() => setShowModal(true)}
                 />
                 {transportsData && (
-                  <FormDialog title="Transport Details" open={showModal} onClose={() => setShowModal(false)}>
-                    <TransportsInfo data={transportsData} currentUser={currentUser} />
-                  </FormDialog>
+                  <Drawer
+                    anchor="right"
+                    open={showModal}
+                    onClose={() => setShowModal(false)}
+                    variant="temporary"
+                  >
+                    {/* <TransportsInfo data={transportsData} currentUser={currentUser} /> */}
+                    <AddNewTransportsForm callback={handleClose} data={transportsData} />
+                  </Drawer>
                 )}
               </Grid>
               <Grid item md={4} xs={12}>
@@ -85,10 +156,10 @@ const TransportsDetails = ({ currentUser, match }) => {
           <Button
             color="primary"
             variant="contained"
-          onClick={() => setOpenModal(true)}
+            onClick={() => setOpenModal(true)}
           >
             Add Vehicle
-        </Button>
+          </Button>
         </Grid>
         <Grid item md={6} xs={12}>
           {vehicleData && (
@@ -96,13 +167,21 @@ const TransportsDetails = ({ currentUser, match }) => {
           )}
         </Grid>
       </Grid>
-      <FormDialog
+      {/* <FormDialog
         title="Add Vehicle"
         open={openModal}
         onClose={() => setOpenModal(false)}
       >
         <AddNewVehicleForm data={transportsData} />
-      </FormDialog>
+      </FormDialog> */}
+      <Drawer
+        anchor="right"
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        variant="temporary"
+      >
+        <AddNewVehicleForm data={transportsData} isEdit='Edit' id={id} />
+      </Drawer>
     </>
   )
 }

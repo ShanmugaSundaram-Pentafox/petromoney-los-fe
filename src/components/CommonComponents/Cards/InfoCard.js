@@ -1,10 +1,19 @@
 import React from "react";
 import PropTypes from 'prop-types';
 import styled, { css } from "styled-components";
+import EditIcon from '@material-ui/icons/Edit';
+import IconButton from '@material-ui/core/IconButton';
 
 export const InfoWrapper = styled.div`
-    display: flex;
+    // display: flex;
+    min-height:17vh;
+    max-height:17vh;
 
+
+    .card-body {
+        display: flex;
+        padding: 10px 0px;
+      }
     .user-initial {
         display: flex;
         align-items: center;
@@ -78,8 +87,6 @@ export const InfoCardWrapper = styled.div`
             box-shadow: 0 0 8px #f1f1f1; 
         }
     `}
-
-
     .title {
         color: #444444;
         font-size: 16px;
@@ -90,42 +97,59 @@ export const InfoCardWrapper = styled.div`
 `;
 
 export const Info = ({
-    userInitial="",
-    name="",
-    description="",
-    caption="",
-    content="",
+    title,
+    userInitial = "",
+    name = "",
+    description = "",
+    caption = "",
+    content = "",
 }) => {
     return (
         <InfoWrapper>
-            <i className="user-initial">{userInitial}</i>
+            <div className="card-body">
+                <i className="user-initial">{userInitial}</i>
+                <div className="user-info-txt">
+                    {caption ? <p className="caption">{caption}</p> : null}
+                    {name ? <p className="name">{name}</p> : null}
+                    {description ? <p><small>{description}</small></p> : null}
+                    {content ? <p className="light"><small>{content}</small></p> : null}
+                </div>
 
-            <div className="user-info-txt">
-                {caption ? <p className="caption">{caption}</p> : null}
-                {name ? <p className="name">{name}</p> : null}
-                {description ? <p><small>{description}</small></p> : null}
-                {content ? <p className="light"><small>{content}</small></p> : null}
             </div>
+            {
+                title === 'Transport Info' && (
+                    <div style={{float:'right'}}>
+                        <IconButton
+                            color="primary"
+                            aria-label="edit owner"
+                            component="span"
+                        >
+                            <EditIcon fontSize="small" />
+                        </IconButton>
+                    </div>
+                )
+            }
         </InfoWrapper>
     );
 };
 
 const InfoCard = ({
-    title="",
-    userInitial="",
-    name="",
-    description="",
-    caption="",
-    content="",
-    onClick= () => {},
+    title = "",
+    userInitial = "",
+    name = "",
+    description = "",
+    caption = "",
+    content = "",
+    onClick = () => { },
     hover,
     noMargin,
 }) => {
     return (
         <InfoCardWrapper noMargin={noMargin} hover={hover} onClick={onClick}>
             {title ? <p className="title">{title}</p> : null}
-            
-            <Info 
+
+            <Info
+                title={title}
                 userInitial={userInitial}
                 caption={caption}
                 name={name}

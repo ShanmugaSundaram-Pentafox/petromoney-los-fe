@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { withStyles } from "@material-ui/core/styles"
+import { makeStyles } from "@material-ui/styles";
 import MuiAccordion from "@material-ui/core/Accordion"
 import Box from "@material-ui/core/Box"
 import MuiAccordionSummary from "@material-ui/core/AccordionSummary"
@@ -33,6 +34,60 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { Drawer } from "@material-ui/core";
+import Divider from '@material-ui/core/Divider';
+import clsx from 'clsx';
+import CloseIcon from '@material-ui/icons/Close';
+
+
+const useStyles = makeStyles((theme) => ({
+  title: {
+    textAlign: 'center',
+    paddingTop: theme.spacing(1),
+    color: '#9e9e9e'
+  },
+  sidePanelTitle: {
+    // textAlign: 'center',
+    padding: '24px 16px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    zIndex: 0,
+    boxShadow: '0 1px 4px -3px #333'
+  },
+  sidePanelFormWrapper: {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    width: '40vw'
+  },
+  sidePanelFormContentWrapper: {
+    flex: 1,
+    overflow: 'auto'
+  },
+  tableRow: {
+    cursor: 'pointer'
+  },
+  stepperRoot: {
+    padding: 16,
+    paddingTop: 8
+  },
+  actionButtonsWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '12px 16px'
+  },
+  editButton: {
+    marginRight: '8px',
+    '&.MuiButton-contained': {
+      backgroundColor: theme.palette.success.main,
+      color: theme.palette.white
+    },
+    '&.MuiButton-contained:hover': {
+      backgroundColor: theme.palette.success.dark
+    }
+  }
+}))
 
 
 
@@ -41,6 +96,7 @@ const Accordion = withStyles({
     border: "1px solid rgba(0, 0, 0, .125)",
     borderRadius: 4,
     marginBottom: 8,
+    minWidth: '52vw',
     // boxShadow: "none",
     "&:not(:last-child)": {
       borderBottom: 0,
@@ -103,6 +159,8 @@ export default function VehicleInfo({ id, data, currentUser }) {
   const [vehicleId, setVehicleId] = useState();
   const [modalType, setModalType] = useState("");
   const { enqueueSnackbar } = useSnackbar();
+  const classes = useStyles()
+
 
 
   const handleChange = (vehicleId) => (event, newExpanded) => {
@@ -251,7 +309,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
     deleteVehicleStatus(id, vehicleId)
       .then(res => {
         // if (res.status ==="SUCCESS") {
-          setOpen(false)
+        setOpen(false)
         enqueueSnackbar(res, {
           anchorOrigin: {
             vertical: 'top',
@@ -473,13 +531,14 @@ export default function VehicleInfo({ id, data, currentUser }) {
       </FormDialog> */}
 
       <TrackerUpdateModal id={id} currentUser={currentUser} statusId={serviceModal?.data?.item?.status_id} data={serviceModal.data?.item} serviceData={serviceModal.data?.serviceData} completed={serviceModal.data?.completed} onClose={closeTrackingStatusModal} />
-      <FormDialog
-        title="Add Vehicle"
+      <Drawer
+        anchor="right"
         open={openModal}
         onClose={() => setOpenModal(false)}
+        variant="temporary"
       >
-        <AddNewVehicleForm id={id} number={vehicleNumber} trans_id={vehicleId} modalType={modalType} />
-      </FormDialog>
+        <AddNewVehicleForm id={id}  number={vehicleNumber} trans_id={vehicleId} modalType={modalType} />
+      </Drawer>
     </div>
   )
 }

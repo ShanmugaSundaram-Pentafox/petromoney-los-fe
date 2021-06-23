@@ -11,7 +11,6 @@ export const URL = {
   sanction: "loans/sanction",
   dealership: "dealership",
   transport: 'transporterslist',
-  transportInfo: 'transporter/info',
   vehicleInfo: 'transporters',
   dealers: "dealers",
   coApplicants: "coapplicants",

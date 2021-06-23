@@ -21,7 +21,7 @@ export const getAllTransport = () => {
 
 export const getTransporterInfoFromID = (id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`${URL.transportInfo}/${id}`)
+    apiCall(`${URL.vehicleInfo}/${id}`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data[0])
@@ -230,7 +230,7 @@ export const deleteVehicleStatus = (id, vehicleId) => {
   return new Promise((resolve, reject) => {
     apiCall(`transporters/${id}/vehicles/${vehicleId}`, {
       method: 'POST',
-      body: { status:0 }
+      body: { status: 0 }
     })
       .then(({ status, message }) => {
         if (status === "SUCCESS") {
@@ -245,3 +245,121 @@ export const deleteVehicleStatus = (id, vehicleId) => {
   })
 }
 
+export const getOwnersById = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`transport/owners/${id}`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+export const addNewTransportOwner = (data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`transport/owner`, {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+export const getTransportsByOwnersId = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`transporters/owner/${id}`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const getOwnerDetailsById = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`transport/owner/${id}`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const getFleetOperatorsById = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${URL.dealership}/${id}/operators`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const addNewFleetOperator = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${URL.dealership}/${id}/operators`, {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const updateFleetOperator = (data, dealerId, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${URL.dealership}/${dealerId}/operators/${id}`, {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}

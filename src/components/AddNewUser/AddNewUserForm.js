@@ -133,7 +133,7 @@ const AddNewUserForm = ({ callback }) => {
               helperText={errors.password || "Default password is Petromall@2020"}
             />
           </Grid>
-          <Grid item xs={12} justify="flex-end" alignItems="flex-end">
+          {/* <Grid item xs={12} justify="flex-end" alignItems="flex-end">
             <Button
               size="large"
               type="submit"
@@ -142,7 +142,7 @@ const AddNewUserForm = ({ callback }) => {
             >
               Create New User
             </Button>
-          </Grid>
+          </Grid> */}
         </Grid>
       </form>
       {apiStatus.type && (

@@ -24,6 +24,7 @@ import LmsLos from '../pages/loanspage/lmsLosTable';
 import PassbookDetails from '../pages/users/dealer/PassbookDetails';
 import EnvTag from '../components/CommonComponents/EnvTag/EnvTag';
 import VehiclesLoanTable from '../pages/transports/components/VehiclesLoanTable';
+import OwnerDetails from '../pages/dashboard/components/OwnerDetails';
 
 const Routes = ({ currentUser }) => {
   return (<>
@@ -43,22 +44,24 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/reports/due" component={Due} />
       <ProtectedRoute allow exact path="/reports/overdue" component={OverDue} />
       <ProtectedRoute allow exact path="/vehicle-loan" component={VehiclesLoanTable} />
+      <ProtectedRoute allow exact path="/owners/:id?" component={OwnerDetails} />
+
 
       <ProtectedRoute
         exact
         path="/users"
         component={Users}
         allow={permissionCheck(currentUser?.role_name, rulesList.users_view)}
-        />
-        <ProtectedRoute
+      />
+      <ProtectedRoute
         allow
         exact
         path="/passbook"
         component={PassbookDetails}
         allow={permissionCheck(currentUser?.role_name, rulesList.dealer_view)}
-        />
+      />
       <Route exact path="/survey" render={props => <Survey {...props} />} />
-      
+
       <Route exact path="/login" render={props => {
         const authUrl = window.sessionStorage.getItem('pm-login-url');
         if (currentUser) {
@@ -69,7 +72,7 @@ const Routes = ({ currentUser }) => {
         return <Login {...props} />
       }} />
     </Switch>
-    </>
+  </>
   )
 }
 

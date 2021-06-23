@@ -140,7 +140,6 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
         logger(err);
       })
   };
-
   const { values, errors, handleSubmit, handleChange, handleReset, setValues } = useFormik({
     initialValues: {
       ...data
@@ -198,7 +197,6 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
         })
     }
   });
-
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">

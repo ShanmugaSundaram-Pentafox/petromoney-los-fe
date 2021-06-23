@@ -78,6 +78,10 @@ const DealerTransportsTable = ({ currentUser }) => {
             .catch((e) => null)
     })
 
+    const handleClose = () => {
+        setOpenModal(!openModal)
+    }
+
     const columns = useMemo(() => {
         return [
             {
@@ -183,7 +187,7 @@ const DealerTransportsTable = ({ currentUser }) => {
                 open={openModal}
                 onClose={() => setOpenModal(false)}
             >
-                <AddNewTransportsForm data={transportsData} />
+                <AddNewTransportsForm data={transportsData} callback={handleClose} />
             </FormDialog>
             {/* {
             view && vehicleData && (

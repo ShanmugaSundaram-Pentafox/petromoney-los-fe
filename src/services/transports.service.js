@@ -326,9 +326,28 @@ export const getFleetOperatorsById = (id) => {
   })
 }
 
-export const addNewFleetOperator = (data,id) => {
+export const addNewFleetOperator = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.dealership}/${id}/operators`, {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const updateFleetOperator = (data, dealerId, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${URL.dealership}/${dealerId}/operators/${id}`, {
       method: 'POST',
       body: data
     })

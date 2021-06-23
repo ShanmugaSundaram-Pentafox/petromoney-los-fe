@@ -138,13 +138,15 @@ const FleetOperatorsDetails = ({ id, currentUser, titleAlign }) => {
     const [ownerInfo, setOwnerInfo] = useState()
     const [transportsData, setTransportsData] = useState()
     const [vehicleData, setVehicleData] = useState()
-    const [edit,setEdit] = useState(false)
-    const [data, setData] = useState([])
+    const [edit, setEdit] = useState(false)
+    const [data, setData] = useState({})
     const classes = useStyles()
 
 
     const handleEdit = () => {
         setOpenModal(!openModal)
+        setEdit(false)
+        setData({});
     }
     const handleClick = (e, row) => {
         console.log(e.target.value)
@@ -178,8 +180,8 @@ const FleetOperatorsDetails = ({ id, currentUser, titleAlign }) => {
                 variant="temporary"
             >
                 {
-                    !edit  ? (
-                        <AddNewFleetOperatorForm data={data} dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} />
+                    !edit ? (
+                        <AddNewFleetOperatorForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} />
                     ) : (
                         <AddNewFleetOperatorForm data={data} dealer_id={id} callback={handleEdit} currentUser={currentUser} />
                     )

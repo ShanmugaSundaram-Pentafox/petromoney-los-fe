@@ -17,7 +17,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
-import { addNewFleetOperator, addNewTransport } from '../../../services/transports.service';
+import { addNewFleetOperator, addNewTransport, updateFleetOperator } from '../../../services/transports.service';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -139,7 +139,7 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit,callback}) => {
+const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
     const [checked, setChecked] = useState(false);
     const [loading, setLoading] = useState(false)
@@ -162,7 +162,6 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit,callback}) => {
     const currentYearDiff = date.getFullYear() - 1970;
     const classes = useStyles()
 
-
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting } = useFormik({
         initialValues: {
             ...data,
@@ -172,24 +171,72 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit,callback}) => {
         validationSchema: Yup.object().shape({
             transport_name: Yup.string().required('Please enter transporter name'),
             vehicle_no: Yup.string().required('Please enter vehicle number'),
-            // email: Yup.string().email('Enter valid mail id '),
-            // mobile: Yup.number().min(10, 'Enter valid mobile number').required('Please enter your mobile number'),
-            // name_on_card: Yup.string().required('Please Enter your name'),
-            // amount_limit: Yup.string().required('Please Enter amount limit '),
+            email: Yup.string().email('Enter valid mail id '),
+            mobile: Yup.number().min(10, 'Enter valid mobile number').required('Please enter your mobile number'),
+            name_on_card: Yup.string().required('Please Enter your name'),
+            amount_limit: Yup.string().required('Please Enter amount limit '),
             // validity: Yup.date('Enter valid date'),
-            // dtplus_card_number: Yup.string().max(16, 'Enter valid card number').required('Please enter your card number'),
+            dtplus_card_number: Yup.string().max(16, 'Enter valid card number').required('Please enter your card number'),
 
         }),
         onSubmit: values => {
-            addNewFleetOperator(values, dealer_id)
-                .then(message => {
-                    console.log(message)
-                    // setApiStatus({ type: 'success', message: message })
-                })
-                .catch(e => {
-                    // setApiStatus({ type: 'error', message: e })
-                    console.log(e);
-                })
+            if (data) {
+                updateFleetOperator(values, dealer_id, data.id)
+                    .then(res => {
+                        console.log(res)
+                        enqueueSnackbar(res, {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'right',
+                            },
+                            variant: 'success',
+                        }
+                        )
+                        setTimeout(() => {
+                            window.location.reload()
+                        }, 1500);
+
+                    })
+                    .catch(e => {
+                        enqueueSnackbar(e, {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'right',
+                            },
+                            variant: 'error',
+                        }
+                        )
+                    })
+
+            }
+            else {
+                addNewFleetOperator(values, dealer_id)
+                    .then(res => {
+                        console.log(res)
+                        enqueueSnackbar(res, {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'right',
+                            },
+                            variant: 'success',
+                        }
+                        )
+                        setTimeout(() => {
+                            window.location.reload()
+                        }, 1500);
+                    })
+                    .catch(e => {
+                        enqueueSnackbar(e, {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'right',
+                            },
+                            variant: 'error',
+                        }
+                        )
+                    })
+            }
+
         }
     });
 

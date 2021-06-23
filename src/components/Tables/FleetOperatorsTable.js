@@ -1,11 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import { useMount } from 'react-use';
-import { NavLink as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
-import MUIDataTable from "mui-datatables";
-import Paper from '@material-ui/core/Paper';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import { getFleetOperatorsById, getOwnersById } from '../../services/transports.service';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+
 
 
 const useStyles = makeStyles(theme => ({
@@ -25,10 +27,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const FleetOperatorsTable = ({ id }) => {
+const FleetOperatorsTable = ({ id, editable, titleAlign, dealersClickRow }) => {
     const classes = useStyles();
     const [loading, setLoading] = useState(false);
     const [operatorsData, setOperatorsData] = useState([])
+    const [data, setData] = useState([])
     useMount(() => {
         if (!operatorsData || !operatorsData.length) {
             setLoading(true);
@@ -42,78 +45,30 @@ const FleetOperatorsTable = ({ id }) => {
                 })
         }
     });
-    const columns = useMemo(() => {
-        return [
-            {
-                label: 'Operator ID',
-                name: 'id',
-                options: {
-                    filter: false,
-                    sort: true,
-                    customBodyRender: value => {
-                        return <div>{value}</div>
-                    }
-                }
-            },
-            {
-                label: 'Name',
-                name: 'name_on_card',
-                options: {
-                    filter: false,
-                    sort: true
-                }
-            },
-            {
-                label: 'Mobile',
-                name: 'mobile',
-                options: {
-                    filter: true,
-                    filterWidth: "100%",
-                    sort: true,
-                    customBodyRender: value => {
-                        return (
-                            <div>
-                                {value ? value : '-'}
-                            </div>
-                        )
-                    }
-                }
-            },
-        ]
-    }, [operatorsData]);
-
-    const options = {
-        selectableRowsHeader: false,
-        selectableRows: "none",
-        print: false,
-        filter: false,
-        search: false,
-        download: false,
-        viewColumns: false,
-        rowsPerPage: 10,
-        isRowSelectable: () => false,
-        selectableRowsHeader: false,
-
-    };
 
     return (
-        <div >
-            {
-                Array.isArray(operatorsData) && operatorsData.length ? (
-
-                    <MUIDataTable
-                        // title={title ? <Typography className={classes.title} variant="h4" component="h4">{title} </Typography> : null}
-                        data={operatorsData}
-                        columns={columns}
-                        options={options}
-                    />
-                ) : (
-                    !loading && <Paper style={{ padding: 10 }}>No Operators found</Paper>
-                )
-            }
-            {
-                loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-            }
+        <div className={classes.wrapper}>
+            {/* <div className={classes.header}>
+                <Typography style={{ width: '90%' }} variant="h5" align={titleAlign} className={classes.title}>Dealers</Typography>
+            </div> */}
+            <Table className={classes.table} size="small" aria-label="Dealers">
+                <TableHead>
+                    <TableRow>
+                        <TableCell>Operator ID</TableCell>
+                        <TableCell align="center">Transport Name</TableCell>
+                        <TableCell align="center">Mobile</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {operatorsData.map(row => (
+                        <TableRow className={classes.tableRow} key={row.id} onClick={e => dealersClickRow(e, row)}>
+                            <TableCell>{row.id}&nbsp;&nbsp;</TableCell>
+                            <TableCell align="center">{row.transport_name ? row.transport_name : "-"}</TableCell>
+                            <TableCell align="center">{row.mobile ? row.mobile : "-"}</TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
         </div>
     )
 }

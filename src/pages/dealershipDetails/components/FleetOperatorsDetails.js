@@ -12,6 +12,7 @@ import Drawer from '@material-ui/core/Drawer';
 import TransportOwnerTable from '../../../components/Tables/TransportOwnerTable';
 import AddNewTransportsOwnerForm from '../../transports/components/AddNewTransportsOwnerForm';
 import FleetOperatorsTable from '../../../components/Tables/FleetOperatorsTable';
+import AddNewFleetOperatorForm from '../../transports/components/AddNewFleetOperatorForm';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -137,13 +138,20 @@ const FleetOperatorsDetails = ({ id, currentUser, titleAlign }) => {
     const [ownerInfo, setOwnerInfo] = useState()
     const [transportsData, setTransportsData] = useState()
     const [vehicleData, setVehicleData] = useState()
+    const [edit,setEdit] = useState(false)
     const [data, setData] = useState([])
     const classes = useStyles()
 
 
-    const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit)
     const handleEdit = () => {
         setOpenModal(!openModal)
+    }
+    const handleClick = (e, row) => {
+        console.log(e.target.value)
+        setData(row)
+        setOpenModal(true)
+        setEdit(true)
+
     }
 
     return (
@@ -157,10 +165,10 @@ const FleetOperatorsDetails = ({ id, currentUser, titleAlign }) => {
                         onClick={() => setOpenModal(true)}
                     >
                         Add Fleet Operator
-                </Button>
+                    </Button>
                 </div>
                 <div>
-                    <FleetOperatorsTable id={id} />
+                    <FleetOperatorsTable id={id} dealersClickRow={handleClick} />
                 </div>
             </div>
             <Drawer
@@ -169,7 +177,13 @@ const FleetOperatorsDetails = ({ id, currentUser, titleAlign }) => {
                 onClose={() => setOpenModal(false)}
                 variant="temporary"
             >
-                <AddNewTransportsOwnerForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} />    
+                {
+                    !edit  ? (
+                        <AddNewFleetOperatorForm data={data} dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} />
+                    ) : (
+                        <AddNewFleetOperatorForm data={data} dealer_id={id} callback={handleEdit} currentUser={currentUser} />
+                    )
+                }
             </Drawer>
         </div>
     )

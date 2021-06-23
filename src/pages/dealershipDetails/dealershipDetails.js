@@ -224,7 +224,7 @@ const DealershipDetails = ({ currentUser, match }) => {
           <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
         </TabPanel>
         <TabPanel activeTab={activeTab} index={6}>
-          <FleetOperatorsDetails />
+          <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
         </TabPanel>
         <SolarEnquiryForm
           dealershipId={id}

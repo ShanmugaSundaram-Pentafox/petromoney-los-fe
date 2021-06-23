@@ -309,3 +309,19 @@ export const getOwnerDetailsById = (id) => {
       })
   })
 }
+
+export const getFleetOperatorsById = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${URL.dealership}/${id}/operators`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}

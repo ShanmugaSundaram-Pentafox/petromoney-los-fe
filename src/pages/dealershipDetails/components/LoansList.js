@@ -62,11 +62,11 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
 
   const processLoan = loan => {
     let status, remarksObj = {};
-    if (loan.status.toLowerCase() === "submitted") {
+    if (loan?.status?.toLowerCase() === "submitted") {
       setLoading(true);
       status = 'loan_approval';
       remarksObj.recommendation_remarks = remarks;
-    } else if (loan.status.toLowerCase() === "approved") {
+    } else if (loan?.status?.toLowerCase() === "approved") {
       setLoading(true);
       status = 'disbursement_approval';
       remarksObj.disbursement_recommendation_remarks = remarks;
@@ -175,7 +175,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
               </TableCell>
               <TableCell align="center">
                 {
-                  row.status.toLowerCase() === "submitted" && editable && (
+                  row?.status?.toLowerCase() === "submitted" && editable && (
                     <Button
                       variant="outlined"
                       color="primary"
@@ -190,7 +190,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
                   )
                 }
                 {
-                  row.status.toLowerCase() === "approved" && editable && (
+                  row?.status?.toLowerCase() === "approved" && editable && (
                     <Button
                       variant="outlined"
                       color="primary"
@@ -205,10 +205,10 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
                   )
                 }
                 {
-                  row.status.toLowerCase() === "loan_approval" && 'Pending for approval'
+                  row?.status?.toLowerCase() === "loan_approval" && 'Pending for approval'
                 }
                 {
-                  row.status.toLowerCase() === "disbursement_approval" && 'Pending for disbursement approval'
+                  row?.status?.toLowerCase() === "disbursement_approval" && 'Pending for disbursement approval'
                 }
               </TableCell>
             </TableRow>

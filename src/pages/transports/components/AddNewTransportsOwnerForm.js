@@ -1,14 +1,22 @@
 import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { withStyles } from '@material-ui/core/styles';
 import Switch from '@material-ui/core/Switch';
 import Typography from '@material-ui/core/Typography';
 import TextInput from '../../../components/TextInput/TextInput';
 import Button from '../../../components/CommonComponents/Button/Button';
-import { addNewTransport } from '../../../services/transports.service'; 
+import * as Yup from 'yup';
+import { useFormik } from 'formik';
+import clsx from 'clsx';
+import Divider from '@material-ui/core/Divider';
+import { makeStyles } from "@material-ui/styles";
+import CloseIcon from '@material-ui/icons/Close';
+import { URL } from '../../../config/serverUrls';
+import EditIcon from '@material-ui/icons/Edit';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
+import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import { useSnackbar } from 'notistack';
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import {
@@ -16,7 +24,125 @@ import {
     KeyboardDatePicker
 } from '@material-ui/pickers';
 
+const useStyles = makeStyles((theme) => ({
+    sidePanelTitle: {
+        // textAlign: 'center',
+        padding: '24px 16px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        zIndex: 0,
+        boxShadow: '0 1px 4px -3px #333'
+    },
+    sidePanelFormWrapper: {
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+        width: '40vw'
+    },
+    sidePanelFormContentWrapper: {
+        flex: 1,
+        overflow: 'auto'
+    },
+    wrapper: {
+        padding: 8,
+        width: '50vw',
+    },
+    title: {
+        paddingLeft: 8,
+        marginBottom: 8
+    },
+    table: {
+        // minWidth: 650,
+        padding: 8
+    },
+    header: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        marginBottom: 8
+    },
+    footer: {
+        paddingTop: 8,
+        textAlign: 'right'
+    },
+    sidePanelWrapper: {
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+        width: '40vw',
+    },
+    actionButtons: {
+        // paddingTop: 8
+    },
+    tableRow: {
+        cursor: 'pointer'
+    },
+    document: {
+        display: 'inline-block',
+        borderRadius: 2,
+        lineHeight: 1,
+    },
+    sidePanelWrapper: {
+        width: '40vw',
+        padding: '14px',
+    },
+    stepperRoot: {
+        padding: 16,
+        paddingTop: 8
+    },
+    transportFormWrapper: {
+        padding: theme.spacing(2),
+    },
+    transWrapper: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        marginBottom: theme.spacing(2),
+    },
+    ownerWrapper: {
+        flex: 1,
+        overflowY: 'auto'
+    },
+    button: {
+        marginTop: theme.spacing(1),
+        marginRight: theme.spacing(1),
+    },
+    actionsContainer: {
+        marginBottom: theme.spacing(2),
+    },
+    resetContainer: {
+        padding: theme.spacing(3),
+    },
+    actionButtonsWrapper: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        padding: '12px 16px'
+    },
+    actionButtons: {
+        // paddingTop: 8
+    },
+    stepperRoot: {
+        padding: 16,
+        paddingTop: 8
+    },
+    stepTitle: {
+        '& .MuiStepLabel-label.MuiStepLabel-active': {
+            fontSize: 15,
+            fontWeight: 600
+        }
+    },
+    editButton: {
+        marginRight: '8px',
+        '&.MuiButton-contained': {
+            backgroundColor: theme.palette.success.main,
+            color: theme.palette.white
+        },
+        '&.MuiButton-contained:hover': {
+            backgroundColor: theme.palette.success.dark
+        }
+    }
 
+}))
 
 const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit, form_data, id, callback }) => {
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
@@ -27,14 +153,6 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
         checkedA: true,
         checkedB: true,
     });
-    const [selectedDate, setSelectedDate] = useState(
-        new Date()
-    )
-    const handleDateChange = (date) => {
-        setSelectedDate(date)
-    }
-
-
     const handleClick = () => {
         setChecked(!checked);
     };
@@ -214,6 +332,38 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                                         onChange={handleChange}
                                         InputLabelProps={{ shrink: true }}
                                     />
+                                </Grid>
+                                <Grid item md={6}>
+
+                                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                        <KeyboardDatePicker
+                                            // disableToolbar
+                                            hideTabs={true}
+                                            variant='inline'
+                                            inputVariant='outlined'
+                                            label="Date of Birth"
+                                            format='dd/MM/yyy'
+                                            // views={["date", "month", "year"]}
+                                            animateYearScrolling={true}
+                                            invalidDateMessage='Invalid Date Format'
+                                            minDate={Date("01-01-1900")}
+                                            margin='normal'
+                                            id='date-picker'
+                                            autoOk={true}
+                                            // label='Disbursement Date'
+                                            value={selectedDate}
+                                            onChange={handleDateChange}
+                                            keyboardButtonProps={{
+                                                'aria-label': 'change date'
+                                            }}
+                                            PopoverProps={{
+                                                anchorOrigin: {
+                                                    vertical: 'bottom',
+                                                    horizontal: 'center',
+                                                }
+                                            }}
+                                        />
+                                    </MuiPickersUtilsProvider>
                                 </Grid>
                                 <Grid item md={6}>
                                     <TextInput

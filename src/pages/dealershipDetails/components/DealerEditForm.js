@@ -3,11 +3,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { makeStyles, withStyles } from '@material-ui/styles';
 import Grid from '@material-ui/core/Grid';
 import TextInput from '../../../components/TextInput/TextInput';
-import Button from '@material-ui/core/Button';
-import DeleteIcon from '@material-ui/icons/Delete';
-import IconButton from '@material-ui/core/IconButton';
-import PhotoCamera from '@material-ui/icons/PhotoCamera';
-import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
 import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
 import Typography from '@material-ui/core/Typography'
 import Switch from '@material-ui/core/Switch';

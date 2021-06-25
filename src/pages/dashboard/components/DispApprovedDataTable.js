@@ -80,9 +80,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
   const [loading, setLoading] = useState(false);
   const [apiStatus, setApiStatus] = useState({});
   const [confirmDelete, setConfirmDelete] = useState({});
-  const [selectedDate, setSelectedDate] = useState(
-    new Date()
-  )
+  const [selectedDate, setSelectedDate] = useState()
   const handleDateChange = (date) => {
     setSelectedDate(date)
   }
@@ -92,13 +90,14 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
       applicant_code: loanData.applicant_code,
       disbursement_details: loanData.disbursement_details
     });
+
   }, [loanData]);
 
   const { values, errors, handleChange, handleSubmit, setValues } = useFormik({
     initialValues: {
       disbursement_status: 1,
       status: "disbursed",
-      disbursement_date: selectedDate
+      disbursement_date: selectedDate,
     },
     validationSchema: Yup.object().shape({
       applicant_code: Yup.string().required("Enter valid Applicant code").matches(/^CN0000[0-9]+$/, "Enter Valid Applicant code"),
@@ -107,9 +106,9 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
       amount: Yup.string().required("Enter Amount"),
     }),
     onSubmit: values => {
-      alert(JSON.stringify(values, null, 2));
       const date = moment(selectedDate).format('YYYY/MM/DD')
       const data = values.applicant_code ? { ...values, disbursement_date: date } : { ...values, applicant_code: dispHistory.applicant_code, disbursement_date: date };
+      // alert(JSON.stringify(data, null, 2));
       setLoading(true);
       updateLoanApprovalStatusById(id, loanData.id, data)
         .then(({ data, message }) => {
@@ -134,9 +133,10 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
   const onRowEdit = data => {
     setValues({
       ...data,
-      status: "disbursed"
+      status: "disbursed",
       // disbursement_date: moment(new Date(data.disbursement_date)).format("YYYY/MM/DD")
     });
+    setSelectedDate(data.disbursement_date)
     setModalData({ open: true });
   }
 
@@ -160,30 +160,6 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
         logger(e);
       })
   }
-  // const handleDayChange = (selectedDay, modifiers, dayPickerInput) => {
-  //   const input = dayPickerInput.getInput();
-  //   setSelectDate(selectedDay)
-  //   setSelectedDate(dayPickerInput.state.value)
-  // }
-  // const OverlayComponent = ({ children, ...props }) => {
-  //   return (
-  //     <TextInput
-  //       direction
-  //       alignTop
-  //       required
-  //       name={"disbursement_date"}
-  //       labelText="Disbursement Date"
-  //       placeholder="Example (YYYY/MM/DD)"
-  //       error={errors.disbursement_date}
-  //       helperText={errors.disbursement_date}
-  //       value={values.disbursement_date}
-  //       onDayChange={handleDayChange}
-  //     />
-  //   )
-
-
-
-  // }
 
   return (
     <div className={classes.root}>
@@ -285,68 +261,30 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                     <InputWrapper direction top>
                       <label className="input-label">Disbursement Date</label>
                       <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                          <KeyboardDatePicker
-                            hideTabs={true}
-                            variant='inline'
-                            inputVariant='outlined'
-                            format='MM/dd/yyy'
-                            animateYearScrolling={true}
-                            invalidDateMessage='Invalid Date Format'
-                            margin='normal'
-                            id='date-picker'
-                            autoOk={true}
-                            value={selectedDate}
-                            onChange={handleDateChange}
-                            keyboardButtonProps={{
-                              'aria-label': 'change date'
-                            }}
-                            PopoverProps={{
-                              anchorOrigin: {
-                                vertical: 'bottom',
-                                horizontal: 'center',
-                              }
-                            }}
-                          />
+                        <KeyboardDatePicker
+                          hideTabs={true}
+                          variant='inline'
+                          inputVariant='outlined'
+                          format='MM/dd/yyy'
+                          animateYearScrolling={true}
+                          invalidDateMessage='Invalid Date Format'
+                          margin='normal'
+                          id='date-picker'
+                          autoOk={true}
+                          value={selectedDate}
+                          onChange={handleDateChange}
+                          keyboardButtonProps={{
+                            'aria-label': 'change date'
+                          }}
+                          PopoverProps={{
+                            anchorOrigin: {
+                              vertical: 'bottom',
+                              horizontal: 'center',
+                            }
+                          }}
+                        />
                       </MuiPickersUtilsProvider>
                     </InputWrapper>
-                    {/* <div className={classes.label}><label >Disbursement Date</label></div>
-                    <DatePicker
-                      name={"disbursement_date"}
-                      labelText="Disbursement Date"
-                      format="y/MM/dd"
-                      value={selectedDate}
-                      error={errors.disbursement_date}
-                      helperText={errors.disbursement_date}
-                      onChange={(e)=>setSelectedDate(e)}
-                    /> */}
-                    {/* <InputMask
-                      mask="9999/99/99"
-                      placeholder="Example (YYYY/MM/DD)"
-                      value={values.disbursement_date}
-                      error={errors.disbursement_date}
-                      onChange={handleChange}
-                    >
-                      {
-                        ({ inputProps }) => (
-                          <> */}
-                    {/* <TextInput
-                              direction
-                              alignTop
-                              required
-                              name={"disbursement_date"}
-                              labelText="Disbursement Date"
-                              // placeholder="Example (YYYY/MM/DD)"
-                              // error={errors.disbursement_date}
-                              helperText={errors.disbursement_date}
-                              // value={values.disbursement_date}
-                              // {...inputProps}
-                              // onChange={dataValue => handleChange(moment(dataValue).format("YYYY/MM/DD"))}
-                            /> */}
-
-                    {/* </>
-                        )
-                      }
-                    </InputMask> */}
                   </Grid>
                   <Grid item sm={6}>
                     <TextInput

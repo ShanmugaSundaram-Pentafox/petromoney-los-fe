@@ -23,6 +23,7 @@ import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker
 } from '@material-ui/pickers';
+import moment from 'moment';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -153,6 +154,10 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
         checkedA: true,
         checkedB: true,
     });
+    const [selectedDate, setSelectedDate] = useState(form_data.dob)
+    const handleDateChange = (e) => {
+        setSelectedDate(e)
+    }
     const handleClick = () => {
         setChecked(!checked);
     };
@@ -188,6 +193,9 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
             Object.keys(values).forEach(key => {
                 data.append(key, values[key]);
             })
+            const date = moment(selectedDate).format('DD-MMM-YYYY')
+            // data.append('dob', date)
+
             if (id === null) {
                 fetch(`${URL.base
                     }transport/owner/${id} `, {
@@ -222,7 +230,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
 
             }
             else {
-                data.append('dealership_id', dealer_id)
+                // data.append('dealership_id', dealer_id)
                 fetch(`${URL.base}transport/owner`, {
                     method: 'POST',
                     body: data,
@@ -320,7 +328,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                                         onChange={handleChange}
                                     />
                                 </Grid>
-                                <Grid item md={6}>
+                                {/* <Grid item md={6}>
                                     <TextInput
                                         id="date"
                                         label="Date of Birth"
@@ -332,13 +340,13 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                                         onChange={handleChange}
                                         InputLabelProps={{ shrink: true }}
                                     />
-                                </Grid>
+                                </Grid> */}
                                 <Grid item md={6}>
 
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                         <KeyboardDatePicker
                                             // disableToolbar
-                                            hideTabs={true}
+                                            // hideTabs={true}
                                             variant='inline'
                                             inputVariant='outlined'
                                             label="Date of Birth"
@@ -346,12 +354,14 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                                             // views={["date", "month", "year"]}
                                             animateYearScrolling={true}
                                             invalidDateMessage='Invalid Date Format'
-                                            minDate={Date("01-01-1900")}
+                                            error={errors.dob}
+                                            helperText={errors.dob}
+                                            readOnly={readOnly}
+                                            disabled={readOnly}
                                             margin='normal'
                                             id='date-picker'
                                             autoOk={true}
-                                            // label='Disbursement Date'
-                                            value={selectedDate}
+                                            value={selectedDate !== null ? selectedDate : values.dob}
                                             onChange={handleDateChange}
                                             keyboardButtonProps={{
                                                 'aria-label': 'change date'

@@ -537,7 +537,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
         onClose={() => setOpenModal(false)}
         variant="temporary"
       >
-        <AddNewVehicleForm id={id}  number={vehicleNumber} trans_id={vehicleId} modalType={modalType} />
+        <AddNewVehicleForm id={id} callback={() => setOpenModal(false)}  number={vehicleNumber} trans_id={vehicleId} modalType={modalType} />
       </Drawer>
     </div>
   )

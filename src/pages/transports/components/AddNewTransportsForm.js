@@ -161,7 +161,7 @@ const AddNewTransportsForm = ({ handleNext, handleBack, id, data, currentUser, c
         setChecked(!checked);
     };
     const handleClose = () => {
-        callback();
+        callback()
     }
     useMount(() => {
         getOmcList()

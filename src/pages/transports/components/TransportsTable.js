@@ -161,17 +161,6 @@ const TransportsTable = ({ transports, setAllTransports }) => {
     //   );
     // }
   }
-  function getStepContent(step) {
-    switch (step) {
-      case 0:
-        return <AddNewTransportsOwnerForm handleNext={handleNext} />
-      case 1:
-        return <AddNewTransportsForm handleBack={handleBack} />
-
-      default:
-        return 'Unknown step';
-    }
-  }
 
   return (
     <div>

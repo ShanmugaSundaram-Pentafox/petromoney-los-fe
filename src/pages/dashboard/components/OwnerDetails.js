@@ -103,7 +103,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-export const OwnerInfoCard = ({ id, ownerData,currentUser }) => {
+export const OwnerInfoCard = ({ id, ownerData, currentUser }) => {
     const classes = useStyles()
     const [openEditModal, setOpenEditModal] = useState(false)
     const [apiStatus, setApiStatus] = useState({});
@@ -148,7 +148,7 @@ export const OwnerInfoCard = ({ id, ownerData,currentUser }) => {
                 onClose={() => setOpenEditModal(false)}
                 variant="temporary"
             >
-                <AddNewTransportsOwnerForm currentUser={currentUser} callback={handleEdit}  form_data={ownerData} id={id} />
+                <AddNewTransportsOwnerForm currentUser={currentUser} callback={handleEdit} form_data={ownerData} id={id} />
             </Drawer>
         </>
     )
@@ -285,7 +285,7 @@ const OwnerDetails = ({ currentUser, match, loading }) => {
                 onClose={() => setOpenModal(false)}
                 variant="temporary"
             >
-                <AddNewTransportForm id={id} currentUser={currentUser} />
+                <AddNewTransportForm callback={() => setOpenModal(false)} id={id} currentUser={currentUser} />
             </Drawer>
         </>
     )

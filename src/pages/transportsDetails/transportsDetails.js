@@ -180,7 +180,7 @@ const TransportsDetails = ({ currentUser, match }) => {
         onClose={() => setOpenModal(false)}
         variant="temporary"
       >
-        <AddNewVehicleForm data={transportsData} isEdit='Edit' id={id} />
+        <AddNewVehicleForm callback={() => setOpenModal(false)} data={transportsData} isEdit='Edit' id={id} />
       </Drawer>
     </>
   )

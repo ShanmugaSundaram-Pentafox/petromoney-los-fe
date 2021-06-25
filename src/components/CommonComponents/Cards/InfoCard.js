@@ -12,7 +12,7 @@ export const InfoWrapper = styled.div`
 
     .card-body {
         display: flex;
-        padding: 10px 0px;
+        padding: 10px 10px;
       }
     .user-initial {
         display: flex;
@@ -75,6 +75,7 @@ export const InfoWrapper = styled.div`
 
 export const InfoCardWrapper = styled.div`
     min-height: 140px;
+    
     padding: 24px;
     background-color: #FFFFFF;
     border-radius: 4px;
@@ -116,19 +117,7 @@ export const Info = ({
                 </div>
 
             </div>
-            {
-                title === 'Transport Info' && (
-                    <div style={{float:'right'}}>
-                        <IconButton
-                            color="primary"
-                            aria-label="edit owner"
-                            component="span"
-                        >
-                            <EditIcon fontSize="small" />
-                        </IconButton>
-                    </div>
-                )
-            }
+
         </InfoWrapper>
     );
 };
@@ -146,7 +135,26 @@ const InfoCard = ({
 }) => {
     return (
         <InfoCardWrapper noMargin={noMargin} hover={hover} onClick={onClick}>
-            {title ? <p className="title">{title}</p> : null}
+            {title === 'Transport Info' ? (
+                <p className="title">{title} &nbsp;&nbsp;
+                    <IconButton
+                        color="primary"
+                        aria-label="edit owner"
+                        component="span"
+                    >
+                        <EditIcon fontSize="small" />
+                    </IconButton>
+                </p>
+
+            ) : title ? <p className="title">{title}</p> : null}
+            {/* {
+                    title === 'Transport Info' && (
+                        <div style={{ float: 'right' }}>
+                            
+                        </div>
+                    )
+                }
+            </div> */}
 
             <Info
                 title={title}

@@ -21,6 +21,8 @@ import { getAllRegion, getBusinessTypes, getOmcList } from '../../../services/co
 import { getDistricts, getFormattedStatesList } from '../../../utils/indianStates.util';
 import { addNewVehicle, getAllTransport, updateVehicle } from '../../../services/transports.service';
 import { useSnackbar } from 'notistack';
+import CloseIcon from '@material-ui/icons/Close';
+
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -143,7 +145,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 
-const AddNewVehicleForm = ({ data, id, number, trans_id, modalType, isEdit }) => {
+const AddNewVehicleForm = ({ data, id, number, trans_id, modalType, isEdit, callback }) => {
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
     const [apiStatus, setApiStatus] = useState({});
     const [transport, setTransport] = useState([]);
@@ -244,7 +246,7 @@ const AddNewVehicleForm = ({ data, id, number, trans_id, modalType, isEdit }) =>
         <div className={classes.sidePanelFormWrapper}>
             <Typography className={classes.sidePanelTitle} variant="h4">
                 <div>Vehicle Information</div>
-                {/* <CloseIcon onClick={() => setOpenModal(false)} /> */}
+                <CloseIcon onClick={callback} />
             </Typography>
             <div className={classes.sidePanelFormContentWrapper}>
                 <div className={classes.stepperRoot}>
@@ -317,8 +319,8 @@ const AddNewVehicleForm = ({ data, id, number, trans_id, modalType, isEdit }) =>
                         <Button
                             variant="outlined"
                             startIcon={<NavigateBeforeRoundedIcon />}
-                        // disabled={loading}
-                        // onClick={onClose}
+                            // disabled={loading}
+                            onClick={callback}
                         >
                             Back
                         </Button>

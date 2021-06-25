@@ -26,11 +26,15 @@ import * as Yup from 'yup';
 import clsx from 'clsx';
 import Currency from '../../../components/Number/Currency';
 import { logger } from '../../../config/logger';
-import TextInput from '../../../components/TextInput/TextInput';
+import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
 import { updateLoanApprovalStatusById, deleteLoanDisbursementRecord } from '../../../services/loans.service';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import DatePicker from 'react-date-picker';
-import { useFlexLayout } from 'react-table';
+import 'date-fns';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker
+} from '@material-ui/pickers';
 
 
 const useStyles = makeStyles(theme => ({
@@ -64,6 +68,8 @@ const useStyles = makeStyles(theme => ({
     margin: 'auto',
     width: '50%',
     padding: 10,
+  },
+  picker: {
   }
 }));
 
@@ -74,7 +80,12 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
   const [loading, setLoading] = useState(false);
   const [apiStatus, setApiStatus] = useState({});
   const [confirmDelete, setConfirmDelete] = useState({});
-  const [selectedDate, setSelectedDate] = useState();
+  const [selectedDate, setSelectedDate] = useState(
+    new Date()
+  )
+  const handleDateChange = (date) => {
+    setSelectedDate(date)
+  }
 
   useEffect(() => {
     setDispHistory({
@@ -96,8 +107,9 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
       amount: Yup.string().required("Enter Amount"),
     }),
     onSubmit: values => {
+      alert(JSON.stringify(values, null, 2));
       const date = moment(selectedDate).format('YYYY/MM/DD')
-      const data = values.applicant_code ? { ...values, disbursement_date: date} : { ...values, applicant_code: dispHistory.applicant_code, disbursement_date: date};
+      const data = values.applicant_code ? { ...values, disbursement_date: date } : { ...values, applicant_code: dispHistory.applicant_code, disbursement_date: date };
       setLoading(true);
       updateLoanApprovalStatusById(id, loanData.id, data)
         .then(({ data, message }) => {
@@ -270,7 +282,34 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                     // style={{ backgroundColor: "green" }}
                     className={classes.gridStyle}
                   >
-                    <div className={classes.label}><label >Disbursement Date</label></div>
+                    <InputWrapper direction top>
+                      <label className="input-label">Disbursement Date</label>
+                      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                          <KeyboardDatePicker
+                            hideTabs={true}
+                            variant='inline'
+                            inputVariant='outlined'
+                            format='MM/dd/yyy'
+                            animateYearScrolling={true}
+                            invalidDateMessage='Invalid Date Format'
+                            margin='normal'
+                            id='date-picker'
+                            autoOk={true}
+                            value={selectedDate}
+                            onChange={handleDateChange}
+                            keyboardButtonProps={{
+                              'aria-label': 'change date'
+                            }}
+                            PopoverProps={{
+                              anchorOrigin: {
+                                vertical: 'bottom',
+                                horizontal: 'center',
+                              }
+                            }}
+                          />
+                      </MuiPickersUtilsProvider>
+                    </InputWrapper>
+                    {/* <div className={classes.label}><label >Disbursement Date</label></div>
                     <DatePicker
                       name={"disbursement_date"}
                       labelText="Disbursement Date"
@@ -279,7 +318,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                       error={errors.disbursement_date}
                       helperText={errors.disbursement_date}
                       onChange={(e)=>setSelectedDate(e)}
-                    />
+                    /> */}
                     {/* <InputMask
                       mask="9999/99/99"
                       placeholder="Example (YYYY/MM/DD)"

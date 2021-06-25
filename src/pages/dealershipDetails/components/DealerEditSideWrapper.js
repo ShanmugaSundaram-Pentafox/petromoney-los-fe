@@ -154,8 +154,6 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
       Object.keys(values).forEach(key => {
         data.append(key, values[key]);
       })
-      // delete values.created_date
-      // delete values.modified_date
       const apiURL = modelType === "DEALER" ? URL.dealers : modelType === "GUARANTOR" ? URL.guarantor : URL.coApplicants;
       let url = `${apiURL}/${dealershipId}`;
       if (values.id) {

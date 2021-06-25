@@ -8,6 +8,13 @@ import MUIDataTable from './MuiDataTable';
 import MuiTableCell from './MuiTableCell';
 import MuiTableHead from './MuiTableHead';
 import MuiTypography from './MuiTypography';
+import {
+  MuiPickersBasePicker,
+  MuiPickersCalendar,
+  MuiPickersCalendarHeader,
+  MuiPickersDay,
+  MuiPickersToolbar,
+} from './MuiPickersBasePicker';
 
 export default {
   MuiTextField,
@@ -19,5 +26,10 @@ export default {
   MUIDataTable,
   MuiTableCell,
   MuiTableHead,
-  MuiTypography
+  MuiTypography,
+  MuiPickersBasePicker,
+  MuiPickersCalendar,
+  MuiPickersCalendarHeader,
+  MuiPickersDay,
+  MuiPickersToolbar,
 };

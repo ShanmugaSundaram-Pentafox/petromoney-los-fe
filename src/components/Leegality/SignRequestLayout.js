@@ -256,7 +256,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
                 <Grid container spacing={2}>
                   {
                     type === "sanction" || type == "application" ? (
-                      <Grid item sm={8} >
+                      <Grid item sm={8} md={7} >
                         {
                           pdfUrl ?
                             <PdfViewer
@@ -424,7 +424,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
                       </Grid>
                     )
                   }
-                  <Grid item sm={3}>
+                  <Grid item sm={3} md={5}>
                     <Box>
                       <Typography variant="h4">Select Invitees</Typography>
                     </Box>
@@ -447,7 +447,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
                       </Box>
                     </Box>
                     {
-                      type === 'agreement' && guarantor.length !==0 &&
+                      type === 'agreement' && guarantor.length !== 0 &&
                       <Box pt={2}>
                         <p>Guarantors</p>
                         <Box pt={1}>

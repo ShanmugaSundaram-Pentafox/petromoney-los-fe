@@ -3,9 +3,21 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { makeStyles, withStyles } from '@material-ui/styles';
 import Grid from '@material-ui/core/Grid';
 import TextInput from '../../../components/TextInput/TextInput';
+import Button from '@material-ui/core/Button';
+import DeleteIcon from '@material-ui/icons/Delete';
+import IconButton from '@material-ui/core/IconButton';
+import PhotoCamera from '@material-ui/icons/PhotoCamera';
+import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
 import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
 import Typography from '@material-ui/core/Typography'
 import Switch from '@material-ui/core/Switch';
+import 'date-fns';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+    MuiPickersUtilsProvider,
+    KeyboardDatePicker
+} from '@material-ui/pickers';
+
 
 const useStyles = makeStyles({
     row: {
@@ -27,6 +39,10 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
         checkedA: true,
         checkedB: true,
     });
+    const [selectedDate, setSelectedDate] = useState()
+    const handleDateChange = (date) => {
+        setSelectedDate(date)
+    }
     const handleChange = (event) => {
         setState({ ...state, [event.target.name]: event.target.checked });
     };
@@ -96,8 +112,6 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                 href={data.pan_file_url} target="_blank" title={'PAN Attachment'}>{'PAN Attachment'}</a>
         )
     }
-console.log("valuesssssssss",values
-)
     return (
         <Grid container>
             <>
@@ -143,7 +157,32 @@ console.log("valuesssssssss",values
                     </TextInput>
                 </Grid>
                 <Grid {...gridItem} md={6}>
-                    <TextInput
+                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                        <KeyboardDatePicker
+                            hideTabs={true}
+                            variant='inline'
+                            inputVariant='outlined'
+                            label="Date of Birth"
+                            format='MM/dd/yyy'
+                            animateYearScrolling={true}
+                            invalidDateMessage='Invalid Date Format'
+                            margin='normal'
+                            id='date-picker'
+                            autoOk={true}
+                            value={values.disbursement_date}
+                            onChange={handleDateChange}
+                            keyboardButtonProps={{
+                                'aria-label': 'change date'
+                            }}
+                            PopoverProps={{
+                                anchorOrigin: {
+                                    vertical: 'bottom',
+                                    horizontal: 'center',
+                                }
+                            }}
+                        />
+                    </MuiPickersUtilsProvider>
+                    {/* <TextInput
                         id="date"
                         label="Date of Birth"
                         name="dob"
@@ -153,7 +192,7 @@ console.log("valuesssssssss",values
                         defaultValue={values.dob}
                         onChange={onChange}
                         InputLabelProps={{ shrink: true }}
-                    />
+                    /> */}
                 </Grid>
                 {modelType === 'COAPPLICANT' || modelType === 'GUARANTOR' ?
                     <>
@@ -364,7 +403,7 @@ console.log("valuesssssssss",values
                                         <Tooltip title={'Click Edit and attach'}>
                                             <AttachFileRoundedIcon disabled={readOnly} />
                                         </Tooltip> Attach PAN
-                                </Typography>}
+                                    </Typography>}
                             </> :
                             <>
                                 {data.profile_image_url ? profileAttachment() :
@@ -395,7 +434,7 @@ console.log("valuesssssssss",values
                                         <Tooltip title={'Click Edit and attach'}>
                                             <AttachFileRoundedIcon disabled={readOnly} />
                                         </Tooltip> Attach PAN
-                                </Typography>}
+                                    </Typography>}
                             </> :
                             <>
                                 {data.pan_file_url ? panAttachment() :
@@ -429,7 +468,7 @@ console.log("valuesssssssss",values
                                         <Tooltip title={'Click Edit and attach'}>
                                             <AttachFileRoundedIcon disabled={readOnly} />
                                         </Tooltip> Front
-                                </Typography>}
+                                    </Typography>}
                             </> :
                             <>
                                 {data.aadhar_f_file_url ? aadharFront() :

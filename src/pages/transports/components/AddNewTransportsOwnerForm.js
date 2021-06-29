@@ -24,6 +24,7 @@ import {
     KeyboardDatePicker
 } from '@material-ui/pickers';
 import moment from 'moment';
+import { Error } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -154,7 +155,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
         checkedA: true,
         checkedB: true,
     });
-    const [selectedDate, setSelectedDate] = useState(form_data.dob)
+    const [selectedDate, setSelectedDate] = useState(form_data && form_data.dob)
     const handleDateChange = (e) => {
         setSelectedDate(e)
     }
@@ -189,16 +190,15 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
             address: Yup.string().required('Please enter address'),
         }),
         onSubmit: values => {
-            const data = new FormData();
-            Object.keys(values).forEach(key => {
-                data.append(key, values[key]);
-            })
             const date = moment(selectedDate).format('DD-MMM-YYYY')
-            // data.append('dob', date)
+            const date_values = { ...values, dob: date }
+            const data = new FormData();
+            Object.keys(date_values).forEach(key => {
+                data.append(key, date_values[key]);
+            })
 
-            if (id === null) {
-                fetch(`${URL.base
-                    }transport/owner/${id} `, {
+            if (isEdit !== 'Edit') {
+                fetch(`${URL.base}transport/owner/${id} `, {
                     method: 'POST',
                     body: data,
                     headers: {
@@ -206,8 +206,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                     }
                 })
                     .then(res => {
-                        console.log("result", res)
-                        enqueueSnackbar(res, {
+                        enqueueSnackbar(res.message, {
                             anchorOrigin: {
                                 vertical: 'top',
                                 horizontal: 'right',
@@ -215,10 +214,10 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                             variant: 'success',
                         }
                         )
-                        // window.location.reload();
+                        window.location.reload();
                     })
                     .catch(error => {
-                        enqueueSnackbar(error.message, {
+                        enqueueSnackbar(error, {
                             anchorOrigin: {
                                 vertical: 'top',
                                 horizontal: 'right',
@@ -230,7 +229,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
 
             }
             else {
-                // data.append('dealership_id', dealer_id)
+                data.append('dealership_id', dealer_id)
                 fetch(`${URL.base}transport/owner`, {
                     method: 'POST',
                     body: data,
@@ -239,7 +238,6 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                     }
                 })
                     .then(res => {
-                        console.log("result", res)
                         enqueueSnackbar(res.message, {
                             anchorOrigin: {
                                 vertical: 'top',
@@ -248,6 +246,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                             variant: 'success',
                         }
                         )
+                        window.location.reload();
 
                     })
                     .catch(error => {

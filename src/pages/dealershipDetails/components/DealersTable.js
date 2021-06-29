@@ -92,8 +92,8 @@ const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExper
                     {data.map(row => (
                         <TableRow className={classes.tableRow} key={row.id} onClick={e => editable && dealersClickRow(e, row, 'DEALER')}>
                             <TableCell>
-                              {row.first_name}&nbsp;&nbsp;
-                              <Chip size="small" label="Experian Report" onClick={(e) => getExperianData(e, row.id)} />
+                                {row.first_name}&nbsp;&nbsp;
+                                <Chip size="small" label="Experian Report" onClick={(e) => getExperianData(e, row.id)} />
                             </TableCell>
                             <TableCell align="center">{row.mobile}</TableCell>
                             <TableCell align="center">
@@ -114,7 +114,7 @@ const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExper
                                 {!row.pan_file_url && !row.aadhar_b_file_url && !row.aadhar_f_file_url &&
                                     <TableCell style={{ border: 0 }} align="center">
                                         -
-                  </TableCell>}
+                                    </TableCell>}
                             </TableCell>
                         </TableRow>
                     ))}

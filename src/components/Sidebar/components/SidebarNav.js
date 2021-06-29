@@ -15,7 +15,7 @@ import ReportIcon from '@material-ui/icons/Report';
 import ReportProblemIcon from '@material-ui/icons/ReportProblem';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
-import { getAllExceptions } from '../../../services/loans.service';
+import { getAllExceptions, getTransportsExceptions } from '../../../services/loans.service';
 import { useMount } from "react-use";
 import Badge from '@material-ui/core/Badge';
 import { connect } from 'react-redux';
@@ -90,6 +90,7 @@ const SidebarNav = props => {
   const classes = useStyles();
   const [checked, setChecked] = React.useState(false);
   const [exceptions, setExceptions] = useState([]);
+  const [transException, setTransException] = useState([]);
   const [check, setCheck] = React.useState(false);
   const [checkStatus, setCheckStatus] = useState(false);
   useMount(() => {
@@ -100,6 +101,13 @@ const SidebarNav = props => {
       .catch((e) => {
         console.log(e);
       });
+    getTransportsExceptions()
+      .then((data) => {
+        setTransException(data)
+      })
+      .catch((e) => {
+        console.log(e)
+      })
   });
   const handleChange = () => {
     setChecked((prev) => !prev);
@@ -292,8 +300,8 @@ const SidebarNav = props => {
                 >
                   <Badge badgeContent={exceptions.length} max={999} color="primary">
                     <div className={classes.icon}><AssessmentOutlinedIcon /></div>
-                      Loans &nbsp;
-                    </Badge>
+                    Loans &nbsp;
+                  </Badge>
                 </Button>
               </ListItem>
               <ListItem
@@ -308,10 +316,10 @@ const SidebarNav = props => {
                   to={'/transport/exceptions'}
                   exact
                 >
-                  <Badge badgeContent={exceptions.length} max={999} color="primary">
+                  <Badge badgeContent={transException.length} max={999} color="primary">
                     <div className={classes.icon}><AssessmentOutlinedIcon /></div>
-                      Transports &nbsp;
-                    </Badge>
+                    Transports &nbsp;
+                  </Badge>
                 </Button>
               </ListItem>
             </Collapse>

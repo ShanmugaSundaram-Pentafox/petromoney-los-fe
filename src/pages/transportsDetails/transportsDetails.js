@@ -138,7 +138,7 @@ const TransportsDetails = ({ currentUser, match }) => {
                   </Drawer>
                 )}
               </Grid>
-              <Grid item md={4} xs={12}>
+              {/* <Grid item md={4} xs={12}>
                 <InfoCard
                   title={"Owner Info"}
                   noMargin
@@ -148,7 +148,7 @@ const TransportsDetails = ({ currentUser, match }) => {
                   content={ownerInfo?.email}
                   description={ownerInfo?.address}
                 />
-              </Grid>
+              </Grid> */}
             </Grid>
           ) : null
         }

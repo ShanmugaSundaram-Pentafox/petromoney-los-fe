@@ -174,13 +174,11 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
     const currentYearDiff = date.getFullYear() - 1970;
     const classes = useStyles()
 
-
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting } = useFormik({
         initialValues: {
             ...form_data,
         },
-        validateOnChange: false,
-        validateOnBlur: true,
+        // validateOnBlur: true,
         validationSchema: Yup.object().shape({
             // id: Yup.number().required('Please enter transporter code'),
             first_name: Yup.string().required('Please enter transporter name'),
@@ -206,18 +204,36 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                     }
                 })
                     .then(res => {
-                        enqueueSnackbar(res.message, {
-                            anchorOrigin: {
-                                vertical: 'top',
-                                horizontal: 'right',
-                            },
-                            variant: 'success',
+                        return res.json()
+                    })
+                    .then(res => {
+                        if (res.status === 'SUCCESS') {
+                            enqueueSnackbar(res.message, {
+                                anchorOrigin: {
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                },
+                                variant: 'success',
+                            }
+                            )
                         }
-                        )
-                        window.location.reload();
+                        else {
+                            enqueueSnackbar(res.message, {
+                                anchorOrigin: {
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                },
+                                variant: 'error',
+                            }
+                            )
+                        }
+
+                        // window.location.reload();
+
                     })
                     .catch(error => {
-                        enqueueSnackbar(error, {
+                        console.log(error);
+                        enqueueSnackbar(error.message, {
                             anchorOrigin: {
                                 vertical: 'top',
                                 horizontal: 'right',
@@ -238,14 +254,30 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                     }
                 })
                     .then(res => {
-                        enqueueSnackbar(res.message, {
-                            anchorOrigin: {
-                                vertical: 'top',
-                                horizontal: 'right',
-                            },
-                            variant: 'success',
+                        return res.json()
+                    })
+                    .then(res => {
+                        if (res.status === 'SUCCESS') {
+                            enqueueSnackbar(res.message, {
+                                anchorOrigin: {
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                },
+                                variant: 'success',
+                            }
+                            )
                         }
-                        )
+                        else {
+                            enqueueSnackbar(res.message, {
+                                anchorOrigin: {
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                },
+                                variant: 'error',
+                            }
+                            )
+                        }
+
                         window.location.reload();
 
                     })

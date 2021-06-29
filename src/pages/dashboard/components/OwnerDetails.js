@@ -112,7 +112,6 @@ export const OwnerInfoCard = ({ id, ownerData, currentUser }) => {
     const handleEdit = () => {
         setOpenEditModal(!openEditModal)
     }
-// console.log("owner data",ownerData)
     return (
         <>
             <Card>

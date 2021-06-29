@@ -7,7 +7,6 @@ import IconButton from '@material-ui/core/IconButton';
 export const InfoWrapper = styled.div`
     // display: flex;
     min-height:17vh;
-    max-height:17vh;
 
 
     .card-body {
@@ -41,7 +40,7 @@ export const InfoWrapper = styled.div`
             line-height: 22px;
 
             &.name {
-                font-size: 18px;
+                font-size: 12px;
                 font-weight: bold;
                 line-height: 24px;
                 margin-bottom: 2px;
@@ -58,7 +57,7 @@ export const InfoWrapper = styled.div`
 
             &.caption {
                 color: #909191;
-                font-size: 16px;
+                font-size: 14px;
                 line-height: 22px;
                 margin-bottom: 2px;
                 text-transform: capitalize;
@@ -66,7 +65,7 @@ export const InfoWrapper = styled.div`
 
             &.light {
                 color: #909191;
-                font-size: 14px;
+                font-size: 12px;
                 line-height: 16px;
             }
         }

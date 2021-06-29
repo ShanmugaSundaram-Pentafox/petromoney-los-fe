@@ -6,20 +6,9 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
-import Drawer from '@material-ui/core/Drawer';
 import Button from '@material-ui/core/Button';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Chip from '@material-ui/core/Chip';
-import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
-import EditRoundedIcon from '@material-ui/icons/EditRounded';
-import MoreHorizRoundedIcon from '@material-ui/icons/MoreHorizRounded';
-import { getDealersByDealershipId, getCoApplicantByDealershipId } from '../../../services/dealers.service';
-import CreditInfoSideWrapper from "./CreditInfoSideWrapper";
-import DealerEditSideWrapper from './DealerEditSideWrapper';
-import AddIconButon from './AddIcon';
 
 const useStyles = makeStyles(theme => ({
     wrapper: {
@@ -74,7 +63,6 @@ const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExper
                 }
             </div>
         );
-
     return (
         <div className={classes.wrapper}>
             <div className={classes.header}>

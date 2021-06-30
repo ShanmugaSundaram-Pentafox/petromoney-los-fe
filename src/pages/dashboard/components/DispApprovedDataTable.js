@@ -102,7 +102,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
     validationSchema: Yup.object().shape({
       applicant_code: Yup.string().required("Enter valid Applicant code").matches(/^CN0000[0-9]+$/, "Enter Valid Applicant code"),
       prospect_code: Yup.string().required("Enter Prospect code"),
-      disbursement_date: Yup.string().required("Enter Disbursement date"),
+      // disbursement_date: Yup.date().required("Enter Disbursement date"),
       amount: Yup.string().required("Enter Amount"),
     }),
     onSubmit: values => {

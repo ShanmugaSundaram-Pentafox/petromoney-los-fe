@@ -24,7 +24,6 @@ import {
     KeyboardDatePicker
 } from '@material-ui/pickers';
 import moment from 'moment';
-import { Error } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -208,7 +207,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                     })
                     .then(res => {
                         if (res.status === 'SUCCESS') {
-                            enqueueSnackbar(res.message, {
+                            enqueueSnackbar(res.profile_status, {
                                 anchorOrigin: {
                                     vertical: 'top',
                                     horizontal: 'right',
@@ -216,9 +215,12 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                                 variant: 'success',
                             }
                             )
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 2000)
                         }
                         else {
-                            enqueueSnackbar(res.message, {
+                            enqueueSnackbar(res.profile_status, {
                                 anchorOrigin: {
                                     vertical: 'top',
                                     horizontal: 'right',
@@ -227,13 +229,10 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                             }
                             )
                         }
-
-                        // window.location.reload();
-
                     })
                     .catch(error => {
                         console.log(error);
-                        enqueueSnackbar(error.message, {
+                        enqueueSnackbar(error.profile_status, {
                             anchorOrigin: {
                                 vertical: 'top',
                                 horizontal: 'right',
@@ -242,7 +241,6 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                         }
                         )
                     })
-
             }
             else {
                 data.append('dealership_id', dealer_id)
@@ -258,7 +256,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                     })
                     .then(res => {
                         if (res.status === 'SUCCESS') {
-                            enqueueSnackbar(res.message, {
+                            enqueueSnackbar(res.profile_status, {
                                 anchorOrigin: {
                                     vertical: 'top',
                                     horizontal: 'right',
@@ -266,9 +264,12 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                                 variant: 'success',
                             }
                             )
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 2000)
                         }
                         else {
-                            enqueueSnackbar(res.message, {
+                            enqueueSnackbar(res.profile_status, {
                                 anchorOrigin: {
                                     vertical: 'top',
                                     horizontal: 'right',
@@ -278,12 +279,10 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                             )
                         }
 
-                        window.location.reload();
-
                     })
                     .catch(error => {
                         console.log(error);
-                        enqueueSnackbar(error.message, {
+                        enqueueSnackbar(error.profile_status, {
                             anchorOrigin: {
                                 vertical: 'top',
                                 horizontal: 'right',

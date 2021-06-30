@@ -223,6 +223,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
       <Drawer
         anchor="right"
         open={showDealerEditForm}
+        onClose={() => setShowDealerEditForm(false)}
         variant="temporary"
       >
         <div className={classes.sidePanelWrapper}>

@@ -26,6 +26,7 @@ import { useSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
 
 
+
 const useStyles = makeStyles(theme => ({
   sidePanelTitle: {
     // textAlign: 'center',
@@ -100,13 +101,13 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
   }
 
   const validationSchema = Yup.object().shape({
-    first_name: Yup.string().min(2, 'first name must be atleast 2 characters').required("Enter first name"),
-    last_name: Yup.string().min(1).required("Enter last name"),
+    first_name: Yup.string().required("Enter first name"),
+    last_name: Yup.string().required("Enter last name"),
     gender: Yup.string().required("Enter gender"),
-    email: Yup.string().email('Enter valid email').required("Enter email"),
+    email: Yup.string().email("Invalid email").required("Enter email"),
     address: Yup.string().min(6, 'address must be atleast 6 characters').required("Enter address"),
     mobile: Yup.string().matches(/^\d{10}$/, 'Invalid mobile number').required("Enter valid mobile number"),
-    dob: Yup.string().required("Choose date of birth"),
+    // dob: Yup.number().required("Choose date of birth"),
     residing_since: Yup.number().required("Enter the year"),
     marital_status: Yup.string("Enter your Marital status"),
     pan: Yup.string().matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, "Invalid PAN").required("Enter PAN").uppercase(),
@@ -159,6 +160,7 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
       if (values.id) {
         url += `/${values.id}`;
       };
+
       if (modelType !== "GUARANTOR") {
         data.append('user_id', currentUser.id);
       }
@@ -182,6 +184,14 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
         .then(res => {
           setLoading(false);
           setApicallStatus('success');
+          enqueueSnackbar(res.profile_status, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          }
+          )
           setApiCallMessage(isAdd ? 'Dealer Added' : 'Dealer Updated');
           onClose();
           modelType === "DEALER" ? getDealerApiCall(dealershipId) : getCoApplicantApiCall(dealershipId);
@@ -189,6 +199,14 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
         .catch(err => {
           setReadOnly(false);
           setLoading(false);
+          enqueueSnackbar(err.profile_status, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          }
+          )
           setApicallStatus('error');
           setApiCallMessage('Sorry! Unable to add or Update. Try again later.')
           logger(err);

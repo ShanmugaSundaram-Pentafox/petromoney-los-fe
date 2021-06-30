@@ -147,36 +147,29 @@ const useStyles = makeStyles((theme) => ({
 
 const AddNewVehicleForm = ({ data, id, number, trans_id, modalType, isEdit, callback }) => {
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
-    const [apiStatus, setApiStatus] = useState({});
-    const [transport, setTransport] = useState([]);
-    const [bussinessType, setBussinessType] = useState([]);
-    const [regions, setRegions] = useState([]);
-    const [openModal, setOpenModal] = useState(false);
-    const [loading, setLoading] = useState(false)
-    const [checked, setChecked] = useState(false);
     const { enqueueSnackbar } = useSnackbar();
+    const [loading,setLoading] = useState(false)
     const classes = useStyles()
-    const handleClick = () => {
-        setChecked(!checked);
-    };
+    
     const handleEdit = () => {
         setReadOnly(!readOnly)
     };
-    useMount(() => {
-        getAllTransport()
-            .then(data => {
-                setTransport(data);
-            })
-            .catch(e => {
-                console.log(e)
-            })
-    })
+    // useMount(() => {
+    //     getAllTransport()
+    //         .then(data => {
+    //             setTransport(data);
+    //         })
+    //         .catch(e => {
+    //             console.log(e)
+    //         })
+    // })
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting } = useFormik({
-        initialValues: {},
+        initialValues: {
+            ...number,
+        },
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
-            // transport: Yup.number().required('Please Choose the transport'),
             tt_no: Yup.string().required('Please enter vehicle number'),
         }),
         onSubmit: formData => {
@@ -194,10 +187,8 @@ const AddNewVehicleForm = ({ data, id, number, trans_id, modalType, isEdit, call
                         setTimeout(() => {
                             window.location.reload();
                         }, 2000)
-                        // setApiStatus({ type: 'success', message: message })
                     })
                     .catch(e => {
-                        // setApiStatus({ type: 'error', message: e })
                         enqueueSnackbar(e, {
                             anchorOrigin: {
                                 vertical: 'top',
@@ -205,7 +196,6 @@ const AddNewVehicleForm = ({ data, id, number, trans_id, modalType, isEdit, call
                             },
                             variant: 'error',
                         })
-                        // console.log(e);
                     })
             }
             else {
@@ -222,10 +212,8 @@ const AddNewVehicleForm = ({ data, id, number, trans_id, modalType, isEdit, call
                             window.location.reload();
                         }, 2000)
 
-                        // setApiStatus({ type: 'success', message: message })
                     })
                     .catch(e => {
-                        // setApiStatus({ type: 'error', message: e })
                         enqueueSnackbar(e, {
                             anchorOrigin: {
                                 vertical: 'top',
@@ -233,7 +221,6 @@ const AddNewVehicleForm = ({ data, id, number, trans_id, modalType, isEdit, call
                             },
                             variant: 'error',
                         })
-                        // console.log(e);
                     })
             }
         }
@@ -253,33 +240,16 @@ const AddNewVehicleForm = ({ data, id, number, trans_id, modalType, isEdit, call
                     <Box>
                         <form onSubmit={handleSubmit}>
                             <Grid container spacing={2}>
-                                <Grid item md={12}>
-                                    {/* <TextInput
-                            {...inputProps}
-                            select
-                            name="transport"
-                            labelText="Transport"
-                            value={values.transport}
-                            error={errors.transport}
-                        >
-                            <option value="">Choose Transport</option>
-                            {
-                                transport.map(transport => <option key={transport.id} value={transport.id}>{transport.name}</option>)
-                            }
-                        </TextInput> */}
-                                </Grid>
                                 <Grid item md={6}>
                                     {
-                                        number && trans_id ? (
+                                        readOnly ? (
                                             <TextInput
                                                 {...inputProps}
-                                                name="tt_no"
                                                 labelText="Vehicle Number"
-                                                value={values.tt_no}
+                                                value={number}
                                                 readOnly={readOnly}
-                                                error={errors.tt_no}
-                                                helperText={errors.tt_no}
-                                                onChange={handleChange}
+                                                InputLabelProps={{ shrink: true }}
+
                                             />
 
                                         ) : (
@@ -297,16 +267,6 @@ const AddNewVehicleForm = ({ data, id, number, trans_id, modalType, isEdit, call
                                     }
 
                                 </Grid>
-                                {/* <Grid item xs={12} justify="flex-end" alignItems="flex-end">
-                        <Button
-                            size="large"
-                            type="submit"
-                            color="primary"
-                            variant="contained"
-                        >
-                            Add New Vehicle
-                        </Button>
-                    </Grid> */}
                             </Grid>
                         </form>
                     </Box>
@@ -319,7 +279,7 @@ const AddNewVehicleForm = ({ data, id, number, trans_id, modalType, isEdit, call
                         <Button
                             variant="outlined"
                             startIcon={<NavigateBeforeRoundedIcon />}
-                            // disabled={loading}
+                            disabled={loading}
                             onClick={callback}
                         >
                             Back
@@ -331,7 +291,7 @@ const AddNewVehicleForm = ({ data, id, number, trans_id, modalType, isEdit, call
                             type="submit"
                             className={clsx(classes.btn, classes.editButton)}
                             startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                            // disabled={loading}
+                            disabled={loading}
                             onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
                         >
                             {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` :

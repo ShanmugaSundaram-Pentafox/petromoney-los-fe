@@ -118,7 +118,7 @@ const DisbursementApprovedTable = ({ title, loans, setLoansData, onRowClick }) =
       },
       {
         label: 'Disbursed Date',
-        name: 'loan_disbursed_date',
+        name: 'loan_disbursement_approved_rejected_date',
         options: {
           filter: false,
           sort: true,

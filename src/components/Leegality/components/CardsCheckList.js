@@ -8,7 +8,11 @@ import Chip from '@material-ui/core/Chip';
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 import CheckCircleOutlineRoundedIcon from '@material-ui/icons/CheckCircleOutlineRounded';
 import RadioButtonUncheckedRoundedIcon from '@material-ui/icons/RadioButtonUncheckedRounded';
+import CheckBoxOutlinedIcon from '@material-ui/icons/CheckBoxOutlined';
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
+import { Switch, Tooltip } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 
 const Card = styled.div`
   background-color: #fff;
@@ -44,31 +48,69 @@ const Card = styled.div`
 
 const CardItem = ({ onChange, data }) => {
   const [checked, setChecked] = useState(false);
-
+  const [aadharSign, setAadharSign] = useState(true);
+  const [virtualSign, setVirtualSign] = useState(true);
   const onPressItem = () => {
     onChange(!checked, data);
     setChecked(!checked);
   }
+  const handleAadharSign = (event) => {
+    setAadharSign(event.target.checked);
+  };
+  const handleVirtualSign = (event) => {
+    setVirtualSign(event.target.checked)
+  }
 
   return (
-    <Card onClick={onPressItem}>
-      <div className="card-body">
-        <Box pr={2}>
-          <Avatar style={{ backgroundColor: '#fafafa' }}>
-            {
-              checked ? 
-                <CheckCircleOutlineRoundedIcon style={{ color: 'green' }} />
-                : <RadioButtonUncheckedRoundedIcon color="primary" />
-            }
-          </Avatar>
-        </Box>
-        <Box>
-          <p><strong>{data.first_name} {data.last_name || ''}</strong></p>
-          {data.email && <p><small>{data.email}</small></p>}
-          {data.mobile && <p><small>{data.mobile}</small></p>}
-        </Box>
-      </div>
-    </Card>
+    <div style={{ display: 'flex' }}>
+      <Card onClick={onPressItem}>
+        <div className="card-body">
+          <Box pr={2}>
+            <Avatar style={{ backgroundColor: '#fafafa' }}>
+              {
+                checked ?
+                  <CheckBoxOutlinedIcon style={{ color: 'green' }} />
+                  : <CheckBoxOutlineBlankIcon color="primary" />
+              }
+            </Avatar>
+          </Box>
+          <Box>
+            <p><strong>{data.first_name} {data.last_name || ''}</strong></p>
+            {data.email && <p><small>{data.email}</small></p>}
+            {data.mobile && <p><small>{data.mobile}</small></p>}
+          </Box>
+        </div>
+      </Card>
+      {
+        checked && (
+          <div style={{ margin: '4px' }}>
+            <div className="toogle" style={{display:'flex',margin:'10px'}}>
+              <Switch
+                checked={aadharSign}
+                onChange={handleAadharSign}
+                size="small"
+                color="primary"
+                name="state"
+                inputProps={{ 'aria-label': 'secondary checkbox' }}
+              />
+              <Typography style={{marginLeft:'8px',fontSize:'13px'}}>Aadhar Sign</Typography>
+            </div>
+            <div style={{display:'flex',margin:'10px'}}>
+              <Switch
+                checked={virtualSign}
+                onChange={handleVirtualSign}
+                size="small"
+                color="primary"
+                name="state"
+                inputProps={{ 'aria-label': 'secondary checkbox' }}
+              />
+              <Typography style={{marginLeft:'8px',fontSize:'13px'}} >Virtual Sign</Typography>
+            </div>
+          </div>
+
+        )
+      }
+    </div>
   )
 }
 

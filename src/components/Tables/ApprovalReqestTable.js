@@ -113,7 +113,7 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick }) => {
       },
       {
         label: 'Req. Date',
-        name: 'created_date',
+        name: 'modified_date',
         options: {
           filter: false,
           sort: true,

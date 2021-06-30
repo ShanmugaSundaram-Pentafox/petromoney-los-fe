@@ -125,7 +125,7 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
                   </Tooltip>
                 </Button>
                 {
-                  d?.id ? 
+                  d?.id ?
                     <RightDrawer key={value} checked={op} userId={value} currentUser={currentUser} data={d} />
                     : null
                 }

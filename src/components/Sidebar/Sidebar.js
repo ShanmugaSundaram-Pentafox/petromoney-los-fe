@@ -112,7 +112,12 @@ const Sidebar = props => {
       title: 'Report',
       href: '/reports',
       icon: <LocalShippingIcon />
-    }
+    },
+    {
+      title: 'Exception',
+      href: '/loans',
+      icon: <AccountBoxIcon />
+    },
     // {
     //   title: 'Account',
     //   href: '/account',

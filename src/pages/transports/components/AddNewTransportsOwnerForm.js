@@ -17,6 +17,13 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
+import 'date-fns';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+    MuiPickersUtilsProvider,
+    KeyboardDatePicker
+} from '@material-ui/pickers';
+import moment from 'moment';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -147,6 +154,10 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
         checkedA: true,
         checkedB: true,
     });
+    const [selectedDate, setSelectedDate] = useState(form_data && form_data.dob)
+    const handleDateChange = (e) => {
+        setSelectedDate(e)
+    }
     const handleClick = () => {
         setChecked(!checked);
     };
@@ -162,13 +173,11 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
     const currentYearDiff = date.getFullYear() - 1970;
     const classes = useStyles()
 
-
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting } = useFormik({
         initialValues: {
             ...form_data,
         },
-        validateOnChange: false,
-        validateOnBlur: true,
+        // validateOnBlur: true,
         validationSchema: Yup.object().shape({
             // id: Yup.number().required('Please enter transporter code'),
             first_name: Yup.string().required('Please enter transporter name'),
@@ -178,13 +187,15 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
             address: Yup.string().required('Please enter address'),
         }),
         onSubmit: values => {
+            const date = moment(selectedDate).format('DD-MMM-YYYY')
+            const date_values = { ...values, dob: date }
             const data = new FormData();
-            Object.keys(values).forEach(key => {
-                data.append(key, values[key]);
+            Object.keys(date_values).forEach(key => {
+                data.append(key, date_values[key]);
             })
-            if (id === null) {
-                fetch(`${URL.base
-                    }transport/owner/${id} `, {
+
+            if (isEdit !== 'Edit') {
+                fetch(`${URL.base}transport/owner/${id} `, {
                     method: 'POST',
                     body: data,
                     headers: {
@@ -192,19 +203,36 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                     }
                 })
                     .then(res => {
-                        console.log("result", res)
-                        enqueueSnackbar(res, {
-                            anchorOrigin: {
-                                vertical: 'top',
-                                horizontal: 'right',
-                            },
-                            variant: 'success',
+                        return res.json()
+                    })
+                    .then(res => {
+                        if (res.status === 'SUCCESS') {
+                            enqueueSnackbar(res.profile_status, {
+                                anchorOrigin: {
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                },
+                                variant: 'success',
+                            }
+                            )
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 2000)
                         }
-                        )
-                        // window.location.reload();
+                        else {
+                            enqueueSnackbar(res.profile_status, {
+                                anchorOrigin: {
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                },
+                                variant: 'error',
+                            }
+                            )
+                        }
                     })
                     .catch(error => {
-                        enqueueSnackbar(error.message, {
+                        console.log(error);
+                        enqueueSnackbar(error.profile_status, {
                             anchorOrigin: {
                                 vertical: 'top',
                                 horizontal: 'right',
@@ -213,7 +241,6 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                         }
                         )
                     })
-
             }
             else {
                 data.append('dealership_id', dealer_id)
@@ -225,20 +252,37 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                     }
                 })
                     .then(res => {
-                        console.log("result", res)
-                        enqueueSnackbar(res.message, {
-                            anchorOrigin: {
-                                vertical: 'top',
-                                horizontal: 'right',
-                            },
-                            variant: 'success',
+                        return res.json()
+                    })
+                    .then(res => {
+                        if (res.status === 'SUCCESS') {
+                            enqueueSnackbar(res.profile_status, {
+                                anchorOrigin: {
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                },
+                                variant: 'success',
+                            }
+                            )
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 2000)
                         }
-                        )
+                        else {
+                            enqueueSnackbar(res.profile_status, {
+                                anchorOrigin: {
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                },
+                                variant: 'error',
+                            }
+                            )
+                        }
 
                     })
                     .catch(error => {
                         console.log(error);
-                        enqueueSnackbar(error.message, {
+                        enqueueSnackbar(error.profile_status, {
                             anchorOrigin: {
                                 vertical: 'top',
                                 horizontal: 'right',
@@ -314,7 +358,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                                         onChange={handleChange}
                                     />
                                 </Grid>
-                                <Grid item md={6}>
+                                {/* <Grid item md={6}>
                                     <TextInput
                                         id="date"
                                         label="Date of Birth"
@@ -326,6 +370,40 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                                         onChange={handleChange}
                                         InputLabelProps={{ shrink: true }}
                                     />
+                                </Grid> */}
+                                <Grid item md={6}>
+
+                                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                        <KeyboardDatePicker
+                                            // disableToolbar
+                                            // hideTabs={true}
+                                            variant='inline'
+                                            inputVariant='outlined'
+                                            label="Date of Birth"
+                                            format='dd/MM/yyy'
+                                            // views={["date", "month", "year"]}
+                                            animateYearScrolling={true}
+                                            invalidDateMessage='Invalid Date Format'
+                                            error={errors.dob}
+                                            helperText={errors.dob}
+                                            readOnly={readOnly}
+                                            disabled={readOnly}
+                                            margin='normal'
+                                            id='date-picker'
+                                            autoOk={true}
+                                            value={selectedDate !== null ? selectedDate : values.dob}
+                                            onChange={handleDateChange}
+                                            keyboardButtonProps={{
+                                                'aria-label': 'change date'
+                                            }}
+                                            PopoverProps={{
+                                                anchorOrigin: {
+                                                    vertical: 'bottom',
+                                                    horizontal: 'center',
+                                                }
+                                            }}
+                                        />
+                                    </MuiPickersUtilsProvider>
                                 </Grid>
                                 <Grid item md={6}>
                                     <TextInput

@@ -19,7 +19,7 @@ const useStyles = makeStyles({
     },
 });
 const LmsLosTable = () => {
-    usePageTitle('Exceptions');
+    usePageTitle('Loan Exceptions');
     const classes = useStyles();
     const [exceptions, setExceptions] = useState([]);
 

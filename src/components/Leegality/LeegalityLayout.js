@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Table from '@material-ui/core/Table';
@@ -19,6 +20,12 @@ import PdfViewer from '../CommonComponents/PdfViewer/PdfViewer';
 import apiCall from '../../utils/api.util';
 import { useSnackbar } from 'notistack';
 import { DockTwoTone } from '@material-ui/icons';
+import SettingsIcon from '@material-ui/icons/Settings';
+import Popover from '@material-ui/core/Popover';
+import DeleteIcon from '@material-ui/icons/Delete';
+import LinkIcon from '@material-ui/icons/Link';
+import { Typography } from '@material-ui/core';
+
 
 const Card = styled.div`
   background-color: #fff;
@@ -43,13 +50,39 @@ const Card = styled.div`
     border-radius: 0 0 4px 4px;
   }
 `;
+const useStyles = makeStyles((theme) => ({
+  popover: {
+    padding: theme.spacing(2),
+    paddingBottom:0,
+    minWidth:'40px',
+  },
+  icon: {
+    display: 'flex',
+    marginBottom:theme.spacing(2),
+  },
+  text: {
+    marginLeft:theme.spacing(1),
+  }
+}));
 
 const LeegalityLayout = ({ docId }) => {
   const [auditTrails, setAuditTrails] = useState([]);
   const [docDetails, setDocDetails] = useState({});
   const [successStatus, setSuccessStatus] = useState(false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
   // const [signUrl, setSignUrl] = useState();
   const { enqueueSnackbar } = useSnackbar();
+  const classes = useStyles();
+
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
 
   useEffect(() => {
 
@@ -86,7 +119,7 @@ const LeegalityLayout = ({ docId }) => {
     apiCall(`document/resend`, {
 
       method: "POST",
-      body: {"sign_url":signUrl},
+      body: { "sign_url": signUrl },
     })
       .then(res => {
         enqueueSnackbar(res.message, {
@@ -197,6 +230,32 @@ const LeegalityLayout = ({ docId }) => {
                           <Button variant="outlined" color="secondary" onClick={ActivateDealer} size="small">Activate</Button>
                       }
                       {/* <Button variant="outlined" color="secondary" size="small">Details</Button> */}
+                      <SettingsIcon fontSize={'small'} color={'action'} onClick={handleClick} />
+                      <Popover
+                        // id={id}
+                        open={Boolean(anchorEl)}
+                        anchorEl={anchorEl}
+                        onClose={handleClose}
+                        anchorOrigin={{
+                          vertical: 'bottom',
+                          horizontal: 'center',
+                        }}
+                        transformOrigin={{
+                          vertical: 'top',
+                          horizontal: 'center',
+                        }}
+                      >
+                        <div className={classes.popover}>
+                          <div className={classes.icon}>
+                            <DeleteIcon fontSize='small' />
+                            <Typography className={classes.text}>Delete</Typography>
+                          </div>
+                          <div className={classes.icon} onClick={() => navigator.clipboard.writeText(item.signUrl)}>
+                            <LinkIcon fontSize='small' />
+                            <Typography className={classes.text}>Copy link</Typography>
+                          </div>
+                        </div>
+                      </Popover>
                     </div>
                   </Card>
                 ))

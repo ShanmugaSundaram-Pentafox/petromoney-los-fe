@@ -6,20 +6,9 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
-import Drawer from '@material-ui/core/Drawer';
 import Button from '@material-ui/core/Button';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Chip from '@material-ui/core/Chip';
-import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
-import EditRoundedIcon from '@material-ui/icons/EditRounded';
-import MoreHorizRoundedIcon from '@material-ui/icons/MoreHorizRounded';
-import { getDealersByDealershipId, getCoApplicantByDealershipId } from '../../../services/dealers.service';
-import CreditInfoSideWrapper from "./CreditInfoSideWrapper";
-import DealerEditSideWrapper from './DealerEditSideWrapper';
-import AddIconButon from './AddIcon';
 
 const useStyles = makeStyles(theme => ({
     wrapper: {
@@ -74,7 +63,6 @@ const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExper
                 }
             </div>
         );
-
     return (
         <div className={classes.wrapper}>
             <div className={classes.header}>
@@ -92,8 +80,8 @@ const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExper
                     {data.map(row => (
                         <TableRow className={classes.tableRow} key={row.id} onClick={e => editable && dealersClickRow(e, row, 'DEALER')}>
                             <TableCell>
-                              {row.first_name}&nbsp;&nbsp;
-                              <Chip size="small" label="Experian Report" onClick={(e) => getExperianData(e, row.id)} />
+                                {row.first_name}&nbsp;&nbsp;
+                                <Chip size="small" label="Experian Report" onClick={(e) => getExperianData(e, row.id)} />
                             </TableCell>
                             <TableCell align="center">{row.mobile}</TableCell>
                             <TableCell align="center">
@@ -114,7 +102,7 @@ const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExper
                                 {!row.pan_file_url && !row.aadhar_b_file_url && !row.aadhar_f_file_url &&
                                     <TableCell style={{ border: 0 }} align="center">
                                         -
-                  </TableCell>}
+                                    </TableCell>}
                             </TableCell>
                         </TableRow>
                     ))}

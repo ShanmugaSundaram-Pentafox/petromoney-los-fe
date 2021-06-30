@@ -112,7 +112,6 @@ export const OwnerInfoCard = ({ id, ownerData, currentUser }) => {
     const handleEdit = () => {
         setOpenEditModal(!openEditModal)
     }
-
     return (
         <>
             <Card>
@@ -251,7 +250,6 @@ const OwnerDetails = ({ currentUser, match, loading }) => {
             );
         }
     };
-
     return (
         <>
             <Grid container>
@@ -261,7 +259,7 @@ const OwnerDetails = ({ currentUser, match, loading }) => {
                 <Grid item md={9}>
                     <div >
                         {
-                            Array.isArray(transportsData) && transportsData.length ? (
+                            Array.isArray(transportsData)  ? (
 
                                 <MUIDataTable
                                     title={<Typography className={classes.tableTitle} variant="h4" component="h4">Transports List</Typography>}

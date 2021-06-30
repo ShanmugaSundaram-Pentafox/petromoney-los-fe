@@ -393,6 +393,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                                             autoOk={true}
                                             value={selectedDate !== null ? selectedDate : values.dob}
                                             onChange={handleDateChange}
+                                            InputLabelProps={{ shrink: true }}
                                             keyboardButtonProps={{
                                                 'aria-label': 'change date'
                                             }}
@@ -498,6 +499,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                                         readOnly={readOnly}
                                         helperText={errors.mobile}
                                         type='number'
+                                        InputLabelProps={{ shrink: true }}
                                     ></TextInput>
                                 </Grid>
                                 <Grid item md={6}>
@@ -509,6 +511,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                                         helperText={errors.email}
                                         defaultValue={values.email}
                                         onChange={handleChange}
+                                        InputLabelProps={{ shrink: true }}
                                     />
                                 </Grid>
                                 <Grid item md={6}>
@@ -520,6 +523,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                                         readOnly={readOnly}
                                         error={errors.aadhar}
                                         onChange={handleChange}
+                                        InputLabelProps={{ shrink: true }}
                                     >
                                     </TextInput>
                                 </Grid>
@@ -532,6 +536,8 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                                         readOnly={readOnly}
                                         helperText={errors.pan}
                                         onChange={handleChange}
+                                        InputLabelProps={{ shrink: true }}
+
                                     >
                                     </TextInput>
                                 </Grid>

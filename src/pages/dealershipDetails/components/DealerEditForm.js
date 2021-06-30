@@ -119,6 +119,7 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                         defaultValue={values.first_name}
                         helperText={errors.first_name}
                         onChange={onChange}
+                        InputLabelProps={{ shrink: true }}
                     />
                 </Grid>
                 <Grid {...gridItem} md={6}>
@@ -130,6 +131,7 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                         helperText={errors.last_name}
                         defaultValue={values.last_name}
                         onChange={onChange}
+                        InputLabelProps={{ shrink: true }}
                     />
                 </Grid>
                 <Grid {...gridItem} md={6}>
@@ -145,6 +147,7 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                         SelectProps={{
                             native: true,
                         }}
+                        InputLabelProps={{ shrink: true }}
                     >
                         <option value="null">Select Gender</option>
                         <option value={'MALE'}>Male</option>
@@ -175,6 +178,7 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                                     horizontal: 'center',
                                 }
                             }}
+                            InputLabelProps={{ shrink: true }}
                         />
                     </MuiPickersUtilsProvider>
                     {/* <TextInput
@@ -205,6 +209,7 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                                 SelectProps={{
                                     native: true,
                                 }}
+                                InputLabelProps={{ shrink: true }}
                             >
                                 <option value="null">Choose Relative</option>
                                 {
@@ -253,6 +258,7 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                         onChange={onChange}
                         rows={3}
                         multiline={true}
+                        InputLabelProps={{ shrink: true }}
                     />
                 </Grid>
                 <Grid {...gridItem} md={6}>
@@ -267,6 +273,7 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                         SelectProps={{
                             native: true,
                         }}
+                        InputLabelProps={{ shrink: true }}
                     >
                         {
                             <>
@@ -294,6 +301,7 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                         SelectProps={{
                             native: true,
                         }}
+                        InputLabelProps={{ shrink: true }}
                     >
                         <option value="null">Choose Marital Status</option>
                         <option value="Single">Single</option>
@@ -312,6 +320,7 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                         error={errors.mobile}
                         helperText={errors.mobile}
                         type='number'
+                        InputLabelProps={{ shrink: true }}
                     ></TextInput>
                 </Grid>
                 <Grid {...gridItem} md={6}>
@@ -323,6 +332,7 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                         helperText={errors.email}
                         defaultValue={values.email}
                         onChange={onChange}
+                        InputLabelProps={{ shrink: true }}
                     />
                 </Grid>
                 <Grid {...gridItem} md={6}>
@@ -337,6 +347,7 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                                     name="checkedA"
                                     color="primary"
                                     inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                    InputLabelProps={{ shrink: true }}
                                 />
                             </Grid>
                             <Grid>Yes</Grid>
@@ -370,6 +381,8 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                         readOnly={readOnly}
                         error={errors.aadhar}
                         onChange={onChange}
+                        InputLabelProps={{ shrink: true }}
+
                     >
                     </TextInput>
                 </Grid>
@@ -382,6 +395,8 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                         helperText={errors.pan}
                         readOnly={readOnly}
                         onChange={onChange}
+                        InputLabelProps={{ shrink: true }}
+
                     >
                     </TextInput>
                 </Grid>

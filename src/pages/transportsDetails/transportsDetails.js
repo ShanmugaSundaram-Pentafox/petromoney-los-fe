@@ -1,9 +1,7 @@
 import React, { useState } from "react"
-import { withStyles } from "@material-ui/core/styles"
 import { makeStyles } from "@material-ui/styles"
 import Grid from "@material-ui/core/Grid"
 import Button from "@material-ui/core/Button"
-import TransportsInfo from "./components/transportsInfo"
 import { useMount } from "react-use"
 import usePageTitle from "../../hooks/usePageTitle"
 import {
@@ -13,13 +11,8 @@ import {
 } from "../../services/transports.service"
 import VehicleInfo from "./components/VehicleInfo"
 import InfoCard from "../../components/CommonComponents/Cards/InfoCard"
-import FormDialog from "../../components/CommonComponents/FormDialog/FormDialog"
 import AddNewVehicleForm from '../transports/components/AddNewVehicleForm'
 import { Drawer } from "@material-ui/core";
-import Divider from '@material-ui/core/Divider';
-import clsx from 'clsx';
-import CloseIcon from '@material-ui/icons/Close';
-import { Typography } from "@material-ui/core"
 import AddNewTransportsForm from "../transports/components/AddNewTransportsForm"
 
 const useStyles = makeStyles((theme) => ({
@@ -109,6 +102,7 @@ const TransportsDetails = ({ currentUser, match }) => {
   const handleClose = () => {
     setShowModal(!showModal)
   }
+  
   return (
     <>
       <Grid container spacing={2}>

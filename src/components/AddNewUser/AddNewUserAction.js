@@ -12,60 +12,11 @@ import clsx from 'clsx';
 import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from "@material-ui/styles";
 
-const useStyles = makeStyles((theme) => ({
-  title: {
-    textAlign: 'center',
-    paddingTop: theme.spacing(1),
-    color: '#9e9e9e'
-  },
-  sidePanelTitle: {
-    // textAlign: 'center',
-    padding: '24px 16px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    zIndex: 0,
-    boxShadow: '0 1px 4px -3px #333'
-  },
-  sidePanelFormWrapper: {
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100vh',
-    width: '40vw'
-  },
-  sidePanelFormContentWrapper: {
-    flex: 1,
-    overflow: 'auto'
-  },
-  tableRow: {
-    cursor: 'pointer'
-  },
-  stepperRoot: {
-    padding: 16,
-    paddingTop: 8
-  },
-  actionButtonsWrapper: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: '12px 16px'
-  },
-  editButton: {
-    marginRight: '8px',
-    '&.MuiButton-contained': {
-      backgroundColor: theme.palette.success.main,
-      color: theme.palette.white
-    },
-    '&.MuiButton-contained:hover': {
-      backgroundColor: theme.palette.success.dark
-    }
-  }
-}))
-
 
 const AddNewUserAction = () => {
   const [openModal, setOpenModal] = useState(false);
   const dispatch = useDispatch();
-  const classes = useStyles()
+  // const classes = useStyles()
 
 
   const saveUserCallback = () => {
@@ -78,6 +29,10 @@ const AddNewUserAction = () => {
       });
 
     setOpenModal(false);
+  }
+  const handleClose = () => {
+    setOpenModal(false)
+
   }
 
   return (
@@ -95,39 +50,7 @@ const AddNewUserAction = () => {
         onClose={() => setOpenModal(false)}
         variant="temporary"
       >
-        <div className={classes.sidePanelFormWrapper}>
-          <Typography className={classes.sidePanelTitle} variant="h4">
-            <div>Add New User Form</div>
-            <CloseIcon onClick={() => setOpenModal(false)} />
-          </Typography>
-          <div className={classes.sidePanelFormContentWrapper}>
-            <div className={classes.stepperRoot}>
-              <AddNewUserForm callback={saveUserCallback} />
-            </div>
-          </div>
-          <div className={classes.actionFooter}>
-            <Divider />
-            <div className={classes.actionButtonsWrapper}>
-              <div>
-                <Button
-                  variant="outlined"
-                  onClick={() => setOpenModal(false)}
-                >
-                  Back
-                </Button>
-              </div>
-              <div>
-                <Button
-                  variant="contained"
-                  type="submit"
-                  className={clsx(classes.btn, classes.editButton)}
-                >
-                  Create New User
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <AddNewUserForm callback={saveUserCallback} action={() => handleClose()} />
       </Drawer>
       {/* <FormDialog
         title="New User Form"

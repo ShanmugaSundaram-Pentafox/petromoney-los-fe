@@ -80,7 +80,7 @@ const DealershipDetails = ({ currentUser, match }) => {
   const [showCreditReport, setShowCreditReport] = useState();
   const [showSolarForm, setShowSolarForm] = useState();
   const [leegalityModalVisible, setLeegalityModalVisible] = useState(false);
-  const [dealerLoanData,setDealerLoanData] = useState();
+  const [dealerLoanData, setDealerLoanData] = useState();
   const {
     url,
     params: { id },
@@ -114,11 +114,10 @@ const DealershipDetails = ({ currentUser, match }) => {
       .catch((e) => null);
   });
 
-  usePageTitle(`${id} - ${dealershipData && (dealershipData.name || '')}`, true)
-
+  usePageTitle(`${id} - ( ${dealershipData && (dealershipData.name || '')}  ${mainApplicant ? (- mainApplicant.mobile || '' ) : ''})`, true)
   return (
     <div>
-      <Grid container spacing={2}>
+      {/* <Grid container spacing={2}>
         <Grid item xs={6} sm={4}>
           <InfoCard
             title={"Dealership Info"}
@@ -140,8 +139,8 @@ const DealershipDetails = ({ currentUser, match }) => {
               />
             </Grid>
           ) : null
-        }
-        {/* <Grid item xs={6} sm={4}>
+        } */}
+      {/* <Grid item xs={6} sm={4}>
           <InfoCard 
             title={" "}
             userInitial={`V`}
@@ -152,7 +151,7 @@ const DealershipDetails = ({ currentUser, match }) => {
             }}
           />
         </Grid> */}
-      </Grid>
+      {/* </Grid> */}
       <div className={classes.tabsWrapper}>
         <div>
           <Collapse in={!showSolarForm}>

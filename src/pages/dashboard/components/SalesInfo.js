@@ -8,6 +8,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
+import ClearRoundedIcon from '@material-ui/icons/ClearRounded';
 import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
 import Currency from '../../../components/Number/Currency';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
@@ -258,40 +259,41 @@ const SalesInfo = ({
                     </TableCell>
                   </TableRow>
                 ) : (
-                    <TableRow key={i}>
-                      <TableCell scope="row" component="th">{row.from_year} - {row.to_year}
-                        {row.to_year >= 2020 ? <InfoOutlinedIcon
-                          className={classes.infoIcon}
-                          color='primary'
-                          aria-haspopup="true"
-                          aria-owns={open ? 'mouse-over-popover' : undefined}
-                          onMouseEnter={handlePopoverOpen}
-                          onMouseLeave={handlePopoverClose} />
-                          : null}</TableCell>
-                      {row.to_year >= 2020 ?
-                        <TableCell align="center" colSpan={2}>{row.ms?.toFixed(2)}</TableCell>
-                        : <>
-                          <TableCell align="right">{row.ms?.toFixed(2)}</TableCell>
-                          <TableCell align="right">{row.hsd?.toFixed(2)}</TableCell>
-                        </>}
-                      <TableCell align="right">{(row.ms + row.hsd)?.toFixed(2)}</TableCell>
-                      <TableCell align="right">
-                        {
-                          editable ? (
-                            <Button
-                              size="small"
-                              variant="outlined"
-                              color="success"
-                              className={classes.btnSuccess}
-                              onClick={() => editSalesRow(row, i)}>
-                              Edit
-                            </Button>
-                          ) : null
+                  <TableRow key={i}>
+                    <TableCell scope="row" component="th">{row.from_year} - {row.to_year}
+                      {/* {row.to_year >= 2020 ? <InfoOutlinedIcon
+                        className={classes.infoIcon}
+                        color='primary'
+                        aria-haspopup="true"
+                        aria-owns={open ? 'mouse-over-popover' : undefined}
+                        onMouseEnter={handlePopoverOpen}
+                        onMouseLeave={handlePopoverClose} />
+                        : null} */}
+                    </TableCell>
+                    {/* {row.to_year >= 2020 ?
+                      <TableCell align="center" colSpan={2}>{row.ms?.toFixed(2)}</TableCell>
+                      : <> */}
+                    <TableCell align="right">{row.ms?.toFixed(2)}</TableCell>
+                    <TableCell align="right">{row.hsd?.toFixed(2)}</TableCell>
+                    {/* </>} */}
+                    <TableCell align="right">{(row.ms + row.hsd)?.toFixed(2)}</TableCell>
+                    <TableCell align="right">
+                      {
+                        editable ? (
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            color="success"
+                            className={classes.btnSuccess}
+                            onClick={() => editSalesRow(row, i)}>
+                            Edit
+                          </Button>
+                        ) : null
                       }
 
-                      </TableCell>
-                    </TableRow>
-                  ))
+                    </TableCell>
+                  </TableRow>
+                ))
               }
               {
                 addNewRow && (
@@ -342,7 +344,7 @@ const SalesInfo = ({
                         onClick={() => {
                           setAddNewRow(false);
                         }}>
-                        <DeleteForeverRoundedIcon fontSize="small" />
+                        <ClearRoundedIcon fontSize="small" />
                       </Button>
                       <Button
                         size="small"
@@ -385,20 +387,21 @@ const SalesInfo = ({
                 info.map((row, i) => (
                   <TableRow key={i}>
                     <TableCell scope="row" component="th">{row.from_year} - {row.to_year}
-                      {row.to_year >= 2020 ? <InfoOutlinedIcon
+                      {/* {row.to_year >= 2020 ? <InfoOutlinedIcon
                         className={classes.infoIcon}
                         color='primary'
                         aria-haspopup="true"
                         aria-owns={open ? 'mouse-over-popover' : undefined}
                         onMouseEnter={handlePopoverOpen}
                         onMouseLeave={handlePopoverClose} />
-                        : null}</TableCell>
-                    {row.to_year >= 2020 ?
+                        : null} */}
+                    </TableCell>
+                    {/* {row.to_year >= 2020 ?
                       <TableCell align="center" colSpan={2}><Currency value={row.ms_rs?.toFixed(2)} /></TableCell>
-                      : <>
-                        <TableCell align="right"><Currency value={row.ms_rs?.toFixed(2)} /></TableCell>
-                        <TableCell align="right"><Currency value={row.hsd_rs?.toFixed(2)} /></TableCell>
-                      </>}
+                      : <> */}
+                    <TableCell align="right"><Currency value={row.ms_rs?.toFixed(2)} /></TableCell>
+                    <TableCell align="right"><Currency value={row.hsd_rs?.toFixed(2)} /></TableCell>
+                    {/* </>} */}
                     <TableCell align="right"><Currency value={(row.ms_rs + row.hsd_rs)?.toFixed(2)} /></TableCell>
                   </TableRow>
                 ))

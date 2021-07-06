@@ -87,7 +87,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const columns = useMemo(() => {
     return [
       {
-        label: 'Delaership Id',
+        label: 'Dealership Id',
         name: 'dealership_id',
         options: {
           filter: false,

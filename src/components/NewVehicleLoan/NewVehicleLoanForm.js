@@ -56,7 +56,7 @@ const NewVehicleLoanForm = ({ vehicleId, callback, currentUser }) => {
           credit_head_id: parseInt(formData.credit_head),
           loan_amount: formData.loan_amount || 0,
           remarks,
-          user_id: currentUser.id,
+          // user_id: currentUser.id,
         }
       })
       .then(res => {

@@ -20,6 +20,7 @@ import AddNewUserAction from '../AddNewUser/AddNewUserAction';
 import SendEmailAction from '../../pages/reports/SendEmailAction';
 import { permissionCheck } from '../UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
+import styled from 'styled-components';
 // import Searchbox from '../CommonComponents/Searchbox';
 
 const useStyles = makeStyles(theme => {
@@ -65,6 +66,39 @@ const useStyles = makeStyles(theme => {
     }
   })
 });
+const CardWrapper = styled.div`
+  border-radius: 4px;
+  color: #343434;
+  position: relative;
+  cursor: pointer;
+  line-height:1.5;
+  flex: 1;
+  min-width: 140px;
+  text-align: center;
+  border-right: ${props => props.noBorder ? 'none' : '1px dashed #ccc'};
+  .stat-number-block {
+    display: flex;
+    padding: 16px;
+    padding-bottom: 0;
+    justify-content: space-between;
+
+    .stat-number {
+      color:#525252;
+      font-size: 10px;
+      // line-height:1.2;
+      font-weight: 600;
+      flex: 1;
+    }
+    
+  }
+  .stat-desc {
+    // padding: 8px 16px 12px 16px;
+    padding-bottom:14px;
+    // line-height:1;
+    font-size: 12px;
+  }
+`;
+
 
 const Topbar = (props) => {
   const { className, onSidebarOpen, pageTitle, user, logout, match, history, goBackIcon, appBarProps, dashboardView, updateDashboardView } = props;
@@ -90,7 +124,7 @@ const Topbar = (props) => {
             />
           </RouterLink> */}
           {
-            
+
             goBackIcon && editable && (
               <Tooltip title="Go Back">
                 <IconButton edge="start" className={classes.goback} color="inherit" aria-label="goback" onClick={history.goBack}>
@@ -100,9 +134,27 @@ const Topbar = (props) => {
             )
           }
           <h2 className={classes.title}>
-            {pageTitle}
+            {typeof pageTitle === 'string' ? pageTitle : (
+              <>
+                {/* <pageTitle /> */}
+                {
+                  Array.isArray(pageTitle) && pageTitle.map((item, i) => (
+                    <CardWrapper>
+                      <div>
+                        <div className="stat-number-block">
+                          <div className="stat-number">
+                            {item?.label}
+                          </div>
+                        </div>
+                        <div className="stat-desc">{item.value || '-'}</div>
+                      </div>
+                    </CardWrapper>
+                  ))
+                }
+              </>
+            )}
             {
-              pageTitle?.toLowerCase() == "dashboard" && user.role_name != "DEALER" ? (
+              typeof pageTitle === 'string' && pageTitle?.toLowerCase() == "dashboard" && user.role_name != "DEALER" ? (
                 <span className={classes.optionsContainer}>
                   <RadioGroup onChange={(e, v) => updateDashboardView(v)} row aria-label="dashboard-view-type" name="dashboard-view-type" defaultValue={dashboardView}>
                     <Tooltip title="Loan Origination System">
@@ -121,7 +173,7 @@ const Topbar = (props) => {
                     </Tooltip>
                   </RadioGroup>
                 </span>
-              ) :null
+              ) : null
             }
 
             {
@@ -154,7 +206,7 @@ const Topbar = (props) => {
             {/* <Searchbox /> */}
             {/* <NotificationsBell action={() => setShowNotificationSidebar(true)} /> */}
             <LoginUserInfo user={user} logout={logout} />
-  
+
             {/* <Tooltip title="Logout">
               <IconButton
                 className={classes.signOutButton}

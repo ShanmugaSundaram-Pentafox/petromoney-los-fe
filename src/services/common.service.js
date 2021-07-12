@@ -233,3 +233,18 @@ export const getPassbookDetails = (id) => {
       })
   });
 }
+export const getStates = () => {
+  return new Promise((resolve, reject) => {
+    apiCall("states")
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(err => {
+        reject(err.message);
+      })
+  })
+}

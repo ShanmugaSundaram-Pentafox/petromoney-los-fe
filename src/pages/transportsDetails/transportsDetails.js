@@ -10,10 +10,8 @@ import {
   getVehicleInfoFromID,
 } from "../../services/transports.service"
 import VehicleInfo from "./components/VehicleInfo"
-import InfoCard from "../../components/CommonComponents/Cards/InfoCard"
 import AddNewVehicleForm from '../transports/components/AddNewVehicleForm'
 import { Drawer } from "@material-ui/core";
-import AddNewTransportsForm from "../transports/components/AddNewTransportsForm"
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -65,8 +63,20 @@ const useStyles = makeStyles((theme) => ({
   transportsInfo: {
     maxWidth: '40vw',
     padding: theme.spacing(2)
+  },
+  card: {
+    [theme.breakpoints.up('sm')]: {
+      flexWrap: "wrap",
+      [theme.breakpoints.up('md')]: {
+        flexWrap: "nowrap",
+      }
+    }
+  },
+  btn: {
+    marginTop: 14,
   }
 }))
+
 
 const TransportsDetails = ({ currentUser, match }) => {
   const [ownerInfo, setOwnerInfo] = useState()
@@ -74,6 +84,7 @@ const TransportsDetails = ({ currentUser, match }) => {
   const [transportsData, setTransportsData] = useState()
   const [vehicleData, setVehicleData] = useState()
   const [showModal, setShowModal] = useState(false)
+
   const classes = useStyles()
   const {
     url,
@@ -83,7 +94,7 @@ const TransportsDetails = ({ currentUser, match }) => {
     getTransporterInfoFromID(id)
       .then(data => {
         setTransportsData(data);
-        return data.pm_user_id
+        return data.t_owner_id
       })
       .then(getTransportOwnerInfo)
       .then(data => {
@@ -97,16 +108,27 @@ const TransportsDetails = ({ currentUser, match }) => {
         setVehicleData(data)
       })
       .catch((e) => null)
+
+
   })
-  usePageTitle(`${id} - ${transportsData && transportsData?.name}`, true)
+  let cardData = [
+    { label: 'Dealership ID', value: ownerInfo?.dealership_id },
+    { label: 'Transport ID', value: transportsData?.id },
+    { label: 'Transport name', value: transportsData?.name },
+    { label: 'Owner name', value: ownerInfo?.first_name },
+    { label: 'Mobile', value: ownerInfo?.mobile },
+  ]
+  usePageTitle(`${id} - ${transportsData && transportsData?.name}`, true, cardData)
+
   const handleClose = () => {
     setShowModal(!showModal)
   }
-  
+
+
   return (
     <>
       <Grid container spacing={2}>
-        {
+        {/* {
           currentUser.role_name !== 'DEALER' ? (
             <Grid item container spacing={2}>
               <Grid item md={4} xs={12}>
@@ -128,11 +150,11 @@ const TransportsDetails = ({ currentUser, match }) => {
                     variant="temporary"
                   >
                     {/* <TransportsInfo data={transportsData} currentUser={currentUser} /> */}
-                    <AddNewTransportsForm callback={handleClose} data={transportsData} />
+        {/* <AddNewTransportsForm callback={handleClose} data={transportsData} />
                   </Drawer>
                 )}
-              </Grid>
-              {/* <Grid item md={4} xs={12}>
+              </Grid> */}
+        {/* <Grid item md={4} xs={12}>
                 <InfoCard
                   title={"Owner Info"}
                   noMargin
@@ -143,13 +165,14 @@ const TransportsDetails = ({ currentUser, match }) => {
                   description={ownerInfo?.address}
                 />
               </Grid> */}
-            </Grid>
+        {/* </Grid>
           ) : null
-        }
+        } */}
         <Grid item xs={12} md={12}>
           <Button
             color="primary"
             variant="contained"
+            className={classes.btn}
             onClick={() => setOpenModal(true)}
           >
             Add Vehicle

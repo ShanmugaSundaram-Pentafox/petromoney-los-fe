@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useMount } from 'react-use';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
 import Alert from '@material-ui/lab/Alert';
@@ -18,6 +19,7 @@ import { rulesList } from '../../../config/userRules';
 import apiCall from '../../../utils/api.util';
 import Button from '../../../components/CommonComponents/Button/Button';
 import { encrypt } from '../../../services/crypto.service';
+import { getBusinessTypes, getStates } from '../../../services/common.service';
 // import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -36,25 +38,32 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
   const [readOnly, setReadOnly] = useState(true);
   const [loading, setLoading] = useState();
   const [apiStatus, setApiStatus] = useState({});
-  const {values, handleChange: onChange, handleSubmit} = useFormik({
+  const [businessTypes, setBusinessTypes] = useState([{}, {}, {}, {}, {}]);
+  const [states, setStates] = useState([])
+  const { values, handleChange: onChange, handleSubmit } = useFormik({
     initialValues: data,
     onSubmit: values => {
-      console.log('Form Values >> ', values);
+      const data = new FormData();
+      Object.keys(values).forEach(key => {
+        data.append(key, values[key]);
+      })
+      // console.log('Form Values >> ', values.id);
       let pan = values?.pan ? encrypt(values.pan) : values?.pan;
       let gst = values?.gst ? encrypt(values.gst) : values?.gst;
       setLoading(true);
       setApiStatus({});
-      apiCall(`${URL.dealership}/${values.id}`, {
-        method: "POST",
-        body: {
-          ...values,
-          pan,
-          gst,
-          user_id: currentUser.id
+      fetch(`${URL.base}${URL.dealership}/${values.id}`, {
+        method: 'POST',
+        body: data,
+        headers: {
+          'Authorization': `Bearer ${currentUser.token} `
         }
       })
+        .then(res => {
+          return res.json()
+        })
         .then(({ status, message, data }) => {
-          if(status == 'success') {
+          if (status == 'SUCCESS') {
             setApiStatus({ type: 'success', message: message || 'Details updated successfully' })
             setLoading(false);
           }
@@ -71,6 +80,20 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         })
     }
   });
+  useMount(() => {
+    getBusinessTypes()
+      .then(setBusinessTypes)
+      .catch(err => {
+        console.log('BusinessTypes fetch error - ', err)
+      })
+    getStates()
+      .then(setStates)
+      .catch(err => {
+        console.log('BusinessTypes fetch error - ', err)
+      })
+
+  });
+
   // const [values, setValues] = useState(data);
   const classes = useStyles();
   const gridProps = {
@@ -94,6 +117,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
     onChange
   }
 
+
   return (
     <Card className={clsx(classes.root, className)}>
       <form
@@ -109,26 +133,48 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
               <TextInput
                 labelText="Name"
                 name="name"
+                readOnly={readOnly}
+                disabled={readOnly}
                 defaultValue={values.name}
                 {...fieldProps}
-                />
+              />
             </Grid>
+
             <Grid {...gridProps}>
               <TextInput
                 multiline
                 labelText="Address"
                 name="address"
+                readOnly={readOnly}
+                disabled={readOnly}
                 defaultValue={values.address}
                 {...fieldProps}
-                />
+              />
             </Grid>
+            <Grid {...gridProps} sm={6}>
+              <TextInput
+                select
+                labelText="Business Type"
+                name="business_type"
+                readOnly={readOnly}
+                disabled={readOnly}
+                defaultValue={businessTypes[values.business_type-1].name}
+                {...fieldProps}
+              >
+                <option value="">{businessTypes[values.business_type].name}</option>
+                {
+                  businessTypes.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
+                }
+              </TextInput>
+            </Grid>
+
             <Grid {...gridProps}>
               <TextInput
-                labelText="Pincode"
-                name="pincode"
-                defaultValue={values.pincode}
+                labelText="GST"
+                name="gst"
+                defaultValue={values.gst}
                 {...fieldProps}
-                />
+              />
             </Grid>
             <Grid {...gridProps}>
               <TextInput
@@ -136,75 +182,92 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 name="pan"
                 defaultValue={values.pan}
                 {...fieldProps}
-                />
-            </Grid>
-            <Grid {...gridProps}>
-              <TextInput 
-                labelText="GST"
-                name="gst"
-                defaultValue={values.gst}
-                {...fieldProps}
-                />
+              />
             </Grid>
             <Divider />
-            <Grid {...gridProps} xs={6}>
-              <TextInput 
+            {/* <Grid {...gridProps} xs={6}>
+              <TextInput
                 labelText="Latitude"
                 name="latitude"
                 labelWidth={40}
                 defaultValue={values.latitude}
                 {...fieldProps}
-                />
+              />
             </Grid>
             <Grid {...gridProps} xs={6}>
-              <TextInput 
+              <TextInput
                 labelText="Longtitude"
                 name="longtitude"
                 labelWidth={40}
                 defaultValue={values.longtitude}
                 {...fieldProps}
-                />
-            </Grid>
+              />
+            </Grid> */}
+
             <Grid {...gridProps} xs={6}>
-              <TextInput 
-                labelText="District"
-                labelWidth={40}
-                defaultValue={values.district}
-                readOnly
-                alignTop
-                direction="column"
-                />
-            </Grid>
-            <Grid {...gridProps} xs={6}>
-              <TextInput 
+              <TextInput
+                select
                 labelText="State"
                 labelWidth={40}
                 defaultValue={values.state}
                 readOnly
                 alignTop
                 direction="column"
-                />
+              >
+                {
+                  states.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
+                }
+              </TextInput>
             </Grid>
+
+
             <Grid {...gridProps} xs={6}>
-              <TextInput 
+              <TextInput
+                labelText="District"
+                labelWidth={40}
+                defaultValue={values.district}
+                readOnly
+                alignTop
+                direction="column"
+              />
+            </Grid>
+            <Grid {...gridProps} sm={6}>
+              <TextInput
+                labelText="Region"
+                name="region"
+                defaultValue={values.region}
+                {...fieldProps}
+              />
+            </Grid>
+
+            <Grid {...gridProps}>
+              <TextInput
+                labelText="Pincode"
+                name="pincode"
+                defaultValue={values.pincode}
+                {...fieldProps}
+              />
+            </Grid>
+            {/* <Grid {...gridProps} xs={6}>
+              <TextInput
                 labelText="Sales Area"
                 labelWidth={40}
                 defaultValue={values.sales_area}
                 readOnly
                 alignTop
                 direction="column"
-                />
+              />
             </Grid>
             <Grid {...gridProps} xs={6}>
-              <TextInput 
+              <TextInput
                 labelText="Zone"
                 labelWidth={40}
                 defaultValue={values.zone}
                 readOnly
                 alignTop
                 direction="column"
-                />
-            </Grid>
+              />
+            </Grid> */}
           </Grid>
         </Paper>
         <Divider />
@@ -219,22 +282,22 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
             size="small"
             variant="contained"
             onClick={toggleCreditReport}
-            >View/Edit Financial Report</Button>
+          >View/Edit Financial Report</Button>
           {!readOnly ? (
-              !loading ? (
-                <>
-                  <Button variant="contained" size="small" onClick={() => { setReadOnly(true); }}>Cancel</Button>
-                  <Button type="submit" color="primary" variant="contained" size="small">Save</Button>
-                </>
-                ) : <CircularProgress />
-            ) : (
-              <Button
-                disabled={!permissionCheck(currentUser.role_name, rulesList.dealership_edit)}
-                color="primary"
-                variant="contained"
-                size="small"
-                onClick={() => { setReadOnly(false); }}>Edit Details</Button>
-            )}
+            !loading ? (
+              <>
+                <Button variant="contained" size="small" onClick={() => { setReadOnly(true); }}>Cancel</Button>
+                <Button type="submit" color="primary" variant="contained" size="small">Save</Button>
+              </>
+            ) : <CircularProgress />
+          ) : (
+            <Button
+              disabled={!permissionCheck(currentUser.role_name, rulesList.dealership_edit)}
+              color="primary"
+              variant="contained"
+              size="small"
+              onClick={() => { setReadOnly(false); }}>Edit Details</Button>
+          )}
         </CardActions>
       </form>
     </Card>

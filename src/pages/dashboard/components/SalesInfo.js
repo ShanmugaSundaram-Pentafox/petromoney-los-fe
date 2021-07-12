@@ -45,6 +45,15 @@ const useStyles = makeStyles(theme => ({
     height: 15,
     color: '#ff0000'
   },
+  title: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  table: {
+    marginTop:20,
+
+  }
 }));
 
 const SalesInfoWrapper = styled.div`
@@ -183,7 +192,18 @@ const SalesInfo = ({
       >
         <Typography variant='subtitle2' component='div'>The combined value of MS and HSD are considered</Typography>
       </Popover>
-      <Typography align={titleAlign} variant="h5">Sales History</Typography>
+      <div className={classes.title}>
+        <Typography align={titleAlign} variant="h5">Sales History</Typography>
+        <UserCan
+          role={currentUser.role_name}
+          perform={rulesList.dealership_edit}
+          yes={() => (
+            <div style={{ textAlign: 'right', marginTop: 8 }}>
+              <Button color="primary" variant="contained" size="small" onClick={() => setAddNewRow(true)}>Add Sales Data</Button>
+            </div>
+          )}
+        />
+      </div>
       <SalesTableWrapper column={column}>
         <div>
           <Table size="small">
@@ -191,7 +211,9 @@ const SalesInfo = ({
               <TableRow>
                 <TableCell>Sales Data(in KL)</TableCell>
                 <TableCell align="center">MS</TableCell>
+                {/* <TableCell align="center">MS Gross</TableCell> */}
                 <TableCell align="center">HSD</TableCell>
+                {/* <TableCell align="center">HSD Gross</TableCell> */}
                 <TableCell align="right">Total (in KL)</TableCell>
                 <TableCell align="right">Action</TableCell>
               </TableRow>
@@ -274,7 +296,9 @@ const SalesInfo = ({
                       <TableCell align="center" colSpan={2}>{row.ms?.toFixed(2)}</TableCell>
                       : <> */}
                     <TableCell align="right">{row.ms?.toFixed(2)}</TableCell>
+                    {/* <TableCell align="right">{row.ms_gross?.toFixed(2)}</TableCell> */}
                     <TableCell align="right">{row.hsd?.toFixed(2)}</TableCell>
+                    {/* <TableCell align="right">{row.hsd_gross?.toFixed(2)}</TableCell> */}
                     {/* </>} */}
                     <TableCell align="right">{(row.ms + row.hsd)?.toFixed(2)}</TableCell>
                     <TableCell align="right">
@@ -362,7 +386,7 @@ const SalesInfo = ({
             </TableBody>
           </Table>
 
-          <UserCan
+          {/* <UserCan
             role={currentUser.role_name}
             perform={rulesList.dealership_edit}
             yes={() => (
@@ -370,15 +394,17 @@ const SalesInfo = ({
                 <Button color="primary" variant="contained" size="small" onClick={() => setAddNewRow(true)}>Add Sales Data</Button>
               </div>
             )}
-          />
+          /> */}
         </div>
-        <div>
+        <div className={classes.table}>
           <Table size="small">
             <TableHead>
               <TableRow>
                 <TableCell>Sales Data(in Lakhs)</TableCell>
                 <TableCell align="center">MS</TableCell>
+                <TableCell align="center">MS Gross</TableCell>
                 <TableCell align="center">HSD</TableCell>
+                <TableCell align="center">HSD Gross</TableCell>
                 <TableCell align="right">Total (in Lakhs)</TableCell>
               </TableRow>
             </TableHead>
@@ -400,7 +426,9 @@ const SalesInfo = ({
                       <TableCell align="center" colSpan={2}><Currency value={row.ms_rs?.toFixed(2)} /></TableCell>
                       : <> */}
                     <TableCell align="right"><Currency value={row.ms_rs?.toFixed(2)} /></TableCell>
+                    <TableCell align="right"><Currency value={row.ms_gross?.toFixed(2)} /></TableCell>
                     <TableCell align="right"><Currency value={row.hsd_rs?.toFixed(2)} /></TableCell>
+                    <TableCell align="right"><Currency value={row.hsd_gross?.toFixed(2)} /></TableCell>
                     {/* </>} */}
                     <TableCell align="right"><Currency value={(row.ms_rs + row.hsd_rs)?.toFixed(2)} /></TableCell>
                   </TableRow>

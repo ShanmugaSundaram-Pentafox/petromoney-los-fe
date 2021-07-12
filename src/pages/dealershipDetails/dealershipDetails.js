@@ -30,6 +30,8 @@ import InfoCard from "../../components/CommonComponents/Cards/InfoCard";
 import LeegalityLayout from "../../components/Leegality/LeegalityLayout";
 import DealershipTransport from "./components/DealershipTransport";
 import FleetOperatorsDetails from "./components/FleetOperatorsDetails";
+import styled from 'styled-components';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,6 +41,7 @@ const useStyles = makeStyles((theme) => ({
   tabsWrapper: {
     display: 'flex',
     flexGrow: 1,
+    marginTop: 20,
   },
   tabs: {
     borderRight: 'none',
@@ -69,6 +72,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#e5e5e5',
   },
 }));
+
+
 
 const DealershipDetails = ({ currentUser, match }) => {
   const classes = useStyles();
@@ -113,8 +118,14 @@ const DealershipDetails = ({ currentUser, match }) => {
       })
       .catch((e) => null);
   });
-
-  usePageTitle(`${id} - ( ${dealershipData && (dealershipData.name || '')}  ${mainApplicant ? (- mainApplicant.mobile || '' ) : ''})`, true)
+  let cardData = [
+    { label: 'Dealership ID', value: dealershipData?.id },
+    { label: 'Business name', value: dealershipData?.name },
+    { label: 'Dealer name', value: mainApplicant?.first_name },
+    { label: 'Mobile', value: mainApplicant?.mobile },
+    { label: 'Email', value: mainApplicant?.email }
+  ]
+  usePageTitle(`${id} - ${dealershipData && (dealershipData.name || '')} `, true,cardData)
   return (
     <div>
       {/* <Grid container spacing={2}>
@@ -172,7 +183,7 @@ const DealershipDetails = ({ currentUser, match }) => {
               <Tab label={<InfoBox active={activeTab === 6} number={7} title="Fleet Operators" />} {...tabA11yProps(6)} />
             </Tabs>
           </Collapse>
-          <div>
+          {/* <div>
             <div onClick={() => {
               setActiveTab(-1);
               setSolarTab(0);
@@ -203,7 +214,7 @@ const DealershipDetails = ({ currentUser, match }) => {
                 <InfoBox title="Go Back" />
               </div>
             </Collapse>
-          </div>
+          </div> */}
         </div>
         <TabPanel activeTab={activeTab} index={0}>
           {dealershipData && (

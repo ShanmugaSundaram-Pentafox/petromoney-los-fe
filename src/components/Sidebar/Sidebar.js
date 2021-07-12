@@ -88,11 +88,11 @@ const Sidebar = props => {
       href: '/',
       icon: <DashboardIcon />
     },
-    {
-      title: 'Solar',
-      href: '/solar',
-      icon: <WbSunnyRoundedIcon />
-    },
+    // {
+    //   title: 'Solar',
+    //   href: '/solar',
+    //   icon: <WbSunnyRoundedIcon />
+    // },
     {
       title: 'Loans',
       href: '/loans',

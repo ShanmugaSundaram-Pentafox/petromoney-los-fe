@@ -80,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
   },
   button: {
-    marginTop : 20,
+    marginTop: 20,
     float: "right",
   }
 }));
@@ -106,6 +106,7 @@ const DocList = ({ id }) => {
   const [modalData, setModalData] = useState([]);
   const [rowData, setRowData] = useState();
   const [value, setValue] = useState();
+  const [imageModal, setImageModal] = useState({})
   const [array, setArray] = useState([]);
   const [description, setDescription] = useState();
 
@@ -132,7 +133,7 @@ const DocList = ({ id }) => {
     setShowUpload(false);
   }
   const handleModal = (data, desc) => {
-    setOpenModal(true);
+    setImageModal(true);
     setModalData(data);
     setDescription(desc);
   }
@@ -226,7 +227,7 @@ const DocList = ({ id }) => {
                 <Docs data={Array.isArray(row.file_data) && row.file_data.length ? row.file_data : []} />
                 <ButtonGroup size="small" aria-label="dealer action buttons">
                   {
-                    Array.isArray(row.file_data) && row.file_data.length && row.file_data[0].file_id ? 
+                    Array.isArray(row.file_data) && row.file_data.length && row.file_data[0].file_id ?
                       <Button onClick={() => handleModal(row.file_data, row.description)}>Delete</Button>
                       : null
                   }
@@ -273,6 +274,9 @@ const DocList = ({ id }) => {
             array.length !== 0 ? <DeleteButton className={classes.button} variant="contained" onClick={() => DeleteDocs()}>Delete</DeleteButton> : null
           } */}
         </div>
+      </FormDialog>
+      <FormDialog title={""} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
+        {imageModal.image && <img src={imageModal.image} alt="image-viewer" />}
       </FormDialog>
       {/* <Modal
         className={classes.modal}

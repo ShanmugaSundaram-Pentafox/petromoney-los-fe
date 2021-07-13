@@ -143,7 +143,7 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const AddNewTransportsForm = ({ handleNext, handleBack, id, data, currentUser, callback, isEdit }) => {
+const AddNewTransportsForm = ({ handleNext, title, handleBack, id, data, currentUser, callback, isEdit }) => {
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
     const [apiStatus, setApiStatus] = useState({});
     const [loading, setLoading] = useState(false)
@@ -259,7 +259,7 @@ const AddNewTransportsForm = ({ handleNext, handleBack, id, data, currentUser, c
     return (
         <div className={classes.sidePanelFormWrapper}>
             <Typography className={classes.sidePanelTitle} variant="h4">
-                <div>Add New Transport</div>
+                <div>{title ? title : 'Add New Transport Form'}</div>
                 <CloseIcon onClick={handleClose} />
             </Typography>
             <div className={classes.sidePanelFormContentWrapper}>

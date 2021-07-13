@@ -37,7 +37,8 @@ export const getTransporterInfoFromID = (id) => {
 
 export const getTransportOwnerInfo = (pm_user_id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`transport/profile?pm_user_id=${pm_user_id}`)
+    // apiCall(`transport/profile?pm_user_id=${pm_user_id}`)
+    apiCall(`transport/owner/${pm_user_id}`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           const result = data[0];

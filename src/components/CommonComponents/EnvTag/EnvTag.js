@@ -5,7 +5,7 @@ const EnvCard = styled.div`
   position: fixed;
   z-index: 3000;
   top: 0;
-  left: calc(50% - 60px);
+  left: calc(6% - 10px);
   width: 120px;
   background-color: #99201c;
   background-image: linear-gradient(316deg, #99201c 0%, #f56545 74%);

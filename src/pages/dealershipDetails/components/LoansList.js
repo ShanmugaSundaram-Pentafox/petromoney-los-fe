@@ -172,10 +172,11 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
                     })
                   }}
                 >
-                  <option>Choose Status</option>
+                  <option>{row.application_state}</option>
                   {
-                    status.map(item => <option value={item.id}>{item.application_state}</option>)
+                    status.map(item => item.application_state !== row.application_state && <option value={item.id}>{item.application_state}</option>)
                   }
+
                 </Select>
               </TableCell>
               <TableCell align="center">

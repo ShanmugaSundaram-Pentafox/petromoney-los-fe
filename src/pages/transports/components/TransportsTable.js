@@ -64,7 +64,7 @@ function getSteps() {
 
 
 
-const TransportsTable = ({ transports, setAllTransports }) => {
+const TransportsTable = ({ transports, setAllTransports, onRowClick }) => {
   const [activeStep, setActiveStep] = React.useState(0);
   const steps = getSteps();
 
@@ -149,6 +149,10 @@ const TransportsTable = ({ transports, setAllTransports }) => {
     viewColumns: false,
     rowsPerPage: 10,
     isRowSelectable: () => false,
+    onRowClick: (rowData, { dataIndex }) => {
+      onRowClick(transports[dataIndex].dealership_id, transports[dataIndex])
+    },
+
     // customToolbar: () => {
     //   return (
     //     <Button

@@ -216,7 +216,10 @@ const OwnerDetails = ({ currentUser, match, loading }) => {
                 name: 'name',
                 options: {
                     filter: false,
-                    sort: true
+                    sort: true,
+                    customBodyRender: (value) => {
+                        return <>{value?.toUpperCase()}</>
+                    },
                 }
             },
             {

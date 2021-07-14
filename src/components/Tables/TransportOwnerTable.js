@@ -60,7 +60,10 @@ const TransportOwnerTable = ({ id, onRowClick }) => {
                 name: 'first_name',
                 options: {
                     filter: false,
-                    sort: true
+                    sort: true,
+                    customBodyRender: (value) => {
+                        return <>{value?.toUpperCase()}</>
+                    },
                 }
             },
             {

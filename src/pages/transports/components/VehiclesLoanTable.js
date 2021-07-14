@@ -49,7 +49,7 @@ const VehiclesLoanTable = () => {
           filter: false,
           sort: true,
           customBodyRender: (value) => {
-            return <>{value.toUpperCase()}</>
+            return <>{value?.toUpperCase()}</>
           },
         },
       },

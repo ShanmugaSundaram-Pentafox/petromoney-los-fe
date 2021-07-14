@@ -104,6 +104,9 @@ const TransportsTable = ({ transports, setAllTransports, onRowClick }) => {
         options: {
           filter: false,
           sort: true,
+          customBodyRender: (value) => {
+            return <>{value?.toUpperCase()}</>
+          },
         },
       },
       {

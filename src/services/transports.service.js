@@ -191,6 +191,24 @@ export const addNewTransport = (data) => {
       })
   })
 }
+export const updateTransport = (id,data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${URL.vehicleInfo}/${id}`, {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
 export const addNewVehicle = (data, transId) => {
   return new Promise((resolve, reject) => {
     apiCall(`transporters/${transId}/vehicles`, {

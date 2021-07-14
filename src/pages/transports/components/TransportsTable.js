@@ -89,7 +89,7 @@ const TransportsTable = ({ transports, setAllTransports, onRowClick }) => {
     return [
       {
         label: "Code",
-        name: "id",
+        name: "transporter_id",
         options: {
           filter: false,
           sort: true,

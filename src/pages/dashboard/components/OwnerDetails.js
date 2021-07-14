@@ -107,6 +107,7 @@ export const OwnerInfoCard = ({ id, ownerData, currentUser }) => {
     const classes = useStyles()
     const [openEditModal, setOpenEditModal] = useState(false)
     const [apiStatus, setApiStatus] = useState({});
+
     usePageTitle(`${id} - ${ownerData && (ownerData.first_name || '')}`, true)
 
     const handleEdit = () => {
@@ -158,10 +159,19 @@ const OwnerDetails = ({ currentUser, match, loading }) => {
     const [openModal, setOpenModal] = useState(false)
     const [transportsData, setTransportsData] = useState()
     const [ownerData, setOwnerData] = useState([]);
+    const [rowData, setRowData] = useState({})
+    const [formType, setFormType] = useState('');
+
     const {
         url,
         params: { id },
     } = match
+    const onRowClick = (id, rowData) => {
+        setOpenModal(true)
+        setRowData(rowData)
+        setFormType('Edit')
+
+    }
 
 
     useMount(() => {
@@ -180,12 +190,19 @@ const OwnerDetails = ({ currentUser, match, loading }) => {
                 console.log(error)
             })
     })
+    let cardData = [
+        { label: 'Owner ID', value: ownerData?.t_owner_id },
+        { label: 'Owner name', value: ownerData.first_name + ' ' + ownerData.last_name },
+        { label: 'Mobile', value: ownerData?.mobile },
+        // { label: 'Email', value: ownerData?.email }
+    ]
+    usePageTitle(`${id} - ${ownerData && (ownerData.name || '')} `, true, cardData)
 
     const columns = useMemo(() => {
         return [
             {
                 label: 'Transport Id',
-                name: 'id',
+                name: 'transporter_id',
                 options: {
                     filter: false,
                     sort: true,
@@ -243,23 +260,30 @@ const OwnerDetails = ({ currentUser, match, loading }) => {
                 <Button
                     color="primary"
                     variant="contained"
-                    onClick={() => setOpenModal(true)}
+                    onClick={() => {
+                        setOpenModal(true)
+                        setRowData('Add')
+                    }}
                 >
                     Add Transport
                 </Button>
             );
-        }
+        },
+        onRowClick: (rowData, { dataIndex }) => {
+            onRowClick(transportsData[dataIndex].dealership_id, transportsData[dataIndex])
+        },
+
     };
     return (
         <>
             <Grid container>
-                <Grid item md={4}>
+                {/* <Grid item md={4}>
                     <OwnerInfoCard id={id} ownerData={ownerData} currentUser={currentUser} />
-                </Grid>
+                </Grid> */}
                 <Grid item md={9}>
                     <div >
                         {
-                            Array.isArray(transportsData)  ? (
+                            Array.isArray(transportsData) ? (
 
                                 <MUIDataTable
                                     title={<Typography className={classes.tableTitle} variant="h4" component="h4">Transports List</Typography>}
@@ -280,10 +304,16 @@ const OwnerDetails = ({ currentUser, match, loading }) => {
             <Drawer
                 anchor="right"
                 open={openModal}
-                onClose={() => setOpenModal(false)}
+                onClose={() => {
+                    setOpenModal(false)
+                    setRowData({})
+                    setFormType('Add')
+
+
+                }}
                 variant="temporary"
             >
-                <AddNewTransportForm callback={() => setOpenModal(false)} id={id} currentUser={currentUser} />
+                <AddNewTransportForm callback={() => setOpenModal(false)} isAdd={formType} id={id} data={rowData} currentUser={currentUser} />
             </Drawer>
         </>
     )

@@ -24,7 +24,7 @@ const useStyles = makeStyles({
     }
 });
 
-const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValues, readOnlyProps, values, errors, onChange }) => {
+const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange }) => {
     const readOnly = readOnlyProps;
     const classes = useStyles();
     const [showUpload, setShowUpload] = useState(false);
@@ -34,9 +34,10 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
         checkedA: true,
         checkedB: true,
     });
-    const [selectedDate, setSelectedDate] = useState()
+    const [selectedDate, setSelectedDate] = useState(data.dob)
     const handleDateChange = (date) => {
         setSelectedDate(date)
+        handleDate(date)
     }
     const handleChange = (event) => {
         setState({ ...state, [event.target.name]: event.target.checked });
@@ -157,17 +158,20 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                 <Grid {...gridItem} md={6}>
                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                         <KeyboardDatePicker
-                            hideTabs={true}
                             variant='inline'
                             inputVariant='outlined'
                             label="Date of Birth"
-                            format='MM/dd/yyy'
+                            format='dd/MM/yyy'
                             animateYearScrolling={true}
                             invalidDateMessage='Invalid Date Format'
+                            error={errors.dob}
+                            helperText={errors.dob}
+                            readOnly={readOnly}
+                            disabled={readOnly}
                             margin='normal'
                             id='date-picker'
                             autoOk={true}
-                            value={values.disbursement_date}
+                            value={selectedDate}
                             onChange={handleDateChange}
                             keyboardButtonProps={{
                                 'aria-label': 'change date'
@@ -179,6 +183,7 @@ const DealerEditForm = ({ modelType, data, dealersList, deleteFile, editableValu
                                 }
                             }}
                             InputLabelProps={{ shrink: true }}
+
                         />
                     </MuiPickersUtilsProvider>
                     {/* <TextInput

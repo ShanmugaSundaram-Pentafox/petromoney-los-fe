@@ -57,6 +57,10 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: theme.palette.success.dark
     }
   },
+  center: {
+    textAlign: 'center',
+    margin: 8,
+  }
 }));
 
 const Text = ({ children }) => {
@@ -423,10 +427,13 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
             <Row text={`FOIR % on fuel credit`} value={values.foir_percentage*100} />
           </TableBody>
         </Table>
+      </Grid>
+      <Grid {...gridItem} className={clsx(classes.row, classes.center)}>
         {
           editable && (
             <Button
               variant="contained"
+              size='large'
               className={clsx(classes.btn, classes.btnSuccess)}
               startIcon={<NavigateNextRoundedIcon />}
               disabled={loading}

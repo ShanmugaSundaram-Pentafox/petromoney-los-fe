@@ -4,6 +4,7 @@ import Typography from '@material-ui/core/Typography';
 // import DealerCreditInfoForm from './DealerCreditInfoForm';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
+import isEqual from 'lodash/isEqual';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 // import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
 import { useFormik } from 'formik';
@@ -61,6 +62,41 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const initObject = {
+  business_vintage: '',
+  vintage_with_banker: 0,
+  inward_returns: 0,
+  other_services_count: 0,
+  social_score: 0,
+  pd_officer_remarks: '',
+  gross_income_fuel: 0,
+  total_income: 0,
+  gross_income_considered: 0,
+  total_expense: 0,
+  current_loans_emi: 0,
+  interest: 0,
+  total_obligations: 0,
+  foir: 0,
+  is_loan: false,
+  max_loan_interest: 0,
+  max_loan_foir: 0,
+  annual_turnover: 0,
+  max_loan_turnover: 0,
+  max_loan_possible: 0,
+  score: 0,
+  score_impact: 0,
+  max_loan_exposure: 0,
+  pm_exposure: 0,
+  final_loan_value: 0,
+  approved_loan_amount: 0,
+  final_loan_amount: 0,
+  annual_interest: 0,
+  foir_percentage: 0,
+  applicable_interest: 18,
+  loan_percentage: 1,
+  max_loan_cap: 3000000,
+};
+
 const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) => {
   const classes = useStyles();
   const [readOnly, setReadOnly] = useState(true);
@@ -87,42 +123,16 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
   }, [])
 
   const { values, errors, handleChange, handleSubmit, handleReset, setValues } = useFormik({
-    initialValues: {
-      business_vintage: '',
-      vintage_with_banker: 0,
-      inward_returns: 0,
-      other_services_count: 0,
-      social_score: 0,
-      pd_officer_remarks: '',
-      gross_income_fuel: 0,
-      total_income: 0,
-      gross_income_considered: 0,
-      total_expense: 0,
-      current_loans_emi: 0,
-      interest: 0,
-      total_obligations: 0,
-      foir: 0,
-      is_loan: false,
-      max_loan_interest: 0,
-      max_loan_foir: 0,
-      annual_turnover: 0,
-      max_loan_turnover: 0,
-      max_loan_possible: 0,
-      score: 0,
-      score_impact: 0,
-      max_loan_exposure: 0,
-      pm_exposure: 0,
-      final_loan_value: 0,
-      approved_loan_amount: 0,
-      final_loan_amount: 0,
-      annual_interest: 0,
-      foir_percentage: 0,
-      applicable_interest: 18,
-      loan_percentage: 1,
-      max_loan_cap: 3000000,
-    },
+    initialValues: initObject,
     onSubmit: values => {
       // console.log('Form Values >> ', values);
+      if(isEqual(values, initObject)) {
+        setApiStatus({ type: 'info', message: 'No changes made! Kindly make any change before submitting.' })
+        setTimeout(() => {
+          setApiStatus({})
+        }, 4000)
+        return null;
+      }
       setLoading(true);
       setApiStatus({});
       // dealership/<int:dealership_id>/credit/info

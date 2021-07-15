@@ -19,7 +19,7 @@ import { rulesList } from '../../../config/userRules';
 import apiCall from '../../../utils/api.util';
 import Button from '../../../components/CommonComponents/Button/Button';
 import { encrypt } from '../../../services/crypto.service';
-import { getBusinessTypes, getStates } from '../../../services/common.service';
+import { getBusinessTypes, getRegion, getStates } from '../../../services/common.service';
 // import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -39,7 +39,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
   const [loading, setLoading] = useState();
   const [apiStatus, setApiStatus] = useState({});
   const [businessTypes, setBusinessTypes] = useState([{}, {}, {}, {}, {}]);
-  const [states, setStates] = useState([])
+  const [states, setStates] = useState([]);
+  const [region, setRegion] = useState([]);
   const { values, handleChange: onChange, handleSubmit } = useFormik({
     initialValues: data,
     onSubmit: values => {
@@ -66,10 +67,13 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
           if (status == 'SUCCESS') {
             setApiStatus({ type: 'success', message: message || 'Details updated successfully' })
             setLoading(false);
+            setReadOnly(false);
           }
           else {
             setApiStatus({ type: 'error', message: message || 'Unable to save the details. Please try again later' })
             setLoading(false);
+            setReadOnly(true);
+
           }
         })
         .catch(e => {
@@ -117,6 +121,16 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
     onChange
   }
 
+  const handleRegion = (value) => {
+    let res = states.find(({ name }) => name === value);
+    getRegion(res.id)
+      .then(setRegion)
+      .catch(err => {
+        console.log("error", err)
+      })
+
+
+  }
 
   return (
     <Card className={clsx(classes.root, className)}>
@@ -134,7 +148,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 labelText="Name"
                 name="name"
                 readOnly={readOnly}
-                disabled={readOnly}
                 defaultValue={values.name}
                 {...fieldProps}
               />
@@ -158,7 +171,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 name="business_type"
                 readOnly={readOnly}
                 disabled={readOnly}
-                defaultValue={businessTypes[values.business_type-1].name}
+                defaultValue={businessTypes[values.business_type - 1].name}
                 {...fieldProps}
               >
                 <option value="">{businessTypes[values.business_type].name}</option>
@@ -172,6 +185,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
               <TextInput
                 labelText="GST"
                 name="gst"
+                readOnly={readOnly}
+                // disabled={readOnly}
                 defaultValue={values.gst}
                 {...fieldProps}
               />
@@ -180,6 +195,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
               <TextInput
                 labelText="PAN"
                 name="pan"
+                readOnly={readOnly}
+                // disabled={readOnly}
                 defaultValue={values.pan}
                 {...fieldProps}
               />
@@ -210,40 +227,63 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 labelText="State"
                 labelWidth={40}
                 defaultValue={values.state}
-                readOnly
+                disabled={readOnly}
+                onChange={(e) => handleRegion(e.target.value)}
+                readOnly={readOnly}
                 alignTop
                 direction="column"
               >
+                <option value="">{values.state}</option>
                 {
-                  states.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
+                  states.map((item, i) => item.name !== values.state && <option key={i} value={item.name}>{item.name}</option>)
                 }
               </TextInput>
             </Grid>
+            <Grid {...gridProps} xs={6}>
+              {
+                <TextInput
+                  select
+                  labelText="Region"
+                  labelWidth={40}
+                  defaultValue={values.region}
+                  readOnly={readOnly}
+                  disabled={readOnly}
+                  alignTop
+                  direction="column"
+                >
+                  <option value="">{values.region}</option>
 
+                  {
+                    region.map((item, i) => item.name !== values.region && <option key={i} value={item.name}>{item.name}</option>)
+                  }
+                </TextInput>
+              }
 
+            </Grid>
             <Grid {...gridProps} xs={6}>
               <TextInput
                 labelText="District"
                 labelWidth={40}
                 defaultValue={values.district}
-                readOnly
+                readOnly={readOnly}
                 alignTop
                 direction="column"
               />
             </Grid>
-            <Grid {...gridProps} sm={6}>
+            {/* <Grid {...gridProps} sm={6}>
               <TextInput
                 labelText="Region"
                 name="region"
                 defaultValue={values.region}
                 {...fieldProps}
               />
-            </Grid>
+            </Grid> */}
 
             <Grid {...gridProps}>
               <TextInput
                 labelText="Pincode"
                 name="pincode"
+                readOnly={readOnly}
                 defaultValue={values.pincode}
                 {...fieldProps}
               />

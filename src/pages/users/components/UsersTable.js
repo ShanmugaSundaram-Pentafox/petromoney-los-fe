@@ -77,6 +77,9 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
         options: {
           filter: false,
           sort: true,
+          customBodyRender: (value) => {
+            return <>{value?.toUpperCase()}</>
+          },
         },
       },
       {

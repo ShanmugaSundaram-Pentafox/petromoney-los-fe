@@ -136,7 +136,9 @@ const DealershipTransport = ({ id, currentUser, titleAlign }) => {
     const [ownerInfo, setOwnerInfo] = useState()
     const [transportsData, setTransportsData] = useState()
     const [vehicleData, setVehicleData] = useState()
+    const [formType, setFormType] = useState('');
     const [data, setData] = useState([])
+    const [rowData, setRowData] = useState({})
     const classes = useStyles()
 
 
@@ -144,6 +146,13 @@ const DealershipTransport = ({ id, currentUser, titleAlign }) => {
     const handleEdit = () => {
         setOpenModal(!openModal)
     }
+    const showOwnerEditForm = (id, data) => {
+        // console.log("Owner edit form", data)
+        setFormType('Edit')
+        setRowData(data)
+        setOpenModal(!openModal)
+    }
+
 
     return (
         <div>
@@ -153,22 +162,29 @@ const DealershipTransport = ({ id, currentUser, titleAlign }) => {
                     <Button
                         color="primary"
                         variant="contained"
-                        onClick={() => setOpenModal(true)}
+                        onClick={() => {
+                            setOpenModal(true)
+                            setRowData({})
+                            setFormType('Add')
+                        }}
                     >
                         Add Owner
-                </Button>
+                    </Button>
                 </div>
                 <div>
-                    <TransportOwnerTable id={id} />
+                    <TransportOwnerTable id={id} onRowClick={showOwnerEditForm} />
                 </div>
             </div>
             <Drawer
                 anchor="right"
                 open={openModal}
-                onClose={() => setOpenModal(false)}
+                onClose={() => {
+                    setRowData({})
+                    setOpenModal(false)
+                }}
                 variant="temporary"
             >
-                <AddNewTransportsOwnerForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} />    
+                <AddNewTransportsOwnerForm dealer_id={id} rowData={rowData} isAdd={formType} callback={handleEdit} currentUser={currentUser} />
             </Drawer>
         </div>
     )

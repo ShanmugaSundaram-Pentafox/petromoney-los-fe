@@ -77,7 +77,10 @@ const RejectedTable = ({ title, loans, setLoansData, onRowClick }) => {
         name: 'name',
         options: {
           filter: false,
-          sort: true
+          sort: true,
+          customBodyRender: (value) => {
+            return <>{value?.toUpperCase()}</>
+          },
         }
       },
       {

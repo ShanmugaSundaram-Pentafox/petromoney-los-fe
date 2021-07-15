@@ -18,6 +18,8 @@ import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
 import 'date-fns';
+import Tooltip from '@material-ui/core/Tooltip';
+import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
 import DateFnsUtils from '@date-io/date-fns';
 import {
     MuiPickersUtilsProvider,
@@ -145,16 +147,15 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit, form_data, id, callback }) => {
-    const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
+const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, rowData, form_data, id, callback }) => {
+    const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
     const [checked, setChecked] = useState(false);
     const [loading, setLoading] = useState(false)
-    const [data, setData] = useState([]);
     const [state, setState] = React.useState({
         checkedA: true,
         checkedB: true,
     });
-    const [selectedDate, setSelectedDate] = useState(form_data && form_data.dob)
+    const [selectedDate, setSelectedDate] = useState(rowData && rowData.dob)
     const handleDateChange = (e) => {
         setSelectedDate(e)
     }
@@ -172,10 +173,9 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
     const currentYear = date.getFullYear();
     const currentYearDiff = date.getFullYear() - 1970;
     const classes = useStyles()
-
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting } = useFormik({
         initialValues: {
-            ...form_data,
+            ...rowData,
         },
         // validateOnBlur: true,
         validationSchema: Yup.object().shape({
@@ -194,8 +194,8 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                 data.append(key, date_values[key]);
             })
 
-            if (isEdit !== 'Edit') {
-                fetch(`${URL.base}transport/owner/${id} `, {
+            if (isAdd === 'Edit') {
+                fetch(`${URL.base}transport/owner/${rowData.t_owner_id} `, {
                     method: 'POST',
                     body: data,
                     headers: {
@@ -295,30 +295,29 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
 
         }
     });
-
     const aadharBack = () => {
         return (
             <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
-                href={data.aadhar_b_file_url} target="_blank" title={'Aadhar Back'}>{'Aadhar Back'}</a>
+                href={rowData.aadhar_b_file_url} target="_blank" title={'Aadhar Back'}>{'Aadhar Back'}</a>
         )
     }
     const profileAttachment = () => {
         return (
             <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
-                href={data.profile_image_url} target="_blank" title={'Profile Attachment'}>{'Profile Attachment'}</a>
+                href={rowData.profile_image_url} target="_blank" title={'Profile Attachment'}>{'Profile Attachment'}</a>
         )
     }
 
     const aadharFront = () => {
         return (
             <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
-                href={data.aadhar_f_file_url} target="_blank" title={'Aadhar Front'}>{'Aadhar Front'}</a>
+                href={rowData.aadhar_f_file_url} target="_blank" title={'Aadhar Front'}>{'Aadhar Front'}</a>
         )
     }
     const panAttachment = () => {
         return (
             <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
-                href={data.pan_file_url} target="_blank" title={'PAN Attachment'}>{'PAN Attachment'}</a>
+                href={rowData.pan_file_url} target="_blank" title={'PAN Attachment'}>{'PAN Attachment'}</a>
         )
     }
 
@@ -582,45 +581,70 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                                 </Grid>
                                 <Grid item md={12}>
                                     <Typography variant="subtitle2" component="subtitle2">
-                                        Photo :
-                                        <>
-                                            {
-                                                data.profile_image_url ? profileAttachment() :
+                                        Photo :{(readOnly) ?
+                                            <>
+                                                {
+                                                    rowData.pan_file_url ?
+                                                        profileAttachment()
+                                                        : <Typography variant="subtitle2" component="subtitle2">
+                                                            <Tooltip title={'Click Edit and attach'}>
+                                                                <AttachFileRoundedIcon disabled={readOnly} />
+                                                            </Tooltip> Attach PAN
+                                                        </Typography>}
+                                            </> :
+                                            <>
+                                                {
+                                                    rowData.profile_image_url ? profileAttachment() :
+                                                        <>
+                                                            <TextInput
+                                                                type="file"
+                                                                accept="image/*"
+                                                                name="pan_file_url"
+                                                                value={rowData.profile_image_url}
+                                                                readOnly={readOnly}
+                                                                disabled={readOnly}
+                                                                onChange={(event) => {
+                                                                    values[event.target.name] = event.currentTarget.files[0];
+                                                                }}
+                                                                InputLabelProps={{ shrink: true }}
+                                                            ></TextInput>
+                                                        </>
+                                                }
+                                            </>
+                                        }
+                                    </Typography>
+                                </Grid>
+                                <Grid item md={12}>
+                                    <Typography variant="subtitle2" component="subtitle2">
+                                        PAN :{(readOnly) ?
+                                            <>
+                                                {rowData.pan_file_url ?
+                                                    panAttachment()
+                                                    : <Typography variant="subtitle2" component="subtitle2">
+                                                        <Tooltip title={'Click Edit and attach'}>
+                                                            <AttachFileRoundedIcon disabled={readOnly} />
+                                                        </Tooltip> Attach PAN
+                                                    </Typography>}
+                                            </> :
+                                            <>
+                                                {rowData.pan_file_url ? panAttachment() :
                                                     <>
                                                         <TextInput
                                                             type="file"
                                                             accept="image/*"
                                                             name="pan_file_url"
-                                                            value={data.profile_image_url}
+                                                            readOnly={readOnly}
+                                                            disabled={readOnly}
+                                                            value={rowData.pan_file_url}
                                                             onChange={(event) => {
                                                                 values[event.target.name] = event.currentTarget.files[0];
                                                             }}
                                                             InputLabelProps={{ shrink: true }}
                                                         ></TextInput>
                                                     </>
-                                            }
-                                        </>
-                                    </Typography>
-                                </Grid>
-                                <Grid item md={12}>
-                                    <Typography variant="subtitle2" component="subtitle2">
-                                        PAN :
-                                        <>
-                                            {data.pan_file_url ? panAttachment() :
-                                                <>
-                                                    <TextInput
-                                                        type="file"
-                                                        accept="image/*"
-                                                        name="pan_file_url"
-                                                        value={data.pan_file_url}
-                                                        onChange={(event) => {
-                                                            values[event.target.name] = event.currentTarget.files[0];
-                                                        }}
-                                                        InputLabelProps={{ shrink: true }}
-                                                    ></TextInput>
-                                                </>
-                                            }
-                                        </>
+                                                }
+                                            </>
+                                        }
                                     </Typography>
                                 </Grid>
                                 <Grid item md={12} style={{ marginBottom: '8px' }}>
@@ -628,45 +652,71 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isEdit,
                                 </Grid>
                                 <Grid item md={6}>
                                     <Typography variant="subtitle2" component="subtitle2">
-                                        Front:
-                                        <>
-                                            {data.aadhar_f_file_url ? aadharFront() :
-                                                <>
-                                                    <TextInput
-                                                        type="file"
-                                                        accept="image/*"
-                                                        name="aadhar_f_file_url"
-                                                        value={data.aadhar_f_file_url}
-                                                        onChange={(event) => {
-                                                            values[event.target.name] = event.currentTarget.files[0];
-                                                        }}
-                                                        InputLabelProps={{ shrink: true }}
-                                                    ></TextInput>
-                                                </>
-                                            }
-                                        </>
+                                        Front:{(readOnly) ?
+                                            <>
+                                                {
+                                                    rowData.pan_file_url ?
+                                                        aadharFront()
+                                                        : <Typography variant="subtitle2" component="subtitle2">
+                                                            <Tooltip title={'Click Edit and attach'}>
+                                                                <AttachFileRoundedIcon disabled={readOnly} />
+                                                            </Tooltip> Attach PAN
+                                                        </Typography>}
+                                            </> :
+                                            <>
+                                                {rowData.aadhar_f_file_url ? aadharFront() :
+                                                    <>
+                                                        <TextInput
+                                                            type="file"
+                                                            accept="image/*"
+                                                            name="aadhar_f_file_url"
+                                                            value={rowData.aadhar_f_file_url}
+                                                            readOnly={readOnly}
+                                                            disabled={readOnly}
+                                                            onChange={(event) => {
+                                                                values[event.target.name] = event.currentTarget.files[0];
+                                                            }}
+                                                            InputLabelProps={{ shrink: true }}
+                                                        ></TextInput>
+                                                    </>
+                                                }
+                                            </>
+                                        }
                                     </Typography>
                                 </Grid>
                                 <Grid item md={6}>
                                     <Typography variant="subtitle2" component="subtitle2">
                                         Back:
-                                        <>
-                                            {data.aadhar_b_file_url ?
-                                                aadharBack() :
-                                                <>
-                                                    <TextInput
-                                                        type="file"
-                                                        accept="image/*"
-                                                        name="aadhar_b_file_url"
-                                                        value={data.aadhar_b_file_url}
-                                                        onChange={(event) => {
-                                                            values[event.target.name] = event.currentTarget.files[0];
-                                                        }}
-                                                        InputLabelProps={{ shrink: true }}
-                                                    ></TextInput>
-                                                </>
-                                            }
-                                        </>
+                                        {(readOnly) ?
+                                            <>
+                                                {
+                                                    rowData.pan_file_url ?
+                                                        aadharBack()
+                                                        : <Typography variant="subtitle2" component="subtitle2">
+                                                            <Tooltip title={'Click Edit and attach'}>
+                                                                <AttachFileRoundedIcon disabled={readOnly} />
+                                                            </Tooltip> Attach PAN
+                                                        </Typography>}
+                                            </> :
+                                            <>
+                                                {rowData.aadhar_b_file_url ?
+                                                    aadharBack() :
+                                                    <>
+                                                        <TextInput
+                                                            type="file"
+                                                            accept="image/*"
+                                                            name="aadhar_b_file_url"
+                                                            value={rowData.aadhar_b_file_url}
+                                                            readOnly={readOnly}
+                                                            disabled={readOnly}
+                                                            onChange={(event) => {
+                                                                values[event.target.name] = event.currentTarget.files[0];
+                                                            }}
+                                                            InputLabelProps={{ shrink: true }}
+                                                        ></TextInput>
+                                                    </>
+                                                }
+                                            </>}
                                     </Typography>
                                 </Grid>
                             </Grid>

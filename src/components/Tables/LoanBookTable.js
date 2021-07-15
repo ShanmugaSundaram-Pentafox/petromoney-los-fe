@@ -48,6 +48,9 @@ const LoanBookTable = ({ title, loanBookData, setLoanBookData }) => {
         options: {
           filter: true,
           sort: true,
+          customBodyRender: (value) => {
+            return <>{value?.toUpperCase()}</>
+          },
         }
       },
       {

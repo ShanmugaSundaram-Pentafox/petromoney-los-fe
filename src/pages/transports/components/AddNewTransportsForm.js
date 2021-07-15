@@ -21,7 +21,9 @@ import { URL } from '../../../config/serverUrls';
 import EditIcon from '@material-ui/icons/Edit';
 import { getAllRegion, getBusinessTypes, getOmcList } from '../../../services/common.service';
 import { getDistricts, getFormattedStatesList } from '../../../utils/indianStates.util';
-import { addNewTransport } from '../../../services/transports.service';
+import { addNewTransport, updateTransport } from '../../../services/transports.service';
+import { useSnackbar } from 'notistack';
+
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -143,8 +145,8 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const AddNewTransportsForm = ({ handleNext, title, handleBack, id, data, currentUser, callback, isEdit }) => {
-    const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
+const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callback, isAdd }) => {
+    const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
     const [apiStatus, setApiStatus] = useState({});
     const [loading, setLoading] = useState(false)
     const [omcs, setOmcs] = useState([]);
@@ -152,6 +154,7 @@ const AddNewTransportsForm = ({ handleNext, title, handleBack, id, data, current
     const [regions, setRegions] = useState([]);
     const [checked, setChecked] = useState(false);
     const classes = useStyles()
+    const { enqueueSnackbar } = useSnackbar();
 
 
     const handleEdit = () => {
@@ -203,18 +206,82 @@ const AddNewTransportsForm = ({ handleNext, title, handleBack, id, data, current
             state: Yup.string().required('Please choose state'),
             district: Yup.string().required('Please choose district'),
             pincode: Yup.number().min(6, 'Pincode must be 6 digits').required("Enter pincode"),
-            gst: Yup.number().min(15, 'Enter valid GST')
+            // gst: Yup.number().min(15, 'Enter valid GST')
         }),
         onSubmit: values => {
             const data = { ...values, t_owner_id: id };
-            addNewTransport(data)
-                .then(message => {
-                    setApiStatus({ type: 'success', message: message })
-                })
-                .catch(e => {
-                    setApiStatus({ type: 'error', message: e })
-                    console.log(e);
-                })
+            let apiURL = isAdd === 'Add' ? `transporters` : `tranporters/${data.transporter_id}`
+            if (isAdd === 'Add') {
+                addNewTransport(data)
+                    .then(res => {
+                        return res.json()
+                    })
+                    .then(res => {
+                        if (res.status === 'SUCCESS') {
+                            enqueueSnackbar(res.profile_status, {
+                                anchorOrigin: {
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                },
+                                variant: 'success',
+                            }
+                            )
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 2000)
+                        }
+                        else {
+                            enqueueSnackbar(res.profile_status, {
+                                anchorOrigin: {
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                },
+                                variant: 'error',
+                            }
+                            )
+                        }
+
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        enqueueSnackbar(error.profile_status, {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'right',
+                            },
+                            variant: 'error',
+                        }
+                        )
+                    })
+
+            }
+            else {
+                updateTransport(data.transporter_id, data)
+                    .then(res => {
+                        enqueueSnackbar(res, {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'right',
+                            },
+                            variant: 'success',
+                        }
+                        )
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        enqueueSnackbar(error.profile_status, {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'right',
+                            },
+                            variant: 'error',
+                        }
+                        )
+                    })
+
+            }
+
+
         }
     });
     const inputProps = {
@@ -286,7 +353,7 @@ const AddNewTransportsForm = ({ handleNext, title, handleBack, id, data, current
                                             {...inputProps}
                                             // labelText="Transporter Code"
                                             placeholder="Enter transporter code here"
-                                            name="id"
+                                            name="transporter_id"
                                             value={values.id}
                                             readOnly={readOnly}
                                             error={errors.id}
@@ -466,8 +533,7 @@ const AddNewTransportsForm = ({ handleNext, title, handleBack, id, data, current
                             // disabled={loading}
                             onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
                         >
-                            {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` :
-                                'Save'}
+                            {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` : 'Save'}
                         </Button>
                     </div>
                 </div>

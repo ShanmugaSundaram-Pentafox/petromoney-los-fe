@@ -33,7 +33,7 @@ const VehiclesLoanTable = () => {
     return [
       {
         label: "Code",
-        name: "id",
+        name: "transporter_id",
         options: {
           filter: false,
           sort: true,
@@ -48,6 +48,9 @@ const VehiclesLoanTable = () => {
         options: {
           filter: false,
           sort: true,
+          customBodyRender: (value) => {
+            return <>{value?.toUpperCase()}</>
+          },
         },
       },
       {
@@ -130,7 +133,7 @@ const VehiclesLoanTable = () => {
           columns={columns}
           options={options}
         />
-      ) : ( !loading &&  <Paper style={{ padding: 10 }}>No Vehicle Loans</Paper>)
+      ) : (!loading && <Paper style={{ padding: 10 }}>No Vehicle Loans</Paper>)
       }
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>

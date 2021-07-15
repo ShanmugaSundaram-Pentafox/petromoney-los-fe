@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const TransportOwnerTable = ({ id }) => {
+const TransportOwnerTable = ({ id, onRowClick }) => {
     const classes = useStyles();
     const [loading, setLoading] = useState(false);
     const [ownerData, setOwnerData] = useState([])
@@ -60,7 +60,10 @@ const TransportOwnerTable = ({ id }) => {
                 name: 'first_name',
                 options: {
                     filter: false,
-                    sort: true
+                    sort: true,
+                    customBodyRender: (value) => {
+                        return <>{value?.toUpperCase()}</>
+                    },
                 }
             },
             {
@@ -93,6 +96,9 @@ const TransportOwnerTable = ({ id }) => {
         rowsPerPage: 10,
         isRowSelectable: () => false,
         selectableRowsHeader: false,
+        onRowClick: (rowData, { dataIndex }) => {
+            onRowClick(ownerData[dataIndex].dealership_id, ownerData[dataIndex])
+        },
 
     };
 

@@ -223,7 +223,19 @@ export default function VehicleInfo({ id, data, currentUser }) {
         return res.json()
       })
       .then(res => {
-        enqueueSnackbar('File Upload Success', { variant: "success" });
+        // enqueueSnackbar('File Upload Success', { variant: "success" });
+        enqueueSnackbar(res.message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          autoHideDuration: 3000,
+          variant: 'success',
+        })
+        onCloseUploader();
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000)
         // console.log("data",res)
         // updateVehicleServiceDetails(id, serviceData.vehicle_id, serviceData.credit_head_id, serviceData.loan_id, { status_id: status, details: { file_url: res?.file_url?.split(" ") } })
         //   .then(res => {
@@ -389,7 +401,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
                             <TableCell>
                               <Button
                                 size="small"
-                                onClick={handleUpload}
+                                onClick={() => setFileUpload(true)}
                               >
                                 Upload
                               </Button>
@@ -522,7 +534,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
         // const d = JSON.parse((serviceData?.tracking_details?.[4]?.details || "{}").replace(/\'/g,'\"'));
         fileUpload &&
         <div style={{ minWidth: '40vw' }}>
-          {<FileUpload handleSave={handleSave} id={id} data={rowData} open={showUpload} onCloseUploader={onCloseUploader} />}
+          {<FileUpload handleSave={handleSave} id={id} data={rowData} open={fileUpload} onCloseUploader={() => setFileUpload(false)} />}
         </div>
       }
 
@@ -537,7 +549,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
         onClose={() => setOpenModal(false)}
         variant="temporary"
       >
-        <AddNewVehicleForm id={id} callback={() => setOpenModal(false)}  number={vehicleNumber} trans_id={vehicleId} modalType={modalType} />
+        <AddNewVehicleForm id={id} callback={() => setOpenModal(false)} number={vehicleNumber} trans_id={vehicleId} modalType={modalType} />
       </Drawer>
     </div>
   )

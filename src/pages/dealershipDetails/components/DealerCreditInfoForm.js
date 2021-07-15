@@ -120,7 +120,7 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
             native: true,
           }}
           >
-          <option value="NA">NA</option>
+          <option value="NA">0</option>
           <option value="1">1 time</option>
           <option value="2">2 times</option>
           <option value="3">3 times</option>

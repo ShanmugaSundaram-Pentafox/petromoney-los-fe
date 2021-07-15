@@ -94,9 +94,9 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
             label="Business Vintage with OMC"
             name="business_vintage"
             type="number"
-            value={values.business_vintage || ""}
+            value={values.business_vintage || 0}
             onChange={onChange}
-            />
+          />
         </Grid>
       </Grid>
       <Grid {...gridItem}>
@@ -147,7 +147,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                   </TableCell>
                 </TableRow> */}
               </TableBody>
-            </Table>          
+            </Table>
           </Grid>
           {/* <Grid {...gridItem} md={6}>
             <Grid {...gridItem}>
@@ -215,7 +215,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
           type="number"
           value={values.vintage_with_banker || 0}
           onChange={onChange}
-          />
+        />
       </Grid>
       <Grid {...gridItem} md={6}>
         <TextInput
@@ -226,7 +226,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
           value={values.inward_returns || 0}
           onChange={onChange}
 
-          />
+        />
       </Grid>
       <Grid {...gridItem} md={6}>
         <TextInput
@@ -239,7 +239,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
           SelectProps={{
             native: true,
           }}
-          >
+        >
           <option value="0">0</option>
           <option value="1">1</option>
           <option value="2">2</option>
@@ -259,7 +259,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
           SelectProps={{
             native: true,
           }}
-          >
+        >
           <option value="0">0</option>
           <option value="1">1</option>
           <option value="2">2</option>
@@ -279,7 +279,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
           SelectProps={{
             native: true,
           }}
-          >
+        >
           <option value="Very Poor">Very Poor</option>
           <option value="Poor">Poor</option>
           <option value="Fair">Fair</option>
@@ -323,7 +323,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 type="number"
                 value={values.current_loans_emi || ""}
                 onChange={onChange}
-                />
+              />
             </Row>
             <Row text={`Interest PA on Working Capital Limits (From P&L)`}>
               <TextInput
@@ -333,7 +333,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 type="number"
                 value={values.interest || 0}
                 onChange={onChange}
-                />
+              />
             </Row>
             <Row text={`Total Existing Obligations`} value={<Currency value={values.total_obligations} />} />
           </TableBody>
@@ -356,7 +356,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 onChange={onChange}
                 min={0}
                 max={100}
-                />
+              />
             </Row>
             <Row text={`Max Loan possible as per FOIR on EBIDTA`} value={<Currency value={values.max_loan_foir} />} />
             <Row text={`Annual Turnover (Rs)`} value={<Currency value={values.annual_turnover} />} />
@@ -367,10 +367,10 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 type="number"
                 value={values.loan_percentage || 0}
                 onChange={onChange}
-                />
+              />
             </Row>
             <Row text={`Max Loan possible as per Turnover criteria`} value={<Currency value={values.max_loan_turnover} />} />
-            <Row text={`Max Loan Possible (Lower of FOIR & Turnover Criteria calculations)`} value={<Currency value={values.max_loan_possible} />}  />
+            <Row text={`Max Loan Possible (Lower of FOIR & Turnover Criteria calculations)`} value={<Currency value={values.max_loan_possible} />} />
             <Row text={`Score as per Scorecard`}>
               <TextInput
                 readOnly={!editable}
@@ -378,7 +378,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 type="number"
                 value={values.score || 0}
                 onChange={onChange}
-                />
+              />
             </Row>
             <Row text={`Score Impact`} value={values.score_impact} />
             <Row text={`Max Loan Exposure possible post score impact`} value={values.max_loan_exposure || 0} />
@@ -390,7 +390,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 type="number"
                 value={values.max_loan_cap || 0}
                 onChange={onChange}
-                />
+              />
             </Row>
             <Row text={`Existing PetroMoney Exposure`}>
               <TextInput
@@ -400,7 +400,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 type="number"
                 value={values.pm_exposure || 0}
                 onChange={onChange}
-                />
+              />
             </Row>
             <Row text={`Max Loan Possible (after applying policy caps) (Rs)`} value={<Currency value={values.final_loan_value} />} />
             <Row text={`Loan Amount applied for (Rs)`}>
@@ -411,7 +411,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 type="number"
                 value={values.approved_loan_amount || 0}
                 onChange={onChange}
-                />
+              />
             </Row>
             <Row text={`Loan Amount to be given (Rs)`}>
               <TextInput
@@ -421,10 +421,10 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 type="number"
                 value={values.final_loan_amount || 0}
                 onChange={onChange}
-                />
+              />
             </Row>
             <Row text={`Annual Interest on Loan Amount (Rs)`} value={<Currency value={values.annual_interest} />} />
-            <Row text={`FOIR % on fuel credit`} value={values.foir_percentage*100} />
+            <Row text={`FOIR % on fuel credit`} value={values.foir_percentage * 100} />
           </TableBody>
         </Table>
       </Grid>
@@ -433,7 +433,6 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
           editable && (
             <Button
               variant="contained"
-              size='large'
               className={clsx(classes.btn, classes.btnSuccess)}
               startIcon={<NavigateNextRoundedIcon />}
               disabled={loading}
@@ -445,7 +444,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
   )
 }
 
-const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors,  currentUser }) => {
+const FinanceFormData = ({ id, editable, type, data, btnLabel, values = {}, errors, currentUser }) => {
   const classes = useStyles();
   const [financeData, setFinanceData] = useState(values);
   const [financeErrors, setFinanceErrors] = useState({});
@@ -459,7 +458,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
     getDealershipFinancialsById(id)
       .then(res => {
         setFinanceData(res);
-        const d = (res[0] || {}).to_year == 2020 && type == 'latest_fy' ? res[0] : res[1]; 
+        const d = (res[0] || {}).to_year == 2020 && type == 'latest_fy' ? res[0] : res[1];
         setFinanceData(d || {});
       })
       .catch(err => {
@@ -498,7 +497,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
             type="number"
             value={financeData.turnover || ""}
             onChange={onTextChange}
-            />
+          />
         </Grid>
       </Grid>
       <Grid {...gridItem}>
@@ -510,7 +509,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
           type="number"
           value={financeData.net_profit || ""}
           onChange={onTextChange}
-          />
+        />
       </Grid>
       <Grid {...gridItem} md={6}>
         <TextInput
@@ -521,7 +520,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
           type="number"
           value={((financeData.net_profit_percentage || 0) * 100) || ""}
           onChange={onTextChange}
-          />
+        />
       </Grid>
       <Grid {...gridItem} md={6}>
         <TextInput
@@ -532,7 +531,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
           type="number"
           value={financeData.net_profit_change_percentage || ""}
           onChange={onTextChange}
-          />
+        />
       </Grid>
       <Grid {...gridItem}>
         <TextInput
@@ -543,7 +542,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
           type="number"
           value={financeData.it_paid || ""}
           onChange={onTextChange}
-          />
+        />
       </Grid>
       <Grid {...gridItem}>
         <TextInput
@@ -554,7 +553,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
           type="number"
           value={financeData.networth || ""}
           onChange={onTextChange}
-          />
+        />
       </Grid>
       <Grid {...gridItem}>
         <TextInput
@@ -565,7 +564,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
           type="number"
           value={financeData.assets_value || ""}
           onChange={onTextChange}
-          />
+        />
       </Grid>
       <Grid {...gridItem}>
         <TextInput
@@ -576,7 +575,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
           type="number"
           value={financeData.loan_os || ""}
           onChange={onTextChange}
-          />
+        />
       </Grid>
       <Grid {...gridItem}>
         <TextInput
@@ -587,7 +586,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values={}, errors
           type="number"
           value={financeData.leverage || ""}
           onChange={onTextChange}
-          />
+        />
       </Grid>
       <Grid {...gridItem}>
         <Text>Change in net profit over sales % for last 2 years <strong>{financeData.change_in_profit_over_sales}%</strong></Text>

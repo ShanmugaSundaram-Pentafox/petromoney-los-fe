@@ -248,3 +248,18 @@ export const getStates = () => {
       })
   })
 }
+export const getRegion = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`regions/${id}`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(err => {
+        reject(err.message);
+      })
+  })
+}

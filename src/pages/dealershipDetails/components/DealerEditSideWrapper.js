@@ -24,6 +24,7 @@ import DealerEditForm from './DealerEditForm';
 import apiCall from '../../../utils/api.util';
 import { useSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
+import moment from 'moment';
 
 
 
@@ -86,6 +87,7 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
   const [loading, setLoading] = useState(false);
   const [apicallStatus, setApicallStatus] = useState(null);
   const [apiCallMessage, setApiCallMessage] = useState('');
+  const [selectedDate, setSelectedDate] = useState();
   const { enqueueSnackbar } = useSnackbar();
 
   const handleEdit = () => {
@@ -151,9 +153,13 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
     validationSchema,
     onSubmit: values => {
       setLoading(true);
+      const date = moment(selectedDate).format('DD-MMM-YYYY')
+      const date_values = { ...values, dob: date }
       const data = new FormData();
-      Object.keys(values).forEach(key => {
-        data.append(key, values[key]);
+
+
+      Object.keys(date_values).forEach(key => {
+        data.append(key, date_values[key]);
       })
       const apiURL = modelType === "DEALER" ? URL.dealers : modelType === "GUARANTOR" ? URL.guarantor : URL.coApplicants;
       let url = `${apiURL}/${dealershipId}`;
@@ -213,6 +219,10 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
         })
     }
   });
+  const handleDateChange = (date) => {
+    setSelectedDate(date)
+
+  }
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
@@ -229,6 +239,7 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
                 readOnlyProps={readOnly}
                 modelType={modelType}
                 data={data}
+                handleDate={handleDateChange}
                 values={values}
                 errors={errors}
                 onChange={handleChange}

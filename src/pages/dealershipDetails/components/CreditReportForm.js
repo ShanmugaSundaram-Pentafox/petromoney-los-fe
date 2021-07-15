@@ -9,6 +9,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
+import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import TextInput from '../../../components/TextInput/TextInput';
 import Currency from '../../../components/Number/Currency';
 import ExpensesTable from './ExpensesTable';
@@ -71,7 +73,7 @@ const Row = ({ text, value, children }) => {
   )
 }
 
-const CreditReportForm = ({ id, editable, data, values, errors, onChange, setValues, currentUser }) => {
+const CreditReportForm = ({ id, editable, data, values, errors, onChange, setValues, currentUser, loading, onSubmit }) => {
   const classes = useStyles();
   const gridItem = {
     md: 12,
@@ -421,6 +423,16 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
             <Row text={`FOIR % on fuel credit`} value={values.foir_percentage*100} />
           </TableBody>
         </Table>
+        {
+          editable && (
+            <Button
+              variant="contained"
+              className={clsx(classes.btn, classes.btnSuccess)}
+              startIcon={<NavigateNextRoundedIcon />}
+              disabled={loading}
+              onClick={loading ? () => null : onSubmit}>{loading ? <CircularProgress size={20} /> : `Save`}</Button>
+          )
+        }
       </Grid>
     </Grid>
   )

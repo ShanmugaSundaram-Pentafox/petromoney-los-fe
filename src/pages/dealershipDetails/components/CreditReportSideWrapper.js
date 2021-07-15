@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import Typography from '@material-ui/core/Typography';
-import DealerCreditInfoForm from './DealerCreditInfoForm';
+// import DealerCreditInfoForm from './DealerCreditInfoForm';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
+// import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
 import { useFormik } from 'formik';
-import clsx from 'clsx';
+// import clsx from 'clsx';
 import Alert from '@material-ui/lab/Alert';
-import CircularProgress from '@material-ui/core/CircularProgress';
+// import CircularProgress from '@material-ui/core/CircularProgress';
 import { API } from '../../../config/api';
 import { URL } from '../../../config/serverUrls';
 import { logger } from '../../../config/logger';
@@ -88,6 +88,35 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
 
   const { values, errors, handleChange, handleSubmit, handleReset, setValues } = useFormik({
     initialValues: {
+      business_vintage: '',
+      vintage_with_banker: 0,
+      inward_returns: 0,
+      other_services_count: 0,
+      social_score: 0,
+      pd_officer_remarks: '',
+      gross_income_fuel: 0,
+      total_income: 0,
+      gross_income_considered: 0,
+      total_expense: 0,
+      current_loans_emi: 0,
+      interest: 0,
+      total_obligations: 0,
+      foir: 0,
+      is_loan: false,
+      max_loan_interest: 0,
+      max_loan_foir: 0,
+      annual_turnover: 0,
+      max_loan_turnover: 0,
+      max_loan_possible: 0,
+      score: 0,
+      score_impact: 0,
+      max_loan_exposure: 0,
+      pm_exposure: 0,
+      final_loan_value: 0,
+      approved_loan_amount: 0,
+      final_loan_amount: 0,
+      annual_interest: 0,
+      foir_percentage: 0,
       applicable_interest: 18,
       loan_percentage: 1,
       max_loan_cap: 3000000,
@@ -147,6 +176,8 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
           onChange={handleChange}
           setValues={setValues}
           currentUser={currentUser}
+          onSubmit={handleSubmit}
+          loading={loading}
         />
         {/* <Alert severity={'success'}>Thanks for submitting credit report</Alert> */}
       </div>
@@ -166,7 +197,7 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
               onClick={onClose}>Back</Button>
           </div>
           <div>
-            {
+            {/* {
               editable && (
                 <Button
                   variant="contained"
@@ -175,7 +206,7 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
                   disabled={loading}
                   onClick={loading ? () => null : handleSubmit}>{loading ? <CircularProgress size={20} /> : `Save`}</Button>
               )
-            }
+            } */}
           </div>
         </div>
       </div>

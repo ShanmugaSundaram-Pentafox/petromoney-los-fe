@@ -214,33 +214,17 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
             if (isAdd === 'Add') {
                 addNewTransport(data)
                     .then(res => {
-                        return res.json()
-                    })
-                    .then(res => {
-                        if (res.status === 'SUCCESS') {
-                            enqueueSnackbar(res.profile_status, {
-                                anchorOrigin: {
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                },
-                                variant: 'success',
-                            }
-                            )
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 2000)
+                        enqueueSnackbar(res, {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'right',
+                            },
+                            variant: 'success',
                         }
-                        else {
-                            enqueueSnackbar(res.profile_status, {
-                                anchorOrigin: {
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                },
-                                variant: 'error',
-                            }
-                            )
-                        }
-
+                        )
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000)
                     })
                     .catch(error => {
                         console.log(error);

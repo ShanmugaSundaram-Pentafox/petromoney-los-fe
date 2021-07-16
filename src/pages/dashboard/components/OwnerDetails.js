@@ -266,6 +266,8 @@ const OwnerDetails = ({ currentUser, match, loading }) => {
                     onClick={() => {
                         setOpenModal(true)
                         setRowData('Add')
+                        setFormType('Add')
+
                     }}
                 >
                     Add Transport
@@ -310,7 +312,6 @@ const OwnerDetails = ({ currentUser, match, loading }) => {
                 onClose={() => {
                     setOpenModal(false)
                     setRowData({})
-                    setFormType('Add')
 
 
                 }}

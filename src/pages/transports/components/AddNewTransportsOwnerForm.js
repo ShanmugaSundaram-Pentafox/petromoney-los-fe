@@ -338,7 +338,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                                     <TextInput
                                         label="First Name"
                                         name="first_name"
-                                        vqalue={values.first_name?.toUpperCase()}
+                                        value={values.first_name?.toUpperCase()}
                                         error={errors.first_name}
                                         readOnly={readOnly}
                                         helperText={errors.first_name}
@@ -432,7 +432,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                                         label="Address"
                                         name="address"
                                         readOnly={readOnly}
-                                        defaultValue={values.address?.toUpperCase()}
+                                        value={values.address?.toUpperCase()}
                                         error={errors.address}
                                         helperText={errors.address}
                                         onChange={handleChange}
@@ -519,7 +519,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                                     <TextInput
                                         label="Aadhar"
                                         name="aadhar"
-                                        value={values?.toUpperCase()}
+                                        value={values.aadhar?.toUpperCase()}
                                         helperText={errors.aadhar}
                                         readOnly={readOnly}
                                         error={errors.aadhar}

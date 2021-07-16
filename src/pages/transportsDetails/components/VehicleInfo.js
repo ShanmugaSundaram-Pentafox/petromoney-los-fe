@@ -17,7 +17,7 @@ import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepButton from '@material-ui/core/StepButton';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { getVehicleDocuments, getVehicleLoans, getVehicleServiceDetails, deleteVehicleStatus, updateVehicleServiceDetails, deleteVehicleDoc } from "../../../services/transports.service"
+import { getVehicleDocuments, getVehicleLoans, getVehicleServiceDetails, deleteVehicleStatus, updateVehicleServiceDetails, deleteVehicleDoc, deleteVehicleLoan } from "../../../services/transports.service"
 import { logger } from "../../../config/logger"
 import Button from "../../../components/CommonComponents/Button/Button"
 import NewVehicleLoanAction from "../../../components/NewVehicleLoan/NewVehicleLoanAction"
@@ -157,7 +157,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
   const [openModal, setOpenModal] = useState(false);
   const [vehicleNumber, setVehicleNumber] = useState();
   const [vehicleId, setVehicleId] = useState();
-  const [vehicleDetails,setVehicleDetails] = useState();
+  const [vehicleDetails, setVehicleDetails] = useState();
   const [modalType, setModalType] = useState("");
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles()
@@ -202,7 +202,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
       }
     }
   }
-  const handleUpload = (row,vehicle) => {
+  const handleUpload = (row, vehicle) => {
     setFileUpload(true);
     setRowData(row);
     setVehicleDetails(vehicle);
@@ -348,8 +348,8 @@ export default function VehicleInfo({ id, data, currentUser }) {
         })
       })
   }
-  const handleDocDelete = (rowData,vehicle) => {
-    deleteVehicleDoc(id, rowData,vehicle)
+  const handleDocDelete = (rowData, vehicle) => {
+    deleteVehicleDoc(id, rowData, vehicle)
       .then(res => {
         setOpen(false)
         enqueueSnackbar(res, {
@@ -357,7 +357,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
             vertical: 'top',
             horizontal: 'right',
           },
-          autoHideDuration: 3000,
+          autoHideDuration: 2000,
           variant: 'success',
         })
 
@@ -374,6 +374,35 @@ export default function VehicleInfo({ id, data, currentUser }) {
           variant: 'error',
         })
       })
+
+  }
+  const handleLoanDelete = (row) => {
+    deleteVehicleLoan(row)
+      .then(res => {
+        setOpen(false)
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          autoHideDuration: 2000,
+          variant: 'success',
+        })
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000)
+      })
+      .catch(e => {
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+      })
+
 
   }
   return (
@@ -425,19 +454,18 @@ export default function VehicleInfo({ id, data, currentUser }) {
                           <TableRow>
                             <TableCell>{row.description}</TableCell>
                             <TableCell>
-                              {/* onClick={() => setImageModal({ open: true, image: row.file_path })} */}
-                              <Button>
+                              <Button onClick={() => setImageModal({ open: true, image: row.file_path })}>
                                 <a href={row.file_path}>{row.file_path?.split("/")[row.file_path?.split("/").length - 1] || '-'}</a>
                               </Button>
                             </TableCell>
                             <TableCell>
                               <Button
                                 size="small"
-                                onClick={() => handleUpload(row,vehicleInfo)}
+                                onClick={() => handleUpload(row, vehicleInfo)}
                               >
                                 Upload
                               </Button>
-                              <Button size="small" onClick={() => handleDocDelete(row,vehicleInfo)}>
+                              <Button size="small" onClick={() => handleDocDelete(row, vehicleInfo)}>
                                 Delete
                               </Button>
                             </TableCell>
@@ -467,7 +495,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
                               <Currency value={row.loan_amount} />
                             </TableCell>
                             <TableCell>
-                              <Button size="small">
+                              <Button size="small" onClick={() => handleLoanDelete(row)}>
                                 Delete
                               </Button>
                             </TableCell>

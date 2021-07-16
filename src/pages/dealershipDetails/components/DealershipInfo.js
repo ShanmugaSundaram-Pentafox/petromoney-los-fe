@@ -129,7 +129,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         console.log("error", err)
       })
 
-
   }
 
   return (
@@ -221,7 +220,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
               />
             </Grid> */}
 
-            <Grid {...gridProps} xs={6}>
+            {/* <Grid {...gridProps} xs={6}>
               <TextInput
                 select
                 labelText="State"
@@ -233,12 +232,30 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 alignTop
                 direction="column"
               >
+                <option value={values.state}>{values.state}</option>
+                {
+                  states.map((item, i) => item.name !== values.state && <option key={item.name} value={item.name}>{item.name}</option>)
+                }
+              </TextInput>
+            </Grid> */}
+            <Grid {...gridProps} sm={6}>
+              <TextInput
+                select
+                labelText="State"
+                name="state"
+                readOnly={readOnly}
+                disabled={readOnly}
+                onChange={(e) => handleRegion(e)}
+                defaultValue={values.state}
+                {...fieldProps}
+              >
                 <option value="">{values.state}</option>
                 {
-                  states.map((item, i) => item.name !== values.state && <option key={i} value={item.name}>{item.name}</option>)
+                  states.map((item, i) => <option key={i} value={item.name}>{item.name}</option>)
                 }
               </TextInput>
             </Grid>
+
             <Grid {...gridProps} xs={6}>
               {
                 <TextInput
@@ -254,7 +271,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                   <option value="">{values.region}</option>
 
                   {
-                    region.map((item, i) => item.name !== values.region && <option key={i} value={item.name}>{item.name}</option>)
+                    region.map((item, i) =>  <option key={i} value={item.name}>{item.name}</option>)
                   }
                 </TextInput>
               }

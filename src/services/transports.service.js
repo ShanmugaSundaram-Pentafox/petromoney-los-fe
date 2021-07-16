@@ -173,6 +173,23 @@ export const getAllVehicleLoans = () => {
       })
   })
 }
+export const deleteVehicleLoan = (rowData) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`vehicle/${rowData.vehicle_id}/loan/${rowData.id}`, {
+      method: 'DELETE',
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
 export const addNewTransport = (data) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.vehicleInfo}`, {
@@ -383,11 +400,10 @@ export const updateFleetOperator = (data, dealerId, id) => {
   })
 }
 
-export const deleteVehicleDoc = (id, rowData,vehicle) => {
+export const deleteVehicleDoc = (id, rowData, vehicle) => {
   return new Promise((resolve, reject) => {
-    apiCall(`transporter/${id}/vehicle/${vehicle.vehicle_id}/docs/${rowData.doc_id}`, {
+    apiCall(`transporter/${id}/vehicle/${vehicle.vehicle_id}/docs/${rowData.id}`, {
       method: 'DELETE',
-      body: rowData
     })
       .then(({ status, message }) => {
         if (status === "SUCCESS") {

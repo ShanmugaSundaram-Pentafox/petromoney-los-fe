@@ -333,7 +333,7 @@ const Survey = (props) => {
               <GridText
                 className={classes.question}
                 label="Transporter Name"
-                value={transporterInfo.name}
+                value={transporterInfo.name?.toUpperCase()}
               />
               <GridText
                 className={classes.question}

@@ -89,7 +89,7 @@ const Profile = ({ readOnly }) => {
                             name="first_name"
                             error={errors.first_name}
                             readOnly={readOnly}
-                            defaultValue={values.first_name}
+                            value={values.first_name?.toUpperCase()}
                             helperText={errors.first_name}
                             onChange={handleChange}
                         />
@@ -100,7 +100,7 @@ const Profile = ({ readOnly }) => {
                             name="last_name"
                             error={errors.last_name}
                             readOnly={readOnly}
-                            defaultValue={values.last_name}
+                            value={values.last_name?.toUpperCase()}
                             helperText={errors.last_name}
                             onChange={handleChange}
                         />
@@ -133,7 +133,7 @@ const Profile = ({ readOnly }) => {
                             name="address"
                             error={errors.address}
                             readOnly={readOnly}
-                            defaultValue={values.address}
+                            value={values.address?.toUpperCase()}
                             helperText={errors.address}
                             onChange={handleChange}
                         />

@@ -17,7 +17,7 @@ import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepButton from '@material-ui/core/StepButton';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { getVehicleDocuments, getVehicleLoans, getVehicleServiceDetails, deleteVehicleStatus, updateVehicleServiceDetails } from "../../../services/transports.service"
+import { getVehicleDocuments, getVehicleLoans, getVehicleServiceDetails, deleteVehicleStatus, updateVehicleServiceDetails, deleteVehicleDoc } from "../../../services/transports.service"
 import { logger } from "../../../config/logger"
 import Button from "../../../components/CommonComponents/Button/Button"
 import NewVehicleLoanAction from "../../../components/NewVehicleLoan/NewVehicleLoanAction"
@@ -210,7 +210,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
     const dealerShipId = id;
     files.map(file => {
       formData.append(`file`, file);
-      formData.append(`document_id`, rowData.doc_id); 
+      formData.append(`document_id`, rowData.doc_id);
     });
     fetch(`${URL.base}transporter/${id}/vehicle/${data[0].vehicle_id}/docs`, {
       method: 'POST',
@@ -346,6 +346,24 @@ export default function VehicleInfo({ id, data, currentUser }) {
         })
       })
   }
+  const deleteDoc = (rowData) => {
+    deleteVehicleDoc(id, data[0].vehicle_id, rowData.doc_id)
+      .then(res => {
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          autoHideDuration: 3000,
+          variant: 'success',
+        })
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000)
+      })
+
+  }
   return (
     <div>
       {data.map((vehicleInfo) => {
@@ -395,7 +413,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
                           <TableRow>
                             <TableCell>{row.description}</TableCell>
                             <TableCell>
-                            {/* onClick={() => setImageModal({ open: true, image: row.file_path })} */}
+                              {/* onClick={() => setImageModal({ open: true, image: row.file_path })} */}
                               <Button>
                                 <a href={row.file_path}>{row.file_path?.split("/")[row.file_path?.split("/").length - 1] || '-'}</a>
                               </Button>
@@ -403,11 +421,11 @@ export default function VehicleInfo({ id, data, currentUser }) {
                             <TableCell>
                               <Button
                                 size="small"
-                                onClick={() =>handleUpload(row)}
+                                onClick={() => handleUpload(row)}
                               >
                                 Upload
                               </Button>
-                              <Button size="small">
+                              <Button size="small" onClick={() => deleteDoc(row)}>
                                 Delete
                               </Button>
                             </TableCell>

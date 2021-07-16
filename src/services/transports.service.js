@@ -191,7 +191,7 @@ export const addNewTransport = (data) => {
       })
   })
 }
-export const updateTransport = (id,data) => {
+export const updateTransport = (id, data) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.vehicleInfo}/${id}`, {
       method: 'POST',
@@ -369,6 +369,25 @@ export const updateFleetOperator = (data, dealerId, id) => {
     apiCall(`${URL.dealership}/${dealerId}/operators/${id}`, {
       method: 'POST',
       body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const deleteVehicleDoc = (id, vehicleId, docId) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`transporter/${id}/vehicle/${vehicleId}/docs/${docId}`, {
+      method: 'POST',
+      body: { status: 0 }
     })
       .then(({ status, message }) => {
         if (status === "SUCCESS") {

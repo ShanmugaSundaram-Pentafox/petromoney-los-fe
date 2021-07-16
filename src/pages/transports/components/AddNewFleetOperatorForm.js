@@ -256,7 +256,7 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
                                     <TextInput
                                         label="Transport Name"
                                         name="transport_name"
-                                        defaultValue={values.transport_name}
+                                        value={values.transport_name?.toUpperCase()}
                                         error={errors.transport_name}
                                         readOnly={readOnly}
                                         helperText={errors.transport_name}

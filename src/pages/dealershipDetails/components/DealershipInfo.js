@@ -148,7 +148,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 labelText="Name"
                 name="name"
                 readOnly={readOnly}
-                defaultValue={values.name}
+                value={values.name?.toUpperCase()}
                 {...fieldProps}
               />
             </Grid>
@@ -160,7 +160,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 name="address"
                 readOnly={readOnly}
                 disabled={readOnly}
-                defaultValue={values.address}
+                value={values.address?.toUpperCase()}
                 {...fieldProps}
               />
             </Grid>

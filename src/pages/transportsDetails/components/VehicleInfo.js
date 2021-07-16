@@ -201,17 +201,18 @@ export default function VehicleInfo({ id, data, currentUser }) {
       }
     }
   }
-  const handleUpload = () => {
+  const handleUpload = (row) => {
     setFileUpload(true);
+    setRowData(row)
   }
   const handleSave = (files) => {
     const formData = new FormData();
     const dealerShipId = id;
     files.map(file => {
       formData.append(`file`, file);
-      formData.append(`document_id`, 18);
+      formData.append(`document_id`, rowData.doc_id); 
     });
-    fetch(`${URL.base}transporter/${data[0].vehicle_id}/vehicle/${id}/docs`, {
+    fetch(`${URL.base}transporter/${id}/vehicle/${data[0].vehicle_id}/docs`, {
       method: 'POST',
       body: formData,
       headers: {
@@ -233,9 +234,9 @@ export default function VehicleInfo({ id, data, currentUser }) {
           variant: 'success',
         })
         onCloseUploader();
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000)
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 2000)
         // console.log("data",res)
         // updateVehicleServiceDetails(id, serviceData.vehicle_id, serviceData.credit_head_id, serviceData.loan_id, { status_id: status, details: { file_url: res?.file_url?.split(" ") } })
         //   .then(res => {
@@ -422,14 +423,15 @@ export default function VehicleInfo({ id, data, currentUser }) {
                           <TableRow>
                             <TableCell>{row.description}</TableCell>
                             <TableCell>
-                              <Button onClick={() => setImageModal({ open: true, image: row.file_path })}>
-                                {row.file_path?.split("/")[row.file_path?.split("/").length - 1] || '-'}
+                            {/* onClick={() => setImageModal({ open: true, image: row.file_path })} */}
+                              <Button>
+                                <a href={row.file_path}>{row.file_path?.split("/")[row.file_path?.split("/").length - 1] || '-'}</a>
                               </Button>
                             </TableCell>
                             <TableCell>
                               <Button
                                 size="small"
-                                onClick={() => setFileUpload(true)}
+                                onClick={() =>handleUpload(row)}
                               >
                                 Upload
                               </Button>

@@ -346,9 +346,10 @@ export default function VehicleInfo({ id, data, currentUser }) {
         })
       })
   }
-  const deleteDoc = (rowData) => {
+  const handleDocDelete = (rowData) => {
     deleteVehicleDoc(id, data[0].vehicle_id, rowData.doc_id)
       .then(res => {
+        setOpen(false)
         enqueueSnackbar(res, {
           anchorOrigin: {
             vertical: 'top',
@@ -361,6 +362,15 @@ export default function VehicleInfo({ id, data, currentUser }) {
         setTimeout(() => {
           window.location.reload();
         }, 2000)
+      })
+      .catch(e => {
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
       })
 
   }
@@ -425,7 +435,11 @@ export default function VehicleInfo({ id, data, currentUser }) {
                               >
                                 Upload
                               </Button>
+<<<<<<< HEAD
                               <Button size="small" onClick={() => deleteDoc(row)}>
+=======
+                              <Button size="small" onClick={() => handleDocDelete(row)}>
+>>>>>>> d2675fee200c38f162d3afde91dbca3ec7ead323
                                 Delete
                               </Button>
                             </TableCell>

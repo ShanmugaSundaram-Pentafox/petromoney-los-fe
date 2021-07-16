@@ -177,7 +177,8 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
         initialValues: {
             ...rowData,
         },
-        // validateOnBlur: true,
+        validateOnChange: false,
+        validateOnBlur: true,
         validationSchema: Yup.object().shape({
             // id: Yup.number().required('Please enter transporter code'),
             first_name: Yup.string().required('Please enter transporter name'),
@@ -337,12 +338,13 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                                     <TextInput
                                         label="First Name"
                                         name="first_name"
-                                        defaultValue={values.first_name}
+                                        vqalue={values.first_name?.toUpperCase()}
                                         error={errors.first_name}
                                         readOnly={readOnly}
                                         helperText={errors.first_name}
                                         InputLabelProps={{ shrink: true }}
                                         onChange={handleChange}
+
                                     />
                                 </Grid>
                                 <Grid item md={6}>
@@ -352,7 +354,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                                         readOnly={readOnly}
                                         error={errors.last_name}
                                         helperText={errors.last_name}
-                                        defaultValue={values.last_name}
+                                        value={values.last_name?.toUpperCase()}
                                         InputLabelProps={{ shrink: true }}
                                         onChange={handleChange}
                                     />
@@ -430,7 +432,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                                         label="Address"
                                         name="address"
                                         readOnly={readOnly}
-                                        defaultValue={values.address}
+                                        defaultValue={values.address?.toUpperCase()}
                                         error={errors.address}
                                         helperText={errors.address}
                                         onChange={handleChange}
@@ -517,7 +519,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                                     <TextInput
                                         label="Aadhar"
                                         name="aadhar"
-                                        value={values.aadhar}
+                                        value={values?.toUpperCase()}
                                         helperText={errors.aadhar}
                                         readOnly={readOnly}
                                         error={errors.aadhar}
@@ -530,7 +532,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                                     <TextInput
                                         label="PAN Number"
                                         name="pan"
-                                        value={values.pan}
+                                        value={values.pan?.toUpperCase()}
                                         error={errors.pan}
                                         readOnly={readOnly}
                                         helperText={errors.pan}

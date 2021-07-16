@@ -367,7 +367,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                         {...inputProps}
                                         name="name"
                                         labelText="Transport Name"
-                                        value={values.name}
+                                        value={values.name?.toUpperCase()}
                                         readOnly={readOnly}
                                         error={errors.name}
                                         helperText={errors.name}
@@ -440,7 +440,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                         {...inputProps}
                                         name="address"
                                         labelText="Address"
-                                        value={values.address}
+                                        value={values.address?.toUpperCase()}
                                         readOnly={readOnly}
                                         disabled={readOnly}
                                         error={errors.address}

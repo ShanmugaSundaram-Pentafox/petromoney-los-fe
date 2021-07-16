@@ -149,7 +149,7 @@ const AddNewUserForm = ({ callback,action }) => {
                     {...inputProps}
                     name="first_name"
                     labelText="First Name"
-                    value={values.first_name}
+                    value={values.first_name?.toUpperCase()}
                     error={errors.first_name}
                     helperText={errors.first_name}
                   />
@@ -159,7 +159,7 @@ const AddNewUserForm = ({ callback,action }) => {
                     {...inputProps}
                     name="last_name"
                     labelText="Last Name"
-                    value={values.last_name}
+                    value={values.last_name?.toUpperCase()}
                     error={errors.last_name}
                     helperText={errors.last_name}
                   />

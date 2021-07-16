@@ -151,6 +151,8 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
       setReadOnly(true)
     },
     validationSchema,
+    validateOnChange: false,
+    validateOnBlur: true,
     onSubmit: values => {
       setLoading(true);
       const date = moment(selectedDate).format('DD-MMM-YYYY')

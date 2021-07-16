@@ -124,7 +124,7 @@ export const OwnerInfoCard = ({ id, ownerData, currentUser }) => {
                         </Avatar>
                     </Box>
                     <Box>
-                        <p><strong>{ownerData.first_name} {ownerData.last_name}</strong></p>
+                        <p><strong>{ownerData.first_name.toUpperCase()} {ownerData.last_name.toUpperCase()}</strong></p>
                         <p><small>{ownerData.dob} | {ownerData.gender}</small></p>
                         <p><small>{ownerData.address} </small></p>
                         <p><small>{ownerData.mobile}</small></p>

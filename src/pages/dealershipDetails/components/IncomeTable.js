@@ -165,7 +165,7 @@ const IncomeTable = ({ id, editable, currentUser }) => {
                   <TextInput
                     label="Business Name"
                     name="business_name"
-                    value={editRow.business_name}
+                    value={editRow.business_name?.toUpperCase()}
                     onChange={onEditTextChange}
                   />
                 </TableCell>
@@ -226,7 +226,7 @@ const IncomeTable = ({ id, editable, currentUser }) => {
                   <TextInput
                     label="Business Name"
                     name="business_name"
-                    value={apiData.business_name}
+                    value={apiData.business_name?.toUpperCase()}
                     onChange={onTextChange}
                   />
                 </TableCell>

@@ -157,6 +157,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
   const [openModal, setOpenModal] = useState(false);
   const [vehicleNumber, setVehicleNumber] = useState();
   const [vehicleId, setVehicleId] = useState();
+  const [vehicleDetails,setVehicleDetails] = useState();
   const [modalType, setModalType] = useState("");
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles()
@@ -201,9 +202,10 @@ export default function VehicleInfo({ id, data, currentUser }) {
       }
     }
   }
-  const handleUpload = (row) => {
+  const handleUpload = (row,vehicle) => {
     setFileUpload(true);
-    setRowData(row)
+    setRowData(row);
+    setVehicleDetails(vehicle);
   }
   const handleSave = (files) => {
     const formData = new FormData();
@@ -212,7 +214,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
       formData.append(`file`, file);
       formData.append(`document_id`, rowData.doc_id);
     });
-    fetch(`${URL.base}transporter/${id}/vehicle/${data[0].vehicle_id}/docs`, {
+    fetch(`${URL.base}transporter/${id}/vehicle/${vehicleDetails.vehicle_id}/docs`, {
       method: 'POST',
       body: formData,
       headers: {
@@ -234,9 +236,9 @@ export default function VehicleInfo({ id, data, currentUser }) {
           variant: 'success',
         })
         onCloseUploader();
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 2000)
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000)
         // console.log("data",res)
         // updateVehicleServiceDetails(id, serviceData.vehicle_id, serviceData.credit_head_id, serviceData.loan_id, { status_id: status, details: { file_url: res?.file_url?.split(" ") } })
         //   .then(res => {
@@ -346,8 +348,8 @@ export default function VehicleInfo({ id, data, currentUser }) {
         })
       })
   }
-  const handleDocDelete = (rowData) => {
-    deleteVehicleDoc(id, data[0].vehicle_id, rowData.doc_id)
+  const handleDocDelete = (rowData,vehicle) => {
+    deleteVehicleDoc(id, rowData,vehicle)
       .then(res => {
         setOpen(false)
         enqueueSnackbar(res, {
@@ -431,15 +433,11 @@ export default function VehicleInfo({ id, data, currentUser }) {
                             <TableCell>
                               <Button
                                 size="small"
-                                onClick={() => handleUpload(row)}
+                                onClick={() => handleUpload(row,vehicleInfo)}
                               >
                                 Upload
                               </Button>
-<<<<<<< HEAD
-                              <Button size="small" onClick={() => deleteDoc(row)}>
-=======
-                              <Button size="small" onClick={() => handleDocDelete(row)}>
->>>>>>> d2675fee200c38f162d3afde91dbca3ec7ead323
+                              <Button size="small" onClick={() => handleDocDelete(row,vehicleInfo)}>
                                 Delete
                               </Button>
                             </TableCell>
@@ -583,7 +581,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
         onClose={() => setOpenModal(false)}
         variant="temporary"
       >
-        <AddNewVehicleForm id={id} callback={() => setOpenModal(false)} number={vehicleNumber} trans_id={vehicleId} modalType={modalType} />
+        <AddNewVehicleForm id={id} isEdit='Add' callback={() => setOpenModal(false)} number={vehicleNumber} trans_id={vehicleId} modalType={modalType} />
       </Drawer>
     </div>
   )

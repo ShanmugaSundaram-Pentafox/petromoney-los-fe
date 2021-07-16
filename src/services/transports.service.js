@@ -383,11 +383,11 @@ export const updateFleetOperator = (data, dealerId, id) => {
   })
 }
 
-export const deleteVehicleDoc = (id, vehicleId,docId) => {
+export const deleteVehicleDoc = (id, rowData,vehicle) => {
   return new Promise((resolve, reject) => {
-    apiCall(`transporter/${id}/vehicle/${vehicleId}/docs/${docId}`, {
+    apiCall(`transporter/${id}/vehicle/${vehicle.vehicle_id}/docs/${rowData.doc_id}`, {
       method: 'DELETE',
-      // body: { status: 0 }
+      body: rowData
     })
       .then(({ status, message }) => {
         if (status === "SUCCESS") {

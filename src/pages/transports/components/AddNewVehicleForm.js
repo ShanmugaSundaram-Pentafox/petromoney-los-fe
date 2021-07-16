@@ -145,8 +145,8 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 
-const AddNewVehicleForm = ({ data, id, number, trans_id, modalType, isEdit, callback }) => {
-    const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
+const AddNewVehicleForm = ({ data, id, number, trans_id, isEdit, callback }) => {
+    const [readOnly, setReadOnly] = useState(isEdit === 'Add' ? true : false);
     const { enqueueSnackbar } = useSnackbar();
     const [loading,setLoading] = useState(false)
     const classes = useStyles()
@@ -173,7 +173,7 @@ const AddNewVehicleForm = ({ data, id, number, trans_id, modalType, isEdit, call
             tt_no: Yup.string().required('Please enter vehicle number'),
         }),
         onSubmit: formData => {
-            if (modalType === "EDIT") {
+            if (isEdit === "EDIT") {
                 updateVehicle(formData, id, trans_id)
                     .then(message => {
                         enqueueSnackbar(message, {
@@ -199,7 +199,7 @@ const AddNewVehicleForm = ({ data, id, number, trans_id, modalType, isEdit, call
                     })
             }
             else {
-                addNewVehicle(formData, data.id)
+                addNewVehicle(formData, id)
                     .then(message => {
                         enqueueSnackbar(message, {
                             anchorOrigin: {

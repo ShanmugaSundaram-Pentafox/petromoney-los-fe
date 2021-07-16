@@ -17,7 +17,7 @@ import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepButton from '@material-ui/core/StepButton';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { getVehicleDocuments, getVehicleLoans, getVehicleServiceDetails, deleteVehicleStatus, updateVehicleServiceDetails } from "../../../services/transports.service"
+import { getVehicleDocuments, getVehicleLoans, getVehicleServiceDetails, deleteVehicleStatus, updateVehicleServiceDetails, deleteVehicleDoc } from "../../../services/transports.service"
 import { logger } from "../../../config/logger"
 import Button from "../../../components/CommonComponents/Button/Button"
 import NewVehicleLoanAction from "../../../components/NewVehicleLoan/NewVehicleLoanAction"
@@ -345,6 +345,34 @@ export default function VehicleInfo({ id, data, currentUser }) {
         })
       })
   }
+  const handleDocDelete = (rowData) => {
+    deleteVehicleDoc(id, data[0].vehicle_id, rowData.doc_id)
+      .then(res => {
+        setOpen(false)
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          autoHideDuration: 3000,
+          variant: 'success',
+        })
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000)
+      })
+      .catch(e => {
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+      })
+
+  }
   return (
     <div>
       {data.map((vehicleInfo) => {
@@ -405,7 +433,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
                               >
                                 Upload
                               </Button>
-                              <Button size="small">
+                              <Button size="small" onClick={() => handleDocDelete(row)}>
                                 Delete
                               </Button>
                             </TableCell>

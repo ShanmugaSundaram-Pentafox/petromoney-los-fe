@@ -382,3 +382,22 @@ export const updateFleetOperator = (data, dealerId, id) => {
       })
   })
 }
+
+export const deleteVehicleDoc = (id, vehicleId,docId) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`transporter/${id}/vehicle/${vehicleId}/docs/${docId}`, {
+      method: 'DELETE',
+      // body: { status: 0 }
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}

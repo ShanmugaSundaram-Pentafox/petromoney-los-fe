@@ -207,7 +207,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
             <Button
               variant="contained"
               className={clsx(classes.btn, classes.btnSuccess)}
-              startIcon={<NavigateNextRoundedIcon />}
+              // startIcon={<NavigateNextRoundedIcon />}
               disabled={loading}
               onClick={loading ? () => null : handleSubmit}>{loading ? <CircularProgress size={20} /> : `Save`}</Button>
           </div>

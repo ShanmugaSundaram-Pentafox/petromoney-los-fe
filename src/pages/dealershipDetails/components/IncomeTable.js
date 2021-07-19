@@ -2,16 +2,17 @@ import React, { useState, Fragment } from 'react';
 import { useMount } from 'react-use';
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
+// import Grid from '@material-ui/core/Grid';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import clsx from 'clsx';
+// import Dialog from '@material-ui/core/Dialog';
+// import DialogActions from '@material-ui/core/DialogActions';
+// import DialogContent from '@material-ui/core/DialogContent';
+// import DialogTitle from '@material-ui/core/DialogTitle';
 import TextInput from '../../../components/TextInput/TextInput';
 import Currency from '../../../components/Number/Currency';
 import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
@@ -21,7 +22,7 @@ import { getDealersWithCoapplicants } from '../../../services/dealers.service';
 import { useFormik } from 'formik';
 import { getBusinessTypes } from '../../../services/common.service';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   table: {
     padding: 8
   },
@@ -30,9 +31,18 @@ const useStyles = makeStyles({
   },
   row: {
     paddingRight: 4,
-    paddingBottom: 14
-  }
-});
+      paddingBottom: 14
+  },
+  btnSuccess: {
+    '&.MuiButton-contained': {
+      backgroundColor: theme.palette.success.main,
+        color: theme.palette.white
+    },
+    '&.MuiButton-contained:hover': {
+      backgroundColor: theme.palette.success.dark
+    }
+  },
+}));
 
 const IncomeTable = ({ id, editable, currentUser }) => {
   const classes = useStyles();
@@ -278,10 +288,10 @@ const IncomeTable = ({ id, editable, currentUser }) => {
                     </Button>
                   </Fragment>
                 ) : (editable && (
+
                   <Button
-                    size="small"
-                    variant="outlined"
-                    className={classes.btnSuccess}
+                    variant="contained"
+                    className={clsx(classes.btn, classes.btnSuccess)}
                     onClick={() => setAddNewRow(true)}>Add Income</Button>
                 ))
               }

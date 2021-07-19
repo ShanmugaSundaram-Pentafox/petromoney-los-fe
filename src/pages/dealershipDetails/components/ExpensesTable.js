@@ -13,13 +13,22 @@ import TextInput from '../../../components/TextInput/TextInput';
 import Currency from '../../../components/Number/Currency';
 import { getDealershipExpensesById, postDealershipExpensesById, updateDealershipExpenseById } from '../../../services/dealerships.service';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   table: {
     padding: 8
-  }
-});
+  },
+  btnSuccess: {
+    '&.MuiButton-contained': {
+      backgroundColor: theme.palette.success.main,
+      color: theme.palette.white
+    },
+    '&.MuiButton-contained:hover': {
+      backgroundColor: theme.palette.success.dark
+    }
+  },
+}));
 
-const ExpensesTable = ({ id, editable, values=[], currentUser }) => {
+const ExpensesTable = ({ id, editable, values = [], currentUser }) => {
   const classes = useStyles();
   const [expenses, setExpenses] = useState(values);
   const [addNewRow, setAddNewRow] = useState();
@@ -76,7 +85,7 @@ const ExpensesTable = ({ id, editable, values=[], currentUser }) => {
 
   const saveNewExpense = () => {
     console.log('Expense api body - ', apiData)
-    if(Object.keys(apiData).length < 2) return null;
+    if (Object.keys(apiData).length < 2) return null;
     const objBody = {
       user_id: currentUser.id, ...apiData
     }
@@ -189,22 +198,21 @@ const ExpensesTable = ({ id, editable, values=[], currentUser }) => {
                     onClick={() => {
                       setAddNewRow(false);
                     }}>
-                      <DeleteForeverRoundedIcon fontSize="small" />
-                    </Button>
-                    &nbsp;&nbsp;
+                    <DeleteForeverRoundedIcon fontSize="small" />
+                  </Button>
+                  &nbsp;&nbsp;
                   <Button
                     size="small"
                     variant="outlined"
                     color="success"
                     className={classes.btnSuccess}
                     onClick={saveNewExpense}>
-                      <DoneRoundedIcon fontSize="small" />
-                    </Button>
+                    <DoneRoundedIcon fontSize="small" />
+                  </Button>
                 </Fragment>
               ) : (editable && (
                 <Button
-                  size="small"
-                  variant="outlined"
+                  variant="contained"
                   className={classes.btnSuccess}
                   onClick={() => setAddNewRow(true)}>Add Expense</Button>
               ))

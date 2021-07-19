@@ -8,9 +8,9 @@ import isEqual from 'lodash/isEqual';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 // import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
 import { useFormik } from 'formik';
-// import clsx from 'clsx';
+import clsx from 'clsx';
 import Alert from '@material-ui/lab/Alert';
-// import CircularProgress from '@material-ui/core/CircularProgress';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { API } from '../../../config/api';
 import { URL } from '../../../config/serverUrls';
 import { logger } from '../../../config/logger';
@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
   },
   actionButtonsWrapper: {
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     padding: '12px 16px'
   },
   actionButtons: {
@@ -109,6 +109,7 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
       .then(({ status, data }) => {
         if (status === "SUCCESS") {
           setApiData(data[0] || {});
+          setValues(data[0] || {})
         } else {
           // reject(data.message);
         }
@@ -198,7 +199,7 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
             <Alert severity={apiStatus.type}>{apiStatus.message}</Alert>
           )
         }
-        <div className={classes.actionButtonsWrapper}>
+        {/* <div className={classes.actionButtonsWrapper}>
           <div>
             <Button
               variant="contained"
@@ -207,7 +208,7 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
               onClick={onClose}>Back</Button>
           </div>
           <div>
-            {/* {
+            {
               editable && (
                 <Button
                   variant="contained"
@@ -216,9 +217,9 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
                   disabled={loading}
                   onClick={loading ? () => null : handleSubmit}>{loading ? <CircularProgress size={20} /> : `Save`}</Button>
               )
-            } */}
+            }
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   )

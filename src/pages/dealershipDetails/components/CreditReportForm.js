@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => ({
     }
   },
   center: {
-    textAlign: 'center',
+    textAlign: 'right',
     margin: 8,
   }
 }));
@@ -434,7 +434,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
             <Button
               variant="contained"
               className={clsx(classes.btn, classes.btnSuccess)}
-              startIcon={<NavigateNextRoundedIcon />}
+              // startIcon={<NavigateNextRoundedIcon />}
               disabled={loading}
               onClick={loading ? () => null : onSubmit}>{loading ? <CircularProgress size={20} /> : `Save`}</Button>
           )

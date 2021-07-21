@@ -17,12 +17,14 @@ import CloseIcon from '@material-ui/icons/Close';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import { URL } from '../../../config/serverUrls';
+// import { URL } from '../../../config/serverUrls';
 import EditIcon from '@material-ui/icons/Edit';
+import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
 import { getAllRegion, getBusinessTypes, getOmcList } from '../../../services/common.service';
 import { getDistricts, getFormattedStatesList } from '../../../utils/indianStates.util';
 import { addNewTransport, updateTransport } from '../../../services/transports.service';
 import { useSnackbar } from 'notistack';
+import Tooltip from '@material-ui/core/Tooltip';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -227,8 +229,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                         }, 2000)
                     })
                     .catch(error => {
-                        console.log(error);
-                        enqueueSnackbar(error.profile_status, {
+                        enqueueSnackbar(error, {
                             anchorOrigin: {
                                 vertical: 'top',
                                 horizontal: 'right',
@@ -307,6 +308,27 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
         },
         checked: {},
     }))(Switch);
+
+    const aadharBack = () => {
+        return (
+            <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
+                href={data.aadhar_b_file_url} target="_blank" title={'Aadhar Back'}>{'Aadhar Back'}</a>
+        )
+    }
+
+    const aadharFront = () => {
+        return (
+            <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
+                href={data.aadhar_f_file_url} target="_blank" title={'Aadhar Front'}>{'Aadhar Front'}</a>
+        )
+    }
+    const panAttachment = () => {
+        return (
+            <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
+                href={data.pan_file_url} target="_blank" title={'PAN Attachment'}>{'PAN Attachment'}</a>
+        )
+    }
+
     return (
         <div className={classes.sidePanelFormWrapper}>
             <Typography className={classes.sidePanelTitle} variant="h4">
@@ -488,6 +510,114 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                         error={errors.gst}
                                         helperText={errors.gst}
                                     />
+                                </Grid>
+                                <Grid md={12} style={{ margin: '16px 8px' }}>
+                                    <Typography variant="title">Documents </Typography>
+                                </Grid>
+                                <Grid item md={12}>
+                                    <Typography variant="subtitle2" component="subtitle2">
+                                        PAN :{(readOnly) ?
+                                            <>
+                                                {data.pan_file_url ?
+                                                    panAttachment()
+                                                    : <Typography variant="subtitle2" component="subtitle2">
+                                                        <Tooltip title={'Click Edit and attach'}>
+                                                            <AttachFileRoundedIcon disabled={readOnly} />
+                                                        </Tooltip> Attach PAN
+                                                    </Typography>}
+                                            </> :
+                                            <>
+                                                {data.pan_file_url ? panAttachment() :
+                                                    <>
+                                                        <TextInput
+                                                            type="file"
+                                                            accept="image/*"
+                                                            name="pan_file_url"
+                                                            readOnly={readOnly}
+                                                            disabled={readOnly}
+                                                            value={data.pan_file_url}
+                                                            onChange={(event) => {
+                                                                values[event.target.name] = event.currentTarget.files[0];
+                                                            }}
+                                                            InputLabelProps={{ shrink: true }}
+                                                        ></TextInput>
+                                                    </>
+                                                }
+                                            </>
+                                        }
+                                    </Typography>
+                                </Grid>
+                                <Grid item md={12} style={{ marginBottom: '8px' }}>
+                                    <Typography variant="subtitle1">Aadhar </Typography>
+                                </Grid>
+                                <Grid item md={6}>
+                                    <Typography variant="subtitle2" component="subtitle2">
+                                        Front:{(readOnly) ?
+                                            <>
+                                                {
+                                                    data.pan_file_url ?
+                                                        aadharFront()
+                                                        : <Typography variant="subtitle2" component="subtitle2">
+                                                            <Tooltip title={'Click Edit and attach'}>
+                                                                <AttachFileRoundedIcon disabled={readOnly} />
+                                                            </Tooltip> Attach PAN
+                                                        </Typography>}
+                                            </> :
+                                            <>
+                                                {data.aadhar_f_file_url ? aadharFront() :
+                                                    <>
+                                                        <TextInput
+                                                            type="file"
+                                                            accept="image/*"
+                                                            name="aadhar_f_file_url"
+                                                            value={data.aadhar_f_file_url}
+                                                            readOnly={readOnly}
+                                                            disabled={readOnly}
+                                                            onChange={(event) => {
+                                                                values[event.target.name] = event.currentTarget.files[0];
+                                                            }}
+                                                            InputLabelProps={{ shrink: true }}
+                                                        ></TextInput>
+                                                    </>
+                                                }
+                                            </>
+                                        }
+                                    </Typography>
+                                </Grid>
+                                <Grid item md={6}>
+                                    <Typography variant="subtitle2" component="subtitle2">
+                                        Back:
+                                        {(readOnly) ?
+                                            <>
+                                                {
+                                                    data.pan_file_url ?
+                                                        aadharBack()
+                                                        : <Typography variant="subtitle2" component="subtitle2">
+                                                            <Tooltip title={'Click Edit and attach'}>
+                                                                <AttachFileRoundedIcon disabled={readOnly} />
+                                                            </Tooltip> Attach PAN
+                                                        </Typography>}
+                                            </> :
+                                            <>
+                                                {data.aadhar_b_file_url ?
+                                                    aadharBack() :
+                                                    <>
+                                                        <TextInput
+                                                            type="file"
+                                                            accept="image/*"
+                                                            name="aadhar_b_file_url"
+                                                            value={data.aadhar_b_file_url}
+                                                            readOnly={readOnly}
+                                                            disabled={readOnly}
+                                                            onChange={(event) => {
+                                                                values[event.target.name] = event.currentTarget.files[0];
+                                                            }}
+                                                            InputLabelProps={{ shrink: true }}
+                                                        ></TextInput>
+                                                    </>
+                                                }
+                                            </>}
+                                    </Typography>
                                 </Grid>
                             </Grid>
                         </form>

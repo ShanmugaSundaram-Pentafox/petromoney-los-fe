@@ -82,7 +82,12 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
     const [openBankingForm,setOpenBankingForm] =useState(false)
 
     const handleEdit = () => {
-        setOpenModal(!openModal)
+        setOpenOmcForm(false)
+        setOpenBusinessForm(false)
+        setOpenOutletForm(false)
+        setOpenInfrastructureForm(false)
+        setOpenAssetForm(false)
+        setOpenBankingForm(false)
     }
 
     return (

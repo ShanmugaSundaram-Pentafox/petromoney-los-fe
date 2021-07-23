@@ -95,7 +95,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                 </div>
                 <Grid container spacing={1} className={classes.root} >
                     <Grid item md={2}>
-                        <Tooltip title="click to edit omc details">
+                        <Tooltip title="click to edit OMC details">
                             <div className={classes.content}>
                                 <BunkIcon width={30} className={classes.icons} onClick={() => setOpenOmcForm(true)} />
                                 <Typography variant="h5" align='center' className={classes.title} >OMC details</Typography>
@@ -104,7 +104,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                         </Tooltip>
                     </Grid>
                     <Grid item md={2}>
-                        <Tooltip title="click to edit omc details">
+                        <Tooltip title="click to edit Business details">
                             <div className={classes.content}>
                                 <BusinessIcon width={30} className={classes.icons} onClick={() => setOpenBusinessForm(true)} />
                                 <Typography variant="h6" align='center' className={classes.title} >Business details</Typography>
@@ -112,7 +112,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                         </Tooltip>
                     </Grid>
                     <Grid item md={2}>
-                        <Tooltip title="click to edit omc details">
+                        <Tooltip title="click to edit Outlet details">
                             <div className={classes.content}>
                                 <OutletIcon width={30} className={classes.icons} onClick={() => setOpenOutletForm(true)} />
                                 <Typography variant="h6" align='center' className={classes.title} >Outlet details</Typography>
@@ -121,7 +121,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                         </Tooltip>
                     </Grid>
                     <Grid item md={2}>
-                        <Tooltip title="click to edit omc details">
+                        <Tooltip title="click to edit Infrastructure details">
                             <div className={classes.content}>
                                 <InfrastructureIcon width={30} className={classes.icons} onClick={() => setOpenInfrastructureForm(true)} />
                                 <Typography variant="h6" align='center' className={classes.title} >Infrastructure details</Typography>
@@ -130,7 +130,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                         </Tooltip>
                     </Grid>
                     <Grid item md={2}>
-                        <Tooltip title="click to edit omc details">
+                        <Tooltip title="click to edit Asset details">
                             <div className={classes.content}>
                                 <AssetIcon width={30} onClick={() => setOpenAssetForm(true)} />
                                 <Typography variant="h5" align='center' className={classes.title} >Asset details</Typography>
@@ -139,10 +139,10 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                         </Tooltip>
                     </Grid>
                     <Grid item md={2}>
-                        <Tooltip title="click to edit omc details">
+                        <Tooltip title="click to edit Bank details">
                             <div className={classes.content}>
                                 <LoanIcon width={30} className={classes.icons} onClick={() => setOpenBankingForm(true)} />
-                                <Typography variant="h5" align='center' className={classes.title} >Business details</Typography>
+                                <Typography variant="h5" align='center' className={classes.title} >Bank details</Typography>
 
                             </div>
                         </Tooltip>

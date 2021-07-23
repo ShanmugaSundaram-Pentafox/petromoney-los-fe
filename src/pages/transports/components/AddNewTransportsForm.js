@@ -36,6 +36,16 @@ const useStyles = makeStyles((theme) => ({
         zIndex: 0,
         boxShadow: '0 1px 4px -3px #333'
     },
+    details: {
+        padding: 6,
+        borderColor: 'grey',
+        minWidth: 80,
+        height: 60,
+        display: 'flex',
+        textAlign: 'left',
+        alignItems: 'left',
+        justifyContent: 'left'
+    },
     sidePanelFormWrapper: {
         position: 'relative',
         display: 'flex',
@@ -45,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
     },
     sidePanelFormContentWrapper: {
         flex: 1,
-        overflow: 'auto'
+        // overflow: 'auto'
     },
     wrapper: {
         padding: 8,
@@ -89,6 +99,16 @@ const useStyles = makeStyles((theme) => ({
     sidePanelWrapper: {
         width: '40vw',
         padding: '14px',
+    },
+    readOnlyWrapper: {
+        margin: '30px 4px',
+        maxWidth: '100%',
+    },
+    text: {
+        fontSize: 14
+    },
+    title: {
+        fontSize: 12,
     },
     stepperRoot: {
         padding: 16,
@@ -330,256 +350,340 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
             </Typography>
             <div className={classes.sidePanelFormContentWrapper}>
                 <div className={classes.stepperRoot}>
-                    <Box>
-                        <form onSubmit={handleSubmit}>
-                            <Grid container spacing={2}>
-                                <Grid item md={12}>
-                                    {
-                                        <Typography component="div">
-                                            <Grid component="label" container alignItems="center" spacing={2}>
-                                                <Grid item>Transporter Code</Grid>
-                                                <Grid item>No</Grid>
-                                                <Grid item>
-                                                    <AntSwitch checked={checked} onChange={handleClick} name="checked" />
-                                                </Grid>
-                                                <Grid item>Yes</Grid>
-                                            </Grid>
-                                        </Typography>
-                                    }
-                                    {
-                                        checked &&
-                                        <TextInput
-                                            {...inputProps}
-                                            // labelText="Transporter Code"
-                                            placeholder="Enter transporter code here"
-                                            name="transporter_id"
-                                            value={values.id}
-                                            readOnly={readOnly}
-                                            error={errors.id}
-                                            helperText={errors.id}
-                                        >
-                                        </TextInput>
-                                    }
+                    {
+                        readOnly ? (
+                            <Grid container spacing={2} className={classes.readOnlyWrapper}>
+                                <Grid item md={6}>
+                                    <Box className={classes.box} >
+                                        <Box className={classes.details}>
+                                            <div>
+                                                <p className={classes.title}>Transport Code</p>
+                                                <strong className={classes.text}>{values.transporter_id}</strong>
+                                            </div>
+                                        </Box>
+                                        <Box className={classes.details}>
+                                            <div>
+                                                <p className={classes.title}>Mobile</p>
+                                                <strong className={classes.text}>{values.mobile}</strong>
+                                            </div>
+                                        </Box>
+                                        <Box className={classes.details}>
+                                            <div>
+                                                <p className={classes.title}>OMC</p>
+                                                <strong className={classes.text}>{values.omc}</strong>
+                                            </div>
+                                        </Box>
+                                        <Box className={classes.details}>
+                                            <div>
+                                                <p className={classes.title}>Region</p>
+                                                <strong className={classes.text}>{values.region}</strong>
+                                            </div>
+                                        </Box>
+                                        <Box className={classes.details}>
+                                            <div>
+                                                <p className={classes.title}>District</p>
+                                                <strong className={classes.text}>{values.district}</strong>
+                                            </div>
+                                        </Box>
+                                        <Box className={classes.details}>
+                                            <div>
+                                                <p className={classes.title}>GST</p>
+                                                <strong className={classes.text}>{values.gst}</strong>
+                                            </div>
+                                        </Box>
+                                    </Box>
                                 </Grid>
                                 <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        name="name"
-                                        labelText="Transport Name"
-                                        value={values.name?.toUpperCase()}
-                                        readOnly={readOnly}
-                                        error={errors.name}
-                                        helperText={errors.name}
-                                    />
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        name="mobile"
-                                        labelText="Mobile"
-                                        value={values.mobile}
-                                        readOnly={readOnly}
-                                        error={errors.mobile}
-                                        helperText={errors.mobile}
-                                    />
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        select
-                                        name="omc"
-                                        labelText="OMC"
-                                        value={values.omc}
-                                        readOnly={readOnly}
-                                        disabled={readOnly}
-                                        error={errors.omc}
-                                    >
-                                        <option value="">Choose OMC</option>
-                                        {
-                                            omcs.map(omc => <option key={omcs.id} value={omcs.id}>{omc.name}</option>)
-                                        }
-                                    </TextInput>
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        select
-                                        name="business_type"
-                                        labelText="Business Type"
-                                        readOnly={readOnly}
-                                        value={values.business_type}
-                                        disabled={readOnly}
-                                        error={errors.business_type}
-                                    >
-                                        <option value="">Choose bussiness type</option>
-                                        {
-                                            bussinessType.map(type => <option key={type.id} value={type.name}>{type.name}</option>)
-                                        }
-                                    </TextInput>
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        select
-                                        name="region"
-                                        labelText="Region"
-                                        readOnly={readOnly}
-                                        disabled={readOnly}
-                                        value={values.region}
-                                        error={errors.region}
-                                    >
-                                        <option value="">Choose region</option>
-                                        {
-                                            regions.map(region => <option key={region.region} value={region.name} >{region.name}</option>)
-                                        }
-                                    </TextInput>
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        name="address"
-                                        labelText="Address"
-                                        value={values.address?.toUpperCase()}
-                                        readOnly={readOnly}
-                                        disabled={readOnly}
-                                        error={errors.address}
-                                        helperText={errors.address}
-                                    />
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        select
-                                        name="state"
-                                        labelText="State"
-                                        readOnly={readOnly}
-                                        disabled={readOnly}
-                                        value={values.state}
-                                        error={errors.state}
-                                    >
-                                        <option value="">Choose state</option>
-                                        {
-                                            getFormattedStatesList().map(item => <option key={item.code} value={item.value}>{item.label}</option>)
-                                        }
-                                    </TextInput>
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        select
-                                        name="district"
-                                        labelText="District"
-                                        readOnly={readOnly}
-                                        disabled={readOnly}
-                                        value={values.district}
-                                        error={errors.district}
-                                    >
-                                        <option value="">Choose District</option>
-                                        {
-                                            getDistricts(values.state).map(item => <option key={item} value={item}>{item}</option>)
-                                        }
-                                    </TextInput>
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        name="pincode"
-                                        labelText="Pincode"
-                                        value={values.pincode}
-                                        disabled={readOnly}
-                                        readOnly={readOnly}
-                                        error={errors.pincode}
-                                        helperText={errors.pincode}
-                                    />
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        name="gst"
-                                        labelText="GST"
-                                        value={values.gst}
-                                        readOnly={readOnly}
-                                        disabled={readOnly}
-                                        error={errors.gst}
-                                        helperText={errors.gst}
-                                    />
-                                </Grid>
-                                <Grid md={12} style={{ margin: '16px 8px' }}>
-                                    <Typography variant="title">Documents </Typography>
-                                </Grid>
-                                <Grid item md={12}>
-                                    <Typography variant="subtitle2" component="subtitle2">
-                                        PAN :{(readOnly) ?
-                                            <>
-                                                {data.pan_file_url ?
-                                                    panAttachment()
-                                                    : <Typography variant="subtitle2" component="subtitle2">
-                                                        <Tooltip title={'Click Edit and attach'}>
-                                                            <AttachFileRoundedIcon disabled={readOnly} />
-                                                        </Tooltip> Attach PAN
-                                                    </Typography>}
-                                            </> :
-                                            <>
-                                                {data.pan_file_url ? panAttachment() :
-                                                    <>
-                                                        <TextInput
-                                                            type="file"
-                                                            accept="image/*"
-                                                            name="pan_file_url"
-                                                            readOnly={readOnly}
-                                                            disabled={readOnly}
-                                                            value={data.pan_file_url}
-                                                            onChange={(event) => {
-                                                                values[event.target.name] = event.currentTarget.files[0];
-                                                            }}
-                                                            InputLabelProps={{ shrink: true }}
-                                                        ></TextInput>
-                                                    </>
-                                                }
-                                            </>
-                                        }
-                                    </Typography>
-                                </Grid>
-                                <Grid item md={12} style={{ marginBottom: '8px' }}>
-                                    <Typography variant="subtitle1">GST Bill </Typography>
-                                </Grid>
-                                <Grid item md={6}>
-                                    <Typography variant="subtitle2" component="subtitle2">
-                                        GST {(readOnly) ?
-                                            <>
-                                                {
-                                                    data.gst_file_url ?
-                                                        gstAttachment()
-                                                        : <Typography variant="subtitle2" component="subtitle2">
-                                                            <Tooltip title={'Click Edit and attach'}>
-                                                                <AttachFileRoundedIcon disabled={readOnly} />
-                                                            </Tooltip> Attach GST
-                                                        </Typography>}
-                                            </> :
-                                            <>
-                                                {data.gst_file_url ? gstAttachment() :
-                                                    <>
-                                                        <TextInput
-                                                            type="file"
-                                                            accept="image/*"
-                                                            name="gstS_file_url"
-                                                            value={data.aadhar_f_file_url}
-                                                            readOnly={readOnly}
-                                                            disabled={readOnly}
-                                                            onChange={(event) => {
-                                                                values[event.target.name] = event.currentTarget.files[0];
-                                                            }}
-                                                            InputLabelProps={{ shrink: true }}
-                                                        ></TextInput>
-                                                    </>
-                                                }
-                                            </>
-                                        }
-                                    </Typography>
+                                    <Box className={classes.box} >
+                                        <Box className={classes.details}>
+                                            <div>
+                                                <p className={classes.title}>Transport Name</p>
+                                                <strong className={classes.text}>{values.name}</strong>
+                                            </div>
+                                        </Box>
+                                        <Box className={classes.details}>
+                                            <div>
+                                                <p className={classes.title}>Address</p>
+                                                <strong className={classes.text}>{values.address}</strong>
+                                            </div>
+                                        </Box>
+                                        <Box className={classes.details}>
+                                            <div>
+                                                <p className={classes.title}>Business Type</p>
+                                                <strong className={classes.text}>{values.business_type}</strong>
+                                            </div>
+                                        </Box>
+                                        <Box className={classes.details}>
+                                            <div>
+                                                <p className={classes.title}>State</p>
+                                                <strong className={classes.text}>{values.state}</strong>
+                                            </div>
+                                        </Box>
+                                        <Box className={classes.details}>
+                                            <div>
+                                                <p className={classes.title}>Pincode</p>
+                                                <strong className={classes.text}>{values.pincode}</strong>
+                                            </div>
+                                        </Box>
+                                    </Box>
                                 </Grid>
                             </Grid>
-                        </form>
-                    </Box >
+
+                        ) : (
+                            <Box>
+                                <form onSubmit={handleSubmit}>
+                                    <Grid container spacing={2}>
+                                        <Grid item md={12}>
+                                            {
+                                                <Typography component="div">
+                                                    <Grid component="label" container alignItems="center" spacing={2}>
+                                                        <Grid item>Transporter Code</Grid>
+                                                        <Grid item>No</Grid>
+                                                        <Grid item>
+                                                            <AntSwitch checked={checked} onChange={handleClick} name="checked" />
+                                                        </Grid>
+                                                        <Grid item>Yes</Grid>
+                                                    </Grid>
+                                                </Typography>
+                                            }
+                                            {
+                                                checked &&
+                                                <TextInput
+                                                    {...inputProps}
+                                                    // labelText="Transporter Code"
+                                                    placeholder="Enter transporter code here"
+                                                    name="transporter_id"
+                                                    value={values.id}
+                                                    readOnly={readOnly}
+                                                    error={errors.id}
+                                                    helperText={errors.id}
+                                                >
+                                                </TextInput>
+                                            }
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                {...inputProps}
+                                                name="name"
+                                                labelText="Transport Name"
+                                                value={values.name?.toUpperCase()}
+                                                readOnly={readOnly}
+                                                error={errors.name}
+                                                helperText={errors.name}
+                                            />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                {...inputProps}
+                                                name="mobile"
+                                                labelText="Mobile"
+                                                value={values.mobile}
+                                                readOnly={readOnly}
+                                                error={errors.mobile}
+                                                helperText={errors.mobile}
+                                            />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                {...inputProps}
+                                                select
+                                                name="omc"
+                                                labelText="OMC"
+                                                value={values.omc}
+                                                readOnly={readOnly}
+                                                disabled={readOnly}
+                                                error={errors.omc}
+                                            >
+                                                <option value="">Choose OMC</option>
+                                                {
+                                                    omcs.map(omc => <option key={omcs.id} value={omcs.id}>{omc.name}</option>)
+                                                }
+                                            </TextInput>
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                {...inputProps}
+                                                select
+                                                name="business_type"
+                                                labelText="Business Type"
+                                                readOnly={readOnly}
+                                                value={values.business_type}
+                                                disabled={readOnly}
+                                                error={errors.business_type}
+                                            >
+                                                <option value="">Choose bussiness type</option>
+                                                {
+                                                    bussinessType.map(type => <option key={type.id} value={type.name}>{type.name}</option>)
+                                                }
+                                            </TextInput>
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                {...inputProps}
+                                                select
+                                                name="region"
+                                                labelText="Region"
+                                                readOnly={readOnly}
+                                                disabled={readOnly}
+                                                value={values.region}
+                                                error={errors.region}
+                                            >
+                                                <option value="">Choose region</option>
+                                                {
+                                                    regions.map(region => <option key={region.region} value={region.name} >{region.name}</option>)
+                                                }
+                                            </TextInput>
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                {...inputProps}
+                                                name="address"
+                                                labelText="Address"
+                                                value={values.address?.toUpperCase()}
+                                                readOnly={readOnly}
+                                                disabled={readOnly}
+                                                error={errors.address}
+                                                helperText={errors.address}
+                                            />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                {...inputProps}
+                                                select
+                                                name="state"
+                                                labelText="State"
+                                                readOnly={readOnly}
+                                                disabled={readOnly}
+                                                value={values.state}
+                                                error={errors.state}
+                                            >
+                                                <option value="">Choose state</option>
+                                                {
+                                                    getFormattedStatesList().map(item => <option key={item.code} value={item.value}>{item.label}</option>)
+                                                }
+                                            </TextInput>
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                {...inputProps}
+                                                select
+                                                name="district"
+                                                labelText="District"
+                                                readOnly={readOnly}
+                                                disabled={readOnly}
+                                                value={values.district}
+                                                error={errors.district}
+                                            >
+                                                <option value="">Choose District</option>
+                                                {
+                                                    getDistricts(values.state).map(item => <option key={item} value={item}>{item}</option>)
+                                                }
+                                            </TextInput>
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                {...inputProps}
+                                                name="pincode"
+                                                labelText="Pincode"
+                                                value={values.pincode}
+                                                disabled={readOnly}
+                                                readOnly={readOnly}
+                                                error={errors.pincode}
+                                                helperText={errors.pincode}
+                                            />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                {...inputProps}
+                                                name="gst"
+                                                labelText="GST"
+                                                value={values.gst}
+                                                readOnly={readOnly}
+                                                disabled={readOnly}
+                                                error={errors.gst}
+                                                helperText={errors.gst}
+                                            />
+                                        </Grid>
+                                        <Grid md={12} style={{ margin: '16px 8px' }}>
+                                            <Typography variant="title">Documents </Typography>
+                                        </Grid>
+                                        <Grid item md={12}>
+                                            <Typography variant="subtitle2" component="subtitle2">
+                                                PAN :{(readOnly) ?
+                                                    <>
+                                                        {data.pan_file_url ?
+                                                            panAttachment()
+                                                            : <Typography variant="subtitle2" component="subtitle2">
+                                                                <Tooltip title={'Click Edit and attach'}>
+                                                                    <AttachFileRoundedIcon disabled={readOnly} />
+                                                                </Tooltip> Attach PAN
+                                                            </Typography>}
+                                                    </> :
+                                                    <>
+                                                        {data.pan_file_url ? panAttachment() :
+                                                            <>
+                                                                <TextInput
+                                                                    type="file"
+                                                                    accept="image/*"
+                                                                    name="pan_file_url"
+                                                                    readOnly={readOnly}
+                                                                    disabled={readOnly}
+                                                                    value={data.pan_file_url}
+                                                                    onChange={(event) => {
+                                                                        values[event.target.name] = event.currentTarget.files[0];
+                                                                    }}
+                                                                    InputLabelProps={{ shrink: true }}
+                                                                ></TextInput>
+                                                            </>
+                                                        }
+                                                    </>
+                                                }
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item md={12} style={{ marginBottom: '8px' }}>
+                                            <Typography variant="subtitle1">GST Bill </Typography>
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <Typography variant="subtitle2" component="subtitle2">
+                                                GST {(readOnly) ?
+                                                    <>
+                                                        {
+                                                            data.gst_file_url ?
+                                                                gstAttachment()
+                                                                : <Typography variant="subtitle2" component="subtitle2">
+                                                                    <Tooltip title={'Click Edit and attach'}>
+                                                                        <AttachFileRoundedIcon disabled={readOnly} />
+                                                                    </Tooltip> Attach GST
+                                                                </Typography>}
+                                                    </> :
+                                                    <>
+                                                        {data.gst_file_url ? gstAttachment() :
+                                                            <>
+                                                                <TextInput
+                                                                    type="file"
+                                                                    accept="image/*"
+                                                                    name="gstS_file_url"
+                                                                    value={data.aadhar_f_file_url}
+                                                                    readOnly={readOnly}
+                                                                    disabled={readOnly}
+                                                                    onChange={(event) => {
+                                                                        values[event.target.name] = event.currentTarget.files[0];
+                                                                    }}
+                                                                    InputLabelProps={{ shrink: true }}
+                                                                ></TextInput>
+                                                            </>
+                                                        }
+                                                    </>
+                                                }
+                                            </Typography>
+                                        </Grid>
+                                    </Grid>
+                                </form>
+                            </Box >
+
+                        )
+                    }
+
                 </div>
             </div>
             <div className={classes.actionFooter}>

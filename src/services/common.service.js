@@ -177,13 +177,14 @@ export const updatePassword = (password, mobile, id) => {
       })
   });
 }
-export const updateUserDetails = (name, mail, id) => {
+export const updateUserDetails = (name,mobile, mail, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`user/${id}`, {
       method: 'POST',
       body: {
         "name": name,
-        "email": mail
+        "email": mail,
+        "mobile" : mobile
       }
     })
       .then(({ status, data, message }) => {

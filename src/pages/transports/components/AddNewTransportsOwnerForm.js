@@ -182,6 +182,10 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
     const handleClick = () => {
         setChecked(!checked);
     };
+    const handleStateChange = (event) => {
+
+        setState({ ...state, [event.target.name]: event.target.checked });
+    };
     const handleEdit = () => {
         setReadOnly(!readOnly)
     };
@@ -209,7 +213,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
         }),
         onSubmit: values => {
             const date = moment(selectedDate).format('DD-MMM-YYYY')
-            const date_values = { ...values, dob: date }
+            const date_values = { ...values, dob: date, is_whatsapp: state.checkedA === true ? 1 : 0, is_aadhar_linked: state.checkedB === true ? 1 : 0 }
             const data = new FormData();
             Object.keys(date_values).forEach(key => {
                 data.append(key, date_values[key]);
@@ -649,7 +653,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                                                     <Grid>
                                                         <Switch
                                                             checked={state.checkedA}
-                                                            onChange={handleChange}
+                                                            onChange={handleStateChange}
                                                             name="checkedA"
                                                             color="primary"
                                                             inputProps={{ 'aria-label': 'secondary checkbox' }}
@@ -667,7 +671,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                                                     <Grid>
                                                         <Switch
                                                             checked={state.checkedB}
-                                                            onChange={handleChange}
+                                                            onChange={handleStateChange}
                                                             color="primary"
                                                             name="checkedB"
                                                             inputProps={{ 'aria-label': 'secondary checkbox' }}

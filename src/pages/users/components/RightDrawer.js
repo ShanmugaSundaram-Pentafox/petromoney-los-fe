@@ -306,21 +306,56 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
             )
           }
           {
-            !data ? (
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <Skeleton variant="rect" width="100%" height={160} />
+            profileSuccess && (
+              <Box pt={2} pl={3} color="success.main" bgcolor="#f9f9f9" borderRadius={4} className={classes.drawerStyle} display="flex" justifyContent="space-between" alignItems="center">
+                Profile Updated Successfully...
+              </Box>
+            )
+          }
+          {
+            passwordSuccess && (
+              <Box pt={2} pl={3} color="success.main" bgcolor="#f9f9f9" borderRadius={4} className={classes.drawerStyle} display="flex" justifyContent="space-between" alignItems="center">
+                Password Updated Successfully...
+              </Box>
+            )
+          }
+          {
+            readOnly ? (
+              <Grid container spacing={2} className={classes.readOnlyWrapper}>
+                <Grid item md={6}>
+                  <Box className={classes.box} >
+                    <Box className={classes.details}>
+                      <div>
+                        <p className={classes.title}>Name</p>
+                        <strong className={classes.text}>{data.name}</strong>
+                      </div>
+                    </Box>
+                    <Box className={classes.details}>
+                      <div>
+                        <p className={classes.title}>Role</p>
+                        <strong className={classes.text}>{data.role_name}</strong>
+                      </div>
+                    </Box>
+                  </Box>
                 </Grid>
-                {
-                  data.role_desc === "Field Officer" ?
-                    <Grid item xs={12}>
-                      <Skeleton variant="rect" width="100%" height={400} />
-                    </Grid> : null
-                }
-                <Grid item xs={12} >
-                  <Skeleton variant="rect" width="100%" height={200} />
+                <Grid item md={6}>
+                  <Box className={classes.box} >
+                    <Box className={classes.details}>
+                      <div>
+                        <p className={classes.title}>Mobile</p>
+                        <strong className={classes.text}>{data.mobile}</strong>
+                      </div>
+                    </Box>
+                    <Box className={classes.details}>
+                      <div>
+                        <p className={classes.title}>Email</p>
+                        <strong className={classes.text}>{data.email}</strong>
+                      </div>
+                    </Box>
+                  </Box>
                 </Grid>
               </Grid>
+
             ) : (
               <>
                 {

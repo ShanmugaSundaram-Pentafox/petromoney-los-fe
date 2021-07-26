@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
     },
     sidePanelFormContentWrapper: {
         flex: 1,
-        overflow: 'auto'
+        overflowX: 'hidden'
     },
     wrapper: {
         padding: 8,
@@ -128,6 +128,26 @@ const useStyles = makeStyles((theme) => ({
         padding: 16,
         paddingTop: 8
     },
+    details: {
+        padding: 6,
+        borderColor: 'grey',
+        minWidth: 80,
+        height: 60,
+        display: 'flex',
+        textAlign: 'left',
+        alignItems: 'left',
+        justifyContent: 'left'
+    },
+    text: {
+        fontSize: 14
+    },
+    title: {
+        fontSize: 12,
+    },
+    readOnlyWrapper: {
+        margin: '30px 4px',
+        maxWidth: '100%',
+    },
     stepTitle: {
         '& .MuiStepLabel-label.MuiStepLabel-active': {
             fontSize: 15,
@@ -162,6 +182,10 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
     const handleClick = () => {
         setChecked(!checked);
     };
+    const handleStateChange = (event) => {
+
+        setState({ ...state, [event.target.name]: event.target.checked });
+    };
     const handleEdit = () => {
         setReadOnly(!readOnly)
     };
@@ -189,7 +213,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
         }),
         onSubmit: values => {
             const date = moment(selectedDate).format('DD-MMM-YYYY')
-            const date_values = { ...values, dob: date }
+            const date_values = { ...values, dob: date, is_whatsapp: state.checkedA === true ? 1 : 0, is_aadhar_linked: state.checkedB === true ? 1 : 0 }
             const data = new FormData();
             Object.keys(date_values).forEach(key => {
                 data.append(key, date_values[key]);
@@ -221,7 +245,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                             }, 2000)
                         }
                         else {
-                            enqueueSnackbar(res.profile_status, {
+                            enqueueSnackbar(res.message, {
                                 anchorOrigin: {
                                     vertical: 'top',
                                     horizontal: 'right',
@@ -270,7 +294,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                             }, 2000)
                         }
                         else {
-                            enqueueSnackbar(res.profile_status, {
+                            enqueueSnackbar(res.message, {
                                 anchorOrigin: {
                                     vertical: 'top',
                                     horizontal: 'right',
@@ -331,35 +355,114 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
             </Typography>
             <div className={classes.sidePanelFormContentWrapper}>
                 <div className={classes.stepperRoot}>
-                    <Box>
-                        <form onSubmit={handleSubmit}>
-                            <Grid container spacing={2}>
+                    {
+                        readOnly ? (
+                            <Grid container spacing={2} className={classes.readOnlyWrapper}>
                                 <Grid item md={6}>
-                                    <TextInput
-                                        label="First Name"
-                                        name="first_name"
-                                        value={values.first_name?.toUpperCase()}
-                                        error={errors.first_name}
-                                        readOnly={readOnly}
-                                        helperText={errors.first_name}
-                                        InputLabelProps={{ shrink: true }}
-                                        onChange={handleChange}
+                                    <Box className={classes.box} >
+                                        <Box className={classes.details}>
+                                            <div>
+                                                <p className={classes.title}>Owner ID</p>
+                                                <strong className={classes.text}>{values.t_owner_id}</strong>
+                                            </div>
+                                        </Box>
+                                        <Box className={classes.details}>
+                                            <div>
+                                                <p className={classes.title}>Date of Birth</p>
+                                                <strong className={classes.text}>{values.dob}</strong>
+                                            </div>
+                                        </Box>
+                                        <Box className={classes.details}>
+                                            <div>
+                                                <p className={classes.title}>Address</p>
+                                                <strong className={classes.text}>{values.address}</strong>
+                                            </div>
+                                        </Box>
+                                        <Box className={classes.details}>
+                                            <div>
+                                                <p className={classes.title}>Marital status</p>
+                                                <strong className={classes.text}>{values.marital_status}</strong>
+                                            </div>
+                                        </Box>
+                                        <Box className={classes.details}>
+                                            <div>
+                                                <p className={classes.title}>Mobile</p>
+                                                <strong className={classes.text}>{values.mobile}</strong>
+                                            </div>
+                                        </Box>
+                                        <Box className={classes.details}>
+                                            <div>
+                                                <p className={classes.title}>Aadhar</p>
+                                                <strong className={classes.text}>{values.aadhar}</strong>
+                                            </div>
+                                        </Box>
+                                    </Box>
+                                </Grid>
+                                <Grid item md={6}>
+                                    <Box className={classes.box} >
+                                        <Box className={classes.details}>
+                                            <div>
+                                                <p className={classes.title}>Name</p>
+                                                <strong className={classes.text}>{values.first_name} {values.last_name}</strong>
+                                            </div>
+                                        </Box>
+                                        <Box className={classes.details}>
+                                            <div>
+                                                <p className={classes.title}>Gender</p>
+                                                <strong className={classes.text}>{values.gender}</strong>
+                                            </div>
+                                        </Box>
+                                        <Box className={classes.details}>
+                                            <div>
+                                                <p className={classes.title}>Residing since</p>
+                                                <strong className={classes.text}>{values.residing_since}</strong>
+                                            </div>
+                                        </Box>
+                                        <Box className={classes.details}>
+                                            <div>
+                                                <p className={classes.title}>Email</p>
+                                                <strong className={classes.text}>{values.email}</strong>
+                                            </div>
+                                        </Box>
+                                        <Box className={classes.details}>
+                                            <div>
+                                                <p className={classes.title}>PAN</p>
+                                                <strong className={classes.text}>{values.pan}</strong>
+                                            </div>
+                                        </Box>
+                                    </Box>
+                                </Grid>
+                            </Grid>
+                        ) : (
+                            <Box>
+                                <form onSubmit={handleSubmit}>
+                                    <Grid container spacing={2}>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                label="First Name"
+                                                name="first_name"
+                                                value={values.first_name?.toUpperCase()}
+                                                error={errors.first_name}
+                                                readOnly={readOnly}
+                                                helperText={errors.first_name}
+                                                InputLabelProps={{ shrink: true }}
+                                                onChange={handleChange}
 
-                                    />
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        label="Last Name"
-                                        name="last_name"
-                                        readOnly={readOnly}
-                                        error={errors.last_name}
-                                        helperText={errors.last_name}
-                                        value={values.last_name?.toUpperCase()}
-                                        InputLabelProps={{ shrink: true }}
-                                        onChange={handleChange}
-                                    />
-                                </Grid>
-                                {/* <Grid item md={6}>
+                                            />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                label="Last Name"
+                                                name="last_name"
+                                                readOnly={readOnly}
+                                                error={errors.last_name}
+                                                helperText={errors.last_name}
+                                                value={values.last_name?.toUpperCase()}
+                                                InputLabelProps={{ shrink: true }}
+                                                onChange={handleChange}
+                                            />
+                                        </Grid>
+                                        {/* <Grid item md={6}>
                                     <TextInput
                                         id="date"
                                         label="Date of Birth"
@@ -372,358 +475,361 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                                         InputLabelProps={{ shrink: true }}
                                     />
                                 </Grid> */}
-                                <Grid item md={6}>
+                                        <Grid item md={6}>
 
-                                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                        <KeyboardDatePicker
-                                            // disableToolbar
-                                            // hideTabs={true}
-                                            variant='inline'
-                                            inputVariant='outlined'
-                                            label="Date of Birth"
-                                            format='dd/MM/yyy'
-                                            // views={["date", "month", "year"]}
-                                            animateYearScrolling={true}
-                                            invalidDateMessage='Invalid Date Format'
-                                            error={errors.dob}
-                                            helperText={errors.dob}
-                                            readOnly={readOnly}
-                                            disabled={readOnly}
-                                            margin='normal'
-                                            id='date-picker'
-                                            autoOk={true}
-                                            value={selectedDate !== null ? selectedDate : values.dob}
-                                            onChange={handleDateChange}
-                                            InputLabelProps={{ shrink: true }}
-                                            keyboardButtonProps={{
-                                                'aria-label': 'change date'
-                                            }}
-                                            PopoverProps={{
-                                                anchorOrigin: {
-                                                    vertical: 'bottom',
-                                                    horizontal: 'center',
-                                                }
-                                            }}
-                                        />
-                                    </MuiPickersUtilsProvider>
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        select
-                                        label="Gender"
-                                        name="gender"
-                                        error={errors.gender}
-                                        helperText={errors.gender}
-                                        value={values.gender}
-                                        readOnly={readOnly}
-                                        disabled={readOnly}
-                                        onChange={handleChange}
-                                        SelectProps={{
-                                            native: true,
-                                        }}
-                                    >
-                                        <option value="null">Select Gender</option>
-                                        <option value={'MALE'}>Male</option>
-                                        <option value={'FEMALE'}>Female</option>
-                                    </TextInput>
-                                </Grid>
-                                <Grid item md={12}>
-                                    <TextInput
-                                        label="Address"
-                                        name="address"
-                                        readOnly={readOnly}
-                                        value={values.address?.toUpperCase()}
-                                        error={errors.address}
-                                        helperText={errors.address}
-                                        onChange={handleChange}
-                                        rows={3}
-                                        multiline={true}
-                                        InputLabelProps={{ shrink: true }}
-
-                                    />
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        select
-                                        label="Residing Since"
-                                        name="residing_since"
-                                        value={values.residing_since}
-                                        error={errors.residing_since}
-                                        onChange={handleChange}
-                                        readOnly={readOnly}
-                                        disabled={readOnly}
-                                        SelectProps={{
-                                            native: true,
-                                        }}
-                                    >
-                                        {
-                                            <>
-                                                <option value="null">Residing Since</option>
-                                                {[...Array(currentYearDiff)].map((_, i) => {
-                                                    return (
-                                                        <option value={currentYear - i}>{currentYear - i}</option>
-                                                    )
-                                                })}
-                                            </>
-                                        }
-                                    </TextInput>
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        select
-                                        label="Marital Status"
-                                        name="marital_status"
-                                        error={errors.marital_status}
-                                        helperText={errors.marital_status}
-                                        value={values.marital_status}
-                                        onChange={handleChange}
-                                        readOnly={readOnly}
-                                        disabled={readOnly}
-                                        SelectProps={{
-                                            native: true,
-                                        }}
-                                    >
-                                        <option value="null">Choose Marital Status</option>
-                                        <option value="Single">Single</option>
-                                        <option value="Married">Married</option>
-                                        <option value="Divorced">Divorced</option>
-                                        <option value="Widowed">Widowed</option>
-                                    </TextInput>
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        label="Mobile"
-                                        name="mobile"
-                                        value={values.mobile}
-                                        onChange={handleChange}
-                                        error={errors.mobile}
-                                        readOnly={readOnly}
-                                        helperText={errors.mobile}
-                                        type='number'
-                                        InputLabelProps={{ shrink: true }}
-                                    ></TextInput>
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        label="Email"
-                                        name="email"
-                                        readOnly={readOnly}
-                                        error={errors.email}
-                                        helperText={errors.email}
-                                        defaultValue={values.email}
-                                        onChange={handleChange}
-                                        InputLabelProps={{ shrink: true }}
-                                    />
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        label="Aadhar"
-                                        name="aadhar"
-                                        value={values.aadhar?.toUpperCase()}
-                                        helperText={errors.aadhar}
-                                        readOnly={readOnly}
-                                        error={errors.aadhar}
-                                        onChange={handleChange}
-                                        InputLabelProps={{ shrink: true }}
-                                    >
-                                    </TextInput>
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        label="PAN Number"
-                                        name="pan"
-                                        value={values.pan?.toUpperCase()}
-                                        error={errors.pan}
-                                        readOnly={readOnly}
-                                        helperText={errors.pan}
-                                        onChange={handleChange}
-                                        InputLabelProps={{ shrink: true }}
-
-                                    >
-                                    </TextInput>
-                                </Grid>
-                                <Grid item md={6}>
-                                    <Typography component="div">
-                                        <Grid component="label" container alignItems="center" style={{ marginBottom: '10px', marginTop: '6px' }} spacing={2}>
-                                            <Grid md={12} style={{ paddingLeft: '8px', fontSize: '13px' }}>Mobile number on Whatsapp?</Grid>
-                                            <Grid style={{ paddingLeft: '8px' }}>No</Grid>
-                                            <Grid>
-                                                <Switch
-                                                    checked={state.checkedA}
-                                                    onChange={handleChange}
-                                                    name="checkedA"
-                                                    color="primary"
-                                                    inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                                <KeyboardDatePicker
+                                                    // disableToolbar
+                                                    // hideTabs={true}
+                                                    variant='inline'
+                                                    inputVariant='outlined'
+                                                    label="Date of Birth"
+                                                    format='dd/MM/yyy'
+                                                    // views={["date", "month", "year"]}
+                                                    animateYearScrolling={true}
+                                                    invalidDateMessage='Invalid Date Format'
+                                                    error={errors.dob}
+                                                    helperText={errors.dob}
+                                                    readOnly={readOnly}
+                                                    disabled={readOnly}
+                                                    margin='normal'
+                                                    id='date-picker'
+                                                    autoOk={true}
+                                                    value={selectedDate !== null ? selectedDate : values.dob}
+                                                    onChange={handleDateChange}
+                                                    InputLabelProps={{ shrink: true }}
+                                                    keyboardButtonProps={{
+                                                        'aria-label': 'change date'
+                                                    }}
+                                                    PopoverProps={{
+                                                        anchorOrigin: {
+                                                            vertical: 'bottom',
+                                                            horizontal: 'center',
+                                                        }
+                                                    }}
                                                 />
-                                            </Grid>
-                                            <Grid>Yes</Grid>
+                                            </MuiPickersUtilsProvider>
                                         </Grid>
-                                    </Typography>
-                                </Grid>
-                                <Grid item md={6}>
-                                    <Typography component="div" >
-                                        <Grid component="label" container style={{ marginBottom: '8px', marginTop: '6px' }} alignItems="center" spacing={2}>
-                                            <Grid md={12} style={{ paddingLeft: '8px', fontSize: '13px' }}>Mobile number linked with AADHAR?</Grid>
-                                            <Grid style={{ paddingLeft: '8px' }}>No</Grid>
-                                            <Grid>
-                                                <Switch
-                                                    checked={state.checkedB}
-                                                    onChange={handleChange}
-                                                    color="primary"
-                                                    name="checkedB"
-                                                    inputProps={{ 'aria-label': 'secondary checkbox' }}
-                                                />
-                                            </Grid>
-                                            <Grid>Yes</Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                select
+                                                label="Gender"
+                                                name="gender"
+                                                error={errors.gender}
+                                                helperText={errors.gender}
+                                                value={values.gender}
+                                                readOnly={readOnly}
+                                                disabled={readOnly}
+                                                onChange={handleChange}
+                                                SelectProps={{
+                                                    native: true,
+                                                }}
+                                            >
+                                                <option value="null">Select Gender</option>
+                                                <option value={'MALE'}>Male</option>
+                                                <option value={'FEMALE'}>Female</option>
+                                            </TextInput>
                                         </Grid>
-                                    </Typography>
-                                </Grid>
-                                <Grid md={12} style={{ margin: '16px 8px' }}>
-                                    <Typography variant="title">Documents </Typography>
-                                </Grid>
-                                <Grid item md={12}>
-                                    <Typography variant="subtitle2" component="subtitle2">
-                                        Photo :{(readOnly) ?
-                                            <>
+                                        <Grid item md={12}>
+                                            <TextInput
+                                                label="Address"
+                                                name="address"
+                                                readOnly={readOnly}
+                                                value={values.address?.toUpperCase()}
+                                                error={errors.address}
+                                                helperText={errors.address}
+                                                onChange={handleChange}
+                                                rows={3}
+                                                multiline={true}
+                                                InputLabelProps={{ shrink: true }}
+
+                                            />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                select
+                                                label="Residing Since"
+                                                name="residing_since"
+                                                value={values.residing_since}
+                                                error={errors.residing_since}
+                                                onChange={handleChange}
+                                                readOnly={readOnly}
+                                                disabled={readOnly}
+                                                SelectProps={{
+                                                    native: true,
+                                                }}
+                                            >
                                                 {
-                                                    rowData.pan_file_url ?
-                                                        profileAttachment()
-                                                        : <Typography variant="subtitle2" component="subtitle2">
-                                                            <Tooltip title={'Click Edit and attach'}>
-                                                                <AttachFileRoundedIcon disabled={readOnly} />
-                                                            </Tooltip> Attach PAN
-                                                        </Typography>}
-                                            </> :
-                                            <>
-                                                {
-                                                    rowData.profile_image_url ? profileAttachment() :
-                                                        <>
-                                                            <TextInput
-                                                                type="file"
-                                                                accept="image/*"
-                                                                name="pan_file_url"
-                                                                value={rowData.profile_image_url}
-                                                                readOnly={readOnly}
-                                                                disabled={readOnly}
-                                                                onChange={(event) => {
-                                                                    values[event.target.name] = event.currentTarget.files[0];
-                                                                }}
-                                                                InputLabelProps={{ shrink: true }}
-                                                            ></TextInput>
-                                                        </>
-                                                }
-                                            </>
-                                        }
-                                    </Typography>
-                                </Grid>
-                                <Grid item md={12}>
-                                    <Typography variant="subtitle2" component="subtitle2">
-                                        PAN :{(readOnly) ?
-                                            <>
-                                                {rowData.pan_file_url ?
-                                                    panAttachment()
-                                                    : <Typography variant="subtitle2" component="subtitle2">
-                                                        <Tooltip title={'Click Edit and attach'}>
-                                                            <AttachFileRoundedIcon disabled={readOnly} />
-                                                        </Tooltip> Attach PAN
-                                                    </Typography>}
-                                            </> :
-                                            <>
-                                                {rowData.pan_file_url ? panAttachment() :
                                                     <>
-                                                        <TextInput
-                                                            type="file"
-                                                            accept="image/*"
-                                                            name="pan_file_url"
-                                                            readOnly={readOnly}
-                                                            disabled={readOnly}
-                                                            value={rowData.pan_file_url}
-                                                            onChange={(event) => {
-                                                                values[event.target.name] = event.currentTarget.files[0];
-                                                            }}
-                                                            InputLabelProps={{ shrink: true }}
-                                                        ></TextInput>
+                                                        <option value="null">Residing Since</option>
+                                                        {[...Array(currentYearDiff)].map((_, i) => {
+                                                            return (
+                                                                <option value={currentYear - i}>{currentYear - i}</option>
+                                                            )
+                                                        })}
                                                     </>
                                                 }
-                                            </>
-                                        }
-                                    </Typography>
-                                </Grid>
-                                <Grid item md={12} style={{ marginBottom: '8px' }}>
-                                    <Typography variant="subtitle1">Aadhar </Typography>
-                                </Grid>
-                                <Grid item md={6}>
-                                    <Typography variant="subtitle2" component="subtitle2">
-                                        Front:{(readOnly) ?
-                                            <>
-                                                {
-                                                    rowData.pan_file_url ?
-                                                        aadharFront()
-                                                        : <Typography variant="subtitle2" component="subtitle2">
-                                                            <Tooltip title={'Click Edit and attach'}>
-                                                                <AttachFileRoundedIcon disabled={readOnly} />
-                                                            </Tooltip> Attach PAN
-                                                        </Typography>}
-                                            </> :
-                                            <>
-                                                {rowData.aadhar_f_file_url ? aadharFront() :
+                                            </TextInput>
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                select
+                                                label="Marital Status"
+                                                name="marital_status"
+                                                error={errors.marital_status}
+                                                helperText={errors.marital_status}
+                                                value={values.marital_status}
+                                                onChange={handleChange}
+                                                readOnly={readOnly}
+                                                disabled={readOnly}
+                                                SelectProps={{
+                                                    native: true,
+                                                }}
+                                            >
+                                                <option value="null">Choose Marital Status</option>
+                                                <option value="Single">Single</option>
+                                                <option value="Married">Married</option>
+                                                <option value="Divorced">Divorced</option>
+                                                <option value="Widowed">Widowed</option>
+                                            </TextInput>
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                label="Mobile"
+                                                name="mobile"
+                                                value={values.mobile}
+                                                onChange={handleChange}
+                                                error={errors.mobile}
+                                                readOnly={readOnly}
+                                                helperText={errors.mobile}
+                                                type='number'
+                                                InputLabelProps={{ shrink: true }}
+                                            ></TextInput>
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                label="Email"
+                                                name="email"
+                                                readOnly={readOnly}
+                                                error={errors.email}
+                                                helperText={errors.email}
+                                                defaultValue={values.email}
+                                                onChange={handleChange}
+                                                InputLabelProps={{ shrink: true }}
+                                            />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                label="Aadhar"
+                                                name="aadhar"
+                                                value={values.aadhar?.toUpperCase()}
+                                                helperText={errors.aadhar}
+                                                readOnly={readOnly}
+                                                error={errors.aadhar}
+                                                onChange={handleChange}
+                                                InputLabelProps={{ shrink: true }}
+                                            >
+                                            </TextInput>
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                label="PAN Number"
+                                                name="pan"
+                                                value={values.pan?.toUpperCase()}
+                                                error={errors.pan}
+                                                readOnly={readOnly}
+                                                helperText={errors.pan}
+                                                onChange={handleChange}
+                                                InputLabelProps={{ shrink: true }}
+
+                                            >
+                                            </TextInput>
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <Typography component="div">
+                                                <Grid component="label" container alignItems="center" style={{ marginBottom: '10px', marginTop: '6px' }} spacing={2}>
+                                                    <Grid md={12} style={{ paddingLeft: '8px', fontSize: '13px' }}>Mobile number on Whatsapp?</Grid>
+                                                    <Grid style={{ paddingLeft: '8px' }}>No</Grid>
+                                                    <Grid>
+                                                        <Switch
+                                                            checked={state.checkedA}
+                                                            onChange={handleStateChange}
+                                                            name="checkedA"
+                                                            color="primary"
+                                                            inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                                        />
+                                                    </Grid>
+                                                    <Grid>Yes</Grid>
+                                                </Grid>
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <Typography component="div" >
+                                                <Grid component="label" container style={{ marginBottom: '8px', marginTop: '6px' }} alignItems="center" spacing={2}>
+                                                    <Grid md={12} style={{ paddingLeft: '8px', fontSize: '13px' }}>Mobile number linked with AADHAR?</Grid>
+                                                    <Grid style={{ paddingLeft: '8px' }}>No</Grid>
+                                                    <Grid>
+                                                        <Switch
+                                                            checked={state.checkedB}
+                                                            onChange={handleStateChange}
+                                                            color="primary"
+                                                            name="checkedB"
+                                                            inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                                        />
+                                                    </Grid>
+                                                    <Grid>Yes</Grid>
+                                                </Grid>
+                                            </Typography>
+                                        </Grid>
+                                        <Grid md={12} style={{ margin: '16px 8px' }}>
+                                            <Typography variant="title">Documents </Typography>
+                                        </Grid>
+                                        <Grid item md={12}>
+                                            <Typography variant="subtitle2" component="subtitle2">
+                                                Photo :{(readOnly) ?
                                                     <>
-                                                        <TextInput
-                                                            type="file"
-                                                            accept="image/*"
-                                                            name="aadhar_f_file_url"
-                                                            value={rowData.aadhar_f_file_url}
-                                                            readOnly={readOnly}
-                                                            disabled={readOnly}
-                                                            onChange={(event) => {
-                                                                values[event.target.name] = event.currentTarget.files[0];
-                                                            }}
-                                                            InputLabelProps={{ shrink: true }}
-                                                        ></TextInput>
+                                                        {
+                                                            rowData.pan_file_url ?
+                                                                profileAttachment()
+                                                                : <Typography variant="subtitle2" component="subtitle2">
+                                                                    <Tooltip title={'Click Edit and attach'}>
+                                                                        <AttachFileRoundedIcon disabled={readOnly} />
+                                                                    </Tooltip> Attach PAN
+                                                                </Typography>}
+                                                    </> :
+                                                    <>
+                                                        {
+                                                            rowData.profile_image_url ? profileAttachment() :
+                                                                <>
+                                                                    <TextInput
+                                                                        type="file"
+                                                                        accept="image/*"
+                                                                        name="pan_file_url"
+                                                                        value={rowData.profile_image_url}
+                                                                        readOnly={readOnly}
+                                                                        disabled={readOnly}
+                                                                        onChange={(event) => {
+                                                                            values[event.target.name] = event.currentTarget.files[0];
+                                                                        }}
+                                                                        InputLabelProps={{ shrink: true }}
+                                                                    ></TextInput>
+                                                                </>
+                                                        }
                                                     </>
                                                 }
-                                            </>
-                                        }
-                                    </Typography>
-                                </Grid>
-                                <Grid item md={6}>
-                                    <Typography variant="subtitle2" component="subtitle2">
-                                        Back:
-                                        {(readOnly) ?
-                                            <>
-                                                {
-                                                    rowData.pan_file_url ?
-                                                        aadharBack()
-                                                        : <Typography variant="subtitle2" component="subtitle2">
-                                                            <Tooltip title={'Click Edit and attach'}>
-                                                                <AttachFileRoundedIcon disabled={readOnly} />
-                                                            </Tooltip> Attach PAN
-                                                        </Typography>}
-                                            </> :
-                                            <>
-                                                {rowData.aadhar_b_file_url ?
-                                                    aadharBack() :
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item md={12}>
+                                            <Typography variant="subtitle2" component="subtitle2">
+                                                PAN :{(readOnly) ?
                                                     <>
-                                                        <TextInput
-                                                            type="file"
-                                                            accept="image/*"
-                                                            name="aadhar_b_file_url"
-                                                            value={rowData.aadhar_b_file_url}
-                                                            readOnly={readOnly}
-                                                            disabled={readOnly}
-                                                            onChange={(event) => {
-                                                                values[event.target.name] = event.currentTarget.files[0];
-                                                            }}
-                                                            InputLabelProps={{ shrink: true }}
-                                                        ></TextInput>
+                                                        {rowData.pan_file_url ?
+                                                            panAttachment()
+                                                            : <Typography variant="subtitle2" component="subtitle2">
+                                                                <Tooltip title={'Click Edit and attach'}>
+                                                                    <AttachFileRoundedIcon disabled={readOnly} />
+                                                                </Tooltip> Attach PAN
+                                                            </Typography>}
+                                                    </> :
+                                                    <>
+                                                        {rowData.pan_file_url ? panAttachment() :
+                                                            <>
+                                                                <TextInput
+                                                                    type="file"
+                                                                    accept="image/*"
+                                                                    name="pan_file_url"
+                                                                    readOnly={readOnly}
+                                                                    disabled={readOnly}
+                                                                    value={rowData.pan_file_url}
+                                                                    onChange={(event) => {
+                                                                        values[event.target.name] = event.currentTarget.files[0];
+                                                                    }}
+                                                                    InputLabelProps={{ shrink: true }}
+                                                                ></TextInput>
+                                                            </>
+                                                        }
                                                     </>
                                                 }
-                                            </>}
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                        </form>
-                    </Box >
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item md={12} style={{ marginBottom: '8px' }}>
+                                            <Typography variant="subtitle1">Aadhar </Typography>
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <Typography variant="subtitle2" component="subtitle2">
+                                                Front:{(readOnly) ?
+                                                    <>
+                                                        {
+                                                            rowData.pan_file_url ?
+                                                                aadharFront()
+                                                                : <Typography variant="subtitle2" component="subtitle2">
+                                                                    <Tooltip title={'Click Edit and attach'}>
+                                                                        <AttachFileRoundedIcon disabled={readOnly} />
+                                                                    </Tooltip> Attach PAN
+                                                                </Typography>}
+                                                    </> :
+                                                    <>
+                                                        {rowData.aadhar_f_file_url ? aadharFront() :
+                                                            <>
+                                                                <TextInput
+                                                                    type="file"
+                                                                    accept="image/*"
+                                                                    name="aadhar_f_file_url"
+                                                                    value={rowData.aadhar_f_file_url}
+                                                                    readOnly={readOnly}
+                                                                    disabled={readOnly}
+                                                                    onChange={(event) => {
+                                                                        values[event.target.name] = event.currentTarget.files[0];
+                                                                    }}
+                                                                    InputLabelProps={{ shrink: true }}
+                                                                ></TextInput>
+                                                            </>
+                                                        }
+                                                    </>
+                                                }
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <Typography variant="subtitle2" component="subtitle2">
+                                                Back:
+                                                {(readOnly) ?
+                                                    <>
+                                                        {
+                                                            rowData.pan_file_url ?
+                                                                aadharBack()
+                                                                : <Typography variant="subtitle2" component="subtitle2">
+                                                                    <Tooltip title={'Click Edit and attach'}>
+                                                                        <AttachFileRoundedIcon disabled={readOnly} />
+                                                                    </Tooltip> Attach PAN
+                                                                </Typography>}
+                                                    </> :
+                                                    <>
+                                                        {rowData.aadhar_b_file_url ?
+                                                            aadharBack() :
+                                                            <>
+                                                                <TextInput
+                                                                    type="file"
+                                                                    accept="image/*"
+                                                                    name="aadhar_b_file_url"
+                                                                    value={rowData.aadhar_b_file_url}
+                                                                    readOnly={readOnly}
+                                                                    disabled={readOnly}
+                                                                    onChange={(event) => {
+                                                                        values[event.target.name] = event.currentTarget.files[0];
+                                                                    }}
+                                                                    InputLabelProps={{ shrink: true }}
+                                                                ></TextInput>
+                                                            </>
+                                                        }
+                                                    </>}
+                                            </Typography>
+                                        </Grid>
+                                    </Grid>
+                                </form>
+                            </Box >
+                        )
+                    }
+
                 </div>
             </div>
             <div className={classes.actionFooter}>

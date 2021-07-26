@@ -20,6 +20,7 @@ import apiCall from '../../../utils/api.util';
 import Button from '../../../components/CommonComponents/Button/Button';
 import { encrypt } from '../../../services/crypto.service';
 import { getBusinessTypes, getRegionById, getStates } from '../../../services/common.service';
+import { getDistricts } from '../../../utils/indianStates.util';
 // import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -93,7 +94,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
     getStates()
       .then(d => {
         setStates(d)
-        return d
+        return d;
       })
       .then(d => {
         let res = d.find(({ name }) => name === values.state);
@@ -114,12 +115,12 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
 
   const fetchRegions = (res) => {
     getRegionById(res)
-        .then(res => {
-          setRegionList(res)
-        })
-        .catch(err => {
-          console.log(err)
-        })
+      .then(res => {
+        setRegionList(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
   const classes = useStyles();
   const gridProps = {
@@ -129,12 +130,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
     className: classes.gridItemStyle
   }
 
-  // const handleChange = event => {
-  //   setValues({
-  //     ...values,
-  //     [event.target.name]: event.target.value
-  //   });
-  // };
 
   const fieldProps = {
     direction: "column",
@@ -143,15 +138,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
     onChange
   }
 
-  // const handleRegion = (value) => {
-  //   let res = states.find(({ name }) => name === value);
-  //   getRegion(res.id)
-  //     .then(setRegion)
-  //     .catch(err => {
-  //       console.log("error", err)
-  //     })
-
-  // }
 
   return (
     <Card className={clsx(classes.root, className)}>
@@ -160,8 +146,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         autoComplete="off"
         noValidate
       >
-        {/* <CardHeader title={`${values.id} - ${values.name}`} /> */}
-        {/* <Divider /> */}
         <Paper>
           <Grid container spacing={2}>
             <Grid {...gridProps} sm={12}>
@@ -223,43 +207,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
               />
             </Grid>
             <Divider />
-            {/* <Grid {...gridProps} xs={6}>
-              <TextInput
-                labelText="Latitude"
-                name="latitude"
-                labelWidth={40}
-                defaultValue={values.latitude}
-                {...fieldProps}
-              />
-            </Grid>
-            <Grid {...gridProps} xs={6}>
-              <TextInput
-                labelText="Longtitude"
-                name="longtitude"
-                labelWidth={40}
-                defaultValue={values.longtitude}
-                {...fieldProps}
-              />
-            </Grid> */}
-
-            {/* <Grid {...gridProps} xs={6}>
-              <TextInput
-                select
-                labelText="State"
-                labelWidth={40}
-                defaultValue={values.state}
-                disabled={readOnly}
-                onChange={(e) => handleRegion(e.target.value)}
-                readOnly={readOnly}
-                alignTop
-                direction="column"
-              >
-                <option value={values.state}>{values.state}</option>
-                {
-                  states.map((item, i) => item.name !== values.state && <option key={item.name} value={item.name}>{item.name}</option>)
-                }
-              </TextInput>
-            </Grid> */}
             <Grid {...gridProps} sm={6}>
               <TextInput
                 select
@@ -268,7 +215,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 readOnly={readOnly}
                 disabled={readOnly}
                 value={values.state}
-                
                 {...fieldProps}
               >
                 {
@@ -276,7 +222,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 }
               </TextInput>
             </Grid>
-
             <Grid {...gridProps} xs={6}>
               {
 
@@ -286,7 +231,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                   name="region"
                   defaultValue={values.region}
                   readOnly={readOnly}
-                  disabled={values.state ? null : readOnly}
+                  disabled={readOnly}
                   {...fieldProps}
                 >
                   {
@@ -302,18 +247,17 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 labelWidth={40}
                 defaultValue={values.district}
                 readOnly={readOnly}
+                disabled={readOnly}
+                // select
                 alignTop
                 direction="column"
-              />
-            </Grid>
-            {/* <Grid {...gridProps} sm={6}>
-              <TextInput
-                labelText="Region"
-                name="region"
-                defaultValue={values.region}
                 {...fieldProps}
-              />
-            </Grid> */}
+              >
+                {/* {
+                  getDistricts().map(item => <option key={item} value={item}>{item}</option>)
+                } */}
+              </TextInput>
+            </Grid>
 
             <Grid {...gridProps}>
               <TextInput
@@ -324,26 +268,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 {...fieldProps}
               />
             </Grid>
-            {/* <Grid {...gridProps} xs={6}>
-              <TextInput
-                labelText="Sales Area"
-                labelWidth={40}
-                defaultValue={values.sales_area}
-                readOnly
-                alignTop
-                direction="column"
-              />
-            </Grid>
-            <Grid {...gridProps} xs={6}>
-              <TextInput
-                labelText="Zone"
-                labelWidth={40}
-                defaultValue={values.zone}
-                readOnly
-                alignTop
-                direction="column"
-              />
-            </Grid> */}
           </Grid>
         </Paper>
         <Divider />

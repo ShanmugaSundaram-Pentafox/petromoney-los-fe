@@ -130,7 +130,7 @@ export const LoginUserInfo = ({
     return (
         <LoginUserInfoWrapper open={show} ref={ref} onClick={() => setShow(!show)}>
             <p>
-                {user.name}
+                {user.first_name}
                 {/* <span>{user.mobile}</span> */}
             </p>
             {/* user image style */}
@@ -138,7 +138,7 @@ export const LoginUserInfo = ({
 
             {/* user initials style */}
             <div className="user-initials-wrapper">
-                <span className="user-initials">{user.name.charAt(0)}</span>
+                <span className="user-initials">{user.first_name?.charAt(0)}</span>
                 <i className="caret"></i>
             </div>
 

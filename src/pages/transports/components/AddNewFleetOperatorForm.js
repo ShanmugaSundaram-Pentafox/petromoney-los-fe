@@ -11,7 +11,6 @@ import clsx from 'clsx';
 import Divider from '@material-ui/core/Divider';
 import { makeStyles } from "@material-ui/styles";
 import CloseIcon from '@material-ui/icons/Close';
-import { URL } from '../../../config/serverUrls';
 import EditIcon from '@material-ui/icons/Edit';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
@@ -165,9 +164,7 @@ const useStyles = makeStyles((theme) => ({
 
 const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
-    const [checked, setChecked] = useState(false);
     const [loading, setLoading] = useState(false)
-
 
     const handleEdit = () => {
         setReadOnly(!readOnly)
@@ -176,7 +173,6 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
         callback();
     }
     const { enqueueSnackbar } = useSnackbar();
-
     const classes = useStyles()
 
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting } = useFormik({
@@ -192,7 +188,6 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
             mobile: Yup.number().min(10, 'Enter valid mobile number').required('Please enter your mobile number'),
             name_on_card: Yup.string().required('Please Enter your name'),
             amount_limit: Yup.string().required('Please Enter amount limit '),
-            // validity: Yup.date('Enter valid date'),
             dtplus_card_number: Yup.string().max(16, 'Enter valid card number').required('Please enter your card number'),
 
         }),
@@ -398,7 +393,7 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
                                         </Grid>
                                         <Grid item md={6}>
                                             <TextInput
-                                                label="DT Plus Card Number"
+                                                label="DT Plus Card Number "
                                                 name="dtplus_card_number"
                                                 value={values.dtplus_card_number}
                                                 error={errors.dtplus_card_number}
@@ -426,6 +421,78 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
                                             <TextInput
                                                 label="Validity"
                                                 name="validity"
+                                                value={values.validity}
+                                                error={errors.validity}
+                                                readOnly={readOnly}
+                                                helperText={errors.validity}
+                                                InputLabelProps={{ shrink: true }}
+                                                onChange={handleChange}
+                                            >
+                                            </TextInput>
+                                        </Grid>
+                                        <Grid item md={12}>
+                                            <Typography className={classes.title} variant="h4">Billing Details</Typography>
+                                        </Grid>
+
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                label="Monthly_billing"
+                                                name="monthly_billing"
+                                                value={values.monthly_billing}
+                                                error={errors.monthly_billing}
+                                                readOnly={readOnly}
+                                                helperText={errors.monthly_billing}
+                                                InputLabelProps={{ shrink: true }}
+                                                onChange={handleChange}
+                                            >
+                                            </TextInput>
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                label="Payment method"
+                                                name="mode_of_payment"
+                                                value={values.mode_of_payment}
+                                                error={errors.mode_of_payment}
+                                                readOnly={readOnly}
+                                                select
+                                                helperText={errors.mode_of_payment}
+                                                InputLabelProps={{ shrink: true }}
+                                                onChange={handleChange}
+                                            >
+                                                <option>Credit</option>
+                                                <option>Cash</option>
+                                            </TextInput>
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                label="Credit Period"
+                                                name="credit_period"
+                                                value={values.credit_period}
+                                                error={errors.credit_period}
+                                                readOnly={readOnly}
+                                                helperText={errors.credit_period}
+                                                InputLabelProps={{ shrink: true }}
+                                                onChange={handleChange}
+                                            >
+                                            </TextInput>
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                label="Total Credit Outstanding"
+                                                name="total_credit_outstand"
+                                                value={values.total_credit_outstand}
+                                                error={errors.total_credit_outstand}
+                                                readOnly={readOnly}
+                                                helperText={errors.total_credit_outstand}
+                                                InputLabelProps={{ shrink: true }}
+                                                onChange={handleChange}
+                                            >
+                                            </TextInput>
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                label="Highest number of days Outstanding"
+                                                name="highest_no_of_days_outstanding"
                                                 value={values.validity}
                                                 error={errors.validity}
                                                 readOnly={readOnly}

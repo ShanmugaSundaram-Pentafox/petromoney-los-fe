@@ -101,6 +101,11 @@ const useStyles = makeStyles({
     color: '#657798',
 
   },
+
+  stepperRoot: {
+    padding: 16,
+    paddingTop: 8
+  },
   readOnlyContent: {
     display: 'flex',
     justifyContent: 'flex-start',
@@ -248,176 +253,177 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
         <CloseIcon onClick={callback} />
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
-        <Box className={classes.button}>
-          <Button variant="contained" className={classes.btnStyle} color="primary" size="small" onClick={() => handleClickOpen(data.id)}>Delete</Button>
-          <Button variant="contained" className={classes.btnStyle} color="primary" size="small" onClick={() => setReadOnly(false)}>Edit</Button>
-        </Box>
+        <div className={classes.stepperRoot}>
 
-        {
-          profileSuccess && (
-            <Box pt={2} pl={3} color="success.main" bgcolor="#f9f9f9" borderRadius={4} className={classes.drawerStyle} display="flex" justifyContent="space-between" alignItems="center">
-              Profile Updated Successfully...
-            </Box>
-          )
-        }
-        {
-          passwordSuccess && (
-            <Box pt={2} pl={3} color="success.main" bgcolor="#f9f9f9" borderRadius={4} className={classes.drawerStyle} display="flex" justifyContent="space-between" alignItems="center">
-              Password Updated Successfully...
-            </Box>
-          )
-        }
-        {
-          readOnly ? (
-            <Grid container spacing={2} className={classes.readOnlyWrapper}>
-              <Grid item md={6}>
-                <Box className={classes.box} >
-                  <Box className={classes.details}>
-                    <div>
-                      <p className={classes.title}>Name</p>
-                      <strong className={classes.text}>{data.name}</strong>
-                    </div>
-                  </Box>
-                  <Box className={classes.details}>
-                    <div>
-                      <p className={classes.title}>Role</p>
-                      <strong className={classes.text}>{data.role_name}</strong>
-                    </div>
-                  </Box>
-                </Box>
-              </Grid>
-              <Grid item md={6}>
-                <Box className={classes.box} >
-                  <Box className={classes.details}>
-                    <div>
-                      <p className={classes.title}>Mobile</p>
-                      <strong className={classes.text}>{data.mobile}</strong>
-                    </div>
-                  </Box>
-                  <Box className={classes.details}>
-                    <div>
-                      <p className={classes.title}>Email</p>
-                      <strong className={classes.text}>{data.email}</strong>
-                    </div>
-                  </Box>
-                </Box>
-              </Grid>
-            </Grid>
+          <Box className={classes.button}>
+            <Button variant="contained" className={classes.btnStyle} color="primary" size="small" onClick={() => handleClickOpen(data.id)}>Delete</Button>
+            <Button variant="contained" className={classes.btnStyle} color="primary" size="small" onClick={() => setReadOnly(false)}>Edit</Button>
+          </Box>
 
-          ) : (
-            <Box p={2} pl={3} >
-              {
-                !data ? (
-                  <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                      <Skeleton variant="rect" width="100%" height={160} />
-                    </Grid>
-                    {
-                      data.role_desc === "Field Officer" ?
-                        <Grid item xs={12}>
-                          <Skeleton variant="rect" width="100%" height={400} />
-                        </Grid> : null
-                    }
-                    <Grid item xs={12} >
-                      <Skeleton variant="rect" width="100%" height={200} />
-                    </Grid>
-                  </Grid>
-                ) : (
-                  <>
-                    <Box mb={2}>
-                      <form>
-                        <Grid container spacing={3}>
-                          <Grid item md={6}>
-                            <TextInput
-                              label="Name"
-                              defaultValue={data.name}
-                              InputLabelProps={{ shrink: true }}
-                              onChange={e => setUserName(e.target.value)}
-                            />
-                          </Grid>
-                          <Grid item md={6}>
-                            <TextInput
-                              label="Mobile"
-                              defaultValue={data.mobile}
-                              InputLabelProps={{ shrink: true }}
-                              onChange={e => setUserMobile(e.target.value)}
-                            />
-                          </Grid>
-                          <Grid item md={6}>
-                            <TextInput
-                              label="Email"
-                              defaultValue={data.email}
-                              InputLabelProps={{ shrink: true }}
-                              onChange={e => setUserMail(e.target.value)}
-                            />
-                          </Grid>
-                        </Grid>
-                      </form>
-                      <Button variant={"contained"} color="primary" className={classes.buttonSave} onClick={() => saveProfile()}>Save</Button>
+          {
+            profileSuccess && (
+              <Box pt={2} pl={3} color="success.main" bgcolor="#f9f9f9" borderRadius={4} className={classes.drawerStyle} display="flex" justifyContent="space-between" alignItems="center">
+                Profile Updated Successfully...
+              </Box>
+            )
+          }
+          {
+            passwordSuccess && (
+              <Box pt={2} pl={3} color="success.main" bgcolor="#f9f9f9" borderRadius={4} className={classes.drawerStyle} display="flex" justifyContent="space-between" alignItems="center">
+                Password Updated Successfully...
+              </Box>
+            )
+          }
+          {
+            readOnly ? (
+              <Grid container spacing={2} className={classes.readOnlyWrapper}>
+                <Grid item md={6}>
+                  <Box className={classes.box} >
+                    <Box className={classes.details}>
+                      <div>
+                        <p className={classes.title}>Name</p>
+                        <strong className={classes.text}>{data.name}</strong>
+                      </div>
                     </Box>
-                    <Divider />
-                    <UserCan
-                      role={currentUser.role_name}
-                      perform={rulesList.region_map}
-                      yes={() => (
-                        [1, 6, 7, 12].includes(data.role_id) ? <MapRegion data={data} /> : null
-                      )}
-                      no={() => null}
-                    />
-                    {
-                    }
-                    <Divider />
-                    <Box mt={2} mb={2} bgcolor={"#fafafa"}>
-                      <Typography variant="h4" component="h3">Reset Password</Typography>
-                      <TextField
-                        margin="dense"
-                        id="password"
-                        label="Enter New Password"
-                        type="password"
-                        value={password}
-                        className={classes.textFieldStyle}
-                        onChange={e => setPassword(e.target.value)}
-                      />
-                      <TextField
-                        margin="dense"
-                        id="password"
-                        label="Confirm New Password"
-                        type="password"
-                        value={confirmPassword}
-                        className={classes.textFieldStyle}
-                        onChange={e => SetConfirmPassword(e.target.value)}
-                      />
-                      <Button variant={"contained"} color="primary" onClick={e => checkPassword()}>
-                        Update Password
-                      </Button>
+                    <Box className={classes.details}>
+                      <div>
+                        <p className={classes.title}>Role</p>
+                        <strong className={classes.text}>{data.role_name}</strong>
+                      </div>
                     </Box>
-                  </>
-                )
-              }
-              <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-                <Alert onClose={handleClose} severity="warning">
-                  Password does not match
-                </Alert>
-              </Snackbar>
-            </Box>
-          )
-        }
+                  </Box>
+                </Grid>
+                <Grid item md={6}>
+                  <Box className={classes.box} >
+                    <Box className={classes.details}>
+                      <div>
+                        <p className={classes.title}>Mobile</p>
+                        <strong className={classes.text}>{data.mobile}</strong>
+                      </div>
+                    </Box>
+                    <Box className={classes.details}>
+                      <div>
+                        <p className={classes.title}>Email</p>
+                        <strong className={classes.text}>{data.email}</strong>
+                      </div>
+                    </Box>
+                  </Box>
+                </Grid>
+              </Grid>
 
-        {/* </Drawer> */}
-        <Dialog
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogContent>
-            <DialogContentText className={classes.text}>Do you want to disable the user?</DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose} variant="contained" >No</Button>
-            <Button onClick={() => deleteUserRecord(userId)} className={classes.button} >Yes</Button>
-          </DialogActions>
-        </Dialog>
+            ) : (
+              <Box p={2} pl={3} >
+                {
+                  !data ? (
+                    <Grid container spacing={2}>
+                      <Grid item xs={12}>
+                        <Skeleton variant="rect" width="100%" height={160} />
+                      </Grid>
+                      {
+                        data.role_desc === "Field Officer" ?
+                          <Grid item xs={12}>
+                            <Skeleton variant="rect" width="100%" height={400} />
+                          </Grid> : null
+                      }
+                      <Grid item xs={12} >
+                        <Skeleton variant="rect" width="100%" height={200} />
+                      </Grid>
+                    </Grid>
+                  ) : (
+                    <>
+                      <Box mb={2}>
+                        <form>
+                          <Grid container spacing={3}>
+                            <Grid item md={6}>
+                              <TextInput
+                                label="Name"
+                                defaultValue={data.name}
+                                InputLabelProps={{ shrink: true }}
+                                onChange={e => setUserName(e.target.value)}
+                              />
+                            </Grid>
+                            <Grid item md={6}>
+                              <TextInput
+                                label="Mobile"
+                                defaultValue={data.mobile}
+                                InputLabelProps={{ shrink: true }}
+                                onChange={e => setUserMobile(e.target.value)}
+                              />
+                            </Grid>
+                            <Grid item md={6}>
+                              <TextInput
+                                label="Email"
+                                defaultValue={data.email}
+                                InputLabelProps={{ shrink: true }}
+                                onChange={e => setUserMail(e.target.value)}
+                              />
+                            </Grid>
+                          </Grid>
+                        </form>
+                        <Button variant={"contained"} color="primary" className={classes.buttonSave} onClick={() => saveProfile()}>Save</Button>
+                      </Box>
+                      <Divider />
+                      <UserCan
+                        role={currentUser.role_name}
+                        perform={rulesList.region_map}
+                        yes={() => (
+                          [1, 6, 7, 12].includes(data.role_id) ? <MapRegion data={data} /> : null
+                        )}
+                        no={() => null}
+                      />
+                      <Divider />
+                      <Box mt={2} mb={2} bgcolor={"#fafafa"}>
+                        <Typography variant="h4" component="h3">Reset Password</Typography>
+                        <TextField
+                          margin="dense"
+                          id="password"
+                          label="Enter New Password"
+                          type="password"
+                          value={password}
+                          className={classes.textFieldStyle}
+                          onChange={e => setPassword(e.target.value)}
+                        />
+                        <TextField
+                          margin="dense"
+                          id="password"
+                          label="Confirm New Password"
+                          type="password"
+                          value={confirmPassword}
+                          className={classes.textFieldStyle}
+                          onChange={e => SetConfirmPassword(e.target.value)}
+                        />
+                        <Button variant={"contained"} color="primary" onClick={e => checkPassword()}>
+                          Update Password
+                        </Button>
+                      </Box>
+                    </>
+                  )
+                }
+                <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                  <Alert onClose={handleClose} severity="warning">
+                    Password does not match
+                  </Alert>
+                </Snackbar>
+              </Box>
+            )
+          }
+
+          {/* </Drawer> */}
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogContent>
+              <DialogContentText className={classes.text}>Do you want to disable the user?</DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose} variant="contained" >No</Button>
+              <Button onClick={() => deleteUserRecord(userId)} className={classes.button} >Yes</Button>
+            </DialogActions>
+          </Dialog>
+        </div>
       </div>
       <div className={classes.actionFooter}>
         <Divider />
@@ -433,7 +439,6 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
           </div>
         </div>
       </div>
-
     </div >
 
   );

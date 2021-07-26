@@ -62,9 +62,9 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
         options: {
           filter: false,
           sort: false,
-          setCellProps: () => ({
-            align: 'center',
-          })
+          // setCellProps: () => ({
+          //   align: 'center',
+          // })
         }
       },
       {
@@ -73,9 +73,9 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
         options: {
           filter: false,
           sort: true,
-          setCellProps: () => ({
-            align: 'center',
-          }),
+          // setCellProps: () => ({
+          //   align: 'center',
+          // }),
           customBodyRender: (value) => {
             return <>{value?.toUpperCase()}</>
           },

@@ -2,15 +2,16 @@ import React, { useMemo, useState } from "react"
 import { makeStyles } from "@material-ui/styles"
 import MUIDataTable from "mui-datatables"
 import Typography from "@material-ui/core/Typography";
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
-import LockIcon from '@material-ui/icons/Lock';
+// import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
+// import LockIcon from '@material-ui/icons/Lock';
 import { Button, TextField } from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Tooltip from '@material-ui/core/Tooltip';
+// import DialogTitle from "@material-ui/core/DialogTitle";
+// import Tooltip from '@material-ui/core/Tooltip';
+import { Drawer } from "@material-ui/core";
 import { deleteUser } from '../../../services/users.service';
 import { logger } from '../../../config/logger';
 import RightDrawer from './RightDrawer'
@@ -20,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
   title: {
     fontWeight: 500,
   },
+
   button: {
     backgroundColor: '#CE2029',
     color: 'white',
@@ -37,46 +39,43 @@ const useStyles = makeStyles((theme) => ({
 }))
 const UsersTable = ({ title, data, withRole, currentUser }) => {
   const classes = useStyles()
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState({});
   const [apiStatus, setApiStatus] = useState({});
   const [userId, setuserId] = useState({});
-
+  const [rowData, setRowData] = useState({});
   const [op, setOp] = React.useState(false);
+  const [openModal, setOpenModal] = useState(false)
   const handleClickOpen = (value) => {
     setuserId(value);
-    setOpen(true);
   };
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const deleteUserRecord = (userId) => {
-    setOpen(false);
-    setLoading(true);
-    deleteUser(userId)
-      .then(({ message }) => {
-        setLoading(false);
-        setApiStatus({ status: 'success', message });
-        setTimeout(() => {
-          setConfirmDelete(userId)
-        }, 700);
-      })
-      .catch(e => {
-        setLoading(false);
-        setApiStatus({ status: 'error', message: e });
-        logger(e);
-      })
+  const onRowClick = (id, data) => {
+    setRowData(data)
+    setOpenModal(true)
   }
   const columns = useMemo(() => {
     const d = [
+      {
+        label: "User ID",
+        name: 'id',
+        options: {
+          filter: false,
+          sort: false,
+          // setCellProps: () => ({
+          //   align: 'center',
+          // })
+        }
+      },
       {
         label: "Name",
         name: "name",
         options: {
           filter: false,
           sort: true,
+          // setCellProps: () => ({
+          //   align: 'center',
+          // }),
           customBodyRender: (value) => {
             return <>{value?.toUpperCase()}</>
           },
@@ -106,38 +105,37 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
           sort: true,
         },
       },
-
     ];
-    const actionColumnData = {
-      label: "Action",
-      name: 'id',
-      options: {
-        filter: false,
-        sort: false,
-        setCellProps: () => ({
-          align: 'center',
-        }),
-        customBodyRender: (value) => {
-          const d = data.find(item => item.id === value) || {};
-          return (
-            <div key={`vi-${value}`}>
-              <div>
-                <Button onClick={() => handleClickOpen(value)}>
-                  <Tooltip title="deactivate" aria-label="add">
-                    <DeleteOutlinedIcon style={{ width: "20px", color: "#ff6666" }} />
-                  </Tooltip>
-                </Button>
-                {
-                  d?.id ?
-                    <RightDrawer key={value} checked={op} userId={value} currentUser={currentUser} data={d} />
-                    : null
-                }
-              </div>
-            </div>
-          )
-        }
-      }
-    }
+    // const actionColumnData = {
+    //   label: "Action",
+    //   name: 'id',
+    //   options: {
+    //     filter: false,
+    //     sort: false,
+    //     setCellProps: () => ({
+    //       align: 'center',
+    //       }),
+    //       customBodyRender: (value) => {
+    //         const d = data.find(item => item.id === value) || {};
+    //         return (
+    //           <div key={`vi-${value}`}>
+    //             <div>
+    //               <Button onClick={() => handleClickOpen(value)}>
+    //                 <Tooltip title="deactivate" aria-label="add">
+    //                   <DeleteOutlinedIcon style={{ width: "20px", color: "#ff6666" }} />
+    //                 </Tooltip>
+    //               </Button>
+    //               {
+    //                 d?.id ?
+    //                   <RightDrawer key={value} checked={op} userId={value} currentUser={currentUser} data={d} />
+    //                   : null
+    //               }
+    //             </div>
+    //           </div>
+    //         )
+    //       }
+    //     }
+    // }
     return withRole ? [
       ...d,
       {
@@ -147,8 +145,8 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
           filter: true,
           sort: true,
         },
-      }, actionColumnData,
-    ] : [...d, actionColumnData];;
+      }
+    ] : [...d];;
   }, [withRole])
 
   const options = {
@@ -158,6 +156,9 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
     selectableRows: "none",
     rowsPerPage: 10,
     isRowSelectable: () => false,
+    onRowClick: (rowData, { dataIndex }) => {
+      onRowClick(data[dataIndex].dealership_id, data[dataIndex])
+    }
   }
   return (
     <div>
@@ -173,7 +174,7 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
           options={options}
         />
       ) : null}
-      <Dialog
+      {/* <Dialog
         open={open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
@@ -186,7 +187,15 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
           <Button onClick={handleClose} variant="contained" >Cancel</Button>
           <Button onClick={() => deleteUserRecord(userId)} className={classes.button} >yes</Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
+      <Drawer
+        anchor="right"
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        variant="temporary"
+      >
+        <RightDrawer key={rowData.id} userId={rowData.id} currentUser={currentUser} callback={()=>setOpenModal(false)} data={rowData} />
+      </Drawer>
 
     </div>
   )

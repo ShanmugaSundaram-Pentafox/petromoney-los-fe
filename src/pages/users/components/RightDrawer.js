@@ -1,39 +1,136 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
 import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
+// import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
+// import IconButton from '@material-ui/core/IconButton';
+// import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 import { updatePassword, updateUserDetails } from '../../../services/common.service';
 import { Paper, TextField, Tooltip, Typography } from '@material-ui/core';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
-import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
+import Button from '../../../components/CommonComponents/Button/Button';
+import { logger } from '../../../config/logger';
+import clsx from 'clsx';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
+import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import EditIcon from '@material-ui/icons/Edit';
+// import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
 import MapRegion from './MapRegion';
 import Skeleton from '@material-ui/lab/Skeleton';
 import Grid from '@material-ui/core/Grid';
 import UserCan from '../../../components/UserCan/UserCan';
+import CloseIcon from '@material-ui/icons/Close';
 import { rulesList } from '../../../config/userRules';
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import { deleteUser, getAllUserRoles } from '../../../services/users.service';
+import TextInput from '../../../components/TextInput/TextInput';
+import { useMount } from 'react-use';
 
 
 
-const useStyles = makeStyles({
+
+const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
     '& > * + *': {
       marginTop: 2,
     },
   },
+  sidePanelFormWrapper: {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: '100vh',
+    width: '40vw',
+    overflowX: 'hidden'
+  },
+  sidePanelTitle: {
+    padding: '24px 16px',
+    marginBottom: 6,
+    display: 'flex',
+    justifyContent: 'space-between',
+    zIndex: 0,
+    boxShadow: '0 1px 4px -3px #333'
+  },
   list: {
     width: '50%',
+  },
+
+  box: {
+    padding: 2,
+    borderColor: 'grey',
+    margin: 2,
+
   },
   fullList: {
     width: '100%',
   },
   drawerStyle: {
-    minWidth: '30vw',
+    minWidth: '40vw',
+
+  },
+  button: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    // marginRight: 12
+
+  },
+
+  sidePanelFormContentWrapper: {
+    flex: 1,
+    overflowY: 'auto'
+  },
+  actionButtonsWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '12px 16px'
+  },
+  readOnlyWrapper: {
+    margin: '10px 0px 4px 0px',
+    maxWidth: '100%',
+  },
+  readOnlyTitle: {
+    color: '#657798',
+
+  },
+
+  passwordWrapper: {
+    margin: '10px 0px 4px 0px',
+    display: 'flex',
+    justifyContent: 'space-between'
+  },
+  stepperRoot: {
+    padding: 16,
+    paddingTop: 8
+  },
+  readOnlyContent: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    margin: 8,
+  },
+  details: {
+    padding: 6,
+    borderColor: 'grey',
+    minWidth: 80,
+    height: 60,
+    display: 'flex',
+    textAlign: 'left',
+    alignItems: 'left',
+    justifyContent: 'left'
+  },
+  text: {
+    fontSize: 14
+  },
+  title: {
+    fontSize: 12,
+  },
+  buttonSave: {
+    marginTop: 12,
 
   },
   textFieldStyle: {
@@ -56,23 +153,59 @@ const useStyles = makeStyles({
       width: '100%',
     }
   },
-});
+
+  btnError: {
+    '&.MuiButton-contained': {
+      backgroundColor: theme.palette.error.main,
+      color: theme.palette.white
+    },
+    '&.MuiButton-contained:hover': {
+      backgroundColor: theme.palette.error.dark
+    }
+  }
+}));
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export default function TemporaryDrawer({ userId, data, currentUser }) {
+export default function TemporaryDrawer({ data, currentUser, callback }) {
   const [open, setOpen] = useState(false);
   const classes = useStyles();
+  const [loading, setLoading] = useState(false);
   const [showUserEditDrawer, setShowUserEditDrawer] = useState(false);
+  const [roleList, setRoleList] = useState([])
   const [password, setPassword] = useState("")
   const [userName, setUserName] = useState(data.name)
+  const [userMobile, setUserMobile] = useState(data.mobile)
+  const [userRole, setUserRole] = useState(data.role_name)
   const [userMail, setUserMail] = useState(data.email)
+  const [readOnly, setReadOnly] = useState(true)
+  const [editProfile, setEditProfile] = useState(false)
+  const [editPassword, setEditPassword] = useState(false)
+  const [apiStatus, setApiStatus] = useState({});
+  const [userId, setuserId] = useState({});
+  const [confirmDelete, setConfirmDelete] = useState({});
   const [confirmPassword, SetConfirmPassword] = useState("")
   const [passwordSuccess, setPasswordSuccess] = useState(false)
   const [profileSuccess, setProfileSuccess] = useState(false)
+
+  useMount(() => {
+    getAllUserRoles()
+      .then(data => {
+        setRoleList(data)
+      })
+      .catch(e => {
+        console.log(e)
+      })
+
+  })
+
   const handleClick = () => {
+    setOpen(true);
+  };
+  const handleClickOpen = (value) => {
+    setuserId(value);
     setOpen(true);
   };
   const handleClose = (event, reason) => {
@@ -82,12 +215,13 @@ export default function TemporaryDrawer({ userId, data, currentUser }) {
     setOpen(false);
   };
   const saveProfile = () => {
-    updateUserDetails(userName, userMail, userId)
+    updateUserDetails(userName, userMobile, userMail, userRole, data.id)
       .then(() => {
         setProfileSuccess(true);
         setTimeout(() => {
           window.location.reload(false);
           setProfileSuccess(false)
+          setReadOnly(true)
         }, 2000)
       })
       .catch(err => {
@@ -115,44 +249,62 @@ export default function TemporaryDrawer({ userId, data, currentUser }) {
       handleClick({ vertical: 'top', horizontal: 'center' })
     }
   }
-  const toggleDrawer = () => (event) => {
-    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      return;
-    }
-    setShowUserEditDrawer(st => !st);
-  };
+  const deleteUserRecord = (userId) => {
+    setOpen(false);
+    setLoading(true);
+    deleteUser(userId)
+      .then(({ message }) => {
+        setLoading(false);
+        setApiStatus({ status: 'success', message });
+        setTimeout(() => {
+          setConfirmDelete(userId)
+          window.location.reload()
+        }, 700);
+      })
+      .catch(e => {
+        setLoading(false);
+        setApiStatus({ status: 'error', message: e });
+        logger(e);
+      })
+  }
+  // const toggleDrawer = () => (event) => {
+  //   if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+  //     return;
+  //   }
+  //   setShowUserEditDrawer(st => !st);
+  // };
 
   return (
-    <>
-      <Button onClick={toggleDrawer()}>
-        <Tooltip title="edit" aria-label="add">
-          <VisibilityOutlinedIcon style={{ width: "20px", color: "#000A0" }} />
-        </Tooltip>
-      </Button>
-      <Drawer anchor={"right"} open={showUserEditDrawer} onClose={toggleDrawer()}>
-        {/* <Box p={2} borderRadius={4} bgcolor={"#f1f1f1"} className={classes.drawerStyle} display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="h3" component="h2">User Information</Typography>
-          <IconButton size="small" onClick={toggleDrawer()}>
-            <CloseRoundedIcon />
-          </IconButton>
-        </Box> */}
-        {
-          profileSuccess && (
-            <Box pt={2} pl={3} color="success.main" bgcolor="#f9f9f9" borderRadius={4} className={classes.drawerStyle} display="flex" justifyContent="space-between" alignItems="center">
-              Profile Updated Successfully...
-            </Box>
-          )
-        }
-        {
-          passwordSuccess && (
-            <Box pt={2} pl={3} color="success.main" bgcolor="#f9f9f9" borderRadius={4} className={classes.drawerStyle} display="flex" justifyContent="space-between" alignItems="center">
-              Password Updated Successfully...
-            </Box>
-          )
+    <div className={classes.sidePanelFormWrapper}>
+      <Typography className={classes.sidePanelTitle} variant="h4">
+        <div>{editProfile ? 'Edit Profile Information' : editPassword ? 'Edit Password' : 'Profile Information'}</div>
+        <CloseIcon onClick={callback} />
+      </Typography>
+      <div className={classes.sidePanelFormContentWrapper}>
+        <div className={classes.stepperRoot}>
+          {
+            !editProfile && (
+              <Box className={classes.button}>
+                {/* <Button variant="contained" className={classes.btnStyle} color="primary" size="small" onClick={() => handleClickOpen(data.id)}>Delete</Button> */}
+                <Button variant="contained" color="primary" size="small" onClick={() => { setReadOnly(false); setEditProfile(true) }}>Edit</Button>
+              </Box>
+            )
 
-        }
-
-        <Box p={2} pl={3} >
+          }
+          {
+            profileSuccess && (
+              <Box pt={2} pl={3} color="success.main" bgcolor="#f9f9f9" borderRadius={4} className={classes.drawerStyle} display="flex" justifyContent="space-between" alignItems="center">
+                Profile Updated Successfully...
+              </Box>
+            )
+          }
+          {
+            passwordSuccess && (
+              <Box pt={2} pl={3} color="success.main" bgcolor="#f9f9f9" borderRadius={4} className={classes.drawerStyle} display="flex" justifyContent="space-between" alignItems="center">
+                Password Updated Successfully...
+              </Box>
+            )
+          }
           {
             !data ? (
               <Grid container spacing={2}>
@@ -171,86 +323,213 @@ export default function TemporaryDrawer({ userId, data, currentUser }) {
               </Grid>
             ) : (
               <>
-                <Box borderRadius={4} className={classes.drawerStyle} display="flex" justifyContent="space-between" alignItems="center">
-                  <Typography variant="h4" component="h3" >Profile Information</Typography>
-                </Box>
-                <Box mb={2}>
-                  <form>
-                    <Box mb={1}>
-                      <label style={{ fontSize: 12, fontWeight: 600, color: '#666', marginBottom: 10 }}>Name</label>
-                      <p><TextField
-                        id="standard-basic"
-                        defaultValue={data.name}
-                        className={classes.textFieldStyle}
-                        onChange={e => setUserName(e.target.value)}
-                      /></p>
-                    </Box>
-                    <Box mb={1}>
-                      <label style={{ fontSize: 12, fontWeight: 600, color: '#666', marginBottom: 10 }}>Mobile</label>
-                      <p style={{ fontSize: 16 }}>{data.mobile}</p>
-                    </Box>
-                    <Box mb={1}>
-                      <label style={{ fontSize: 12, fontWeight: 600, color: '#666', marginBottom: 10 }}>Email</label>
-                      <p><TextField
-                        id="standard-basic"
-                        defaultValue={data.email}
-                        className={classes.textFieldStyle}
-                        onChange={e => setUserMail(e.target.value)}
-                      /></p>
-                    </Box>
-                  </form>
-                  <div>
-                    <Button variant={"contained"} color="primary" onClick={() => saveProfile()}>Save</Button>
-                  </div>
-                </Box>
-                <Divider />
-                <UserCan
-                  role={currentUser.role_name}
-                  perform={rulesList.region_map}
-                  yes={() => (
-                    [1, 6, 7, 12].includes(data.role_id) ? <MapRegion data={data} /> : null
-                  )}
-                  no={() => null}
-                />
                 {
+                  !editProfile ? (
+                    <>
+                      <Grid container spacing={2} className={classes.readOnlyWrapper}>
+                        <Grid item md={6}>
+                          <Box className={classes.box} >
+                            <Box className={classes.details}>
+                              <div>
+                                <p className={classes.title}>ID</p>
+                                <strong className={classes.text}>{data.id}</strong>
+                              </div>
+                            </Box>
+                            <Box className={classes.details}>
+                              <div>
+                                <p className={classes.title}>Role</p>
+                                <strong className={classes.text}>{data.role_name}</strong>
+                              </div>
+                            </Box>
+                            <Box className={classes.details}>
+                              <div>
+                                <p className={classes.title}>Email</p>
+                                <strong className={classes.text}>{data.email}</strong>
+                              </div>
+                            </Box>
+                          </Box>
+                        </Grid>
+                        <Grid item md={6}>
+                          <Box className={classes.details}>
+                            <div>
+                              <p className={classes.title}>Name</p>
+                              <strong className={classes.text}>{data.name}</strong>
+                            </div>
+                          </Box>
+                          <Box className={classes.box} >
+                            <Box className={classes.details}>
+                              <div>
+                                <p className={classes.title}>Mobile</p>
+                                <strong className={classes.text}>{data.mobile}</strong>
+                              </div>
+                            </Box>
+                          </Box>
+                        </Grid>
+                      </Grid>
+                    </>
+                  ) : (
+                    <>
+                      <Box mb={2}>
+                        <form>
+                          <Grid container spacing={3}>
+                            <Grid item md={6}>
+                              <TextInput
+                                label="Name"
+                                defaultValue={data.name}
+                                InputLabelProps={{ shrink: true }}
+                                onChange={e => setUserName(e.target.value)}
+                              />
+                            </Grid>
+                            <Grid item md={6}>
+                              <TextInput
+                                label="Mobile"
+                                defaultValue={data.mobile}
+                                InputLabelProps={{ shrink: true }}
+                                onChange={e => setUserMobile(e.target.value)}
+                              />
+                            </Grid>
+                            <Grid item md={6}>
+                              <TextInput
+                                select
+                                label="Role"
+                                value={data.role_name}
+                                InputLabelProps={{ shrink: true }}
+                                onChange={e => setUserRole(e.target.value)}
+                              >
+                                <option>{data.role_name}</option>
+                                {
+                                  roleList.map(roleList => <option key={roleList.role_name} value={roleList.id}>({roleList.role_name}) - {roleList.name}</option>)
+                                }
+                              </TextInput>
+                            </Grid>
+                            <Grid item md={6}>
+                              <TextInput
+                                label="Email"
+                                defaultValue={data.email}
+                                InputLabelProps={{ shrink: true }}
+                                onChange={e => setUserMail(e.target.value)}
+                              />
+                            </Grid>
+                          </Grid>
+                        </form>
+                        <div className={classes.passwordWrapper}>
+                          <Button variant='outlined' onClick={() => setEditProfile(false)}>Cancel</Button>
+                          <Button variant='contained' color="primary" onClick={() => saveProfile()}>Save</Button>
+                        </div>
+                      </Box>
+                      <Divider />
+                      <UserCan
+                        role={currentUser.role_name}
+                        perform={rulesList.region_map}
+                        yes={() => (
+                          [1, 6, 7, 12].includes(data.role_id) ? <MapRegion data={data} /> : null
+                        )}
+                        no={() => null}
+                      />
+                    </>
+                  )
                 }
-                <Divider />
-                <Box mt={2} mb={2} bgcolor={"#fafafa"}>
-                  <Typography variant="h4" component="h3">Reset Password</Typography>
-                  <TextField
-                    margin="dense"
-                    id="password"
-                    label="Enter New Password"
-                    type="password"
-                    value={password}
-                    className={classes.textFieldStyle}
-                    onChange={e => setPassword(e.target.value)}
-                  />
-                  <TextField
-                    margin="dense"
-                    id="password"
-                    label="Confirm New Password"
-                    type="password"
-                    value={confirmPassword}
-                    className={classes.textFieldStyle}
-                    onChange={e => SetConfirmPassword(e.target.value)}
-                  />
-                  <Button variant={"contained"} color="primary" onClick={e => checkPassword()}>
-                    Update Password
-                    </Button>
-                </Box>
+                {
+                  !editPassword ? (
+                    <>
+                      <div className={classes.passwordWrapper}>
+                        {/* <Typography variant="h4" component="h3">Reset Password</Typography> */}
+                        {
+                          <Box className={classes.button}>
+                            <Button variant="contained" color="primary" size="small" onClick={() => { setReadOnly(false); setEditPassword(true) }}>Change password</Button>
+                          </Box>
+                        }
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <Box mb={2}>
+                        {/* <Divider /> */}
+                        {
+                          editPassword && (
+                            <Box mt={2} mb={2} bgcolor={"#fafafa"}>
+                              {/* <Typography variant="h4" component="h3">Reset Password</Typography> */}
+                              <TextField
+                                margin="dense"
+                                id="password"
+                                label="Enter New Password"
+                                type="password"
+                                value={password}
+                                className={classes.textFieldStyle}
+                                onChange={e => setPassword(e.target.value)}
+                              />
+                              <TextField
+                                margin="dense"
+                                id="password"
+                                label="Confirm New Password"
+                                type="password"
+                                value={confirmPassword}
+                                className={classes.textFieldStyle}
+                                onChange={e => SetConfirmPassword(e.target.value)}
+                              />
+
+                              <div className={classes.passwordWrapper}>
+                                <Button variant='outlined' onClick={() => setEditPassword(false)}>Cancel</Button>
+                                <Button variant='contained' color="primary" onClick={e => checkPassword()}>save</Button>
+                              </div>
+                            </Box>
+                          )}
+                      </Box>
+                    </>
+                  )
+                }
               </>
             )
           }
-          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+
+          {/* <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="warning">
               Password does not match
-              </Alert>
-          </Snackbar>
-        </Box>
-      </Drawer>
+            </Alert>
+          </Snackbar> */}
 
-    </>
+          {/* </Drawer> */}
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogContent>
+              <DialogContentText className={classes.text}>Do you want to disable the user?</DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose} variant="contained" >No</Button>
+              <Button onClick={() => deleteUserRecord(userId)} className={classes.button} >Yes</Button>
+            </DialogActions>
+          </Dialog>
+        </div>
+      </div>
+      <div className={classes.actionFooter}>
+        <Divider />
+        <div className={classes.actionButtonsWrapper}>
+          <div>
+            <Button
+              variant="outlined"
+              startIcon={<NavigateBeforeRoundedIcon />}
+              onClick={callback}
+            >
+              Back
+            </Button>
+          </div>
+          <div>
+            <Button
+              variant="contained"
+              className={classes.btnError}
+              color="primary"
+              onClick={() => handleClickOpen(data.id)}
+            >
+              Delete
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div >
   );
 
 }

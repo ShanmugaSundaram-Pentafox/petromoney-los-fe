@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
     },
     sidePanelFormContentWrapper: {
         flex: 1,
-        overflow: 'auto'
+        overflowY: 'auto'
     },
     wrapper: {
         padding: 8,

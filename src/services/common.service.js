@@ -177,13 +177,15 @@ export const updatePassword = (password, mobile, id) => {
       })
   });
 }
-export const updateUserDetails = (name, mail, id) => {
+export const updateUserDetails = (name, mobile, mail, role, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`user/${id}`, {
       method: 'POST',
       body: {
         "name": name,
-        "email": mail
+        "email": mail,
+        "mobile": mobile,
+        "role_name": role,
       }
     })
       .then(({ status, data, message }) => {
@@ -248,9 +250,9 @@ export const getStates = () => {
       })
   })
 }
-export const getRegion = (id) => {
+export const getRegionById = (res) => {
   return new Promise((resolve, reject) => {
-    apiCall(`regions/${id}`)
+    apiCall(`regions/${res.id}`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data);

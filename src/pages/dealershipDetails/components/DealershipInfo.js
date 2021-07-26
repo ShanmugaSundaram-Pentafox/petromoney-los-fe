@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMount } from 'react-use';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
@@ -19,7 +19,7 @@ import { rulesList } from '../../../config/userRules';
 import apiCall from '../../../utils/api.util';
 import Button from '../../../components/CommonComponents/Button/Button';
 import { encrypt } from '../../../services/crypto.service';
-import { getBusinessTypes, getRegion, getStates } from '../../../services/common.service';
+import { getBusinessTypes, getRegionById, getStates } from '../../../services/common.service';
 // import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -40,7 +40,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
   const [apiStatus, setApiStatus] = useState({});
   const [businessTypes, setBusinessTypes] = useState([{}, {}, {}, {}, {}]);
   const [states, setStates] = useState([]);
-  const [region, setRegion] = useState([]);
+  const [regionList, setRegionList] = useState([]);
   const { values, handleChange: onChange, handleSubmit } = useFormik({
     initialValues: data,
     onSubmit: values => {
@@ -67,7 +67,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
           if (status == 'SUCCESS') {
             setApiStatus({ type: 'success', message: message || 'Details updated successfully' })
             setLoading(false);
-            setReadOnly(false);
+            setReadOnly(true);
           }
           else {
             setApiStatus({ type: 'error', message: message || 'Unable to save the details. Please try again later' })
@@ -91,14 +91,36 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         console.log('BusinessTypes fetch error - ', err)
       })
     getStates()
-      .then(setStates)
+      .then(d => {
+        setStates(d)
+        return d
+      })
+      .then(d => {
+        let res = d.find(({ name }) => name === values.state);
+        fetchRegions(res);
+      })
       .catch(err => {
         console.log('BusinessTypes fetch error - ', err)
       })
 
   });
+  useEffect(() => {
+    console.log(values)
+    if (values.state) {
+      let res = states.find(({ name }) => name === values.state);
+      fetchRegions(res);
+    }
+  }, [values.state])
 
-  // const [values, setValues] = useState(data);
+  const fetchRegions = (res) => {
+    getRegionById(res)
+        .then(res => {
+          setRegionList(res)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+  }
   const classes = useStyles();
   const gridProps = {
     item: true,
@@ -121,15 +143,15 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
     onChange
   }
 
-  const handleRegion = (value) => {
-    let res = states.find(({ name }) => name === value);
-    getRegion(res.id)
-      .then(setRegion)
-      .catch(err => {
-        console.log("error", err)
-      })
+  // const handleRegion = (value) => {
+  //   let res = states.find(({ name }) => name === value);
+  //   getRegion(res.id)
+  //     .then(setRegion)
+  //     .catch(err => {
+  //       console.log("error", err)
+  //     })
 
-  }
+  // }
 
   return (
     <Card className={clsx(classes.root, className)}>
@@ -245,11 +267,10 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 name="state"
                 readOnly={readOnly}
                 disabled={readOnly}
-                onChange={(e) => handleRegion(e)}
-                defaultValue={values.state}
+                value={values.state}
+                
                 {...fieldProps}
               >
-                <option value="">{values.state}</option>
                 {
                   states.map((item, i) => <option key={i} value={item.name}>{item.name}</option>)
                 }
@@ -258,20 +279,18 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
 
             <Grid {...gridProps} xs={6}>
               {
+
                 <TextInput
                   select
                   labelText="Region"
-                  labelWidth={40}
+                  name="region"
                   defaultValue={values.region}
                   readOnly={readOnly}
-                  disabled={readOnly}
-                  alignTop
-                  direction="column"
+                  disabled={values.state ? null : readOnly}
+                  {...fieldProps}
                 >
-                  <option value="">{values.region}</option>
-
                   {
-                    region.map((item, i) =>  <option key={i} value={item.name}>{item.name}</option>)
+                    regionList.map((item, i) => (values.region !== item.name && <option key={i} value={item.name}>{item.name}</option>))
                   }
                 </TextInput>
               }
@@ -339,7 +358,9 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
             size="small"
             variant="contained"
             onClick={toggleCreditReport}
-          >View/Edit Financial Report</Button>
+          >
+            View/Edit Financial Report
+          </Button>
           {!readOnly ? (
             !loading ? (
               <>

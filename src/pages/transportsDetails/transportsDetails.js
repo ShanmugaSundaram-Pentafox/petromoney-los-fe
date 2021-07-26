@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
   sidePanelFormContentWrapper: {
     flex: 1,
-    overflow: 'auto'
+    overflowY: 'auto'
   },
   tableRow: {
     cursor: 'pointer'

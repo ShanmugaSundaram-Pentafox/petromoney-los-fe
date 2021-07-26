@@ -84,7 +84,7 @@ const TransportsTable = ({ transports, setAllTransports, onRowClick }) => {
   const [loading, setLoading] = useState(false);
 
   const classes = useStyles()
-
+  
   const columns = useMemo(() => {
     return [
       {

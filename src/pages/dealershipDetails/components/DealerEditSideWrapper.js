@@ -147,6 +147,7 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
     initialValues: {
       ...data
     },
+    
     onReset: (values, e) => {
       setReadOnly(true)
     },
@@ -154,6 +155,10 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: values => {
+      console.log("values",values)
+      setValues(values?.first_name?.toUpperCase())
+      console.log("values 22",values)
+
       setLoading(true);
       const date = moment(selectedDate).format('DD-MMM-YYYY')
       const date_values = { ...values, dob: date }
@@ -168,6 +173,11 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
       if (values.id) {
         url += `/${values.id}`;
       };
+      console.log("dataaaaaaaaaaaa",data)
+      // data.append('first_name'.values.first_name?.toUpperCase())
+      // data.last_name.toUpperCase()
+      data.append('first_name',values.first_name.toUpperCase())
+      console.log("dataaaaaaaaaaaa 22",data)
 
       if (modelType !== "GUARANTOR") {
         data.append('user_id', currentUser.id);

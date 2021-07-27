@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Alert from "@material-ui/lab/Alert"
@@ -20,7 +20,7 @@ import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded'
 // import { URL } from '../../../config/serverUrls';
 import EditIcon from '@material-ui/icons/Edit';
 import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
-import { getAllRegion, getBusinessTypes, getOmcList } from '../../../services/common.service';
+import { getAllRegion, getBusinessTypes, getOmcList, getRegionById, getStates } from '../../../services/common.service';
 import { getDistricts, getFormattedStatesList } from '../../../utils/indianStates.util';
 import { addNewTransport, updateTransport } from '../../../services/transports.service';
 import { useSnackbar } from 'notistack';
@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
     },
     sidePanelFormContentWrapper: {
         flex: 1,
-        // overflow: 'auto'
+        overflowY: 'auto'
     },
     wrapper: {
         padding: 8,
@@ -124,7 +124,7 @@ const useStyles = makeStyles((theme) => ({
     },
     ownerWrapper: {
         flex: 1,
-        overflowY: 'auto'
+        // overflowY: 'auto'
     },
     button: {
         marginTop: theme.spacing(1),
@@ -173,6 +173,8 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
     const [loading, setLoading] = useState(false)
     const [omcs, setOmcs] = useState([]);
     const [bussinessType, setBussinessType] = useState([]);
+    const [states, setStates] = useState([]);
+    const [regionList, setRegionList] = useState([]);
     const [regions, setRegions] = useState([]);
     const [checked, setChecked] = useState(false);
     const classes = useStyles()
@@ -188,29 +190,8 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
     const handleClose = () => {
         callback()
     }
-    useMount(() => {
-        getOmcList()
-            .then(data => {
-                setOmcs(data);
-            })
-            .catch(e => {
-                console.log(e)
-            })
-        getBusinessTypes()
-            .then(data => {
-                setBussinessType(data);
-            })
-            .catch(e => {
-                console.log(e)
-            })
-        getAllRegion()
-            .then(data => {
-                setRegions(data);
-            })
-            .catch(e => {
-                console.log(e)
-            })
-    })
+
+
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting } = useFormik({
         initialValues: {
             ...data,
@@ -289,6 +270,57 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
 
         }
     });
+    useMount(() => {
+        getOmcList()
+            .then(data => {
+                setOmcs(data);
+            })
+            .catch(e => {
+                console.log(e)
+            })
+        getBusinessTypes()
+            .then(data => {
+                setBussinessType(data);
+            })
+            .catch(e => {
+                console.log(e)
+            })
+        getStates()
+            .then(d => {
+                setStates(d);
+                return d;
+            })
+            .then(d => {
+                let res = d.find(({ id }) => id === parseInt(values?.state));
+                fetchRegions(parseInt(res.id));
+            })
+            .catch(e => {
+                console.log(e)
+            })
+        getRegionById()
+            .then(data => {
+                setRegions(data);
+            })
+            .catch(e => {
+                console.log(e)
+            })
+    })
+
+    useEffect(() => {
+        if (values.state) {
+            // let res = states.find(({ name }) => name === values.state);
+            fetchRegions(parseInt(values.state));
+        }
+    }, [values.state])
+    const fetchRegions = (res) => {
+        getRegionById(res)
+            .then(res => {
+                setRegionList(res)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
     const inputProps = {
         direction: "column",
         alignTop: true,
@@ -521,6 +553,23 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                             <TextInput
                                                 {...inputProps}
                                                 select
+                                                name="state"
+                                                labelText="State"
+                                                readOnly={readOnly}
+                                                disabled={readOnly}
+                                                value={values.state}
+                                                error={errors.state}
+                                            >
+                                                {
+                                                    states.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
+                                                }
+
+                                            </TextInput>
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                {...inputProps}
+                                                select
                                                 name="region"
                                                 labelText="Region"
                                                 readOnly={readOnly}
@@ -528,9 +577,8 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 value={values.region}
                                                 error={errors.region}
                                             >
-                                                <option value="">Choose region</option>
                                                 {
-                                                    regions.map(region => <option key={region.region} value={region.name} >{region.name}</option>)
+                                                    regionList.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))
                                                 }
                                             </TextInput>
                                         </Grid>
@@ -546,23 +594,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 helperText={errors.address}
                                             />
                                         </Grid>
-                                        <Grid item md={6}>
-                                            <TextInput
-                                                {...inputProps}
-                                                select
-                                                name="state"
-                                                labelText="State"
-                                                readOnly={readOnly}
-                                                disabled={readOnly}
-                                                value={values.state}
-                                                error={errors.state}
-                                            >
-                                                <option value="">Choose state</option>
-                                                {
-                                                    getFormattedStatesList().map(item => <option key={item.code} value={item.value}>{item.label}</option>)
-                                                }
-                                            </TextInput>
-                                        </Grid>
+
                                         <Grid item md={6}>
                                             <TextInput
                                                 {...inputProps}

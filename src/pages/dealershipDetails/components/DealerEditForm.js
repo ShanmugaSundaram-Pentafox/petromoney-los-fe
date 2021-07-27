@@ -25,7 +25,7 @@ const useStyles = makeStyles({
     },
     details: {
         padding: 4,
-        marginBottom:10,
+        marginBottom: 10,
         borderColor: 'grey',
         minWidth: 80,
         height: 60,
@@ -46,7 +46,7 @@ const useStyles = makeStyles({
     },
 });
 
-const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange }) => {
+const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState }) => {
     const readOnly = readOnlyProps;
     const classes = useStyles();
     const [showUpload, setShowUpload] = useState(false);
@@ -63,6 +63,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
     }
     const handleChange = (event) => {
         setState({ ...state, [event.target.name]: event.target.checked });
+        handleState(state)
     };
 
     const gridItem = {
@@ -464,7 +465,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                             <Grid item md={6}>
                                 <Typography component="div" >
                                     <Grid component="label" container style={{ marginBottom: '8px', marginTop: '6px' }} alignItems="center" spacing={2}>
-                                        <Grid md={12} style={{ paddingLeft: '8px' }}>Mobile number linked with AADHAR?</Grid>
+                                        <Grid md={12} style={{ paddingLeft: 8, fontSize: 12 }}>Mobile number linked with AADHAR?</Grid>
                                         <Grid style={{ paddingLeft: '8px' }}>No</Grid>
                                         <Grid>
                                             <Switch

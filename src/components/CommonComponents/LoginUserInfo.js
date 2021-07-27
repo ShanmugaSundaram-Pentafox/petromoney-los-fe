@@ -110,41 +110,41 @@ const LoginUserInfoWrapper = styled.div`
 `;
 
 export const LoginUserInfo = ({
-    open= false,
+    open = false,
     user,
     logout
 }) => {
     const [show, setShow] = useState();
-    let ref= useRef();
+    let ref = useRef();
     useEffect(() => {
-        let handler = (event)=> {
-            if(!ref.current.contains(event.target)) {
+        let handler = (event) => {
+            if (!ref.current.contains(event.target)) {
                 setShow(false);
             }
         }
-        document.addEventListener("mousedown",handler);
+        document.addEventListener("mousedown", handler);
         return () => {
-            document.removeEventListener("mousedown",handler);
+            document.removeEventListener("mousedown", handler);
         }
     });
     return (
         <LoginUserInfoWrapper open={show} ref={ref} onClick={() => setShow(!show)}>
             <p>
-            {user.first_name}
-            {/* <span>{user.mobile}</span> */}
+                {user.first_name}
+                {/* <span>{user.mobile}</span> */}
             </p>
             {/* user image style */}
             {/* <img src="https://i.imgur.com/JBj1jMv.png" alt="user-img" /> */}
 
             {/* user initials style */}
             <div className="user-initials-wrapper">
-            <span className="user-initials">{user.first_name?.charAt(0)}</span>
-            <i className="caret"></i>
+                <span className="user-initials">{user.first_name?.charAt(0)}</span>
+                <i className="caret"></i>
             </div>
 
             <div className="header-dropdown">
-                <span onClick={logout}>Logout</span>
                 <RouterLink to={'/profile'}><span>Profile</span></RouterLink>
+                <span onClick={logout}>Logout</span>
             </div>
         </LoginUserInfoWrapper>
     );

@@ -4,16 +4,18 @@ import MUIDataTable from "mui-datatables"
 import Typography from "@material-ui/core/Typography";
 // import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 // import LockIcon from '@material-ui/icons/Lock';
+import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
+import { green, grey } from '@material-ui/core/colors';
 import { Button, TextField } from "@material-ui/core";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
+// import Dialog from "@material-ui/core/Dialog";
+// import DialogActions from "@material-ui/core/DialogActions";
+// import DialogContent from "@material-ui/core/DialogContent";
+// import DialogContentText from "@material-ui/core/DialogContentText";
 // import DialogTitle from "@material-ui/core/DialogTitle";
 // import Tooltip from '@material-ui/core/Tooltip';
 import { Drawer } from "@material-ui/core";
-import { deleteUser } from '../../../services/users.service';
-import { logger } from '../../../config/logger';
+// import { deleteUser } from '../../../services/users.service';
+// import { logger } from '../../../config/logger';
 import RightDrawer from './RightDrawer'
 
 
@@ -69,7 +71,7 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
       },
       {
         label: "Name",
-        name: "name",
+        name: "first_name",
         options: {
           filter: false,
           sort: true,
@@ -106,36 +108,39 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
         },
       },
     ];
-    // const actionColumnData = {
-    //   label: "Action",
-    //   name: 'id',
-    //   options: {
-    //     filter: false,
-    //     sort: false,
-    //     setCellProps: () => ({
-    //       align: 'center',
-    //       }),
-    //       customBodyRender: (value) => {
-    //         const d = data.find(item => item.id === value) || {};
-    //         return (
-    //           <div key={`vi-${value}`}>
-    //             <div>
-    //               <Button onClick={() => handleClickOpen(value)}>
-    //                 <Tooltip title="deactivate" aria-label="add">
-    //                   <DeleteOutlinedIcon style={{ width: "20px", color: "#ff6666" }} />
-    //                 </Tooltip>
-    //               </Button>
-    //               {
-    //                 d?.id ?
-    //                   <RightDrawer key={value} checked={op} userId={value} currentUser={currentUser} data={d} />
-    //                   : null
-    //               }
-    //             </div>
-    //           </div>
-    //         )
-    //       }
-    //     }
-    // }
+    const actionColumnData = {
+      label: "Action",
+      name: 'status',
+      options: {
+        filter: false,
+        sort: false,
+        setCellProps: () => ({
+          align: 'center',
+        }),
+        customBodyRender: (value) => {
+          return (
+            <div key={`vi-${value}`}>
+              {
+                value === 1 ? <CheckCircleTwoToneIcon style={{ color: green[200] }} /> : <CheckCircleTwoToneIcon style={{ color: grey[500] }} />
+              }
+
+              {/* <div>
+                  <Button onClick={() => handleClickOpen(value)}>
+                    <Tooltip title="deactivate" aria-label="add">
+                      <DeleteOutlinedIcon style={{ width: "20px", color: "#ff6666" }} />
+                    </Tooltip>
+                  </Button>
+                  {
+                    d?.id ?
+                      <RightDrawer key={value} checked={op} userId={value} currentUser={currentUser} data={d} />
+                      : null
+                  }
+                </div> */}
+            </div>
+          )
+        }
+      }
+    }
     return withRole ? [
       ...d,
       {
@@ -146,7 +151,7 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
           sort: true,
         },
       }
-    ] : [...d];;
+    ] : [...d, actionColumnData];;
   }, [withRole])
 
   const options = {
@@ -194,7 +199,7 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
         onClose={() => setOpenModal(false)}
         variant="temporary"
       >
-        <RightDrawer key={rowData.id} userId={rowData.id} currentUser={currentUser} callback={()=>setOpenModal(false)} data={rowData} />
+        <RightDrawer key={rowData.id} userId={rowData.id} currentUser={currentUser} callback={() => setOpenModal(false)} data={rowData} />
       </Drawer>
 
     </div>

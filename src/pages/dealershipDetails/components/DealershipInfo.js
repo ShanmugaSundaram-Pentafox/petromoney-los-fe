@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMount } from 'react-use';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
@@ -19,7 +19,8 @@ import { rulesList } from '../../../config/userRules';
 import apiCall from '../../../utils/api.util';
 import Button from '../../../components/CommonComponents/Button/Button';
 import { encrypt } from '../../../services/crypto.service';
-import { getBusinessTypes, getRegion, getStates } from '../../../services/common.service';
+import { getBusinessTypes, getRegionById, getStates } from '../../../services/common.service';
+import { getDistricts } from '../../../utils/indianStates.util';
 // import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -40,7 +41,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
   const [apiStatus, setApiStatus] = useState({});
   const [businessTypes, setBusinessTypes] = useState([{}, {}, {}, {}, {}]);
   const [states, setStates] = useState([]);
-  const [region, setRegion] = useState([]);
+  const [regionList, setRegionList] = useState([]);
   const { values, handleChange: onChange, handleSubmit } = useFormik({
     initialValues: data,
     onSubmit: values => {
@@ -67,7 +68,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
           if (status == 'SUCCESS') {
             setApiStatus({ type: 'success', message: message || 'Details updated successfully' })
             setLoading(false);
-            setReadOnly(false);
+            setReadOnly(true);
           }
           else {
             setApiStatus({ type: 'error', message: message || 'Unable to save the details. Please try again later' })
@@ -91,14 +92,37 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         console.log('BusinessTypes fetch error - ', err)
       })
     getStates()
-      .then(setStates)
+      .then(d => {
+        setStates(d)
+        return d;
+      })
+      .then(d => {
+        let res = d.find(({ id }) => id === parseInt(values.state));
+
+        fetchRegions(parseInt(res.id));
+      })
       .catch(err => {
         console.log('BusinessTypes fetch error - ', err)
       })
 
   });
+  useEffect(() => {
+    // console.log(values)
+    if (values.state) {
+      // let res = states.find(({ name }) => name === values.state);
+      fetchRegions(parseInt(values.state));
+    }
+  }, [values.state])
 
-  // const [values, setValues] = useState(data);
+  const fetchRegions = (res) => {
+    getRegionById(res)
+      .then(res => {
+        setRegionList(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
   const classes = useStyles();
   const gridProps = {
     item: true,
@@ -107,12 +131,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
     className: classes.gridItemStyle
   }
 
-  // const handleChange = event => {
-  //   setValues({
-  //     ...values,
-  //     [event.target.name]: event.target.value
-  //   });
-  // };
 
   const fieldProps = {
     direction: "column",
@@ -121,15 +139,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
     onChange
   }
 
-  const handleRegion = (value) => {
-    let res = states.find(({ name }) => name === value);
-    getRegion(res.id)
-      .then(setRegion)
-      .catch(err => {
-        console.log("error", err)
-      })
-
-  }
 
   return (
     <Card className={clsx(classes.root, className)}>
@@ -138,8 +147,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         autoComplete="off"
         noValidate
       >
-        {/* <CardHeader title={`${values.id} - ${values.name}`} /> */}
-        {/* <Divider /> */}
         <Paper>
           <Grid container spacing={2}>
             <Grid {...gridProps} sm={12}>
@@ -201,43 +208,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
               />
             </Grid>
             <Divider />
-            {/* <Grid {...gridProps} xs={6}>
-              <TextInput
-                labelText="Latitude"
-                name="latitude"
-                labelWidth={40}
-                defaultValue={values.latitude}
-                {...fieldProps}
-              />
-            </Grid>
-            <Grid {...gridProps} xs={6}>
-              <TextInput
-                labelText="Longtitude"
-                name="longtitude"
-                labelWidth={40}
-                defaultValue={values.longtitude}
-                {...fieldProps}
-              />
-            </Grid> */}
-
-            {/* <Grid {...gridProps} xs={6}>
-              <TextInput
-                select
-                labelText="State"
-                labelWidth={40}
-                defaultValue={values.state}
-                disabled={readOnly}
-                onChange={(e) => handleRegion(e.target.value)}
-                readOnly={readOnly}
-                alignTop
-                direction="column"
-              >
-                <option value={values.state}>{values.state}</option>
-                {
-                  states.map((item, i) => item.name !== values.state && <option key={item.name} value={item.name}>{item.name}</option>)
-                }
-              </TextInput>
-            </Grid> */}
             <Grid {...gridProps} sm={6}>
               <TextInput
                 select
@@ -245,33 +215,28 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 name="state"
                 readOnly={readOnly}
                 disabled={readOnly}
-                onChange={(e) => handleRegion(e)}
-                defaultValue={values.state}
+                value={values.state}
                 {...fieldProps}
               >
-                <option value="">{values.state}</option>
                 {
-                  states.map((item, i) => <option key={i} value={item.name}>{item.name}</option>)
+                  states.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
                 }
               </TextInput>
             </Grid>
-
             <Grid {...gridProps} xs={6}>
               {
+
                 <TextInput
                   select
                   labelText="Region"
-                  labelWidth={40}
-                  defaultValue={values.region}
+                  name="region"
+                  value={values.region}
                   readOnly={readOnly}
                   disabled={readOnly}
-                  alignTop
-                  direction="column"
+                  {...fieldProps}
                 >
-                  <option value="">{values.region}</option>
-
                   {
-                    region.map((item, i) =>  <option key={i} value={item.name}>{item.name}</option>)
+                    regionList.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))
                   }
                 </TextInput>
               }
@@ -281,20 +246,19 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
               <TextInput
                 labelText="District"
                 labelWidth={40}
-                defaultValue={values.district}
+                value={values.district}
                 readOnly={readOnly}
+                disabled={readOnly}
+                // select
                 alignTop
                 direction="column"
-              />
-            </Grid>
-            {/* <Grid {...gridProps} sm={6}>
-              <TextInput
-                labelText="Region"
-                name="region"
-                defaultValue={values.region}
                 {...fieldProps}
-              />
-            </Grid> */}
+              >
+                {/* {
+                  getDistricts().map(item => <option key={item} value={item}>{item}</option>)
+                } */}
+              </TextInput>
+            </Grid>
 
             <Grid {...gridProps}>
               <TextInput
@@ -305,26 +269,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 {...fieldProps}
               />
             </Grid>
-            {/* <Grid {...gridProps} xs={6}>
-              <TextInput
-                labelText="Sales Area"
-                labelWidth={40}
-                defaultValue={values.sales_area}
-                readOnly
-                alignTop
-                direction="column"
-              />
-            </Grid>
-            <Grid {...gridProps} xs={6}>
-              <TextInput
-                labelText="Zone"
-                labelWidth={40}
-                defaultValue={values.zone}
-                readOnly
-                alignTop
-                direction="column"
-              />
-            </Grid> */}
           </Grid>
         </Paper>
         <Divider />
@@ -339,7 +283,9 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
             size="small"
             variant="contained"
             onClick={toggleCreditReport}
-          >View/Edit Financial Report</Button>
+          >
+            View/Edit Financial Report
+          </Button>
           {!readOnly ? (
             !loading ? (
               <>

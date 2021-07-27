@@ -157,7 +157,7 @@ export const deleteMappedRegion = (data, id) => {
       })
   });
 }
-export const updatePassword = (password, mobile, id) => {
+export const updatePassword = (password, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`user/${id}`, {
       method: 'POST',
@@ -167,7 +167,7 @@ export const updatePassword = (password, mobile, id) => {
     })
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data);
+          resolve(message);
         } else {
           reject(message);
         }
@@ -177,19 +177,22 @@ export const updatePassword = (password, mobile, id) => {
       })
   });
 }
-export const updateUserDetails = (name,mobile, mail, id) => {
+export const updateUserDetails = (first_name, last_name, mobile, mail, role, id, status) => {
   return new Promise((resolve, reject) => {
     apiCall(`user/${id}`, {
       method: 'POST',
       body: {
-        "name": name,
+        "first_name": first_name,
+        "last_name": last_name,
         "email": mail,
-        "mobile" : mobile
+        "mobile": mobile,
+        "role_name": role,
+        "status": status,
       }
     })
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data);
+          resolve(message);
         } else {
           reject(message);
         }
@@ -249,9 +252,9 @@ export const getStates = () => {
       })
   })
 }
-export const getRegion = (id) => {
+export const getRegionById = (res) => {
   return new Promise((resolve, reject) => {
-    apiCall(`regions/${id}`)
+    apiCall(`regions/${res}`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data);

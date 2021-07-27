@@ -7,18 +7,18 @@ import Divider from '@material-ui/core/Divider';
 // import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 import { updatePassword, updateUserDetails } from '../../../services/common.service';
 import { Paper, TextField, Tooltip, Typography } from '@material-ui/core';
-import Snackbar from '@material-ui/core/Snackbar';
+// import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import Button from '../../../components/CommonComponents/Button/Button';
 import { logger } from '../../../config/logger';
-import clsx from 'clsx';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
+// import clsx from 'clsx';
+// import CircularProgress from '@material-ui/core/CircularProgress';
+// import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import EditIcon from '@material-ui/icons/Edit';
 // import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
 import MapRegion from './MapRegion';
-import Skeleton from '@material-ui/lab/Skeleton';
+// import Skeleton from '@material-ui/lab/Skeleton';
 import Grid from '@material-ui/core/Grid';
 import UserCan from '../../../components/UserCan/UserCan';
 import CloseIcon from '@material-ui/icons/Close';
@@ -30,6 +30,8 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import { deleteUser, getAllUserRoles } from '../../../services/users.service';
 import TextInput from '../../../components/TextInput/TextInput';
 import { useMount } from 'react-use';
+import { useSnackbar } from 'notistack';
+
 
 
 
@@ -176,7 +178,8 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
   const [showUserEditDrawer, setShowUserEditDrawer] = useState(false);
   const [roleList, setRoleList] = useState([])
   const [password, setPassword] = useState("")
-  const [userName, setUserName] = useState(data.name)
+  const [userFirstName, setUserFirstName] = useState(data.first_name)
+  const [userLastName, setUserLastName] = useState(data.first_name)
   const [userMobile, setUserMobile] = useState(data.mobile)
   const [userRole, setUserRole] = useState(data.role_name)
   const [userMail, setUserMail] = useState(data.email)
@@ -189,6 +192,8 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
   const [confirmPassword, SetConfirmPassword] = useState("")
   const [passwordSuccess, setPasswordSuccess] = useState(false)
   const [profileSuccess, setProfileSuccess] = useState(false)
+  const { enqueueSnackbar } = useSnackbar();
+
 
   useMount(() => {
     getAllUserRoles()
@@ -208,14 +213,8 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
     setuserId(value);
     setOpen(true);
   };
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpen(false);
-  };
-  const saveProfile = () => {
-    updateUserDetails(userName, userMobile, userMail, userRole, data.id)
+  const ActivateUser = (status) => {
+    updateUserDetails(userFirstName, userLastName, userMobile, userMail, userRole, data.id, status)
       .then(() => {
         setProfileSuccess(true);
         setTimeout(() => {
@@ -227,19 +226,56 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
       .catch(err => {
         console.log(err)
       })
+
+  }
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
+  const saveProfile = () => {
+    updateUserDetails(userFirstName, userLastName, userMobile, userMail, userRole, data.id)
+      .then(res => {
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        }
+        )
+        setTimeout(() => {
+          window.location.reload(false);
+          // setProfileSuccess(false)
+          setReadOnly(true)
+        }, 1500)
+
+      })
+
+      .catch(err => {
+        console.log(err)
+      })
   }
 
   const checkPassword = () => {
     if (password === confirmPassword && password !== null) {
-      updatePassword(password, data.mobile, userId)
-        .then(
-          setPasswordSuccess(true),
+      updatePassword(password, data.id)
+        .then(res => {
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          }
+          )
           setTimeout(() => {
             setPassword("")
             SetConfirmPassword("")
-            setPasswordSuccess(false)
-          }, 2000),
-        )
+            setEditPassword(false)
+          }, 1500)
+        })
         .catch(err => {
           console.log(err)
         })
@@ -291,7 +327,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
             )
 
           }
-          {
+          {/* {
             profileSuccess && (
               <Box pt={2} pl={3} color="success.main" bgcolor="#f9f9f9" borderRadius={4} className={classes.drawerStyle} display="flex" justifyContent="space-between" alignItems="center">
                 Profile Updated Successfully...
@@ -318,8 +354,8 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                 Password Updated Successfully...
               </Box>
             )
-          }
-          {
+          } */}
+          {/* {
             readOnly ? (
               <Grid container spacing={2} className={classes.readOnlyWrapper}>
                 <Grid item md={6}>
@@ -356,166 +392,175 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                 </Grid>
               </Grid>
 
-            ) : (
-              <>
-                {
-                  !editProfile ? (
-                    <>
-                      <Grid container spacing={2} className={classes.readOnlyWrapper}>
-                        <Grid item md={6}>
-                          <Box className={classes.box} >
-                            <Box className={classes.details}>
-                              <div>
-                                <p className={classes.title}>ID</p>
-                                <strong className={classes.text}>{data.id}</strong>
-                              </div>
-                            </Box>
-                            <Box className={classes.details}>
-                              <div>
-                                <p className={classes.title}>Role</p>
-                                <strong className={classes.text}>{data.role_name}</strong>
-                              </div>
-                            </Box>
-                            <Box className={classes.details}>
-                              <div>
-                                <p className={classes.title}>Email</p>
-                                <strong className={classes.text}>{data.email}</strong>
-                              </div>
-                            </Box>
-                          </Box>
-                        </Grid>
-                        <Grid item md={6}>
-                          <Box className={classes.details}>
-                            <div>
-                              <p className={classes.title}>Name</p>
-                              <strong className={classes.text}>{data.name}</strong>
-                            </div>
-                          </Box>
-                          <Box className={classes.box} >
-                            <Box className={classes.details}>
-                              <div>
-                                <p className={classes.title}>Mobile</p>
-                                <strong className={classes.text}>{data.mobile}</strong>
-                              </div>
-                            </Box>
-                          </Box>
-                        </Grid>
-                      </Grid>
-                    </>
-                  ) : (
-                    <>
-                      <Box mb={2}>
-                        <form>
-                          <Grid container spacing={3}>
-                            <Grid item md={6}>
-                              <TextInput
-                                label="Name"
-                                defaultValue={data.name}
-                                InputLabelProps={{ shrink: true }}
-                                onChange={e => setUserName(e.target.value)}
-                              />
-                            </Grid>
-                            <Grid item md={6}>
-                              <TextInput
-                                label="Mobile"
-                                defaultValue={data.mobile}
-                                InputLabelProps={{ shrink: true }}
-                                onChange={e => setUserMobile(e.target.value)}
-                              />
-                            </Grid>
-                            <Grid item md={6}>
-                              <TextInput
-                                select
-                                label="Role"
-                                value={data.role_name}
-                                InputLabelProps={{ shrink: true }}
-                                onChange={e => setUserRole(e.target.value)}
-                              >
-                                <option>{data.role_name}</option>
-                                {
-                                  roleList.map(roleList => <option key={roleList.role_name} value={roleList.id}>({roleList.role_name}) - {roleList.name}</option>)
-                                }
-                              </TextInput>
-                            </Grid>
-                            <Grid item md={6}>
-                              <TextInput
-                                label="Email"
-                                defaultValue={data.email}
-                                InputLabelProps={{ shrink: true }}
-                                onChange={e => setUserMail(e.target.value)}
-                              />
-                            </Grid>
-                          </Grid>
-                        </form>
-                        <div className={classes.passwordWrapper}>
-                          <Button variant='outlined' onClick={() => setEditProfile(false)}>Cancel</Button>
-                          <Button variant='contained' color="primary" onClick={() => saveProfile()}>Save</Button>
+            ) : ( */}
+          <>
+            {
+              !editProfile ? (
+                <>
+                  <Grid container spacing={2} className={classes.readOnlyWrapper}>
+                    <Grid item md={6}>
+                      <Box className={classes.box} >
+                        <Box className={classes.details}>
+                          <div>
+                            <p className={classes.title}>ID</p>
+                            <strong className={classes.text}>{data.id}</strong>
+                          </div>
+                        </Box>
+                        <Box className={classes.details}>
+                          <div>
+                            <p className={classes.title}>Role</p>
+                            <strong className={classes.text}>{data.role_name}</strong>
+                          </div>
+                        </Box>
+                        <Box className={classes.details}>
+                          <div>
+                            <p className={classes.title}>Email</p>
+                            <strong className={classes.text}>{data.email}</strong>
+                          </div>
+                        </Box>
+                      </Box>
+                    </Grid>
+                    <Grid item md={6}>
+                      <Box className={classes.details}>
+                        <div>
+                          <p className={classes.title}>Name</p>
+                          <strong className={classes.text}>{data.first_name}</strong>
                         </div>
                       </Box>
-                      <Divider />
-                      <UserCan
-                        role={currentUser.role_name}
-                        perform={rulesList.region_map}
-                        yes={() => (
-                          [1, 6, 7, 12].includes(data.role_id) ? <MapRegion data={data} /> : null
-                        )}
-                        no={() => null}
-                      />
-                    </>
-                  )
-                }
-                {
-                  !editPassword ? (
-                    <>
-                      <div className={classes.passwordWrapper}>
-                        {/* <Typography variant="h4" component="h3">Reset Password</Typography> */}
-                        {
-                          <Box className={classes.button}>
-                            <Button variant="contained" color="primary" size="small" onClick={() => { setReadOnly(false); setEditPassword(true) }}>Change password</Button>
-                          </Box>
-                        }
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <Box mb={2}>
-                        {/* <Divider /> */}
-                        {
-                          editPassword && (
-                            <Box mt={2} mb={2} bgcolor={"#fafafa"}>
-                              {/* <Typography variant="h4" component="h3">Reset Password</Typography> */}
-                              <TextField
-                                margin="dense"
-                                id="password"
-                                label="Enter New Password"
-                                type="password"
-                                value={password}
-                                className={classes.textFieldStyle}
-                                onChange={e => setPassword(e.target.value)}
-                              />
-                              <TextField
-                                margin="dense"
-                                id="password"
-                                label="Confirm New Password"
-                                type="password"
-                                value={confirmPassword}
-                                className={classes.textFieldStyle}
-                                onChange={e => SetConfirmPassword(e.target.value)}
-                              />
-
-                              <div className={classes.passwordWrapper}>
-                                <Button variant='outlined' onClick={() => setEditPassword(false)}>Cancel</Button>
-                                <Button variant='contained' color="primary" onClick={e => checkPassword()}>save</Button>
-                              </div>
-                            </Box>
-                          )}
+                      <Box className={classes.box} >
+                        <Box className={classes.details}>
+                          <div>
+                            <p className={classes.title}>Mobile</p>
+                            <strong className={classes.text}>{data.mobile}</strong>
+                          </div>
+                        </Box>
                       </Box>
-                    </>
-                  )
-                }
-              </>
-            )
-          }
+                    </Grid>
+                  </Grid>
+                </>
+              ) : (
+                <>
+                  <Box mb={2}>
+                    <form>
+                      <Grid container spacing={3}>
+                        <Grid item md={6}>
+                          <TextInput
+                            label="First Name"
+                            defaultValue={data.first_name}
+                            InputLabelProps={{ shrink: true }}
+                            onChange={e => setUserFirstName(e.target.value)}
+                          />
+                        </Grid>
+                        <Grid item md={6}>
+                          <TextInput
+                            label="Last Name"
+                            defaultValue={data.last_name}
+                            InputLabelProps={{ shrink: true }}
+                            onChange={e => setUserLastName(e.target.value)}
+                          />
+                        </Grid>
+
+                        <Grid item md={6}>
+                          <TextInput
+                            label="Mobile"
+                            defaultValue={data.mobile}
+                            InputLabelProps={{ shrink: true }}
+                            onChange={e => setUserMobile(e.target.value)}
+                          />
+                        </Grid>
+                        <Grid item md={6}>
+                          <TextInput
+                            select
+                            label="Role"
+                            value={data.role_name}
+                            InputLabelProps={{ shrink: true }}
+                            onChange={e => setUserRole(e.target.value)}
+                          >
+                            <option>{data.role_name}</option>
+                            {
+                              roleList.map(roleList => <option key={roleList.role_name} value={roleList.id}>({roleList.role_name}) - {roleList.name}</option>)
+                            }
+                          </TextInput>
+                        </Grid>
+                        <Grid item md={6}>
+                          <TextInput
+                            label="Email"
+                            defaultValue={data.email}
+                            InputLabelProps={{ shrink: true }}
+                            onChange={e => setUserMail(e.target.value)}
+                          />
+                        </Grid>
+                      </Grid>
+                    </form>
+                    <div className={classes.passwordWrapper}>
+                      <Button variant='outlined' onClick={() => setEditProfile(false)}>Cancel</Button>
+                      <Button variant='contained' color="primary" onClick={() => saveProfile()}>Save</Button>
+                    </div>
+                  </Box>
+                  <Divider />
+                  <UserCan
+                    role={currentUser.role_name}
+                    perform={rulesList.region_map}
+                    yes={() => (
+                      [1, 6, 7, 12].includes(data.role_id) ? <MapRegion data={data} /> : null
+                    )}
+                    no={() => null}
+                  />
+                </>
+              )
+            }
+            {
+              !editPassword ? (
+                <>
+                  <div className={classes.passwordWrapper}>
+                    {/* <Typography variant="h4" component="h3">Reset Password</Typography> */}
+                    {
+                      <Box className={classes.button}>
+                        <Button variant="contained" color="primary" size="small" onClick={() => { setReadOnly(false); setEditPassword(true) }}>Change password</Button>
+                      </Box>
+                    }
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Box mb={2}>
+                    {/* <Divider /> */}
+                    {
+                      editPassword && (
+                        <Box mt={2} mb={2} bgcolor={"#fafafa"}>
+                          {/* <Typography variant="h4" component="h3">Reset Password</Typography> */}
+                          <TextField
+                            margin="dense"
+                            id="password"
+                            label="Enter New Password"
+                            type="password"
+                            value={password}
+                            className={classes.textFieldStyle}
+                            onChange={e => setPassword(e.target.value)}
+                          />
+                          <TextField
+                            margin="dense"
+                            id="password"
+                            label="Confirm New Password"
+                            type="password"
+                            value={confirmPassword}
+                            className={classes.textFieldStyle}
+                            onChange={e => SetConfirmPassword(e.target.value)}
+                          />
+
+                          <div className={classes.passwordWrapper}>
+                            <Button variant='outlined' onClick={() => setEditPassword(false)}>Cancel</Button>
+                            <Button variant='contained' color="primary" onClick={e => checkPassword()}>save</Button>
+                          </div>
+                        </Box>
+                      )}
+                  </Box>
+                </>
+              )
+            }
+          </>
+
+          {/* } */}
 
           {/* <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="warning">
@@ -552,16 +597,32 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
               Back
             </Button>
           </div>
-          <div>
-            <Button
-              variant="contained"
-              className={classes.btnError}
-              color="primary"
-              onClick={() => handleClickOpen(data.id)}
-            >
-              Delete
-            </Button>
-          </div>
+          {
+            data.status === 1 ? (
+              <div>
+                <Button
+                  variant="contained"
+                  className={classes.btnError}
+                  color="primary"
+                  onClick={() => handleClickOpen(data.id)}
+                >
+                  Delete
+                </Button>
+              </div>
+            ) : (
+              <div>
+                <Button
+                  variant="contained"
+                  className={classes.btnError}
+                  // color="primary"
+                  onClick={() => ActivateUser(1)}
+                >
+                  Activate
+                </Button>
+              </div>
+            )
+          }
+
         </div>
       </div>
     </div >

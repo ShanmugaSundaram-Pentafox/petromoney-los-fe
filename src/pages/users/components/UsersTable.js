@@ -71,7 +71,7 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
       },
       {
         label: "Name",
-        name: "name",
+        name: "first_name",
         options: {
           filter: false,
           sort: true,

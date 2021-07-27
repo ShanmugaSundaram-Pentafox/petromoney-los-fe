@@ -97,8 +97,9 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         return d;
       })
       .then(d => {
-        let res = d.find(({ name }) => name === values.state);
-        fetchRegions(res);
+        let res = d.find(({ id }) => id === parseInt(values.state));
+
+        fetchRegions(parseInt(res.id));
       })
       .catch(err => {
         console.log('BusinessTypes fetch error - ', err)
@@ -106,10 +107,10 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
 
   });
   useEffect(() => {
-    console.log(values)
+    // console.log(values)
     if (values.state) {
-      let res = states.find(({ name }) => name === values.state);
-      fetchRegions(res);
+      // let res = states.find(({ name }) => name === values.state);
+      fetchRegions(parseInt(values.state));
     }
   }, [values.state])
 
@@ -218,7 +219,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 {...fieldProps}
               >
                 {
-                  states.map((item, i) => <option key={i} value={item.name}>{item.name}</option>)
+                  states.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
                 }
               </TextInput>
             </Grid>
@@ -229,13 +230,13 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                   select
                   labelText="Region"
                   name="region"
-                  defaultValue={values.region}
+                  value={values.region}
                   readOnly={readOnly}
                   disabled={readOnly}
                   {...fieldProps}
                 >
                   {
-                    regionList.map((item, i) => (values.region !== item.name && <option key={i} value={item.name}>{item.name}</option>))
+                    regionList.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))
                   }
                 </TextInput>
               }
@@ -245,7 +246,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
               <TextInput
                 labelText="District"
                 labelWidth={40}
-                defaultValue={values.district}
+                value={values.district}
                 readOnly={readOnly}
                 disabled={readOnly}
                 // select

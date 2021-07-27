@@ -102,7 +102,7 @@ const useStyles = makeStyles(theme => ({
   },
 
   passwordWrapper: {
-    margin: '10px 0px 4px 0px',
+    margin: '30px 0px 4px 0px',
     display: 'flex',
     justifyContent: 'space-between'
   },
@@ -260,7 +260,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
 
   const checkPassword = () => {
     if (password === confirmPassword && password !== null) {
-      updatePassword(password, data.id)
+      updatePassword(password, data.mobile, userId)
         .then(res => {
           enqueueSnackbar(res, {
             anchorOrigin: {
@@ -273,8 +273,8 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
           setTimeout(() => {
             setPassword("")
             SetConfirmPassword("")
-            setEditPassword(false)
-          }, 1500)
+            setPasswordSuccess(false)
+          }, 2000)
         })
         .catch(err => {
           console.log(err)
@@ -309,7 +309,12 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
   //   }
   //   setShowUserEditDrawer(st => !st);
   // };
-
+  const fieldProps = {
+    direction: "column",
+    alignTop: true,
+    readOnly,
+  }
+  console.log("role list", roleList)
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
@@ -355,44 +360,6 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
               </Box>
             )
           } */}
-          {/* {
-            readOnly ? (
-              <Grid container spacing={2} className={classes.readOnlyWrapper}>
-                <Grid item md={6}>
-                  <Box className={classes.box} >
-                    <Box className={classes.details}>
-                      <div>
-                        <p className={classes.title}>Name</p>
-                        <strong className={classes.text}>{data.name}</strong>
-                      </div>
-                    </Box>
-                    <Box className={classes.details}>
-                      <div>
-                        <p className={classes.title}>Role</p>
-                        <strong className={classes.text}>{data.role_name}</strong>
-                      </div>
-                    </Box>
-                  </Box>
-                </Grid>
-                <Grid item md={6}>
-                  <Box className={classes.box} >
-                    <Box className={classes.details}>
-                      <div>
-                        <p className={classes.title}>Mobile</p>
-                        <strong className={classes.text}>{data.mobile}</strong>
-                      </div>
-                    </Box>
-                    <Box className={classes.details}>
-                      <div>
-                        <p className={classes.title}>Email</p>
-                        <strong className={classes.text}>{data.email}</strong>
-                      </div>
-                    </Box>
-                  </Box>
-                </Grid>
-              </Grid>
-
-            ) : ( */}
           <>
             {
               !editProfile ? (
@@ -472,11 +439,10 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                           <TextInput
                             select
                             label="Role"
-                            value={data.role_name}
+                            value={userRole}
                             InputLabelProps={{ shrink: true }}
                             onChange={e => setUserRole(e.target.value)}
                           >
-                            <option>{data.role_name}</option>
                             {
                               roleList.map(roleList => <option key={roleList.role_name} value={roleList.id}>({roleList.role_name}) - {roleList.name}</option>)
                             }
@@ -492,10 +458,6 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                         </Grid>
                       </Grid>
                     </form>
-                    <div className={classes.passwordWrapper}>
-                      <Button variant='outlined' onClick={() => setEditProfile(false)}>Cancel</Button>
-                      <Button variant='contained' color="primary" onClick={() => saveProfile()}>Save</Button>
-                    </div>
                   </Box>
                   <Divider />
                   <UserCan
@@ -506,6 +468,11 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                     )}
                     no={() => null}
                   />
+                  <div className={classes.passwordWrapper}>
+                    <Button variant='outlined' onClick={() => setEditProfile(false)}>Cancel</Button>
+                    <Button variant='contained' color="primary" onClick={() => saveProfile()}>Save</Button>
+                  </div>
+
                 </>
               )
             }

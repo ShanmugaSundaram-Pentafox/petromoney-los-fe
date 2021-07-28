@@ -16,7 +16,11 @@ export const encrypt = text => {
 export const decrypt = cipher => {
   try {
     const bytes = AES.decrypt(cipher.toString(), process.env.REACT_APP_CRYPT_KEY);
-    const result = bytes.toString(Utf8);
+    let result = bytes.toString(Utf8);
+    if (!result) {
+      const b = AES.decrypt(cipher.toString(), 'uat-salt-key');
+      result = b.toString(Utf8);
+    }
     // console.log(cipher.toString(), process.env.REACT_APP_CRYPT_KEY, result)
     // console.log('>> DECIPHER -- ', cipher, result);
     // return text;

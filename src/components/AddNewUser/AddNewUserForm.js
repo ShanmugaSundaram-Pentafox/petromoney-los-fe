@@ -15,11 +15,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from "@material-ui/styles";
 
 const useStyles = makeStyles((theme) => ({
-  title: {
-    textAlign: 'center',
-    paddingTop: theme.spacing(1),
-    color: '#9e9e9e'
-  },
   sidePanelTitle: {
     // textAlign: 'center',
     padding: '24px 16px',
@@ -38,9 +33,6 @@ const useStyles = makeStyles((theme) => ({
   sidePanelFormContentWrapper: {
     flex: 1,
     overflow: 'auto'
-  },
-  tableRow: {
-    cursor: 'pointer'
   },
   stepperRoot: {
     padding: 16,

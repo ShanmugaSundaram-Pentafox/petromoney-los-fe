@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
-import Alert from "@material-ui/lab/Alert"
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { withStyles } from '@material-ui/core/styles';
@@ -57,26 +56,9 @@ const useStyles = makeStyles((theme) => ({
         flex: 1,
         overflowY: 'auto'
     },
-    wrapper: {
-        padding: 8,
-        width: '50vw',
-    },
     title: {
-        paddingLeft: 8,
-        marginBottom: 8
-    },
-    table: {
-        // minWidth: 650,
-        padding: 8
-    },
-    header: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        marginBottom: 8
-    },
-    footer: {
-        paddingTop: 8,
-        textAlign: 'right'
+        marginBottom: 8,
+        fontSize: 12,
     },
     sidePanelWrapper: {
         position: 'relative',
@@ -84,21 +66,8 @@ const useStyles = makeStyles((theme) => ({
         flexDirection: 'column',
         height: '100vh',
         width: '40vw',
-    },
-    actionButtons: {
-        // paddingTop: 8
-    },
-    tableRow: {
-        cursor: 'pointer'
-    },
-    document: {
-        display: 'inline-block',
-        borderRadius: 2,
-        lineHeight: 1,
-    },
-    sidePanelWrapper: {
-        width: '40vw',
         padding: '14px',
+
     },
     readOnlyWrapper: {
         margin: '30px 4px',
@@ -107,52 +76,14 @@ const useStyles = makeStyles((theme) => ({
     text: {
         fontSize: 14
     },
-    title: {
-        fontSize: 12,
-    },
     stepperRoot: {
         padding: 16,
         paddingTop: 8
-    },
-    transportFormWrapper: {
-        padding: theme.spacing(2),
-    },
-    transWrapper: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        marginBottom: theme.spacing(2),
-    },
-    ownerWrapper: {
-        flex: 1,
-        // overflowY: 'auto'
-    },
-    button: {
-        marginTop: theme.spacing(1),
-        marginRight: theme.spacing(1),
-    },
-    actionsContainer: {
-        marginBottom: theme.spacing(2),
-    },
-    resetContainer: {
-        padding: theme.spacing(3),
     },
     actionButtonsWrapper: {
         display: 'flex',
         justifyContent: 'space-between',
         padding: '12px 16px'
-    },
-    actionButtons: {
-        // paddingTop: 8
-    },
-    stepperRoot: {
-        padding: 16,
-        paddingTop: 8
-    },
-    stepTitle: {
-        '& .MuiStepLabel-label.MuiStepLabel-active': {
-            fontSize: 15,
-            fontWeight: 600
-        }
     },
     editButton: {
         marginRight: '8px',
@@ -164,12 +95,10 @@ const useStyles = makeStyles((theme) => ({
             backgroundColor: theme.palette.success.dark
         }
     }
-
 }))
 
 const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callback, isAdd }) => {
     const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
-    const [apiStatus, setApiStatus] = useState({});
     const [loading, setLoading] = useState(false)
     const [omcs, setOmcs] = useState([]);
     const [bussinessType, setBussinessType] = useState([]);
@@ -598,7 +527,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                         <Grid item md={6}>
                                             <TextInput
                                                 {...inputProps}
-                                                select
+                                                // select
                                                 name="district"
                                                 labelText="District"
                                                 readOnly={readOnly}
@@ -606,7 +535,6 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 value={values.district}
                                                 error={errors.district}
                                             >
-                                                <option value="">Choose District</option>
                                                 {
                                                     getDistricts(values.state).map(item => <option key={item} value={item}>{item}</option>)
                                                 }

@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { makeStyles } from "@material-ui/styles";
 import { Grid, Typography } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
-import AnnouncementTwoToneIcon from '@material-ui/icons/AnnouncementTwoTone';
-import { Paper } from '@material-ui/core';
 import { Drawer } from "@material-ui/core";
 import AddOmcDetailsForm from '../PDRForms/AddOmcDetailsForm';
 import AddBusinessDetailsForm from '../PDRForms/AddBusinessDetailsForm';
@@ -18,11 +16,6 @@ import { ReactComponent as LoanIcon } from '../../../icons/loan.svg';
 import { ReactComponent as OutletIcon } from '../../../icons/outlet.svg';
 import { Button } from '@material-ui/core';
 import AddBankingDetailsForm from '../PDRForms/AddBankingDetailsForm';
-
-
-
-
-
 
 
 const useStyles = makeStyles((theme) => ({
@@ -67,8 +60,6 @@ const useStyles = makeStyles((theme) => ({
             backgroundColor: theme.palette.success.dark
         }
     },
-
-
 }))
 
 const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {

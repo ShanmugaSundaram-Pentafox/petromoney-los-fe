@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { useMount } from 'react-use';
+// import { useMount } from 'react-use';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -26,28 +26,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     marginBottom: 8
   },
-  footer: {
-    paddingTop: 8,
-    textAlign: 'right'
-  },
-  sidePanelWrapper: {
-    width: '40vw',
-    minWidth: 300
-  },
-  actionButtons: {
-    // paddingTop: 8
-  },
   tableRow: {
     cursor: 'pointer'
   },
-  document: {
-    display: 'inline-block',
-    borderRadius: 2,
-    lineHeight: 1,
-    marginRight: 3,
-    marginBottom: 4,
-    padding: 4,
-  }
 }));
 
 const GuarantorsTable = ({ id, editable, guarantorsData, titleAlign, getExperianData, onClickAddMenu, formType, openCloseCreditForm, rowData, currentUser, showDealerEditForm, dealersClickRow, editFormClose }) => {

@@ -20,7 +20,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
-import Currency from '../../../components/Number/Currency';
 import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
 import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
 
@@ -44,33 +43,13 @@ const useStyles = makeStyles((theme) => ({
         flex: 1,
         overflow: 'auto'
     },
-    wrapper: {
-        padding: 8,
-        width: '55vw',
-    },
-    title: {
-        paddingLeft: 8,
-        marginBottom: 8
-    },
-    table: {
-        // minWidth: 650,
-        padding: 8
-    },
-    header: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        marginBottom: 8
-    },
-    footer: {
-        paddingTop: 8,
-        textAlign: 'right'
-    },
     sidePanelWrapper: {
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
         height: '100vh',
         width: '40vw',
+        padding: 14,
     },
     actionButtons: {
         // paddingTop: 8
@@ -83,20 +62,9 @@ const useStyles = makeStyles((theme) => ({
         borderRadius: 2,
         lineHeight: 1,
     },
-    sidePanelWrapper: {
-        width: '40vw',
-        padding: '14px',
-    },
     table: {
         padding: 8,
         marginTop: 8
-    },
-    formWrapper: {
-        padding: '0 15px'
-    },
-    row: {
-        paddingRight: 4,
-        paddingBottom: 14
     },
     btnSuccess: {
         '&.MuiButton-contained': {
@@ -111,45 +79,10 @@ const useStyles = makeStyles((theme) => ({
         padding: 16,
         paddingTop: 8
     },
-    transportFormWrapper: {
-        padding: theme.spacing(2),
-    },
-    transWrapper: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        marginBottom: theme.spacing(2),
-    },
-    ownerWrapper: {
-        flex: 1,
-        overflowY: 'auto'
-    },
-    button: {
-        marginTop: theme.spacing(1),
-        marginRight: theme.spacing(1),
-    },
-    actionsContainer: {
-        marginBottom: theme.spacing(2),
-    },
-    resetContainer: {
-        padding: theme.spacing(3),
-    },
     actionButtonsWrapper: {
         display: 'flex',
         justifyContent: 'space-between',
         padding: '12px 16px'
-    },
-    actionButtons: {
-        // paddingTop: 8
-    },
-    stepperRoot: {
-        padding: 16,
-        paddingTop: 8
-    },
-    stepTitle: {
-        '& .MuiStepLabel-label.MuiStepLabel-active': {
-            fontSize: 15,
-            fontWeight: 600
-        }
     },
     subTitle: {
         marginTop: 8,
@@ -504,7 +437,6 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                                             </TableBody>
                                         </Table>
                                     </Fragment>
-                                    {/* <IncomeTa id={id} editable={editable} currentUser={currentUser} /> */}
                                 </Grid>
 
                             </Grid>

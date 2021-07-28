@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useMount } from 'react-use';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
-import Alert from '@material-ui/lab/Alert';
 import Card from '@material-ui/core/Card';
 // import CardHeader from '@material-ui/core/CardHeader';
 import Paper from '@material-ui/core/Paper';
@@ -16,11 +15,11 @@ import { logger } from '../../../config/logger';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-import apiCall from '../../../utils/api.util';
+// import apiCall from '../../../utils/api.util';
 import Button from '../../../components/CommonComponents/Button/Button';
 import { encrypt } from '../../../services/crypto.service';
 import { getBusinessTypes, getRegionById, getStates } from '../../../services/common.service';
-import { getDistricts } from '../../../utils/indianStates.util';
+import { useSnackbar } from 'notistack';
 // import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -42,6 +41,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
   const [businessTypes, setBusinessTypes] = useState([{}, {}, {}, {}, {}]);
   const [states, setStates] = useState([]);
   const [regionList, setRegionList] = useState([]);
+  const { enqueueSnackbar } = useSnackbar();
   const { values, handleChange: onChange, handleSubmit } = useFormik({
     initialValues: data,
     onSubmit: values => {
@@ -53,7 +53,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
       let pan = values?.pan ? encrypt(values.pan) : values?.pan;
       let gst = values?.gst ? encrypt(values.gst) : values?.gst;
       setLoading(true);
-      setApiStatus({});
+      // setApiStatus({});
       fetch(`${URL.base}${URL.dealership}/${values.id}`, {
         method: 'POST',
         body: data,
@@ -66,19 +66,43 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         })
         .then(({ status, message, data }) => {
           if (status == 'SUCCESS') {
-            setApiStatus({ type: 'success', message: message || 'Details updated successfully' })
+            enqueueSnackbar(message, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'success',
+            }
+            )
+            // setApiStatus({ type: 'success', message: message || 'Details updated successfully' })
             setLoading(false);
             setReadOnly(true);
           }
           else {
-            setApiStatus({ type: 'error', message: message || 'Unable to save the details. Please try again later' })
+            enqueueSnackbar(message, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            }
+            )
+            // setApiStatus({ type: 'error', message: message || 'Unable to save the details. Please try again later' })
             setLoading(false);
             setReadOnly(true);
 
           }
         })
         .catch(e => {
-          setApiStatus({ type: 'error', message: 'Unable to save the details. Please try again later' })
+          enqueueSnackbar(e, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          }
+          )
+          // setApiStatus({ type: 'error', message: 'Unable to save the details. Please try again later' })
           setLoading(false);
           setReadOnly(true);
           logger(e);
@@ -272,11 +296,11 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
           </Grid>
         </Paper>
         <Divider />
-        {
+        {/* {
           apiStatus.type && (
             <Alert severity={apiStatus.type}>{apiStatus.message}</Alert>
           )
-        }
+        } */}
         <CardActions className={classes.actionFooter}>
           <Button
             color="primary"

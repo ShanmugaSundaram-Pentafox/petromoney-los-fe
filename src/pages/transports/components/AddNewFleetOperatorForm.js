@@ -38,53 +38,6 @@ const useStyles = makeStyles((theme) => ({
         flex: 1,
         overflowX: 'hidden',
     },
-    wrapper: {
-        padding: 8,
-        width: '50vw',
-    },
-    title: {
-        paddingLeft: 8,
-        marginBottom: 8
-    },
-    table: {
-        // minWidth: 650,
-        padding: 8
-    },
-    header: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        marginBottom: 8
-    },
-    footer: {
-        paddingTop: 8,
-        textAlign: 'right'
-    },
-    sidePanelWrapper: {
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-        width: '40vw',
-    },
-    actionButtons: {
-        // paddingTop: 8
-    },
-    tableRow: {
-        cursor: 'pointer'
-    },
-    document: {
-        display: 'inline-block',
-        borderRadius: 2,
-        lineHeight: 1,
-    },
-    sidePanelWrapper: {
-        width: '40vw',
-        padding: '14px',
-    },
-    stepperRoot: {
-        padding: 16,
-        paddingTop: 8
-    },
     details: {
         padding: 6,
         borderColor: 'grey',
@@ -105,49 +58,10 @@ const useStyles = makeStyles((theme) => ({
         margin: '30px 4px',
         maxWidth: '100%',
     },
-    readOnlyTitle: {
-        color: '#657798',
-
-    },
-    transportFormWrapper: {
-        padding: theme.spacing(2),
-    },
-    transWrapper: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        marginBottom: theme.spacing(2),
-    },
-    ownerWrapper: {
-        flex: 1,
-        overflowY: 'auto'
-    },
-    button: {
-        marginTop: theme.spacing(1),
-        marginRight: theme.spacing(1),
-    },
-    actionsContainer: {
-        marginBottom: theme.spacing(2),
-    },
-    resetContainer: {
-        padding: theme.spacing(3),
-    },
     actionButtonsWrapper: {
         display: 'flex',
         justifyContent: 'space-between',
         padding: '12px 16px'
-    },
-    actionButtons: {
-        // paddingTop: 8
-    },
-    stepperRoot: {
-        padding: 16,
-        paddingTop: 8
-    },
-    stepTitle: {
-        '& .MuiStepLabel-label.MuiStepLabel-active': {
-            fontSize: 15,
-            fontWeight: 600
-        }
     },
     editButton: {
         marginRight: '8px',

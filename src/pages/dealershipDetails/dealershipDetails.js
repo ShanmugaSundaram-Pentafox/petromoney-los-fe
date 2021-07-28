@@ -35,10 +35,7 @@ import PersonalDiscussionReport from "./components/PDReport";
 
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    padding: theme.spacing(2),
-    paddingTop: theme.spacing(1),
-  },
+  
   tabsWrapper: {
     display: 'flex',
     flexGrow: 1,

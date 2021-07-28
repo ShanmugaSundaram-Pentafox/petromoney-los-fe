@@ -44,8 +44,8 @@ const LoginUserInfoWrapper = styled.div`
             display: inline-block;
             font-weight: 500;
             background-color: #dddddd;
-            width: 32px;
-            height: 32px;
+            width: 24px;
+            height: 24px;
             border-radius: 100%;
             background-clip: padding-box;
             display: flex;

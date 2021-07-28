@@ -43,18 +43,19 @@ const useStyles = makeStyles(theme => ({
   button: {
     // color: colors.blueGrey[200],
     color: "rgba(173, 173, 173, 1)",
-    padding: '10px 8px',
+    padding: '8px',
     justifyContent: 'flex-start',
     textTransform: 'none',
     letterSpacing: 0,
     width: '100%',
+    fontSize: 13,
     fontWeight: theme.typography.fontWeightMedium
   },
   icon: {
     // color: theme.palette.icon,
     // color: "rgba(34, 36, 68, 1)",
     width: 24,
-    height: 24,
+    height: 20,
     display: 'flex',
     alignItems: 'center',
     marginRight: theme.spacing(1)
@@ -67,6 +68,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(3)
   },
   active: {
+    padding: '6px 8px',
     backgroundColor: 'rgba(248, 213, 138, 1)',
     color: colors.blueGrey[800],
     fontWeight: theme.typography.fontWeightMedium,

@@ -10,11 +10,11 @@ export const InputWrapper = styled.div`
   flex-direction: ${props => props.direction ? 'column' : 'row'};
 
   .input-label {
-    font-size: 13px;
+    font-size: 12px;
     width: ${props => props.labelWidth ? props.labelWidth : "15"}%;
     margin-right: 8px;
     text-align: right;
-    padding: 4px 0;
+    padding: 0;
     color: #242424;
     ${props => props.direction ? css`
       color: #444444;

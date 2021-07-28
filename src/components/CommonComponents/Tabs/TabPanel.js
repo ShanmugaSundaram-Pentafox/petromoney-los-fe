@@ -16,6 +16,7 @@ export const TabPanel = ({ children, activeTab, index, ...rest }) => {
       hidden={activeTab !== index}
       id={`vertical-tabpanel-${index}`}
       aria-labelledby={`vertical-tab-${index}`}
+      style={{ flex: 1 }}
       {...rest}
     >
       {/* {activeTab === index && ( */}

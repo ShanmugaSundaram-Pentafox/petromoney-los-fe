@@ -45,9 +45,12 @@ const useStyles = makeStyles(theme => {
     },
     title: {
       ...theme.typography.h2,
-      fontSize: 18,
+      fontSize: 16,
       display: 'flex',
       alignItems: 'center',
+    },
+    topbarStyle: {
+      minHeight: 48
     },
     optionsContainer: {
       paddingRight: theme.spacing(2),
@@ -115,7 +118,7 @@ const Topbar = (props) => {
         {...appBarProps}
         className={clsx(classes.root, className)}
       >
-        <Toolbar>
+        <Toolbar className={classes.topbarStyle}>
           {/* <RouterLink to="/" className={classes.logoLink}>
             <img
               alt="Logo"

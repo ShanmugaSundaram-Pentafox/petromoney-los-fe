@@ -10,7 +10,7 @@ export default {
       margin: '4px 0',
     },
     '& .MuiInputBase-input': {
-      fontSize: 13,
+      fontSize: 12,
       color: '#222444'
     },
     '& .MuiInputBase-input[readonly]+fieldset': {

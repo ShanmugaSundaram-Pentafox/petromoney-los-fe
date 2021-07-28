@@ -51,8 +51,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
   },
   table: {
-    marginTop:20,
-
+    marginBottom: 20,
   }
 }));
 
@@ -205,7 +204,7 @@ const SalesInfo = ({
         />
       </div>
       <SalesTableWrapper column={column}>
-        <div>
+        <div className={classes.table}>
           <Table size="small">
             <TableHead>
               <TableRow>

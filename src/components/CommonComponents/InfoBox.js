@@ -89,6 +89,8 @@ const InfoBoxCard = styled.div`
             &.title {
                 /* margin-bottom: 4px; */
                 width:max-content;
+                font-size: 12px;
+                font-weight: 500;
             }
 
             &.txt {

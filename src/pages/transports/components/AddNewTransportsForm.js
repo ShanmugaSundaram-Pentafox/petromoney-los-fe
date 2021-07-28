@@ -24,6 +24,7 @@ import { getDistricts, getFormattedStatesList } from '../../../utils/indianState
 import { addNewTransport, updateTransport } from '../../../services/transports.service';
 import { useSnackbar } from 'notistack';
 import Tooltip from '@material-ui/core/Tooltip';
+import { URL } from '../../../config/serverUrls';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -142,11 +143,26 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
         }),
         onSubmit: values => {
             const data = { ...values, t_owner_id: id };
+            const formData = new FormData();
+            Object.keys(data).forEach(key => {
+                formData.append(key, data[key]);
+            })
+            console.log('values', data)
             let apiURL = isAdd === 'Add' ? `transporters` : `tranporters/${data.transporter_id}`
             if (isAdd === 'Add') {
-                addNewTransport(data)
+                fetch(`${URL.base}${URL.vehicleInfo}`, {
+                    method: 'POST',
+                    body:formData,
+                    headers: {
+                        'Authorization': `Bearer ${currentUser.token} `
+                    }
+                })
+
                     .then(res => {
-                        enqueueSnackbar(res, {
+                        return res.json()
+                    })
+                    .then(res => {
+                        enqueueSnackbar(res.message, {
                             anchorOrigin: {
                                 vertical: 'top',
                                 horizontal: 'right',
@@ -154,9 +170,9 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                             variant: 'success',
                         }
                         )
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 2000)
+                        // setTimeout(() => {
+                        //     window.location.reload();
+                        // }, 2000)
                     })
                     .catch(error => {
                         enqueueSnackbar(error, {
@@ -171,16 +187,28 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
 
             }
             else {
-                updateTransport(data.transporter_id, data)
+                fetch(`${URL.base}${URL.vehicleInfo}/${data.transporter_id} `, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Authorization': `Bearer ${currentUser.token} `
+                    }
+                })
                     .then(res => {
-                        enqueueSnackbar(res, {
+                        return res.json()
+                    })
+                    .then(res => {
+                        enqueueSnackbar(res.message, {
                             anchorOrigin: {
                                 vertical: 'top',
                                 horizontal: 'right',
                             },
                             variant: 'success',
-                        }
-                        )
+                        })
+                        // setTimeout(() => {
+                        //     window.location.reload();
+                        // }, 2000)
+
                     })
                     .catch(error => {
                         console.log(error);
@@ -219,10 +247,10 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                 setStates(d);
                 return d;
             })
-            .then(d => {
-                let res = d.find(({ id }) => id === parseInt(values?.state));
-                fetchRegions(parseInt(res.id));
-            })
+            // .then(d => {
+            //     let res = d.find(({ id }) => id === parseInt(values?.state));
+            //     fetchRegions(parseInt(res.id));
+            // })
             .catch(e => {
                 console.log(e)
             })
@@ -348,8 +376,8 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                         </Box>
                                         <Box className={classes.details}>
                                             <div>
-                                                <p className={classes.title}>GST</p>
-                                                <strong className={classes.text}>{values.gst}</strong>
+                                                <p className={classes.title}>PAN</p>
+                                                <strong className={classes.text}>{values.pan}</strong>
                                             </div>
                                         </Box>
                                     </Box>
@@ -384,6 +412,12 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                             <div>
                                                 <p className={classes.title}>Pincode</p>
                                                 <strong className={classes.text}>{values.pincode}</strong>
+                                            </div>
+                                        </Box>
+                                        <Box className={classes.details}>
+                                            <div>
+                                                <p className={classes.title}>GST</p>
+                                                <strong className={classes.text}>{values.gst}</strong>
                                             </div>
                                         </Box>
                                     </Box>
@@ -422,7 +456,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 </TextInput>
                                             }
                                         </Grid>
-                                        <Grid item md={6}>
+                                        <Grid item md={12}>
                                             <TextInput
                                                 {...inputProps}
                                                 name="name"
@@ -438,7 +472,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 {...inputProps}
                                                 name="mobile"
                                                 labelText="Mobile"
-                                                value={values.mobile}
+                                                value={values?.mobile}
                                                 readOnly={readOnly}
                                                 error={errors.mobile}
                                                 helperText={errors.mobile}
@@ -450,7 +484,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 select
                                                 name="omc"
                                                 labelText="OMC"
-                                                value={values.omc}
+                                                value={values?.omc}
                                                 readOnly={readOnly}
                                                 disabled={readOnly}
                                                 error={errors.omc}
@@ -468,7 +502,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 name="business_type"
                                                 labelText="Business Type"
                                                 readOnly={readOnly}
-                                                value={values.business_type}
+                                                value={values?.business_type}
                                                 disabled={readOnly}
                                                 error={errors.business_type}
                                             >
@@ -486,7 +520,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 labelText="State"
                                                 readOnly={readOnly}
                                                 disabled={readOnly}
-                                                value={values.state}
+                                                value={values?.state}
                                                 error={errors.state}
                                             >
                                                 {
@@ -503,7 +537,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 labelText="Region"
                                                 readOnly={readOnly}
                                                 disabled={readOnly}
-                                                value={values.region}
+                                                value={values?.region}
                                                 error={errors.region}
                                             >
                                                 {
@@ -516,7 +550,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 {...inputProps}
                                                 name="address"
                                                 labelText="Address"
-                                                value={values.address?.toUpperCase()}
+                                                value={values?.address}
                                                 readOnly={readOnly}
                                                 disabled={readOnly}
                                                 error={errors.address}
@@ -545,7 +579,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 {...inputProps}
                                                 name="pincode"
                                                 labelText="Pincode"
-                                                value={values.pincode}
+                                                value={values?.pincode}
                                                 disabled={readOnly}
                                                 readOnly={readOnly}
                                                 error={errors.pincode}
@@ -555,9 +589,21 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                         <Grid item md={6}>
                                             <TextInput
                                                 {...inputProps}
+                                                name="pan"
+                                                labelText="PAN"
+                                                value={values?.pan}
+                                                readOnly={readOnly}
+                                                disabled={readOnly}
+                                                error={errors.pan}
+                                                helperText={errors.pan}
+                                            />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                {...inputProps}
                                                 name="gst"
                                                 labelText="GST"
-                                                value={values.gst}
+                                                value={values?.gst}
                                                 readOnly={readOnly}
                                                 disabled={readOnly}
                                                 error={errors.gst}
@@ -568,8 +614,8 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                             <Typography variant="title">Documents </Typography>
                                         </Grid>
                                         <Grid item md={12}>
-                                            <Typography variant="subtitle2" component="subtitle2">
-                                                PAN :{(readOnly) ?
+                                            <Typography variant="subtitle" component="subtitle2">
+                                                PAN {(readOnly) ?
                                                     <>
                                                         {data.pan_file_url ?
                                                             panAttachment()
@@ -601,10 +647,10 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                             </Typography>
                                         </Grid>
                                         <Grid item md={12} style={{ marginBottom: '8px' }}>
-                                            <Typography variant="subtitle1">GST Bill </Typography>
+                                            {/* <Typography variant="subtitle1">GST</Typography> */}
                                         </Grid>
-                                        <Grid item md={6}>
-                                            <Typography variant="subtitle2" component="subtitle2">
+                                        <Grid item md={12}>
+                                            <Typography variant="subtitle" component="subtitle2">
                                                 GST {(readOnly) ?
                                                     <>
                                                         {
@@ -622,7 +668,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                                 <TextInput
                                                                     type="file"
                                                                     accept="image/*"
-                                                                    name="gstS_file_url"
+                                                                    name="gst_file_url"
                                                                     value={data.aadhar_f_file_url}
                                                                     readOnly={readOnly}
                                                                     disabled={readOnly}

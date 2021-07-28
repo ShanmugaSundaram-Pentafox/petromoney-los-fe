@@ -25,37 +25,8 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     display: "flex",
-  },
-  sidePanelWrapper: {
-    width: '40vw',
-    padding: '10px',
-  },
-  sidePanelTitle: {
-    padding: '12px 16px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    zIndex: 0,
-    marginBottom: 4,
-    boxShadow: '0 1px 4px -3px #333',
-  },
-  transWrapper: {
-    boxShadow: '0 1px 4px -3px #333',
-    // borderBottom: '1px solid green',
-    marginBottom: '8px',
-    padding: '10px'
-  },
-  ownerWrapper: {
-    borderBottom: '1px solid green',
-  },
-  button: {
     marginTop: theme.spacing(1),
     marginRight: theme.spacing(1),
-  },
-  actionsContainer: {
-    marginBottom: theme.spacing(2),
-  },
-  resetContainer: {
-    padding: theme.spacing(3),
   },
 }))
 function getSteps() {
@@ -65,22 +36,8 @@ function getSteps() {
 
 
 const TransportsTable = ({ transports, setAllTransports, onRowClick }) => {
-  const [activeStep, setActiveStep] = React.useState(0);
-  const steps = getSteps();
+  
 
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const handleReset = () => {
-    setActiveStep(0);
-  };
-
-  const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const classes = useStyles()

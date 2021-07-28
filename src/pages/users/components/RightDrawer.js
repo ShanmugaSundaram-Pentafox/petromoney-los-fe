@@ -30,19 +30,12 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import { deleteUser, getAllUserRoles } from '../../../services/users.service';
 import TextInput from '../../../components/TextInput/TextInput';
 import { useMount } from 'react-use';
-import { useSnackbar } from 'notistack';
-
-
+import { useSnackbar } from 'notistack'
 
 
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    width: '100%',
-    '& > * + *': {
-      marginTop: 2,
-    },
-  },
+  
   sidePanelFormWrapper: {
     position: 'relative',
     display: 'flex',
@@ -69,13 +62,6 @@ const useStyles = makeStyles(theme => ({
     margin: 2,
 
   },
-  fullList: {
-    width: '100%',
-  },
-  drawerStyle: {
-    minWidth: '40vw',
-
-  },
   button: {
     display: 'flex',
     justifyContent: 'flex-end',
@@ -96,24 +82,14 @@ const useStyles = makeStyles(theme => ({
     margin: '10px 0px 4px 0px',
     maxWidth: '100%',
   },
-  readOnlyTitle: {
-    color: '#657798',
-
-  },
-
   passwordWrapper: {
-    margin: '10px 0px 4px 0px',
+    margin: '30px 0px 4px 0px',
     display: 'flex',
     justifyContent: 'space-between'
   },
   stepperRoot: {
     padding: 16,
     paddingTop: 8
-  },
-  readOnlyContent: {
-    display: 'flex',
-    justifyContent: 'flex-start',
-    margin: 8,
   },
   details: {
     padding: 6,
@@ -130,10 +106,6 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     fontSize: 12,
-  },
-  buttonSave: {
-    marginTop: 12,
-
   },
   textFieldStyle: {
     marginBottom: '12px',
@@ -167,15 +139,12 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
 
 export default function TemporaryDrawer({ data, currentUser, callback }) {
   const [open, setOpen] = useState(false);
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
-  const [showUserEditDrawer, setShowUserEditDrawer] = useState(false);
+  // const [showUserEditDrawer, setShowUserEditDrawer] = useState(false);
   const [roleList, setRoleList] = useState([])
   const [password, setPassword] = useState("")
   const [userFirstName, setUserFirstName] = useState(data.first_name)
@@ -260,7 +229,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
 
   const checkPassword = () => {
     if (password === confirmPassword && password !== null) {
-      updatePassword(password, data.id)
+      updatePassword(password, data.mobile, userId)
         .then(res => {
           enqueueSnackbar(res, {
             anchorOrigin: {
@@ -273,8 +242,8 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
           setTimeout(() => {
             setPassword("")
             SetConfirmPassword("")
-            setEditPassword(false)
-          }, 1500)
+            setPasswordSuccess(false)
+          }, 2000)
         })
         .catch(err => {
           console.log(err)
@@ -309,7 +278,11 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
   //   }
   //   setShowUserEditDrawer(st => !st);
   // };
-
+  const fieldProps = {
+    direction: "column",
+    alignTop: true,
+    readOnly,
+  }
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
@@ -355,44 +328,6 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
               </Box>
             )
           } */}
-          {/* {
-            readOnly ? (
-              <Grid container spacing={2} className={classes.readOnlyWrapper}>
-                <Grid item md={6}>
-                  <Box className={classes.box} >
-                    <Box className={classes.details}>
-                      <div>
-                        <p className={classes.title}>Name</p>
-                        <strong className={classes.text}>{data.name}</strong>
-                      </div>
-                    </Box>
-                    <Box className={classes.details}>
-                      <div>
-                        <p className={classes.title}>Role</p>
-                        <strong className={classes.text}>{data.role_name}</strong>
-                      </div>
-                    </Box>
-                  </Box>
-                </Grid>
-                <Grid item md={6}>
-                  <Box className={classes.box} >
-                    <Box className={classes.details}>
-                      <div>
-                        <p className={classes.title}>Mobile</p>
-                        <strong className={classes.text}>{data.mobile}</strong>
-                      </div>
-                    </Box>
-                    <Box className={classes.details}>
-                      <div>
-                        <p className={classes.title}>Email</p>
-                        <strong className={classes.text}>{data.email}</strong>
-                      </div>
-                    </Box>
-                  </Box>
-                </Grid>
-              </Grid>
-
-            ) : ( */}
           <>
             {
               !editProfile ? (
@@ -472,11 +407,10 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                           <TextInput
                             select
                             label="Role"
-                            value={data.role_name}
+                            value={userRole}
                             InputLabelProps={{ shrink: true }}
                             onChange={e => setUserRole(e.target.value)}
                           >
-                            <option>{data.role_name}</option>
                             {
                               roleList.map(roleList => <option key={roleList.role_name} value={roleList.id}>({roleList.role_name}) - {roleList.name}</option>)
                             }
@@ -492,10 +426,6 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                         </Grid>
                       </Grid>
                     </form>
-                    <div className={classes.passwordWrapper}>
-                      <Button variant='outlined' onClick={() => setEditProfile(false)}>Cancel</Button>
-                      <Button variant='contained' color="primary" onClick={() => saveProfile()}>Save</Button>
-                    </div>
                   </Box>
                   <Divider />
                   <UserCan
@@ -506,6 +436,11 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                     )}
                     no={() => null}
                   />
+                  <div className={classes.passwordWrapper}>
+                    <Button variant='outlined' onClick={() => setEditProfile(false)}>Cancel</Button>
+                    <Button variant='contained' color="primary" onClick={() => saveProfile()}>Save</Button>
+                  </div>
+
                 </>
               )
             }
@@ -513,7 +448,6 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
               !editPassword ? (
                 <>
                   <div className={classes.passwordWrapper}>
-                    {/* <Typography variant="h4" component="h3">Reset Password</Typography> */}
                     {
                       <Box className={classes.button}>
                         <Button variant="contained" color="primary" size="small" onClick={() => { setReadOnly(false); setEditPassword(true) }}>Change password</Button>
@@ -528,7 +462,6 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                     {
                       editPassword && (
                         <Box mt={2} mb={2} bgcolor={"#fafafa"}>
-                          {/* <Typography variant="h4" component="h3">Reset Password</Typography> */}
                           <TextField
                             margin="dense"
                             id="password"

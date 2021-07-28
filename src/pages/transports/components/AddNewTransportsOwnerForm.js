@@ -47,33 +47,9 @@ const useStyles = makeStyles((theme) => ({
         flex: 1,
         overflowX: 'hidden'
     },
-    wrapper: {
-        padding: 8,
-        width: '50vw',
-    },
     title: {
-        paddingLeft: 8,
-        marginBottom: 8
-    },
-    table: {
-        // minWidth: 650,
-        padding: 8
-    },
-    header: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        marginBottom: 8
-    },
-    footer: {
-        paddingTop: 8,
-        textAlign: 'right'
-    },
-    sidePanelWrapper: {
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-        width: '40vw',
+        marginBottom: 8,
+        fontSize: 12,
     },
     actionButtons: {
         // paddingTop: 8
@@ -86,47 +62,14 @@ const useStyles = makeStyles((theme) => ({
         borderRadius: 2,
         lineHeight: 1,
     },
-    sidePanelWrapper: {
-        width: '40vw',
-        padding: '14px',
-    },
     stepperRoot: {
         padding: 16,
         paddingTop: 8
-    },
-    transportFormWrapper: {
-        padding: theme.spacing(2),
-    },
-    transWrapper: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        marginBottom: theme.spacing(2),
-    },
-    ownerWrapper: {
-        flex: 1,
-        overflowY: 'auto'
-    },
-    button: {
-        marginTop: theme.spacing(1),
-        marginRight: theme.spacing(1),
-    },
-    actionsContainer: {
-        marginBottom: theme.spacing(2),
-    },
-    resetContainer: {
-        padding: theme.spacing(3),
     },
     actionButtonsWrapper: {
         display: 'flex',
         justifyContent: 'space-between',
         padding: '12px 16px'
-    },
-    actionButtons: {
-        // paddingTop: 8
-    },
-    stepperRoot: {
-        padding: 16,
-        paddingTop: 8
     },
     details: {
         padding: 6,
@@ -141,18 +84,9 @@ const useStyles = makeStyles((theme) => ({
     text: {
         fontSize: 14
     },
-    title: {
-        fontSize: 12,
-    },
     readOnlyWrapper: {
         margin: '30px 4px',
         maxWidth: '100%',
-    },
-    stepTitle: {
-        '& .MuiStepLabel-label.MuiStepLabel-active': {
-            fontSize: 15,
-            fontWeight: 600
-        }
     },
     editButton: {
         marginRight: '8px',
@@ -179,9 +113,6 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
     const handleDateChange = (e) => {
         setSelectedDate(e)
     }
-    const handleClick = () => {
-        setChecked(!checked);
-    };
     const handleStateChange = (event) => {
 
         setState({ ...state, [event.target.name]: event.target.checked });
@@ -462,19 +393,6 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                                                 onChange={handleChange}
                                             />
                                         </Grid>
-                                        {/* <Grid item md={6}>
-                                    <TextInput
-                                        id="date"
-                                        label="Date of Birth"
-                                        name="dob"
-                                        error={errors.dob}
-                                        helperText={errors.dob}
-                                        readOnly={readOnly}
-                                        defaultValue={values.dob}
-                                        onChange={handleChange}
-                                        InputLabelProps={{ shrink: true }}
-                                    />
-                                </Grid> */}
                                         <Grid item md={6}>
 
                                             <MuiPickersUtilsProvider utils={DateFnsUtils}>

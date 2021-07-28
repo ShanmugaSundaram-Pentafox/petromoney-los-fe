@@ -60,53 +60,12 @@ const useStyles = makeStyles((theme) => ({
         paddingTop: theme.spacing(1),
         color: '#9e9e9e'
     },
-    sidePanelTitle: {
-        // textAlign: 'center',
-        padding: '24px 16px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        zIndex: 0,
-        boxShadow: '0 1px 4px -3px #333'
-    },
-    sidePanelFormWrapper: {
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-        width: '40vw'
-    },
-    sidePanelFormContentWrapper: {
-        flex: 1,
-        overflow: 'auto'
-    },
-    tableRow: {
-        cursor: 'pointer'
-    },
-    stepperRoot: {
-        padding: 16,
-        paddingTop: 8
-    },
-    actionButtonsWrapper: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        padding: '12px 16px'
-    },
-    editButton: {
-        marginRight: '8px',
-        '&.MuiButton-contained': {
-            backgroundColor: theme.palette.success.main,
-            color: theme.palette.white
-        },
-        '&.MuiButton-contained:hover': {
-            backgroundColor: theme.palette.success.dark
-        }
-    }
 }))
 
 export const OwnerInfoCard = ({ id, ownerData, currentUser }) => {
     const classes = useStyles()
     const [openEditModal, setOpenEditModal] = useState(false)
-    const [apiStatus, setApiStatus] = useState({});
+    // const [apiStatus, setApiStatus] = useState({});
 
     usePageTitle(`${id} - ${ownerData && (ownerData.first_name || '')}`, true)
 

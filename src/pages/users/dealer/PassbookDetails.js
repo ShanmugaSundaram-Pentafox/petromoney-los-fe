@@ -14,30 +14,7 @@ import DisbursementApprovedTable from '../../../components/Tables/DisbursementAp
 import CallMadeIcon from '@material-ui/icons/CallMade';
 import CallReceivedIcon from '@material-ui/icons/CallReceived';
 const useStyles = makeStyles(theme => ({
-  root: {
-    // padding: theme.spacing(3),
-    // paddingTop: 0,
-  },
-  title: {
-    fontWeight: 500
-  },
-  pill: {
-    display: 'inline-block',
-    borderRadius: '29px',
-    padding: '3px 8px',
-    fontSize: '13px',
-    fontWeight: '600',
-    minWidth: '30px',
-    textAlign: 'center',
-  },
-  pills_FUEL: {
-    color: '#d35178',
-    backgroundColor: '#f7eae8'
-  },
-  pills_SOLAR: {
-    color: '#51b37f',
-    backgroundColor: '#e1f8e5',
-  },
+ 
   credit: {
     color: '#FA8072'
   },

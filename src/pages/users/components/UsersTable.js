@@ -2,20 +2,9 @@ import React, { useMemo, useState } from "react"
 import { makeStyles } from "@material-ui/styles"
 import MUIDataTable from "mui-datatables"
 import Typography from "@material-ui/core/Typography";
-// import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
-// import LockIcon from '@material-ui/icons/Lock';
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import { green, grey } from '@material-ui/core/colors';
-import { Button, TextField } from "@material-ui/core";
-// import Dialog from "@material-ui/core/Dialog";
-// import DialogActions from "@material-ui/core/DialogActions";
-// import DialogContent from "@material-ui/core/DialogContent";
-// import DialogContentText from "@material-ui/core/DialogContentText";
-// import DialogTitle from "@material-ui/core/DialogTitle";
-// import Tooltip from '@material-ui/core/Tooltip';
 import { Drawer } from "@material-ui/core";
-// import { deleteUser } from '../../../services/users.service';
-// import { logger } from '../../../config/logger';
 import RightDrawer from './RightDrawer'
 
 
@@ -41,17 +30,9 @@ const useStyles = makeStyles((theme) => ({
 }))
 const UsersTable = ({ title, data, withRole, currentUser }) => {
   const classes = useStyles()
-  // const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState({});
-  const [apiStatus, setApiStatus] = useState({});
-  const [userId, setuserId] = useState({});
   const [rowData, setRowData] = useState({});
-  const [op, setOp] = React.useState(false);
   const [openModal, setOpenModal] = useState(false)
-  const handleClickOpen = (value) => {
-    setuserId(value);
-  };
+  
   const onRowClick = (id, data) => {
     setRowData(data)
     setOpenModal(true)

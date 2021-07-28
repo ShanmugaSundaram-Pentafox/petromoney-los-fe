@@ -1,24 +1,18 @@
 import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
-import Alert from "@material-ui/lab/Alert"
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { makeStyles } from "@material-ui/styles";
-import { withStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import Divider from '@material-ui/core/Divider';
-import Switch from '@material-ui/core/Switch';
 import Typography from '@material-ui/core/Typography';
 import TextInput from '../../../components/TextInput/TextInput';
 import Button from '../../../components/CommonComponents/Button/Button';
-import { useMount } from 'react-use';
 import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { getAllRegion, getBusinessTypes, getOmcList } from '../../../services/common.service';
-import { getDistricts, getFormattedStatesList } from '../../../utils/indianStates.util';
 import { addNewVehicle, getAllTransport, updateVehicle } from '../../../services/transports.service';
 import { useSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
@@ -44,92 +38,14 @@ const useStyles = makeStyles((theme) => ({
         flex: 1,
         overflowY: 'auto'
     },
-    wrapper: {
-        padding: 8,
-        width: '50vw',
-    },
-    title: {
-        paddingLeft: 8,
-        marginBottom: 8
-    },
-    table: {
-        // minWidth: 650,
-        padding: 8
-    },
-    header: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        marginBottom: 8
-    },
-    footer: {
-        paddingTop: 8,
-        textAlign: 'right'
-    },
-    sidePanelWrapper: {
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-        width: '40vw',
-    },
-    actionButtons: {
-        // paddingTop: 8
-    },
-    tableRow: {
-        cursor: 'pointer'
-    },
-    document: {
-        display: 'inline-block',
-        borderRadius: 2,
-        lineHeight: 1,
-    },
-    sidePanelWrapper: {
-        width: '40vw',
-        padding: '14px',
-    },
     stepperRoot: {
         padding: 16,
         paddingTop: 8
-    },
-    transportFormWrapper: {
-        padding: theme.spacing(2),
-    },
-    transWrapper: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        marginBottom: theme.spacing(2),
-    },
-    ownerWrapper: {
-        flex: 1,
-        overflowY: 'auto'
-    },
-    button: {
-        marginTop: theme.spacing(1),
-        marginRight: theme.spacing(1),
-    },
-    actionsContainer: {
-        marginBottom: theme.spacing(2),
-    },
-    resetContainer: {
-        padding: theme.spacing(3),
     },
     actionButtonsWrapper: {
         display: 'flex',
         justifyContent: 'space-between',
         padding: '12px 16px'
-    },
-    actionButtons: {
-        // paddingTop: 8
-    },
-    stepperRoot: {
-        padding: 16,
-        paddingTop: 8
-    },
-    stepTitle: {
-        '& .MuiStepLabel-label.MuiStepLabel-active': {
-            fontSize: 15,
-            fontWeight: 600
-        }
     },
     editButton: {
         marginRight: '8px',
@@ -141,28 +57,17 @@ const useStyles = makeStyles((theme) => ({
             backgroundColor: theme.palette.success.dark
         }
     }
-
 }))
-
 
 const AddNewVehicleForm = ({ data, id, number, trans_id, isEdit, callback }) => {
     const [readOnly, setReadOnly] = useState(isEdit === 'Add' ? true : false);
     const { enqueueSnackbar } = useSnackbar();
-    const [loading,setLoading] = useState(false)
+    const [loading, setLoading] = useState(false)
     const classes = useStyles()
-    
+
     const handleEdit = () => {
         setReadOnly(!readOnly)
     };
-    // useMount(() => {
-    //     getAllTransport()
-    //         .then(data => {
-    //             setTransport(data);
-    //         })
-    //         .catch(e => {
-    //             console.log(e)
-    //         })
-    // })
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting } = useFormik({
         initialValues: {
             ...number,

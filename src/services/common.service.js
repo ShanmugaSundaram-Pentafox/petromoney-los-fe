@@ -186,7 +186,7 @@ export const updateUserDetails = (first_name, last_name, mobile, mail, role, id,
         "last_name": last_name,
         "email": mail,
         "mobile": mobile,
-        "role_name": role,
+        "role_id": role,
         "status": status,
       }
     })

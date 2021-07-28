@@ -1,16 +1,11 @@
 import React, { useState } from 'react';
-import FormDialog from '../CommonComponents/FormDialog/FormDialog';
+// import FormDialog from '../CommonComponents/FormDialog/FormDialog';
 import AddNewUserForm from './AddNewUserForm';
 import Button from '../CommonComponents/Button/Button';
 import { getAllUsers } from '../../services/users.service';
 import { useDispatch } from 'react-redux';
 import { setAllUsers } from '../../store/dashboard/dashboard.actions';
 import { Drawer } from "@material-ui/core";
-import Typography from "@material-ui/core/Typography"
-import Divider from '@material-ui/core/Divider';
-import clsx from 'clsx';
-import CloseIcon from '@material-ui/icons/Close';
-import { makeStyles } from "@material-ui/styles";
 
 
 const AddNewUserAction = () => {

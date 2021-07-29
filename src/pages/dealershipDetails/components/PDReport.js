@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
 
     wrapper: {
         padding: 8,
-        width: '55vw',
+        // width: '55vw',
     },
     title: {
         fontSize: 12,

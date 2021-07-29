@@ -90,7 +90,7 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
       },
     ];
     const actionColumnData = {
-      label: "Action",
+      label: "Status",
       name: 'status',
       options: {
         filter: false,

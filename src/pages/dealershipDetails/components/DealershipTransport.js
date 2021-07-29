@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     },
     wrapper: {
         padding: 8,
-        width: '50vw',
+        // width: '50vw',
     },
     title: {
         paddingLeft: 8,

@@ -21,9 +21,10 @@ import EditIcon from '@material-ui/icons/Edit';
 import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
 import { getAllRegion, getBusinessTypes, getOmcList, getRegionById, getStates } from '../../../services/common.service';
 import { getDistricts, getFormattedStatesList } from '../../../utils/indianStates.util';
-import { addNewTransport, updateTransport } from '../../../services/transports.service';
+// import { addNewTransport, updateTransport } from '../../../services/transports.service';
 import { useSnackbar } from 'notistack';
 import Tooltip from '@material-ui/core/Tooltip';
+import { URL } from '../../../config/serverUrls';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -57,8 +58,8 @@ const useStyles = makeStyles((theme) => ({
         overflowY: 'auto'
     },
     title: {
-        marginBottom: 8,
-        fontSize: 12,
+        marginBottom: 4,
+        fontSize: 11,
     },
     sidePanelWrapper: {
         position: 'relative',
@@ -73,12 +74,19 @@ const useStyles = makeStyles((theme) => ({
         margin: '30px 4px',
         maxWidth: '100%',
     },
+    btn: {
+        marginRight: 4,
+    },
     text: {
-        fontSize: 14
+        fontSize: 12
     },
     stepperRoot: {
         padding: 16,
         paddingTop: 8
+    },
+    fileStyle: {
+        marginTop: 8,
+
     },
     actionButtonsWrapper: {
         display: 'flex',
@@ -143,10 +151,25 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
         onSubmit: values => {
             const data = { ...values, t_owner_id: id };
             let apiURL = isAdd === 'Add' ? `transporters` : `tranporters/${data.transporter_id}`
+            const formData = new FormData();
+            Object.keys(data).forEach(key => {
+                formData.append(key, data[key]);
+            })
+            // console.log(currentUser)
             if (isAdd === 'Add') {
-                addNewTransport(data)
+                fetch(`${URL.base}${URL.vehicleInfo}`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Authorization': `Bearer ${currentUser.token}`
+                    }
+                })
                     .then(res => {
-                        enqueueSnackbar(res, {
+                        return res.json()
+                    })
+
+                    .then(res => {
+                        enqueueSnackbar(res.message, {
                             anchorOrigin: {
                                 vertical: 'top',
                                 horizontal: 'right',
@@ -171,9 +194,19 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
 
             }
             else {
-                updateTransport(data.transporter_id, data)
+                fetch(`${URL.base}${URL.vehicleInfo}/${data.transporter_id}`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Authorization': `Bearer ${currentUser.token}`
+                    }
+                })
                     .then(res => {
-                        enqueueSnackbar(res, {
+                        return res.json()
+                    })
+
+                    .then(res => {
+                        enqueueSnackbar(res.message, {
                             anchorOrigin: {
                                 vertical: 'top',
                                 horizontal: 'right',
@@ -292,14 +325,19 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
 
     const gstAttachment = () => {
         return (
-            <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
-                href={data.gst_file_url} target="_blank" title={'GST Attachment'}>{'GST Attachment'}</a>
+            <div className={classes.fileStyle}>
+                <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede', color: '#43a047' }}
+                    href={data.gst_file_url} target="_blank" title={'GST Attachment'}>{'GST Attachment'}</a>
+            </div>
         )
     }
     const panAttachment = () => {
         return (
-            <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
-                href={data.pan_file_url} target="_blank" title={'PAN Attachment'}>{'PAN Attachment'}</a>
+            <div className={classes.fileStyle}>
+                {/* <Button variant='outlined' size='small' className={classes.btn}>upload</Button> */}
+                <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede', color: '#43a047' }}
+                    href={data.pan_file_url} target="_blank" title={'PAN Attachment'}>{'PAN Attachment'}</a>
+            </div>
         )
     }
 
@@ -552,24 +590,28 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 helperText={errors.pincode}
                                             />
                                         </Grid>
-                                        <Grid item md={6}>
-                                            <TextInput
-                                                {...inputProps}
-                                                name="gst"
-                                                labelText="GST"
-                                                value={values.gst}
-                                                readOnly={readOnly}
-                                                disabled={readOnly}
-                                                error={errors.gst}
-                                                helperText={errors.gst}
-                                            />
-                                        </Grid>
                                         <Grid md={12} style={{ margin: '16px 8px' }}>
                                             <Typography variant="title">Documents </Typography>
                                         </Grid>
-                                        <Grid item md={12}>
+                                        <Grid md={12} style={{ margin: '0px 8px' }}>
+                                            <Typography variant="title">PAN</Typography>
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                {...inputProps}
+                                                name="pan"
+                                                // labelText="PAN"
+                                                placeholder='PAN'
+                                                value={values.pan}
+                                                readOnly={readOnly}
+                                                disabled={readOnly}
+                                                error={errors.pan}
+                                                helperText={errors.pan}
+                                            />
+                                        </Grid>
+                                        <Grid item md={6}>
                                             <Typography variant="subtitle2" component="subtitle2">
-                                                PAN :{(readOnly) ?
+                                                {(readOnly) ?
                                                     <>
                                                         {data.pan_file_url ?
                                                             panAttachment()
@@ -600,12 +642,25 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 }
                                             </Typography>
                                         </Grid>
-                                        <Grid item md={12} style={{ marginBottom: '8px' }}>
-                                            <Typography variant="subtitle1">GST Bill </Typography>
+                                        <Grid md={12} style={{ margin: '0px 8px' }}>
+                                            <Typography variant="subtitle1">GST</Typography>
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                {...inputProps}
+                                                name="gst"
+                                                // labelText="GST"
+                                                placeholder='GST'
+                                                value={values.gst}
+                                                readOnly={readOnly}
+                                                disabled={readOnly}
+                                                error={errors.gst}
+                                                helperText={errors.gst}
+                                            />
                                         </Grid>
                                         <Grid item md={6}>
                                             <Typography variant="subtitle2" component="subtitle2">
-                                                GST {(readOnly) ?
+                                                {(readOnly) ?
                                                     <>
                                                         {
                                                             data.gst_file_url ?
@@ -622,7 +677,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                                 <TextInput
                                                                     type="file"
                                                                     accept="image/*"
-                                                                    name="gstS_file_url"
+                                                                    name="gst_file_url"
                                                                     value={data.aadhar_f_file_url}
                                                                     readOnly={readOnly}
                                                                     disabled={readOnly}

@@ -27,6 +27,10 @@ const useStyles = makeStyles((theme) => ({
         zIndex: 0,
         boxShadow: '0 1px 4px -3px #333'
     },
+    stepperRoot: {
+        padding: 16,
+        paddingTop: 8
+    },
     sidePanelFormWrapper: {
         position: 'relative',
         display: 'flex',
@@ -49,10 +53,12 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'left'
     },
     text: {
-        fontSize: 14
+        fontSize: 12
     },
     title: {
-        fontSize: 12,
+        fontSize: 11,
+        marginBottom: 4,
+
     },
     readOnlyWrapper: {
         margin: '30px 4px',

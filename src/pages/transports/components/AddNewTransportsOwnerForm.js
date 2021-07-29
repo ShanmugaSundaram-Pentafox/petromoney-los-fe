@@ -48,8 +48,8 @@ const useStyles = makeStyles((theme) => ({
         overflowX: 'hidden'
     },
     title: {
-        marginBottom: 8,
-        fontSize: 12,
+        marginBottom: 4,
+        fontSize: 11,
     },
     actionButtons: {
         // paddingTop: 8
@@ -82,7 +82,7 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'left'
     },
     text: {
-        fontSize: 14
+        fontSize: 12
     },
     readOnlyWrapper: {
         margin: '30px 4px',

@@ -8,14 +8,14 @@ import Divider from '@material-ui/core/Divider';
 import { updatePassword, updateUserDetails } from '../../../services/common.service';
 import { Paper, TextField, Tooltip, Typography } from '@material-ui/core';
 // import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
+// import MuiAlert from '@material-ui/lab/Alert';
 import Button from '../../../components/CommonComponents/Button/Button';
 import { logger } from '../../../config/logger';
 // import clsx from 'clsx';
 // import CircularProgress from '@material-ui/core/CircularProgress';
 // import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import EditIcon from '@material-ui/icons/Edit';
+// import EditIcon from '@material-ui/icons/Edit';
 // import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
 import MapRegion from './MapRegion';
 // import Skeleton from '@material-ui/lab/Skeleton';
@@ -102,10 +102,11 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'left'
   },
   text: {
-    fontSize: 14
+    fontSize: 12
   },
   title: {
-    fontSize: 12,
+    fontSize: 11,
+    marginBottom: 4,
   },
   textFieldStyle: {
     marginBottom: '12px',
@@ -492,7 +493,6 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
               )
             }
           </>
-
           {/* } */}
 
           {/* <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>

@@ -1,7 +1,7 @@
 import React from "react";
 import { DropzoneDialog, DropzoneArea } from "material-ui-dropzone";
 
-const FileUpload = ({id,data, inline, open, onCloseUploader, handleSave, initialFiles=[] }) => {
+const FileUpload = ({id,data, inline, open, onCloseUploader,title, handleSave, initialFiles=[] }) => {
   if(inline) {
     return (
       <DropzoneArea
@@ -21,7 +21,7 @@ const FileUpload = ({id,data, inline, open, onCloseUploader, handleSave, initial
   return (
     <DropzoneDialog
       open={open}
-      dialogTitle={'Upload Dealership Document'}
+      dialogTitle={title}
       dialogProps={{
           disableBackdropClick: true
       }}

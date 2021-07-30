@@ -3,20 +3,26 @@ import apiCall from "../utils/api.util";
 import { decrypt } from "./crypto.service";
 
 export const getAllGuarantor = (dealerId) => {
-    return new Promise((resolve, reject) => {
-      apiCall(`${URL.guarantor}/${dealerId}`)
-        .then(({ status, data, message }) => {
-          if(status === "SUCCESS") {
-            resolve(data);
-          } else {
-            reject(message);
-          }
-        })
-        .catch(e => {
-          reject(e.message);
-        })
-    });
-  }
+  return new Promise((resolve, reject) => {
+    apiCall(`${URL.guarantor}/${dealerId}`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          const result = data.map(item => ({
+            ...item,
+            pan: item?.pan ? decrypt(item.pan) : item.pan,
+            aadhar: item?.aadhar ? decrypt(item.aadhar) : item.aadhar,
+          }));
+
+          resolve(result);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
 //   export const updateGuarantor = (dealershipId, guarantorId, body) => {
 //     return new Promise((resolve, reject) => {
 //       apiCall(`${URL.guarantor}/${dealershipId}/`, {
@@ -38,17 +44,17 @@ export const getAllGuarantor = (dealerId) => {
 //     });
 //   }
 export const getPdfContent = (loanId, dealerId, type) => {
-    return new Promise((resolve, reject) => {
-      apiCall(`loans/dealership/${dealerId}/loans/${loanId}/${type}`)
-        .then(({ status, file, message }) => {
-          if(status === "SUCCESS") {
-            resolve(file);
-          } else {
-            reject(message);
-          }
-        })
-        .catch(e => {
-          reject(e.message);
-        })
-    });
-  }
+  return new Promise((resolve, reject) => {
+    apiCall(`loans/dealership/${dealerId}/loans/${loanId}/${type}`)
+      .then(({ status, file, message }) => {
+        if (status === "SUCCESS") {
+          resolve(file);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

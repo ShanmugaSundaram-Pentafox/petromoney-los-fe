@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles, withStyles } from '@material-ui/styles';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Button from "@material-ui/core/Button";
@@ -22,7 +22,7 @@ import { TableContainer } from '@material-ui/core';
 import { Table } from '@material-ui/core';
 import { TableBody } from '@material-ui/core';
 import { TableRow } from '@material-ui/core';
-import { TableCell } from '@material-ui/core';
+import { TableCell as TableCellComp } from '@material-ui/core';
 import { getLoanById, getLoanDocumentHistoryById } from '../../services/loans.service';
 import { getAllGuarantor, getPdfContent } from '../../services/leegality.service';
 import { useSnackbar } from 'notistack';
@@ -48,8 +48,18 @@ const useStyles = makeStyles(theme => ({
   },
   content: {
     overflowY: "auto",
-  }
+  },
+  table: {
+  
+  },
+
 }));
+
+const TableCell = withStyles(theme => ({
+  root: {
+    border: "1px solid #eeeeee",
+  },
+}))(TableCellComp)
 
 const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, callback }) => {
   const classes = useStyles();
@@ -266,9 +276,9 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
                             : null
                         }
                       </Grid>) : (
-                      <Grid item sm={8} >
+                      <Grid item md={8} >
                         <Grid container spacing={2}>
-                          <Grid item sm={10} >
+                          <Grid item md={12} >
                             <Box pt={2}>
                               <TableContainer>
                                 <Table>
@@ -424,7 +434,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
                       </Grid>
                     )
                   }
-                  <Grid item sm={3} md={5}>
+                  <Grid item sm={3} md={4}>
                     <Box>
                       <Typography variant="h4">Select Invitees</Typography>
                     </Box>

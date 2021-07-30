@@ -26,6 +26,11 @@ import {
     KeyboardDatePicker
 } from '@material-ui/pickers';
 import moment from 'moment';
+import FileUpload from '../../../components/FileUpload';
+import DeleteIcon from '@material-ui/icons/Delete';
+import UploadIcon from '@material-ui/icons/Backup';
+
+
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -66,6 +71,11 @@ const useStyles = makeStyles((theme) => ({
         padding: 16,
         paddingTop: 8
     },
+    fileStyle: {
+        display: 'flex',
+        justifyContent: 'space-around',
+        marginTop: 8,
+    },
     actionButtonsWrapper: {
         display: 'flex',
         justifyContent: 'space-between',
@@ -75,7 +85,7 @@ const useStyles = makeStyles((theme) => ({
         padding: 6,
         borderColor: 'grey',
         minWidth: 80,
-        height: 60,
+        height: 50,
         display: 'flex',
         textAlign: 'left',
         alignItems: 'left',
@@ -85,7 +95,7 @@ const useStyles = makeStyles((theme) => ({
         fontSize: 12
     },
     readOnlyWrapper: {
-        margin: '30px 4px',
+        margin: '8px 4px',
         maxWidth: '100%',
     },
     editButton: {
@@ -101,10 +111,24 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
+export const ViewData = ({ title, value }) => {
+    const classes = useStyles()
+    return (
+        <Box className={classes.details}>
+            <div>
+                <p className={classes.title}>{title}</p>
+                <strong className={classes.text}>{value ? value : '-'}</strong>
+            </div>
+        </Box >
+    )
+}
+
 const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, rowData, form_data, id, callback }) => {
     const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
     const [checked, setChecked] = useState(false);
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
+    const [showUpload, setShowUpload] = useState(false);
+    const [data, setData] = useState(false);
     const [state, setState] = React.useState({
         checkedA: true,
         checkedB: true,
@@ -128,7 +152,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
     const currentYear = date.getFullYear();
     const currentYearDiff = date.getFullYear() - 1970;
     const classes = useStyles()
-    const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting } = useFormik({
+    const { values, errors, handleChange, handleSubmit, isSubmitting, setFieldValue, setSubmitting } = useFormik({
         initialValues: {
             ...rowData,
         },
@@ -251,31 +275,69 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
 
         }
     });
+    const onCloseUploader = () => {
+        setShowUpload(false);
+    }
+    const handleSave = (value) => {
+        setFieldValue('pan_file_url', value[0])
+        handleSubmit(values)
+        onCloseUploader()
+        // enqueueSnackbar('File added successfully', {
+        //     anchorOrigin: {
+        //         vertical: 'top',
+        //         horizontal: 'right',
+        //     },
+        //     autoHideDuration: 1000,
+        //     variant: 'success',
+        // }
+        // )
+
+    }
+    const docUpload = () => {
+        setShowUpload(true)
+    }
     const aadharBack = () => {
         return (
-            <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
-                href={rowData.aadhar_b_file_url} target="_blank" title={'Aadhar Back'}>{'Aadhar Back'}</a>
+            <div className={classes.fileStyle}>
+                <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
+                    href={rowData.aadhar_b_file_url} target="_blank" title={'Aadhar Back'}>{'Aadhar Back'}</a>
+                <UploadIcon fontSize="small" padding={2} onClick={() => docUpload()} />
+                <DeleteIcon fontSize="small" padding={2} />
+            </div>
         )
     }
     const profileAttachment = () => {
         return (
-            <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
-                href={rowData.profile_image_url} target="_blank" title={'Profile Attachment'}>{'Profile Attachment'}</a>
+            <div className={classes.fileStyle}>
+                <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
+                    href={rowData.profile_image_url} target="_blank" title={'Profile Attachment'}>{'Profile Attachment'}</a>
+                <UploadIcon fontSize="small" padding={2} onClick={() => docUpload()} />
+                <DeleteIcon fontSize="small" padding={2} />
+            </div>
         )
     }
 
     const aadharFront = () => {
         return (
-            <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
-                href={rowData.aadhar_f_file_url} target="_blank" title={'Aadhar Front'}>{'Aadhar Front'}</a>
+            <div className={classes.fileStyle}>
+                <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
+                    href={rowData.aadhar_f_file_url} target="_blank" title={'Aadhar Front'}>{'Aadhar Front'}</a>
+                <UploadIcon fontSize="small" padding={2} onClick={() => docUpload()} />
+                <DeleteIcon fontSize="small" padding={2} />
+            </div>
         )
     }
     const panAttachment = () => {
         return (
-            <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
-                href={rowData.pan_file_url} target="_blank" title={'PAN Attachment'}>{'PAN Attachment'}</a>
+            <div className={classes.fileStyle}>
+                <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede', color: '#43a047' }}
+                    href={rowData.pan_file_url} target="_blank" title={'PAN Attachment'}>{'PAN Attachment'}</a>
+                <UploadIcon fontSize="small" padding={2} onClick={() => docUpload()} />
+                <DeleteIcon fontSize="small" padding={2} />
+            </div>
         )
     }
+
 
 
     return (
@@ -291,76 +353,21 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                             <Grid container spacing={2} className={classes.readOnlyWrapper}>
                                 <Grid item md={6}>
                                     <Box className={classes.box} >
-                                        <Box className={classes.details}>
-                                            <div>
-                                                <p className={classes.title}>Owner ID</p>
-                                                <strong className={classes.text}>{values.t_owner_id}</strong>
-                                            </div>
-                                        </Box>
-                                        <Box className={classes.details}>
-                                            <div>
-                                                <p className={classes.title}>Date of Birth</p>
-                                                <strong className={classes.text}>{values.dob}</strong>
-                                            </div>
-                                        </Box>
-                                        <Box className={classes.details}>
-                                            <div>
-                                                <p className={classes.title}>Address</p>
-                                                <strong className={classes.text}>{values.address}</strong>
-                                            </div>
-                                        </Box>
-                                        <Box className={classes.details}>
-                                            <div>
-                                                <p className={classes.title}>Marital status</p>
-                                                <strong className={classes.text}>{values.marital_status}</strong>
-                                            </div>
-                                        </Box>
-                                        <Box className={classes.details}>
-                                            <div>
-                                                <p className={classes.title}>Mobile</p>
-                                                <strong className={classes.text}>{values.mobile}</strong>
-                                            </div>
-                                        </Box>
-                                        <Box className={classes.details}>
-                                            <div>
-                                                <p className={classes.title}>Aadhar</p>
-                                                <strong className={classes.text}>{values.aadhar}</strong>
-                                            </div>
-                                        </Box>
+                                        <ViewData title='Owner ID' value={values.t_owner_id} />
+                                        <ViewData title='Date of Birth' value={values.dob} />
+                                        <ViewData title='Address' value={values.address} />
+                                        <ViewData title='Marital Status' value={values.marital_status} />
+                                        <ViewData title='Mobile' value={values.mobile} />
+                                        <ViewData title='Aadhar' value={values.aadhar} />
                                     </Box>
                                 </Grid>
                                 <Grid item md={6}>
                                     <Box className={classes.box} >
-                                        <Box className={classes.details}>
-                                            <div>
-                                                <p className={classes.title}>Name</p>
-                                                <strong className={classes.text}>{values.first_name} {values.last_name}</strong>
-                                            </div>
-                                        </Box>
-                                        <Box className={classes.details}>
-                                            <div>
-                                                <p className={classes.title}>Gender</p>
-                                                <strong className={classes.text}>{values.gender}</strong>
-                                            </div>
-                                        </Box>
-                                        <Box className={classes.details}>
-                                            <div>
-                                                <p className={classes.title}>Residing since</p>
-                                                <strong className={classes.text}>{values.residing_since}</strong>
-                                            </div>
-                                        </Box>
-                                        <Box className={classes.details}>
-                                            <div>
-                                                <p className={classes.title}>Email</p>
-                                                <strong className={classes.text}>{values.email}</strong>
-                                            </div>
-                                        </Box>
-                                        <Box className={classes.details}>
-                                            <div>
-                                                <p className={classes.title}>PAN</p>
-                                                <strong className={classes.text}>{values.pan}</strong>
-                                            </div>
-                                        </Box>
+                                        <ViewData title='Name' value={values.first_name} />
+                                        <ViewData title='Gender' value={values.gender} />
+                                        <ViewData title='Residing since' value={values.residing_since} />
+                                        <ViewData title='Email' value={values.email} />
+                                        <ViewData title='PAN' value={values.pan} />
                                     </Box>
                                 </Grid>
                             </Grid>
@@ -612,7 +619,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                                                                 : <Typography variant="subtitle2" component="subtitle2">
                                                                     <Tooltip title={'Click Edit and attach'}>
                                                                         <AttachFileRoundedIcon disabled={readOnly} />
-                                                                    </Tooltip> Attach PAN
+                                                                    </Tooltip> Attach Profile
                                                                 </Typography>}
                                                     </> :
                                                     <>
@@ -637,7 +644,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                                                 }
                                             </Typography>
                                         </Grid>
-                                        <Grid item md={12}>
+                                        <Grid item md={6}>
                                             <Typography variant="subtitle2" component="subtitle2">
                                                 PAN :{(readOnly) ?
                                                     <>
@@ -749,6 +756,9 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                     }
 
                 </div>
+                {
+                    showUpload && <FileUpload handleSave={(value) => handleSave(value)} id={id} data={rowData} title='Upload Transport Owner Documents' open={showUpload} onCloseUploader={onCloseUploader} />
+                }
             </div>
             <div className={classes.actionFooter}>
                 <Divider />

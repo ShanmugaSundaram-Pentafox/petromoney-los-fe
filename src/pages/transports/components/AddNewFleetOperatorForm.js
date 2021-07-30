@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
         padding: 6,
         borderColor: 'grey',
         minWidth: 80,
-        height: 60,
+        height: 50,
         display: 'flex',
         textAlign: 'left',
         alignItems: 'left',
@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
 
     },
     readOnlyWrapper: {
-        margin: '30px 4px',
+        margin: '8px 4px',
         maxWidth: '100%',
     },
     actionButtonsWrapper: {
@@ -81,6 +81,18 @@ const useStyles = makeStyles((theme) => ({
     }
 
 }))
+export const ViewData = ({ title, value }) => {
+    const classes = useStyles()
+    return (
+        <Box className={classes.details}>
+            <div>
+                <p className={classes.title}>{title}</p>
+                <strong className={classes.text}>{value ? value : '-'}</strong>
+            </div>
+        </Box >
+    )
+}
+
 
 const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
@@ -184,58 +196,18 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
                         <Grid container spacing={2} className={classes.readOnlyWrapper}>
                             <Grid item md={6}>
                                 <Box className={classes.box} >
-                                    <Box className={classes.details}>
-                                        <div>
-                                            <p className={classes.title}>Transport Name</p>
-                                            <strong className={classes.text}>{values.transport_name}</strong>
-                                        </div>
-                                    </Box>
-                                    <Box className={classes.details}>
-                                        <div>
-                                            <p className={classes.title}>Vehicle Number</p>
-                                            <strong className={classes.text}>{values.vehicle_no}</strong>
-                                        </div>
-                                    </Box>
-                                    <Box className={classes.details}>
-                                        <div>
-                                            <p className={classes.title}>Mobile</p>
-                                            <strong className={classes.text}>{values.mobile}</strong>
-                                        </div>
-                                    </Box>
-                                    <Box className={classes.details}>
-                                        <div>
-                                            <p className={classes.title}>Email</p>
-                                            <strong className={classes.text}>{values.email}</strong>
-                                        </div>
-                                    </Box>
+                                    <ViewData title='Transport Name' value={values.transport_name} />
+                                    <ViewData title='Vehicle Number' value={values.vehicle_no} />
+                                    <ViewData title='Mobile' value={values.mobile} />
+                                    <ViewData title='Email' value={values.email} />
                                 </Box>
                             </Grid>
                             <Grid item md={6}>
-                                <Box className={classes.box} >
-                                    <Box className={classes.details}>
-                                        <div>
-                                            <p className={classes.title}>Amount Limit</p>
-                                            <strong className={classes.text}>{values.amount_limit}</strong>
-                                        </div>
-                                    </Box>
-                                    <Box className={classes.details}>
-                                        <div>
-                                            <p className={classes.title}>DT Plus Card Number</p>
-                                            <strong className={classes.text}>{values.dtplus_card_number}</strong>
-                                        </div>
-                                    </Box>
-                                    <Box className={classes.details}>
-                                        <div>
-                                            <p className={classes.title}>Name on Card</p>
-                                            <strong className={classes.text}>{values.name_on_card}</strong>
-                                        </div>
-                                    </Box>
-                                    <Box className={classes.details}>
-                                        <div>
-                                            <p className={classes.title}>Validity</p>
-                                            <strong className={classes.text}>{values.validity}</strong>
-                                        </div>
-                                    </Box>
+                                <Box className={classes.box}>
+                                    <ViewData title='Amount Limit' value={values.amount_limit} />
+                                    <ViewData title='DT Plus Card Number' value={values.dtplus_card_number} />
+                                    <ViewData title='Name on Card' value={values.name_on_card} />
+                                    <ViewData title='Validity' value={values.validity} />
                                 </Box>
                             </Grid>
                         </Grid>

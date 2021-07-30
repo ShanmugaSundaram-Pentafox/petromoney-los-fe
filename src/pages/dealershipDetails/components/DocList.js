@@ -204,7 +204,7 @@ const DocList = ({ id }) => {
 
   return (
     <div className={classes.wrapper}>
-      {showUpload && <FileUpload handleSave={handleSave} id={id} data={rowData} open={showUpload} onCloseUploader={onCloseUploader} />}
+      {showUpload && <FileUpload handleSave={handleSave} id={id} data={rowData} title='Upload Dealership Document' open={showUpload} onCloseUploader={onCloseUploader} />}
       {/* <Typography variant="h5" align={"center"} className={classes.title}>
         Dealership Documents
       </Typography> */}

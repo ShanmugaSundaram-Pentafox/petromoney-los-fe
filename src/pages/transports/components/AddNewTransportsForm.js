@@ -18,13 +18,19 @@ import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 // import { URL } from '../../../config/serverUrls';
 import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+import UploadIcon from '@material-ui/icons/Backup';
 import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
 import { getAllRegion, getBusinessTypes, getOmcList, getRegionById, getStates } from '../../../services/common.service';
 import { getDistricts, getFormattedStatesList } from '../../../utils/indianStates.util';
-import { addNewTransport, updateTransport } from '../../../services/transports.service';
+// import { addNewTransport, updateTransport } from '../../../services/transports.service';
 import { useSnackbar } from 'notistack';
 import Tooltip from '@material-ui/core/Tooltip';
 import { URL } from '../../../config/serverUrls';
+<<<<<<< HEAD
+=======
+import FileUpload from '../../../components/FileUpload';
+>>>>>>> e94ba288f6fd5e3ef6d6c84a4e4ce3b98122762f
 
 
 const useStyles = makeStyles((theme) => ({
@@ -40,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
         padding: 6,
         borderColor: 'grey',
         minWidth: 80,
-        height: 60,
+        height: 50,
         display: 'flex',
         textAlign: 'left',
         alignItems: 'left',
@@ -58,8 +64,8 @@ const useStyles = makeStyles((theme) => ({
         overflowY: 'auto'
     },
     title: {
-        marginBottom: 8,
-        fontSize: 12,
+        marginBottom: 4,
+        fontSize: 11,
     },
     sidePanelWrapper: {
         position: 'relative',
@@ -71,15 +77,23 @@ const useStyles = makeStyles((theme) => ({
 
     },
     readOnlyWrapper: {
-        margin: '30px 4px',
+        margin: '8px 4px',
         maxWidth: '100%',
     },
+    btn: {
+        marginRight: 4,
+    },
     text: {
-        fontSize: 14
+        fontSize: 12
     },
     stepperRoot: {
         padding: 16,
         paddingTop: 8
+    },
+    fileStyle: {
+        display: 'flex',
+        justifyContent: 'space-around',
+        marginTop: 8,
     },
     actionButtonsWrapper: {
         display: 'flex',
@@ -97,6 +111,17 @@ const useStyles = makeStyles((theme) => ({
         }
     }
 }))
+export const ViewData = ({ title, value }) => {
+    const classes = useStyles()
+    return (
+        <Box className={classes.details}>
+            <div>
+                <p className={classes.title}>{title}</p>
+                <strong className={classes.text}>{value ? value : '-'}</strong>
+            </div>
+        </Box >
+    )
+}
 
 const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callback, isAdd }) => {
     const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
@@ -104,6 +129,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
     const [omcs, setOmcs] = useState([]);
     const [bussinessType, setBussinessType] = useState([]);
     const [states, setStates] = useState([]);
+    const [showUpload, setShowUpload] = useState(false);
     const [regionList, setRegionList] = useState([]);
     const [regions, setRegions] = useState([]);
     const [checked, setChecked] = useState(false);
@@ -121,8 +147,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
         callback()
     }
 
-
-    const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting } = useFormik({
+    const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setFieldValue } = useFormik({
         initialValues: {
             ...data,
         },
@@ -134,7 +159,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
             mobile: Yup.number().min(10, 'Enter valid mobile number').required('please Enter your mobile number'),
             omc: Yup.string().required('Please Choose OMC'),
             business_type: Yup.string().required('Please choose bussiness type'),
-            region: Yup.string().required('Please choose region'),
+            // region: Yup.string().required('Please choose region'),
             address: Yup.string().required('Please enter address'),
             state: Yup.string().required('Please choose state'),
             district: Yup.string().required('Please choose district'),
@@ -149,9 +174,15 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
             })
             console.log('values', data)
             let apiURL = isAdd === 'Add' ? `transporters` : `tranporters/${data.transporter_id}`
+            const formData = new FormData();
+            Object.keys(data).forEach(key => {
+                formData.append(key, data[key]);
+            })
+            // console.log(currentUser)
             if (isAdd === 'Add') {
                 fetch(`${URL.base}${URL.vehicleInfo}`, {
                     method: 'POST',
+<<<<<<< HEAD
                     body:formData,
                     headers: {
                         'Authorization': `Bearer ${currentUser.token} `
@@ -162,6 +193,18 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                         return res.json()
                     })
                     .then(res => {
+=======
+                    body: formData,
+                    headers: {
+                        'Authorization': `Bearer ${currentUser.token}`
+                    }
+                })
+                    .then(res => {
+                        return res.json()
+                    })
+
+                    .then(res => {
+>>>>>>> e94ba288f6fd5e3ef6d6c84a4e4ce3b98122762f
                         enqueueSnackbar(res.message, {
                             anchorOrigin: {
                                 vertical: 'top',
@@ -187,6 +230,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
 
             }
             else {
+<<<<<<< HEAD
                 fetch(`${URL.base}${URL.vehicleInfo}/${data.transporter_id} `, {
                     method: 'POST',
                     body: formData,
@@ -198,17 +242,39 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                         return res.json()
                     })
                     .then(res => {
+=======
+                fetch(`${URL.base}${URL.vehicleInfo}/${data.transporter_id}`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Authorization': `Bearer ${currentUser.token}`
+                    }
+                })
+                    .then(res => {
+                        return res.json()
+                    })
+
+                    .then(res => {
+>>>>>>> e94ba288f6fd5e3ef6d6c84a4e4ce3b98122762f
                         enqueueSnackbar(res.message, {
                             anchorOrigin: {
                                 vertical: 'top',
                                 horizontal: 'right',
                             },
                             variant: 'success',
+<<<<<<< HEAD
                         })
                         // setTimeout(() => {
                         //     window.location.reload();
                         // }, 2000)
 
+=======
+                        }
+                        )
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000)
+>>>>>>> e94ba288f6fd5e3ef6d6c84a4e4ce3b98122762f
                     })
                     .catch(error => {
                         console.log(error);
@@ -221,10 +287,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                         }
                         )
                     })
-
             }
-
-
         }
     });
     useMount(() => {
@@ -269,6 +332,27 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
             fetchRegions(parseInt(values.state));
         }
     }, [values.state])
+    const onCloseUploader = () => {
+        setShowUpload(false);
+    }
+    const handleSave = (value) => {
+        setFieldValue('pan_file_url', value[0])
+        handleSubmit(values)
+        onCloseUploader()
+        // enqueueSnackbar('File added successfully', {
+        //     anchorOrigin: {
+        //         vertical: 'top',
+        //         horizontal: 'right',
+        //     },
+        //     autoHideDuration: 1000,
+        //     variant: 'success',
+        // }
+        // )
+
+    }
+    const docUpload = (url) => {
+        setShowUpload(true)
+    }
     const fetchRegions = (res) => {
         getRegionById(res)
             .then(res => {
@@ -320,16 +404,25 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
 
     const gstAttachment = () => {
         return (
-            <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
-                href={data.gst_file_url} target="_blank" title={'GST Attachment'}>{'GST Attachment'}</a>
+            <div className={classes.fileStyle}>
+                <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede', color: '#43a047' }}
+                    href={data.gst_file_url} target="_blank" title={'GST Attachment'}>{'GST Attachment'}</a>
+                <UploadIcon fontSize="small" padding={2} onClick={() => docUpload()} />
+                <DeleteIcon fontSize="small" padding={2} />
+            </div>
         )
     }
     const panAttachment = () => {
         return (
-            <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
-                href={data.pan_file_url} target="_blank" title={'PAN Attachment'}>{'PAN Attachment'}</a>
+            <div className={classes.fileStyle}>
+                <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede', color: '#43a047' }}
+                    href={data.pan_file_url} target="_blank" title={'PAN Attachment'}>{'PAN Attachment'}</a>
+                <UploadIcon fontSize="small" padding={2} onClick={() => docUpload()} />
+                <DeleteIcon fontSize="small" padding={2} />
+            </div>
         )
     }
+
 
     return (
         <div className={classes.sidePanelFormWrapper}>
@@ -344,82 +437,22 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                             <Grid container spacing={2} className={classes.readOnlyWrapper}>
                                 <Grid item md={6}>
                                     <Box className={classes.box} >
-                                        <Box className={classes.details}>
-                                            <div>
-                                                <p className={classes.title}>Transport Code</p>
-                                                <strong className={classes.text}>{values.transporter_id}</strong>
-                                            </div>
-                                        </Box>
-                                        <Box className={classes.details}>
-                                            <div>
-                                                <p className={classes.title}>Mobile</p>
-                                                <strong className={classes.text}>{values.mobile}</strong>
-                                            </div>
-                                        </Box>
-                                        <Box className={classes.details}>
-                                            <div>
-                                                <p className={classes.title}>OMC</p>
-                                                <strong className={classes.text}>{values.omc}</strong>
-                                            </div>
-                                        </Box>
-                                        <Box className={classes.details}>
-                                            <div>
-                                                <p className={classes.title}>Region</p>
-                                                <strong className={classes.text}>{values.region}</strong>
-                                            </div>
-                                        </Box>
-                                        <Box className={classes.details}>
-                                            <div>
-                                                <p className={classes.title}>District</p>
-                                                <strong className={classes.text}>{values.district}</strong>
-                                            </div>
-                                        </Box>
-                                        <Box className={classes.details}>
-                                            <div>
-                                                <p className={classes.title}>PAN</p>
-                                                <strong className={classes.text}>{values.pan}</strong>
-                                            </div>
-                                        </Box>
+                                        <ViewData title='Transport Code' value={values.transporter_id} />
+                                        <ViewData title='Mobile' value={values.mobile} />
+                                        <ViewData title='OMC' value={values.omc} />
+                                        <ViewData title='Region' value={values.region} />
+                                        <ViewData title='District' value={values.district} />
+                                        <ViewData title='GST' value={values.gst} />
                                     </Box>
                                 </Grid>
                                 <Grid item md={6}>
                                     <Box className={classes.box} >
-                                        <Box className={classes.details}>
-                                            <div>
-                                                <p className={classes.title}>Transport Name</p>
-                                                <strong className={classes.text}>{values.name}</strong>
-                                            </div>
-                                        </Box>
-                                        <Box className={classes.details}>
-                                            <div>
-                                                <p className={classes.title}>Address</p>
-                                                <strong className={classes.text}>{values.address}</strong>
-                                            </div>
-                                        </Box>
-                                        <Box className={classes.details}>
-                                            <div>
-                                                <p className={classes.title}>Business Type</p>
-                                                <strong className={classes.text}>{values.business_type}</strong>
-                                            </div>
-                                        </Box>
-                                        <Box className={classes.details}>
-                                            <div>
-                                                <p className={classes.title}>State</p>
-                                                <strong className={classes.text}>{values.state}</strong>
-                                            </div>
-                                        </Box>
-                                        <Box className={classes.details}>
-                                            <div>
-                                                <p className={classes.title}>Pincode</p>
-                                                <strong className={classes.text}>{values.pincode}</strong>
-                                            </div>
-                                        </Box>
-                                        <Box className={classes.details}>
-                                            <div>
-                                                <p className={classes.title}>GST</p>
-                                                <strong className={classes.text}>{values.gst}</strong>
-                                            </div>
-                                        </Box>
+                                        <ViewData title='Transport Name' value={values.name} />
+                                        <ViewData title='Address' value={values.address} />
+                                        <ViewData title='Business Type' value={values.business_type} />
+                                        <ViewData title='State' value={values.state} />
+                                        <ViewData title='Pincode' value={values.pincode} />
+                                        <ViewData title='PAN' value={values.pan} />
                                     </Box>
                                 </Grid>
                             </Grid>
@@ -586,12 +619,19 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 helperText={errors.pincode}
                                             />
                                         </Grid>
+                                        <Grid md={12} style={{ margin: '16px 8px' }}>
+                                            <Typography variant="title">Documents </Typography>
+                                        </Grid>
+                                        <Grid md={12} style={{ margin: '0px 8px' }}>
+                                            <Typography variant="title">PAN</Typography>
+                                        </Grid>
                                         <Grid item md={6}>
                                             <TextInput
                                                 {...inputProps}
                                                 name="pan"
-                                                labelText="PAN"
-                                                value={values?.pan}
+                                                // labelText="PAN"
+                                                placeholder='PAN'
+                                                value={values.pan}
                                                 readOnly={readOnly}
                                                 disabled={readOnly}
                                                 error={errors.pan}
@@ -599,23 +639,8 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                             />
                                         </Grid>
                                         <Grid item md={6}>
-                                            <TextInput
-                                                {...inputProps}
-                                                name="gst"
-                                                labelText="GST"
-                                                value={values?.gst}
-                                                readOnly={readOnly}
-                                                disabled={readOnly}
-                                                error={errors.gst}
-                                                helperText={errors.gst}
-                                            />
-                                        </Grid>
-                                        <Grid md={12} style={{ margin: '16px 8px' }}>
-                                            <Typography variant="title">Documents </Typography>
-                                        </Grid>
-                                        <Grid item md={12}>
-                                            <Typography variant="subtitle" component="subtitle2">
-                                                PAN {(readOnly) ?
+                                            <Typography variant="subtitle2" component="subtitle2">
+                                                {(readOnly) ?
                                                     <>
                                                         {data.pan_file_url ?
                                                             panAttachment()
@@ -646,12 +671,25 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 }
                                             </Typography>
                                         </Grid>
-                                        <Grid item md={12} style={{ marginBottom: '8px' }}>
-                                            {/* <Typography variant="subtitle1">GST</Typography> */}
+                                        <Grid md={12} style={{ margin: '0px 8px' }}>
+                                            <Typography variant="subtitle1">GST</Typography>
                                         </Grid>
-                                        <Grid item md={12}>
-                                            <Typography variant="subtitle" component="subtitle2">
-                                                GST {(readOnly) ?
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                {...inputProps}
+                                                name="gst"
+                                                // labelText="GST"
+                                                placeholder='GST'
+                                                value={values.gst}
+                                                readOnly={readOnly}
+                                                disabled={readOnly}
+                                                error={errors.gst}
+                                                helperText={errors.gst}
+                                            />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <Typography variant="subtitle2" component="subtitle2">
+                                                {(readOnly) ?
                                                     <>
                                                         {
                                                             data.gst_file_url ?
@@ -689,8 +727,11 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
 
                         )
                     }
-
                 </div>
+
+                {
+                    showUpload && <FileUpload handleSave={(value) => handleSave(value)} id={id} title='Upload Transport Documents' open={showUpload} onCloseUploader={onCloseUploader} />
+                }
             </div>
             <div className={classes.actionFooter}>
                 <Divider />

@@ -8,9 +8,14 @@ export const getAllTransport = () => {
     apiCall(URL.transport)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data)
+          const result = data.map(item => ({
+            ...item,
+            pan: item?.pan ? decrypt(item.pan) : item.pan,
+            aadhar: item?.aadhar ? decrypt(item.aadhar) : item.aadhar,
+          }));
+          resolve(result);
         } else {
-          reject(message)
+          reject(message);
         }
       })
       .catch((e) => {
@@ -24,10 +29,21 @@ export const getTransporterInfoFromID = (id) => {
     apiCall(`${URL.vehicleInfo}/${id}`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data[0])
+          const result = data[0].map(item => ({
+            ...item,
+            pan: item?.pan ? decrypt(item.pan) : item.pan,
+            aadhar: item?.aadhar ? decrypt(item.aadhar) : item.aadhar,
+          }));
+
+          resolve(result);
         } else {
-          reject(message)
+          reject(message);
         }
+        // if (status === "SUCCESS") {
+        //   resolve(data[0])
+        // } else {
+        //   reject(message)
+        // }
       })
       .catch((e) => {
         reject(e.message)
@@ -286,10 +302,21 @@ export const getOwnersById = (id) => {
     apiCall(`transport/owners/${id}`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data)
+          const result = data.map(item => ({
+            ...item,
+            pan: item?.pan ? decrypt(item.pan) : item.pan,
+            aadhar: item?.aadhar ? decrypt(item.aadhar) : item.aadhar,
+          }));
+
+          resolve(result);
         } else {
-          reject(message)
+          reject(message);
         }
+        // if (status === "SUCCESS") {
+        //   resolve(data)
+        // } else {
+        //   reject(message)
+        // }
       })
       .catch((e) => {
         reject(e.message)
@@ -319,10 +346,21 @@ export const getTransportsByOwnersId = (id) => {
     apiCall(`transporters/owner/${id}`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data)
+          const result = data.map(item => ({
+            ...item,
+            pan: item?.pan ? decrypt(item.pan) : item.pan,
+            aadhar: item?.aadhar ? decrypt(item.aadhar) : item.aadhar,
+          }));
+
+          resolve(result);
         } else {
-          reject(message)
+          reject(message);
         }
+        // if (status === "SUCCESS") {
+        //   resolve(data)
+        // } else {
+        //   reject(message)
+        // }
       })
       .catch((e) => {
         reject(e.message)
@@ -335,10 +373,21 @@ export const getOwnerDetailsById = (id) => {
     apiCall(`transport/owner/${id}`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data)
+          const result = data.map(item => ({
+            ...item,
+            pan: item?.pan ? decrypt(item.pan) : item.pan,
+            aadhar: item?.aadhar ? decrypt(item.aadhar) : item.aadhar,
+          }));
+
+          resolve(result);
         } else {
-          reject(message)
+          reject(message);
         }
+        // if (status === "SUCCESS") {
+        //   resolve(data)
+        // } else {
+        //   reject(message)
+        // }
       })
       .catch((e) => {
         reject(e.message)

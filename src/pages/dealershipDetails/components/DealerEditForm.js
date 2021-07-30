@@ -25,10 +25,9 @@ const useStyles = makeStyles({
     },
     details: {
         padding: 4,
-        marginBottom: 10,
         borderColor: 'grey',
         minWidth: 80,
-        height: 60,
+        height: 50,
         display: 'flex',
         textAlign: 'left',
         alignItems: 'left',
@@ -39,12 +38,25 @@ const useStyles = makeStyles({
         maxWidth: '100%',
     },
     text: {
-        fontSize: 14,
-    },
-    title: {
+        marginBottom:4,
         fontSize: 12,
     },
+    title: {
+        fontSize: 11,
+    },
 });
+export const ViewData = ({ title, value }) => {
+    const classes = useStyles()
+    return (
+        <Box className={classes.details}>
+            <div>
+                <p className={classes.title}>{title}</p>
+                <strong className={classes.text}>{value ? value : '-'}</strong>
+            </div>
+        </Box >
+    )
+}
+
 
 const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState }) => {
     const readOnly = readOnlyProps;
@@ -138,76 +150,21 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                     <Grid container spacing={2} className={classes.readOnlyWrapper}>
                         <Grid item md={6}>
                             <Box className={classes.box} >
-                                <Box className={classes.details}>
-                                    <div>
-                                        <p className={classes.title}>ID</p>
-                                        <strong className={classes.text}>{values.id}</strong>
-                                    </div>
-                                </Box>
-                                <Box className={classes.details}>
-                                    <div>
-                                        <p className={classes.title}>Date of Birth</p>
-                                        <strong className={classes.text}>{values.dob}</strong>
-                                    </div>
-                                </Box>
-                                <Box className={classes.details}>
-                                    <div>
-                                        <p className={classes.title}>Address</p>
-                                        <strong className={classes.text}>{values.address}</strong>
-                                    </div>
-                                </Box>
-                                <Box className={classes.details}>
-                                    <div>
-                                        <p className={classes.title}>Marital status</p>
-                                        <strong className={classes.text}>{values.marital_status}</strong>
-                                    </div>
-                                </Box>
-                                <Box className={classes.details}>
-                                    <div>
-                                        <p className={classes.title}>Mobile</p>
-                                        <strong className={classes.text}>{values.mobile}</strong>
-                                    </div>
-                                </Box>
-                                <Box className={classes.details}>
-                                    <div>
-                                        <p className={classes.title}>Aadhar</p>
-                                        <strong className={classes.text}>{values.aadhar}</strong>
-                                    </div>
-                                </Box>
+                                <ViewData title='ID' value={values.id} />
+                                <ViewData title='Date of Birth' value={values.dob} />
+                                <ViewData title='Address' value={values.address} />
+                                <ViewData title='Marital Status' value={values.marital_status} />
+                                <ViewData title='Mobile' value={values.mobile} />
+                                <ViewData title='Aadhar' value={values.aadhar} />
                             </Box>
                         </Grid>
                         <Grid item md={6}>
                             <Box className={classes.box} >
-                                <Box className={classes.details}>
-                                    <div>
-                                        <p className={classes.title}>Name</p>
-                                        <strong className={classes.text}>{values.first_name} {values.last_name}</strong>
-                                    </div>
-                                </Box>
-                                <Box className={classes.details}>
-                                    <div>
-                                        <p className={classes.title}>Gender</p>
-                                        <strong className={classes.text}>{values.gender}</strong>
-                                    </div>
-                                </Box>
-                                <Box className={classes.details}>
-                                    <div>
-                                        <p className={classes.title}>Residing since</p>
-                                        <strong className={classes.text}>{values.residing_since}</strong>
-                                    </div>
-                                </Box>
-                                <Box className={classes.details}>
-                                    <div>
-                                        <p className={classes.title}>Email</p>
-                                        <strong className={classes.text}>{values.email}</strong>
-                                    </div>
-                                </Box>
-                                <Box className={classes.details}>
-                                    <div>
-                                        <p className={classes.title}>PAN</p>
-                                        <strong className={classes.text}>{values.pan}</strong>
-                                    </div>
-                                </Box>
+                                <ViewData title='Name' value={`${values.first_name} ${values.last_name}`} />
+                                <ViewData title='Gender' value={values.gender} />
+                                <ViewData title='Residing since' value={values.residing_since} />
+                                <ViewData title='Email' value={values.email} />
+                                <ViewData title='PAN' value={values.pan} />
                             </Box>
                         </Grid>
                     </Grid>

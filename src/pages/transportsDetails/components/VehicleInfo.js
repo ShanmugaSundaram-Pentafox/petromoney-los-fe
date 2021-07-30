@@ -420,7 +420,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
                 aria-controls="panel1d-content"
                 id="panel1d-header"
               >
-                <Typography variant="h6">Vehicle Number: {vehicleInfo.tt_no}</Typography>
+                <Typography>Vehicle Number: {vehicleInfo.tt_no}</Typography>
                 <Typography>
                   Credit Limit: <Currency value={vehicleInfo.credit_limit} />
                 </Typography>

@@ -27,10 +27,7 @@ import { getDistricts, getFormattedStatesList } from '../../../utils/indianState
 import { useSnackbar } from 'notistack';
 import Tooltip from '@material-ui/core/Tooltip';
 import { URL } from '../../../config/serverUrls';
-<<<<<<< HEAD
-=======
 import FileUpload from '../../../components/FileUpload';
->>>>>>> e94ba288f6fd5e3ef6d6c84a4e4ce3b98122762f
 
 
 const useStyles = makeStyles((theme) => ({
@@ -182,18 +179,6 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
             if (isAdd === 'Add') {
                 fetch(`${URL.base}${URL.vehicleInfo}`, {
                     method: 'POST',
-<<<<<<< HEAD
-                    body:formData,
-                    headers: {
-                        'Authorization': `Bearer ${currentUser.token} `
-                    }
-                })
-
-                    .then(res => {
-                        return res.json()
-                    })
-                    .then(res => {
-=======
                     body: formData,
                     headers: {
                         'Authorization': `Bearer ${currentUser.token}`
@@ -204,7 +189,6 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                     })
 
                     .then(res => {
->>>>>>> e94ba288f6fd5e3ef6d6c84a4e4ce3b98122762f
                         enqueueSnackbar(res.message, {
                             anchorOrigin: {
                                 vertical: 'top',
@@ -230,19 +214,6 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
 
             }
             else {
-<<<<<<< HEAD
-                fetch(`${URL.base}${URL.vehicleInfo}/${data.transporter_id} `, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Authorization': `Bearer ${currentUser.token} `
-                    }
-                })
-                    .then(res => {
-                        return res.json()
-                    })
-                    .then(res => {
-=======
                 fetch(`${URL.base}${URL.vehicleInfo}/${data.transporter_id}`, {
                     method: 'POST',
                     body: formData,
@@ -255,26 +226,17 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                     })
 
                     .then(res => {
->>>>>>> e94ba288f6fd5e3ef6d6c84a4e4ce3b98122762f
                         enqueueSnackbar(res.message, {
                             anchorOrigin: {
                                 vertical: 'top',
                                 horizontal: 'right',
                             },
                             variant: 'success',
-<<<<<<< HEAD
-                        })
-                        // setTimeout(() => {
-                        //     window.location.reload();
-                        // }, 2000)
-
-=======
                         }
                         )
                         setTimeout(() => {
                             window.location.reload();
                         }, 2000)
->>>>>>> e94ba288f6fd5e3ef6d6c84a4e4ce3b98122762f
                     })
                     .catch(error => {
                         console.log(error);

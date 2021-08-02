@@ -615,25 +615,34 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 <Grid item md={6}>
                                                     <>
                                                         {data.pan_file_url ? panAttachment() :
-                                                            <>
-                                                                <Typography variant="subtitle2" component="subtitle2">
-                                                                    <Tooltip title={'Click Edit and attach'}>
-                                                                        <AttachmentOutlinedIcon onClick={() => docUpload('PAN')} />
-                                                                    </Tooltip> Attach PAN
-                                                                </Typography>
-                                                                {/* <TextInput
-                                                                            type="file"
-                                                                            accept="image/*"
-                                                                            name="pan_file_url"
-                                                                            readOnly={readOnly}
-                                                                            disabled={readOnly}
-                                                                            value={data.pan_file_url}
-                                                                            onChange={(event) => {
-                                                                                values[event.target.name] = event.currentTarget.files[0];
-                                                                            }}
-                                                                            InputLabelProps={{ shrink: true }}
-                                                                        ></TextInput> */}
-                                                            </>
+                                                            <div className={classes.fileAttachement} onClick={() => docUpload('PAN')}>
+                                                                <Tooltip title={'Click Edit and attach'}>
+                                                                    <>
+                                                                        <AttachmentOutlinedIcon className={classes.icon} disabled={readOnly} />
+                                                                        <Typography className={classes.typography}>Attach PAN</Typography>
+                                                                    </>
+                                                                </Tooltip>
+                                                            </div>
+                                                            // <>
+
+                                                            //     <Typography variant="subtitle2" component="subtitle2">
+                                                            //         <Tooltip title={'Click Edit and attach'}>
+                                                            //             <AttachmentOutlinedIcon onClick={() => docUpload('PAN')} />
+                                                            //         </Tooltip> Attach PAN
+                                                            //     </Typography>
+                                                            //     <TextInput
+                                                            //                 type="file"
+                                                            //                 accept="image/*"
+                                                            //                 name="pan_file_url"
+                                                            //                 readOnly={readOnly}
+                                                            //                 disabled={readOnly}
+                                                            //                 value={data.pan_file_url}
+                                                            //                 onChange={(event) => {
+                                                            //                     values[event.target.name] = event.currentTarget.files[0];
+                                                            //                 }}
+                                                            //                 InputLabelProps={{ shrink: true }}
+                                                            //             ></TextInput>
+                                                            // </>
                                                         }
                                                     </>
                                                 </Grid>
@@ -654,17 +663,16 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                         {
                                             values.gst ? (
                                                 <Grid item md={6}>
-                                                    <Typography variant="subtitle2" component="subtitle2">
-                                                        <>
-                                                            {data.gst_file_url ? gstAttachment() :
-                                                                <div className={classes.fileAttachement} onClick={() => docUpload('GST')}>
-                                                                    <Tooltip title={'Click Edit and attach'}>
-                                                                        <>
-                                                                            <AttachmentOutlinedIcon className={classes.icon} disabled={readOnly} />
-                                                                            <Typography className={classes.typography}>Attach GST</Typography>
-                                                                        </>
-                                                                    </Tooltip>
-                                                                    {/* <TextInput
+                                                    <>
+                                                        {data.gst_file_url ? gstAttachment() :
+                                                            <div className={classes.fileAttachement} onClick={() => docUpload('GST')}>
+                                                                <Tooltip title={'Click Edit and attach'}>
+                                                                    <>
+                                                                        <AttachmentOutlinedIcon className={classes.icon} disabled={readOnly} />
+                                                                        <Typography className={classes.typography}>Attach GST</Typography>
+                                                                    </>
+                                                                </Tooltip>
+                                                                {/* <TextInput
                                                                             type="file"
                                                                             accept="image/*"
                                                                             name="gst_file_url"
@@ -676,10 +684,9 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                                             }}
                                                                             InputLabelProps={{ shrink: true }}
                                                                         ></TextInput> */}
-                                                                </div>
-                                                            }
-                                                        </>
-                                                    </Typography>
+                                                            </div>
+                                                        }
+                                                    </>
                                                 </Grid>
                                             ) : null
                                         }

@@ -204,9 +204,9 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                             variant: 'success',
                         }
                         )
-                        // setTimeout(() => {
-                        //     window.location.reload();
-                        // }, 2000)
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000)
                     })
                     .catch(error => {
                         enqueueSnackbar(error, {
@@ -241,9 +241,9 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                             variant: 'success',
                         }
                         )
-                        // setTimeout(() => {
-                        //     window.location.reload();
-                        // }, 2000)
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000)
                     })
                     .catch(error => {
                         console.log(error);
@@ -380,9 +380,9 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                 <Tooltip title={'Click to edit'}>
                     <UploadIcon fontSize="small" padding={2} onClick={() => docUpload('GST')} />
                 </Tooltip>
-                <Tooltip title={'Click to delete'}>
+                {/* <Tooltip title={'Click to delete'}>
                     <DeleteIcon fontSize="small" padding={2} />
-                </Tooltip>
+                </Tooltip> */}
             </div>
         )
     }
@@ -394,9 +394,9 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                 <Tooltip title={'Click to edit'}>
                     <UploadIcon fontSize="small" padding={2} onClick={() => docUpload('PAN')} />
                 </Tooltip>
-                <Tooltip title={'Click to delete'}>
+                {/* <Tooltip title={'Click to delete'}>
                     <DeleteIcon fontSize="small" padding={2} />
-                </Tooltip>
+                </Tooltip> */}
             </div>
         )
     }
@@ -616,10 +616,10 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                     <>
                                                         {data.pan_file_url ? panAttachment() :
                                                             <div className={classes.fileAttachement} onClick={() => docUpload('PAN')}>
-                                                                <Tooltip title={'Click Edit and attach'}>
+                                                                <Tooltip title={'Click and attach'}>
                                                                     <>
-                                                                        <AttachmentOutlinedIcon className={classes.icon} disabled={readOnly} />
-                                                                        <Typography className={classes.typography}>Attach PAN</Typography>
+                                                                        <UploadIcon className={classes.icon} disabled={readOnly} />
+                                                                        {/* <Typography className={classes.typography}>Attach PAN</Typography> */}
                                                                     </>
                                                                 </Tooltip>
                                                             </div>
@@ -666,10 +666,10 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                     <>
                                                         {data.gst_file_url ? gstAttachment() :
                                                             <div className={classes.fileAttachement} onClick={() => docUpload('GST')}>
-                                                                <Tooltip title={'Click Edit and attach'}>
+                                                                <Tooltip title={'Click and attach'}>
                                                                     <>
-                                                                        <AttachmentOutlinedIcon className={classes.icon} disabled={readOnly} />
-                                                                        <Typography className={classes.typography}>Attach GST</Typography>
+                                                                        <UploadIcon className={classes.icon} disabled={readOnly} />
+                                                                        {/* <Typography className={classes.typography}>Attach GST</Typography> */}
                                                                     </>
                                                                 </Tooltip>
                                                                 {/* <TextInput

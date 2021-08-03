@@ -322,9 +322,9 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                 <Tooltip title={'Click to edit'}>
                     <UploadIcon fontSize="small" padding={2} onClick={() => docUpload('Back')} />
                 </Tooltip>
-                <Tooltip title={'Click to delete'}>
+                {/* <Tooltip title={'Click to delete'}>
                     <DeleteIcon fontSize="small" padding={2} />
-                </Tooltip>
+                </Tooltip> */}
             </div>
         )
     }
@@ -336,9 +336,9 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                 <Tooltip title={'Click to edit'}>
                     <UploadIcon fontSize="small" style={{ color: grey[800] }} padding={2} onClick={() => docUpload('Profile')} />
                 </Tooltip>
-                <Tooltip title={'Click to delete'}>
+                {/* <Tooltip title={'Click to delete'}>
                     <DeleteIcon fontSize="small" style={{ color: grey[800] }} padding={2} />
-                </Tooltip>
+                </Tooltip> */}
             </div>
         )
     }
@@ -351,9 +351,9 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                 <Tooltip title={'Click to edit'}>
                     <UploadIcon fontSize="small" style={{ color: grey[800] }} padding={2} onClick={() => docUpload('Front')} />
                 </Tooltip>
-                <Tooltip title={'Click to delete'}>
+                {/* <Tooltip title={'Click to delete'}>
                     <DeleteIcon fontSize="small" style={{ color: grey[800] }} padding={2} />
-                </Tooltip>
+                </Tooltip> */}
             </div>
         )
     }
@@ -365,9 +365,9 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                 <Tooltip title={'Click to edit'}>
                     <UploadIcon fontSize="small" padding={2} style={{ color: grey[800] }} onClick={() => docUpload('PAN')} />
                 </Tooltip>
-                <Tooltip title={'Click to delete'}>
+                {/* <Tooltip title={'Click to delete'}>
                     <DeleteIcon fontSize="small" style={{ color: grey[800] }} padding={2} />
-                </Tooltip>
+                </Tooltip> */}
             </div>
         )
     }

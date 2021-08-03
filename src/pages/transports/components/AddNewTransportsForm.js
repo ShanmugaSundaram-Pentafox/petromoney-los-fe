@@ -22,7 +22,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import UploadIcon from '@material-ui/icons/Backup';
 // import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
 import AttachmentOutlinedIcon from '@material-ui/icons/AttachmentOutlined';
-import { getAllRegion, getBusinessTypes, getOmcList, getRegionById, getStates } from '../../../services/common.service';
+import { getBusinessTypes, getOmcList, getRegionById, getStates } from '../../../services/common.service';
 import { getDistricts, getFormattedStatesList } from '../../../utils/indianStates.util';
 // import { addNewTransport, updateTransport } from '../../../services/transports.service';
 import { useSnackbar } from 'notistack';

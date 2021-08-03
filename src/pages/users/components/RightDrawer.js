@@ -151,7 +151,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
   const [userFirstName, setUserFirstName] = useState(data.first_name)
   const [userLastName, setUserLastName] = useState(data.first_name)
   const [userMobile, setUserMobile] = useState(data.mobile)
-  const [userRole, setUserRole] = useState(data.role_name)
+  const [userRole, setUserRole] = useState(data.role_id)
   const [userMail, setUserMail] = useState(data.email)
   const [readOnly, setReadOnly] = useState(true)
   const [editProfile, setEditProfile] = useState(false)

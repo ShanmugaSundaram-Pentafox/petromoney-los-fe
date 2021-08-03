@@ -618,13 +618,13 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                                         </Grid>
                                         <Grid item md={12}>
                                             <>
-                                                <Typography style={{ fontSize: 12, fontWeight: 700, marginBottom: 4 }}>Profile</Typography>
+                                                <Typography style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>Profile</Typography>
                                                 {
                                                     rowData.profile_image_url ? profileAttachment() :
-                                                        <div style={{ display: 'flex' }} onClick={() => docUpload('PAN')}>
-                                                            <Tooltip title={'Click Edit and attach'}>
+                                                        <div style={{ display: 'flex',justifyContent:'flex-start',alignItems:'center' }} onClick={() => docUpload('PAN')}>
+                                                            <Tooltip title={'Click to attach profile'}>
                                                                 <>
-                                                                    <AttachmentOutlinedIcon />
+                                                                    <UploadIcon fontSize='small' />
                                                                     <Typography style={{ marginLeft: 12 }}>Attach profile</Typography>
                                                                 </>
                                                             </Tooltip>
@@ -655,6 +655,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                                                 readOnly={readOnly}
                                                 helperText={errors.pan}
                                                 onChange={handleChange}
+                                                InputLabelProps={{ shrink: true }}
                                             />
                                         </Grid>
                                         {
@@ -662,10 +663,10 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                                                 <Grid item md={6}>
                                                     {rowData.pan_file_url ? panAttachment() :
                                                         <div className={classes.fileAttachement} onClick={() => docUpload('PAN')}>
-                                                            <Tooltip title={'Click Edit and attach'}>
+                                                            <Tooltip title={'Click to attach PAN'}>
                                                                 <>
-                                                                    <AttachmentOutlinedIcon className={classes.icon} />
-                                                                    <Typography className={classes.typography}>PAN</Typography>
+                                                                    <UploadIcon className={classes.icon} disabled={readOnly} />
+                                                                    {/* <Typography className={classes.typography}>PAN</Typography> */}
                                                                 </>
                                                             </Tooltip>
                                                         </div>
@@ -692,10 +693,10 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                                                     <Grid item md={3}>
                                                         {rowData.aadhar_f_file_url ? aadharFront() :
                                                             <div className={classes.fileAttachement} onClick={() => docUpload('Front')}>
-                                                                <Tooltip title={'Click Edit and attach'}>
+                                                                <Tooltip title={'Click to attach aadhar front'}>
                                                                     <>
-                                                                        <AttachmentOutlinedIcon className={classes.icon} />
-                                                                        <Typography className={classes.typography}>Front</Typography>
+                                                                        <UploadIcon className={classes.icon} disabled={readOnly} />
+                                                                        {/* <Typography className={classes.typography}>Front</Typography> */}
                                                                     </>
                                                                 </Tooltip>
                                                             </div>
@@ -705,10 +706,11 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                                                         {rowData.aadhar_b_file_url ?
                                                             aadharBack() :
                                                             <div className={classes.fileAttachement} onClick={() => docUpload('Back')}>
-                                                                <Tooltip title={'Click Edit and attach'}>
+                                                                <Tooltip title={'Click to attach aadhar back'}>
                                                                     <>
-                                                                        <AttachmentOutlinedIcon className={classes.icon} />
-                                                                        <Typography className={classes.typography}>Back</Typography>
+                                                                        {/* <AttachmentOutlinedIcon className={classes.icon} /> */}
+                                                                        <UploadIcon className={classes.icon} disabled={readOnly} />
+                                                                        {/* <Typography className={classes.typography}>Back</Typography> */}
                                                                     </>
                                                                 </Tooltip>
                                                             </div>
@@ -718,8 +720,6 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
 
                                             ) : null
                                         }
-
-
                                     </Grid>
                                 </form>
                             </Box >

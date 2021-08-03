@@ -159,6 +159,7 @@ const LoanInfo = ({
   const [showRemarksModal, setShowRemarksModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState({});
 
+
   useEffect(() => {
     apiCall(`business/products`)
       .then(res => {
@@ -174,7 +175,6 @@ const LoanInfo = ({
         console.log(err)
       })
   }, [row.product_id]);
-
   return (
     <>
       <LoanInfoWrapper>
@@ -212,7 +212,7 @@ const LoanInfo = ({
                     color: '#333'
                   }}
                 >
-                  <option value="">Choose Loan type</option>
+                  {/* <option value="">Choose Loan type</option> */}
                   {
                     products.map(item => <option value={item.product_id}>{item.product_name}</option>)
                   }
@@ -419,6 +419,7 @@ const DealershipDetails = ({
       if (status === "loan_approval") {
         resMsg = 'Successfully Approved Loan Request';
         reqBody.amount_approved = newLoanInfo.amount_approved;
+        reqBody.remarks = newLoanInfo.remarks;
       } else if (status === "disbursement_approval") {
         reqBody.status = 'disbursement_approved';
         resMsg = 'Successfully Approved Loan for Disbursement';
@@ -489,8 +490,6 @@ const DealershipDetails = ({
         console.log(e);
       })
   }
-
-
   return (
     <div className={classes.wrapper}>
       <div className={classes.wrapperTitle}>
@@ -587,7 +586,7 @@ const DealershipDetails = ({
 
           <Grid {...gridProps}>
             {values.id ? <SalesInfo id={values.id} currentUser={currentUser} /> : null}
-            <LoanInfo editable={editable} data={loanInfo} status={status} newInfo={newLoanInfo} currentUser={currentUser} updateNewLoanInfo={updateNewLoanInfo} />
+            <LoanInfo editable={editable} data={loanData} status={status} newInfo={newLoanInfo} currentUser={currentUser} updateNewLoanInfo={updateNewLoanInfo} />
           </Grid>
 
           {

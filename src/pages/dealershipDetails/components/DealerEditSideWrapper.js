@@ -59,7 +59,7 @@ const useStyles = makeStyles(theme => ({
     // paddingTop: 8
   },
   stepperRoot: {
-    padding: 16,
+    // padding: 16,
     paddingTop: 8
   },
   stepTitle: {
@@ -236,7 +236,7 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
       <div className={classes.sidePanelFormContentWrapper}>
         <Stepper activeStep={activeStep} orientation="vertical" className={classes.stepperRoot}>
           <Step key={data.id}>
-            <StepContent>
+            {/* <StepContent> */}
               <DealerEditForm
                 dealersList={dealersList}
                 deleteFile={deleteFile}
@@ -248,7 +248,7 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
                 errors={errors}
                 onChange={handleChange}
               />
-            </StepContent>
+            {/* </StepContent> */}
           </Step>
         </Stepper>
         {apicallStatus ? <Alert severity={apicallStatus}>{apiCallMessage}</Alert> : null}

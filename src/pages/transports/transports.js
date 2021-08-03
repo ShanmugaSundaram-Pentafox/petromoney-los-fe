@@ -48,7 +48,7 @@ const Transport = ({ currentUser }) => {
               onClose={() => setOpenModal(false)}
               variant="temporary"
             >
-              <AddNewTransportsForm title= {'Edit Transport Details Form'} currentUser={currentUser} callback={handleClose} data={rowData} />
+              <AddNewTransportsForm title= {'Edit Transport Details Form'} currentUser={currentUser} id={rowData.t_owner_id} callback={handleClose} data={rowData} />
             </Drawer>
 
           </>

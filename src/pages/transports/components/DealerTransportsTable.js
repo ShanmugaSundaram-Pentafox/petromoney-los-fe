@@ -185,13 +185,13 @@ const DealerTransportsTable = ({ currentUser }) => {
                         )
                 }
             </div>
-            <FormDialog
+            {/* <FormDialog
                 title="Add Transport"
                 open={openModal}
                 onClose={() => setOpenModal(false)}
             >
-                <AddNewTransportsForm data={transportsData} currentUser={currentUser} callback={handleClose} />
-            </FormDialog>
+                <AddNewTransportsForm data={transportsData} id={transportsData.} currentUser={currentUser} callback={handleClose} />
+            </FormDialog> */}
             {/* {
             view && vehicleData && (
                 <VehicleInfo id={id} data={vehicleData} currentUser={currentUser} />

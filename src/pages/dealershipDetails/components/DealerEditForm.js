@@ -3,12 +3,12 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { makeStyles, withStyles } from '@material-ui/styles';
 import Grid from '@material-ui/core/Grid';
 import TextInput from '../../../components/TextInput/TextInput';
-import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
+// import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
 import Typography from '@material-ui/core/Typography'
 import Switch from '@material-ui/core/Switch';
 import Box from '@material-ui/core/Box';
-import AttachmentOutlinedIcon from '@material-ui/icons/AttachmentOutlined';
-import DeleteIcon from '@material-ui/icons/Delete';
+// import AttachmentOutlinedIcon from '@material-ui/icons/AttachmentOutlined';
+// import DeleteIcon from '@material-ui/icons/Delete';
 import UploadIcon from '@material-ui/icons/Backup';
 import { grey } from '@material-ui/core/colors';
 import 'date-fns';
@@ -496,7 +496,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                                     </Grid>
                                 </Typography>
                             </Grid>
-                            <Grid {...gridItem} md={12} style={{ marginBottom: '16px' }}>
+                            <Grid {...gridItem} md={12} >
                                 <Typography variant="title">Documents </Typography>
                             </Grid>
                             <Grid {...gridItem} md={12}>

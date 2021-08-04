@@ -613,7 +613,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                                                 </Grid>
                                             </Typography>
                                         </Grid>
-                                        <Grid md={12} style={{ margin: '16px 8px' }}>
+                                        <Grid md={12} item>
                                             <Typography variant="subtitle1" component="subtitle1">Documents</Typography>
                                         </Grid>
                                         <Grid item md={12}>

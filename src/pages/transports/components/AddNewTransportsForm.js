@@ -177,11 +177,6 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
         }),
         onSubmit: values => {
             const data = { ...values, t_owner_id: id };
-            const formData = new FormData();
-            Object.keys(data).forEach(key => {
-                formData.append(key, data[key]);
-            })
-            console.log('values', data)
             let apiURL = isAdd === 'Add' ? `transporters` : `tranporters/${data.transporter_id}`
             const formData = new FormData();
             Object.keys(data).forEach(key => {

@@ -159,7 +159,7 @@ const LoanInfo = ({
   const [showRemarksModal, setShowRemarksModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState({});
 
-
+  
   useEffect(() => {
     apiCall(`business/products`)
       .then(res => {
@@ -586,7 +586,7 @@ const DealershipDetails = ({
 
           <Grid {...gridProps}>
             {values.id ? <SalesInfo id={values.id} currentUser={currentUser} /> : null}
-            <LoanInfo editable={editable} data={loanData} status={status} newInfo={newLoanInfo} currentUser={currentUser} updateNewLoanInfo={updateNewLoanInfo} />
+            <LoanInfo editable={editable} data={loanInfo} status={status} newInfo={newLoanInfo} currentUser={currentUser} updateNewLoanInfo={updateNewLoanInfo} />
           </Grid>
 
           {

@@ -25,7 +25,7 @@ import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { selectCurrentUser } from '../../../store/user/user.selector';
 import { createStructuredSelector } from 'reselect';
-import { getLoanById, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
+import { getLoanById, getLoansByStatus, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
 import Alert from '@material-ui/lab/Alert';
 import DispApprovedDataTable from './DispApprovedDataTable';
 import apiCall from '../../../utils/api.util';
@@ -75,9 +75,9 @@ const useStyles = makeStyles(theme => ({
     overflow: 'auto'
   },
   wrapperTitle: {
-    display:'flex',
-    justifyContent:'space-between',
-    marginRight:24,
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginRight: 24,
   },
   title: {
     // position: 'absolute',
@@ -88,8 +88,8 @@ const useStyles = makeStyles(theme => ({
     borderBottomRightRadius: 12,
     boxShadow: '0px 0px 4px #8d8d8d',
   },
-  closeIcon:{
-    marginTop:8,
+  closeIcon: {
+    marginTop: 8,
   },
   gridItemStyle: {
     // paddingTop: theme.spacing(1),
@@ -159,7 +159,7 @@ const LoanInfo = ({
   const [showRemarksModal, setShowRemarksModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState({});
 
-  
+
   useEffect(() => {
     apiCall(`business/products`)
       .then(res => {
@@ -443,6 +443,15 @@ const DealershipDetails = ({
     updateLoanApprovalStatusById(values.id, loanData.id, reqBody)
       .then(res => {
         setLoanInfo(res.data);
+        setTimeout(() => {
+          getLoansByStatus('approved')
+            .then(data => null)
+            .catch(e => null)
+          getLoansByStatus('loan_approval')
+            .then(data => null)
+            .catch(e => null)
+
+        }, 2000)
         setApiStatus({ type: 'success', message: res.message || resMsg })
       })
       .catch(err => {
@@ -715,7 +724,7 @@ const DealershipDetails = ({
                 </Grid>
                 <Grid {...gridProps} style={{ position: 'relative' }}>
                   Remarks(Disbursement)
-                    {/* <Typography variant="p" component={'p'}>
+                  {/* <Typography variant="p" component={'p'}>
                     {loanInfo.disbursement_approval_remarks}
                   </Typography> */}
                   <TextInput

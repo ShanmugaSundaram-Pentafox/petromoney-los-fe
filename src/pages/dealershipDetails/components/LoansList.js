@@ -19,7 +19,7 @@ import { useMount } from 'react-use';
 import { getDealershipLoansById } from '../../../services/dealerships.service';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-import { getApplicationStatusById, updateLoanApprovalStatusById } from '../../../services/loans.service';
+import { getApplicationStatusById, getLoansByStatus, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import TextInput from '../../../components/TextInput/TextInput';
 import { Select } from '@material-ui/core';
 import apiCall from '../../../utils/api.util';
@@ -89,6 +89,12 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
         setDialogState({});
         console.log('Loan Status update error - ', err)
       })
+    getLoansByStatus('approved')
+      .then(data => null)
+      .catch(e => null)
+    getLoansByStatus('loan_approval')
+      .then(data => null)
+      .catch(e => null)
   }
 
   const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit)

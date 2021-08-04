@@ -50,6 +50,7 @@ const FleetOperatorsDetails = ({ id, currentUser, titleAlign }) => {
                     <Button
                         color="primary"
                         variant="contained"
+                        size='small'
                         onClick={() => setOpenModal(true)}
                     >
                         Add Fleet Operator

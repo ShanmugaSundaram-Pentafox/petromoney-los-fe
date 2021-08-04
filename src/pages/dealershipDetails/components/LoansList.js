@@ -185,7 +185,8 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
                     <Button
                       variant="outlined"
                       color="primary"
-                      fontSize="small"
+                      // fontSize="small"
+                      size='small'
                       disabled={loading}
                       className={classes.btnSuccess}
                       onClick={getRemarks(row)}>

@@ -279,10 +279,10 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                 setStates(d);
                 return d;
             })
-            .then(d => {
-                let res = d.find(({ id }) => id === parseInt(values?.state));
-                fetchRegions(parseInt(res.id));
-            })
+            // .then(d => {
+            //     let res = d.find(({ id }) => id === parseInt(values?.state));
+            //     fetchRegions(parseInt(res.id));
+            // })
             .catch(e => {
                 console.log(e)
             })
@@ -465,7 +465,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 </TextInput>
                                             }
                                         </Grid>
-                                        <Grid item md={6}>
+                                        <Grid item md={12}>
                                             <TextInput
                                                 {...inputProps}
                                                 name="name"
@@ -481,7 +481,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 {...inputProps}
                                                 name="mobile"
                                                 labelText="Mobile"
-                                                value={values.mobile}
+                                                value={values?.mobile}
                                                 readOnly={readOnly}
                                                 error={errors.mobile}
                                                 helperText={errors.mobile}
@@ -493,7 +493,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 select
                                                 name="omc"
                                                 labelText="OMC"
-                                                value={values.omc}
+                                                value={values?.omc}
                                                 readOnly={readOnly}
                                                 disabled={readOnly}
                                                 error={errors.omc}
@@ -511,7 +511,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 name="business_type"
                                                 labelText="Business Type"
                                                 readOnly={readOnly}
-                                                value={values.business_type}
+                                                value={values?.business_type}
                                                 disabled={readOnly}
                                                 error={errors.business_type}
                                             >
@@ -529,7 +529,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 labelText="State"
                                                 readOnly={readOnly}
                                                 disabled={readOnly}
-                                                value={values.state}
+                                                value={values?.state}
                                                 error={errors.state}
                                             >
                                                 {
@@ -546,7 +546,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 labelText="Region"
                                                 readOnly={readOnly}
                                                 disabled={readOnly}
-                                                value={values.region}
+                                                value={values?.region}
                                                 error={errors.region}
                                             >
                                                 {
@@ -559,7 +559,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 {...inputProps}
                                                 name="address"
                                                 labelText="Address"
-                                                value={values.address?.toUpperCase()}
+                                                value={values?.address}
                                                 readOnly={readOnly}
                                                 disabled={readOnly}
                                                 error={errors.address}
@@ -588,7 +588,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 {...inputProps}
                                                 name="pincode"
                                                 labelText="Pincode"
-                                                value={values.pincode}
+                                                value={values?.pincode}
                                                 disabled={readOnly}
                                                 readOnly={readOnly}
                                                 error={errors.pincode}

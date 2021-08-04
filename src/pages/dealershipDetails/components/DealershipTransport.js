@@ -21,13 +21,6 @@ const useStyles = makeStyles((theme) => ({
         zIndex: 0,
         boxShadow: '0 1px 4px -3px #333'
     },
-    sidePanelFormWrapper: {
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-        width: '40vw'
-    },
     sidePanelFormContentWrapper: {
         flex: 1,
         overflow: 'auto'
@@ -162,6 +155,7 @@ const DealershipTransport = ({ id, currentUser, titleAlign }) => {
                     <Button
                         color="primary"
                         variant="contained"
+                        size='small'
                         onClick={() => {
                             setOpenModal(true)
                             setRowData({})

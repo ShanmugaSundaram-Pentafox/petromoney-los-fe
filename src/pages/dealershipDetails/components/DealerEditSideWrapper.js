@@ -143,11 +143,28 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
         logger(err);
       })
   };
-  const { values, errors, handleSubmit, handleChange, handleReset, setValues } = useFormik({
+  const handleSave = (value,fileType) => {
+    if (fileType === 'PAN') {
+      setFieldValue('pan_file_url', value[0])
+    }
+    else if (fileType === 'Front') {
+      setFieldValue('aadhar_f_file_url', value[0])
+    }
+    else if (fileType === 'Back') {
+      setFieldValue('aadhar_b_file_url', value[0])
+    }
+    else {
+      setFieldValue('profile_image_url', value[0])
+    }
+    handleSubmit(values)
+    // onCloseUploader();
+
+  }
+  const { values, errors, handleSubmit, handleChange, handleReset, setFieldValue, setValues } = useFormik({
     initialValues: {
       ...data
     },
-    
+
     onReset: (values, e) => {
       setReadOnly(true)
     },
@@ -237,17 +254,18 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
         <Stepper activeStep={activeStep} orientation="vertical" className={classes.stepperRoot}>
           <Step key={data.id}>
             {/* <StepContent> */}
-              <DealerEditForm
-                dealersList={dealersList}
-                deleteFile={deleteFile}
-                readOnlyProps={readOnly}
-                modelType={modelType}
-                data={data}
-                handleDate={handleDateChange}
-                values={values}
-                errors={errors}
-                onChange={handleChange}
-              />
+            <DealerEditForm
+              dealersList={dealersList}
+              deleteFile={deleteFile}
+              readOnlyProps={readOnly}
+              modelType={modelType}
+              data={data}
+              handleDate={handleDateChange}
+              values={values}
+              errors={errors}
+              onChange={handleChange}
+              handleSave={handleSave}
+            />
             {/* </StepContent> */}
           </Step>
         </Stepper>

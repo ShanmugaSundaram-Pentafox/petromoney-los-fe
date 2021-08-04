@@ -138,13 +138,6 @@ const VehiclesLoanTable = () => {
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
       }
-      {/* <FormDialog
-        title="Add Vehicle"
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-      >
-        <AddNewVehicleForm />
-      </FormDialog> */}
     </Grid>
   )
 }

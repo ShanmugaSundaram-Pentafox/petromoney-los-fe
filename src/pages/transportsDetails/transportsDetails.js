@@ -14,7 +14,7 @@ import AddNewVehicleForm from '../transports/components/AddNewVehicleForm'
 import { Drawer } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
-  
+
   btn: {
     marginTop: 14,
   }
@@ -27,6 +27,7 @@ const TransportsDetails = ({ currentUser, match }) => {
   const [transportsData, setTransportsData] = useState()
   const [vehicleData, setVehicleData] = useState()
   const [showModal, setShowModal] = useState(false)
+  const [formType, setFormType] = useState('');
 
   const classes = useStyles()
   const {
@@ -47,7 +48,6 @@ const TransportsDetails = ({ currentUser, match }) => {
 
     getVehicleInfoFromID(id)
       .then((data) => {
-        // console.log(data)
         setVehicleData(data)
       })
       .catch((e) => null)
@@ -116,7 +116,10 @@ const TransportsDetails = ({ currentUser, match }) => {
             color="primary"
             variant="contained"
             className={classes.btn}
-            onClick={() => setOpenModal(true)}
+            onClick={() => {
+              setOpenModal(true)
+              setFormType('Add')
+            }}
           >
             Add Vehicle
           </Button>
@@ -127,20 +130,13 @@ const TransportsDetails = ({ currentUser, match }) => {
           )}
         </Grid>
       </Grid>
-      {/* <FormDialog
-        title="Add Vehicle"
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-      >
-        <AddNewVehicleForm data={transportsData} />
-      </FormDialog> */}
       <Drawer
         anchor="right"
         open={openModal}
         onClose={() => setOpenModal(false)}
         variant="temporary"
       >
-        <AddNewVehicleForm callback={() => setOpenModal(false)} data={transportsData} isEdit='Edit' id={id} />
+        <AddNewVehicleForm callback={() => setOpenModal(false)} data={transportsData} isAdd={formType} id={id} />
       </Drawer>
     </>
   )

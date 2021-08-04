@@ -17,6 +17,7 @@ import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker
 } from '@material-ui/pickers';
+import FileUpload from '../../../components/FileUpload';
 
 
 const useStyles = makeStyles({
@@ -80,11 +81,11 @@ export const ViewData = ({ title, value }) => {
 }
 
 
-const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState }) => {
+const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave }) => {
     const readOnly = readOnlyProps;
     const classes = useStyles();
     const [showUpload, setShowUpload] = useState(false);
-    const [fileType, setFileType] = useState('')
+    const [fileType, setFileType] = useState()
     const [currentFileUpload, setCurrentFileUpload] = useState('');
     const [formValue, setformValue] = useState(values);
     const [state, setState] = React.useState({
@@ -160,7 +161,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
     }
     const profileAttachment = () => {
         return (
-            <div className={classes.fileStyle}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#eeeeee', color: '#43a047' }}
                     href={data.profile_image_url} target="_blank" title={'Profile Attachment'}>{'Profile Attachment'}</a>
                 <Tooltip title={'Click to edit'}>
@@ -201,7 +202,6 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
             </div>
         )
     }
-
     return (
         <>
             {
@@ -499,12 +499,14 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                             <Grid {...gridItem} md={12} >
                                 <Typography variant="title">Documents </Typography>
                             </Grid>
-                            <Grid {...gridItem} md={12}>
+                            <Grid {...gridItem} md={3}>
+                                <Typography style={{ display: 'contents' }} variant="title" >Profile</Typography>
+                            </Grid>
+                            <Grid {...gridItem} md={5}>
                                 <>
-                                    <Typography style={{ fontSize: 12, fontWeight: 700, marginBottom: 4 }}>Profile</Typography>
                                     {
                                         data.profile_image_url ? profileAttachment() :
-                                            <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }} onClick={() => docUpload('PAN')}>
+                                            <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }} onClick={() => docUpload('Profile')}>
                                                 <Tooltip title={'Click to attach Profile'}>
                                                     <>
                                                         <UploadIcon fontSize='small' />
@@ -568,6 +570,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                                                     <Tooltip title={'Click to attach aadhar front'}>
                                                         <>
                                                             <UploadIcon className={classes.icon} disabled={readOnly} />
+                                                            <Typography className={classes.typography}>Front</Typography>
                                                         </>
                                                     </Tooltip>
                                                 </div>
@@ -580,6 +583,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                                                     <Tooltip title={'Click to attach aadhar back'}>
                                                         <>
                                                             <UploadIcon className={classes.icon} disabled={readOnly} />
+                                                            <Typography className={classes.typography}>Back</Typography>
                                                         </>
                                                     </Tooltip>
                                                 </div>
@@ -588,6 +592,9 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                                     </>
 
                                 ) : null
+                            }
+                            {
+                                showUpload && <FileUpload handleSave={(value) => handleSave(value, fileType)} title='Upload Documents' open={showUpload} onCloseUploader={() => { setShowUpload(false) }} />
                             }
                         </>
                     </Grid>

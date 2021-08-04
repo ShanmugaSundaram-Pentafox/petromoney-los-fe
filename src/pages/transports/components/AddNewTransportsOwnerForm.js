@@ -330,7 +330,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
     }
     const profileAttachment = () => {
         return (
-            <div className={classes.fileStyle}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#eeeeee', color: '#43a047' }}
                     href={rowData.profile_image_url} target="_blank" title={'Profile Attachment'}>{'Profile Attachment'}</a>
                 <Tooltip title={'Click to edit'}>
@@ -616,17 +616,19 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                                         <Grid md={12} item>
                                             <Typography variant="subtitle1" component="subtitle1">Documents</Typography>
                                         </Grid>
-                                        <Grid item md={12}>
+                                        <Grid item md={3}>
+                                            <Typography style={{ display: 'contents' }} variant="title" >Profile</Typography>
+                                        </Grid>
+                                        <Grid item md={5}>
                                             <>
-                                                <Typography style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>Profile</Typography>
                                                 {
                                                     rowData.profile_image_url ? profileAttachment() :
-                                                        <div style={{ display: 'flex',justifyContent:'flex-start',alignItems:'center' }} onClick={() => docUpload('PAN')}>
+                                                        <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }} onClick={() => docUpload('PAN')}>
                                                             <Tooltip title={'Click to attach profile'}>
-                                                                <>
+                                                                <div>
                                                                     <UploadIcon fontSize='small' />
                                                                     <Typography style={{ marginLeft: 12 }}>Attach profile</Typography>
-                                                                </>
+                                                                </div>
                                                             </Tooltip>
                                                         </div>
                                                     // <>

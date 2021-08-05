@@ -93,7 +93,7 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
       label: "Status",
       name: 'status',
       options: {
-        filter: false,
+        filter: true,
         sort: false,
         setCellProps: () => ({
           align: 'center',
@@ -102,7 +102,7 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
           return (
             <div key={`vi-${value}`}>
               {
-                value === 1 ? <CheckCircleTwoToneIcon style={{ color: green[200] }} /> : <CheckCircleTwoToneIcon style={{ color: grey[500] }} />
+                value === 'Active' ? <CheckCircleTwoToneIcon style={{ color: green[200] }} /> : <CheckCircleTwoToneIcon style={{ color: grey[500] }} />
               }
 
               {/* <div>

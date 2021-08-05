@@ -157,12 +157,12 @@ export const deleteMappedRegion = (data, id) => {
       })
   });
 }
-export const updatePassword = (password, id) => {
+export const updatePassword = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`user/${id}`, {
       method: 'POST',
       body: {
-        password
+        password: data.password
       }
     })
       .then(({ status, data, message }) => {
@@ -177,18 +177,13 @@ export const updatePassword = (password, id) => {
       })
   });
 }
-export const updateUserDetails = (first_name, last_name, mobile, mail, role, id, status) => {
+export const updateUserDetails = (data, id) => {
+
   return new Promise((resolve, reject) => {
     apiCall(`user/${id}`, {
       method: 'POST',
-      body: {
-        "first_name": first_name,
-        "last_name": last_name,
-        "email": mail,
-        "mobile": mobile,
-        "role_id": role,
-        "status": status,
-      }
+      body: data
+      
     })
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {

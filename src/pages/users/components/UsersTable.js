@@ -105,7 +105,7 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
           return (
             <div key={`vi-${value}`}>
               {
-                value === 1 ? (
+                value === 'Active' ? (
                   <Tooltip title='Active'>
                     <CheckCircleTwoToneIcon style={{ color: green[200] }} />
                   </Tooltip>
@@ -115,7 +115,6 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
                   </Tooltip>
                 )
               }
-
               {/* <div>
                   <Button onClick={() => handleClickOpen(value)}>
                     <Tooltip title="deactivate" aria-label="add">

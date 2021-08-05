@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { makeStyles } from "@material-ui/styles"
 import Grid from "@material-ui/core/Grid"
 import Button from "@material-ui/core/Button"
@@ -51,21 +51,15 @@ const TransportsDetails = ({ currentUser, match }) => {
         setVehicleData(data)
       })
       .catch((e) => null)
-
-
   })
   let cardData = [
     { label: 'Dealership ID', value: ownerInfo?.dealership_id },
-    { label: 'Transport ID', value: transportsData?.id },
+    { label: 'Transport ID', value: transportsData?.transporter_id },
     { label: 'Transport name', value: transportsData?.name },
     { label: 'Owner name', value: ownerInfo?.first_name },
     { label: 'Mobile', value: ownerInfo?.mobile },
   ]
   usePageTitle(`${id} - ${transportsData && transportsData?.name}`, true, cardData)
-
-  const handleClose = () => {
-    setShowModal(!showModal)
-  }
 
 
   return (

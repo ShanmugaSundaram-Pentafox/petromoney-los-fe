@@ -467,9 +467,14 @@ export default function VehicleInfo({ id, data, currentUser }) {
                               >
                                 Upload
                               </Button>
-                              <Button size="small" onClick={() => handleDocDelete(row, vehicleInfo)}>
-                                Delete
-                              </Button>
+                              {
+                                row.file_path && (
+                                  <Button size="small" onClick={() => handleDocDelete(row, vehicleInfo)}>
+                                    Delete
+                                  </Button>
+                                )
+
+                              }
                             </TableCell>
                           </TableRow>
                         ))

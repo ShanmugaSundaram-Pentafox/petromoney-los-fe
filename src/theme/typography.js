@@ -1,3 +1,4 @@
+import { colors } from '@material-ui/core';
 import palette from './palette';
 
 export default {
@@ -65,7 +66,7 @@ export default {
     lineHeight: '18px'
   },
   body2: {
-    color: palette.text.secondary,
+    color: colors.grey[900],
     fontSize: '12px',
     // letterSpacing: '-0.04px',
     lineHeight: '16px'

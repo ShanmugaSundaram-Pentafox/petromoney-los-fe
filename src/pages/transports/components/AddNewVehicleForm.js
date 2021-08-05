@@ -162,7 +162,7 @@ const AddNewVehicleForm = ({ data, id, number, trans_id, isEdit, isAdd, callback
                                                 {...inputProps}
                                                 name="tt_no"
                                                 labelText="Vehicle Number"
-                                                value={values.tt_no}
+                                                value={values.tt_no?.toUpperCase()}
                                                 readOnly={readOnly}
                                                 error={errors.tt_no}
                                                 helperText={errors.tt_no}

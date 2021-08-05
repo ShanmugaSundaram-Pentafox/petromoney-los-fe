@@ -348,6 +348,7 @@ const DealershipDetails = ({
   status,
   currentUser,
   editable,
+  
 }) => {
   const [values, setValues] = useState({});
   const [loanInfo, setLoanInfo] = useState({});
@@ -443,15 +444,7 @@ const DealershipDetails = ({
     updateLoanApprovalStatusById(values.id, loanData.id, reqBody)
       .then(res => {
         setLoanInfo(res.data);
-        setTimeout(() => {
-          getLoansByStatus('approved')
-            .then(data => null)
-            .catch(e => null)
-          getLoansByStatus('loan_approval')
-            .then(data => null)
-            .catch(e => null)
 
-        }, 2000)
         setApiStatus({ type: 'success', message: res.message || resMsg })
       })
       .catch(err => {

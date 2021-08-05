@@ -89,12 +89,6 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
         setDialogState({});
         console.log('Loan Status update error - ', err)
       })
-    getLoansByStatus('approved')
-      .then(data => null)
-      .catch(e => null)
-    getLoansByStatus('loan_approval')
-      .then(data => null)
-      .catch(e => null)
   }
 
   const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit)

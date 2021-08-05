@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Tooltip from '@material-ui/core/Tooltip';
 import { makeStyles, withStyles } from '@material-ui/styles';
 import Grid from '@material-ui/core/Grid';
@@ -92,6 +92,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
         checkedA: true,
         checkedB: true,
     });
+
     const [selectedDate, setSelectedDate] = useState(data.dob)
     const handleDateChange = (date) => {
         setSelectedDate(date)
@@ -594,7 +595,13 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                                 ) : null
                             }
                             {
-                                showUpload && <FileUpload handleSave={(value) => handleSave(value, fileType)} title='Upload Documents' open={showUpload} onCloseUploader={() => { setShowUpload(false) }} />
+                                showUpload && <FileUpload
+                                    handleSave={(value) => {
+                                        handleSave(value, fileType)
+                                        showUpload && setShowUpload(false);
+                                    }}
+                                    title='Upload Documents'
+                                    open={showUpload} onCloseUploader={() => { setShowUpload(false) }} />
                             }
                         </>
                     </Grid>

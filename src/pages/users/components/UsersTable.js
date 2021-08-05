@@ -98,9 +98,6 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
         setCellProps: () => ({
           align: 'center',
         }),
-        customFilter: (value) => {
-
-        },
         customBodyRender: (value) => {
           return (
             <div key={`vi-${value}`}>

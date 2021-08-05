@@ -1,18 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Tooltip from '@material-ui/core/Tooltip';
 import { makeStyles, withStyles } from '@material-ui/styles';
 import Grid from '@material-ui/core/Grid';
 import TextInput from '../../../components/TextInput/TextInput';
-import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
+// import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
 import Typography from '@material-ui/core/Typography'
 import Switch from '@material-ui/core/Switch';
 import Box from '@material-ui/core/Box';
+// import AttachmentOutlinedIcon from '@material-ui/icons/AttachmentOutlined';
+// import DeleteIcon from '@material-ui/icons/Delete';
+import UploadIcon from '@material-ui/icons/Backup';
+import { grey } from '@material-ui/core/colors';
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker
 } from '@material-ui/pickers';
+import FileUpload from '../../../components/FileUpload';
 
 
 const useStyles = makeStyles({
@@ -37,8 +42,26 @@ const useStyles = makeStyles({
         margin: '2px 4px',
         maxWidth: '100%',
     },
+
+    fileStyle: {
+        display: 'flex',
+        justifyContent: 'space-around',
+        marginTop: 12,
+    },
+    fileAttachement: {
+        display: 'flex',
+        // justifyContent:'center',
+        marginTop: 6
+    },
+    icon: {
+        marginRight: 4,
+        marginTop: 6,
+    },
+    typography: {
+        marginTop: 8,
+    },
     text: {
-        marginBottom:4,
+        marginBottom: 4,
         fontSize: 12,
     },
     title: {
@@ -58,16 +81,18 @@ export const ViewData = ({ title, value }) => {
 }
 
 
-const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState }) => {
+const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave }) => {
     const readOnly = readOnlyProps;
     const classes = useStyles();
     const [showUpload, setShowUpload] = useState(false);
+    const [fileType, setFileType] = useState()
     const [currentFileUpload, setCurrentFileUpload] = useState('');
     const [formValue, setformValue] = useState(values);
     const [state, setState] = React.useState({
         checkedA: true,
         checkedB: true,
     });
+
     const [selectedDate, setSelectedDate] = useState(data.dob)
     const handleDateChange = (date) => {
         setSelectedDate(date)
@@ -77,6 +102,10 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
         setState({ ...state, [event.target.name]: event.target.checked });
         handleState(state)
     };
+    const docUpload = (val) => {
+        setShowUpload(true)
+        setFileType(val)
+    }
 
     const gridItem = {
         md: 12,
@@ -119,28 +148,59 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
 
     const aadharBack = () => {
         return (
-            <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
-                href={data.aadhar_b_file_url} target="_blank" title={'Aadhar Back'}>{'Aadhar Back'}</a>
+            <div className={classes.fileStyle}>
+                <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#eeeeee', color: '#43a047' }}
+                    href={data.aadhar_b_file_url} target="_blank" title={'Aadhar Back'}>{'Back'}</a>
+                <Tooltip title={'Click to edit'}>
+                    <UploadIcon fontSize="small" padding={2} onClick={() => docUpload('Back')} />
+                </Tooltip>
+                {/* <Tooltip title={'Click to delete'}>
+                    <DeleteIcon fontSize="small" padding={2} />
+                </Tooltip> */}
+            </div>
         )
     }
     const profileAttachment = () => {
         return (
-            <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
-                href={data.profile_image_url} target="_blank" title={'Profile Attachment'}>{'Profile Attachment'}</a>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#eeeeee', color: '#43a047' }}
+                    href={data.profile_image_url} target="_blank" title={'Profile Attachment'}>{'Profile Attachment'}</a>
+                <Tooltip title={'Click to edit'}>
+                    <UploadIcon fontSize="small" style={{ color: grey[800] }} padding={2} onClick={() => docUpload('Profile')} />
+                </Tooltip>
+                {/* <Tooltip title={'Click to delete'}>
+                    <DeleteIcon fontSize="small" style={{ color: grey[800] }} padding={2} />
+                </Tooltip> */}
+            </div>
         )
     }
 
     const aadharFront = () => {
         return (
-            <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
-                href={data.aadhar_f_file_url} target="_blank" title={'Aadhar Front'}>{'Aadhar Front'}</a>
+            <div className={classes.fileStyle} >
+                <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#eeeeee', color: '#43a047' }}
+                    href={data.aadhar_f_file_url} target="_blank" title={'Aadhar Front'}>{'Front'}</a>
+                <Tooltip title={'Click to edit'}>
+                    <UploadIcon fontSize="small" style={{ color: grey[800] }} padding={2} onClick={() => docUpload('Front')} />
+                </Tooltip>
+                {/* <Tooltip title={'Click to delete'}>
+                    <DeleteIcon fontSize="small" style={{ color: grey[800] }} padding={2} />
+                </Tooltip> */}
+            </div>
         )
     }
-
     const panAttachment = () => {
         return (
-            <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede' }}
-                href={data.pan_file_url} target="_blank" title={'PAN Attachment'}>{'PAN Attachment'}</a>
+            <div className={classes.fileStyle}>
+                <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#eeeeee', color: '#43a047' }}
+                    href={data.pan_file_url} target="_blank" title={'PAN Attachment'}>{'PAN Attachment'}</a>
+                <Tooltip title={'Click to edit'}>
+                    <UploadIcon fontSize="small" padding={2} style={{ color: grey[800] }} onClick={() => docUpload('PAN')} />
+                </Tooltip>
+                {/* <Tooltip title={'Click to delete'}>
+                    <DeleteIcon fontSize="small" style={{ color: grey[800] }} padding={2} />
+                </Tooltip> */}
+            </div>
         )
     }
     return (
@@ -437,19 +497,26 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                                     </Grid>
                                 </Typography>
                             </Grid>
-                            <Grid {...gridItem} md={6}>
-                                <TextInput
-                                    label="Aadhar"
-                                    name="aadhar"
-                                    value={values.aadhar}
-                                    helperText={errors.aadhar}
-                                    readOnly={readOnly}
-                                    error={errors.aadhar}
-                                    onChange={onChange}
-                                    InputLabelProps={{ shrink: true }}
-
-                                >
-                                </TextInput>
+                            <Grid {...gridItem} md={12} >
+                                <Typography variant="title">Documents </Typography>
+                            </Grid>
+                            <Grid {...gridItem} md={3}>
+                                <Typography style={{ display: 'contents' }} variant="title" >Profile</Typography>
+                            </Grid>
+                            <Grid {...gridItem} md={5}>
+                                <>
+                                    {
+                                        data.profile_image_url ? profileAttachment() :
+                                            <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }} onClick={() => docUpload('Profile')}>
+                                                <Tooltip title={'Click to attach Profile'}>
+                                                    <>
+                                                        <UploadIcon fontSize='small' />
+                                                        <Typography style={{ marginLeft: 12 }}>Attach profile</Typography>
+                                                    </>
+                                                </Tooltip>
+                                            </div>
+                                    }
+                                </>
                             </Grid>
                             <Grid {...gridItem} md={6}>
                                 <TextInput
@@ -465,139 +532,77 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                                 >
                                 </TextInput>
                             </Grid>
-                            <Grid md={12} style={{ marginBottom: '16px' }}>
-                                <Typography variant="title">Documents </Typography>
-                            </Grid>
-                            <Grid {...gridItem} md={12}>
-                                <Typography variant="subtitle2" component="subtitle2">
-                                    Photo : {(readOnly) ?
-                                        <>
-                                            {data.pan_file_url ?
-                                                profileAttachment()
-                                                : <Typography variant="subtitle2" component="subtitle2">
-                                                    <Tooltip title={'Click Edit and attach'}>
-                                                        <AttachFileRoundedIcon disabled={readOnly} />
-                                                    </Tooltip> Attach PAN
-                                                </Typography>}
-                                        </> :
-                                        <>
-                                            {data.profile_image_url ? profileAttachment() :
-                                                <>
-                                                    <TextInput
-                                                        type="file"
-                                                        accept="image/*"
-                                                        name="pan_file_url"
-                                                        value={data.profile_image_url}
-                                                        onChange={(event) => {
-                                                            values[event.target.name] = event.currentTarget.files[0];
-                                                        }}
-                                                        InputLabelProps={{ shrink: true }}
-                                                    ></TextInput>
-                                                </>
-                                            }
-                                        </>
-                                    }
-                                </Typography>
-                            </Grid>
-                            <Grid {...gridItem} md={12}>
-                                <Typography variant="subtitle2" component="subtitle2">
-                                    PAN : {(readOnly) ?
-                                        <>
-                                            {data.pan_file_url ?
-                                                panAttachment()
-                                                : <Typography variant="subtitle2" component="subtitle2">
-                                                    <Tooltip title={'Click Edit and attach'}>
-                                                        <AttachFileRoundedIcon disabled={readOnly} />
-                                                    </Tooltip> Attach PAN
-                                                </Typography>}
-                                        </> :
-                                        <>
-                                            {data.pan_file_url ? panAttachment() :
-                                                <>
-                                                    <TextInput
-                                                        type="file"
-                                                        accept="image/*"
-                                                        name="pan_file_url"
-                                                        value={data.pan_file_url}
-                                                        onChange={(event) => {
-                                                            values[event.target.name] = event.currentTarget.files[0];
-                                                        }}
-                                                        InputLabelProps={{ shrink: true }}
-                                                    ></TextInput>
-                                                </>
-                                            }
-                                        </>
-                                    }
-                                </Typography>
-                            </Grid>
-                            <Grid md={12} style={{ marginBottom: '8px' }}>
-                                <Typography variant="subtitle1">Aadhar </Typography>
-                            </Grid>
+                            {
+                                values.pan ? (
+                                    <Grid {...gridItem} md={6}>
+                                        {data.pan_file_url ? panAttachment() :
+                                            <div className={classes.fileAttachement} onClick={() => docUpload('PAN')}>
+                                                <Tooltip title={'Click to attach PAN'}>
+                                                    <>
+                                                        <UploadIcon className={classes.icon} disabled={readOnly} />
+                                                    </>
+                                                </Tooltip>
+                                            </div>
+                                        }
+                                    </Grid>
+                                ) : null
+                            }
+
                             <Grid {...gridItem} md={6}>
-                                <Typography variant="subtitle2" component="subtitle2">
-                                    Front: {(readOnly) ?
-                                        <>
-                                            {data.aadhar_f_file_url ?
-                                                aadharFront()
-                                                : <Typography variant="subtitle2" component="subtitle2">
-                                                    <Tooltip title={'Click Edit and attach'}>
-                                                        <AttachFileRoundedIcon disabled={readOnly} />
-                                                    </Tooltip> Front
-                                                </Typography>}
-                                        </> :
-                                        <>
+                                <TextInput
+                                    label="Aadhar"
+                                    name="aadhar"
+                                    value={values.aadhar}
+                                    helperText={errors.aadhar}
+                                    readOnly={readOnly}
+                                    error={errors.aadhar}
+                                    onChange={onChange}
+                                    InputLabelProps={{ shrink: true }}
+
+                                >
+                                </TextInput>
+                            </Grid>
+                            {
+                                values.aadhar ? (
+                                    <>
+                                        <Grid {...gridItem} md={3}>
                                             {data.aadhar_f_file_url ? aadharFront() :
-                                                <>
-                                                    <TextInput
-                                                        type="file"
-                                                        accept="image/*"
-                                                        name="aadhar_f_file_url"
-                                                        value={data.aadhar_f_file_url}
-                                                        onChange={(event) => {
-                                                            values[event.target.name] = event.currentTarget.files[0];
-                                                        }}
-                                                        InputLabelProps={{ shrink: true }}
-                                                    ></TextInput>
-                                                </>
+                                                <div className={classes.fileAttachement} onClick={() => docUpload('Front')}>
+                                                    <Tooltip title={'Click to attach aadhar front'}>
+                                                        <>
+                                                            <UploadIcon className={classes.icon} disabled={readOnly} />
+                                                            <Typography className={classes.typography}>Front</Typography>
+                                                        </>
+                                                    </Tooltip>
+                                                </div>
                                             }
-                                        </>
-                                    }
-                                </Typography>
-                            </Grid>
-                            <Grid {...gridItem} md={6}>
-                                <Typography variant="subtitle2" component="subtitle2">
-                                    Back: {(readOnly) ?
-                                        <>
-                                            {data.aadhar_b_file_url ?
-                                                aadharBack()
-                                                :
-                                                <Typography variant="subtitle2" component="subtitle2">
-                                                    <Tooltip title={'Click Edit and attach'}>
-                                                        <AttachFileRoundedIcon disabled={readOnly} />
-                                                    </Tooltip> Back
-                                                </Typography>
-                                            }
-                                        </> :
-                                        <>
+                                        </Grid>
+                                        <Grid {...gridItem} md={3}>
                                             {data.aadhar_b_file_url ?
                                                 aadharBack() :
-                                                <>
-                                                    <TextInput
-                                                        type="file"
-                                                        accept="image/*"
-                                                        name="aadhar_b_file_url"
-                                                        value={data.aadhar_b_file_url}
-                                                        onChange={(event) => {
-                                                            values[event.target.name] = event.currentTarget.files[0];
-                                                        }}
-                                                        InputLabelProps={{ shrink: true }}
-                                                    ></TextInput>
-                                                </>
+                                                <div className={classes.fileAttachement} onClick={() => docUpload('Back')}>
+                                                    <Tooltip title={'Click to attach aadhar back'}>
+                                                        <>
+                                                            <UploadIcon className={classes.icon} disabled={readOnly} />
+                                                            <Typography className={classes.typography}>Back</Typography>
+                                                        </>
+                                                    </Tooltip>
+                                                </div>
                                             }
-                                        </>
-                                    }
-                                </Typography>
-                            </Grid>
+                                        </Grid>
+                                    </>
+
+                                ) : null
+                            }
+                            {
+                                showUpload && <FileUpload
+                                    handleSave={(value) => {
+                                        handleSave(value, fileType)
+                                        showUpload && setShowUpload(false);
+                                    }}
+                                    title='Upload Documents'
+                                    open={showUpload} onCloseUploader={() => { setShowUpload(false) }} />
+                            }
                         </>
                     </Grid>
                 )

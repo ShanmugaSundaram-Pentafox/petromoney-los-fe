@@ -59,8 +59,8 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const AddNewVehicleForm = ({ data, id, number, trans_id, isEdit, callback }) => {
-    const [readOnly, setReadOnly] = useState(isEdit === 'Add' ? true : false);
+const AddNewVehicleForm = ({ data, id, number, trans_id, isEdit, isAdd, callback }) => {
+    const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
     const { enqueueSnackbar } = useSnackbar();
     const [loading, setLoading] = useState(false)
     const classes = useStyles()
@@ -78,7 +78,7 @@ const AddNewVehicleForm = ({ data, id, number, trans_id, isEdit, callback }) => 
             tt_no: Yup.string().required('Please enter vehicle number'),
         }),
         onSubmit: formData => {
-            if (isEdit === "EDIT") {
+            if (isAdd === 'Edit') {
                 updateVehicle(formData, id, trans_id)
                     .then(message => {
                         enqueueSnackbar(message, {
@@ -162,7 +162,7 @@ const AddNewVehicleForm = ({ data, id, number, trans_id, isEdit, callback }) => 
                                                 {...inputProps}
                                                 name="tt_no"
                                                 labelText="Vehicle Number"
-                                                value={values.tt_no}
+                                                value={values.tt_no?.toUpperCase()}
                                                 readOnly={readOnly}
                                                 error={errors.tt_no}
                                                 helperText={errors.tt_no}

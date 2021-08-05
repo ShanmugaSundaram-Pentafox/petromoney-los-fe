@@ -595,7 +595,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                 helperText={errors.pincode}
                                             />
                                         </Grid>
-                                        <Grid md={12} style={{ margin: '16px 8px' }}>
+                                        <Grid md={12} item>
                                             <Typography variant="subtitle1" component="subtitle1" >Documents</Typography>
                                         </Grid>
                                         <Grid item md={6}>

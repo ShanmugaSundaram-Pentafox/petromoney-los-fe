@@ -25,7 +25,7 @@ import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { selectCurrentUser } from '../../../store/user/user.selector';
 import { createStructuredSelector } from 'reselect';
-import { getLoanById, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
+import { getLoanById, getLoansByStatus, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
 import Alert from '@material-ui/lab/Alert';
 import DispApprovedDataTable from './DispApprovedDataTable';
 import apiCall from '../../../utils/api.util';
@@ -75,9 +75,9 @@ const useStyles = makeStyles(theme => ({
     overflow: 'auto'
   },
   wrapperTitle: {
-    display:'flex',
-    justifyContent:'space-between',
-    marginRight:24,
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginRight: 24,
   },
   title: {
     // position: 'absolute',
@@ -88,8 +88,8 @@ const useStyles = makeStyles(theme => ({
     borderBottomRightRadius: 12,
     boxShadow: '0px 0px 4px #8d8d8d',
   },
-  closeIcon:{
-    marginTop:8,
+  closeIcon: {
+    marginTop: 8,
   },
   gridItemStyle: {
     // paddingTop: theme.spacing(1),
@@ -159,6 +159,7 @@ const LoanInfo = ({
   const [showRemarksModal, setShowRemarksModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState({});
 
+
   useEffect(() => {
     apiCall(`business/products`)
       .then(res => {
@@ -174,7 +175,6 @@ const LoanInfo = ({
         console.log(err)
       })
   }, [row.product_id]);
-
   return (
     <>
       <LoanInfoWrapper>
@@ -212,7 +212,7 @@ const LoanInfo = ({
                     color: '#333'
                   }}
                 >
-                  <option value="">Choose Loan type</option>
+                  {/* <option value="">Choose Loan type</option> */}
                   {
                     products.map(item => <option value={item.product_id}>{item.product_name}</option>)
                   }
@@ -348,6 +348,7 @@ const DealershipDetails = ({
   status,
   currentUser,
   editable,
+  
 }) => {
   const [values, setValues] = useState({});
   const [loanInfo, setLoanInfo] = useState({});
@@ -419,6 +420,7 @@ const DealershipDetails = ({
       if (status === "loan_approval") {
         resMsg = 'Successfully Approved Loan Request';
         reqBody.amount_approved = newLoanInfo.amount_approved;
+        reqBody.remarks = newLoanInfo.remarks;
       } else if (status === "disbursement_approval") {
         reqBody.status = 'disbursement_approved';
         resMsg = 'Successfully Approved Loan for Disbursement';
@@ -442,6 +444,7 @@ const DealershipDetails = ({
     updateLoanApprovalStatusById(values.id, loanData.id, reqBody)
       .then(res => {
         setLoanInfo(res.data);
+
         setApiStatus({ type: 'success', message: res.message || resMsg })
       })
       .catch(err => {
@@ -489,8 +492,6 @@ const DealershipDetails = ({
         console.log(e);
       })
   }
-
-
   return (
     <div className={classes.wrapper}>
       <div className={classes.wrapperTitle}>
@@ -716,7 +717,7 @@ const DealershipDetails = ({
                 </Grid>
                 <Grid {...gridProps} style={{ position: 'relative' }}>
                   Remarks(Disbursement)
-                    {/* <Typography variant="p" component={'p'}>
+                  {/* <Typography variant="p" component={'p'}>
                     {loanInfo.disbursement_approval_remarks}
                   </Typography> */}
                   <TextInput

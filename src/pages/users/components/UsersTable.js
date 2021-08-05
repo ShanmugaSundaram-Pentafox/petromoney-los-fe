@@ -4,7 +4,7 @@ import MUIDataTable from "mui-datatables"
 import Typography from "@material-ui/core/Typography";
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import { green, grey } from '@material-ui/core/colors';
-import { Drawer } from "@material-ui/core";
+import { Drawer, Tooltip } from "@material-ui/core";
 import RightDrawer from './RightDrawer'
 
 
@@ -32,7 +32,7 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
   const classes = useStyles()
   const [rowData, setRowData] = useState({});
   const [openModal, setOpenModal] = useState(false)
-  
+
   const onRowClick = (id, data) => {
     setRowData(data)
     setOpenModal(true)
@@ -102,9 +102,16 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
           return (
             <div key={`vi-${value}`}>
               {
-                value === 'Active' ? <CheckCircleTwoToneIcon style={{ color: green[200] }} /> : <CheckCircleTwoToneIcon style={{ color: grey[500] }} />
+                value === 'Active' ? (
+                  <Tooltip title='Active'>
+                    <CheckCircleTwoToneIcon style={{ color: green[200] }} />
+                  </Tooltip>
+                ) : (
+                  <Tooltip title='Inactive'>
+                    <CheckCircleTwoToneIcon style={{ color: grey[500] }} />
+                  </Tooltip>
+                )
               }
-
               {/* <div>
                   <Button onClick={() => handleClickOpen(value)}>
                     <Tooltip title="deactivate" aria-label="add">

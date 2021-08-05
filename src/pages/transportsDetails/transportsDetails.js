@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { makeStyles } from "@material-ui/styles"
 import Grid from "@material-ui/core/Grid"
 import Button from "@material-ui/core/Button"
@@ -27,6 +27,7 @@ const TransportsDetails = ({ currentUser, match }) => {
   const [transportsData, setTransportsData] = useState()
   const [vehicleData, setVehicleData] = useState()
   const [showModal, setShowModal] = useState(false)
+  const [formType, setFormType] = useState('');
 
   const classes = useStyles()
   const {
@@ -47,7 +48,6 @@ const TransportsDetails = ({ currentUser, match }) => {
 
     getVehicleInfoFromID(id)
       .then((data) => {
-        // console.log(data)
         setVehicleData(data)
       })
       .catch((e) => null)
@@ -110,7 +110,10 @@ const TransportsDetails = ({ currentUser, match }) => {
             color="primary"
             variant="contained"
             className={classes.btn}
-            onClick={() => setOpenModal(true)}
+            onClick={() => {
+              setOpenModal(true)
+              setFormType('Add')
+            }}
           >
             Add Vehicle
           </Button>
@@ -121,20 +124,13 @@ const TransportsDetails = ({ currentUser, match }) => {
           )}
         </Grid>
       </Grid>
-      {/* <FormDialog
-        title="Add Vehicle"
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-      >
-        <AddNewVehicleForm data={transportsData} />
-      </FormDialog> */}
       <Drawer
         anchor="right"
         open={openModal}
         onClose={() => setOpenModal(false)}
         variant="temporary"
       >
-        <AddNewVehicleForm callback={() => setOpenModal(false)} data={transportsData} isEdit='Edit' id={id} />
+        <AddNewVehicleForm callback={() => setOpenModal(false)} data={transportsData} isAdd={formType} id={id} />
       </Drawer>
     </>
   )

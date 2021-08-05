@@ -29,21 +29,10 @@ export const getTransporterInfoFromID = (id) => {
     apiCall(`${URL.vehicleInfo}/${id}`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          const result = data[0].map(item => ({
-            ...item,
-            pan: item?.pan ? decrypt(item.pan) : item.pan,
-            aadhar: item?.aadhar ? decrypt(item.aadhar) : item.aadhar,
-          }));
-
-          resolve(result);
+          resolve(data[0])
         } else {
-          reject(message);
+          reject(message)
         }
-        // if (status === "SUCCESS") {
-        //   resolve(data[0])
-        // } else {
-        //   reject(message)
-        // }
       })
       .catch((e) => {
         reject(e.message)

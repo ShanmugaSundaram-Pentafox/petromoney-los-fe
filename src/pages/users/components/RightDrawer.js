@@ -256,7 +256,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
 
     }),
     onSubmit: values => {
-      const d = { ...values };
+      const { status, ...d } = values;
       d.first_name = d.first_name.toUpperCase()
       d.last_name = d.last_name.toUpperCase()
 
@@ -336,6 +336,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                             {...inputProps}
                             name="first_name"
                             labelText="First Name"
+                            disabled={isSubmitting}
                             value={values.first_name?.toUpperCase()}
                             error={errors.first_name}
                             helperText={errors.first_name}
@@ -346,6 +347,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                             {...inputProps}
                             name="last_name"
                             labelText="Last Name"
+                            disabled={isSubmitting}
                             value={values.last_name?.toUpperCase()}
                             error={errors.last_name}
                             helperText={errors.last_name}
@@ -357,6 +359,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                             type="mobile"
                             name="mobile"
                             labelText="Mobile"
+                            disabled={isSubmitting}
                             value={values.mobile}
                             error={errors.mobile}
                             helperText={errors.mobile}
@@ -368,6 +371,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                             type="email"
                             name="email"
                             labelText="Email"
+                            disabled={isSubmitting}
                             value={values.email}
                             error={errors.email}
                             helperText={errors.email}
@@ -379,6 +383,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                             select
                             labelText="User Role"
                             name="role_id"
+                            disabled={isSubmitting}
                             value={values.role_id}
                             error={errors.role_id}
                             helperText={errors.role_id}
@@ -421,7 +426,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                   />
                   <div className={classes.passwordWrapper}>
                     <Button variant='outlined' onClick={() => setEditProfile(false)} style={{ marginRight: 4 }}>Cancel</Button>
-                    <Button variant='contained' color="primary" onClick={() => { handleSubmit(); setSubmitType('Profile') }}>Save</Button>
+                    <Button variant='contained' color="primary" onClick={() => { handleSubmit(); setSubmitType('Profile') }} disabled={isSubmitting}>Save</Button>
                   </div>
                 </>
               )
@@ -489,7 +494,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                   color="primary"
                   onClick={() => handleClickOpen(data.id)}
                 >
-                  Delete
+                  Deactivate user
                 </Button>
               </div>
             ) : (

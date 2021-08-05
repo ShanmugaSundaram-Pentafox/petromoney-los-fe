@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
 const PasswordForm = ({ data, callback }) => {
     const { enqueueSnackbar } = useSnackbar();
     const classes = useStyles();
-    const { values, errors, handleChange, handleSubmit, setValues, isSubmitting, setSubmitting, setFieldValue } = useFormik({
+    const { values, errors, handleChange, handleSubmit, setValues, isSubmitting, setFieldValue } = useFormik({
         initialValues: {},
         validateOnChange: false,
         validateOnBlur: true,
@@ -51,7 +51,7 @@ const PasswordForm = ({ data, callback }) => {
             password: Yup.string().required('Enter the Password'),
             confirm_password: Yup.string().required('Enter the Password'),
         }),
-        onSubmit: values => {
+        onSubmit: (values, { setSubmitting }) => {
             const d = { ...values };
             d.password = (d.password + '').trim();
             d.confirm_password = (d.confirm_password + '').trim();
@@ -73,6 +73,7 @@ const PasswordForm = ({ data, callback }) => {
                     })
                     .catch(err => {
                         console.log(err)
+                        setSubmitting(false)
                     })
 
             } else {
@@ -85,6 +86,7 @@ const PasswordForm = ({ data, callback }) => {
                         variant: 'warning',
                     }
                     )
+                    setSubmitting(false)
                 }
                 else {
                     enqueueSnackbar('Please enter valid password', {
@@ -95,6 +97,7 @@ const PasswordForm = ({ data, callback }) => {
                         variant: 'warning',
                     }
                     )
+                    setSubmitting(false)
 
                 }
 
@@ -116,6 +119,7 @@ const PasswordForm = ({ data, callback }) => {
                             name="password"
                             label="Enter New Password"
                             type="password"
+                            disabled={isSubmitting}
                             value={values.password}
                             className={classes.textFieldStyle}
                             error={errors.password}
@@ -127,6 +131,7 @@ const PasswordForm = ({ data, callback }) => {
                             label="Confirm New Password"
                             type="password"
                             name="confirm_password"
+                            disabled={isSubmitting}
                             value={values.confirm_password}
                             className={classes.textFieldStyle}
                             error={errors.confirm_password}
@@ -136,7 +141,7 @@ const PasswordForm = ({ data, callback }) => {
 
                         <div className={classes.passwordWrapper}>
                             <Button variant='outlined' onClick={callback} style={{ marginRight: 4 }}>Cancel</Button>
-                            <Button variant='contained' color="primary" onClick={() => { handleSubmit() }}>Save</Button>
+                            <Button variant='contained' color="primary" onClick={() => { handleSubmit() }} disabled={isSubmitting}>Save</Button>
                         </div>
                     </Box>
                 }

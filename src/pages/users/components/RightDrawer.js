@@ -20,6 +20,8 @@ import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded'
 import MapRegion from './MapRegion';
 // import Skeleton from '@material-ui/lab/Skeleton';
 import Grid from '@material-ui/core/Grid';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import UserCan from '../../../components/UserCan/UserCan';
 import CloseIcon from '@material-ui/icons/Close';
 import { rulesList } from '../../../config/userRules';
@@ -31,11 +33,12 @@ import { deleteUser, getAllUserRoles } from '../../../services/users.service';
 import TextInput from '../../../components/TextInput/TextInput';
 import { useMount } from 'react-use';
 import { useSnackbar } from 'notistack'
+import PasswordForm from './PasswordForm';
 
 
 
 const useStyles = makeStyles(theme => ({
-  
+
   sidePanelFormWrapper: {
     position: 'relative',
     display: 'flex',
@@ -57,9 +60,7 @@ const useStyles = makeStyles(theme => ({
   },
 
   box: {
-    padding: 2,
     borderColor: 'grey',
-    margin: 2,
 
   },
   button: {
@@ -79,20 +80,27 @@ const useStyles = makeStyles(theme => ({
     padding: '12px 16px'
   },
   readOnlyWrapper: {
-    margin: '10px 0px 4px 0px',
+    marginTop: 10,
     maxWidth: '100%',
   },
   passwordWrapper: {
-    margin: '30px 0px 4px 0px',
+    marginTop: 10,
+    marginBottom: 10,
     display: 'flex',
-    justifyContent: 'space-between'
+    justifyContent: 'flex-end'
+  },
+  passwordSection: {
+    marginTop: 10,
+    display: 'flex',
+    justifyContent: 'flex-start'
+
+
   },
   stepperRoot: {
     padding: 16,
     paddingTop: 8
   },
   details: {
-    padding: 6,
     borderColor: 'grey',
     minWidth: 80,
     height: 60,
@@ -113,7 +121,7 @@ const useStyles = makeStyles(theme => ({
     display: 'block',
 
     '& .MuiInputLabel-formControl': {
-      fontSize: '16px',
+      fontSize: '12px',
       lineHeight: '140%',
       color: '#909191',
       top: '-6px',
@@ -123,7 +131,7 @@ const useStyles = makeStyles(theme => ({
     },
     '& .MuiInputBase-input': {
       fontWeight: '500',
-      fontSize: '16px',
+      fontSize: '12px',
       lineHeight: '140%',
       width: '100%',
     }
@@ -139,7 +147,17 @@ const useStyles = makeStyles(theme => ({
     }
   }
 }));
-
+export const ViewData = ({ title, value }) => {
+  const classes = useStyles()
+  return (
+    <Box className={classes.details}>
+      <div>
+        <p className={classes.title}>{title}</p>
+        <strong className={classes.text}>{value ? value : '-'}</strong>
+      </div>
+    </Box >
+  )
+}
 
 export default function TemporaryDrawer({ data, currentUser, callback }) {
   const [open, setOpen] = useState(false);
@@ -147,21 +165,11 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
   const [loading, setLoading] = useState(false);
   // const [showUserEditDrawer, setShowUserEditDrawer] = useState(false);
   const [roleList, setRoleList] = useState([])
-  const [password, setPassword] = useState("")
-  const [userFirstName, setUserFirstName] = useState(data.first_name)
-  const [userLastName, setUserLastName] = useState(data.first_name)
-  const [userMobile, setUserMobile] = useState(data.mobile)
-  const [userRole, setUserRole] = useState(data.role_id)
-  const [userMail, setUserMail] = useState(data.email)
   const [readOnly, setReadOnly] = useState(true)
   const [editProfile, setEditProfile] = useState(false)
   const [editPassword, setEditPassword] = useState(false)
   const [apiStatus, setApiStatus] = useState({});
-  const [userId, setuserId] = useState({});
-  const [confirmDelete, setConfirmDelete] = useState({});
-  const [confirmPassword, SetConfirmPassword] = useState("")
-  const [passwordSuccess, setPasswordSuccess] = useState(false)
-  const [profileSuccess, setProfileSuccess] = useState(false)
+  const [submitType, setSubmitType] = useState()
   const { enqueueSnackbar } = useSnackbar();
 
 
@@ -175,21 +183,22 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
       })
 
   })
-
-  const handleClick = () => {
-    setOpen(true);
-  };
   const handleClickOpen = (value) => {
-    setuserId(value);
     setOpen(true);
   };
   const ActivateUser = (status) => {
-    updateUserDetails(userFirstName, userLastName, userMobile, userMail, userRole, data.id, status)
-      .then(() => {
-        setProfileSuccess(true);
+    updateUserDetails({ status }, data.id)
+      .then((res) => {
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        }
+        )
         setTimeout(() => {
           window.location.reload(false);
-          setProfileSuccess(false)
           setReadOnly(true)
         }, 2000)
       })
@@ -204,10 +213,14 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
     }
     setOpen(false);
   };
-  const saveProfile = () => {
-    updateUserDetails(userFirstName, userLastName, userMobile, userMail, userRole, data.id)
-      .then(res => {
-        enqueueSnackbar(res, {
+
+  const deleteUserRecord = (userId) => {
+    setOpen(false);
+    setLoading(true);
+    deleteUser(userId)
+      .then(({ message }) => {
+        setLoading(false);
+        enqueueSnackbar(message, {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',
@@ -216,73 +229,64 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
         }
         )
         setTimeout(() => {
-          window.location.reload(false);
-          // setProfileSuccess(false)
-          setReadOnly(true)
-        }, 1500)
-
-      })
-
-      .catch(err => {
-        console.log(err)
-      })
-  }
-
-  const checkPassword = () => {
-    if (password === confirmPassword && password !== null) {
-      updatePassword(password, data.mobile, userId)
-        .then(res => {
-          enqueueSnackbar(res, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'success',
-          }
-          )
-          setTimeout(() => {
-            setPassword("")
-            SetConfirmPassword("")
-            setPasswordSuccess(false)
-          }, 2000)
-        })
-        .catch(err => {
-          console.log(err)
-        })
-
-    } else {
-      console.log("ASDA")
-      handleClick({ vertical: 'top', horizontal: 'center' })
-    }
-  }
-  const deleteUserRecord = (userId) => {
-    setOpen(false);
-    setLoading(true);
-    deleteUser(userId)
-      .then(({ message }) => {
-        setLoading(false);
-        setApiStatus({ status: 'success', message });
-        setTimeout(() => {
-          setConfirmDelete(userId)
+          // setConfirmDelete(userId)
           window.location.reload()
         }, 700);
       })
       .catch(e => {
         setLoading(false);
-        setApiStatus({ status: 'error', message: e });
         logger(e);
       })
   }
-  // const toggleDrawer = () => (event) => {
-  //   if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-  //     return;
-  //   }
-  //   setShowUserEditDrawer(st => !st);
-  // };
-  const fieldProps = {
+
+
+
+  const { values, errors, handleChange, handleSubmit, setValues, isSubmitting, setSubmitting, setFieldValue } = useFormik({
+    initialValues: {
+      ...data,
+    },
+    validateOnChange: false,
+    validateOnBlur: true,
+    validationSchema: Yup.object().shape({
+      role_id: Yup.number().required('Choose Proper User Role'),
+      first_name: Yup.string().required('Enter first name'),
+      last_name: Yup.string().required('Enter last name'),
+      mobile: Yup.number().min(10, 'Enter valid mobile number').required('Enter Mobile number'),
+      email: Yup.string().email("Enter valid email"),
+
+    }),
+    onSubmit: values => {
+      const d = { ...values };
+      d.first_name = d.first_name.toUpperCase()
+      d.last_name = d.last_name.toUpperCase()
+
+      if (submitType === 'Profile') {
+        updateUserDetails(d, data.id)
+          .then(res => {
+            enqueueSnackbar(res, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'success',
+            }
+            )
+            setTimeout(() => {
+              window.location.reload(false);
+              setReadOnly(true)
+            }, 1500)
+
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      }
+    }
+  });
+  const inputProps = {
     direction: "column",
     alignTop: true,
-    readOnly,
+    onChange: handleChange,
   }
   return (
     <div className={classes.sidePanelFormWrapper}>
@@ -296,81 +300,29 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
             !editProfile && (
               <Box className={classes.button}>
                 {/* <Button variant="contained" className={classes.btnStyle} color="primary" size="small" onClick={() => handleClickOpen(data.id)}>Delete</Button> */}
-                <Button variant="contained" color="primary" size="small" onClick={() => { setReadOnly(false); setEditProfile(true) }}>Edit</Button>
+                <Button variant="contained" color="primary" size="small" onClick={() => { setReadOnly(false); setEditProfile(true); setEditPassword(false) }}>Edit</Button>
               </Box>
             )
 
           }
-          {/* {
-            profileSuccess && (
-              <Box pt={2} pl={3} color="success.main" bgcolor="#f9f9f9" borderRadius={4} className={classes.drawerStyle} display="flex" justifyContent="space-between" alignItems="center">
-                Profile Updated Successfully...
-              </Box>
-            )
-          }
-          {
-            passwordSuccess && (
-              <Box pt={2} pl={3} color="success.main" bgcolor="#f9f9f9" borderRadius={4} className={classes.drawerStyle} display="flex" justifyContent="space-between" alignItems="center">
-                Password Updated Successfully...
-              </Box>
-            )
-          }
-          {
-            profileSuccess && (
-              <Box pt={2} pl={3} color="success.main" bgcolor="#f9f9f9" borderRadius={4} className={classes.drawerStyle} display="flex" justifyContent="space-between" alignItems="center">
-                Profile Updated Successfully...
-              </Box>
-            )
-          }
-          {
-            passwordSuccess && (
-              <Box pt={2} pl={3} color="success.main" bgcolor="#f9f9f9" borderRadius={4} className={classes.drawerStyle} display="flex" justifyContent="space-between" alignItems="center">
-                Password Updated Successfully...
-              </Box>
-            )
-          } */}
           <>
             {
               !editProfile ? (
                 <>
-                  <Grid container spacing={2} className={classes.readOnlyWrapper}>
-                    <Grid item md={6}>
-                      <Box className={classes.box} >
-                        <Box className={classes.details}>
-                          <div>
-                            <p className={classes.title}>ID</p>
-                            <strong className={classes.text}>{data.id}</strong>
-                          </div>
-                        </Box>
-                        <Box className={classes.details}>
-                          <div>
-                            <p className={classes.title}>Role</p>
-                            <strong className={classes.text}>{data.role_name}</strong>
-                          </div>
-                        </Box>
-                        <Box className={classes.details}>
-                          <div>
-                            <p className={classes.title}>Email</p>
-                            <strong className={classes.text}>{data.email}</strong>
-                          </div>
-                        </Box>
-                      </Box>
+                  <Grid container className={classes.readOnlyWrapper}>
+                    <Grid md={6}>
+                      <div className={classes.box} >
+                        <ViewData title='ID' value={data.id} />
+                        <ViewData title='Role' value={data.role_name} />
+                        <ViewData title='Email' value={data.email} />
+                      </div>
                     </Grid>
-                    <Grid item md={6}>
-                      <Box className={classes.details}>
-                        <div>
-                          <p className={classes.title}>Name</p>
-                          <strong className={classes.text}>{data.first_name}</strong>
-                        </div>
-                      </Box>
-                      <Box className={classes.box} >
-                        <Box className={classes.details}>
-                          <div>
-                            <p className={classes.title}>Mobile</p>
-                            <strong className={classes.text}>{data.mobile}</strong>
-                          </div>
-                        </Box>
-                      </Box>
+                    <Grid md={6}>
+                      <div className={classes.box} >
+                        <ViewData title='Name' value={data.first_name.toUpperCase()} />
+                        <ViewData title='Mobile' value={data.mobile} />
+                      </div>
+
                     </Grid>
                   </Grid>
                 </>
@@ -381,30 +333,66 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                       <Grid container spacing={3}>
                         <Grid item md={6}>
                           <TextInput
-                            label="First Name"
-                            defaultValue={data.first_name}
-                            InputLabelProps={{ shrink: true }}
-                            onChange={e => setUserFirstName(e.target.value)}
+                            {...inputProps}
+                            name="first_name"
+                            labelText="First Name"
+                            value={values.first_name?.toUpperCase()}
+                            error={errors.first_name}
+                            helperText={errors.first_name}
                           />
                         </Grid>
                         <Grid item md={6}>
                           <TextInput
-                            label="Last Name"
-                            defaultValue={data.last_name}
-                            InputLabelProps={{ shrink: true }}
-                            onChange={e => setUserLastName(e.target.value)}
+                            {...inputProps}
+                            name="last_name"
+                            labelText="Last Name"
+                            value={values.last_name?.toUpperCase()}
+                            error={errors.last_name}
+                            helperText={errors.last_name}
                           />
                         </Grid>
-
                         <Grid item md={6}>
                           <TextInput
-                            label="Mobile"
-                            defaultValue={data.mobile}
-                            InputLabelProps={{ shrink: true }}
-                            onChange={e => setUserMobile(e.target.value)}
+                            {...inputProps}
+                            type="mobile"
+                            name="mobile"
+                            labelText="Mobile"
+                            value={values.mobile}
+                            error={errors.mobile}
+                            helperText={errors.mobile}
                           />
                         </Grid>
                         <Grid item md={6}>
+                          <TextInput
+                            {...inputProps}
+                            type="email"
+                            name="email"
+                            labelText="Email"
+                            value={values.email}
+                            error={errors.email}
+                            helperText={errors.email}
+                          />
+                        </Grid>
+                        <Grid item md={12}>
+                          <TextInput
+                            {...inputProps}
+                            select
+                            labelText="User Role"
+                            name="role_id"
+                            value={values.role_id}
+                            error={errors.role_id}
+                            helperText={errors.role_id}
+                            SelectProps={{
+                              native: true,
+                            }}
+                          >
+                            <option value="">Choose user role</option>
+                            {
+                              roleList.map(userRole => <option key={userRole.role_name} value={userRole.id}>({userRole.role_name}) - {userRole.name}</option>)
+                            }
+                          </TextInput>
+                        </Grid>
+                        {/* <Grid item md={6}>
                           <TextInput
                             select
                             label="Role"
@@ -416,19 +404,13 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                               roleList.map(roleList => <option key={roleList.role_name} value={roleList.id}>({roleList.role_name}) - {roleList.name}</option>)
                             }
                           </TextInput>
-                        </Grid>
-                        <Grid item md={6}>
-                          <TextInput
-                            label="Email"
-                            defaultValue={data.email}
-                            InputLabelProps={{ shrink: true }}
-                            onChange={e => setUserMail(e.target.value)}
-                          />
-                        </Grid>
+                        </Grid> */}
                       </Grid>
                     </form>
                   </Box>
-                  <Divider />
+                  {
+                    !editProfile && <Divider />
+                  }
                   <UserCan
                     role={currentUser.role_name}
                     perform={rulesList.region_map}
@@ -438,58 +420,26 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                     no={() => null}
                   />
                   <div className={classes.passwordWrapper}>
-                    <Button variant='outlined' onClick={() => setEditProfile(false)}>Cancel</Button>
-                    <Button variant='contained' color="primary" onClick={() => saveProfile()}>Save</Button>
+                    <Button variant='outlined' onClick={() => setEditProfile(false)} style={{ marginRight: 4 }}>Cancel</Button>
+                    <Button variant='contained' color="primary" onClick={() => { handleSubmit(); setSubmitType('Profile') }}>Save</Button>
                   </div>
-
                 </>
               )
             }
             {
               !editPassword ? (
                 <>
-                  <div className={classes.passwordWrapper}>
+                  <Divider />
+                  <div className={classes.passwordSection}>
                     {
                       <Box className={classes.button}>
-                        <Button variant="contained" color="primary" size="small" onClick={() => { setReadOnly(false); setEditPassword(true) }}>Change password</Button>
+                        <Button variant="contained" color="primary" size="small" onClick={() => { setReadOnly(false); setEditPassword(true); setEditProfile(false) }}>Change password</Button>
                       </Box>
                     }
                   </div>
                 </>
               ) : (
-                <>
-                  <Box mb={2}>
-                    {/* <Divider /> */}
-                    {
-                      editPassword && (
-                        <Box mt={2} mb={2} bgcolor={"#fafafa"}>
-                          <TextField
-                            margin="dense"
-                            id="password"
-                            label="Enter New Password"
-                            type="password"
-                            value={password}
-                            className={classes.textFieldStyle}
-                            onChange={e => setPassword(e.target.value)}
-                          />
-                          <TextField
-                            margin="dense"
-                            id="password"
-                            label="Confirm New Password"
-                            type="password"
-                            value={confirmPassword}
-                            className={classes.textFieldStyle}
-                            onChange={e => SetConfirmPassword(e.target.value)}
-                          />
-
-                          <div className={classes.passwordWrapper}>
-                            <Button variant='outlined' onClick={() => setEditPassword(false)}>Cancel</Button>
-                            <Button variant='contained' color="primary" onClick={e => checkPassword()}>save</Button>
-                          </div>
-                        </Box>
-                      )}
-                  </Box>
-                </>
+                editPassword && <PasswordForm data={data} callback={() => { setEditPassword(false) }} />
               )
             }
           </>
@@ -513,7 +463,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose} variant="contained" >No</Button>
-              <Button onClick={() => deleteUserRecord(userId)} className={classes.button} >Yes</Button>
+              <Button onClick={() => deleteUserRecord(data.id)} className={classes.button} >Yes</Button>
             </DialogActions>
           </Dialog>
         </div>
@@ -531,7 +481,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
             </Button>
           </div>
           {
-            data.status === 1 ? (
+            data.status === 'Active' ? (
               <div>
                 <Button
                   variant="contained"

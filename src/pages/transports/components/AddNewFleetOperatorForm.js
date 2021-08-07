@@ -442,6 +442,19 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
                                 </div>
                             )
                         ) : (
+                            <>
+                            <div>
+                            <Button
+                                    variant="outlined"
+                                    startIcon={<NavigateBeforeRoundedIcon />}
+                                    // disabled={loading}
+                                    onClick={handleClose}
+                                >
+                                Back
+                                </Button>
+                            </div>
+                            
+                            <div>
                             <Button
                             variant="contained"
                             type="submit"
@@ -452,6 +465,8 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
                         >
                             Edit
                         </Button>
+                        </div>
+                        </>
                         )
                     }
                 </div>

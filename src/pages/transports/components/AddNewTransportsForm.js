@@ -738,6 +738,19 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                 </div>
                             )
                         ) : (
+                            <>
+                            <div>
+                                    <Button
+                                        variant="outlined"
+                                        startIcon={<NavigateBeforeRoundedIcon />}
+                                        // disabled={loading}
+                                        onClick={handleClose}
+                                        >
+                                        Back
+                                    </Button>
+                            </div>
+
+                            <div>
                             <Button
                             variant="contained"
                             type="submit"
@@ -749,6 +762,8 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                             >
                             Edit
                             </Button>
+                            </div>
+                            </>
 
                         )
                     }

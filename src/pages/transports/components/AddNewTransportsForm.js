@@ -21,14 +21,14 @@ import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import UploadIcon from '@material-ui/icons/Backup';
 // import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
-import AttachmentOutlinedIcon from '@material-ui/icons/AttachmentOutlined';
 import { getBusinessTypes, getOmcList, getRegionById, getStates } from '../../../services/common.service';
-import { getDistricts, getFormattedStatesList } from '../../../utils/indianStates.util';
+import { getDistricts} from '../../../utils/indianStates.util';
 // import { addNewTransport, updateTransport } from '../../../services/transports.service';
 import { useSnackbar } from 'notistack';
 import Tooltip from '@material-ui/core/Tooltip';
 import { URL } from '../../../config/serverUrls';
 import FileUpload from '../../../components/FileUpload';
+import { AvatarCard, ViewData } from '../../../components/CommonComponents/FilePreview';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -118,17 +118,6 @@ const useStyles = makeStyles((theme) => ({
         }
     }
 }))
-export const ViewData = ({ title, value }) => {
-    const classes = useStyles()
-    return (
-        <Box className={classes.details}>
-            <div>
-                <p className={classes.title}>{title}</p>
-                <strong className={classes.text}>{value ? value : '-'}</strong>
-            </div>
-        </Box >
-    )
-}
 
 const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callback, isAdd }) => {
     const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
@@ -141,6 +130,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
     const [fileType, setFileType] = useState('')
     const [regions, setRegions] = useState([]);
     const [checked, setChecked] = useState(false);
+    const [imageModal, setImageModal] = useState({})
     const classes = useStyles()
     const { enqueueSnackbar } = useSnackbar();
 
@@ -176,13 +166,14 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
             gst: Yup.number().min(15, 'Enter valid GST')
         }),
         onSubmit: values => {
+            values.first_name = values.first_name.toUpperCase()
+            values.last_name = values.last_name.toUpperCase()
             const data = { ...values, t_owner_id: id };
-            let apiURL = isAdd === 'Add' ? `transporters` : `tranporters/${data.transporter_id}`
+            // let apiURL = isAdd === 'Add' ? `transporters` : `tranporters/${data.transporter_id}` 
             const formData = new FormData();
             Object.keys(data).forEach(key => {
                 formData.append(key, data[key]);
             })
-            // console.log(currentUser)
             if (isAdd === 'Add') {
                 fetch(`${URL.base}${URL.vehicleInfo}`, {
                     method: 'POST',
@@ -375,8 +366,12 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
     const gstAttachment = () => {
         return (
             <div className={classes.fileStyle}>
-                <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede', color: '#43a047' }}
-                    href={data.gst_file_url} target="_blank" title={'GST Attachment'}>{'GST Attachment'}</a>
+                <Button onClick={() => setImageModal({ open: true, image: data.gst_file_url })}>
+                    <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede', color: '#43a047' }}
+                        target="_blank" title={'GST Attachment'}>{'GST Attachment'}</a>
+                </Button>
+                {/* <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede', color: '#43a047' }}
+                    href={data.gst_file_url} target="_blank" title={'GST Attachment'}>{'GST Attachment'}</a> */}
                 <Tooltip title={'Click to edit'}>
                     <UploadIcon fontSize="small" padding={2} onClick={() => docUpload('GST')} />
                 </Tooltip>
@@ -410,29 +405,38 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                 <div className={classes.stepperRoot}>
                     {
                         readOnly ? (
-                            <Grid container spacing={2} className={classes.readOnlyWrapper}>
-                                <Grid item md={6}>
-                                    <Box className={classes.box} >
-                                        <ViewData title='Transport Code' value={values.transporter_id} />
-                                        <ViewData title='Mobile' value={values.mobile} />
-                                        <ViewData title='OMC' value={values.omc} />
-                                        <ViewData title='Region' value={values.region} />
-                                        <ViewData title='District' value={values.district} />
-                                        <ViewData title='GST' value={values.gst} />
-                                    </Box>
+                            <>
+                                <Grid container spacing={2} className={classes.readOnlyWrapper}>
+                                    <Grid item md={6}>
+                                        <Box className={classes.box} >
+                                            <ViewData title='Transport Code' value={values.transporter_id} />
+                                            <ViewData title='Mobile' value={values.mobile} />
+                                            <ViewData title='OMC' value={values.omc} />
+                                            <ViewData title='Region' value={values.region} />
+                                            <ViewData title='District' value={values.district} />
+                                            <ViewData title='GST' value={values.gst} />
+                                        </Box>
+                                    </Grid>
+                                    <Grid item md={6}>
+                                        <Box className={classes.box} >
+                                            <ViewData title='Transport Name' value={values.name} />
+                                            <ViewData title='Address' value={values.address} />
+                                            <ViewData title='Business Type' value={values.business_type} />
+                                            <ViewData title='State' value={values.state} />
+                                            <ViewData title='Pincode' value={values.pincode} />
+                                            <ViewData title='PAN' value={values.pan} />
+                                        </Box>
+                                    </Grid>
                                 </Grid>
-                                <Grid item md={6}>
-                                    <Box className={classes.box} >
-                                        <ViewData title='Transport Name' value={values.name} />
-                                        <ViewData title='Address' value={values.address} />
-                                        <ViewData title='Business Type' value={values.business_type} />
-                                        <ViewData title='State' value={values.state} />
-                                        <ViewData title='Pincode' value={values.pincode} />
-                                        <ViewData title='PAN' value={values.pan} />
-                                    </Box>
-                                </Grid>
-                            </Grid>
-
+                                <Divider />
+                                <div className={classes.readOnlyWrapper}>
+                                    <Typography variant="h4">Attachments</Typography>
+                                    <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: 16 }}>
+                                        {values.pan_file_url && <AvatarCard tooltip='View PAN' file={values?.pan_file_url} title='PAN' />}
+                                        {values.gst_file_url && <AvatarCard tooltip='View GST' file={values?.gst_file_url} title='GST' />}
+                                    </div>
+                                </div>
+                            </>
                         ) : (
                             <Box>
                                 <form onSubmit={handleSubmit}>

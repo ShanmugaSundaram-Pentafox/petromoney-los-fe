@@ -19,7 +19,6 @@ import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded'
 import { useSnackbar } from 'notistack';
 import 'date-fns';
 import Tooltip from '@material-ui/core/Tooltip';
-import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
 import DateFnsUtils from '@date-io/date-fns';
 import {
     MuiPickersUtilsProvider,
@@ -27,11 +26,9 @@ import {
 } from '@material-ui/pickers';
 import moment from 'moment';
 import FileUpload from '../../../components/FileUpload';
-import DeleteIcon from '@material-ui/icons/Delete';
 import UploadIcon from '@material-ui/icons/Backup';
-import AttachmentOutlinedIcon from '@material-ui/icons/AttachmentOutlined';
 import { grey } from '@material-ui/core/colors';
-
+import { AvatarCard, ViewData } from '../../../components/CommonComponents/FilePreview';
 
 
 
@@ -97,7 +94,7 @@ const useStyles = makeStyles((theme) => ({
         padding: '12px 16px'
     },
     details: {
-        padding: 6,
+        // padding: 6,
         borderColor: 'grey',
         minWidth: 80,
         height: 50,
@@ -113,6 +110,10 @@ const useStyles = makeStyles((theme) => ({
         margin: '8px 4px',
         maxWidth: '100%',
     },
+    // avatar: {
+    //     backgroundImage: ''
+
+    // },
     editButton: {
         marginRight: '8px',
         '&.MuiButton-contained': {
@@ -122,21 +123,10 @@ const useStyles = makeStyles((theme) => ({
         '&.MuiButton-contained:hover': {
             backgroundColor: theme.palette.success.dark
         }
-    }
+    },
 
 }))
 
-export const ViewData = ({ title, value }) => {
-    const classes = useStyles()
-    return (
-        <Box className={classes.details}>
-            <div>
-                <p className={classes.title}>{title}</p>
-                <strong className={classes.text}>{value ? value : '-'}</strong>
-            </div>
-        </Box >
-    )
-}
 
 const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, rowData, form_data, id, callback }) => {
     const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
@@ -182,6 +172,8 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
             address: Yup.string().required('Please enter address'),
         }),
         onSubmit: values => {
+            values.first_name = values.first_name.toUpperCase()
+            values.last_name = values.last_name.toUpperCase()
             const date = moment(selectedDate).format('DD-MMM-YYYY')
             const date_values = { ...values, dob: date, is_whatsapp: state.checkedA === true ? 1 : 0, is_aadhar_linked: state.checkedB === true ? 1 : 0 }
             const data = new FormData();
@@ -384,27 +376,39 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                 <div className={classes.stepperRoot}>
                     {
                         readOnly ? (
-                            <Grid container spacing={2} className={classes.readOnlyWrapper}>
-                                <Grid item md={6}>
-                                    <Box className={classes.box} >
-                                        <ViewData title='Owner ID' value={values.t_owner_id} />
-                                        <ViewData title='Date of Birth' value={values.dob} />
-                                        <ViewData title='Address' value={values.address} />
-                                        <ViewData title='Marital Status' value={values.marital_status} />
-                                        <ViewData title='Mobile' value={values.mobile} />
-                                        <ViewData title='Aadhar' value={values.aadhar} />
-                                    </Box>
+                            <>
+                                <Grid container className={classes.readOnlyWrapper}>
+                                    <Grid item md={6}>
+                                        <Box className={classes.box} >
+                                            <ViewData title='Owner ID' value={values.t_owner_id} />
+                                            <ViewData title='Date of Birth' value={values.dob} />
+                                            <ViewData title='Address' value={values.address} />
+                                            <ViewData title='Marital Status' value={values.marital_status} />
+                                            <ViewData title='Mobile' value={values.mobile} />
+                                            <ViewData title='Aadhar' value={values.aadhar} />
+                                        </Box>
+                                    </Grid>
+                                    <Grid item md={6}>
+                                        <Box className={classes.box} >
+                                            <ViewData title='Name' value={values.first_name} />
+                                            <ViewData title='Gender' value={values.gender} />
+                                            <ViewData title='Residing since' value={values.residing_since} />
+                                            <ViewData title='Email' value={values.email} />
+                                            <ViewData title='PAN' value={values.pan} />
+                                        </Box>
+                                    </Grid>
                                 </Grid>
-                                <Grid item md={6}>
-                                    <Box className={classes.box} >
-                                        <ViewData title='Name' value={values.first_name} />
-                                        <ViewData title='Gender' value={values.gender} />
-                                        <ViewData title='Residing since' value={values.residing_since} />
-                                        <ViewData title='Email' value={values.email} />
-                                        <ViewData title='PAN' value={values.pan} />
-                                    </Box>
-                                </Grid>
-                            </Grid>
+                                <Divider />
+                                <div className={classes.readOnlyWrapper}>
+                                    <Typography variant="h4">Attachments</Typography>
+                                    <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: 16 }}>
+                                        {values.profile_image_url && <AvatarCard tooltip='View profile' file={values?.profile_image_url} title='Profile' />}
+                                        {values.pan_file_url && <AvatarCard tooltip='View PAN' file={values?.pan_file_url} title='PAN' />}
+                                        {values.aadhar_f_file_url && <AvatarCard tooltip='View Aadhar Front' file={values?.aadhar_f_file_url} title='Aadhar front' />}
+                                        {values.aadhar_b_file_url && < AvatarCard tooltip='View Aadhar back' file={values?.aadhar_b_file_url} title='Aadhar back' />}
+                                    </div>
+                                </div>
+                            </>
                         ) : (
                             <Box>
                                 <form onSubmit={handleSubmit}>

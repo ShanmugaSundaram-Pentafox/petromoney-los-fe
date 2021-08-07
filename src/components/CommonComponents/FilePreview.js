@@ -1,0 +1,83 @@
+import React, { useState } from 'react'
+import PdfViewer from './PdfViewer/PdfViewer';
+import styled from "styled-components";
+import { makeStyles } from "@material-ui/styles";
+import { Box } from '@material-ui/core';
+import Tooltip from '@material-ui/core/Tooltip';
+import { Avatar } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
+import FormDialog from './FormDialog/FormDialog';
+
+const useStyles = makeStyles((theme) => ({
+    title: {
+        marginBottom: 4,
+        fontSize: 11,
+    },
+    details: {
+        borderColor: 'grey',
+        minWidth: 80,
+        height: 50,
+        display: 'flex',
+        textAlign: 'left',
+        alignItems: 'left',
+        justifyContent: 'left'
+    },
+    text: {
+        fontSize: 12
+    },
+}))
+
+const PreviewWrapper = styled.div`
+.image {
+    width: 500px;
+    height: 400px;
+    object-fit: 'cover';
+}
+`;
+
+export const ViewData = ({ title, value }) => {
+    const classes = useStyles()
+    return (
+        <Box className={classes.details}>
+            <div>
+                <p className={classes.title}>{title}</p>
+                <strong className={classes.text}>{value ? value : '-'}</strong>
+            </div>
+        </Box >
+    )
+}
+export const AvatarCard = ({ file, title, tooltip }) => {
+    const classes = useStyles()
+    const [imageModal, setImageModal] = useState({})
+    console.log("image modal", imageModal)
+    return (
+        <>
+            <div onClick={() => setImageModal({ open: true, image: file, type: (file?.split("/")[file?.split("/").length - 1]?.split('.'))[1] })} >
+                <Tooltip title={tooltip}>
+                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                        <Avatar src={`${file}`} />
+                        <Typography style={{ marginTop: 4 }}>{title}</Typography>
+                    </div>
+                </Tooltip>
+            </div>
+            <FormDialog title={title} onDownload={imageModal.image} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
+                <FilePreview data={imageModal} />
+            </FormDialog>
+        </>
+    )
+}
+
+
+const FilePreview = ({ data }) => {
+    return (
+        <PreviewWrapper>
+            {
+                ['jpg', 'png', 'jpeg'].includes(data.type) ?
+                    <img className="image" src={data.image} alt="image-viewer" /> :
+                    <PdfViewer file={data.image} />
+            }
+        </PreviewWrapper>
+    )
+
+}
+export default FilePreview;

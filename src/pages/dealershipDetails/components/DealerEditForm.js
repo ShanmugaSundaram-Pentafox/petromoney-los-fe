@@ -18,6 +18,8 @@ import {
     KeyboardDatePicker
 } from '@material-ui/pickers';
 import FileUpload from '../../../components/FileUpload';
+import { AvatarCard, ViewData } from '../../../components/CommonComponents/FilePreview';
+import { Divider } from '@material-ui/core';
 
 
 const useStyles = makeStyles({
@@ -68,17 +70,6 @@ const useStyles = makeStyles({
         fontSize: 11,
     },
 });
-export const ViewData = ({ title, value }) => {
-    const classes = useStyles()
-    return (
-        <Box className={classes.details}>
-            <div>
-                <p className={classes.title}>{title}</p>
-                <strong className={classes.text}>{value ? value : '-'}</strong>
-            </div>
-        </Box >
-    )
-}
 
 
 const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave }) => {
@@ -207,27 +198,39 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
         <>
             {
                 readOnly ? (
-                    <Grid container spacing={2} className={classes.readOnlyWrapper}>
-                        <Grid item md={6}>
-                            <Box className={classes.box} >
-                                <ViewData title='ID' value={values.id} />
-                                <ViewData title='Date of Birth' value={values.dob} />
-                                <ViewData title='Address' value={values.address} />
-                                <ViewData title='Marital Status' value={values.marital_status} />
-                                <ViewData title='Mobile' value={values.mobile} />
-                                <ViewData title='Aadhar' value={values.aadhar} />
-                            </Box>
+                    <>
+                        <Grid container spacing={2} className={classes.readOnlyWrapper}>
+                            <Grid item md={6}>
+                                <Box className={classes.box} >
+                                    <ViewData title='ID' value={values.id} />
+                                    <ViewData title='Date of Birth' value={values.dob} />
+                                    <ViewData title='Address' value={values.address} />
+                                    <ViewData title='Marital Status' value={values.marital_status} />
+                                    <ViewData title='Mobile' value={values.mobile} />
+                                    <ViewData title='Aadhar' value={values.aadhar} />
+                                </Box>
+                            </Grid>
+                            <Grid item md={6}>
+                                <Box className={classes.box} >
+                                    <ViewData title='Name' value={`${values.first_name} ${values.last_name}`} />
+                                    <ViewData title='Gender' value={values.gender} />
+                                    <ViewData title='Residing since' value={values.residing_since} />
+                                    <ViewData title='Email' value={values.email} />
+                                    <ViewData title='PAN' value={values.pan} />
+                                </Box>
+                            </Grid>
                         </Grid>
-                        <Grid item md={6}>
-                            <Box className={classes.box} >
-                                <ViewData title='Name' value={`${values.first_name} ${values.last_name}`} />
-                                <ViewData title='Gender' value={values.gender} />
-                                <ViewData title='Residing since' value={values.residing_since} />
-                                <ViewData title='Email' value={values.email} />
-                                <ViewData title='PAN' value={values.pan} />
-                            </Box>
-                        </Grid>
-                    </Grid>
+                        <Divider />
+                        <div className={classes.readOnlyWrapper}>
+                            <Typography variant="h4">Attachments</Typography>
+                            <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: 16 }}>
+                                {values.profile_image_url && <AvatarCard tooltip='View profile' file={values?.profile_image_url} title='Profile' />}
+                                {values.pan_file_url && <AvatarCard tooltip='View PAN' file={values?.pan_file_url} title='PAN' />}
+                                {values.aadhar_f_file_url && <AvatarCard tooltip='View Aadhar Front' file={values?.aadhar_f_file_url} title='Aadhar front' />}
+                                {values.aadhar_b_file_url && < AvatarCard tooltip='View Aadhar back' file={values?.aadhar_b_file_url} title='Aadhar back' />}
+                            </div>
+                        </div>
+                    </>
                 ) : (
                     <Grid container>
                         <>

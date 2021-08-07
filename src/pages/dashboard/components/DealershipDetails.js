@@ -348,7 +348,7 @@ const DealershipDetails = ({
   status,
   currentUser,
   editable,
-  
+
 }) => {
   const [values, setValues] = useState({});
   const [loanInfo, setLoanInfo] = useState({});
@@ -481,7 +481,15 @@ const DealershipDetails = ({
   const handleResubmit = () => {
     updateLoanStats(data.id, loanData.id)
       .then(res => {
-        enqueueSnackbar(res, { variant: "success" });
+        // enqueueSnackbar(res, { variant: "success" });
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        }
+        )
         setTimeout(() => {
           window.location.reload();
         }, 2000)

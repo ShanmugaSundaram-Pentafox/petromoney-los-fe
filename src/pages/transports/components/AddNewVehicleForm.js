@@ -212,7 +212,19 @@ const AddNewVehicleForm = ({ data, id, number, trans_id, isEdit, isAdd, callback
                                 </div>
                             )
                         ) : (
-                            
+                            <>
+                            <div>
+                            <Button
+                                    variant="outlined"
+                                    startIcon={<NavigateBeforeRoundedIcon />}
+                                    disabled={loading}
+                                    onClick={callback}
+                                    >
+                                    Back
+                                </Button>
+                            </div>
+
+                            <div>
                             <Button
                             variant="contained"
                             type="submit"
@@ -223,6 +235,8 @@ const AddNewVehicleForm = ({ data, id, number, trans_id, isEdit, isAdd, callback
                         >
                             Edit
                         </Button>
+                        </div>
+                        </>
                         )
                     }
                 </div>

@@ -274,22 +274,39 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
       <div className={classes.actionFooter}>
         <Divider />
         <div className={classes.actionButtonsWrapper}>
-          <div>
-            <Button
-              variant="contained"
-              startIcon={<NavigateBeforeRoundedIcon />}
-              disabled={loading}
-              onClick={onClose}>Back</Button>
-          </div>
-          <div>
-            <Button
-              variant="contained"
-              className={clsx(classes.btn, classes.editButton)}
-              startIcon={!readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />}
-              disabled={loading}
-              onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}>{loading ? <CircularProgress size={20} /> : readOnly ? `Edit` :
-                'Save'}</Button>
-          </div>
+            {
+              !readOnly ? (
+                !loading ? (
+                  <>
+                  <Button
+                    variant="contained"
+                    startIcon={<NavigateBeforeRoundedIcon />}
+                    disabled={loading}
+                    onClick={onClose}>Back</Button>
+
+                  <Button
+                    variant="contained"
+                    className={clsx(classes.btn, classes.editButton)}
+                    startIcon={!readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />}
+                    disabled={loading}
+                    onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}>Save</Button>
+                  </>
+                ) : (
+                  <div style={{display: 'flex', justifyContent: 'flex-end', width: '90%', margin: '0 auto'}}>
+                    <CircularProgress size={30}/>
+                  </div>
+                )
+              ) : (
+              <div>
+                <Button
+                  variant="contained"
+                  className={clsx(classes.btn, classes.editButton)}
+                  startIcon={!readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />}
+                  disabled={loading}
+                  onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}>Edit</Button>
+              </div>
+              )
+            }
         </div>
       </div>
     </div>

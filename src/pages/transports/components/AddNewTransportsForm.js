@@ -176,6 +176,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
             gst: Yup.number().min(15, 'Enter valid GST')
         }),
         onSubmit: values => {
+            setLoading(true);
             const data = { ...values, t_owner_id: id };
             let apiURL = isAdd === 'Add' ? `transporters` : `tranporters/${data.transporter_id}`
             const formData = new FormData();
@@ -196,6 +197,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                     })
 
                     .then(res => {
+                        setLoading(false);
                         enqueueSnackbar(res.message, {
                             anchorOrigin: {
                                 vertical: 'top',
@@ -209,6 +211,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                         }, 1000)
                     })
                     .catch(error => {
+                        setLoading(false);
                         enqueueSnackbar(error, {
                             anchorOrigin: {
                                 vertical: 'top',
@@ -704,18 +707,38 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
             <div className={classes.actionFooter}>
                 <Divider />
                 <div className={classes.actionButtonsWrapper}>
-                    <div>
-                        <Button
-                            variant="outlined"
-                            startIcon={<NavigateBeforeRoundedIcon />}
-                            // disabled={loading}
-                            onClick={handleClose}
-                        >
-                            Back
-                        </Button>
-                    </div>
-                    <div>
-                        <Button
+                    {
+                        !readOnly ? (
+                            !loading ? (
+                                <>
+                                    <Button
+                                        variant="outlined"
+                                        startIcon={<NavigateBeforeRoundedIcon />}
+                                        // disabled={loading}
+                                        onClick={handleClose}
+                                        >
+                                        Back
+                                    </Button>
+
+                                    <Button
+                                        variant="contained"
+                                        type="submit"
+                                        onClick={handleSubmit}
+                                        className={clsx(classes.btn, classes.editButton)}
+                                        startIcon={!readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />}
+                                        // disabled={loading}
+                                        onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
+                                        >
+                                        Save
+                                    </Button>
+                                </>
+                            ) : (
+                                <div style={{display: 'flex', justifyContent: 'flex-end', width: '90%', margin: '0 auto'}}>
+                                    <CircularProgress size={30}/>
+                                </div>
+                            )
+                        ) : (
+                            <Button
                             variant="contained"
                             type="submit"
                             onClick={handleSubmit}
@@ -723,10 +746,12 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                             startIcon={!readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />}
                             // disabled={loading}
                             onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
-                        >
-                            {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` : 'Save'}
-                        </Button>
-                    </div>
+                            >
+                            Edit
+                            </Button>
+
+                        )
+                    }
                 </div>
             </div>
         </div>

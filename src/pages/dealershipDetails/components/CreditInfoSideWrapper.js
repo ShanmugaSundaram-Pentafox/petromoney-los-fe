@@ -195,21 +195,34 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
           <Alert severity={apiStatus.type}>{apiStatus.message}</Alert>
         </Snackbar>
         <div className={classes.actionButtonsWrapper}>
-          <div>
-            <Button
+          {
+            !loading ? (
+              <>
+              <Button
               variant="contained"
               color="secondary"
               startIcon={<NavigateBeforeRoundedIcon />}
               disabled={loading}
               onClick={onClose}>Close</Button>
-          </div>
-          <div>
-            <Button
+
+              <Button
               variant="contained"
               className={clsx(classes.btn, classes.btnSuccess)}
               // startIcon={<NavigateNextRoundedIcon />}
               disabled={loading}
-              onClick={loading ? () => null : handleSubmit}>{loading ? <CircularProgress size={20} /> : `Save`}</Button>
+              onClick={loading ? () => null : handleSubmit}>Save</Button>
+              </>
+            ) : (
+              <div style={{display: 'flex', justifyContent: 'flex-end', width: '90%', margin: '0 auto'}}>
+                <CircularProgress size={30}/>
+              </div>
+            )
+          }
+          <div>
+            
+          </div>
+          <div>
+            
           </div>
         </div>
       </div>

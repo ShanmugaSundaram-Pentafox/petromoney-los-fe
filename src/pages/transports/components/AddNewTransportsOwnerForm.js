@@ -736,11 +736,11 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
             <div className={classes.actionFooter}>
                 <Divider />
                 <div className={classes.actionButtonsWrapper}>
-                    <div>
+                <div>
                         <Button
                             variant="outlined"
                             startIcon={<NavigateBeforeRoundedIcon />}
-                            // disabled={loading}
+                            disabled={loading}
                             onClick={handleClose}
                         >
                             Back
@@ -752,7 +752,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                             type="submit"
                             className={clsx(classes.btn, classes.editButton)}
                             startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                            // disabled={loading}
+                            disabled={loading}
                             onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
                         >
                             {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` :

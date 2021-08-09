@@ -33,11 +33,8 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import { Drawer } from "@material-ui/core";
-import Divider from '@material-ui/core/Divider';
-import clsx from 'clsx';
-import CloseIcon from '@material-ui/icons/Close';
+import FilePreview from "../../../components/CommonComponents/FilePreview";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -86,6 +83,11 @@ const useStyles = makeStyles((theme) => ({
     '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.success.dark
     }
+  },
+  objectImage: {
+    width: 500,
+    height: 400,
+    objectFit: 'cover'
   }
 }))
 
@@ -456,7 +458,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
                           <TableRow>
                             <TableCell>{row.description}</TableCell>
                             <TableCell>
-                              <Button onClick={() => setImageModal({ open: true, image: row.file_path })}>
+                              <Button onClick={() => setImageModal({ open: true, image: row.file_path, type: (row.file_path?.split("/")[row.file_path?.split("/").length - 1].split('.'))[1] })}>
                                 <a href={row.file_path}>{row.file_path?.split("/")[row.file_path?.split("/").length - 1] || '-'}</a>
                               </Button>
                             </TableCell>
@@ -473,7 +475,6 @@ export default function VehicleInfo({ id, data, currentUser }) {
                                     Delete
                                   </Button>
                                 )
-
                               }
                             </TableCell>
                           </TableRow>
@@ -594,8 +595,8 @@ export default function VehicleInfo({ id, data, currentUser }) {
           </div>
         )
       })}
-      <FormDialog title={""} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
-        {imageModal.image && <img src={imageModal.image} alt="image-viewer" />}
+      <FormDialog title={"image preview"} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
+        <FilePreview data={imageModal} />
       </FormDialog>
       {
         // const d = JSON.parse((serviceData?.tracking_details?.[4]?.details || "{}").replace(/\'/g,'\"'));

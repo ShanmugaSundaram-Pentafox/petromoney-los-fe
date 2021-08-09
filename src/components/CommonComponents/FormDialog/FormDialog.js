@@ -7,6 +7,8 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
+import { Button } from '@material-ui/core';
+import CloudDownloadOutlinedIcon from '@material-ui/icons/CloudDownloadOutlined';
 
 const styles = (theme) => ({
   root: {
@@ -19,13 +21,26 @@ const styles = (theme) => ({
     top: theme.spacing(0.5),
     color: theme.palette.grey[500],
   },
+  downloadButton: {
+    position: 'absolute',
+    right: theme.spacing(7),
+    top: theme.spacing(0.5),
+    // color: theme.palette.blueGreyLight[300]
+  }
 });
 
 const DialogTitle = withStyles(styles)((props) => {
-  const { children, classes, onClose, ...other } = props;
+  const { children, classes, onClose, onDownload, ...other } = props;
   return (
     <MuiDialogTitle disableTypography className={classes.root} {...other}>
       <Typography variant="h5">{children}</Typography>
+      {
+        onDownload ? (
+          <IconButton aria-label="close" className={classes.downloadButton}>
+            <a href={onDownload} style={{ color: '#4682B4' }}><CloudDownloadOutlinedIcon /></a>
+          </IconButton>
+        ) : null
+      }
       {onClose ? (
         <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
           <CloseIcon />
@@ -55,11 +70,12 @@ const FormDialog = (props) => {
     actions,
     open,
     onClose,
+    onDownload,
   } = props;
 
   return (
     <Dialog onClose={onClose} aria-labelledby="form-dialog-title" open={open}>
-      <DialogTitle id="form-dialog-title" onClose={onClose}>
+      <DialogTitle id="form-dialog-title" onDownload={onDownload} onClose={onClose}>
         {title}
       </DialogTitle>
       <DialogContent dividers>

@@ -34,6 +34,7 @@ import TextInput from '../../../components/TextInput/TextInput';
 import { useMount } from 'react-use';
 import { useSnackbar } from 'notistack'
 import PasswordForm from './PasswordForm';
+import { ViewData } from '../../../components/CommonComponents/FilePreview';
 
 
 
@@ -147,17 +148,6 @@ const useStyles = makeStyles(theme => ({
     }
   }
 }));
-export const ViewData = ({ title, value }) => {
-  const classes = useStyles()
-  return (
-    <Box className={classes.details}>
-      <div>
-        <p className={classes.title}>{title}</p>
-        <strong className={classes.text}>{value ? value : '-'}</strong>
-      </div>
-    </Box >
-  )
-}
 
 export default function TemporaryDrawer({ data, currentUser, callback }) {
   const [open, setOpen] = useState(false);
@@ -170,8 +160,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
   const [readOnly, setReadOnly] = useState(true)
   const [editProfile, setEditProfile] = useState(false)
   const [editPassword, setEditPassword] = useState(false)
-  const [apiStatus, setApiStatus] = useState({});
-  const [submitType, setSubmitType] = useState()
+  const [submitType, setSubmitType] = useState();
   const { enqueueSnackbar } = useSnackbar();
 
 
@@ -244,6 +233,18 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
       })
   }
 
+  const activationAlert = () => {
+    enqueueSnackbar('Please activate the user before editing', {
+      anchorOrigin: {
+        vertical: 'top',
+        horizontal: 'right',
+      },
+      autoHideDuration: 2000,
+      variant: 'warning',
+    }
+    )
+  }
+
 
 
   const { values, errors, handleChange, handleSubmit, setValues, isSubmitting, setSubmitting, setFieldValue } = useFormik({
@@ -308,7 +309,20 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
             !editProfile && (
               <Box className={classes.button}>
                 {/* <Button variant="contained" className={classes.btnStyle} color="primary" size="small" onClick={() => handleClickOpen(data.id)}>Delete</Button> */}
-                <Button variant="contained" color="primary" size="small" onClick={() => { setReadOnly(false); setEditProfile(true); setEditPassword(false) }}>Edit</Button>
+                {
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    onClick={() => {
+                      setReadOnly(false);
+                      // setEditProfile(true);
+                      // activationAlert();
+                      setEditPassword(false);
+                      data.status === 'Active' ? setEditProfile(true) : activationAlert()
+
+                    }}>Edit</Button>
+                }
               </Box>
             )
 
@@ -447,7 +461,15 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                   <div className={classes.passwordSection}>
                     {
                       <Box className={classes.button}>
-                        <Button variant="contained" color="primary" size="small" onClick={() => { setReadOnly(false); setEditPassword(true); setEditProfile(false) }}>Change password</Button>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          size="small"
+                          onClick={() => {
+                            setReadOnly(false);
+                            // setEditPassword(true);
+                            data.status === 'Active' ? setEditPassword(true) : activationAlert()
+                          }}>Change password</Button>
                       </Box>
                     }
                   </div>

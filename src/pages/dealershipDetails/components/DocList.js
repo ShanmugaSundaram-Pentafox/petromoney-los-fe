@@ -21,6 +21,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import ButtonComp from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import FormDialog from "../../../components/CommonComponents/FormDialog/FormDialog";
+import FilePreview from "../../../components/CommonComponents/FilePreview";
 
 const DeleteButton = withStyles(theme => ({
   root: {
@@ -87,15 +88,23 @@ const useStyles = makeStyles((theme) => ({
 
 
 const Docs = ({ data }) => {
+  const [imageModal, setImageModal] = useState({})
   let temp = 0;
   return data.map((file, i) => {
     temp += file.file_url ? 1 : 0;
     return file.file_url ? (
       <div>
-        <a style={{ display: 'inline-block', borderRadius: 4, lineHeight: 1, marginRight: 8, marginBottom: 8, padding: 8, backgroundColor: '#f0f0f0' }} href={file.file_url} target="_blank" title={file.name}>{getFileNameFromUrl(file?.file_url)} </a>
+        <Button onClick={() => setImageModal({ open: true, image: file.file_url, type: (file.file_url?.split("/")[file.file_url?.split("/").length - 1].split('.'))[1] })}>
+          <a style={{ display: 'inline-block', borderRadius: 4, lineHeight: 1, marginRight: 8, marginBottom: 8, padding: 8, backgroundColor: '#f0f0f0' }} href={file.file_url} >{getFileNameFromUrl(file?.file_url)} </a>
+        </Button>
+        <FormDialog title={"File Preview"} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
+          <FilePreview data={imageModal} />
+        </FormDialog>
       </div>
+
     ) : null
   });
+
 }
 
 const DocList = ({ id }) => {
@@ -275,9 +284,7 @@ const DocList = ({ id }) => {
           } */}
         </div>
       </FormDialog>
-      <FormDialog title={""} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
-        {imageModal.image && <img src={imageModal.image} alt="image-viewer" />}
-      </FormDialog>
+
       {/* <Modal
         className={classes.modal}
         open={openModal}

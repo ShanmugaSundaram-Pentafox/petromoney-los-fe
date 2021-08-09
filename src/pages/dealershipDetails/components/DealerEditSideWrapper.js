@@ -172,6 +172,8 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: values => {
+      values.first_name=values.first_name.toUpperCase()
+      values.last_name=values.last_name.toUpperCase()
       setLoading(true);
       const date = moment(selectedDate).format('DD-MMM-YYYY')
       const date_values = { ...values, dob: date }
@@ -185,15 +187,10 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
       if (values.id) {
         url += `/${values.id}`;
       };
-      // data.append('first_name'.values.first_name?.toUpperCase())
-      // data.last_name.toUpperCase()
 
       if (modelType !== "GUARANTOR") {
         data.append('user_id', currentUser.id);
       }
-      // data.append('is_whatsapp', checkedA);
-      // data.append('is_pan', checkedB);
-      // API.post(url, data)
       fetch(`${URL.base}${url}`, {
         method: 'POST',
         body: data,
@@ -204,10 +201,6 @@ const DealerEditSideWrapper = ({ modelType, dealersList, isAdd, dealershipId, ge
         .then(res => {
           return res.json()
         })
-        // apiCall(url, {
-        //   method : 'POST',
-        //   body: data,
-        // })
         .then(res => {
           setLoading(false);
           setApicallStatus('success');

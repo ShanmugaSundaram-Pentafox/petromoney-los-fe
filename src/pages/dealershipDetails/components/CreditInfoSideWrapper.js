@@ -218,12 +218,6 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
               </div>
             )
           }
-          <div>
-            
-          </div>
-          <div>
-            
-          </div>
         </div>
       </div>
     </div>

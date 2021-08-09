@@ -166,8 +166,8 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
             gst: Yup.number().min(15, 'Enter valid GST')
         }),
         onSubmit: values => {
-            values.first_name = values.first_name.toUpperCase()
-            values.last_name = values.last_name.toUpperCase()
+            setLoading(true);
+            values.name = values.name.toUpperCase();
             const data = { ...values, t_owner_id: id };
             // let apiURL = isAdd === 'Add' ? `transporters` : `tranporters/${data.transporter_id}` 
             const formData = new FormData();
@@ -710,7 +710,7 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
             <div className={classes.actionFooter}>
                 <Divider />
                 <div className={classes.actionButtonsWrapper}>
-                    {
+                {
                         !readOnly ? (
                             !loading ? (
                                 <>

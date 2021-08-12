@@ -53,6 +53,7 @@ const DueTable = () => {
         console.log(e);
       });
   })
+  usePageTitle('Report')
   const columns = useMemo(() => {
     return [
       { name: 'applicant_code', label: 'Applicant Code' },
@@ -120,7 +121,7 @@ const DueTable = () => {
           </Grid>
         ) : Array.isArray(loans) && loans.length ? (
           <MUIDataTable
-            title={"Due Reports"}
+            title={"Load Due Reports"}
             data={loans}
             columns={columns}
             options={options}

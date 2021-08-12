@@ -1,116 +1,144 @@
-import React, { useState } from 'react';
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import Alert from "@material-ui/lab/Alert"
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import TextInput from '../TextInput/TextInput';
-import Button from '../CommonComponents/Button/Button';
-import { addNewUser, getAllUserRoles } from '../../services/users.service';
-import { useMount } from 'react-use';
-import Typography from "@material-ui/core/Typography"
-import Divider from '@material-ui/core/Divider';
-import clsx from 'clsx';
-import CloseIcon from '@material-ui/icons/Close';
+import React, { useState } from "react";
+import Box from "@material-ui/core/Box";
+import Grid from "@material-ui/core/Grid";
+import Alert from "@material-ui/lab/Alert";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import TextInput from "../TextInput/TextInput";
+import Button from "../CommonComponents/Button/Button";
+import { addNewUser, getAllUserRoles } from "../../services/users.service";
+import { useMount } from "react-use";
+import Typography from "@material-ui/core/Typography";
+import Divider from "@material-ui/core/Divider";
+import clsx from "clsx";
+import CloseIcon from "@material-ui/icons/Close";
 import { makeStyles } from "@material-ui/styles";
+import { useSnackbar } from "notistack";
+import { CircularProgress } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
     // textAlign: 'center',
-    padding: '24px 16px',
-    display: 'flex',
-    justifyContent: 'space-between',
+    padding: "24px 16px",
+    display: "flex",
+    justifyContent: "space-between",
     zIndex: 0,
-    boxShadow: '0 1px 4px -3px #333'
+    boxShadow: "0 1px 4px -3px #333",
   },
   sidePanelFormWrapper: {
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100vh',
-    width: '40vw'
+    position: "relative",
+    display: "flex",
+    flexDirection: "column",
+    height: "100vh",
+    width: "40vw",
   },
   sidePanelFormContentWrapper: {
     flex: 1,
-    overflow: 'auto'
+    overflow: "auto",
   },
   stepperRoot: {
     padding: 16,
-    paddingTop: 8
+    paddingTop: 8,
   },
   actionButtonsWrapper: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: '12px 16px'
+    display: "flex",
+    justifyContent: "space-between",
+    padding: "12px 16px",
   },
   editButton: {
-    marginRight: '8px',
-    '&.MuiButton-contained': {
+    marginRight: "8px",
+    "&.MuiButton-contained": {
       backgroundColor: theme.palette.success.main,
-      color: theme.palette.white
+      color: theme.palette.white,
     },
-    '&.MuiButton-contained:hover': {
-      backgroundColor: theme.palette.success.dark
-    }
-  }
-}))
+    "&.MuiButton-contained:hover": {
+      backgroundColor: theme.palette.success.dark,
+    },
+  },
+}));
 
-
-const AddNewUserForm = ({ callback,action }) => {
+const AddNewUserForm = ({ callback, action }) => {
   const [apiStatus, setApiStatus] = useState({});
   const [userRoles, setUserRoles] = useState([]);
-  const classes = useStyles()
-
+  const [loading, setLoading] = useState(false);
+  const classes = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
 
   useMount(() => {
     getAllUserRoles()
-      .then(data => {
+      .then((data) => {
         setUserRoles(data);
       })
-      .catch(e => {
-        console.log(e)
-      })
-  })
+      .catch((e) => {
+        console.log(e);
+      });
+  });
 
-  const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting } = useFormik({
+  const {
+    values,
+    errors,
+    handleChange,
+    handleSubmit,
+    isSubmitting,
+    setSubmitting,
+  } = useFormik({
     initialValues: {},
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      role_id: Yup.number().required('Choose Proper User Role'),
-      first_name: Yup.string().required('Enter first name'),
-      last_name: Yup.string().min(1).required('Enter last name'),
-      mobile: Yup.number().min(10,'Enter valid mobile number').required('Enter Mobile number'),
+      role_id: Yup.number().required("Choose Proper User Role"),
+      first_name: Yup.string().required("Enter first name"),
+      last_name: Yup.string().min(1).required("Enter last name"),
+      mobile: Yup.number()
+        .min(10, "Enter valid mobile number")
+        .required("Enter Mobile number"),
       email: Yup.string().email("Enter valid email"),
       password: Yup.string(),
     }),
-    onSubmit: formData => {
-      setApiStatus({ type: 'info', message: 'Creating a new user. Please wait...' })
-      const userType = userRoles.find(role => role.id === Number(formData.role_id));
+    onSubmit: (formData) => {
+      setLoading(true);
+      const userType = userRoles.find(
+        (role) => role.id === Number(formData.role_id)
+      );
       addNewUser(formData, userType.role_name)
-        .then(message => {
-          setApiStatus({ type: 'success', message: 'Successfully created new user.' });
-          callback && setTimeout(() => {
-            callback();
-          }, 1000)
+        .then((message) => {
+          setLoading(false);
+          enqueueSnackbar(message, {
+            anchorOrigin: {
+              vertical: "top",
+              horizontal: "right",
+            },
+            variant: "success",
+          });
+          callback &&
+            setTimeout(() => {
+              callback();
+            }, 1000);
         })
-        .catch(e => {
-          setApiStatus({ type: 'error', message: e })
+        .catch((e) => {
+          setLoading(false);
+          enqueueSnackbar(e, {
+            anchorOrigin: {
+              vertical: "top",
+              horizontal: "right",
+            },
+            variant: "error",
+          });
           console.log(e);
-        })
-    }
+        });
+    },
   });
   const inputProps = {
     direction: "column",
     alignTop: true,
     onChange: handleChange,
-  }
+  };
 
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Add New User Form</div>
-        <CloseIcon onClick={action}  />
+        <CloseIcon onClick={action} />
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
@@ -131,9 +159,11 @@ const AddNewUserForm = ({ callback,action }) => {
                     }}
                   >
                     <option value="">Choose user role</option>
-                    {
-                      userRoles.map(userRole => <option key={userRole.role_name} value={userRole.id}>({userRole.role_name}) - {userRole.name}</option>)
-                    }
+                    {userRoles.map((userRole) => (
+                      <option key={userRole.role_name} value={userRole.id}>
+                        ({userRole.role_name}) - {userRole.name}
+                      </option>
+                    ))}
                   </TextInput>
                 </Grid>
                 <Grid item md={6}>
@@ -186,7 +216,9 @@ const AddNewUserForm = ({ callback,action }) => {
                     labelText="Password (Optional)"
                     value={values.password}
                     error={errors.password}
-                    helperText={errors.password || "Default password is Petromall@2020"}
+                    helperText={
+                      errors.password || "Default password is Petromall@2020"
+                    }
                   />
                 </Grid>
                 {/* <Grid item xs={12} justify="flex-end" alignItems="flex-end">
@@ -211,27 +243,37 @@ const AddNewUserForm = ({ callback,action }) => {
         <Divider />
         <div className={classes.actionButtonsWrapper}>
           <div>
-            <Button
-              variant="outlined"
-              onClick={action}
-            >
+            <Button variant="outlined" onClick={action}>
               Back
             </Button>
           </div>
           <div>
-            <Button
-              variant="contained"
-              type="submit"
-              onClick={handleSubmit}
-              className={clsx(classes.btn, classes.editButton)}
-            >
-              Create New User
-            </Button>
+            {!loading ? (
+              <Button
+                variant="contained"
+                type="submit"
+                onClick={handleSubmit}
+                className={clsx(classes.btn, classes.editButton)}
+              >
+                Create New User
+              </Button>
+            ) : (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  width: "90%",
+                  margin: "0 auto",
+                }}
+              >
+                <CircularProgress size={30} />
+              </div>
+            )}
           </div>
         </div>
       </div>
-    </div >
-  )
-}
+    </div>
+  );
+};
 
 export default AddNewUserForm;

@@ -316,7 +316,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 <Button variant="contained" size="small" onClick={() => { setReadOnly(true); }}>Cancel</Button>
                 <Button type="submit" color="primary" variant="contained" size="small">Save</Button>
               </>
-            ) : <CircularProgress />
+            ) : <CircularProgress size={20}/>
           ) : (
             <Button
               disabled={!permissionCheck(currentUser.role_name, rulesList.dealership_edit)}

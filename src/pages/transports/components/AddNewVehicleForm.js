@@ -78,9 +78,11 @@ const AddNewVehicleForm = ({ data, id, number, trans_id, isEdit, isAdd, callback
             tt_no: Yup.string().required('Please enter vehicle number'),
         }),
         onSubmit: formData => {
+            setLoading(true);
             if (isAdd === 'Edit') {
                 updateVehicle(formData, id, trans_id)
                     .then(message => {
+                        setLoading(false);
                         enqueueSnackbar(message, {
                             anchorOrigin: {
                                 vertical: 'top',
@@ -94,6 +96,7 @@ const AddNewVehicleForm = ({ data, id, number, trans_id, isEdit, isAdd, callback
                         }, 2000)
                     })
                     .catch(e => {
+                        setLoading(false);
                         enqueueSnackbar(e, {
                             anchorOrigin: {
                                 vertical: 'top',
@@ -180,18 +183,49 @@ const AddNewVehicleForm = ({ data, id, number, trans_id, isEdit, isAdd, callback
             <div className={classes.actionFooter}>
                 <Divider />
                 <div className={classes.actionButtonsWrapper}>
-                    <div>
-                        <Button
-                            variant="outlined"
-                            startIcon={<NavigateBeforeRoundedIcon />}
-                            disabled={loading}
-                            onClick={callback}
-                        >
-                            Back
-                        </Button>
-                    </div>
-                    <div>
-                        <Button
+                    {
+                        !readOnly ? (
+                            !loading ? (
+                                <>
+                                <Button
+                                    variant="outlined"
+                                    startIcon={<NavigateBeforeRoundedIcon />}
+                                    disabled={loading}
+                                    onClick={callback}
+                                    >
+                                    Back
+                                </Button>
+                                <Button
+                                variant="contained"
+                                type="submit"
+                                className={clsx(classes.btn, classes.editButton)}
+                                startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
+                                disabled={loading}
+                                onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
+                                >
+                                Save
+                            </Button>
+                            </>
+                            ) : (
+                                <div style={{display: 'flex', justifyContent: 'flex-end', width: '90%', margin: '0 auto'}}>
+                                  <CircularProgress size={30}/>
+                                </div>
+                            )
+                        ) : (
+                            <>
+                            <div>
+                            <Button
+                                    variant="outlined"
+                                    startIcon={<NavigateBeforeRoundedIcon />}
+                                    disabled={loading}
+                                    onClick={callback}
+                                    >
+                                    Back
+                                </Button>
+                            </div>
+
+                            <div>
+                            <Button
                             variant="contained"
                             type="submit"
                             className={clsx(classes.btn, classes.editButton)}
@@ -199,10 +233,12 @@ const AddNewVehicleForm = ({ data, id, number, trans_id, isEdit, isAdd, callback
                             disabled={loading}
                             onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
                         >
-                            {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` :
-                                'Save'}
+                            Edit
                         </Button>
-                    </div>
+                        </div>
+                        </>
+                        )
+                    }
                 </div>
             </div>
         </div>

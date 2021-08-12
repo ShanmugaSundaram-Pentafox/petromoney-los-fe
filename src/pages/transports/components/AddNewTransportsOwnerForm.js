@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import Switch from '@material-ui/core/Switch';
-import Typography from '@material-ui/core/Typography';
-import TextInput from '../../../components/TextInput/TextInput';
-import Button from '../../../components/CommonComponents/Button/Button';
-import * as Yup from 'yup';
-import { useFormik } from 'formik';
-import clsx from 'clsx';
-import Divider from '@material-ui/core/Divider';
+import React, { useState } from "react";
+import Box from "@material-ui/core/Box";
+import Grid from "@material-ui/core/Grid";
+import Switch from "@material-ui/core/Switch";
+import Typography from "@material-ui/core/Typography";
+import TextInput from "../../../components/TextInput/TextInput";
+import Button from "../../../components/CommonComponents/Button/Button";
+import * as Yup from "yup";
+import { useFormik } from "formik";
+import clsx from "clsx";
+import Divider from "@material-ui/core/Divider";
 import { makeStyles } from "@material-ui/styles";
 import CloseIcon from '@material-ui/icons/Close';
 import { URL } from '../../../config/serverUrls';
@@ -33,66 +33,66 @@ import { AvatarCard, ViewData } from '../../../components/CommonComponents/FileP
 
 
 const useStyles = makeStyles((theme) => ({
-    sidePanelTitle: {
-        // textAlign: 'center',
-        padding: '24px 16px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        zIndex: 0,
-        boxShadow: '0 1px 4px -3px #333'
-    },
-    sidePanelFormWrapper: {
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-        width: '40vw'
-    },
-    sidePanelFormContentWrapper: {
-        flex: 1,
-        overflowX: 'hidden'
-    },
-    title: {
-        marginBottom: 4,
-        fontSize: 11,
-    },
-    actionButtons: {
-        // paddingTop: 8
-    },
-    tableRow: {
-        cursor: 'pointer'
-    },
-    document: {
-        display: 'inline-block',
-        borderRadius: 2,
-        lineHeight: 1,
-    },
-    stepperRoot: {
-        padding: 16,
-        paddingTop: 8
-    },
-    fileStyle: {
-        display: 'flex',
-        justifyContent: 'space-around',
-        marginTop: 12,
-    },
-    fileAttachement: {
-        display: 'flex',
-        // justifyContent:'center',
-        marginTop: 6
-    },
-    icon: {
-        marginRight: 4,
-        marginTop: 6,
-    },
-    typography: {
-        marginTop: 8,
-    },
-    actionButtonsWrapper: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        padding: '12px 16px'
-    },
+  sidePanelTitle: {
+    // textAlign: 'center',
+    padding: "24px 16px",
+    display: "flex",
+    justifyContent: "space-between",
+    zIndex: 0,
+    boxShadow: "0 1px 4px -3px #333",
+  },
+  sidePanelFormWrapper: {
+    position: "relative",
+    display: "flex",
+    flexDirection: "column",
+    height: "100vh",
+    width: "40vw",
+  },
+  sidePanelFormContentWrapper: {
+    flex: 1,
+    overflowX: "hidden",
+  },
+  title: {
+    marginBottom: 4,
+    fontSize: 11,
+  },
+  actionButtons: {
+    // paddingTop: 8
+  },
+  tableRow: {
+    cursor: "pointer",
+  },
+  document: {
+    display: "inline-block",
+    borderRadius: 2,
+    lineHeight: 1,
+  },
+  stepperRoot: {
+    padding: 16,
+    paddingTop: 8,
+  },
+  fileStyle: {
+    display: "flex",
+    justifyContent: "space-around",
+    marginTop: 12,
+  },
+  fileAttachement: {
+    display: "flex",
+    // justifyContent:'center',
+    marginTop: 6,
+  },
+  icon: {
+    marginRight: 4,
+    marginTop: 6,
+  },
+  typography: {
+    marginTop: 8,
+  },
+  actionButtonsWrapper: {
+    display: "flex",
+    justifyContent: "space-between",
+    padding: "12px 16px",
+  },
     details: {
         // padding: 6,
         borderColor: 'grey',
@@ -172,6 +172,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
             address: Yup.string().required('Please enter address'),
         }),
         onSubmit: values => {
+            
             values.first_name = values.first_name.toUpperCase()
             values.last_name = values.last_name.toUpperCase()
             const date = moment(selectedDate).format('DD-MMM-YYYY')
@@ -181,188 +182,259 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                 data.append(key, date_values[key]);
             })
 
-            if (isAdd === 'Edit') {
-                fetch(`${URL.base}transport/owner/${rowData.t_owner_id} `, {
-                    method: 'POST',
-                    body: data,
-                    headers: {
-                        'Authorization': `Bearer ${currentUser.token} `
-                    }
-                })
-                    .then(res => {
-                        return res.json()
-                    })
-                    .then(res => {
-                        if (res.status === 'SUCCESS') {
-                            enqueueSnackbar(res.profile_status, {
-                                anchorOrigin: {
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                },
-                                variant: 'success',
-                            }
-                            )
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 2000)
-                        }
-                        else {
-                            enqueueSnackbar(res.message, {
-                                anchorOrigin: {
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                },
-                                variant: 'error',
-                            }
-                            )
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        enqueueSnackbar(error.profile_status, {
-                            anchorOrigin: {
-                                vertical: 'top',
-                                horizontal: 'right',
-                            },
-                            variant: 'error',
-                        }
-                        )
-                    })
+      if (isAdd === "Edit") {
+        setLoading(true);
+        fetch(`${URL.base}transport/owner/${rowData.t_owner_id} `, {
+          method: "POST",
+          body: data,
+          headers: {
+            Authorization: `Bearer ${currentUser.token} `,
+          },
+        })
+          .then((res) => {
+            return res.json();
+          })
+          .then((res) => {
+            if (res.status === "SUCCESS") {
+                setLoading(false)
+              enqueueSnackbar(res.profile_status, {
+                anchorOrigin: {
+                  vertical: "top",
+                  horizontal: "right",
+                },
+                variant: "success",
+              });
+              setTimeout(() => {
+                window.location.reload();
+              }, 2000);
+            } else {
+              enqueueSnackbar(res.message, {
+                anchorOrigin: {
+                  vertical: "top",
+                  horizontal: "right",
+                },
+                variant: "error",
+              });
             }
-            else {
-                data.append('dealership_id', dealer_id)
-                fetch(`${URL.base}transport/owner`, {
-                    method: 'POST',
-                    body: data,
-                    headers: {
-                        'Authorization': `Bearer ${currentUser.token} `
-                    }
-                })
-                    .then(res => {
-                        return res.json()
-                    })
-                    .then(res => {
-                        if (res.status === 'SUCCESS') {
-                            enqueueSnackbar(res.profile_status, {
-                                anchorOrigin: {
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                },
-                                variant: 'success',
-                            }
-                            )
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 2000)
-                        }
-                        else {
-                            enqueueSnackbar(res.message, {
-                                anchorOrigin: {
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                },
-                                variant: 'error',
-                            }
-                            )
-                        }
-
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        enqueueSnackbar(error.profile_status, {
-                            anchorOrigin: {
-                                vertical: 'top',
-                                horizontal: 'right',
-                            },
-                            variant: 'error',
-                        }
-                        )
-                    })
+          })
+          .catch((error) => {
+              setLoading(false)
+            console.log(error);
+            enqueueSnackbar(error.profile_status, {
+              anchorOrigin: {
+                vertical: "top",
+                horizontal: "right",
+              },
+              variant: "error",
+            });
+          });
+      } else {
+          setLoading(true)
+        data.append("dealership_id", dealer_id);
+        fetch(`${URL.base}transport/owner`, {
+          method: "POST",
+          body: data,
+          headers: {
+            Authorization: `Bearer ${currentUser.token} `,
+          },
+        })
+          .then((res) => {
+            return res.json();
+          })
+          .then((res) => {
+            if (res.status === "SUCCESS") {
+                setLoading(false)
+              enqueueSnackbar(res.profile_status, {
+                anchorOrigin: {
+                  vertical: "top",
+                  horizontal: "right",
+                },
+                variant: "success",
+              });
+              setTimeout(() => {
+                window.location.reload();
+              }, 2000);
+            } else {
+              enqueueSnackbar(res.message, {
+                anchorOrigin: {
+                  vertical: "top",
+                  horizontal: "right",
+                },
+                variant: "error",
+              });
             }
-
-        }
-    });
-    const onCloseUploader = () => {
-        setShowUpload(false);
+          })
+          .catch((error) => {
+              setLoading(false)
+            console.log(error);
+            enqueueSnackbar(error.profile_status, {
+              anchorOrigin: {
+                vertical: "top",
+                horizontal: "right",
+              },
+              variant: "error",
+            });
+          });
+      }
+    },
+  });
+  const onCloseUploader = () => {
+    setShowUpload(false);
+  };
+  const handleSave = (value) => {
+    if (fileType === "PAN") {
+      setFieldValue("pan_file_url", value[0]);
+    } else if (fileType === "Front") {
+      setFieldValue("aadhar_f_file_url", value[0]);
+    } else if (fileType === "Back") {
+      setFieldValue("aadhar_b_file_url", value[0]);
+    } else {
+      setFieldValue("profile_image_url", value[0]);
     }
-    const handleSave = (value) => {
-        if (fileType === 'PAN') {
-            setFieldValue('pan_file_url', value[0])
-        }
-        else if (fileType === 'Front') {
-            setFieldValue('aadhar_f_file_url', value[0])
-        }
-        else if (fileType === 'Back') {
-            setFieldValue('aadhar_b_file_url', value[0])
-        }
-        else {
-            setFieldValue('profile_image_url', value[0])
-        }
-        // fileType === 'PAN' ? setFieldValue('pan_file_url', value[0]) : fileType === 'Front' ? setFieldValue('aadhar_f_file_url', value[0]) : fileType = 'Back' ? setFieldValue('aadhar_b_file_url', value[0]) : setFieldValue('profile_image_url', value[0])
-        handleSubmit(values)
-        onCloseUploader();
-    }
-    const docUpload = (val) => {
-        setShowUpload(true)
-        setFileType(val)
-    }
-    const aadharBack = () => {
-        return (
-            <div className={classes.fileStyle}>
-                <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#eeeeee', color: '#43a047' }}
-                    href={rowData.aadhar_b_file_url} target="_blank" title={'Aadhar Back'}>{'Back'}</a>
-                <Tooltip title={'Click to edit'}>
-                    <UploadIcon fontSize="small" padding={2} onClick={() => docUpload('Back')} />
-                </Tooltip>
-                {/* <Tooltip title={'Click to delete'}>
+    // fileType === 'PAN' ? setFieldValue('pan_file_url', value[0]) : fileType === 'Front' ? setFieldValue('aadhar_f_file_url', value[0]) : fileType = 'Back' ? setFieldValue('aadhar_b_file_url', value[0]) : setFieldValue('profile_image_url', value[0])
+    handleSubmit(values);
+    onCloseUploader();
+  };
+  const docUpload = (val) => {
+    setShowUpload(true);
+    setFileType(val);
+  };
+  const aadharBack = () => {
+    return (
+      <div className={classes.fileStyle}>
+        <a
+          style={{
+            display: "inline-block",
+            borderRadius: 2,
+            lineHeight: 1,
+            marginRight: 4,
+            marginBottom: 4,
+            padding: 4,
+            backgroundColor: "#eeeeee",
+            color: "#43a047",
+          }}
+          href={rowData.aadhar_b_file_url}
+          target="_blank"
+          title={"Aadhar Back"}
+        >
+          {"Back"}
+        </a>
+        <Tooltip title={"Click to edit"}>
+          <UploadIcon
+            fontSize="small"
+            padding={2}
+            onClick={() => docUpload("Back")}
+          />
+        </Tooltip>
+        {/* <Tooltip title={'Click to delete'}>
                     <DeleteIcon fontSize="small" padding={2} />
                 </Tooltip> */}
-            </div>
-        )
-    }
-    const profileAttachment = () => {
-        return (
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#eeeeee', color: '#43a047' }}
-                    href={rowData.profile_image_url} target="_blank" title={'Profile Attachment'}>{'Profile Attachment'}</a>
-                <Tooltip title={'Click to edit'}>
-                    <UploadIcon fontSize="small" style={{ color: grey[800] }} padding={2} onClick={() => docUpload('Profile')} />
-                </Tooltip>
-                {/* <Tooltip title={'Click to delete'}>
+      </div>
+    );
+  };
+  const profileAttachment = () => {
+    return (
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <a
+          style={{
+            display: "inline-block",
+            borderRadius: 2,
+            lineHeight: 1,
+            marginRight: 4,
+            marginBottom: 4,
+            padding: 4,
+            backgroundColor: "#eeeeee",
+            color: "#43a047",
+          }}
+          href={rowData.profile_image_url}
+          target="_blank"
+          title={"Profile Attachment"}
+        >
+          {"Profile Attachment"}
+        </a>
+        <Tooltip title={"Click to edit"}>
+          <UploadIcon
+            fontSize="small"
+            style={{ color: grey[800] }}
+            padding={2}
+            onClick={() => docUpload("Profile")}
+          />
+        </Tooltip>
+        {/* <Tooltip title={'Click to delete'}>
                     <DeleteIcon fontSize="small" style={{ color: grey[800] }} padding={2} />
                 </Tooltip> */}
-            </div>
-        )
-    }
+      </div>
+    );
+  };
 
-    const aadharFront = () => {
-        return (
-            <div className={classes.fileStyle} >
-                <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#eeeeee', color: '#43a047' }}
-                    href={rowData.aadhar_f_file_url} target="_blank" title={'Aadhar Front'}>{'Front'}</a>
-                <Tooltip title={'Click to edit'}>
-                    <UploadIcon fontSize="small" style={{ color: grey[800] }} padding={2} onClick={() => docUpload('Front')} />
-                </Tooltip>
-                {/* <Tooltip title={'Click to delete'}>
+  const aadharFront = () => {
+    return (
+      <div className={classes.fileStyle}>
+        <a
+          style={{
+            display: "inline-block",
+            borderRadius: 2,
+            lineHeight: 1,
+            marginRight: 4,
+            marginBottom: 4,
+            padding: 4,
+            backgroundColor: "#eeeeee",
+            color: "#43a047",
+          }}
+          href={rowData.aadhar_f_file_url}
+          target="_blank"
+          title={"Aadhar Front"}
+        >
+          {"Front"}
+        </a>
+        <Tooltip title={"Click to edit"}>
+          <UploadIcon
+            fontSize="small"
+            style={{ color: grey[800] }}
+            padding={2}
+            onClick={() => docUpload("Front")}
+          />
+        </Tooltip>
+        {/* <Tooltip title={'Click to delete'}>
                     <DeleteIcon fontSize="small" style={{ color: grey[800] }} padding={2} />
                 </Tooltip> */}
-            </div>
-        )
-    }
-    const panAttachment = () => {
-        return (
-            <div className={classes.fileStyle}>
-                <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#eeeeee', color: '#43a047' }}
-                    href={rowData.pan_file_url} target="_blank" title={'PAN Attachment'}>{'PAN Attachment'}</a>
-                <Tooltip title={'Click to edit'}>
-                    <UploadIcon fontSize="small" padding={2} style={{ color: grey[800] }} onClick={() => docUpload('PAN')} />
-                </Tooltip>
-                {/* <Tooltip title={'Click to delete'}>
+      </div>
+    );
+  };
+  const panAttachment = () => {
+    return (
+      <div className={classes.fileStyle}>
+        <a
+          style={{
+            display: "inline-block",
+            borderRadius: 2,
+            lineHeight: 1,
+            marginRight: 4,
+            marginBottom: 4,
+            padding: 4,
+            backgroundColor: "#eeeeee",
+            color: "#43a047",
+          }}
+          href={rowData.pan_file_url}
+          target="_blank"
+          title={"PAN Attachment"}
+        >
+          {"PAN Attachment"}
+        </a>
+        <Tooltip title={"Click to edit"}>
+          <UploadIcon
+            fontSize="small"
+            padding={2}
+            style={{ color: grey[800] }}
+            onClick={() => docUpload("PAN")}
+          />
+        </Tooltip>
+        {/* <Tooltip title={'Click to delete'}>
                     <DeleteIcon fontSize="small" style={{ color: grey[800] }} padding={2} />
                 </Tooltip> */}
-            </div>
-        )
-    }
+      </div>
+    );
+  };
 
 
 
@@ -373,7 +445,7 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                 <CloseIcon onClick={handleClose} />
             </Typography>
             <div className={classes.sidePanelFormContentWrapper}>
-                <div className={classes.stepperRoot}>
+            <div className={classes.stepperRoot}>
                     {
                         readOnly ? (
                             <>
@@ -733,42 +805,90 @@ const AddNewTransportsOwnerForm = ({ handleNext, currentUser, dealer_id, isAdd, 
                     }
 
                 </div>
-                {
-                    showUpload && <FileUpload handleSave={(value) => handleSave(value)} id={id} data={rowData} title='Upload Transport Owner Documents' open={showUpload} onCloseUploader={onCloseUploader} />
-                }
-            </div>
-            <div className={classes.actionFooter}>
-                <Divider />
-                <div className={classes.actionButtonsWrapper}>
-                    <div>
-                        <Button
-                            variant="outlined"
-                            startIcon={<NavigateBeforeRoundedIcon />}
-                            // disabled={loading}
-                            onClick={handleClose}
-                        >
-                            Back
-                        </Button>
-                    </div>
-                    <div>
-                        <Button
-                            variant="contained"
-                            type="submit"
-                            className={clsx(classes.btn, classes.editButton)}
-                            startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                            // disabled={loading}
-                            onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
-                        >
-                            {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` :
-                                'Save'}
-                        </Button>
-                    </div>
-                </div>
-            </div>
-        </div >
+        {showUpload && (
+          <FileUpload
+            handleSave={(value) => handleSave(value)}
+            id={id}
+            data={rowData}
+            title="Upload Transport Owner Documents"
+            open={showUpload}
+            onCloseUploader={onCloseUploader}
+          />
+        )}
+      </div>
+      <div className={classes.actionFooter}>
+        <Divider />
+        <div className={classes.actionButtonsWrapper}>
+          {!readOnly ? (
+            !loading ? (
+              <>
+                <Button
+                  variant="outlined"
+                  startIcon={<NavigateBeforeRoundedIcon />}
+                  disabled={loading}
+                  onClick={handleClose}
+                >
+                  Back
+                </Button>
 
+                <Button
+                  variant="contained"
+                  type="submit"
+                  className={clsx(classes.btn, classes.editButton)}
+                  startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
+                  disabled={loading}
+                  onClick={
+                    loading ? () => null : readOnly ? handleEdit : handleSubmit
+                  }
+                >
+                  Save
+                </Button>
+              </>
+            ) : (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  width: "90%",
+                  margin: "0 auto",
+                }}
+              >
+                <CircularProgress size={30} />
+              </div>
+            )
+          ) : (
+            <>
+              <div>
+                <Button
+                  variant="outlined"
+                  startIcon={<NavigateBeforeRoundedIcon />}
+                  disabled={loading}
+                  onClick={handleClose}
+                >
+                  Back
+                </Button>
+              </div>
 
-    )
-}
+              <div>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  className={clsx(classes.btn, classes.editButton)}
+                  startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
+                  disabled={loading}
+                  onClick={
+                    loading ? () => null : readOnly ? handleEdit : handleSubmit
+                  }
+                >
+                  Edit
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default AddNewTransportsOwnerForm;

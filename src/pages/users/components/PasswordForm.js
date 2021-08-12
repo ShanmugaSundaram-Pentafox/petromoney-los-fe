@@ -1,4 +1,4 @@
-import { TextField } from '@material-ui/core';
+import { CircularProgress, TextField } from '@material-ui/core';
 import { Box } from '@material-ui/core';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const PasswordForm = ({ data, callback }) => {
+const PasswordForm = ({ data, callback, loading ,setLoading}) => {
     const { enqueueSnackbar } = useSnackbar();
     const classes = useStyles();
     const { values, errors, handleChange, handleSubmit, setValues, isSubmitting, setFieldValue } = useFormik({
@@ -57,8 +57,10 @@ const PasswordForm = ({ data, callback }) => {
             d.confirm_password = (d.confirm_password + '').trim();
 
             if (d.password && d.confirm_password && d.password === d.confirm_password) {
+                setLoading(true)
                 updatePassword(d, data.id)
                     .then(res => {
+                        setLoading(false)
                         enqueueSnackbar(res, {
                             anchorOrigin: {
                                 vertical: 'top',
@@ -72,6 +74,7 @@ const PasswordForm = ({ data, callback }) => {
                         }, 2000)
                     })
                     .catch(err => {
+                        setLoading(false);
                         console.log(err)
                         setSubmitting(false)
                     })
@@ -140,8 +143,14 @@ const PasswordForm = ({ data, callback }) => {
                         />
 
                         <div className={classes.passwordWrapper}>
-                            <Button variant='outlined' onClick={callback} style={{ marginRight: 4 }}>Cancel</Button>
-                            <Button variant='contained' color="primary" onClick={() => { handleSubmit() }} disabled={isSubmitting}>Save</Button>
+                            {
+                                !loading ? (
+                                    <>
+                                        <Button variant='outlined' onClick={callback} style={{ marginRight: 4 }}>Cancel</Button>
+                                        <Button variant='contained' color="primary" onClick={() => { handleSubmit() }}>Save</Button>
+                                    </>
+                                ) : <CircularProgress />
+                            }
                         </div>
                     </Box>
                 }

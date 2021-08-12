@@ -6,7 +6,7 @@ import Divider from '@material-ui/core/Divider';
 // import IconButton from '@material-ui/core/IconButton';
 // import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 import { updatePassword, updateUserDetails } from '../../../services/common.service';
-import { Paper, TextField, Tooltip, Typography } from '@material-ui/core';
+import { CircularProgress, Paper, TextField, Tooltip, Typography } from '@material-ui/core';
 // import Snackbar from '@material-ui/core/Snackbar';
 // import MuiAlert from '@material-ui/lab/Alert';
 import Button from '../../../components/CommonComponents/Button/Button';
@@ -153,6 +153,8 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
   const [open, setOpen] = useState(false);
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
+  const [userLoading, setuserLoading] = useState(false);
+  const [passLoading, setpassLoading] = useState(false);
   // const [showUserEditDrawer, setShowUserEditDrawer] = useState(false);
   const [roleList, setRoleList] = useState([])
   const [readOnly, setReadOnly] = useState(true)
@@ -176,8 +178,10 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
     setOpen(true);
   };
   const ActivateUser = (status) => {
+    setuserLoading(true)
     updateUserDetails({ status }, data.id)
       .then((res) => {
+        setuserLoading(false)
         enqueueSnackbar(res, {
           anchorOrigin: {
             vertical: 'top',
@@ -192,6 +196,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
         }, 2000)
       })
       .catch(err => {
+        setuserLoading(false)
         console.log(err)
       })
 
@@ -205,10 +210,10 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
 
   const deleteUserRecord = (userId) => {
     setOpen(false);
-    setLoading(true);
+    setuserLoading(true);
     deleteUser(userId)
       .then(({ message }) => {
-        setLoading(false);
+        setuserLoading(false);
         enqueueSnackbar(message, {
           anchorOrigin: {
             vertical: 'top',
@@ -223,7 +228,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
         }, 700);
       })
       .catch(e => {
-        setLoading(false);
+        setuserLoading(false);
         logger(e);
       })
   }
@@ -262,8 +267,10 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
       d.last_name = d.last_name.toUpperCase()
 
       if (submitType === 'Profile') {
+        setLoading(true);
         updateUserDetails(d, data.id)
           .then(res => {
+            setLoading(false);
             enqueueSnackbar(res, {
               anchorOrigin: {
                 vertical: 'top',
@@ -279,6 +286,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
 
           })
           .catch(err => {
+            setLoading(false);
             console.log(err)
           })
       }
@@ -350,7 +358,6 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                             {...inputProps}
                             name="first_name"
                             labelText="First Name"
-                            disabled={isSubmitting}
                             value={values.first_name?.toUpperCase()}
                             error={errors.first_name}
                             helperText={errors.first_name}
@@ -361,7 +368,6 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                             {...inputProps}
                             name="last_name"
                             labelText="Last Name"
-                            disabled={isSubmitting}
                             value={values.last_name?.toUpperCase()}
                             error={errors.last_name}
                             helperText={errors.last_name}
@@ -373,7 +379,6 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                             type="mobile"
                             name="mobile"
                             labelText="Mobile"
-                            disabled={isSubmitting}
                             value={values.mobile}
                             error={errors.mobile}
                             helperText={errors.mobile}
@@ -385,7 +390,6 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                             type="email"
                             name="email"
                             labelText="Email"
-                            disabled={isSubmitting}
                             value={values.email}
                             error={errors.email}
                             helperText={errors.email}
@@ -397,7 +401,6 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                             select
                             labelText="User Role"
                             name="role_id"
-                            disabled={isSubmitting}
                             value={values.role_id}
                             error={errors.role_id}
                             helperText={errors.role_id}
@@ -439,8 +442,14 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                     no={() => null}
                   />
                   <div className={classes.passwordWrapper}>
-                    <Button variant='outlined' onClick={() => setEditProfile(false)} style={{ marginRight: 4 }}>Cancel</Button>
-                    <Button variant='contained' color="primary" onClick={() => { handleSubmit(); setSubmitType('Profile') }} disabled={isSubmitting}>Save</Button>
+                    {
+                      !loading ? (
+                        <>
+                          <Button variant='outlined' onClick={() => setEditProfile(false)} style={{ marginRight: 4 }}>Cancel</Button>
+                          <Button variant='contained' color="primary" onClick={() => { handleSubmit(); setSubmitType('Profile') }}>Save</Button>
+                        </>
+                      ) : <CircularProgress />
+                    }
                   </div>
                 </>
               )
@@ -466,7 +475,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                   </div>
                 </>
               ) : (
-                editPassword && <PasswordForm data={data} callback={() => { setEditPassword(false) }} />
+                editPassword && <PasswordForm data={data} callback={() => { setEditPassword(false) }} loading={passLoading} setLoading={setpassLoading}/>
               )
             }
           </>
@@ -508,29 +517,31 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
             </Button>
           </div>
           {
-            data.status === 'Active' ? (
-              <div>
-                <Button
-                  variant="contained"
-                  className={classes.btnError}
-                  color="primary"
-                  onClick={() => handleClickOpen(data.id)}
-                >
-                  Deactivate user
-                </Button>
-              </div>
-            ) : (
-              <div>
-                <Button
-                  variant="contained"
-                  className={classes.btnError}
-                  // color="primary"
-                  onClick={() => ActivateUser(1)}
-                >
-                  Activate
-                </Button>
-              </div>
-            )
+            !userLoading ? (
+              data.status === 'Active' ? (
+                <div>
+                  <Button
+                    variant="contained"
+                    className={classes.btnError}
+                    color="primary"
+                    onClick={() => handleClickOpen(data.id)}
+                  >
+                    Deactivate user
+                  </Button>
+                </div>
+              ) : (
+                <div>
+                  <Button
+                    variant="contained"
+                    className={classes.btnError}
+                    // color="primary"
+                    onClick={() => ActivateUser(1)}
+                  >
+                    Activate
+                  </Button>
+                </div>
+              )
+            ) : <CircularProgress />
           }
 
         </div>

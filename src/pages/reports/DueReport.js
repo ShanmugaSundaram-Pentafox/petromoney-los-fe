@@ -121,7 +121,7 @@ const DueTable = () => {
           </Grid>
         ) : Array.isArray(loans) && loans.length ? (
           <MUIDataTable
-            title={"Load Due Reports"}
+            title={"Loan Due Reports"}
             data={loans}
             columns={columns}
             options={options}

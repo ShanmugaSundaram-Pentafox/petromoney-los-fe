@@ -200,10 +200,10 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 name="business_type"
                 readOnly={readOnly}
                 disabled={readOnly}
-                defaultValue={businessTypes[values.business_type - 1].name}
+                defaultValue={businessTypes[values.business_type - 1]?.name}
                 {...fieldProps}
               >
-                <option value="">{businessTypes[values.business_type].name}</option>
+                <option value="">{businessTypes[values.business_type]?.name}</option>
                 {
                   businessTypes.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
                 }

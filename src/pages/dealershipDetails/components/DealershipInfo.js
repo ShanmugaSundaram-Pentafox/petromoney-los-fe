@@ -182,7 +182,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 {...fieldProps}
               />
             </Grid>
-
             <Grid {...gridProps}>
               <TextInput
                 multiline

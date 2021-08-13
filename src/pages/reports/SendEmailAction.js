@@ -6,6 +6,8 @@ import Grid from '@material-ui/core/Grid';
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { SendReports } from '../../services/common.service';
+import { useSnackbar } from "notistack";
+
 
 
 
@@ -35,7 +37,9 @@ const SendEmailAction = () => {
   const [open, setOpen] = React.useState(false);
   const [modalData, setModalData] = useState({});
   const [loading, setLoading] = useState(false);
-  const [title, setTitle] = useState({msg: "Yes"})
+  const [title, setTitle] = useState({msg: "Yes"});
+  const { enqueueSnackbar } = useSnackbar();
+
 
   const sendEmail = async () => {
     setTitle({msg: "Sending..."})
@@ -43,17 +47,39 @@ const SendEmailAction = () => {
       .then((res) => {
         if (res.status=== "SUCCESS") {
           setTitle({ completed: true, msg: res.message})
+          enqueueSnackbar(res.message, {
+            anchorOrigin: {
+              vertical: "top",
+              horizontal: "right",
+            },
+            variant: "success"
+          });
           setTimeout(() => {
-            setOpen(false);
             setModalData({})
+            setOpen(false);
             setTitle({msg: "Yes"})
           }, 2000)
         } 
         else {
           setTitle({msg: res.message})
+          enqueueSnackbar(res.message, {
+            anchorOrigin: {
+              vertical: "top",
+              horizontal: "right",
+            },
+            variant: "error"
+          });
         }
       })
       .catch((err) => {
+        setModalData({})
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+          variant: "error"
+        });
         setTitle({msg: 'Yes'});
       });
   };

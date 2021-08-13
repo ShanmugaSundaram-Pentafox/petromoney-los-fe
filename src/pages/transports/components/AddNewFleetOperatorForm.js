@@ -412,11 +412,8 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
             <div className={classes.actionFooter}>
                 <Divider />
                 <div className={classes.actionButtonsWrapper}>
-                    {
-                        !readOnly ? (
-                            !loading ? (
-                                <>
-                                <Button
+                        <div>
+                            <Button
                                     variant="outlined"
                                     startIcon={<NavigateBeforeRoundedIcon />}
                                     // disabled={loading}
@@ -424,14 +421,19 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
                                 >
                                 Back
                                 </Button>
+                        </div>
 
+                        {
+                        !readOnly ? (
+                            !loading ? (
+                                <>
                                 <Button
                                     variant="contained"
                                     type="submit"
                                     className={clsx(classes.btn, classes.editButton)}
                                     startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
                                     // disabled={loading}
-                                    onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
+                                    onClick={loading ? () => null : handleSubmit}
                                     >
                                     Save
                                 </Button>
@@ -445,23 +447,12 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
                             <>
                             <div>
                             <Button
-                                    variant="outlined"
-                                    startIcon={<NavigateBeforeRoundedIcon />}
-                                    // disabled={loading}
-                                    onClick={handleClose}
-                                >
-                                Back
-                                </Button>
-                            </div>
-                            
-                            <div>
-                            <Button
                             variant="contained"
                             type="submit"
                             className={clsx(classes.btn, classes.editButton)}
                             startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
                             // disabled={loading}
-                            onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
+                            onClick={loading ? () => null : handleEdit }
                         >
                             Edit
                         </Button>

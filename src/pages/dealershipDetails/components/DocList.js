@@ -142,7 +142,7 @@ const DocList = ({ id }) => {
     setShowUpload(false);
   }
   const handleModal = (data, desc) => {
-    setImageModal(true);
+    setOpenModal(true);
     setModalData(data);
     setDescription(desc);
   }

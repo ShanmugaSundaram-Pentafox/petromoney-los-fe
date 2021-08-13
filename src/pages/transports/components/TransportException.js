@@ -87,7 +87,7 @@ const TransportException = ({ currentUser }) => {
                         return <div>{value}</div>
                     },
                     setCellProps: () => ({
-                        align: 'center',
+                        align: 'left',
                     }),
                 },
             },
@@ -126,7 +126,7 @@ const TransportException = ({ currentUser }) => {
                     filter: false,
                     sort: false,
                     setCellProps: () => ({
-                        align: 'center',
+                        align: 'left',
                     }),
                     customBodyRender: (value) => {
                         return (

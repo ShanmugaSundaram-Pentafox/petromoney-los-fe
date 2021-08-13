@@ -221,6 +221,8 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                             </Grid>
                         </Grid>
                         <Divider />
+                        {
+                            values?.profile_image_url || values?.pan_file_url || values?.aadhar_f_file_url || values?.aadhar_b_file_url ? (
                         <div className={classes.readOnlyWrapper}>
                             <Typography variant="h4">Attachments</Typography>
                             <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: 16 }}>
@@ -230,6 +232,16 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                                 {values.aadhar_b_file_url && < AvatarCard tooltip='View Aadhar back' file={values?.aadhar_b_file_url} title='Aadhar back' />}
                             </div>
                         </div>
+
+                            ) : (
+                        <div className={classes.readOnlyWrapper}>
+                            <Typography variant="h4">Attachments</Typography>
+                            <div style={{display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
+                                <Typography variant="h7">No Attachments Found</Typography>
+                            </div>
+                        </div>
+                            )
+                        }
                     </>
                 ) : (
                     <Grid container>

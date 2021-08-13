@@ -1,62 +1,62 @@
-import React, { useState } from "react";
-import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Grid";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { makeStyles } from "@material-ui/styles";
-import clsx from "clsx";
-import Divider from "@material-ui/core/Divider";
-import Typography from "@material-ui/core/Typography";
-import TextInput from "../../../components/TextInput/TextInput";
-import Button from "../../../components/CommonComponents/Button/Button";
-import EditIcon from "@material-ui/icons/Edit";
-import NavigateBeforeRoundedIcon from "@material-ui/icons/NavigateBeforeRounded";
-import NavigateNextRounded from "@material-ui/icons/NavigateNextRounded";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import React, { useState } from 'react';
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
+import Divider from '@material-ui/core/Divider';
+import Typography from '@material-ui/core/Typography';
+import TextInput from '../../../components/TextInput/TextInput';
+import Button from '../../../components/CommonComponents/Button/Button';
+import EditIcon from '@material-ui/icons/Edit';
+import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import {
   addNewVehicle,
   getAllTransport,
   updateVehicle,
-} from "../../../services/transports.service";
-import { useSnackbar } from "notistack";
-import CloseIcon from "@material-ui/icons/Close";
+} from '../../../services/transports.service';
+import { useSnackbar } from 'notistack';
+import CloseIcon from '@material-ui/icons/Close';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
     // textAlign: 'center',
-    padding: "24px 16px",
-    display: "flex",
-    justifyContent: "space-between",
+    padding: '24px 16px',
+    display: 'flex',
+    justifyContent: 'space-between',
     zIndex: 0,
-    boxShadow: "0 1px 4px -3px #333",
+    boxShadow: '0 1px 4px -3px #333',
   },
   sidePanelFormWrapper: {
-    position: "relative",
-    display: "flex",
-    flexDirection: "column",
-    height: "100vh",
-    width: "40vw",
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    width: '40vw',
   },
   sidePanelFormContentWrapper: {
     flex: 1,
-    overflowY: "auto",
+    overflowY: 'auto',
   },
   stepperRoot: {
     padding: 16,
     paddingTop: 8,
   },
   actionButtonsWrapper: {
-    display: "flex",
-    justifyContent: "space-between",
-    padding: "12px 16px",
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '12px 16px',
   },
   editButton: {
-    marginRight: "8px",
-    "&.MuiButton-contained": {
+    marginRight: '8px',
+    '&.MuiButton-contained': {
       backgroundColor: theme.palette.success.main,
       color: theme.palette.white,
     },
-    "&.MuiButton-contained:hover": {
+    '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.success.dark,
     },
   },
@@ -71,7 +71,7 @@ const AddNewVehicleForm = ({
   isAdd,
   callback,
 }) => {
-  const [readOnly, setReadOnly] = useState(isAdd === "Add" ? false : true);
+  const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
   const classes = useStyles();
@@ -93,20 +93,20 @@ const AddNewVehicleForm = ({
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      tt_no: Yup.string().required("Please enter vehicle number"),
+      tt_no: Yup.string().required('Please enter vehicle number'),
     }),
     onSubmit: (formData) => {
       setLoading(true);
-      if (isAdd === "Edit") {
+      if (isAdd === 'Edit') {
         updateVehicle(formData, id, trans_id)
           .then((message) => {
             setLoading(false);
             enqueueSnackbar(message, {
               anchorOrigin: {
-                vertical: "top",
-                horizontal: "right",
+                vertical: 'top',
+                horizontal: 'right',
               },
-              variant: "success",
+              variant: 'success',
             });
 
             setTimeout(() => {
@@ -117,10 +117,10 @@ const AddNewVehicleForm = ({
             setLoading(false);
             enqueueSnackbar(e, {
               anchorOrigin: {
-                vertical: "top",
-                horizontal: "right",
+                vertical: 'top',
+                horizontal: 'right',
               },
-              variant: "error",
+              variant: 'error',
             });
           });
       } else {
@@ -128,10 +128,10 @@ const AddNewVehicleForm = ({
           .then((message) => {
             enqueueSnackbar(message, {
               anchorOrigin: {
-                vertical: "top",
-                horizontal: "right",
+                vertical: 'top',
+                horizontal: 'right',
               },
-              variant: "success",
+              variant: 'success',
             });
             setTimeout(() => {
               window.location.reload();
@@ -140,22 +140,22 @@ const AddNewVehicleForm = ({
           .catch((e) => {
             enqueueSnackbar(e, {
               anchorOrigin: {
-                vertical: "top",
-                horizontal: "right",
+                vertical: 'top',
+                horizontal: 'right',
               },
-              variant: "error",
+              variant: 'error',
             });
           });
       }
     },
   });
   const inputProps = {
-    direction: "column",
+    direction: 'column',
     alignTop: true,
   };
   return (
     <div className={classes.sidePanelFormWrapper}>
-      <Typography className={classes.sidePanelTitle} variant="h4">
+      <Typography className={classes.sidePanelTitle} variant='h4'>
         <div>Vehicle Information</div>
         <CloseIcon onClick={callback} />
       </Typography>
@@ -168,7 +168,7 @@ const AddNewVehicleForm = ({
                   {readOnly ? (
                     <TextInput
                       {...inputProps}
-                      labelText="Vehicle Number"
+                      labelText='Vehicle Number'
                       value={number}
                       readOnly={readOnly}
                       InputLabelProps={{ shrink: true }}
@@ -176,8 +176,8 @@ const AddNewVehicleForm = ({
                   ) : (
                     <TextInput
                       {...inputProps}
-                      name="tt_no"
-                      labelText="Vehicle Number"
+                      name='tt_no'
+                      labelText='Vehicle Number'
                       value={values.tt_no?.toUpperCase()}
                       readOnly={readOnly}
                       error={errors.tt_no}
@@ -195,7 +195,7 @@ const AddNewVehicleForm = ({
         <Divider />
         <div className={classes.actionButtonsWrapper}>
           <Button
-            variant="outlined"
+            variant='outlined'
             startIcon={<NavigateBeforeRoundedIcon />}
             disabled={loading}
             onClick={callback}
@@ -206,8 +206,8 @@ const AddNewVehicleForm = ({
             !loading ? (
               <>
                 <Button
-                  variant="contained"
-                  type="submit"
+                  variant='contained'
+                  type='submit'
                   className={clsx(classes.btn, classes.editButton)}
                   startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
                   disabled={loading}
@@ -219,10 +219,10 @@ const AddNewVehicleForm = ({
             ) : (
               <div
                 style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  width: "90%",
-                  margin: "0 auto",
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  width: '90%',
+                  margin: '0 auto',
                 }}
               >
                 <CircularProgress size={30} />
@@ -232,8 +232,8 @@ const AddNewVehicleForm = ({
             <>
               <div>
                 <Button
-                  variant="contained"
-                  type="submit"
+                  variant='contained'
+                  type='submit'
                   className={clsx(classes.btn, classes.editButton)}
                   startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
                   disabled={loading}

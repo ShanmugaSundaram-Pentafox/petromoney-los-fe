@@ -1,57 +1,57 @@
-import React, { useState } from "react";
-import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Grid";
-import Alert from "@material-ui/lab/Alert";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import TextInput from "../TextInput/TextInput";
-import Button from "../CommonComponents/Button/Button";
-import { addNewUser, getAllUserRoles } from "../../services/users.service";
-import { useMount } from "react-use";
-import Typography from "@material-ui/core/Typography";
-import Divider from "@material-ui/core/Divider";
-import clsx from "clsx";
-import CloseIcon from "@material-ui/icons/Close";
-import { makeStyles } from "@material-ui/styles";
-import { useSnackbar } from "notistack";
-import { CircularProgress } from "@material-ui/core";
+import React, { useState } from 'react';
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
+import Alert from '@material-ui/lab/Alert';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import TextInput from '../TextInput/TextInput';
+import Button from '../CommonComponents/Button/Button';
+import { addNewUser, getAllUserRoles } from '../../services/users.service';
+import { useMount } from 'react-use';
+import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
+import clsx from 'clsx';
+import CloseIcon from '@material-ui/icons/Close';
+import { makeStyles } from '@material-ui/styles';
+import { useSnackbar } from 'notistack';
+import { CircularProgress } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
     // textAlign: 'center',
-    padding: "24px 16px",
-    display: "flex",
-    justifyContent: "space-between",
+    padding: '24px 16px',
+    display: 'flex',
+    justifyContent: 'space-between',
     zIndex: 0,
-    boxShadow: "0 1px 4px -3px #333",
+    boxShadow: '0 1px 4px -3px #333',
   },
   sidePanelFormWrapper: {
-    position: "relative",
-    display: "flex",
-    flexDirection: "column",
-    height: "100vh",
-    width: "40vw",
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    width: '40vw',
   },
   sidePanelFormContentWrapper: {
     flex: 1,
-    overflow: "auto",
+    overflow: 'auto',
   },
   stepperRoot: {
     padding: 16,
     paddingTop: 8,
   },
   actionButtonsWrapper: {
-    display: "flex",
-    justifyContent: "space-between",
-    padding: "12px 16px",
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '12px 16px',
   },
   editButton: {
-    marginRight: "8px",
-    "&.MuiButton-contained": {
+    marginRight: '8px',
+    '&.MuiButton-contained': {
       backgroundColor: theme.palette.success.main,
       color: theme.palette.white,
     },
-    "&.MuiButton-contained:hover": {
+    '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.success.dark,
     },
   },
@@ -86,13 +86,13 @@ const AddNewUserForm = ({ callback, action }) => {
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      role_id: Yup.number().required("Choose Proper User Role"),
-      first_name: Yup.string().required("Enter first name"),
-      last_name: Yup.string().min(1).required("Enter last name"),
+      role_id: Yup.number().required('Choose Proper User Role'),
+      first_name: Yup.string().required('Enter first name'),
+      last_name: Yup.string().min(1).required('Enter last name'),
       mobile: Yup.number()
-        .min(10, "Enter valid mobile number")
-        .required("Enter Mobile number"),
-      email: Yup.string().email("Enter valid email"),
+        .min(10, 'Enter valid mobile number')
+        .required('Enter Mobile number'),
+      email: Yup.string().email('Enter valid email'),
       password: Yup.string(),
     }),
     onSubmit: (formData) => {
@@ -105,10 +105,10 @@ const AddNewUserForm = ({ callback, action }) => {
           setLoading(false);
           enqueueSnackbar(message, {
             anchorOrigin: {
-              vertical: "top",
-              horizontal: "right",
+              vertical: 'top',
+              horizontal: 'right',
             },
-            variant: "success",
+            variant: 'success',
           });
           callback &&
             setTimeout(() => {
@@ -119,24 +119,24 @@ const AddNewUserForm = ({ callback, action }) => {
           setLoading(false);
           enqueueSnackbar(e, {
             anchorOrigin: {
-              vertical: "top",
-              horizontal: "right",
+              vertical: 'top',
+              horizontal: 'right',
             },
-            variant: "error",
+            variant: 'error',
           });
           console.log(e);
         });
     },
   });
   const inputProps = {
-    direction: "column",
+    direction: 'column',
     alignTop: true,
     onChange: handleChange,
   };
 
   return (
     <div className={classes.sidePanelFormWrapper}>
-      <Typography className={classes.sidePanelTitle} variant="h4">
+      <Typography className={classes.sidePanelTitle} variant='h4'>
         <div>Add New User Form</div>
         <CloseIcon onClick={action} />
       </Typography>
@@ -149,8 +149,8 @@ const AddNewUserForm = ({ callback, action }) => {
                   <TextInput
                     {...inputProps}
                     select
-                    labelText="User Role"
-                    name="role_id"
+                    labelText='User Role'
+                    name='role_id'
                     value={values.role_id}
                     error={errors.role_id}
                     helperText={errors.role_id}
@@ -158,7 +158,7 @@ const AddNewUserForm = ({ callback, action }) => {
                       native: true,
                     }}
                   >
-                    <option value="">Choose user role</option>
+                    <option value=''>Choose user role</option>
                     {userRoles.map((userRole) => (
                       <option key={userRole.role_name} value={userRole.id}>
                         ({userRole.role_name}) - {userRole.name}
@@ -169,8 +169,8 @@ const AddNewUserForm = ({ callback, action }) => {
                 <Grid item md={6}>
                   <TextInput
                     {...inputProps}
-                    name="first_name"
-                    labelText="First Name"
+                    name='first_name'
+                    labelText='First Name'
                     value={values.first_name?.toUpperCase()}
                     error={errors.first_name}
                     helperText={errors.first_name}
@@ -179,8 +179,8 @@ const AddNewUserForm = ({ callback, action }) => {
                 <Grid item md={6}>
                   <TextInput
                     {...inputProps}
-                    name="last_name"
-                    labelText="Last Name"
+                    name='last_name'
+                    labelText='Last Name'
                     value={values.last_name?.toUpperCase()}
                     error={errors.last_name}
                     helperText={errors.last_name}
@@ -189,9 +189,9 @@ const AddNewUserForm = ({ callback, action }) => {
                 <Grid item md={6}>
                   <TextInput
                     {...inputProps}
-                    type="mobile"
-                    name="mobile"
-                    labelText="Mobile"
+                    type='mobile'
+                    name='mobile'
+                    labelText='Mobile'
                     value={values.mobile}
                     error={errors.mobile}
                     helperText={errors.mobile}
@@ -200,9 +200,9 @@ const AddNewUserForm = ({ callback, action }) => {
                 <Grid item md={6}>
                   <TextInput
                     {...inputProps}
-                    type="email"
-                    name="email"
-                    labelText="Email"
+                    type='email'
+                    name='email'
+                    labelText='Email'
                     value={values.email}
                     error={errors.email}
                     helperText={errors.email}
@@ -211,13 +211,13 @@ const AddNewUserForm = ({ callback, action }) => {
                 <Grid item md={6}>
                   <TextInput
                     {...inputProps}
-                    type="password"
-                    name="password"
-                    labelText="Password (Optional)"
+                    type='password'
+                    name='password'
+                    labelText='Password (Optional)'
                     value={values.password}
                     error={errors.password}
                     helperText={
-                      errors.password || "Default password is Petromall@2020"
+                      errors.password || 'Default password is Petromall@2020'
                     }
                   />
                 </Grid>
@@ -243,15 +243,15 @@ const AddNewUserForm = ({ callback, action }) => {
         <Divider />
         <div className={classes.actionButtonsWrapper}>
           <div>
-            <Button variant="outlined" onClick={action}>
+            <Button variant='outlined' onClick={action}>
               Back
             </Button>
           </div>
           <div>
             {!loading ? (
               <Button
-                variant="contained"
-                type="submit"
+                variant='contained'
+                type='submit'
                 onClick={handleSubmit}
                 className={clsx(classes.btn, classes.editButton)}
               >
@@ -260,10 +260,10 @@ const AddNewUserForm = ({ callback, action }) => {
             ) : (
               <div
                 style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  width: "90%",
-                  margin: "0 auto",
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  width: '90%',
+                  margin: '0 auto',
                 }}
               >
                 <CircularProgress size={30} />

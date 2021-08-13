@@ -1,57 +1,57 @@
-import React, { useState } from "react";
-import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Grid";
-import Switch from "@material-ui/core/Switch";
-import Typography from "@material-ui/core/Typography";
-import TextInput from "../../../components/TextInput/TextInput";
-import Button from "../../../components/CommonComponents/Button/Button";
-import * as Yup from "yup";
-import { useFormik } from "formik";
-import clsx from "clsx";
-import Divider from "@material-ui/core/Divider";
-import { makeStyles } from "@material-ui/styles";
-import CloseIcon from "@material-ui/icons/Close";
-import { URL } from "../../../config/serverUrls";
-import EditIcon from "@material-ui/icons/Edit";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import NavigateNextRounded from "@material-ui/icons/NavigateNextRounded";
-import NavigateBeforeRoundedIcon from "@material-ui/icons/NavigateBeforeRounded";
-import { useSnackbar } from "notistack";
-import "date-fns";
-import Tooltip from "@material-ui/core/Tooltip";
-import DateFnsUtils from "@date-io/date-fns";
+import React, { useState } from 'react';
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
+import Switch from '@material-ui/core/Switch';
+import Typography from '@material-ui/core/Typography';
+import TextInput from '../../../components/TextInput/TextInput';
+import Button from '../../../components/CommonComponents/Button/Button';
+import * as Yup from 'yup';
+import { useFormik } from 'formik';
+import clsx from 'clsx';
+import Divider from '@material-ui/core/Divider';
+import { makeStyles } from '@material-ui/styles';
+import CloseIcon from '@material-ui/icons/Close';
+import { URL } from '../../../config/serverUrls';
+import EditIcon from '@material-ui/icons/Edit';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
+import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import { useSnackbar } from 'notistack';
+import 'date-fns';
+import Tooltip from '@material-ui/core/Tooltip';
+import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
-} from "@material-ui/pickers";
-import moment from "moment";
-import FileUpload from "../../../components/FileUpload";
-import UploadIcon from "@material-ui/icons/Backup";
-import { grey } from "@material-ui/core/colors";
+} from '@material-ui/pickers';
+import moment from 'moment';
+import FileUpload from '../../../components/FileUpload';
+import UploadIcon from '@material-ui/icons/Backup';
+import { grey } from '@material-ui/core/colors';
 import {
   AvatarCard,
   ViewData,
-} from "../../../components/CommonComponents/FilePreview";
+} from '../../../components/CommonComponents/FilePreview';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
     // textAlign: 'center',
-    padding: "24px 16px",
-    display: "flex",
-    justifyContent: "space-between",
+    padding: '24px 16px',
+    display: 'flex',
+    justifyContent: 'space-between',
     zIndex: 0,
-    boxShadow: "0 1px 4px -3px #333",
+    boxShadow: '0 1px 4px -3px #333',
   },
   sidePanelFormWrapper: {
-    position: "relative",
-    display: "flex",
-    flexDirection: "column",
-    height: "100vh",
-    width: "40vw",
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    width: '40vw',
   },
   sidePanelFormContentWrapper: {
     flex: 1,
-    overflowX: "hidden",
+    overflowX: 'hidden',
   },
   title: {
     marginBottom: 4,
@@ -61,10 +61,10 @@ const useStyles = makeStyles((theme) => ({
     // paddingTop: 8
   },
   tableRow: {
-    cursor: "pointer",
+    cursor: 'pointer',
   },
   document: {
-    display: "inline-block",
+    display: 'inline-block',
     borderRadius: 2,
     lineHeight: 1,
   },
@@ -73,12 +73,12 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: 8,
   },
   fileStyle: {
-    display: "flex",
-    justifyContent: "space-around",
+    display: 'flex',
+    justifyContent: 'space-around',
     marginTop: 12,
   },
   fileAttachement: {
-    display: "flex",
+    display: 'flex',
     // justifyContent:'center',
     marginTop: 6,
   },
@@ -90,38 +90,38 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 8,
   },
   actionButtonsWrapper: {
-    display: "flex",
-    justifyContent: "space-between",
-    padding: "12px 16px",
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '12px 16px',
   },
   details: {
     // padding: 6,
-    borderColor: "grey",
+    borderColor: 'grey',
     minWidth: 80,
     height: 50,
-    display: "flex",
-    textAlign: "left",
-    alignItems: "left",
-    justifyContent: "left",
+    display: 'flex',
+    textAlign: 'left',
+    alignItems: 'left',
+    justifyContent: 'left',
   },
   text: {
     fontSize: 12,
   },
   readOnlyWrapper: {
-    margin: "8px 4px",
-    maxWidth: "100%",
+    margin: '8px 4px',
+    maxWidth: '100%',
   },
   // avatar: {
   //     backgroundImage: ''
 
   // },
   editButton: {
-    marginRight: "8px",
-    "&.MuiButton-contained": {
+    marginRight: '8px',
+    '&.MuiButton-contained': {
       backgroundColor: theme.palette.success.main,
       color: theme.palette.white,
     },
-    "&.MuiButton-contained:hover": {
+    '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.success.dark,
     },
   },
@@ -137,11 +137,11 @@ const AddNewTransportsOwnerForm = ({
   id,
   callback,
 }) => {
-  const [readOnly, setReadOnly] = useState(isAdd === "Add" ? false : true);
+  const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
   const [checked, setChecked] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
-  const [fileType, setFileType] = useState("");
+  const [fileType, setFileType] = useState('');
   const [state, setState] = React.useState({
     checkedA: true,
     checkedB: true,
@@ -180,18 +180,18 @@ const AddNewTransportsOwnerForm = ({
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       // id: Yup.number().required('Please enter transporter code'),
-      first_name: Yup.string().required("Please enter transporter name"),
-      last_name: Yup.string().required("Please enter transporter name"),
-      email: Yup.string().email("Enter valid mail id "),
+      first_name: Yup.string().required('Please enter transporter name'),
+      last_name: Yup.string().required('Please enter transporter name'),
+      email: Yup.string().email('Enter valid mail id '),
       mobile: Yup.number()
-        .min(10, "Enter valid mobile number")
-        .required("please Enter your mobile number"),
-      address: Yup.string().required("Please enter address"),
+        .min(10, 'Enter valid mobile number')
+        .required('please Enter your mobile number'),
+      address: Yup.string().required('Please enter address'),
     }),
     onSubmit: (values) => {
       values.first_name = values.first_name.toUpperCase();
       values.last_name = values.last_name.toUpperCase();
-      const date = moment(selectedDate).format("DD-MMM-YYYY");
+      const date = moment(selectedDate).format('DD-MMM-YYYY');
       const date_values = {
         ...values,
         dob: date,
@@ -203,10 +203,10 @@ const AddNewTransportsOwnerForm = ({
         data.append(key, date_values[key]);
       });
 
-      if (isAdd === "Edit") {
+      if (isAdd === 'Edit') {
         setLoading(true);
         fetch(`${URL.base}transport/owner/${rowData.t_owner_id} `, {
-          method: "POST",
+          method: 'POST',
           body: data,
           headers: {
             Authorization: `Bearer ${currentUser.token} `,
@@ -216,14 +216,14 @@ const AddNewTransportsOwnerForm = ({
             return res.json();
           })
           .then((res) => {
-            if (res.status === "SUCCESS") {
+            if (res.status === 'SUCCESS') {
               setLoading(false);
               enqueueSnackbar(res.profile_status, {
                 anchorOrigin: {
-                  vertical: "top",
-                  horizontal: "right",
+                  vertical: 'top',
+                  horizontal: 'right',
                 },
-                variant: "success",
+                variant: 'success',
               });
               setTimeout(() => {
                 window.location.reload();
@@ -232,10 +232,10 @@ const AddNewTransportsOwnerForm = ({
               setLoading(false);
               enqueueSnackbar(res.message, {
                 anchorOrigin: {
-                  vertical: "top",
-                  horizontal: "right",
+                  vertical: 'top',
+                  horizontal: 'right',
                 },
-                variant: "error",
+                variant: 'error',
               });
             }
           })
@@ -244,17 +244,17 @@ const AddNewTransportsOwnerForm = ({
             console.log(error);
             enqueueSnackbar(error.profile_status, {
               anchorOrigin: {
-                vertical: "top",
-                horizontal: "right",
+                vertical: 'top',
+                horizontal: 'right',
               },
-              variant: "error",
+              variant: 'error',
             });
           });
       } else {
         setLoading(true);
-        data.append("dealership_id", dealer_id);
+        data.append('dealership_id', dealer_id);
         fetch(`${URL.base}transport/owner`, {
-          method: "POST",
+          method: 'POST',
           body: data,
           headers: {
             Authorization: `Bearer ${currentUser.token} `,
@@ -264,14 +264,14 @@ const AddNewTransportsOwnerForm = ({
             return res.json();
           })
           .then((res) => {
-            if (res.status === "SUCCESS") {
+            if (res.status === 'SUCCESS') {
               setLoading(false);
               enqueueSnackbar(res.message, {
                 anchorOrigin: {
-                  vertical: "top",
-                  horizontal: "right",
+                  vertical: 'top',
+                  horizontal: 'right',
                 },
-                variant: "success",
+                variant: 'success',
               });
               setTimeout(() => {
                 window.location.reload();
@@ -279,10 +279,10 @@ const AddNewTransportsOwnerForm = ({
             } else {
               enqueueSnackbar(res.message, {
                 anchorOrigin: {
-                  vertical: "top",
-                  horizontal: "right",
+                  vertical: 'top',
+                  horizontal: 'right',
                 },
-                variant: "error",
+                variant: 'error',
               });
             }
           })
@@ -291,10 +291,10 @@ const AddNewTransportsOwnerForm = ({
             console.log(error);
             enqueueSnackbar(error.message, {
               anchorOrigin: {
-                vertical: "top",
-                horizontal: "right",
+                vertical: 'top',
+                horizontal: 'right',
               },
-              variant: "error",
+              variant: 'error',
             });
           });
       }
@@ -304,14 +304,14 @@ const AddNewTransportsOwnerForm = ({
     setShowUpload(false);
   };
   const handleSave = (value) => {
-    if (fileType === "PAN") {
-      setFieldValue("pan_file_url", value[0]);
-    } else if (fileType === "Front") {
-      setFieldValue("aadhar_f_file_url", value[0]);
-    } else if (fileType === "Back") {
-      setFieldValue("aadhar_b_file_url", value[0]);
+    if (fileType === 'PAN') {
+      setFieldValue('pan_file_url', value[0]);
+    } else if (fileType === 'Front') {
+      setFieldValue('aadhar_f_file_url', value[0]);
+    } else if (fileType === 'Back') {
+      setFieldValue('aadhar_b_file_url', value[0]);
     } else {
-      setFieldValue("profile_image_url", value[0]);
+      setFieldValue('profile_image_url', value[0]);
     }
     // fileType === 'PAN' ? setFieldValue('pan_file_url', value[0]) : fileType === 'Front' ? setFieldValue('aadhar_f_file_url', value[0]) : fileType = 'Back' ? setFieldValue('aadhar_b_file_url', value[0]) : setFieldValue('profile_image_url', value[0])
     handleSubmit(values);
@@ -326,26 +326,26 @@ const AddNewTransportsOwnerForm = ({
       <div className={classes.fileStyle}>
         <a
           style={{
-            display: "inline-block",
+            display: 'inline-block',
             borderRadius: 2,
             lineHeight: 1,
             marginRight: 4,
             marginBottom: 4,
             padding: 4,
-            backgroundColor: "#eeeeee",
-            color: "#43a047",
+            backgroundColor: '#eeeeee',
+            color: '#43a047',
           }}
           href={rowData.aadhar_b_file_url}
-          target="_blank"
-          title={"Aadhar Back"}
+          target='_blank'
+          title={'Aadhar Back'}
         >
-          {"Back"}
+          {'Back'}
         </a>
-        <Tooltip title={"Click to edit"}>
+        <Tooltip title={'Click to edit'}>
           <UploadIcon
-            fontSize="small"
+            fontSize='small'
             padding={2}
-            onClick={() => docUpload("Back")}
+            onClick={() => docUpload('Back')}
           />
         </Tooltip>
         {/* <Tooltip title={'Click to delete'}>
@@ -356,30 +356,30 @@ const AddNewTransportsOwnerForm = ({
   };
   const profileAttachment = () => {
     return (
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <a
           style={{
-            display: "inline-block",
+            display: 'inline-block',
             borderRadius: 2,
             lineHeight: 1,
             marginRight: 4,
             marginBottom: 4,
             padding: 4,
-            backgroundColor: "#eeeeee",
-            color: "#43a047",
+            backgroundColor: '#eeeeee',
+            color: '#43a047',
           }}
           href={rowData.profile_image_url}
-          target="_blank"
-          title={"Profile Attachment"}
+          target='_blank'
+          title={'Profile Attachment'}
         >
-          {"Profile Attachment"}
+          {'Profile Attachment'}
         </a>
-        <Tooltip title={"Click to edit"}>
+        <Tooltip title={'Click to edit'}>
           <UploadIcon
-            fontSize="small"
+            fontSize='small'
             style={{ color: grey[800] }}
             padding={2}
-            onClick={() => docUpload("Profile")}
+            onClick={() => docUpload('Profile')}
           />
         </Tooltip>
         {/* <Tooltip title={'Click to delete'}>
@@ -394,27 +394,27 @@ const AddNewTransportsOwnerForm = ({
       <div className={classes.fileStyle}>
         <a
           style={{
-            display: "inline-block",
+            display: 'inline-block',
             borderRadius: 2,
             lineHeight: 1,
             marginRight: 4,
             marginBottom: 4,
             padding: 4,
-            backgroundColor: "#eeeeee",
-            color: "#43a047",
+            backgroundColor: '#eeeeee',
+            color: '#43a047',
           }}
           href={rowData.aadhar_f_file_url}
-          target="_blank"
-          title={"Aadhar Front"}
+          target='_blank'
+          title={'Aadhar Front'}
         >
-          {"Front"}
+          {'Front'}
         </a>
-        <Tooltip title={"Click to edit"}>
+        <Tooltip title={'Click to edit'}>
           <UploadIcon
-            fontSize="small"
+            fontSize='small'
             style={{ color: grey[800] }}
             padding={2}
-            onClick={() => docUpload("Front")}
+            onClick={() => docUpload('Front')}
           />
         </Tooltip>
         {/* <Tooltip title={'Click to delete'}>
@@ -428,27 +428,27 @@ const AddNewTransportsOwnerForm = ({
       <div className={classes.fileStyle}>
         <a
           style={{
-            display: "inline-block",
+            display: 'inline-block',
             borderRadius: 2,
             lineHeight: 1,
             marginRight: 4,
             marginBottom: 4,
             padding: 4,
-            backgroundColor: "#eeeeee",
-            color: "#43a047",
+            backgroundColor: '#eeeeee',
+            color: '#43a047',
           }}
           href={rowData.pan_file_url}
-          target="_blank"
-          title={"PAN Attachment"}
+          target='_blank'
+          title={'PAN Attachment'}
         >
-          {"PAN Attachment"}
+          {'PAN Attachment'}
         </a>
-        <Tooltip title={"Click to edit"}>
+        <Tooltip title={'Click to edit'}>
           <UploadIcon
-            fontSize="small"
+            fontSize='small'
             padding={2}
             style={{ color: grey[800] }}
-            onClick={() => docUpload("PAN")}
+            onClick={() => docUpload('PAN')}
           />
         </Tooltip>
         {/* <Tooltip title={'Click to delete'}>
@@ -460,7 +460,7 @@ const AddNewTransportsOwnerForm = ({
 
   return (
     <div className={classes.sidePanelFormWrapper}>
-      <Typography className={classes.sidePanelTitle} variant="h4">
+      <Typography className={classes.sidePanelTitle} variant='h4'>
         <div>Owner Information</div>
         <CloseIcon onClick={handleClose} />
       </Typography>
@@ -471,66 +471,66 @@ const AddNewTransportsOwnerForm = ({
               <Grid container className={classes.readOnlyWrapper}>
                 <Grid item md={6}>
                   <Box className={classes.box}>
-                    <ViewData title="Owner ID" value={values.t_owner_id} />
-                    <ViewData title="Date of Birth" value={values.dob} />
-                    <ViewData title="Address" value={values.address} />
+                    <ViewData title='Owner ID' value={values.t_owner_id} />
+                    <ViewData title='Date of Birth' value={values.dob} />
+                    <ViewData title='Address' value={values.address} />
                     <ViewData
-                      title="Marital Status"
+                      title='Marital Status'
                       value={values.marital_status}
                     />
-                    <ViewData title="Mobile" value={values.mobile} />
-                    <ViewData title="Aadhar" value={values.aadhar} />
+                    <ViewData title='Mobile' value={values.mobile} />
+                    <ViewData title='Aadhar' value={values.aadhar} />
                   </Box>
                 </Grid>
                 <Grid item md={6}>
                   <Box className={classes.box}>
-                    <ViewData title="Name" value={values.first_name} />
-                    <ViewData title="Gender" value={values.gender} />
+                    <ViewData title='Name' value={values.first_name} />
+                    <ViewData title='Gender' value={values.gender} />
                     <ViewData
-                      title="Residing since"
+                      title='Residing since'
                       value={values.residing_since}
                     />
-                    <ViewData title="Email" value={values.email} />
-                    <ViewData title="PAN" value={values.pan} />
+                    <ViewData title='Email' value={values.email} />
+                    <ViewData title='PAN' value={values.pan} />
                   </Box>
                 </Grid>
               </Grid>
               <Divider />
               <div className={classes.readOnlyWrapper}>
-                <Typography variant="h4">Attachments</Typography>
+                <Typography variant='h4'>Attachments</Typography>
                 <div
                   style={{
-                    display: "flex",
-                    justifyContent: "space-around",
+                    display: 'flex',
+                    justifyContent: 'space-around',
                     marginTop: 16,
                   }}
                 >
                   {values.profile_image_url && (
                     <AvatarCard
-                      tooltip="View profile"
+                      tooltip='View profile'
                       file={values?.profile_image_url}
-                      title="Profile"
+                      title='Profile'
                     />
                   )}
                   {values.pan_file_url && (
                     <AvatarCard
-                      tooltip="View PAN"
+                      tooltip='View PAN'
                       file={values?.pan_file_url}
-                      title="PAN"
+                      title='PAN'
                     />
                   )}
                   {values.aadhar_f_file_url && (
                     <AvatarCard
-                      tooltip="View Aadhar Front"
+                      tooltip='View Aadhar Front'
                       file={values?.aadhar_f_file_url}
-                      title="Aadhar front"
+                      title='Aadhar front'
                     />
                   )}
                   {values.aadhar_b_file_url && (
                     <AvatarCard
-                      tooltip="View Aadhar back"
+                      tooltip='View Aadhar back'
                       file={values?.aadhar_b_file_url}
-                      title="Aadhar back"
+                      title='Aadhar back'
                     />
                   )}
                 </div>
@@ -542,8 +542,8 @@ const AddNewTransportsOwnerForm = ({
                 <Grid container spacing={2}>
                   <Grid item md={6}>
                     <TextInput
-                      label="First Name"
-                      name="first_name"
+                      label='First Name'
+                      name='first_name'
                       value={values.first_name?.toUpperCase()}
                       error={errors.first_name}
                       readOnly={readOnly}
@@ -554,8 +554,8 @@ const AddNewTransportsOwnerForm = ({
                   </Grid>
                   <Grid item md={6}>
                     <TextInput
-                      label="Last Name"
-                      name="last_name"
+                      label='Last Name'
+                      name='last_name'
                       readOnly={readOnly}
                       error={errors.last_name}
                       helperText={errors.last_name}
@@ -569,19 +569,19 @@ const AddNewTransportsOwnerForm = ({
                       <KeyboardDatePicker
                         // disableToolbar
                         // hideTabs={true}
-                        variant="inline"
-                        inputVariant="outlined"
-                        label="Date of Birth"
-                        format="dd/MM/yyy"
+                        variant='inline'
+                        inputVariant='outlined'
+                        label='Date of Birth'
+                        format='dd/MM/yyy'
                         // views={["date", "month", "year"]}
                         animateYearScrolling={true}
-                        invalidDateMessage="Invalid Date Format"
+                        invalidDateMessage='Invalid Date Format'
                         error={errors.dob}
                         helperText={errors.dob}
                         readOnly={readOnly}
                         disabled={readOnly}
-                        margin="normal"
-                        id="date-picker"
+                        margin='normal'
+                        id='date-picker'
                         autoOk={true}
                         value={
                           selectedDate !== null ? selectedDate : values.dob
@@ -589,12 +589,12 @@ const AddNewTransportsOwnerForm = ({
                         onChange={handleDateChange}
                         InputLabelProps={{ shrink: true }}
                         keyboardButtonProps={{
-                          "aria-label": "change date",
+                          'aria-label': 'change date',
                         }}
                         PopoverProps={{
                           anchorOrigin: {
-                            vertical: "bottom",
-                            horizontal: "center",
+                            vertical: 'bottom',
+                            horizontal: 'center',
                           },
                         }}
                       />
@@ -603,8 +603,8 @@ const AddNewTransportsOwnerForm = ({
                   <Grid item md={6}>
                     <TextInput
                       select
-                      label="Gender"
-                      name="gender"
+                      label='Gender'
+                      name='gender'
                       error={errors.gender}
                       helperText={errors.gender}
                       value={values.gender}
@@ -615,15 +615,15 @@ const AddNewTransportsOwnerForm = ({
                         native: true,
                       }}
                     >
-                      <option value="null">Select Gender</option>
-                      <option value={"MALE"}>Male</option>
-                      <option value={"FEMALE"}>Female</option>
+                      <option value='null'>Select Gender</option>
+                      <option value={'MALE'}>Male</option>
+                      <option value={'FEMALE'}>Female</option>
                     </TextInput>
                   </Grid>
                   <Grid item md={12}>
                     <TextInput
-                      label="Address"
-                      name="address"
+                      label='Address'
+                      name='address'
                       readOnly={readOnly}
                       value={values.address?.toUpperCase()}
                       error={errors.address}
@@ -637,8 +637,8 @@ const AddNewTransportsOwnerForm = ({
                   <Grid item md={6}>
                     <TextInput
                       select
-                      label="Residing Since"
-                      name="residing_since"
+                      label='Residing Since'
+                      name='residing_since'
                       value={values.residing_since}
                       error={errors.residing_since}
                       onChange={handleChange}
@@ -650,7 +650,7 @@ const AddNewTransportsOwnerForm = ({
                     >
                       {
                         <>
-                          <option value="null">Residing Since</option>
+                          <option value='null'>Residing Since</option>
                           {[...Array(currentYearDiff)].map((_, i) => {
                             return (
                               <option value={currentYear - i}>
@@ -665,8 +665,8 @@ const AddNewTransportsOwnerForm = ({
                   <Grid item md={6}>
                     <TextInput
                       select
-                      label="Marital Status"
-                      name="marital_status"
+                      label='Marital Status'
+                      name='marital_status'
                       error={errors.marital_status}
                       helperText={errors.marital_status}
                       value={values.marital_status}
@@ -677,30 +677,30 @@ const AddNewTransportsOwnerForm = ({
                         native: true,
                       }}
                     >
-                      <option value="null">Choose Marital Status</option>
-                      <option value="Single">Single</option>
-                      <option value="Married">Married</option>
-                      <option value="Divorced">Divorced</option>
-                      <option value="Widowed">Widowed</option>
+                      <option value='null'>Choose Marital Status</option>
+                      <option value='Single'>Single</option>
+                      <option value='Married'>Married</option>
+                      <option value='Divorced'>Divorced</option>
+                      <option value='Widowed'>Widowed</option>
                     </TextInput>
                   </Grid>
                   <Grid item md={6}>
                     <TextInput
-                      label="Mobile"
-                      name="mobile"
+                      label='Mobile'
+                      name='mobile'
                       value={values.mobile}
                       onChange={handleChange}
                       error={errors.mobile}
                       readOnly={readOnly}
                       helperText={errors.mobile}
-                      type="number"
+                      type='number'
                       InputLabelProps={{ shrink: true }}
                     ></TextInput>
                   </Grid>
                   <Grid item md={6}>
                     <TextInput
-                      label="Email"
-                      name="email"
+                      label='Email'
+                      name='email'
                       readOnly={readOnly}
                       error={errors.email}
                       helperText={errors.email}
@@ -710,28 +710,28 @@ const AddNewTransportsOwnerForm = ({
                     />
                   </Grid>
                   <Grid item md={6}>
-                    <Typography component="div">
+                    <Typography component='div'>
                       <Grid
-                        component="label"
+                        component='label'
                         container
-                        alignItems="center"
-                        style={{ marginBottom: "10px", marginTop: "6px" }}
+                        alignItems='center'
+                        style={{ marginBottom: '10px', marginTop: '6px' }}
                         spacing={2}
                       >
                         <Grid
                           md={12}
-                          style={{ paddingLeft: "8px", fontSize: "13px" }}
+                          style={{ paddingLeft: '8px', fontSize: '13px' }}
                         >
                           Mobile number on Whatsapp?
                         </Grid>
-                        <Grid style={{ paddingLeft: "8px" }}>No</Grid>
+                        <Grid style={{ paddingLeft: '8px' }}>No</Grid>
                         <Grid>
                           <Switch
                             checked={state.checkedA}
                             onChange={handleStateChange}
-                            name="checkedA"
-                            color="primary"
-                            inputProps={{ "aria-label": "secondary checkbox" }}
+                            name='checkedA'
+                            color='primary'
+                            inputProps={{ 'aria-label': 'secondary checkbox' }}
                           />
                         </Grid>
                         <Grid>Yes</Grid>
@@ -739,28 +739,28 @@ const AddNewTransportsOwnerForm = ({
                     </Typography>
                   </Grid>
                   <Grid item md={6}>
-                    <Typography component="div">
+                    <Typography component='div'>
                       <Grid
-                        component="label"
+                        component='label'
                         container
-                        style={{ marginBottom: "8px", marginTop: "6px" }}
-                        alignItems="center"
+                        style={{ marginBottom: '8px', marginTop: '6px' }}
+                        alignItems='center'
                         spacing={2}
                       >
                         <Grid
                           md={12}
-                          style={{ paddingLeft: "8px", fontSize: "13px" }}
+                          style={{ paddingLeft: '8px', fontSize: '13px' }}
                         >
                           Mobile number linked with AADHAR?
                         </Grid>
-                        <Grid style={{ paddingLeft: "8px" }}>No</Grid>
+                        <Grid style={{ paddingLeft: '8px' }}>No</Grid>
                         <Grid>
                           <Switch
                             checked={state.checkedB}
                             onChange={handleStateChange}
-                            color="primary"
-                            name="checkedB"
-                            inputProps={{ "aria-label": "secondary checkbox" }}
+                            color='primary'
+                            name='checkedB'
+                            inputProps={{ 'aria-label': 'secondary checkbox' }}
                           />
                         </Grid>
                         <Grid>Yes</Grid>
@@ -768,12 +768,12 @@ const AddNewTransportsOwnerForm = ({
                     </Typography>
                   </Grid>
                   <Grid md={12} item>
-                    <Typography variant="subtitle1" component="subtitle1">
+                    <Typography variant='subtitle1' component='subtitle1'>
                       Documents
                     </Typography>
                   </Grid>
                   <Grid item md={3}>
-                    <Typography style={{ display: "contents" }} variant="title">
+                    <Typography style={{ display: 'contents' }} variant='title'>
                       Profile
                     </Typography>
                   </Grid>
@@ -785,15 +785,15 @@ const AddNewTransportsOwnerForm = ({
                         ) : (
                           <div
                             style={{
-                              display: "flex",
-                              justifyContent: "flex-start",
-                              alignItems: "center",
+                              display: 'flex',
+                              justifyContent: 'flex-start',
+                              alignItems: 'center',
                             }}
-                            onClick={() => docUpload("PAN")}
+                            onClick={() => docUpload('PAN')}
                           >
-                            <Tooltip title={"Click to attach profile"}>
+                            <Tooltip title={'Click to attach profile'}>
                               <div>
-                                <UploadIcon fontSize="small" />
+                                <UploadIcon fontSize='small' />
                                 <Typography style={{ marginLeft: 12 }}>
                                   Attach profile
                                 </Typography>
@@ -820,8 +820,8 @@ const AddNewTransportsOwnerForm = ({
                   </Grid>
                   <Grid item md={6}>
                     <TextInput
-                      label="PAN"
-                      name="pan"
+                      label='PAN'
+                      name='pan'
                       value={values.pan?.toUpperCase()}
                       error={errors.pan}
                       readOnly={readOnly}
@@ -837,9 +837,9 @@ const AddNewTransportsOwnerForm = ({
                       ) : (
                         <div
                           className={classes.fileAttachement}
-                          onClick={() => docUpload("PAN")}
+                          onClick={() => docUpload('PAN')}
                         >
-                          <Tooltip title={"Click to attach PAN"}>
+                          <Tooltip title={'Click to attach PAN'}>
                             <>
                               <UploadIcon
                                 className={classes.icon}
@@ -854,8 +854,8 @@ const AddNewTransportsOwnerForm = ({
                   ) : null}
                   <Grid item md={6}>
                     <TextInput
-                      label="Aadhar"
-                      name="aadhar"
+                      label='Aadhar'
+                      name='aadhar'
                       value={values.aadhar?.toUpperCase()}
                       helperText={errors.aadhar}
                       readOnly={readOnly}
@@ -872,9 +872,9 @@ const AddNewTransportsOwnerForm = ({
                         ) : (
                           <div
                             className={classes.fileAttachement}
-                            onClick={() => docUpload("Front")}
+                            onClick={() => docUpload('Front')}
                           >
-                            <Tooltip title={"Click to attach aadhar front"}>
+                            <Tooltip title={'Click to attach aadhar front'}>
                               <>
                                 <UploadIcon
                                   className={classes.icon}
@@ -892,9 +892,9 @@ const AddNewTransportsOwnerForm = ({
                         ) : (
                           <div
                             className={classes.fileAttachement}
-                            onClick={() => docUpload("Back")}
+                            onClick={() => docUpload('Back')}
                           >
-                            <Tooltip title={"Click to attach aadhar back"}>
+                            <Tooltip title={'Click to attach aadhar back'}>
                               <>
                                 {/* <AttachmentOutlinedIcon className={classes.icon} /> */}
                                 <UploadIcon
@@ -919,7 +919,7 @@ const AddNewTransportsOwnerForm = ({
             handleSave={(value) => handleSave(value)}
             id={id}
             data={rowData}
-            title="Upload Transport Owner Documents"
+            title='Upload Transport Owner Documents'
             open={showUpload}
             onCloseUploader={onCloseUploader}
           />
@@ -930,7 +930,7 @@ const AddNewTransportsOwnerForm = ({
         <div className={classes.actionButtonsWrapper}>
           <div>
             <Button
-              variant="outlined"
+              variant='outlined'
               startIcon={<NavigateBeforeRoundedIcon />}
               disabled={loading}
               onClick={handleClose}
@@ -942,8 +942,8 @@ const AddNewTransportsOwnerForm = ({
             !loading ? (
               <>
                 <Button
-                  variant="contained"
-                  type="submit"
+                  variant='contained'
+                  type='submit'
                   className={clsx(classes.btn, classes.editButton)}
                   startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
                   disabled={loading}
@@ -955,10 +955,10 @@ const AddNewTransportsOwnerForm = ({
             ) : (
               <div
                 style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  width: "90%",
-                  margin: "0 auto",
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  width: '90%',
+                  margin: '0 auto',
                 }}
               >
                 <CircularProgress size={30} />
@@ -967,14 +967,12 @@ const AddNewTransportsOwnerForm = ({
           ) : (
             <div>
               <Button
-                variant="contained"
-                type="submit"
+                variant='contained'
+                type='submit'
                 className={clsx(classes.btn, classes.editButton)}
                 startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
                 disabled={loading}
-                onClick={
-                  loading ? () => null : handleEdit
-                }
+                onClick={loading ? () => null : handleEdit}
               >
                 Edit
               </Button>

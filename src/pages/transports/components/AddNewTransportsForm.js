@@ -1,79 +1,79 @@
-import React, { useEffect, useState } from "react";
-import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Grid";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { withStyles } from "@material-ui/core/styles";
-import Switch from "@material-ui/core/Switch";
-import Typography from "@material-ui/core/Typography";
-import TextInput from "../../../components/TextInput/TextInput";
-import clsx from "clsx";
-import Divider from "@material-ui/core/Divider";
-import { makeStyles } from "@material-ui/styles";
-import Button from "../../../components/CommonComponents/Button/Button";
-import { useMount } from "react-use";
-import CloseIcon from "@material-ui/icons/Close";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import NavigateNextRoundedIcon from "@material-ui/icons/NavigateNextRounded";
-import NavigateBeforeRoundedIcon from "@material-ui/icons/NavigateBeforeRounded";
+import React, { useEffect, useState } from 'react';
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { withStyles } from '@material-ui/core/styles';
+import Switch from '@material-ui/core/Switch';
+import Typography from '@material-ui/core/Typography';
+import TextInput from '../../../components/TextInput/TextInput';
+import clsx from 'clsx';
+import Divider from '@material-ui/core/Divider';
+import { makeStyles } from '@material-ui/styles';
+import Button from '../../../components/CommonComponents/Button/Button';
+import { useMount } from 'react-use';
+import CloseIcon from '@material-ui/icons/Close';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
+import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 // import { URL } from '../../../config/serverUrls';
-import EditIcon from "@material-ui/icons/Edit";
-import DeleteIcon from "@material-ui/icons/Delete";
-import UploadIcon from "@material-ui/icons/Backup";
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+import UploadIcon from '@material-ui/icons/Backup';
 // import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
 import {
   getBusinessTypes,
   getOmcList,
   getRegionById,
   getStates,
-} from "../../../services/common.service";
-import { getDistricts } from "../../../utils/indianStates.util";
+} from '../../../services/common.service';
+import { getDistricts } from '../../../utils/indianStates.util';
 // import { addNewTransport, updateTransport } from '../../../services/transports.service';
-import { useSnackbar } from "notistack";
-import Tooltip from "@material-ui/core/Tooltip";
-import { URL } from "../../../config/serverUrls";
-import FileUpload from "../../../components/FileUpload";
+import { useSnackbar } from 'notistack';
+import Tooltip from '@material-ui/core/Tooltip';
+import { URL } from '../../../config/serverUrls';
+import FileUpload from '../../../components/FileUpload';
 import {
   AvatarCard,
   ViewData,
-} from "../../../components/CommonComponents/FilePreview";
+} from '../../../components/CommonComponents/FilePreview';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
     // textAlign: 'center',
-    padding: "24px 16px",
-    display: "flex",
-    justifyContent: "space-between",
+    padding: '24px 16px',
+    display: 'flex',
+    justifyContent: 'space-between',
     zIndex: 0,
-    boxShadow: "0 1px 4px -3px #333",
+    boxShadow: '0 1px 4px -3px #333',
   },
   details: {
     padding: 6,
-    borderColor: "grey",
+    borderColor: 'grey',
     minWidth: 80,
     height: 50,
-    display: "flex",
-    textAlign: "left",
-    alignItems: "left",
-    justifyContent: "left",
+    display: 'flex',
+    textAlign: 'left',
+    alignItems: 'left',
+    justifyContent: 'left',
   },
   sidePanelFormWrapper: {
-    position: "relative",
-    display: "flex",
-    flexDirection: "column",
-    height: "100vh",
-    width: "40vw",
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    width: '40vw',
   },
   sidePanelFormContentWrapper: {
     flex: 1,
-    overflowY: "auto",
+    overflowY: 'auto',
   },
   title: {
     marginBottom: 4,
     fontSize: 11,
   },
   fileAttachement: {
-    display: "flex",
+    display: 'flex',
     // justifyContent:'center',
     marginTop: 8,
   },
@@ -85,16 +85,16 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 14,
   },
   sidePanelWrapper: {
-    position: "relative",
-    display: "flex",
-    flexDirection: "column",
-    height: "100vh",
-    width: "40vw",
-    padding: "14px",
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    width: '40vw',
+    padding: '14px',
   },
   readOnlyWrapper: {
-    margin: "8px 4px",
-    maxWidth: "100%",
+    margin: '8px 4px',
+    maxWidth: '100%',
   },
   text: {
     fontSize: 12,
@@ -104,22 +104,22 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: 8,
   },
   fileStyle: {
-    display: "flex",
-    justifyContent: "space-around",
+    display: 'flex',
+    justifyContent: 'space-around',
     marginTop: 24,
   },
   actionButtonsWrapper: {
-    display: "flex",
-    justifyContent: "space-between",
-    padding: "12px 16px",
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '12px 16px',
   },
   editButton: {
-    marginRight: "8px",
-    "&.MuiButton-contained": {
+    marginRight: '8px',
+    '&.MuiButton-contained': {
       backgroundColor: theme.palette.success.main,
       color: theme.palette.white,
     },
-    "&.MuiButton-contained:hover": {
+    '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.success.dark,
     },
   },
@@ -134,14 +134,14 @@ const AddNewTransportsForm = ({
   callback,
   isAdd,
 }) => {
-  const [readOnly, setReadOnly] = useState(isAdd === "Add" ? false : true);
+  const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
   const [loading, setLoading] = useState(false);
   const [omcs, setOmcs] = useState([]);
   const [bussinessType, setBussinessType] = useState([]);
   const [states, setStates] = useState([]);
   const [showUpload, setShowUpload] = useState(false);
   const [regionList, setRegionList] = useState([]);
-  const [fileType, setFileType] = useState("");
+  const [fileType, setFileType] = useState('');
   const [regions, setRegions] = useState([]);
   const [checked, setChecked] = useState(false);
   const [imageModal, setImageModal] = useState({});
@@ -174,24 +174,24 @@ const AddNewTransportsForm = ({
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       // id: Yup.number().required('Please enter transporter code'),
-      name: Yup.string().required("Please enter transporter name"),
+      name: Yup.string().required('Please enter transporter name'),
       mobile: Yup.number()
-        .min(10, "Enter valid mobile number")
-        .required("please Enter your mobile number"),
-      omc: Yup.string().required("Please Choose OMC"),
-      business_type: Yup.string().required("Please choose bussiness type"),
+        .min(10, 'Enter valid mobile number')
+        .required('please Enter your mobile number'),
+      omc: Yup.string().required('Please Choose OMC'),
+      business_type: Yup.string().required('Please choose bussiness type'),
       // region: Yup.string().required('Please choose region'),
-      address: Yup.string().required("Please enter address"),
-      state: Yup.string().required("Please choose state"),
-      district: Yup.string().required("Please choose district"),
+      address: Yup.string().required('Please enter address'),
+      state: Yup.string().required('Please choose state'),
+      district: Yup.string().required('Please choose district'),
       pincode: Yup.number()
-        .min(6, "Pincode must be 6 digits")
-        .required("Enter pincode"),
+        .min(6, 'Pincode must be 6 digits')
+        .required('Enter pincode'),
       pan: Yup.string()
-        .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, "Invalid PAN")
-        .required("Enter PAN")
+        .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
+        .required('Enter PAN')
         .uppercase(),
-      gst: Yup.number().min(15, "Enter valid GST"),
+      gst: Yup.number().min(15, 'Enter valid GST'),
     }),
     onSubmit: (values) => {
       setLoading(true);
@@ -202,9 +202,9 @@ const AddNewTransportsForm = ({
       Object.keys(data).forEach((key) => {
         formData.append(key, data[key]);
       });
-      if (isAdd === "Add") {
+      if (isAdd === 'Add') {
         fetch(`${URL.base}${URL.vehicleInfo}`, {
-          method: "POST",
+          method: 'POST',
           body: formData,
           headers: {
             Authorization: `Bearer ${currentUser.token}`,
@@ -218,10 +218,10 @@ const AddNewTransportsForm = ({
             setLoading(false);
             enqueueSnackbar(res.message, {
               anchorOrigin: {
-                vertical: "top",
-                horizontal: "right",
+                vertical: 'top',
+                horizontal: 'right',
               },
-              variant: "success",
+              variant: 'success',
             });
             setTimeout(() => {
               window.location.reload();
@@ -231,15 +231,15 @@ const AddNewTransportsForm = ({
             setLoading(false);
             enqueueSnackbar(error, {
               anchorOrigin: {
-                vertical: "top",
-                horizontal: "right",
+                vertical: 'top',
+                horizontal: 'right',
               },
-              variant: "error",
+              variant: 'error',
             });
           });
       } else {
         fetch(`${URL.base}${URL.vehicleInfo}/${data.transporter_id}`, {
-          method: "POST",
+          method: 'POST',
           body: formData,
           headers: {
             Authorization: `Bearer ${currentUser.token}`,
@@ -252,10 +252,10 @@ const AddNewTransportsForm = ({
           .then((res) => {
             enqueueSnackbar(res.message, {
               anchorOrigin: {
-                vertical: "top",
-                horizontal: "right",
+                vertical: 'top',
+                horizontal: 'right',
               },
-              variant: "success",
+              variant: 'success',
             });
             setTimeout(() => {
               window.location.reload();
@@ -265,10 +265,10 @@ const AddNewTransportsForm = ({
             console.log(error);
             enqueueSnackbar(error.profile_status, {
               anchorOrigin: {
-                vertical: "top",
-                horizontal: "right",
+                vertical: 'top',
+                horizontal: 'right',
               },
-              variant: "error",
+              variant: 'error',
             });
           });
       }
@@ -320,9 +320,9 @@ const AddNewTransportsForm = ({
     setShowUpload(false);
   };
   const handleSave = (value) => {
-    fileType === "PAN"
-      ? setFieldValue("pan_file_url", value[0])
-      : setFieldValue("gst_file_url", value[0]);
+    fileType === 'PAN'
+      ? setFieldValue('pan_file_url', value[0])
+      : setFieldValue('gst_file_url', value[0]);
     handleSubmit(values);
     onCloseUploader();
     // enqueueSnackbar('File added successfully', {
@@ -349,7 +349,7 @@ const AddNewTransportsForm = ({
       });
   };
   const inputProps = {
-    direction: "column",
+    direction: 'column',
     alignTop: true,
     onChange: handleChange,
   };
@@ -358,16 +358,16 @@ const AddNewTransportsForm = ({
       width: 28,
       height: 16,
       padding: 0,
-      display: "flex",
+      display: 'flex',
     },
     switchBase: {
       marginBottom: 4,
       padding: 2,
       color: theme.palette.grey[500],
-      "&$checked": {
-        transform: "translateX(12px)",
+      '&$checked': {
+        transform: 'translateX(12px)',
         color: theme.palette.common.white,
-        "& + $track": {
+        '& + $track': {
           opacity: 1,
           backgroundColor: theme.palette.primary.main,
           borderColor: theme.palette.primary.main,
@@ -377,7 +377,7 @@ const AddNewTransportsForm = ({
     thumb: {
       width: 12,
       height: 12,
-      boxShadow: "none",
+      boxShadow: 'none',
     },
     track: {
       border: `1px solid ${theme.palette.grey[500]}`,
@@ -398,28 +398,28 @@ const AddNewTransportsForm = ({
         >
           <a
             style={{
-              display: "inline-block",
+              display: 'inline-block',
               borderRadius: 2,
               lineHeight: 1,
               marginRight: 4,
               marginBottom: 4,
               padding: 4,
-              backgroundColor: "#dedede",
-              color: "#43a047",
+              backgroundColor: '#dedede',
+              color: '#43a047',
             }}
-            target="_blank"
-            title={"GST Attachment"}
+            target='_blank'
+            title={'GST Attachment'}
           >
-            {"GST Attachment"}
+            {'GST Attachment'}
           </a>
         </Button>
         {/* <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede', color: '#43a047' }}
                     href={data.gst_file_url} target="_blank" title={'GST Attachment'}>{'GST Attachment'}</a> */}
-        <Tooltip title={"Click to edit"}>
+        <Tooltip title={'Click to edit'}>
           <UploadIcon
-            fontSize="small"
+            fontSize='small'
             padding={2}
-            onClick={() => docUpload("GST")}
+            onClick={() => docUpload('GST')}
           />
         </Tooltip>
         {/* <Tooltip title={'Click to delete'}>
@@ -433,26 +433,26 @@ const AddNewTransportsForm = ({
       <div className={classes.fileStyle}>
         <a
           style={{
-            display: "inline-block",
+            display: 'inline-block',
             borderRadius: 2,
             lineHeight: 1,
             marginRight: 4,
             marginBottom: 4,
             padding: 4,
-            backgroundColor: "#dedede",
-            color: "#43a047",
+            backgroundColor: '#dedede',
+            color: '#43a047',
           }}
           href={data.pan_file_url}
-          target="_blank"
-          title={"PAN Attachment"}
+          target='_blank'
+          title={'PAN Attachment'}
         >
-          {"PAN Attachment"}
+          {'PAN Attachment'}
         </a>
-        <Tooltip title={"Click to edit"}>
+        <Tooltip title={'Click to edit'}>
           <UploadIcon
-            fontSize="small"
+            fontSize='small'
             padding={2}
-            onClick={() => docUpload("PAN")}
+            onClick={() => docUpload('PAN')}
           />
         </Tooltip>
         {/* <Tooltip title={'Click to delete'}>
@@ -463,8 +463,8 @@ const AddNewTransportsForm = ({
   };
   return (
     <div className={classes.sidePanelFormWrapper}>
-      <Typography className={classes.sidePanelTitle} variant="h4">
-        <div>{title ? title : "Add New Transport Form"}</div>
+      <Typography className={classes.sidePanelTitle} variant='h4'>
+        <div>{title ? title : 'Add New Transport Form'}</div>
         <CloseIcon onClick={handleClose} />
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
@@ -475,52 +475,52 @@ const AddNewTransportsForm = ({
                 <Grid item md={6}>
                   <Box className={classes.box}>
                     <ViewData
-                      title="Transport Code"
+                      title='Transport Code'
                       value={values.transporter_id}
                     />
-                    <ViewData title="Mobile" value={values.mobile} />
-                    <ViewData title="OMC" value={values.omc} />
-                    <ViewData title="Region" value={values.region} />
-                    <ViewData title="District" value={values.district} />
-                    <ViewData title="GST" value={values.gst} />
+                    <ViewData title='Mobile' value={values.mobile} />
+                    <ViewData title='OMC' value={values.omc} />
+                    <ViewData title='Region' value={values.region} />
+                    <ViewData title='District' value={values.district} />
+                    <ViewData title='GST' value={values.gst} />
                   </Box>
                 </Grid>
                 <Grid item md={6}>
                   <Box className={classes.box}>
-                    <ViewData title="Transport Name" value={values.name} />
-                    <ViewData title="Address" value={values.address} />
+                    <ViewData title='Transport Name' value={values.name} />
+                    <ViewData title='Address' value={values.address} />
                     <ViewData
-                      title="Business Type"
+                      title='Business Type'
                       value={values.business_type}
                     />
-                    <ViewData title="State" value={values.state} />
-                    <ViewData title="Pincode" value={values.pincode} />
-                    <ViewData title="PAN" value={values.pan} />
+                    <ViewData title='State' value={values.state} />
+                    <ViewData title='Pincode' value={values.pincode} />
+                    <ViewData title='PAN' value={values.pan} />
                   </Box>
                 </Grid>
               </Grid>
               <Divider />
               <div className={classes.readOnlyWrapper}>
-                <Typography variant="h4">Attachments</Typography>
+                <Typography variant='h4'>Attachments</Typography>
                 <div
                   style={{
-                    display: "flex",
-                    justifyContent: "space-around",
+                    display: 'flex',
+                    justifyContent: 'space-around',
                     marginTop: 16,
                   }}
                 >
                   {values.pan_file_url && (
                     <AvatarCard
-                      tooltip="View PAN"
+                      tooltip='View PAN'
                       file={values?.pan_file_url}
-                      title="PAN"
+                      title='PAN'
                     />
                   )}
                   {values.gst_file_url && (
                     <AvatarCard
-                      tooltip="View GST"
+                      tooltip='View GST'
                       file={values?.gst_file_url}
-                      title="GST"
+                      title='GST'
                     />
                   )}
                 </div>
@@ -532,11 +532,11 @@ const AddNewTransportsForm = ({
                 <Grid container spacing={2}>
                   <Grid item md={12}>
                     {
-                      <Typography component="div">
+                      <Typography component='div'>
                         <Grid
-                          component="label"
+                          component='label'
                           container
-                          alignItems="center"
+                          alignItems='center'
                           spacing={2}
                         >
                           <Grid item>Transporter Code</Grid>
@@ -545,7 +545,7 @@ const AddNewTransportsForm = ({
                             <AntSwitch
                               checked={checked}
                               onChange={handleClick}
-                              name="checked"
+                              name='checked'
                             />
                           </Grid>
                           <Grid item>Yes</Grid>
@@ -556,8 +556,8 @@ const AddNewTransportsForm = ({
                       <TextInput
                         {...inputProps}
                         // labelText="Transporter Code"
-                        placeholder="Enter transporter code here"
-                        name="transporter_id"
+                        placeholder='Enter transporter code here'
+                        name='transporter_id'
                         value={values.id}
                         readOnly={readOnly}
                         error={errors.id}
@@ -568,8 +568,8 @@ const AddNewTransportsForm = ({
                   <Grid item md={12}>
                     <TextInput
                       {...inputProps}
-                      name="name"
-                      labelText="Transport Name"
+                      name='name'
+                      labelText='Transport Name'
                       value={values.name?.toUpperCase()}
                       readOnly={readOnly}
                       error={errors.name}
@@ -579,8 +579,8 @@ const AddNewTransportsForm = ({
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
-                      name="mobile"
-                      labelText="Mobile"
+                      name='mobile'
+                      labelText='Mobile'
                       value={values?.mobile}
                       readOnly={readOnly}
                       error={errors.mobile}
@@ -591,14 +591,14 @@ const AddNewTransportsForm = ({
                     <TextInput
                       {...inputProps}
                       select
-                      name="omc"
-                      labelText="OMC"
+                      name='omc'
+                      labelText='OMC'
                       value={values?.omc}
                       readOnly={readOnly}
                       disabled={readOnly}
                       error={errors.omc}
                     >
-                      <option value="">Choose OMC</option>
+                      <option value=''>Choose OMC</option>
                       {omcs.map((omc) => (
                         <option key={omcs.id} value={omcs.id}>
                           {omc.name}
@@ -610,14 +610,14 @@ const AddNewTransportsForm = ({
                     <TextInput
                       {...inputProps}
                       select
-                      name="business_type"
-                      labelText="Business Type"
+                      name='business_type'
+                      labelText='Business Type'
                       readOnly={readOnly}
                       value={values?.business_type}
                       disabled={readOnly}
                       error={errors.business_type}
                     >
-                      <option value="">Choose bussiness type</option>
+                      <option value=''>Choose bussiness type</option>
                       {bussinessType.map((type) => (
                         <option key={type.id} value={type.name}>
                           {type.name}
@@ -629,8 +629,8 @@ const AddNewTransportsForm = ({
                     <TextInput
                       {...inputProps}
                       select
-                      name="state"
-                      labelText="State"
+                      name='state'
+                      labelText='State'
                       readOnly={readOnly}
                       disabled={readOnly}
                       value={values?.state}
@@ -647,8 +647,8 @@ const AddNewTransportsForm = ({
                     <TextInput
                       {...inputProps}
                       select
-                      name="region"
-                      labelText="Region"
+                      name='region'
+                      labelText='Region'
                       readOnly={readOnly}
                       disabled={readOnly}
                       value={values?.region}
@@ -664,8 +664,8 @@ const AddNewTransportsForm = ({
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
-                      name="address"
-                      labelText="Address"
+                      name='address'
+                      labelText='Address'
                       value={values?.address}
                       readOnly={readOnly}
                       disabled={readOnly}
@@ -678,8 +678,8 @@ const AddNewTransportsForm = ({
                     <TextInput
                       {...inputProps}
                       // select
-                      name="district"
-                      labelText="District"
+                      name='district'
+                      labelText='District'
                       readOnly={readOnly}
                       disabled={readOnly}
                       value={values.district}
@@ -695,8 +695,8 @@ const AddNewTransportsForm = ({
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
-                      name="pincode"
-                      labelText="Pincode"
+                      name='pincode'
+                      labelText='Pincode'
                       value={values?.pincode}
                       disabled={readOnly}
                       readOnly={readOnly}
@@ -705,15 +705,15 @@ const AddNewTransportsForm = ({
                     />
                   </Grid>
                   <Grid md={12} item>
-                    <Typography variant="subtitle1" component="subtitle1">
+                    <Typography variant='subtitle1' component='subtitle1'>
                       Documents
                     </Typography>
                   </Grid>
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
-                      name="pan"
-                      labelText="PAN"
+                      name='pan'
+                      labelText='PAN'
                       value={values.pan}
                       readOnly={readOnly}
                       disabled={readOnly}
@@ -730,9 +730,9 @@ const AddNewTransportsForm = ({
                           ) : (
                             <div
                               className={classes.fileAttachement}
-                              onClick={() => docUpload("PAN")}
+                              onClick={() => docUpload('PAN')}
                             >
-                              <Tooltip title={"Click and attach"}>
+                              <Tooltip title={'Click and attach'}>
                                 <>
                                   <UploadIcon
                                     className={classes.icon}
@@ -770,8 +770,8 @@ const AddNewTransportsForm = ({
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
-                      name="gst"
-                      labelText="GST"
+                      name='gst'
+                      labelText='GST'
                       value={values.gst}
                       readOnly={readOnly}
                       disabled={readOnly}
@@ -787,9 +787,9 @@ const AddNewTransportsForm = ({
                         ) : (
                           <div
                             className={classes.fileAttachement}
-                            onClick={() => docUpload("GST")}
+                            onClick={() => docUpload('GST')}
                           >
-                            <Tooltip title={"Click and attach"}>
+                            <Tooltip title={'Click and attach'}>
                               <>
                                 <UploadIcon
                                   className={classes.icon}
@@ -825,7 +825,7 @@ const AddNewTransportsForm = ({
           <FileUpload
             handleSave={(value) => handleSave(value)}
             id={id}
-            title="Upload Transport Documents"
+            title='Upload Transport Documents'
             open={showUpload}
             onCloseUploader={onCloseUploader}
           />
@@ -836,28 +836,27 @@ const AddNewTransportsForm = ({
         <div className={classes.actionButtonsWrapper}>
           <div>
             <Button
-              variant="outlined"
+              variant='outlined'
               startIcon={<NavigateBeforeRoundedIcon />}
               // disabled={loading}
               onClick={handleClose}
             >
-              Back</Button>
+              Back
+            </Button>
           </div>
           {!readOnly ? (
             !loading ? (
               <>
                 <Button
-                  variant="contained"
-                  type="submit"
+                  variant='contained'
+                  type='submit'
                   onClick={handleSubmit}
                   className={clsx(classes.btn, classes.editButton)}
                   startIcon={
                     !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
                   }
                   // disabled={loading}
-                  onClick={
-                    loading ? () => null : handleSubmit
-                  }
+                  onClick={loading ? () => null : handleSubmit}
                 >
                   Save
                 </Button>
@@ -865,10 +864,10 @@ const AddNewTransportsForm = ({
             ) : (
               <div
                 style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  width: "90%",
-                  margin: "0 auto",
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  width: '90%',
+                  margin: '0 auto',
                 }}
               >
                 <CircularProgress size={30} />
@@ -877,17 +876,15 @@ const AddNewTransportsForm = ({
           ) : (
             <div>
               <Button
-                variant="contained"
-                type="submit"
+                variant='contained'
+                type='submit'
                 onClick={handleSubmit}
                 className={clsx(classes.btn, classes.editButton)}
                 startIcon={
                   !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
                 }
                 // disabled={loading}
-                onClick={
-                  loading ? () => null : handleEdit
-                }
+                onClick={loading ? () => null : handleEdit}
               >
                 Edit
               </Button>

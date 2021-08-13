@@ -496,45 +496,63 @@ const AddNewTransportsOwnerForm = ({
                 </Grid>
               </Grid>
               <Divider />
-              <div className={classes.readOnlyWrapper}>
-                <Typography variant='h4'>Attachments</Typography>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-around',
-                    marginTop: 16,
-                  }}
-                >
-                  {values.profile_image_url && (
-                    <AvatarCard
-                      tooltip='View profile'
-                      file={values?.profile_image_url}
-                      title='Profile'
-                    />
-                  )}
-                  {values.pan_file_url && (
-                    <AvatarCard
-                      tooltip='View PAN'
-                      file={values?.pan_file_url}
-                      title='PAN'
-                    />
-                  )}
-                  {values.aadhar_f_file_url && (
-                    <AvatarCard
-                      tooltip='View Aadhar Front'
-                      file={values?.aadhar_f_file_url}
-                      title='Aadhar front'
-                    />
-                  )}
-                  {values.aadhar_b_file_url && (
-                    <AvatarCard
-                      tooltip='View Aadhar back'
-                      file={values?.aadhar_b_file_url}
-                      title='Aadhar back'
-                    />
-                  )}
+              {values?.profile_image_url ||
+              values?.pan_file_url ||
+              values?.aadhar_f_file_url ||
+              values?.aadhar_b_file_url ? (
+                <div className={classes.readOnlyWrapper}>
+                  <Typography variant='h4'>Attachments</Typography>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-around',
+                      marginTop: 16,
+                    }}
+                  >
+                    {values.profile_image_url && (
+                      <AvatarCard
+                        tooltip='View profile'
+                        file={values?.profile_image_url}
+                        title='Profile'
+                      />
+                    )}
+                    {values.pan_file_url && (
+                      <AvatarCard
+                        tooltip='View PAN'
+                        file={values?.pan_file_url}
+                        title='PAN'
+                      />
+                    )}
+                    {values.aadhar_f_file_url && (
+                      <AvatarCard
+                        tooltip='View Aadhar Front'
+                        file={values?.aadhar_f_file_url}
+                        title='Aadhar front'
+                      />
+                    )}
+                    {values.aadhar_b_file_url && (
+                      <AvatarCard
+                        tooltip='View Aadhar back'
+                        file={values?.aadhar_b_file_url}
+                        title='Aadhar back'
+                      />
+                    )}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className={classes.readOnlyWrapper}>
+                  <Typography variant='h4'>Attachments</Typography>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      marginTop: '20px',
+                    }}
+                  >
+                    <Typography variant='h7'>No Attachments Found</Typography>
+                  </div>
+                </div>
+              )}
             </>
           ) : (
             <Box>

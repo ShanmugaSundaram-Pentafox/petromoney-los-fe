@@ -224,7 +224,6 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                         {
                             values?.profile_image_url || values?.pan_file_url || values?.aadhar_f_file_url || values?.aadhar_b_file_url ? (
                         <div className={classes.readOnlyWrapper}>
-                            {console.log(values?.aadhar_b_file_url)}
                             <Typography variant="h4">Attachments</Typography>
                             <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: 16 }}>
                                 {values.profile_image_url && <AvatarCard tooltip='View profile' file={values?.profile_image_url} title='Profile' />}

@@ -51,9 +51,9 @@ const useStyles = makeStyles(theme => ({
 
 }));
 
-const Profile = ({ readOnly }) => {
+const Profile = ({ readOnly,currentUser }) => {
     const classes = useStyles();
-
+    readOnly = true;
 
     const gridItem = {
         item: true,
@@ -75,13 +75,14 @@ const Profile = ({ readOnly }) => {
 
         }
     });
+
     return (
         <>
             <Paper className={classes.paper} >
                 <div className={classes.root}>
-                    <Avatar className={classes.avatar}>P</Avatar>
+                    <Avatar className={classes.avatar}>{currentUser.first_name.charAt(0)}</Avatar>
                 </div>
-                <Typography variant={'h4'} className={classes.profile}>User Name</Typography>
+                <Typography variant={'h4'} className={classes.profile}>{currentUser.first_name?.toUpperCase()}</Typography>
                 <Grid container className={classes.grid}>
                     <Grid {...gridItem} md={6}>
                         <TextInput
@@ -89,7 +90,7 @@ const Profile = ({ readOnly }) => {
                             name="first_name"
                             error={errors.first_name}
                             readOnly={readOnly}
-                            value={values.first_name?.toUpperCase()}
+                            value={currentUser.first_name?.toUpperCase()}
                             helperText={errors.first_name}
                             onChange={handleChange}
                         />
@@ -100,7 +101,7 @@ const Profile = ({ readOnly }) => {
                             name="last_name"
                             error={errors.last_name}
                             readOnly={readOnly}
-                            value={values.last_name?.toUpperCase()}
+                            value={currentUser.last_name?.toUpperCase()}
                             helperText={errors.last_name}
                             onChange={handleChange}
                         />
@@ -111,7 +112,7 @@ const Profile = ({ readOnly }) => {
                             name="mail"
                             error={errors.mail}
                             readOnly={readOnly}
-                            defaultValue={values.mail}
+                            defaultValue={currentUser.email}
                             helperText={errors.mail}
                             onChange={handleChange}
                         />
@@ -122,7 +123,7 @@ const Profile = ({ readOnly }) => {
                             name="mobile"
                             error={errors.mobile}
                             readOnly={readOnly}
-                            defaultValue={values.mobile}
+                            defaultValue={currentUser.mobile}
                             helperText={errors.mobile}
                             onChange={handleChange}
                         />
@@ -144,7 +145,7 @@ const Profile = ({ readOnly }) => {
                             name="city"
                             error={errors.city}
                             readOnly={readOnly}
-                            defaultValue={values.city}
+                            defaultValue={currentUser.region_name}
                             helperText={errors.city}
                             onChange={handleChange}
                         />
@@ -177,7 +178,7 @@ const Profile = ({ readOnly }) => {
                             name="country"
                             error={errors.country}
                             readOnly={readOnly}
-                            defaultValue={values.country}
+                            defaultValue={"INDIA"}
                             helperText={errors.country}
                             onChange={handleChange}
                         />

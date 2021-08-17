@@ -18,6 +18,8 @@ import { getDealershipSalesById, postDealershipSalesById } from '../../../servic
 import TextInput from '../../../components/TextInput/TextInput';
 import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
+import { useSnackbar } from "notistack";
+
 
 /**
 {
@@ -90,6 +92,7 @@ const SalesInfo = ({
   const [apiData, setApiData] = useState({});
   const [anchorEl, setAnchorEl] = useState(null);
   const [editRow, setEditRow] = useState({});
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     if (id) {
@@ -118,32 +121,54 @@ const SalesInfo = ({
   const open = Boolean(anchorEl);
 
   const saveNewSalesData = () => {
-    if (Object.keys(apiData).length < 4) return null;
-    const objBody = {
-      user_id: currentUser.id, ...apiData
+    if (parseInt(apiData.from_year) >= parseInt(apiData.to_year)){
+      enqueueSnackbar("Year error, Please check...", {
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+        variant: "error",
+      });
     }
-    postDealershipSalesById(id, objBody)
-      .then(res => {
-        setInfo(res);
-        setAddNewRow(false);
-      })
-      .catch(err => {
-        console.log('Sales data save error - ', err);
-      })
+    else{
+      if (Object.keys(apiData).length < 4) return null;
+      const objBody = {
+        user_id: currentUser.id, ...apiData
+      }
+      postDealershipSalesById(id, objBody)
+        .then(res => {
+          setInfo(res);
+          setAddNewRow(false);
+        })
+        .catch(err => {
+          console.log('Sales data save error - ', err);
+        })
+      
+    }
   }
 
   const saveEditRow = (data, i) => {
-    const objBody = {
-      user_id: currentUser.id, ...data
+    if(parseInt(data.from_year) >= parseInt(data.to_year)){
+      enqueueSnackbar("Year error, Please check...", {
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+        variant: "error",
+      });
+    } else {
+      const objBody = {
+        user_id: currentUser.id, ...data
+      }
+      postDealershipSalesById(id, objBody)
+        .then(res => {
+          setInfo(res);
+          setEditRow({});
+        })
+        .catch(err => {
+          console.log('Sales data save error - ', err);
+        })
     }
-    postDealershipSalesById(id, objBody)
-      .then(res => {
-        setInfo(res);
-        setEditRow({});
-      })
-      .catch(err => {
-        console.log('Sales data save error - ', err);
-      })
   }
 
   const editSalesRow = (rowData, rowIndex) => {

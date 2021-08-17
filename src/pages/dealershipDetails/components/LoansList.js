@@ -19,7 +19,7 @@ import { useMount } from 'react-use';
 import { getDealershipLoansById } from '../../../services/dealerships.service';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-import { getApplicationStatusById, updateLoanApprovalStatusById } from '../../../services/loans.service';
+import { getApplicationStatusById, getLoansByStatus, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import TextInput from '../../../components/TextInput/TextInput';
 import { Select } from '@material-ui/core';
 import apiCall from '../../../utils/api.util';
@@ -185,7 +185,8 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
                     <Button
                       variant="outlined"
                       color="primary"
-                      fontSize="small"
+                      // fontSize="small"
+                      size='small'
                       disabled={loading}
                       className={classes.btnSuccess}
                       onClick={getRemarks(row)}>

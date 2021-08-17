@@ -182,7 +182,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 {...fieldProps}
               />
             </Grid>
-
             <Grid {...gridProps}>
               <TextInput
                 multiline
@@ -201,10 +200,10 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 name="business_type"
                 readOnly={readOnly}
                 disabled={readOnly}
-                defaultValue={businessTypes[values.business_type - 1].name}
+                defaultValue={businessTypes[values.business_type - 1]?.name}
                 {...fieldProps}
               >
-                <option value="">{businessTypes[values.business_type].name}</option>
+                <option value="">{businessTypes[values.business_type]?.name}</option>
                 {
                   businessTypes.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
                 }
@@ -316,7 +315,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 <Button variant="contained" size="small" onClick={() => { setReadOnly(true); }}>Cancel</Button>
                 <Button type="submit" color="primary" variant="contained" size="small">Save</Button>
               </>
-            ) : <CircularProgress />
+            ) : <CircularProgress size={20}/>
           ) : (
             <Button
               disabled={!permissionCheck(currentUser.role_name, rulesList.dealership_edit)}

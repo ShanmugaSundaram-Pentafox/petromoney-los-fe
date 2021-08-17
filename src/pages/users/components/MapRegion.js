@@ -57,18 +57,34 @@ const MapRegion = (data) => {
         setLoading(false);
       });
   });
-  const getValue = (e) => {
+  const getValue = (e, list) => {
     console.log(e);
     const val = parseInt(e?.target?.value);
-    if (!val) return;
+    // if (!val) return;
+    if(val === 0) {
+      if(region.includes(val)) {
+        setRegion([])
+      } else {
+        setRegion(list.map(r => r.region_name ? r.region_id : r.region))
+      }
+      return;
+    }
     if (region.includes(val)) {
       var n = region.indexOf(val);
+      
       setRegion((d) => {
-        d.splice(n, 1);
-        return d;
+        let re = [...d];
+        re.splice(n, 1)
+        if(re.includes(0)) {
+          re.splice(re.indexOf(0), 1);
+        }
+        return re;
       });
     } else {
       setRegion((d) => {
+        if([...d, val].length === list.length - 1) {
+          d.unshift(0);
+        }
         return d.concat(val);
       });
     }
@@ -145,7 +161,7 @@ const MapRegion = (data) => {
                 <FormGroup>
                   <FormControlLabel
                     key={item.region}
-                    control={<Checkbox key={item.region} color="primary" value={item.region} onChange={(e) => getValue(e)} />}
+                    control={<Checkbox key={item.region} checked={region.includes(item.region)} color="primary" value={item.region} onChange={(e) => getValue(e, regionList)} />}
                     label={item.name}
                     value={item.region}
                   />
@@ -184,7 +200,7 @@ const MapRegion = (data) => {
                 <FormGroup key={item.region_id}>
                   <FormControlLabel
                     key={item.region_id}
-                    control={<Checkbox color="primary" key={item.region_id} value={item.region_id} onChange={(e) => getValue(e)} />}
+                    control={<Checkbox color="primary" key={item.region_id} checked={region.includes(item.region_id)} value={item.region_id} onChange={(e) => getValue(e, mappedRegion)} />}
                     label={item.region_name}
                     value={item.region_id}
                   />

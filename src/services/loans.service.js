@@ -111,18 +111,7 @@ export const getLoanById = (dealershipId, loanId) => {
     apiCall(`${URL.dealership}/${dealershipId}/loans/${loanId}`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          // resolve(data[0] || {});
-          if (status === "SUCCESS") {
-            const result = data[0].map(item => ({
-              ...item,
-              pan: item?.pan ? decrypt(item.pan) : item.pan,
-              aadhar: item?.aadhar ? decrypt(item.aadhar) : item.aadhar,
-            }));
-
-            resolve(result || {});
-          } else {
-            reject(message);
-          }
+          resolve(data[0] || {});
         } else {
           reject(message);
         }

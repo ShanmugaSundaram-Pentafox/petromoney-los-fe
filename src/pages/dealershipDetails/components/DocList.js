@@ -81,7 +81,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
   },
   button: {
-    marginTop: 20,
+    margin: 0,
     float: "right",
   }
 }));
@@ -125,11 +125,10 @@ const DocList = ({ id }) => {
     if (array.includes(val)) {
       var n = array.indexOf(val);
       setArray((d) => {
-        d.splice(n, 1);
-        return d;
+        const re = [...d];
+        re.splice(n, 1);
+        return re;
       });
-
-
     } else {
       setArray((d) => {
         return d.concat(val);
@@ -143,6 +142,7 @@ const DocList = ({ id }) => {
   }
   const handleModal = (data, desc) => {
     setOpenModal(true);
+    // setImageModal(true);
     setModalData(data);
     setDescription(desc);
   }

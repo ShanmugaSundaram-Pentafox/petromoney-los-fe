@@ -231,14 +231,15 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
       <Grid {...gridItem} md={6}>
         <TextInput
           select
-          readOnly={!editable}
-          label="No of other services"
-          name="other_services_count"
+          label='No of other services'
+          name='other_services_count'
           value={values.other_services_count}
           onChange={onChange}
+          readOnly={!editable}
           SelectProps={{
             native: true,
           }}
+          InputLabelProps={{ shrink: true }}
         >
           <option value="0">0</option>
           <option value="1">1</option>
@@ -251,14 +252,15 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
       <Grid {...gridItem} md={6}>
         <TextInput
           select
-          readOnly={!editable}
           label="Social score"
           name="social_score"
           value={values.social_score}
           onChange={onChange}
+          readOnly={!editable}
           SelectProps={{
             native: true,
           }}
+          InputLabelProps={{ shrink: true }}
         >
           <option value="0">0</option>
           <option value="1">1</option>
@@ -271,14 +273,15 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
       <Grid {...gridItem} md={6}>
         <TextInput
           select
-          readOnly={!editable}
           label="PD Officer Assessment"
           name="pd_officer_remarks"
           value={values.pd_officer_remarks}
           onChange={onChange}
+          readOnly={!editable}
           SelectProps={{
             native: true,
           }}
+          InputLabelProps={{ shrink: true }}
         >
           <option value="Very Poor">Very Poor</option>
           <option value="Poor">Poor</option>

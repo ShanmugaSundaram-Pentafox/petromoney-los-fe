@@ -37,6 +37,7 @@ import {
   AvatarCard,
   ViewData,
 } from '../../../components/CommonComponents/FilePreview';
+import { deleteTransportProfileDoc } from '../../../services/transports.service';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -123,6 +124,16 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.success.dark,
     },
   },
+  profileLink: {
+    display: 'inline-block',
+    borderRadius: 2,
+    lineHeight: 1,
+    marginRight: 4,
+    marginBottom: 4,
+    padding: 4,
+    backgroundColor: '#dedede',
+    color: '#43a047',
+  }
 }));
 
 const AddNewTransportsForm = ({
@@ -157,6 +168,28 @@ const AddNewTransportsForm = ({
   const handleClose = () => {
     callback();
   };
+  const onDocDelete = (data) => {
+    deleteTransportProfileDoc(data, values.transporter_id)
+      .then(res => {
+        enqueueSnackbar(res.message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        });
+      })
+      .catch(err => {
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      })
+
+  }
 
   const {
     values,
@@ -396,25 +429,8 @@ const AddNewTransportsForm = ({
             setImageModal({ open: true, image: data.gst_file_url })
           }
         >
-          <a
-            style={{
-              display: 'inline-block',
-              borderRadius: 2,
-              lineHeight: 1,
-              marginRight: 4,
-              marginBottom: 4,
-              padding: 4,
-              backgroundColor: '#dedede',
-              color: '#43a047',
-            }}
-            target='_blank'
-            title={'GST Attachment'}
-          >
-            {'GST Attachment'}
-          </a>
+          <a className={classes.profileLink} target='_blank' title={'GST Attachment'}>{'GST Attachment'}</a>
         </Button>
-        {/* <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede', color: '#43a047' }}
-                    href={data.gst_file_url} target="_blank" title={'GST Attachment'}>{'GST Attachment'}</a> */}
         <Tooltip title={'Click to edit'}>
           <UploadIcon
             fontSize='small'
@@ -422,32 +438,16 @@ const AddNewTransportsForm = ({
             onClick={() => docUpload('GST')}
           />
         </Tooltip>
-        {/* <Tooltip title={'Click to delete'}>
-                    <DeleteIcon fontSize="small" padding={2} />
-                </Tooltip> */}
+        <Tooltip title={'Click to delete'}>
+          <DeleteIcon onClick={() => onDocDelete({ gst_file_url: "" })} fontSize="small" padding={2} />
+        </Tooltip>
       </div>
     );
   };
   const panAttachment = () => {
     return (
       <div className={classes.fileStyle}>
-        <a
-          style={{
-            display: 'inline-block',
-            borderRadius: 2,
-            lineHeight: 1,
-            marginRight: 4,
-            marginBottom: 4,
-            padding: 4,
-            backgroundColor: '#dedede',
-            color: '#43a047',
-          }}
-          href={data.pan_file_url}
-          target='_blank'
-          title={'PAN Attachment'}
-        >
-          {'PAN Attachment'}
-        </a>
+        <a className={classes.profileLink} href={data.pan_file_url} target='_blank' title={'PAN Attachment'}>{'PAN Attachment'}</a>
         <Tooltip title={'Click to edit'}>
           <UploadIcon
             fontSize='small'
@@ -455,9 +455,9 @@ const AddNewTransportsForm = ({
             onClick={() => docUpload('PAN')}
           />
         </Tooltip>
-        {/* <Tooltip title={'Click to delete'}>
-                    <DeleteIcon fontSize="small" padding={2} />
-                </Tooltip> */}
+        <Tooltip title={'Click to delete'}>
+          <DeleteIcon onClick={() => onDocDelete({ pan_file_url: "" })} fontSize="small" padding={2} />
+        </Tooltip>
       </div>
     );
   };
@@ -501,9 +501,9 @@ const AddNewTransportsForm = ({
               </Grid>
               <Divider />
               {values?.profile_image_url ||
-              values?.pan_file_url ||
-              values?.aadhar_f_file_url ||
-              values?.aadhar_b_file_url ? (
+                values?.pan_file_url ||
+                values?.aadhar_f_file_url ||
+                values?.aadhar_b_file_url ? (
                 <div className={classes.readOnlyWrapper}>
                   <Typography variant='h4'>Attachments</Typography>
                   <div

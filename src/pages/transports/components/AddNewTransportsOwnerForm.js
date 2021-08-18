@@ -337,7 +337,7 @@ const AddNewTransportsOwnerForm = ({
   const onDocDelete = (data) => {
     deleteTransportOwnerProfileDoc(data, values.t_owner_id)
       .then(res => {
-        enqueueSnackbar(res.Message, {
+        enqueueSnackbar(res.message, {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',

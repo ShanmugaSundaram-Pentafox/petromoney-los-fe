@@ -7,8 +7,8 @@ import { useMount } from 'react-use';
 const useStyles = makeStyles({
     root: {
         display: 'flex',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap'
+        // justifyContent: 'space-between',
+        flexWrap: 'wrap',
     },  
 })
 

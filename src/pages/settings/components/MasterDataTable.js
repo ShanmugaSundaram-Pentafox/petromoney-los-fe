@@ -16,6 +16,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Snackbar } from '@material-ui/core';
+
 import {
   addOmcs,
   addRegion,
@@ -89,7 +90,7 @@ const useStyles = makeStyles({
   },
 });
 
-function Contain({ title, data, label }) {
+function Contain({ title, data, label, loading }) {
   const classes = useStyles();
   const [value, setValue] = useState();
   const [openEditForm, setOpenEditForm] = useState(false);
@@ -99,8 +100,7 @@ function Contain({ title, data, label }) {
   const [openAddForm, setOpenAddForm] = useState(false);
   const [AddData, setAddData] = useState({});
   const enqueueSnackbar = useSnackbar();
-  // console.log(rowData);
-  // console.log(value);
+
   const handleClose = () => {
     setOpenEditForm(false);
     setOpenDeleteForm(false);
@@ -110,19 +110,15 @@ function Contain({ title, data, label }) {
   const filteredData = data.filter((item) =>
     item.name.toUpperCase().includes(value?.toUpperCase())
   );
-  const testing = (item, title) => {
+  const editItem = (item, title) => {
     setRowData(item);
     setStatus(title);
   };
 
-  const testDelete = (item, title) => {
+  const deleteItem = (item, title) => {
     setRowData(item);
     setStatus(title);
   };
-
-  // const testingAdd = (item, title) => {
-    
-  // }
 
   const handleChange = (event) => {
     setRowData({
@@ -295,7 +291,7 @@ function Contain({ title, data, label }) {
                             size='small'
                             onClick={() => {
                               setOpenEditForm(true);
-                              testing(item, title);
+                              editItem(item, title);
                             }}
                           >
                             <EditIcon fontSize='small' />
@@ -304,7 +300,7 @@ function Contain({ title, data, label }) {
                         <Tooltip title='Delete'>
                           <IconButton className={classes.btn} size='small' onClick={() => {
                             setOpenDeleteForm(true);
-                            testDelete(item, title);
+                            deleteItem(item, title);
                           }}>
                             <DeleteIcon fontSize='small' />
                           </IconButton>
@@ -356,7 +352,7 @@ function Contain({ title, data, label }) {
                           size='small'
                           onClick={() => {
                             setOpenEditForm(true);
-                            testing(item, title);
+                            editItem(item, title);
                           }}
                         >
                           <EditIcon fontSize='small' className={classes.edt} />
@@ -368,7 +364,7 @@ function Contain({ title, data, label }) {
                           size='small'
                           onClick={() => {
                             setOpenDeleteForm(true);
-                            testDelete(item, title);
+                            deleteItem(item, title);
                           }}
                         >
                           <DeleteIcon
@@ -388,10 +384,11 @@ function Contain({ title, data, label }) {
       </Paper>
       <Dialog open={openEditForm} onClose={handleClose} aria-labelledby='edit'>
         <DialogTitle>Edit {title} Form</DialogTitle>
-        <DialogContent>
+        <DialogContent style={{width: 400}}>
           <TextField
             id='edit'
             autoFocus
+            fullWidth
             variant='outlined'
             label={title}
             value={rowData.name}
@@ -410,8 +407,8 @@ function Contain({ title, data, label }) {
         aria-labelledby='delete'
       >
         <DialogTitle>Delete Form</DialogTitle>
-        <DialogContent>
-          <Typography variant='h6'>
+        <DialogContent style={{width: 400}}>
+          <Typography variant='h7'>
             Are you sure want to delete {rowData.name}?
           </Typography>
         </DialogContent>
@@ -432,21 +429,20 @@ function Contain({ title, data, label }) {
       aria-labelledby='add'
       >
         <DialogTitle>Add {title}</DialogTitle>
-        <DialogContent>
+        <DialogContent style={{width: 400}}>
           <TextField 
           id='add'
           autoFocus
           variant='outlined'
           placeholder={title}
+          fullWidth
           onChange={handleAdd}
-          // value={AddData}
           />
         </DialogContent>
         <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
           <Button
             onClick={submitAdd}
-            style={{ color: '#50CB93' }}
           >
             Save
           </Button>

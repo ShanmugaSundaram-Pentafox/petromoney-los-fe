@@ -3,13 +3,13 @@ import React, {useState} from 'react';
 import Contain from './MasterDataTable';
 import { getOmcList, getStates, getAllRegion } from '../../../services/common.service';
 import { useMount } from 'react-use';
+import Skeleton from '@material-ui/lab/Skeleton';
 
 const useStyles = makeStyles({
     root: {
         display: 'flex',
-        // justifyContent: 'space-between',
         flexWrap: 'wrap',
-    },  
+    },
 })
 
 function MasterData() {
@@ -17,30 +17,48 @@ function MasterData() {
   const [omc, setOmc] = useState([]);
   const [region, setRegion] = useState([]);
   const [state, setState] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useMount(() => {
+    setLoading(true);
     getOmcList()
       .then(setOmc)
-      .catch((e) => console.log(e));
-  });
-
-  useMount(() => {
+      .catch((e) => {
+        console.log(e)
+        setLoading(false)
+      });
+    
     getAllRegion()
       .then(setRegion)
-      .catch((e) => console.log(e));
-  });
-
-  useMount(() => {
+      .catch((e) => {
+        console.log(e)
+        setLoading(false)
+      });
+      
     getStates()
-      .then(setState)
-      .catch((e) => console.log(e));
+      .then((data) => {
+        setState(data)
+          setLoading(false)
+      }) 
+      .catch((e) => {
+        console.log(e)
+        setLoading(false)
+      });
   });
 
   return (
     <div className={classes.root}>
-      <Contain title={'OMCs'} data={omc} label={'name'}/>
-      <Contain title={'Region'} data={region} label={'region'}/>
-      <Contain title={'State'} data={state} label={'name'}/>
+      {
+        loading ? (
+          <Skeleton variant="rect" width="100%" height={500}/>
+        ) : (
+          <>
+          <Contain title={'OMCs'} data={omc} label={'name'} />
+          <Contain title={'Region'} data={region} label={'region'} />
+          <Contain title={'State'} data={state} label={'name'} />
+          </>
+        )
+      }
     </div>
   );
 }

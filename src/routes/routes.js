@@ -27,6 +27,7 @@ import VehiclesLoanTable from '../pages/transports/components/VehiclesLoanTable'
 import OwnerDetails from '../pages/dashboard/components/OwnerDetails';
 import Profile from '../pages/profile/Profile';
 import TransportException from '../pages/transports/components/TransportException';
+import BlacklistTable from '../pages/loanspage/BlacklistTable';
 
 const Routes = ({ currentUser }) => {
   return (<>
@@ -49,6 +50,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/vehicle-loan" component={VehiclesLoanTable} />
       <ProtectedRoute allow exact path="/owners/:id?" component={OwnerDetails} />
       <ProtectedRoute allow exact path="/profile" component={Profile} />
+      <ProtectedRoute allow exact path="/blacklist" component={BlacklistTable} />
 
 
       <ProtectedRoute

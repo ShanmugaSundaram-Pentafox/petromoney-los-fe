@@ -199,6 +199,24 @@ const SidebarNav = props => {
                   {'Vehicle Loans'}
                 </Button>
               </ListItem>
+              <ListItem
+                className={classes.itemSub}
+                disableGutters
+                key={'All'}
+              >
+                <Button
+                  activeClassName={classes.active}
+                  className={classes.button}
+                  component={CustomRouterLink}
+                  to={'/blacklist'}
+                  exact
+                >
+                  <Badge badgeContent={2} max={999} color="primary">
+                    <div className={classes.icon}><BookmarkBorderIcon /></div>
+                    {'Blacklist'}
+                  </Badge>
+                </Button>
+              </ListItem>
             </Collapse>
           </Fragment>
         ) : page.title === "Report" ? (

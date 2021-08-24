@@ -25,7 +25,7 @@ import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { selectCurrentUser } from '../../../store/user/user.selector';
 import { createStructuredSelector } from 'reselect';
-import { getLoanById, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
+import { getLoanById, getLoansByStatus, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
 import Alert from '@material-ui/lab/Alert';
 import DispApprovedDataTable from './DispApprovedDataTable';
 import apiCall from '../../../utils/api.util';
@@ -33,6 +33,7 @@ import FormDialog from '../../../components/CommonComponents/FormDialog/FormDial
 import { useSnackbar } from 'notistack';
 // import CloseIcon from '@material-ui/icons/Close';
 import CloseIcon from '@material-ui/icons/CloseRounded';
+import { CircularProgress } from '@material-ui/core';
 
 // import Button from '../../../components/CommonComponents/Button/Button'
 
@@ -75,9 +76,9 @@ const useStyles = makeStyles(theme => ({
     overflow: 'auto'
   },
   wrapperTitle: {
-    display:'flex',
-    justifyContent:'space-between',
-    marginRight:24,
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginRight: 24,
   },
   title: {
     // position: 'absolute',
@@ -88,8 +89,8 @@ const useStyles = makeStyles(theme => ({
     borderBottomRightRadius: 12,
     boxShadow: '0px 0px 4px #8d8d8d',
   },
-  closeIcon:{
-    marginTop:8,
+  closeIcon: {
+    marginTop: 8,
   },
   gridItemStyle: {
     // paddingTop: theme.spacing(1),
@@ -159,6 +160,7 @@ const LoanInfo = ({
   const [showRemarksModal, setShowRemarksModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState({});
 
+
   useEffect(() => {
     apiCall(`business/products`)
       .then(res => {
@@ -174,7 +176,6 @@ const LoanInfo = ({
         console.log(err)
       })
   }, [row.product_id]);
-
   return (
     <>
       <LoanInfoWrapper>
@@ -212,7 +213,7 @@ const LoanInfo = ({
                     color: '#333'
                   }}
                 >
-                  <option value="">Choose Loan type</option>
+                  {/* <option value="">Choose Loan type</option> */}
                   {
                     products.map(item => <option value={item.product_id}>{item.product_name}</option>)
                   }
@@ -348,9 +349,13 @@ const DealershipDetails = ({
   status,
   currentUser,
   editable,
+
 }) => {
   const [values, setValues] = useState({});
   const [loanInfo, setLoanInfo] = useState({});
+  const [reLoader, setReloader] = useState(false);
+  const [rejectLoader, setRejectLoader] = useState(false);
+  const [approveLoader, setApproveLoader] = useState(false);
   const [apiStatus, setApiStatus] = useState({});
   const [readOnly, setReadOnly] = useState(true);
   const [showRemarksModal, setShowRemarksModal] = useState(false);
@@ -400,7 +405,6 @@ const DealershipDetails = ({
     //   return null
     // }
 
-    setApiStatus({ loading: true, type: 'info', message: 'We are processing your request, Please wait...' });
     let reqBody = {
       status: submitStatus,
       user_id: currentUser.id,
@@ -416,9 +420,11 @@ const DealershipDetails = ({
       reqBody.product_id = newLoanInfo.product_id;
     }
     if (submitStatus === "approved") {
+      setApproveLoader(true);
       if (status === "loan_approval") {
         resMsg = 'Successfully Approved Loan Request';
         reqBody.amount_approved = newLoanInfo.amount_approved;
+        reqBody.remarks = newLoanInfo.remarks;
       } else if (status === "disbursement_approval") {
         reqBody.status = 'disbursement_approved';
         resMsg = 'Successfully Approved Loan for Disbursement';
@@ -430,6 +436,7 @@ const DealershipDetails = ({
     }
 
     if (submitStatus === 'rejected') {
+      setRejectLoader(true);
       resMsg = 'Request got rejected successfully';
     }
     // if(submitStatus === "disbursed") {
@@ -441,11 +448,27 @@ const DealershipDetails = ({
     // }
     updateLoanApprovalStatusById(values.id, loanData.id, reqBody)
       .then(res => {
+        setApproveLoader(false);
+        setRejectLoader(false);
         setLoanInfo(res.data);
-        setApiStatus({ type: 'success', message: res.message || resMsg })
+        enqueueSnackbar(res.message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
       })
       .catch(err => {
-        setApiStatus({ type: 'error', message: 'Unable to update status. Please contact your admin' })
+        setApproveLoader(false);
+        setRejectLoader(false);
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
         console.log('Loan status update error - ', err)
       })
   }
@@ -476,21 +499,31 @@ const DealershipDetails = ({
     className: classes.fieldItemStyle
   }
   const handleResubmit = () => {
+    setReloader(true);
     updateLoanStats(data.id, loanData.id)
       .then(res => {
-        enqueueSnackbar(res, { variant: "success" });
+        // enqueueSnackbar(res, { variant: "success" });
+        setReloader(false);
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        }
+        )
         setTimeout(() => {
+          setReloader(false);
           window.location.reload();
         }, 2000)
 
         // setData(data)
       })
       .catch((e) => {
+        setReloader(false);
         console.log(e);
       })
   }
-
-
   return (
     <div className={classes.wrapper}>
       <div className={classes.wrapperTitle}>
@@ -716,7 +749,7 @@ const DealershipDetails = ({
                 </Grid>
                 <Grid {...gridProps} style={{ position: 'relative' }}>
                   Remarks(Disbursement)
-                    {/* <Typography variant="p" component={'p'}>
+                  {/* <Typography variant="p" component={'p'}>
                     {loanInfo.disbursement_approval_remarks}
                   </Typography> */}
                   <TextInput
@@ -751,38 +784,50 @@ const DealershipDetails = ({
           )
         }
         <div className={classes.actionButtonsWrapper}>
-          <div>
-            <Button
-              variant="contained"
-              startIcon={<ArrowBackIosRoundedIcon />}
-              onClick={onClose}>Back</Button>
+          <div style={{ display: 'flex' }}>
+            <div>
+              <Button
+                variant="contained"
+                startIcon={<ArrowBackIosRoundedIcon />}
+                onClick={onClose}>Back</Button>
+            </div>
             {
               editable && status && ["rejected", "approved", "disbursment_approval", "loan_approval"].includes(status.toLowerCase()) && (
                 <UserCan
                   role={currentUser.role_name}
                   perform={rulesList.loan_approval}
                   yes={() => (
-                    <Button
-                      variant="contained"
-                      disabled={apiStatus.loading}
-                      className={clsx(classes.btn, classes.btnError)}
-                      onClick={handleResubmit}
-                    >
-                      Re-submit</Button>
+                    !reLoader ? (
+                      <div>
+                        <Button
+                          variant="contained"
+                          disabled={apiStatus.loading}
+                          className={clsx(classes.btn, classes.btnError)}
+                          onClick={handleResubmit}
+                        >
+                          Re-submit</Button>
+                      </div>
+                    ) : (
+                      <div style={{ marginLeft: '16px' }}>
+                        <CircularProgress size={30} />
+                      </div>
+                    )
+
                   )}
                 />
               )
             }
           </div>
-          <div>
-
-            <Button
-              component={RouterLink}
-              to={`/dealership/${values.id}`}
-              variant="contained"
-              disabled={apiStatus.loading}
-              className={clsx(classes.btn, classes.btnSuccess)}
-              startIcon={<AccountTreeRoundedIcon />}>View more</Button>
+          <div style={{ display: 'flex' }}>
+            <div>
+              <Button
+                component={RouterLink}
+                to={`/dealership/${values.id}`}
+                variant="contained"
+                disabled={apiStatus.loading}
+                className={clsx(classes.btn, classes.btnSuccess)}
+                startIcon={<AccountTreeRoundedIcon />}>View more</Button>
+            </div>
             {
               editable && status && ["loan_approval", "disbursement_approval"].includes(status.toLowerCase()) && (
                 <UserCan
@@ -790,18 +835,38 @@ const DealershipDetails = ({
                   perform={rulesList.loan_approval}
                   yes={() => (
                     <>
-                      <Button
-                        variant="contained"
-                        disabled={apiStatus.loading}
-                        className={clsx(classes.btn, classes.btnError)}
-                        startIcon={<ThumbDownAltIcon />}
-                        onClick={() => updateLoanStatus('rejected')}>Reject</Button>
-                      <Button
-                        variant="contained"
-                        disabled={apiStatus.loading}
-                        className={clsx(classes.btn, classes.btnSuccess)}
-                        startIcon={<ThumbUpAltIcon />}
-                        onClick={() => updateLoanStatus('approved')}>Approve</Button>
+                      {
+                        !rejectLoader ? (
+                          <div>
+                            <Button
+                              variant="contained"
+                              disabled={apiStatus.loading}
+                              className={clsx(classes.btn, classes.btnError)}
+                              startIcon={<ThumbDownAltIcon />}
+                              onClick={() => updateLoanStatus('rejected')}>Reject</Button>
+                          </div>
+                        ) : (
+                          <div style={{ marginLeft: '16px' }}>
+                            <CircularProgress size={30} />
+                          </div>
+                        )
+                      }
+                      {
+                        !approveLoader ? (
+                          <div>
+                            <Button
+                              variant="contained"
+                              disabled={apiStatus.loading}
+                              className={clsx(classes.btn, classes.btnSuccess)}
+                              startIcon={<ThumbUpAltIcon />}
+                              onClick={() => updateLoanStatus('approved')}>Approve</Button>
+                          </div>
+                        ) : (
+                          <div style={{ marginLeft: '16px' }}>
+                            <CircularProgress size={30} />
+                          </div>
+                        )
+                      }
                     </>
                   )}
                 />

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { withStyles } from "@material-ui/core/styles"
-import MuiAccordion from "@material-ui/core/Accordion"
-import MuiAccordionSummary from "@material-ui/core/AccordionSummary"
-import MuiAccordionDetails from "@material-ui/core/AccordionDetails"
+// import { withStyles } from "@material-ui/core/styles"
+// import MuiAccordion from "@material-ui/core/Accordion"
+// import MuiAccordionSummary from "@material-ui/core/AccordionSummary"
+// import MuiAccordionDetails from "@material-ui/core/AccordionDetails"
 import { Typography } from '@material-ui/core';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
@@ -20,13 +20,6 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'space-between',
         zIndex: 0,
         boxShadow: '0 1px 4px -3px #333'
-    },
-    sidePanelFormWrapper: {
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-        width: '40vw'
     },
     sidePanelFormContentWrapper: {
         flex: 1,
@@ -162,6 +155,7 @@ const DealershipTransport = ({ id, currentUser, titleAlign }) => {
                     <Button
                         color="primary"
                         variant="contained"
+                        size='small'
                         onClick={() => {
                             setOpenModal(true)
                             setRowData({})

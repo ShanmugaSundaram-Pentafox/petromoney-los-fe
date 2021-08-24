@@ -114,19 +114,20 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
-            transport_name: Yup.string().required('Please enter transporter name'),
-            vehicle_no: Yup.string().required('Please enter vehicle number'),
-            email: Yup.string().email('Enter valid mail id '),
+            // transport_name: Yup.string().required('Please enter transporter name'),
+            // email: Yup.string().email('Enter valid mail id '),
             mobile: Yup.number().min(10, 'Enter valid mobile number').required('Please enter your mobile number'),
             name_on_card: Yup.string().required('Please Enter your name'),
-            amount_limit: Yup.string().required('Please Enter amount limit '),
+            // amount_limit: Yup.string().required('Please Enter amount limit '),
             dtplus_card_number: Yup.string().max(16, 'Enter valid card number').required('Please enter your card number'),
 
         }),
         onSubmit: values => {
             if (data) {
+                setLoading(true)
                 updateFleetOperator(values, dealer_id, data.id)
                     .then(res => {
+                        setLoading(false)
                         console.log(res)
                         enqueueSnackbar(res, {
                             anchorOrigin: {
@@ -142,6 +143,7 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
 
                     })
                     .catch(e => {
+                        setLoading(false)
                         enqueueSnackbar(e, {
                             anchorOrigin: {
                                 vertical: 'top',
@@ -154,8 +156,10 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
 
             }
             else {
+                setLoading(true);
                 addNewFleetOperator(values, dealer_id)
                     .then(res => {
+                        setLoading(false)
                         console.log(res)
                         enqueueSnackbar(res, {
                             anchorOrigin: {
@@ -170,6 +174,7 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
                         }, 1500);
                     })
                     .catch(e => {
+                        setLoading(false)
                         enqueueSnackbar(e, {
                             anchorOrigin: {
                                 vertical: 'top',
@@ -407,28 +412,54 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
             <div className={classes.actionFooter}>
                 <Divider />
                 <div className={classes.actionButtonsWrapper}>
-                    <div>
-                        <Button
-                            variant="outlined"
-                            startIcon={<NavigateBeforeRoundedIcon />}
-                            // disabled={loading}
-                            onClick={handleClose}
-                        >
-                            Back
-                        </Button>
-                    </div>
-                    <div>
-                        <Button
+                        <div>
+                            <Button
+                                    variant="outlined"
+                                    startIcon={<NavigateBeforeRoundedIcon />}
+                                    // disabled={loading}
+                                    onClick={handleClose}
+                                >
+                                Back
+                                </Button>
+                        </div>
+
+                        {
+                        !readOnly ? (
+                            !loading ? (
+                                <>
+                                <Button
+                                    variant="contained"
+                                    type="submit"
+                                    className={clsx(classes.btn, classes.editButton)}
+                                    startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
+                                    // disabled={loading}
+                                    onClick={loading ? () => null : handleSubmit}
+                                    >
+                                    Save
+                                </Button>
+                                </>   
+                            ) : (
+                                <div style={{display: 'flex', justifyContent: 'flex-end', width: '90%', margin: '0 auto'}}>
+                                  <CircularProgress size={30}/>
+                                </div>
+                            )
+                        ) : (
+                            <>
+                            <div>
+                            <Button
                             variant="contained"
                             type="submit"
                             className={clsx(classes.btn, classes.editButton)}
                             startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
                             // disabled={loading}
-                            onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
+                            onClick={loading ? () => null : handleEdit }
                         >
-                            {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` : 'Save'}
+                            Edit
                         </Button>
-                    </div>
+                        </div>
+                        </>
+                        )
+                    }
                 </div>
             </div>
         </div >

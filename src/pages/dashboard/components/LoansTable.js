@@ -164,6 +164,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
     setReportDetails(selectedLoanData)
     setModalData({ open: true })
   }
+
   return (
     <Box pt={2}>
       <UserCan

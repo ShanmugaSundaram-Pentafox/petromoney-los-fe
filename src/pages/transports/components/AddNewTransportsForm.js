@@ -9,7 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import TextInput from '../../../components/TextInput/TextInput';
 import clsx from 'clsx';
 import Divider from '@material-ui/core/Divider';
-import { makeStyles } from "@material-ui/styles";
+import { makeStyles } from '@material-ui/styles';
 import Button from '../../../components/CommonComponents/Button/Button';
 import { useMount } from 'react-use';
 import CloseIcon from '@material-ui/icons/Close';
@@ -21,658 +21,802 @@ import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import UploadIcon from '@material-ui/icons/Backup';
 // import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
-import AttachmentOutlinedIcon from '@material-ui/icons/AttachmentOutlined';
-import { getBusinessTypes, getOmcList, getRegionById, getStates } from '../../../services/common.service';
-import { getDistricts, getFormattedStatesList } from '../../../utils/indianStates.util';
+import {
+  getBusinessTypes,
+  getOmcList,
+  getRegionById,
+  getStates,
+} from '../../../services/common.service';
+import { getDistricts } from '../../../utils/indianStates.util';
 // import { addNewTransport, updateTransport } from '../../../services/transports.service';
 import { useSnackbar } from 'notistack';
 import Tooltip from '@material-ui/core/Tooltip';
 import { URL } from '../../../config/serverUrls';
 import FileUpload from '../../../components/FileUpload';
-
+import {
+  AvatarCard,
+  ViewData,
+} from '../../../components/CommonComponents/FilePreview';
 
 const useStyles = makeStyles((theme) => ({
-    sidePanelTitle: {
-        // textAlign: 'center',
-        padding: '24px 16px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        zIndex: 0,
-        boxShadow: '0 1px 4px -3px #333'
+  sidePanelTitle: {
+    // textAlign: 'center',
+    padding: '24px 16px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    zIndex: 0,
+    boxShadow: '0 1px 4px -3px #333',
+  },
+  details: {
+    padding: 6,
+    borderColor: 'grey',
+    minWidth: 80,
+    height: 50,
+    display: 'flex',
+    textAlign: 'left',
+    alignItems: 'left',
+    justifyContent: 'left',
+  },
+  sidePanelFormWrapper: {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    width: '40vw',
+  },
+  sidePanelFormContentWrapper: {
+    flex: 1,
+    overflowY: 'auto',
+  },
+  title: {
+    marginBottom: 4,
+    fontSize: 11,
+  },
+  fileAttachement: {
+    display: 'flex',
+    // justifyContent:'center',
+    marginTop: 8,
+  },
+  icon: {
+    marginRight: 4,
+    marginTop: 12,
+  },
+  typography: {
+    marginTop: 14,
+  },
+  sidePanelWrapper: {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    width: '40vw',
+    padding: '14px',
+  },
+  readOnlyWrapper: {
+    margin: '8px 4px',
+    maxWidth: '100%',
+  },
+  text: {
+    fontSize: 12,
+  },
+  stepperRoot: {
+    padding: 16,
+    paddingTop: 8,
+  },
+  fileStyle: {
+    display: 'flex',
+    justifyContent: 'space-around',
+    marginTop: 24,
+  },
+  actionButtonsWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '12px 16px',
+  },
+  editButton: {
+    marginRight: '8px',
+    '&.MuiButton-contained': {
+      backgroundColor: theme.palette.success.main,
+      color: theme.palette.white,
     },
-    details: {
-        padding: 6,
-        borderColor: 'grey',
-        minWidth: 80,
-        height: 50,
-        display: 'flex',
-        textAlign: 'left',
-        alignItems: 'left',
-        justifyContent: 'left'
+    '&.MuiButton-contained:hover': {
+      backgroundColor: theme.palette.success.dark,
     },
-    sidePanelFormWrapper: {
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-        width: '40vw'
-    },
-    sidePanelFormContentWrapper: {
-        flex: 1,
-        overflowY: 'auto'
-    },
-    title: {
-        marginBottom: 4,
-        fontSize: 11,
-    },
-    fileAttachement: {
-        display: 'flex',
-        // justifyContent:'center',
-        marginTop: 8
-    },
-    icon: {
-        marginRight: 4,
-        marginTop: 12,
-    },
-    typography: {
-        marginTop: 14,
-    },
-    sidePanelWrapper: {
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-        width: '40vw',
-        padding: '14px',
+  },
+}));
 
+const AddNewTransportsForm = ({
+  title,
+  handleBack,
+  id,
+  data,
+  currentUser,
+  callback,
+  isAdd,
+}) => {
+  const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
+  const [loading, setLoading] = useState(false);
+  const [omcs, setOmcs] = useState([]);
+  const [bussinessType, setBussinessType] = useState([]);
+  const [states, setStates] = useState([]);
+  const [showUpload, setShowUpload] = useState(false);
+  const [regionList, setRegionList] = useState([]);
+  const [fileType, setFileType] = useState('');
+  const [regions, setRegions] = useState([]);
+  const [checked, setChecked] = useState(false);
+  const [imageModal, setImageModal] = useState({});
+  const classes = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
+
+  const handleEdit = () => {
+    setReadOnly(!readOnly);
+  };
+  const handleClick = () => {
+    setChecked(!checked);
+  };
+  const handleClose = () => {
+    callback();
+  };
+
+  const {
+    values,
+    errors,
+    handleChange,
+    handleSubmit,
+    isSubmitting,
+    setSubmitting,
+    setFieldValue,
+  } = useFormik({
+    initialValues: {
+      ...data,
     },
-    readOnlyWrapper: {
-        margin: '8px 4px',
-        maxWidth: '100%',
+    validateOnChange: false,
+    validateOnBlur: true,
+    validationSchema: Yup.object().shape({
+      // id: Yup.number().required('Please enter transporter code'),
+      name: Yup.string().required('Please enter transporter name'),
+      mobile: Yup.number()
+        .min(10, 'Enter valid mobile number')
+        .required('please Enter your mobile number'),
+      omc: Yup.string().required('Please Choose OMC'),
+      business_type: Yup.string().required('Please choose bussiness type'),
+      // region: Yup.string().required('Please choose region'),
+      address: Yup.string().required('Please enter address'),
+      state: Yup.string().required('Please choose state'),
+      district: Yup.string().required('Please choose district'),
+      pincode: Yup.number()
+        .min(6, 'Pincode must be 6 digits')
+        .required('Enter pincode'),
+      pan: Yup.string()
+        .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
+        .required('Enter PAN')
+        .uppercase(),
+      gst: Yup.number().min(15, 'Enter valid GST'),
+    }),
+    onSubmit: (values) => {
+      setLoading(true);
+      values.name = values.name.toUpperCase();
+      const data = { ...values, t_owner_id: id };
+      // let apiURL = isAdd === 'Add' ? `transporters` : `tranporters/${data.transporter_id}`
+      const formData = new FormData();
+      Object.keys(data).forEach((key) => {
+        formData.append(key, data[key]);
+      });
+      if (isAdd === 'Add') {
+        fetch(`${URL.base}${URL.vehicleInfo}`, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${currentUser.token}`,
+          },
+        })
+          .then((res) => {
+            return res.json();
+          })
+
+          .then((res) => {
+            setLoading(false);
+            enqueueSnackbar(res.message, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'success',
+            });
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+          })
+          .catch((error) => {
+            setLoading(false);
+            enqueueSnackbar(error, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            });
+          });
+      } else {
+        fetch(`${URL.base}${URL.vehicleInfo}/${data.transporter_id}`, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${currentUser.token}`,
+          },
+        })
+          .then((res) => {
+            return res.json();
+          })
+
+          .then((res) => {
+            enqueueSnackbar(res.message, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'success',
+            });
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+          })
+          .catch((error) => {
+            console.log(error);
+            enqueueSnackbar(error.profile_status, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            });
+          });
+      }
     },
-    text: {
-        fontSize: 12
-    },
-    stepperRoot: {
-        padding: 16,
-        paddingTop: 8
-    },
-    fileStyle: {
-        display: 'flex',
-        justifyContent: 'space-around',
-        marginTop: 24,
-    },
-    actionButtonsWrapper: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        padding: '12px 16px'
-    },
-    editButton: {
-        marginRight: '8px',
-        '&.MuiButton-contained': {
-            backgroundColor: theme.palette.success.main,
-            color: theme.palette.white
-        },
-        '&.MuiButton-contained:hover': {
-            backgroundColor: theme.palette.success.dark
-        }
+  });
+  useMount(() => {
+    getOmcList()
+      .then((data) => {
+        setOmcs(data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+    getBusinessTypes()
+      .then((data) => {
+        setBussinessType(data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+    getStates()
+      .then((d) => {
+        setStates(d);
+        return d;
+      })
+      // .then(d => {
+      //     let res = d.find(({ id }) => id === parseInt(values?.state));
+      //     fetchRegions(parseInt(res.id));
+      // })
+      .catch((e) => {
+        console.log(e);
+      });
+    getRegionById()
+      .then((data) => {
+        setRegions(data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  });
+
+  useEffect(() => {
+    if (values.state) {
+      // let res = states.find(({ name }) => name === values.state);
+      fetchRegions(parseInt(values.state));
     }
-}))
-export const ViewData = ({ title, value }) => {
-    const classes = useStyles()
+  }, [values.state]);
+  const onCloseUploader = () => {
+    setShowUpload(false);
+  };
+  const handleSave = (value) => {
+    fileType === 'PAN'
+      ? setFieldValue('pan_file_url', value[0])
+      : setFieldValue('gst_file_url', value[0]);
+    handleSubmit(values);
+    onCloseUploader();
+    // enqueueSnackbar('File added successfully', {
+    //     anchorOrigin: {
+    //         vertical: 'top',
+    //         horizontal: 'right',
+    //     },
+    //     autoHideDuration: 1000,
+    //     variant: 'success',
+    // }
+    // )
+  };
+  const docUpload = (val) => {
+    setShowUpload(true);
+    setFileType(val);
+  };
+  const fetchRegions = (res) => {
+    getRegionById(res)
+      .then((res) => {
+        setRegionList(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const inputProps = {
+    direction: 'column',
+    alignTop: true,
+    onChange: handleChange,
+  };
+  const AntSwitch = withStyles((theme) => ({
+    root: {
+      width: 28,
+      height: 16,
+      padding: 0,
+      display: 'flex',
+    },
+    switchBase: {
+      marginBottom: 4,
+      padding: 2,
+      color: theme.palette.grey[500],
+      '&$checked': {
+        transform: 'translateX(12px)',
+        color: theme.palette.common.white,
+        '& + $track': {
+          opacity: 1,
+          backgroundColor: theme.palette.primary.main,
+          borderColor: theme.palette.primary.main,
+        },
+      },
+    },
+    thumb: {
+      width: 12,
+      height: 12,
+      boxShadow: 'none',
+    },
+    track: {
+      border: `1px solid ${theme.palette.grey[500]}`,
+      borderRadius: 16 / 2,
+      opacity: 1,
+      backgroundColor: theme.palette.common.white,
+    },
+    checked: {},
+  }))(Switch);
+
+  const gstAttachment = () => {
     return (
-        <Box className={classes.details}>
-            <div>
-                <p className={classes.title}>{title}</p>
-                <strong className={classes.text}>{value ? value : '-'}</strong>
-            </div>
-        </Box >
-    )
-}
-
-const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callback, isAdd }) => {
-    const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
-    const [loading, setLoading] = useState(false)
-    const [omcs, setOmcs] = useState([]);
-    const [bussinessType, setBussinessType] = useState([]);
-    const [states, setStates] = useState([]);
-    const [showUpload, setShowUpload] = useState(false);
-    const [regionList, setRegionList] = useState([]);
-    const [fileType, setFileType] = useState('')
-    const [regions, setRegions] = useState([]);
-    const [checked, setChecked] = useState(false);
-    const classes = useStyles()
-    const { enqueueSnackbar } = useSnackbar();
-
-
-    const handleEdit = () => {
-        setReadOnly(!readOnly)
-    };
-    const handleClick = () => {
-        setChecked(!checked);
-    };
-    const handleClose = () => {
-        callback()
-    }
-
-    const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setFieldValue } = useFormik({
-        initialValues: {
-            ...data,
-        },
-        validateOnChange: false,
-        validateOnBlur: true,
-        validationSchema: Yup.object().shape({
-            // id: Yup.number().required('Please enter transporter code'),
-            name: Yup.string().required('Please enter transporter name'),
-            mobile: Yup.number().min(10, 'Enter valid mobile number').required('please Enter your mobile number'),
-            omc: Yup.string().required('Please Choose OMC'),
-            business_type: Yup.string().required('Please choose bussiness type'),
-            // region: Yup.string().required('Please choose region'),
-            address: Yup.string().required('Please enter address'),
-            state: Yup.string().required('Please choose state'),
-            district: Yup.string().required('Please choose district'),
-            pincode: Yup.number().min(6, 'Pincode must be 6 digits').required("Enter pincode"),
-            pan: Yup.string().matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, "Invalid PAN").required("Enter PAN").uppercase(),
-            gst: Yup.number().min(15, 'Enter valid GST')
-        }),
-        onSubmit: values => {
-            const data = { ...values, t_owner_id: id };
-            let apiURL = isAdd === 'Add' ? `transporters` : `tranporters/${data.transporter_id}`
-            const formData = new FormData();
-            Object.keys(data).forEach(key => {
-                formData.append(key, data[key]);
-            })
-            // console.log(currentUser)
-            if (isAdd === 'Add') {
-                fetch(`${URL.base}${URL.vehicleInfo}`, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Authorization': `Bearer ${currentUser.token}`
-                    }
-                })
-                    .then(res => {
-                        return res.json()
-                    })
-
-                    .then(res => {
-                        enqueueSnackbar(res.message, {
-                            anchorOrigin: {
-                                vertical: 'top',
-                                horizontal: 'right',
-                            },
-                            variant: 'success',
-                        }
-                        )
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 1000)
-                    })
-                    .catch(error => {
-                        enqueueSnackbar(error, {
-                            anchorOrigin: {
-                                vertical: 'top',
-                                horizontal: 'right',
-                            },
-                            variant: 'error',
-                        }
-                        )
-                    })
-
-            }
-            else {
-                fetch(`${URL.base}${URL.vehicleInfo}/${data.transporter_id}`, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Authorization': `Bearer ${currentUser.token}`
-                    }
-                })
-                    .then(res => {
-                        return res.json()
-                    })
-
-                    .then(res => {
-                        enqueueSnackbar(res.message, {
-                            anchorOrigin: {
-                                vertical: 'top',
-                                horizontal: 'right',
-                            },
-                            variant: 'success',
-                        }
-                        )
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 1000)
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        enqueueSnackbar(error.profile_status, {
-                            anchorOrigin: {
-                                vertical: 'top',
-                                horizontal: 'right',
-                            },
-                            variant: 'error',
-                        }
-                        )
-                    })
-            }
-        }
-    });
-    useMount(() => {
-        getOmcList()
-            .then(data => {
-                setOmcs(data);
-            })
-            .catch(e => {
-                console.log(e)
-            })
-        getBusinessTypes()
-            .then(data => {
-                setBussinessType(data);
-            })
-            .catch(e => {
-                console.log(e)
-            })
-        getStates()
-            .then(d => {
-                setStates(d);
-                return d;
-            })
-            .then(d => {
-                let res = d.find(({ id }) => id === parseInt(values?.state));
-                fetchRegions(parseInt(res.id));
-            })
-            .catch(e => {
-                console.log(e)
-            })
-        getRegionById()
-            .then(data => {
-                setRegions(data);
-            })
-            .catch(e => {
-                console.log(e)
-            })
-    })
-
-    useEffect(() => {
-        if (values.state) {
-            // let res = states.find(({ name }) => name === values.state);
-            fetchRegions(parseInt(values.state));
-        }
-    }, [values.state])
-    const onCloseUploader = () => {
-        setShowUpload(false);
-    }
-    const handleSave = (value) => {
-        fileType === 'PAN' ? setFieldValue('pan_file_url', value[0]) : setFieldValue('gst_file_url', value[0])
-        handleSubmit(values)
-        onCloseUploader()
-        // enqueueSnackbar('File added successfully', {
-        //     anchorOrigin: {
-        //         vertical: 'top',
-        //         horizontal: 'right',
-        //     },
-        //     autoHideDuration: 1000,
-        //     variant: 'success',
-        // }
-        // )
-
-    }
-    const docUpload = (val) => {
-        setShowUpload(true)
-        setFileType(val)
-    }
-    const fetchRegions = (res) => {
-        getRegionById(res)
-            .then(res => {
-                setRegionList(res)
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    }
-    const inputProps = {
-        direction: "column",
-        alignTop: true,
-        onChange: handleChange,
-    }
-    const AntSwitch = withStyles((theme) => ({
-        root: {
-            width: 28,
-            height: 16,
-            padding: 0,
-            display: 'flex',
-        },
-        switchBase: {
+      <div className={classes.fileStyle}>
+        <Button
+          onClick={() =>
+            setImageModal({ open: true, image: data.gst_file_url })
+          }
+        >
+          <a
+            style={{
+              display: 'inline-block',
+              borderRadius: 2,
+              lineHeight: 1,
+              marginRight: 4,
+              marginBottom: 4,
+              padding: 4,
+              backgroundColor: '#dedede',
+              color: '#43a047',
+            }}
+            target='_blank'
+            title={'GST Attachment'}
+          >
+            {'GST Attachment'}
+          </a>
+        </Button>
+        {/* <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede', color: '#43a047' }}
+                    href={data.gst_file_url} target="_blank" title={'GST Attachment'}>{'GST Attachment'}</a> */}
+        <Tooltip title={'Click to edit'}>
+          <UploadIcon
+            fontSize='small'
+            padding={2}
+            onClick={() => docUpload('GST')}
+          />
+        </Tooltip>
+        {/* <Tooltip title={'Click to delete'}>
+                    <DeleteIcon fontSize="small" padding={2} />
+                </Tooltip> */}
+      </div>
+    );
+  };
+  const panAttachment = () => {
+    return (
+      <div className={classes.fileStyle}>
+        <a
+          style={{
+            display: 'inline-block',
+            borderRadius: 2,
+            lineHeight: 1,
+            marginRight: 4,
             marginBottom: 4,
-            padding: 2,
-            color: theme.palette.grey[500],
-            '&$checked': {
-                transform: 'translateX(12px)',
-                color: theme.palette.common.white,
-                '& + $track': {
-                    opacity: 1,
-                    backgroundColor: theme.palette.primary.main,
-                    borderColor: theme.palette.primary.main,
-                },
-            },
-        },
-        thumb: {
-            width: 12,
-            height: 12,
-            boxShadow: 'none',
-        },
-        track: {
-            border: `1px solid ${theme.palette.grey[500]}`,
-            borderRadius: 16 / 2,
-            opacity: 1,
-            backgroundColor: theme.palette.common.white,
-        },
-        checked: {},
-    }))(Switch);
-
-    const gstAttachment = () => {
-        return (
-            <div className={classes.fileStyle}>
-                <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede', color: '#43a047' }}
-                    href={data.gst_file_url} target="_blank" title={'GST Attachment'}>{'GST Attachment'}</a>
-                <Tooltip title={'Click to edit'}>
-                    <UploadIcon fontSize="small" padding={2} onClick={() => docUpload('GST')} />
-                </Tooltip>
-                {/* <Tooltip title={'Click to delete'}>
+            padding: 4,
+            backgroundColor: '#dedede',
+            color: '#43a047',
+          }}
+          href={data.pan_file_url}
+          target='_blank'
+          title={'PAN Attachment'}
+        >
+          {'PAN Attachment'}
+        </a>
+        <Tooltip title={'Click to edit'}>
+          <UploadIcon
+            fontSize='small'
+            padding={2}
+            onClick={() => docUpload('PAN')}
+          />
+        </Tooltip>
+        {/* <Tooltip title={'Click to delete'}>
                     <DeleteIcon fontSize="small" padding={2} />
                 </Tooltip> */}
-            </div>
-        )
-    }
-    const panAttachment = () => {
-        return (
-            <div className={classes.fileStyle}>
-                <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#dedede', color: '#43a047' }}
-                    href={data.pan_file_url} target="_blank" title={'PAN Attachment'}>{'PAN Attachment'}</a>
-                <Tooltip title={'Click to edit'}>
-                    <UploadIcon fontSize="small" padding={2} onClick={() => docUpload('PAN')} />
-                </Tooltip>
-                {/* <Tooltip title={'Click to delete'}>
-                    <DeleteIcon fontSize="small" padding={2} />
-                </Tooltip> */}
-            </div>
-        )
-    }
-    return (
-        <div className={classes.sidePanelFormWrapper}>
-            <Typography className={classes.sidePanelTitle} variant="h4">
-                <div>{title ? title : 'Add New Transport Form'}</div>
-                <CloseIcon onClick={handleClose} />
-            </Typography>
-            <div className={classes.sidePanelFormContentWrapper}>
-                <div className={classes.stepperRoot}>
+      </div>
+    );
+  };
+  return (
+    <div className={classes.sidePanelFormWrapper}>
+      <Typography className={classes.sidePanelTitle} variant='h4'>
+        <div>{title ? title : 'Add New Transport Form'}</div>
+        <CloseIcon onClick={handleClose} />
+      </Typography>
+      <div className={classes.sidePanelFormContentWrapper}>
+        <div className={classes.stepperRoot}>
+          {readOnly ? (
+            <>
+              <Grid container spacing={2} className={classes.readOnlyWrapper}>
+                <Grid item md={6}>
+                  <Box className={classes.box}>
+                    <ViewData
+                      title='Transport Code'
+                      value={values.transporter_id}
+                    />
+                    <ViewData title='Mobile' value={values.mobile} />
+                    <ViewData title='OMC' value={values.omc} />
+                    <ViewData title='Region' value={values.region} />
+                    <ViewData title='District' value={values.district} />
+                    <ViewData title='GST' value={values.gst} />
+                  </Box>
+                </Grid>
+                <Grid item md={6}>
+                  <Box className={classes.box}>
+                    <ViewData title='Transport Name' value={values.name} />
+                    <ViewData title='Address' value={values.address} />
+                    <ViewData
+                      title='Business Type'
+                      value={values.business_type}
+                    />
+                    <ViewData title='State' value={values.state} />
+                    <ViewData title='Pincode' value={values.pincode} />
+                    <ViewData title='PAN' value={values.pan} />
+                  </Box>
+                </Grid>
+              </Grid>
+              <Divider />
+              {values?.profile_image_url ||
+              values?.pan_file_url ||
+              values?.aadhar_f_file_url ||
+              values?.aadhar_b_file_url ? (
+                <div className={classes.readOnlyWrapper}>
+                  <Typography variant='h4'>Attachments</Typography>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-around',
+                      marginTop: 16,
+                    }}
+                  >
+                    {values.pan_file_url && (
+                      <AvatarCard
+                        tooltip='View PAN'
+                        file={values?.pan_file_url}
+                        title='PAN'
+                      />
+                    )}
+                    {values.gst_file_url && (
+                      <AvatarCard
+                        tooltip='View GST'
+                        file={values?.gst_file_url}
+                        title='GST'
+                      />
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className={classes.readOnlyWrapper}>
+                  <Typography variant='h4'>Attachments</Typography>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      marginTop: '20px',
+                    }}
+                  >
+                    <Typography variant='h7'>No Attachments Found</Typography>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <Box>
+              <form onSubmit={handleSubmit}>
+                <Grid container spacing={2}>
+                  <Grid item md={12}>
                     {
-                        readOnly ? (
-                            <Grid container spacing={2} className={classes.readOnlyWrapper}>
-                                <Grid item md={6}>
-                                    <Box className={classes.box} >
-                                        <ViewData title='Transport Code' value={values.transporter_id} />
-                                        <ViewData title='Mobile' value={values.mobile} />
-                                        <ViewData title='OMC' value={values.omc} />
-                                        <ViewData title='Region' value={values.region} />
-                                        <ViewData title='District' value={values.district} />
-                                        <ViewData title='GST' value={values.gst} />
-                                    </Box>
-                                </Grid>
-                                <Grid item md={6}>
-                                    <Box className={classes.box} >
-                                        <ViewData title='Transport Name' value={values.name} />
-                                        <ViewData title='Address' value={values.address} />
-                                        <ViewData title='Business Type' value={values.business_type} />
-                                        <ViewData title='State' value={values.state} />
-                                        <ViewData title='Pincode' value={values.pincode} />
-                                        <ViewData title='PAN' value={values.pan} />
-                                    </Box>
-                                </Grid>
-                            </Grid>
+                      <Typography component='div'>
+                        <Grid
+                          component='label'
+                          container
+                          alignItems='center'
+                          spacing={2}
+                        >
+                          <Grid item>Transporter Code</Grid>
+                          <Grid item>No</Grid>
+                          <Grid item>
+                            <AntSwitch
+                              checked={checked}
+                              onChange={handleClick}
+                              name='checked'
+                            />
+                          </Grid>
+                          <Grid item>Yes</Grid>
+                        </Grid>
+                      </Typography>
+                    }
+                    {checked && (
+                      <TextInput
+                        {...inputProps}
+                        // labelText="Transporter Code"
+                        placeholder='Enter transporter code here'
+                        name='transporter_id'
+                        value={values.id}
+                        readOnly={readOnly}
+                        error={errors.id}
+                        helperText={errors.id}
+                      ></TextInput>
+                    )}
+                  </Grid>
+                  <Grid item md={12}>
+                    <TextInput
+                      {...inputProps}
+                      name='name'
+                      labelText='Transport Name'
+                      value={values.name?.toUpperCase()}
+                      readOnly={readOnly}
+                      error={errors.name}
+                      helperText={errors.name}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      name='mobile'
+                      labelText='Mobile'
+                      value={values?.mobile}
+                      readOnly={readOnly}
+                      error={errors.mobile}
+                      helperText={errors.mobile}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      select
+                      name='omc'
+                      labelText='OMC'
+                      value={values?.omc}
+                      readOnly={readOnly}
+                      disabled={readOnly}
+                      error={errors.omc}
+                    >
+                      <option value=''>Choose OMC</option>
+                      {omcs.map((omc) => (
+                        <option key={omcs.id} value={omcs.id}>
+                          {omc.name}
+                        </option>
+                      ))}
+                    </TextInput>
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      select
+                      name='business_type'
+                      labelText='Business Type'
+                      readOnly={readOnly}
+                      value={values?.business_type}
+                      disabled={readOnly}
+                      error={errors.business_type}
+                    >
+                      <option value=''>Choose bussiness type</option>
+                      {bussinessType.map((type) => (
+                        <option key={type.id} value={type.name}>
+                          {type.name}
+                        </option>
+                      ))}
+                    </TextInput>
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      select
+                      name='state'
+                      labelText='State'
+                      readOnly={readOnly}
+                      disabled={readOnly}
+                      value={values?.state}
+                      error={errors.state}
+                    >
+                      {states.map((item, i) => (
+                        <option key={i} value={item.id}>
+                          {item.name}
+                        </option>
+                      ))}
+                    </TextInput>
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      select
+                      name='region'
+                      labelText='Region'
+                      readOnly={readOnly}
+                      disabled={readOnly}
+                      value={values?.region}
+                      error={errors.region}
+                    >
+                      {regionList.map((item, i) => (
+                        <option key={i} value={item.id}>
+                          {item.name}
+                        </option>
+                      ))}
+                    </TextInput>
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      name='address'
+                      labelText='Address'
+                      value={values?.address}
+                      readOnly={readOnly}
+                      disabled={readOnly}
+                      error={errors.address}
+                      helperText={errors.address}
+                    />
+                  </Grid>
 
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      // select
+                      name='district'
+                      labelText='District'
+                      readOnly={readOnly}
+                      disabled={readOnly}
+                      value={values.district}
+                      error={errors.district}
+                    >
+                      {getDistricts(values.state).map((item) => (
+                        <option key={item} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    </TextInput>
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      name='pincode'
+                      labelText='Pincode'
+                      value={values?.pincode}
+                      disabled={readOnly}
+                      readOnly={readOnly}
+                      error={errors.pincode}
+                      helperText={errors.pincode}
+                    />
+                  </Grid>
+                  <Grid md={12} item>
+                    <Typography variant='subtitle1' component='subtitle1'>
+                      Documents
+                    </Typography>
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      name='pan'
+                      labelText='PAN'
+                      value={values.pan}
+                      readOnly={readOnly}
+                      disabled={readOnly}
+                      error={errors.pan}
+                      helperText={errors.pan}
+                    />
+                  </Grid>
+                  {values.pan ? (
+                    <Grid item md={6}>
+                      <>
+                        {
+                          data.pan_file_url ? (
+                            panAttachment()
+                          ) : (
+                            <div
+                              className={classes.fileAttachement}
+                              onClick={() => docUpload('PAN')}
+                            >
+                              <Tooltip title={'Click and attach'}>
+                                <>
+                                  <UploadIcon
+                                    className={classes.icon}
+                                    disabled={readOnly}
+                                  />
+                                  {/* <Typography className={classes.typography}>Attach PAN</Typography> */}
+                                </>
+                              </Tooltip>
+                            </div>
+                          )
+                          // <>
+
+                          //     <Typography variant="subtitle2" component="subtitle2">
+                          //         <Tooltip title={'Click Edit and attach'}>
+                          //             <AttachmentOutlinedIcon onClick={() => docUpload('PAN')} />
+                          //         </Tooltip> Attach PAN
+                          //     </Typography>
+                          //     <TextInput
+                          //                 type="file"
+                          //                 accept="image/*"
+                          //                 name="pan_file_url"
+                          //                 readOnly={readOnly}
+                          //                 disabled={readOnly}
+                          //                 value={data.pan_file_url}
+                          //                 onChange={(event) => {
+                          //                     values[event.target.name] = event.currentTarget.files[0];
+                          //                 }}
+                          //                 InputLabelProps={{ shrink: true }}
+                          //             ></TextInput>
+                          // </>
+                        }
+                      </>
+                    </Grid>
+                  ) : null}
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      name='gst'
+                      labelText='GST'
+                      value={values.gst}
+                      readOnly={readOnly}
+                      disabled={readOnly}
+                      error={errors.gst}
+                      helperText={errors.gst}
+                    />
+                  </Grid>
+                  {values.gst ? (
+                    <Grid item md={6}>
+                      <>
+                        {data.gst_file_url ? (
+                          gstAttachment()
                         ) : (
-                            <Box>
-                                <form onSubmit={handleSubmit}>
-                                    <Grid container spacing={2}>
-                                        <Grid item md={12}>
-                                            {
-                                                <Typography component="div">
-                                                    <Grid component="label" container alignItems="center" spacing={2}>
-                                                        <Grid item>Transporter Code</Grid>
-                                                        <Grid item>No</Grid>
-                                                        <Grid item>
-                                                            <AntSwitch checked={checked} onChange={handleClick} name="checked" />
-                                                        </Grid>
-                                                        <Grid item>Yes</Grid>
-                                                    </Grid>
-                                                </Typography>
-                                            }
-                                            {
-                                                checked &&
-                                                <TextInput
-                                                    {...inputProps}
-                                                    // labelText="Transporter Code"
-                                                    placeholder="Enter transporter code here"
-                                                    name="transporter_id"
-                                                    value={values.id}
-                                                    readOnly={readOnly}
-                                                    error={errors.id}
-                                                    helperText={errors.id}
-                                                >
-                                                </TextInput>
-                                            }
-                                        </Grid>
-                                        <Grid item md={6}>
-                                            <TextInput
-                                                {...inputProps}
-                                                name="name"
-                                                labelText="Transport Name"
-                                                value={values.name?.toUpperCase()}
-                                                readOnly={readOnly}
-                                                error={errors.name}
-                                                helperText={errors.name}
-                                            />
-                                        </Grid>
-                                        <Grid item md={6}>
-                                            <TextInput
-                                                {...inputProps}
-                                                name="mobile"
-                                                labelText="Mobile"
-                                                value={values.mobile}
-                                                readOnly={readOnly}
-                                                error={errors.mobile}
-                                                helperText={errors.mobile}
-                                            />
-                                        </Grid>
-                                        <Grid item md={6}>
-                                            <TextInput
-                                                {...inputProps}
-                                                select
-                                                name="omc"
-                                                labelText="OMC"
-                                                value={values.omc}
-                                                readOnly={readOnly}
-                                                disabled={readOnly}
-                                                error={errors.omc}
-                                            >
-                                                <option value="">Choose OMC</option>
-                                                {
-                                                    omcs.map(omc => <option key={omcs.id} value={omcs.id}>{omc.name}</option>)
-                                                }
-                                            </TextInput>
-                                        </Grid>
-                                        <Grid item md={6}>
-                                            <TextInput
-                                                {...inputProps}
-                                                select
-                                                name="business_type"
-                                                labelText="Business Type"
-                                                readOnly={readOnly}
-                                                value={values.business_type}
-                                                disabled={readOnly}
-                                                error={errors.business_type}
-                                            >
-                                                <option value="">Choose bussiness type</option>
-                                                {
-                                                    bussinessType.map(type => <option key={type.id} value={type.name}>{type.name}</option>)
-                                                }
-                                            </TextInput>
-                                        </Grid>
-                                        <Grid item md={6}>
-                                            <TextInput
-                                                {...inputProps}
-                                                select
-                                                name="state"
-                                                labelText="State"
-                                                readOnly={readOnly}
-                                                disabled={readOnly}
-                                                value={values.state}
-                                                error={errors.state}
-                                            >
-                                                {
-                                                    states.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
-                                                }
-
-                                            </TextInput>
-                                        </Grid>
-                                        <Grid item md={6}>
-                                            <TextInput
-                                                {...inputProps}
-                                                select
-                                                name="region"
-                                                labelText="Region"
-                                                readOnly={readOnly}
-                                                disabled={readOnly}
-                                                value={values.region}
-                                                error={errors.region}
-                                            >
-                                                {
-                                                    regionList.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))
-                                                }
-                                            </TextInput>
-                                        </Grid>
-                                        <Grid item md={6}>
-                                            <TextInput
-                                                {...inputProps}
-                                                name="address"
-                                                labelText="Address"
-                                                value={values.address?.toUpperCase()}
-                                                readOnly={readOnly}
-                                                disabled={readOnly}
-                                                error={errors.address}
-                                                helperText={errors.address}
-                                            />
-                                        </Grid>
-
-                                        <Grid item md={6}>
-                                            <TextInput
-                                                {...inputProps}
-                                                // select
-                                                name="district"
-                                                labelText="District"
-                                                readOnly={readOnly}
-                                                disabled={readOnly}
-                                                value={values.district}
-                                                error={errors.district}
-                                            >
-                                                {
-                                                    getDistricts(values.state).map(item => <option key={item} value={item}>{item}</option>)
-                                                }
-                                            </TextInput>
-                                        </Grid>
-                                        <Grid item md={6}>
-                                            <TextInput
-                                                {...inputProps}
-                                                name="pincode"
-                                                labelText="Pincode"
-                                                value={values.pincode}
-                                                disabled={readOnly}
-                                                readOnly={readOnly}
-                                                error={errors.pincode}
-                                                helperText={errors.pincode}
-                                            />
-                                        </Grid>
-                                        <Grid md={12} style={{ margin: '16px 8px' }}>
-                                            <Typography variant="subtitle1" component="subtitle1" >Documents</Typography>
-                                        </Grid>
-                                        <Grid item md={6}>
-                                            <TextInput
-                                                {...inputProps}
-                                                name="pan"
-                                                labelText="PAN"
-                                                value={values.pan}
-                                                readOnly={readOnly}
-                                                disabled={readOnly}
-                                                error={errors.pan}
-                                                helperText={errors.pan}
-                                            />
-                                        </Grid>
-                                        {
-                                            values.pan ? (
-                                                <Grid item md={6}>
-                                                    <>
-                                                        {data.pan_file_url ? panAttachment() :
-                                                            <div className={classes.fileAttachement} onClick={() => docUpload('PAN')}>
-                                                                <Tooltip title={'Click and attach'}>
-                                                                    <>
-                                                                        <UploadIcon className={classes.icon} disabled={readOnly} />
-                                                                        {/* <Typography className={classes.typography}>Attach PAN</Typography> */}
-                                                                    </>
-                                                                </Tooltip>
-                                                            </div>
-                                                            // <>
-
-                                                            //     <Typography variant="subtitle2" component="subtitle2">
-                                                            //         <Tooltip title={'Click Edit and attach'}>
-                                                            //             <AttachmentOutlinedIcon onClick={() => docUpload('PAN')} />
-                                                            //         </Tooltip> Attach PAN
-                                                            //     </Typography>
-                                                            //     <TextInput
-                                                            //                 type="file"
-                                                            //                 accept="image/*"
-                                                            //                 name="pan_file_url"
-                                                            //                 readOnly={readOnly}
-                                                            //                 disabled={readOnly}
-                                                            //                 value={data.pan_file_url}
-                                                            //                 onChange={(event) => {
-                                                            //                     values[event.target.name] = event.currentTarget.files[0];
-                                                            //                 }}
-                                                            //                 InputLabelProps={{ shrink: true }}
-                                                            //             ></TextInput>
-                                                            // </>
-                                                        }
-                                                    </>
-                                                </Grid>
-                                            ) : null
-                                        }
-                                        <Grid item md={6}>
-                                            <TextInput
-                                                {...inputProps}
-                                                name="gst"
-                                                labelText="GST"
-                                                value={values.gst}
-                                                readOnly={readOnly}
-                                                disabled={readOnly}
-                                                error={errors.gst}
-                                                helperText={errors.gst}
-                                            />
-                                        </Grid>
-                                        {
-                                            values.gst ? (
-                                                <Grid item md={6}>
-                                                    <>
-                                                        {data.gst_file_url ? gstAttachment() :
-                                                            <div className={classes.fileAttachement} onClick={() => docUpload('GST')}>
-                                                                <Tooltip title={'Click and attach'}>
-                                                                    <>
-                                                                        <UploadIcon className={classes.icon} disabled={readOnly} />
-                                                                        {/* <Typography className={classes.typography}>Attach GST</Typography> */}
-                                                                    </>
-                                                                </Tooltip>
-                                                                {/* <TextInput
+                          <div
+                            className={classes.fileAttachement}
+                            onClick={() => docUpload('GST')}
+                          >
+                            <Tooltip title={'Click and attach'}>
+                              <>
+                                <UploadIcon
+                                  className={classes.icon}
+                                  disabled={readOnly}
+                                />
+                                {/* <Typography className={classes.typography}>Attach GST</Typography> */}
+                              </>
+                            </Tooltip>
+                            {/* <TextInput
                                                                             type="file"
                                                                             accept="image/*"
                                                                             name="gst_file_url"
@@ -684,53 +828,90 @@ const AddNewTransportsForm = ({ title, handleBack, id, data, currentUser, callba
                                                                             }}
                                                                             InputLabelProps={{ shrink: true }}
                                                                         ></TextInput> */}
-                                                            </div>
-                                                        }
-                                                    </>
-                                                </Grid>
-                                            ) : null
-                                        }
-                                    </Grid>
-                                </form>
-                            </Box >
-                        )
-                    }
-                </div>
-
-                {
-                    showUpload && <FileUpload handleSave={(value) => handleSave(value)} id={id} title='Upload Transport Documents' open={showUpload} onCloseUploader={onCloseUploader} />
-                }
-            </div>
-            <div className={classes.actionFooter}>
-                <Divider />
-                <div className={classes.actionButtonsWrapper}>
-                    <div>
-                        <Button
-                            variant="outlined"
-                            startIcon={<NavigateBeforeRoundedIcon />}
-                            // disabled={loading}
-                            onClick={handleClose}
-                        >
-                            Back
-                        </Button>
-                    </div>
-                    <div>
-                        <Button
-                            variant="contained"
-                            type="submit"
-                            onClick={handleSubmit}
-                            className={clsx(classes.btn, classes.editButton)}
-                            startIcon={!readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />}
-                            // disabled={loading}
-                            onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
-                        >
-                            {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` : 'Save'}
-                        </Button>
-                    </div>
-                </div>
-            </div>
+                          </div>
+                        )}
+                      </>
+                    </Grid>
+                  ) : null}
+                </Grid>
+              </form>
+            </Box>
+          )}
         </div>
-    )
-}
+
+        {showUpload && (
+          <FileUpload
+            handleSave={(value) => handleSave(value)}
+            id={id}
+            title='Upload Transport Documents'
+            open={showUpload}
+            onCloseUploader={onCloseUploader}
+          />
+        )}
+      </div>
+      <div className={classes.actionFooter}>
+        <Divider />
+        <div className={classes.actionButtonsWrapper}>
+          <div>
+            <Button
+              variant='outlined'
+              startIcon={<NavigateBeforeRoundedIcon />}
+              // disabled={loading}
+              onClick={handleClose}
+            >
+              Back
+            </Button>
+          </div>
+          {!readOnly ? (
+            !loading ? (
+              <>
+                <Button
+                  variant='contained'
+                  type='submit'
+                  onClick={handleSubmit}
+                  className={clsx(classes.btn, classes.editButton)}
+                  startIcon={
+                    !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
+                  }
+                  // disabled={loading}
+                  onClick={loading ? () => null : handleSubmit}
+                >
+                  Save
+                </Button>
+              </>
+            ) : (
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  width: '90%',
+                  margin: '0 auto',
+                }}
+              >
+                <CircularProgress size={30} />
+              </div>
+            )
+          ) : (
+            <div>
+              <Button
+                variant='contained'
+                type='submit'
+                onClick={handleSubmit}
+                className={clsx(classes.btn, classes.editButton)}
+                startIcon={
+                  !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
+                }
+                // disabled={loading}
+                onClick={loading ? () => null : handleEdit}
+              >
+                Edit
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default AddNewTransportsForm;

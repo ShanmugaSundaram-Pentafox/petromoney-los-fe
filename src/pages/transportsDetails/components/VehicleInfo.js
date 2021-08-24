@@ -33,11 +33,8 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import { Drawer } from "@material-ui/core";
-import Divider from '@material-ui/core/Divider';
-import clsx from 'clsx';
-import CloseIcon from '@material-ui/icons/Close';
+import FilePreview from "../../../components/CommonComponents/FilePreview";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -86,6 +83,11 @@ const useStyles = makeStyles((theme) => ({
     '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.success.dark
     }
+  },
+  objectImage: {
+    width: 500,
+    height: 400,
+    objectFit: 'cover'
   }
 }))
 
@@ -158,7 +160,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
   const [vehicleNumber, setVehicleNumber] = useState();
   const [vehicleId, setVehicleId] = useState();
   const [vehicleDetails, setVehicleDetails] = useState();
-  const [modalType, setModalType] = useState("");
+  const [formType, setFormType] = useState('');
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles()
 
@@ -312,18 +314,20 @@ export default function VehicleInfo({ id, data, currentUser }) {
     setVehicleNumber(number)
     setVehicleId(id);
     setOpenModal(true);
-    setModalType("EDIT");
+    setFormType('Edit')
+
   }
-  const handleClickOpen = () => {
+  const handleClickOpen = (number, id) => {
+    setVehicleNumber(number)
+    setVehicleId(id)
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
   };
-  const deleteVehicle = (vehicleId) => {
+  const deleteVehicle = () => {
     deleteVehicleStatus(id, vehicleId)
       .then(res => {
-        // if (res.status ==="SUCCESS") {
         setOpen(false)
         enqueueSnackbar(res, {
           anchorOrigin: {
@@ -426,13 +430,13 @@ export default function VehicleInfo({ id, data, currentUser }) {
                 </Typography>
                 <div style={{ display: "flex" }}>
                   <Tooltip title="Edit vehicle">
-                    <Typography style={{ marginRight: '7px', color: "#4770C1" }} onClick={() => modalOpen(vehicleInfo.tt_no, vehicleInfo.vehicle_id)}>
+                    <Typography style={{ marginRight: '7px', color: "#4770C1" }} onClick={() => { modalOpen(vehicleInfo.tt_no, vehicleInfo.vehicle_id) }}>
                       <EditOutlinedIcon fontSize="medium" />
                     </Typography>
                   </Tooltip>
                   <Tooltip title="Delete vehicle">
                     <Typography style={{ color: '#ff6666' }}>
-                      <DeleteOutlineOutlinedIcon fontSize="medium" onClick={handleClickOpen} />
+                      <DeleteOutlineOutlinedIcon fontSize="medium" onClick={() => handleClickOpen(vehicleInfo.tt_no, vehicleInfo.vehicle_id)} />
                     </Typography>
                   </Tooltip>
                 </div>
@@ -454,7 +458,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
                           <TableRow>
                             <TableCell>{row.description}</TableCell>
                             <TableCell>
-                              <Button onClick={() => setImageModal({ open: true, image: row.file_path })}>
+                              <Button onClick={() => setImageModal({ open: true, image: row.file_path, type: (row.file_path?.split("/")[row.file_path?.split("/").length - 1].split('.'))[1] })}>
                                 <a href={row.file_path}>{row.file_path?.split("/")[row.file_path?.split("/").length - 1] || '-'}</a>
                               </Button>
                             </TableCell>
@@ -465,9 +469,13 @@ export default function VehicleInfo({ id, data, currentUser }) {
                               >
                                 Upload
                               </Button>
-                              <Button size="small" onClick={() => handleDocDelete(row, vehicleInfo)}>
-                                Delete
-                              </Button>
+                              {
+                                row.file_path && (
+                                  <Button size="small" onClick={() => handleDocDelete(row, vehicleInfo)}>
+                                    Delete
+                                  </Button>
+                                )
+                              }
                             </TableCell>
                           </TableRow>
                         ))
@@ -572,14 +580,14 @@ export default function VehicleInfo({ id, data, currentUser }) {
               {/* <DialogTitle id="alert-dialog-title">{"Are you sure...?"}</DialogTitle> */}
               <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                  Did you want to delete the vehicle with vehicle number {vehicleInfo.tt_no} ?
+                  Did you want to delete the vehicle with vehicle number {vehicleNumber} ?
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
                 <Button onClick={handleClose} color="primary">
                   No
                 </Button>
-                <Button onClick={() => deleteVehicle(vehicleInfo.vehicle_id)} color="primary" autoFocus>
+                <Button onClick={() => deleteVehicle()} color="primary" autoFocus>
                   Yes
                 </Button>
               </DialogActions>
@@ -587,8 +595,8 @@ export default function VehicleInfo({ id, data, currentUser }) {
           </div>
         )
       })}
-      <FormDialog title={""} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
-        {imageModal.image && <img src={imageModal.image} alt="image-viewer" />}
+      <FormDialog title={"image preview"} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
+        <FilePreview data={imageModal} />
       </FormDialog>
       {
         // const d = JSON.parse((serviceData?.tracking_details?.[4]?.details || "{}").replace(/\'/g,'\"'));
@@ -609,7 +617,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
         onClose={() => setOpenModal(false)}
         variant="temporary"
       >
-        <AddNewVehicleForm id={id} isEdit='Add' callback={() => setOpenModal(false)} number={vehicleNumber} trans_id={vehicleId} modalType={modalType} />
+        <AddNewVehicleForm id={id} isAdd={formType} callback={() => setOpenModal(false)} number={vehicleNumber} trans_id={vehicleId} />
       </Drawer>
     </div>
   )

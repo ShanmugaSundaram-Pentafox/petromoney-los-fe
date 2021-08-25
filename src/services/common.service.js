@@ -234,7 +234,7 @@ export const getPassbookDetails = (id) => {
 }
 export const getStates = () => {
   return new Promise((resolve, reject) => {
-    apiCall("states")
+    apiCall("master/states")
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data);
@@ -303,7 +303,7 @@ export const updateRegionById = (data, id) => {
 
 export const updateStateById = (data, id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`states/${id}`, {
+    apiCall(`master/states/${id}`, {
       method: 'POST',
       body: data,
     })
@@ -360,7 +360,7 @@ export const addRegion = (data) => {
 }
 export const addState = (data) => {
   return new Promise((resolve, reject) => {
-    apiCall(`states`, {
+    apiCall(`master/states`, {
       method: 'POST',
       body: data
     })
@@ -417,7 +417,7 @@ export const deleteRegion = (data, id) => {
 }
 export const deleteState = (data, id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`states/${id}`, {
+    apiCall(`master/states/${id}`, {
       method: 'DELETE',
       body: data
     })

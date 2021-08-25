@@ -15,7 +15,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { Snackbar } from '@material-ui/core';
+import { useSnackbar } from 'notistack';
 
 import {
   addOmcs,
@@ -28,7 +28,7 @@ import {
   updateRegionById,
   updateStateById,
 } from '../../../services/common.service';
-import { useSnackbar } from 'notistack';
+import CheckCircleTwoTone from '@material-ui/icons/CheckCircleTwoTone';
 
 const useStyles = makeStyles({
   root: {
@@ -90,7 +90,7 @@ const useStyles = makeStyles({
   },
 });
 
-function Contain({ title, data, label, loading }) {
+function Contain({ title, data, label, loading, setStateBtn }) {
   const classes = useStyles();
   const [value, setValue] = useState();
   const [openEditForm, setOpenEditForm] = useState(false);
@@ -99,12 +99,17 @@ function Contain({ title, data, label, loading }) {
   const [status, setStatus] = useState();
   const [openAddForm, setOpenAddForm] = useState(false);
   const [AddData, setAddData] = useState({});
-  const enqueueSnackbar = useSnackbar();
+  const [openActiveForm, setOpenActiveForm] = useState(false);
+  const [openDeactiveForm, setOpenDeactiveForm] = useState(false);
+  const [deactivateId, setDeactivateId] = useState();
+  const {enqueueSnackbar} = useSnackbar();
 
   const handleClose = () => {
     setOpenEditForm(false);
     setOpenDeleteForm(false);
     setOpenAddForm(false);
+    setOpenActiveForm(false);
+    setOpenDeactiveForm(false);
   };
 
   const filteredData = data.filter((item) =>
@@ -119,6 +124,10 @@ function Contain({ title, data, label, loading }) {
     setRowData(item);
     setStatus(title);
   };
+
+  const DeactivateItem = (id) => {
+    setDeactivateId(id);
+  }
 
   const handleChange = (event) => {
     setRowData({
@@ -135,35 +144,76 @@ function Contain({ title, data, label, loading }) {
     if (status === 'OMCs') {
       updateOmcsById(rowData, rowData.id)
         .then((res) => {
-          console.log(res);
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
           setTimeout(() => {
             window.location.reload(false);
           }, 1500);
         })
         .catch((err) => {
           console.log(err);
+          enqueueSnackbar(err, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
         });
     }
     if (status === 'Region') {
       updateRegionById(rowData, rowData.region)
         .then((res) => {
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
           setTimeout(() => {
             window.location.reload(false);
           }, 1500);
         })
         .catch((err) => {
           console.log(err);
+          enqueueSnackbar(err, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
         });
     }
     if (status === 'State') {
       updateStateById(rowData, rowData.id)
         .then((res) => {
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
           setTimeout(() => {
             window.location.reload(false);
           }, 1500);
         })
         .catch((err) => {
           console.log(err);
+          enqueueSnackbar(err, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
         });
     }
   };
@@ -172,34 +222,76 @@ function Contain({ title, data, label, loading }) {
     if(status === 'OMCs'){
       addOmcs(AddData)
       .then((res) => {
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
         setTimeout(() => {
           window.location.reload(false);
         }, 1500);
       })
       .catch((err) => {
         console.log(err);
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
       })
     }
     if(status === 'Region'){
       addRegion(AddData)
       .then((res) => {
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
         setTimeout(() => {
           window.location.reload(false);
         }, 1500);
       })
       .catch((err) => {
         console.log(err);
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
       })
     }
     if(status === 'State'){
       addState(AddData)
       .then((res) => {
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
         setTimeout(() => {
           window.location.reload(false);
         }, 1500);
       })
       .catch((err) => {
         console.log(err);
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
       })
     }
   }
@@ -208,34 +300,76 @@ function Contain({ title, data, label, loading }) {
     if(status === 'OMCs'){
       deleteOmcs(rowData, rowData.id)
       .then((res) => {
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
         setTimeout(() => {
           window.location.reload(false);
         }, 1500);
       })
       .catch((err) => {
         console.log(err);
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
       });
     }
     if(status === 'Region'){
       deleteRegion(rowData, rowData.region)
       .then((res) => {
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
         setTimeout(() => {
           window.location.reload(false);
         }, 1500);
       })
       .catch((err) => {
         console.log(err);
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
       });
     }
     if(status === 'State'){
       deleteState(rowData, rowData.id)
       .then((res) => {
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
         setTimeout(() => {
           window.location.reload(false);
         }, 1500);
       })
       .catch((err) => {
         console.log(err);
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
       });
     }
   }
@@ -297,7 +431,11 @@ function Contain({ title, data, label, loading }) {
                             <EditIcon fontSize='small' />
                           </IconButton>
                         </Tooltip>
-                        <Tooltip title='Delete'>
+                        {
+                        setStateBtn ? (
+                          item.is_active ? (
+                            <>
+                            <Tooltip title='Delete'>
                           <IconButton className={classes.btn} size='small' onClick={() => {
                             setOpenDeleteForm(true);
                             deleteItem(item, title);
@@ -305,6 +443,76 @@ function Contain({ title, data, label, loading }) {
                             <DeleteIcon fontSize='small' />
                           </IconButton>
                         </Tooltip>
+                            <Tooltip title='Deactivate'>
+                              <IconButton
+                                className={classes.btn}
+                                size='small'
+                                onClick={() => {
+                                  setOpenDeactiveForm(true);
+                                  DeactivateItem(item.id)
+                                }}
+                              >
+                                <CheckCircleTwoTone style={{ color: '#93D9A3' }}/>
+                              </IconButton>
+                            </Tooltip>
+                            </>
+                          ) : (
+                            <>
+                            <Tooltip title='Delete'>
+                          <IconButton className={classes.btn} size='small' onClick={() => {
+                            setOpenDeleteForm(true);
+                            deleteItem(item, title);
+                          }}>
+                            <DeleteIcon fontSize='small' />
+                          </IconButton>
+                        </Tooltip>
+                            <Tooltip title='Activate'>
+                              <IconButton
+                                className={classes.btn}
+                                size='small'
+                                onClick={() => {
+                                  const test = {is_active: 1}
+                                  updateStateById(test, item.id)
+                                    .then((res) => {
+                                      enqueueSnackbar(res, {
+                                        anchorOrigin: {
+                                          vertical: 'top',
+                                          horizontal: 'right',
+                                        },
+                                        variant: 'success',
+                                      })
+                                      setTimeout(() => {
+                                        window.location.reload(false);
+                                      }, 1500);
+                                    })
+                                    .catch((err) => {
+                                      console.log(err);
+                                    });
+                                }}
+                              >
+                                <CheckCircleTwoTone style={{ color: '#C9CCD5' }}/>
+                              </IconButton>
+                            </Tooltip>
+                            </>
+                          )
+                        ) : (
+                          <Tooltip title='Delete'>
+                        <IconButton
+                          className={classes.btn}
+                          size='small'
+                          onClick={() => {
+                            setOpenDeleteForm(true);
+                            deleteItem(item, title);
+                          }}
+                        >
+                          <DeleteIcon
+                            fontSize='small'
+                            className={classes.del}
+                          />
+                        </IconButton>
+                      </Tooltip>
+                        )
+                      }
                       </div>
                     </div>
                     <Divider className={classes.divider} />
@@ -358,7 +566,72 @@ function Contain({ title, data, label, loading }) {
                           <EditIcon fontSize='small' className={classes.edt} />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title='Delete'>
+                      {
+                        setStateBtn ? (
+                          item.is_active ? (
+                            <>
+                            <Tooltip title='Delete'>
+                          <IconButton className={classes.btn} size='small' onClick={() => {
+                            setOpenDeleteForm(true);
+                            deleteItem(item, title);
+                          }}>
+                            <DeleteIcon fontSize='small' />
+                          </IconButton>
+                        </Tooltip>
+                            <Tooltip title='Deactivate'>
+                              <IconButton
+                                className={classes.btn}
+                                size='small'
+                                onClick={() => {
+                                  setOpenDeactiveForm(true);
+                                  DeactivateItem(item.id)
+                                }}
+                              >
+                                <CheckCircleTwoTone style={{ color: '#93D9A3' }}/>
+                              </IconButton>
+                            </Tooltip>
+                            </>
+                          ) : (
+                            <>
+                            <Tooltip title='Delete'>
+                          <IconButton className={classes.btn} size='small' onClick={() => {
+                            setOpenDeleteForm(true);
+                            deleteItem(item, title);
+                          }}>
+                            <DeleteIcon fontSize='small' />
+                          </IconButton>
+                        </Tooltip>
+                            <Tooltip title='Activate'>
+                              <IconButton
+                                className={classes.btn}
+                                size='small'
+                                onClick={() => {
+                                  const test = {is_active: 1}
+                                  updateStateById(test, item.id)
+                                    .then((res) => {
+                                      enqueueSnackbar(res, {
+                                        anchorOrigin: {
+                                          vertical: 'top',
+                                          horizontal: 'right',
+                                        },
+                                        variant: 'success',
+                                      })
+                                      setTimeout(() => {
+                                        window.location.reload(false);
+                                      }, 1500);
+                                    })
+                                    .catch((err) => {
+                                      console.log(err);
+                                    });
+                                }}
+                              >
+                                <CheckCircleTwoTone style={{ color: '#C9CCD5' }}/>
+                              </IconButton>
+                            </Tooltip>
+                            </>
+                          )
+                        ) : (
+                          <Tooltip title='Delete'>
                         <IconButton
                           className={classes.btn}
                           size='small'
@@ -373,6 +646,8 @@ function Contain({ title, data, label, loading }) {
                           />
                         </IconButton>
                       </Tooltip>
+                        )
+                      }   
                     </div>
                   </div>
                   <Divider className={classes.divider} />
@@ -445,6 +720,70 @@ function Contain({ title, data, label, loading }) {
             onClick={submitAdd}
           >
             Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+
+      {/* <Dialog
+      open={openActiveForm}
+      onClose={handleClose}
+      aria-labelledby='activate'
+      >
+        <DialogTitle>{title}</DialogTitle>
+        <DialogContent style={{width: 400}}>
+          <Typography variant='h7'>
+            Activate Form
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+        <Button onClick={handleClose}>Cancel</Button>
+          <Button
+            onClick={submitAdd}
+          >
+            BTN
+          </Button>
+        </DialogActions>
+      </Dialog> */}
+      
+      <Dialog
+      open={openDeactiveForm}
+      onClose={handleClose}
+      aria-labelledby='activate'
+      >
+        <DialogTitle>Deactivate {title}</DialogTitle>
+        <DialogContent style={{width: 400}}>
+          <Typography variant='h7'>
+            Do you want to disable this state
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+        <Button onClick={handleClose}>Cancel</Button>
+          <Button
+            onClick={() => {
+            const test = {is_active: 0}
+            updateStateById(test, deactivateId)
+              .then((res) => {
+                enqueueSnackbar(res, {
+                  anchorOrigin: {
+                    vertical: 'top',
+                    horizontal: 'right',
+                  },
+                  variant: 'success',
+                })
+                setTimeout(() => {
+                  window.location.reload(false);
+                }, 1500);
+                handleClose();
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+
+            }}
+            style={{ color: '#FF4848' }}
+          >
+            Deactivate
           </Button>
         </DialogActions>
       </Dialog>

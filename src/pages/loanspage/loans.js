@@ -181,8 +181,8 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
                     { name: 'Submitted', count: data.submitted_count },
                     { name: 'Pending Approval', count: data.loan_approval_count || 0 },
                     { name: 'Approved', count: data.approved_count },
-                    { name: 'Pending Disbursement Approval', count: data.disbursement_approval_count || 0 },
-                    { name: 'Disbursement Approved', count: data.disbursement_approved_count || 0 },
+                    { name: 'Disb. Approval', count: data.disbursement_approval_count || 0 },
+                    { name: 'Disb. Approved', count: data.disbursement_approved_count || 0 },
                     { name: 'Disbursed', count: data.disbursed_count },
                     { name: 'Rejected', count: data.rejected_count },
                 ];
@@ -235,7 +235,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
                     ) : null
                 }
                 {
-                    selectedStatsCard === "Pending Disbursement Approval" ? (
+                    selectedStatsCard === "Disb. Approval" ? (
                         <Grid item md={12}>
                             <Paper className={classes.tableContainer}>
                                 <DisbursementReqestTable title={"Pending for Disbursement Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} />
@@ -281,7 +281,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
                     ) : null
                 }
                 {
-                    selectedStatsCard === "Disbursement Approved" ? (
+                    selectedStatsCard === "Disb. Approved" ? (
                         <Grid item xs={12}>
                             <Paper className={classes.tableContainer}>
                                 <DisbursementApprovedTable title={"Disbursement Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useMount } from 'react-use';
-import { formatDistance, subDays, format } from 'date-fns'
+import { subDays, format } from 'date-fns'
 import { Box, Typography, Tooltip, Popover } from '@material-ui/core';
 import { DateRange } from 'react-date-range';
 import Select from 'react-select'
@@ -92,8 +92,8 @@ const LoanStats = ({ selectedStatsCard, handleClick }) => {
     switch (type) {
       case 'D':
         setSelectedPeriod({
-          from: subDays(new Date(), 1),
-          to: subDays(new Date(), 1),
+          from: new Date(),
+          to: new Date(),
         })
         break;
       case 'W':
@@ -222,7 +222,7 @@ const LoanStats = ({ selectedStatsCard, handleClick }) => {
             <Box pl={2}>
               {/* <small>Period</small> */}
               <div className={classes.filterWrapper}>
-                <div className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')}>1D</div>
+                <div className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')}>Today</div>
                 <div className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')}>1W</div>
                 <div className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')}>MTD</div>
                 <div className={`${classes.filterItem} ${selectedPeriodType === 'Y' && 'active'}`} onClick={onDateChange('Y')}>YTD</div>

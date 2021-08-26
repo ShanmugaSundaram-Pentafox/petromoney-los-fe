@@ -32,6 +32,8 @@ import {
   AvatarCard,
   ViewData,
 } from '../../../components/CommonComponents/FilePreview';
+import DeleteIcon from '@material-ui/icons/Delete';
+import { deleteTransportOwnerProfileDoc } from '../../../services/transports.service';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -124,6 +126,17 @@ const useStyles = makeStyles((theme) => ({
     '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.success.dark,
     },
+  },
+  profileLink: {
+    display: 'inline-block',
+    borderRadius: 2,
+    lineHeight: 1,
+    marginRight: 4,
+    marginBottom: 4,
+    padding: 4,
+    backgroundColor: '#eeeeee',
+    color: '#43a047',
+
   },
 }));
 
@@ -321,26 +334,32 @@ const AddNewTransportsOwnerForm = ({
     setShowUpload(true);
     setFileType(val);
   };
+  const onDocDelete = (data) => {
+    deleteTransportOwnerProfileDoc(data, values.t_owner_id)
+      .then(res => {
+        enqueueSnackbar(res.message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        });
+      })
+      .catch(err => {
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      })
+
+  }
   const aadharBack = () => {
     return (
       <div className={classes.fileStyle}>
-        <a
-          style={{
-            display: 'inline-block',
-            borderRadius: 2,
-            lineHeight: 1,
-            marginRight: 4,
-            marginBottom: 4,
-            padding: 4,
-            backgroundColor: '#eeeeee',
-            color: '#43a047',
-          }}
-          href={rowData.aadhar_b_file_url}
-          target='_blank'
-          title={'Aadhar Back'}
-        >
-          {'Back'}
-        </a>
+        <a href={rowData.aadhar_b_file_url} className={classes.profileLink} target='_blank' title={'Aadhar Back'}>{'Back'}</a>
         <Tooltip title={'Click to edit'}>
           <UploadIcon
             fontSize='small'
@@ -348,32 +367,16 @@ const AddNewTransportsOwnerForm = ({
             onClick={() => docUpload('Back')}
           />
         </Tooltip>
-        {/* <Tooltip title={'Click to delete'}>
-                    <DeleteIcon fontSize="small" padding={2} />
-                </Tooltip> */}
+        <Tooltip title={'Click to delete'}>
+          <DeleteIcon onClick={() => onDocDelete({ aadhar_b_file_url: "" })} fontSize="small" padding={2} />
+        </Tooltip>
       </div>
     );
   };
   const profileAttachment = () => {
     return (
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <a
-          style={{
-            display: 'inline-block',
-            borderRadius: 2,
-            lineHeight: 1,
-            marginRight: 4,
-            marginBottom: 4,
-            padding: 4,
-            backgroundColor: '#eeeeee',
-            color: '#43a047',
-          }}
-          href={rowData.profile_image_url}
-          target='_blank'
-          title={'Profile Attachment'}
-        >
-          {'Profile Attachment'}
-        </a>
+        <a className={classes.profileLink} href={rowData.profile_image_url} target='_blank' title={'Profile Attachment'}>{'Profile Attachment'}</a>
         <Tooltip title={'Click to edit'}>
           <UploadIcon
             fontSize='small'
@@ -382,9 +385,9 @@ const AddNewTransportsOwnerForm = ({
             onClick={() => docUpload('Profile')}
           />
         </Tooltip>
-        {/* <Tooltip title={'Click to delete'}>
-                    <DeleteIcon fontSize="small" style={{ color: grey[800] }} padding={2} />
-                </Tooltip> */}
+        <Tooltip title={'Click to delete'}>
+          <DeleteIcon onClick={() => onDocDelete({ profile_image_url: "" })} fontSize="small" style={{ color: grey[800] }} padding={2} />
+        </Tooltip>
       </div>
     );
   };
@@ -392,23 +395,7 @@ const AddNewTransportsOwnerForm = ({
   const aadharFront = () => {
     return (
       <div className={classes.fileStyle}>
-        <a
-          style={{
-            display: 'inline-block',
-            borderRadius: 2,
-            lineHeight: 1,
-            marginRight: 4,
-            marginBottom: 4,
-            padding: 4,
-            backgroundColor: '#eeeeee',
-            color: '#43a047',
-          }}
-          href={rowData.aadhar_f_file_url}
-          target='_blank'
-          title={'Aadhar Front'}
-        >
-          {'Front'}
-        </a>
+        <a className={classes.profileLink} href={rowData.aadhar_f_file_url} target='_blank' title={'Aadhar Front'}>{'Front'}</a>
         <Tooltip title={'Click to edit'}>
           <UploadIcon
             fontSize='small'
@@ -417,32 +404,16 @@ const AddNewTransportsOwnerForm = ({
             onClick={() => docUpload('Front')}
           />
         </Tooltip>
-        {/* <Tooltip title={'Click to delete'}>
-                    <DeleteIcon fontSize="small" style={{ color: grey[800] }} padding={2} />
-                </Tooltip> */}
+        <Tooltip title={'Click to delete'}>
+          <DeleteIcon onClick={() => onDocDelete({ aadhar_f_file_url: "" })} fontSize="small" style={{ color: grey[800] }} padding={2} />
+        </Tooltip>
       </div>
     );
   };
   const panAttachment = () => {
     return (
       <div className={classes.fileStyle}>
-        <a
-          style={{
-            display: 'inline-block',
-            borderRadius: 2,
-            lineHeight: 1,
-            marginRight: 4,
-            marginBottom: 4,
-            padding: 4,
-            backgroundColor: '#eeeeee',
-            color: '#43a047',
-          }}
-          href={rowData.pan_file_url}
-          target='_blank'
-          title={'PAN Attachment'}
-        >
-          {'PAN Attachment'}
-        </a>
+        <a className={classes.profileLink} href={rowData.pan_file_url} target='_blank' title={'PAN Attachment'}>{'PAN Attachment'}</a>
         <Tooltip title={'Click to edit'}>
           <UploadIcon
             fontSize='small'
@@ -451,9 +422,9 @@ const AddNewTransportsOwnerForm = ({
             onClick={() => docUpload('PAN')}
           />
         </Tooltip>
-        {/* <Tooltip title={'Click to delete'}>
-                    <DeleteIcon fontSize="small" style={{ color: grey[800] }} padding={2} />
-                </Tooltip> */}
+        <Tooltip title={'Click to delete'}>
+          <DeleteIcon onClick={() => onDocDelete({ pan_file_url: "" })} fontSize="small" style={{ color: grey[800] }} padding={2} />
+        </Tooltip>
       </div>
     );
   };
@@ -497,9 +468,9 @@ const AddNewTransportsOwnerForm = ({
               </Grid>
               <Divider />
               {values?.profile_image_url ||
-              values?.pan_file_url ||
-              values?.aadhar_f_file_url ||
-              values?.aadhar_b_file_url ? (
+                values?.pan_file_url ||
+                values?.aadhar_f_file_url ||
+                values?.aadhar_b_file_url ? (
                 <div className={classes.readOnlyWrapper}>
                   <Typography variant='h4'>Attachments</Typography>
                   <div

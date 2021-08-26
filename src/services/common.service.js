@@ -269,7 +269,7 @@ export const getStates = () => {
 }
 export const getRegionById = (res) => {
   return new Promise((resolve, reject) => {
-    apiCall(`regions/${res}`)
+    apiCall(`states/regions/${res}`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data);

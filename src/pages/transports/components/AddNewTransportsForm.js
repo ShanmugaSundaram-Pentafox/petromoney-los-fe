@@ -291,7 +291,7 @@ const AddNewTransportsForm = ({
       });
     getStates()
       .then((d) => {
-        setStates(d);
+        setStates([{ id: '', name: 'Choose State' }, ...d]);
         return d;
       })
       // .then(d => {
@@ -301,13 +301,7 @@ const AddNewTransportsForm = ({
       .catch((e) => {
         console.log(e);
       });
-    getRegionById()
-      .then((data) => {
-        setRegions(data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+
   });
 
   useEffect(() => {

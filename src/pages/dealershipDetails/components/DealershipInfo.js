@@ -117,13 +117,15 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
       })
     getStates()
       .then(d => {
-        setStates(d)
+        setStates([{ id: '', name: 'Choose State' }, ...d])
         return d;
       })
       .then(d => {
         let res = d.find(({ id }) => id === parseInt(values.state));
 
-        fetchRegions(parseInt(res.id));
+        if(res) {
+          fetchRegions(parseInt(res.id));
+        }
       })
       .catch(err => {
         console.log('BusinessTypes fetch error - ', err)
@@ -267,6 +269,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
             </Grid>
             <Grid {...gridProps} xs={6}>
               <TextInput
+                name="district"
                 labelText="District"
                 labelWidth={40}
                 value={values.district}

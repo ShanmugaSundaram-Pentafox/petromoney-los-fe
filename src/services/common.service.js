@@ -247,6 +247,38 @@ export const getStates = () => {
       })
   })
 }
+export const getActiveStates = () => {
+  return new Promise((resolve, reject) => {
+    apiCall("states")
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(err => {
+        reject(err.message);
+      })
+  })
+}
+
+// export const getMasterRegionById = (res) => {
+//   return new Promise((resolve, reject) => {
+//     apiCall(`master/regions/${res}`)
+//       .then(({ status, data, message }) => {
+//         if (status === "SUCCESS") {
+//           resolve(data);
+//         } else {
+//           reject(message);
+//         }
+//       })
+//       .catch(err => {
+//         reject(err.message);
+//       })
+//   })
+// }
+
 export const getRegionById = (res) => {
   return new Promise((resolve, reject) => {
     apiCall(`regions/${res}`)
@@ -284,7 +316,7 @@ export const updateOmcsById = (data, id) => {
 
 export const updateRegionById = (data, id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`regions/${id}`, {
+    apiCall(`master/regions/${id}`, {
       method: 'POST',
       body: data,
     })
@@ -398,7 +430,7 @@ export const deleteOmcs = (data, id) => {
 
 export const deleteRegion = (data, id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`regions/${id}`, {
+    apiCall(`master/regions/${id}`, {
       method: 'DELETE',
       body: data
     })

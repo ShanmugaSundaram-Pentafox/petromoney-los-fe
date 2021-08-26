@@ -7,6 +7,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import TextField from '@material-ui/core/TextField';
+import TextInput from '../../../components/TextInput/TextInput';
 import SearchIcon from '@material-ui/icons/Search';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { Tooltip } from '@material-ui/core';
@@ -24,11 +25,13 @@ import {
   deleteOmcs,
   deleteRegion,
   deleteState,
+  getActiveStates,
   updateOmcsById,
   updateRegionById,
   updateStateById,
 } from '../../../services/common.service';
 import CheckCircleTwoTone from '@material-ui/icons/CheckCircleTwoTone';
+import { useMount } from 'react-use';
 
 const useStyles = makeStyles({
   root: {
@@ -53,7 +56,6 @@ const useStyles = makeStyles({
     width: '100%',
     justifyContent: 'space-between',
     position: 'sticky',
-    // padding: 15,
   },
   section: {
     marginTop: 10,
@@ -90,7 +92,7 @@ const useStyles = makeStyles({
   },
 });
 
-function Contain({ title, data, label, loading, setStateBtn }) {
+function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
   const classes = useStyles();
   const [value, setValue] = useState();
   const [openEditForm, setOpenEditForm] = useState(false);
@@ -99,10 +101,21 @@ function Contain({ title, data, label, loading, setStateBtn }) {
   const [status, setStatus] = useState();
   const [openAddForm, setOpenAddForm] = useState(false);
   const [AddData, setAddData] = useState({});
+  console.log(AddData);
   const [openActiveForm, setOpenActiveForm] = useState(false);
   const [openDeactiveForm, setOpenDeactiveForm] = useState(false);
   const [deactivateId, setDeactivateId] = useState();
+  const [openRegionForm, setOpenRegionForm] = useState();
+  const [states, setStates] = useState();
   const {enqueueSnackbar} = useSnackbar();
+
+  useMount(() => {
+    getActiveStates()
+      .then(setStates)
+      .catch((e) => {
+        console.log(e)
+      })
+  })
 
   const handleClose = () => {
     setOpenEditForm(false);
@@ -110,6 +123,7 @@ function Contain({ title, data, label, loading, setStateBtn }) {
     setOpenAddForm(false);
     setOpenActiveForm(false);
     setOpenDeactiveForm(false);
+    setOpenRegionForm(false);
   };
 
   const filteredData = data.filter((item) =>
@@ -137,13 +151,18 @@ function Contain({ title, data, label, loading, setStateBtn }) {
   };
 
   const handleAdd = (event) => {
-    setAddData({name: event.target.value.toUpperCase()})
+    setAddData({...AddData, name: event.target.value.toUpperCase()})
+  }
+
+  const handleStateAdd = (event) => {
+    setAddData({...AddData, state_id: parseInt(event.target.value)})
   }
 
   const handleSubmit = () => {
     if (status === 'OMCs') {
       updateOmcsById(rowData, rowData.id)
         .then((res) => {
+          handleClose()
           enqueueSnackbar(res, {
             anchorOrigin: {
               vertical: 'top',
@@ -169,6 +188,7 @@ function Contain({ title, data, label, loading, setStateBtn }) {
     if (status === 'Region') {
       updateRegionById(rowData, rowData.region)
         .then((res) => {
+          handleClose()
           enqueueSnackbar(res, {
             anchorOrigin: {
               vertical: 'top',
@@ -194,6 +214,7 @@ function Contain({ title, data, label, loading, setStateBtn }) {
     if (status === 'State') {
       updateStateById(rowData, rowData.id)
         .then((res) => {
+          handleClose()
           enqueueSnackbar(res, {
             anchorOrigin: {
               vertical: 'top',
@@ -222,6 +243,7 @@ function Contain({ title, data, label, loading, setStateBtn }) {
     if(status === 'OMCs'){
       addOmcs(AddData)
       .then((res) => {
+        handleClose()
         enqueueSnackbar(res, {
           anchorOrigin: {
             vertical: 'top',
@@ -229,7 +251,7 @@ function Contain({ title, data, label, loading, setStateBtn }) {
           },
           variant: 'success',
         })
-        setTimeout(() => {
+        setTimeout(() => {  
           window.location.reload(false);
         }, 1500);
       })
@@ -247,6 +269,7 @@ function Contain({ title, data, label, loading, setStateBtn }) {
     if(status === 'Region'){
       addRegion(AddData)
       .then((res) => {
+        handleClose()
         enqueueSnackbar(res, {
           anchorOrigin: {
             vertical: 'top',
@@ -272,6 +295,7 @@ function Contain({ title, data, label, loading, setStateBtn }) {
     if(status === 'State'){
       addState(AddData)
       .then((res) => {
+        handleClose()
         enqueueSnackbar(res, {
           anchorOrigin: {
             vertical: 'top',
@@ -300,6 +324,7 @@ function Contain({ title, data, label, loading, setStateBtn }) {
     if(status === 'OMCs'){
       deleteOmcs(rowData, rowData.id)
       .then((res) => {
+        handleClose()
         enqueueSnackbar(res, {
           anchorOrigin: {
             vertical: 'top',
@@ -325,6 +350,7 @@ function Contain({ title, data, label, loading, setStateBtn }) {
     if(status === 'Region'){
       deleteRegion(rowData, rowData.region)
       .then((res) => {
+        handleClose()
         enqueueSnackbar(res, {
           anchorOrigin: {
             vertical: 'top',
@@ -350,6 +376,7 @@ function Contain({ title, data, label, loading, setStateBtn }) {
     if(status === 'State'){
       deleteState(rowData, rowData.id)
       .then((res) => {
+        handleClose()
         enqueueSnackbar(res, {
           anchorOrigin: {
             vertical: 'top',
@@ -383,7 +410,7 @@ function Contain({ title, data, label, loading, setStateBtn }) {
           </Typography>
           <Tooltip title={'Add ' + title}>
             <Button variant='contained' color='primary' onClick={() => {
-              setOpenAddForm(true);
+              !regionForm? setOpenAddForm(true) : setOpenRegionForm(true)
               setStatus(title)
             }}>
               ADD
@@ -684,7 +711,7 @@ function Contain({ title, data, label, loading, setStateBtn }) {
         <DialogTitle>Delete Form</DialogTitle>
         <DialogContent style={{width: 400}}>
           <Typography variant='h7'>
-            Are you sure want to delete {rowData.name}?
+            Are you sure want to delete <strong>{rowData.name}</strong>?
           </Typography>
         </DialogContent>
         <DialogActions>
@@ -709,8 +736,10 @@ function Contain({ title, data, label, loading, setStateBtn }) {
           id='add'
           autoFocus
           variant='outlined'
-          placeholder={title}
+          // placeholder={title}
+          label={title}
           fullWidth
+          value={AddData.name}
           onChange={handleAdd}
           />
         </DialogContent>
@@ -723,28 +752,42 @@ function Contain({ title, data, label, loading, setStateBtn }) {
           </Button>
         </DialogActions>
       </Dialog>
-
-
-      {/* <Dialog
-      open={openActiveForm}
+      
+      <Dialog
+      open={openRegionForm}
       onClose={handleClose}
-      aria-labelledby='activate'
+      aria-labelledby='add'
       >
-        <DialogTitle>{title}</DialogTitle>
-        <DialogContent style={{width: 400}}>
-          <Typography variant='h7'>
-            Activate Form
-          </Typography>
+        <DialogTitle>Add {title}</DialogTitle>
+        <DialogContent style={{width: 400, display: 'flex', alignItems: 'center' ,justifyContent: 'space-around'}}>
+          <TextInput
+          select
+          name='states'
+          label='States'
+          variant='outlined'
+          onChange={handleStateAdd}
+          >
+            {
+              states?.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
+            }
+          </TextInput>
+          <TextField 
+          id='add'
+          autoFocus
+          variant='outlined'
+          label={title}
+          onChange={handleAdd}
+          />
         </DialogContent>
         <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
           <Button
             onClick={submitAdd}
           >
-            BTN
+            Save
           </Button>
         </DialogActions>
-      </Dialog> */}
+      </Dialog>
       
       <Dialog
       open={openDeactiveForm}

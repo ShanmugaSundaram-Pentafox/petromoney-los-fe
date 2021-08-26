@@ -53,9 +53,9 @@ function MasterData() {
           <Skeleton variant="rect" width="100%" height={500}/>
         ) : (
           <>
-          <Contain title={'OMCs'} data={omc} label={'name'} setStateBtn={false}/>
-          <Contain title={'Region'} data={region} label={'region'} setStateBtn={false}/>
-          <Contain title={'State'} data={state} label={'name'} setStateBtn={true}/>
+          <Contain title={'OMCs'} data={omc} label={'name'} setStateBtn={false} regionForm={false}/>
+          <Contain title={'Region'} data={region} label={'region'} setStateBtn={false} regionForm={true}/>
+          <Contain title={'State'} data={state} label={'name'} setStateBtn={true} regionForm={false}/>
           </>
         )
       }

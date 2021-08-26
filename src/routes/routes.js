@@ -50,7 +50,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/vehicle-loan" component={VehiclesLoanTable} />
       <ProtectedRoute allow exact path="/owners/:id?" component={OwnerDetails} />
       <ProtectedRoute allow exact path="/profile" component={Profile} />
-      <ProtectedRoute allow exact path="/blacklist" component={BlacklistTable} />
+      <ProtectedRoute allow exact path="/withheld" component={BlacklistTable} />
 
 
       <ProtectedRoute

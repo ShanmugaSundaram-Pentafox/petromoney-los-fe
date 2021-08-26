@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Button from '../../components/CommonComponents/Button/Button';
@@ -40,6 +40,12 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'space-between',
         padding: '12px 16px'
     },
+    dropdown: {
+        boxShadow: '1px 1px 4px -3px #333'
+    },
+    option: {
+        padding: 6,
+    },
     editButton: {
         marginRight: '8px',
         '&.MuiButton-contained': {
@@ -54,15 +60,27 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-const AddBlackListForm = ({ rowData, data, handleChange, action }) => {
+const AddBlackListForm = ({ rowData, data, handleChange, callback }) => {
+    const [newRemark, setNewRemark] = useState()
     const classes = useStyles()
-    const remarks = {
-        remarks: [
-            'Transporter Agreement not Signed',
-            'Fuel Credit Agreement not signed',
-            'Renewal Processing fee is not collected',
-        ]
-    }
+
+    const remarks = [
+        {
+            "id": "1",
+            "remarks": "Transporter Agreement not Signed",
+            "is_resolved": 0
+        },
+        {
+            "id": "2",
+            "remarks": "Fuel Credit Agreement not signed",
+            "is_resolved": 1
+        },
+        {
+            "id": "3",
+            "remarks": "Renewal Processing fee is not collected",
+            "is_resolved": 1
+        }
+    ]
 
     const inputProps = {
         direction: "column",
@@ -72,16 +90,16 @@ const AddBlackListForm = ({ rowData, data, handleChange, action }) => {
     const handleSubmit = () => {
         console.log("submit")
     }
-    const mapList = () => {
+    const mapList = (rowData, newValue) => {
         console.log("mapped")
 
-    }
 
+    }
     return (
         <div className={classes.sidePanelFormWrapper}>
             <Typography className={classes.sidePanelTitle} variant="h4">
-                <div>Add Blacklist data Form</div>
-                <CloseIcon onClick={action} />
+                <div>Add Withheld Form</div>
+                <CloseIcon onClick={callback} />
             </Typography>
             <div className={classes.sidePanelFormContentWrapper}>
                 <div className={classes.stepperRoot}>
@@ -92,12 +110,13 @@ const AddBlackListForm = ({ rowData, data, handleChange, action }) => {
                                     <Autocomplete
                                         size="small"
                                         options={data}
-                                        getOptionLabel={(option) => option?.transporter_id?.toString()}
+                                        getOptionLabel={(option) => option?.dealership_id?.toString()}
                                         id="Choose id"
                                         debug
                                         renderInput={(params) => (
                                             <div ref={params.InputProps.ref}>
                                                 <TextInput
+                                                    {...inputProps}
                                                     {...params}
                                                     variant="standard"
                                                     placeholder="Choose ID"
@@ -112,7 +131,29 @@ const AddBlackListForm = ({ rowData, data, handleChange, action }) => {
                                     />
                                 </Grid>
                                 <Grid item md={7}>
-                                    
+                                    <Autocomplete
+                                        size="small"
+                                        options={remarks}
+                                        getOptionLabel={(option) => option?.remarks?.toString()}
+                                        id="Choose id"
+                                        debug
+                                        renderInput={(params) => (
+                                            <div ref={params.InputProps.ref}>
+                                                <TextInput
+                                                    {...inputProps}
+                                                    {...params}
+                                                    onChange={(e) => setNewRemark(e.target.value)}
+                                                    variant="standard"
+                                                    placeholder="Choose ID"
+                                                    label="ID"
+                                                    InputLabelProps={{ shrink: true }}
+                                                />
+                                            </div>
+                                        )}
+                                        onChange={(event, newValue) => {
+                                            mapList(rowData, newValue)
+                                        }}
+                                    />
                                 </Grid>
                             </Grid>
                         </form>
@@ -125,7 +166,7 @@ const AddBlackListForm = ({ rowData, data, handleChange, action }) => {
                     <div>
                         <Button
                             variant="outlined"
-                            onClick={action}
+                            onClick={callback}
                         >
                             Back
                         </Button>
@@ -137,7 +178,7 @@ const AddBlackListForm = ({ rowData, data, handleChange, action }) => {
                             onClick={handleSubmit}
                             className={clsx(classes.btn, classes.editButton)}
                         >
-                            Add to Blacklist
+                            Save
                         </Button>
                     </div>
                 </div>

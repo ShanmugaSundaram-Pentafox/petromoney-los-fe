@@ -208,12 +208,12 @@ const SidebarNav = props => {
                   activeClassName={classes.active}
                   className={classes.button}
                   component={CustomRouterLink}
-                  to={'/blacklist'}
+                  to={'/withheld'}
                   exact
                 >
-                  <Badge badgeContent={2} max={999} color="primary">
+                  <Badge badgeContent={2} style={{ paddingTop: 3, marginTop: 4 }} max={999} color="primary">
                     <div className={classes.icon}><BookmarkBorderIcon /></div>
-                    {'Blacklist'}
+                    {'Withheld'}
                   </Badge>
                 </Button>
               </ListItem>

@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useMount } from 'react-use';
 import { formatDistance, subDays, format } from 'date-fns'
 import { Box, Typography, Tooltip, Popover } from '@material-ui/core';
-import { DateRangePicker } from 'react-date-range';
+import { DateRange } from 'react-date-range';
 import Select from 'react-select'
 import { makeStyles } from '@material-ui/core/styles';
 import { getLoanStats } from '../../../services/loans.service';
 import DashCard from '../../../components/CommonComponents/Cards/DashCard';
 import { getAllRegions } from '../../../services/common.service';
+import { Button } from '@material-ui/core';
 
 const useStyles = makeStyles(theme =>({
   card :{
@@ -22,19 +23,19 @@ const useStyles = makeStyles(theme =>({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 4,
-    // border: '1px solid hsl(0, 0%, 80%)',
+    borderRadius: 6,
+    border: '1px solid hsl(0, 0%, 90%)',
     backgroundColor: 'hsl(0, 0%, 100%)',
-    minHeight: 38,
+    minHeight: 32,
     boxSizing: 'border-box',
-    // padding: 4,
+    padding: '0 4px',
   },
   filterItem: {
     position: 'relative',
     cursor: 'pointer',
     borderRadius: 4,
-    marginRight: 8,
-    padding: 4,
+    marginRight: 2,
+    padding: '2px 4px',
     minWidth: 50,
     textAlign: 'center',
     border: 'none',
@@ -43,12 +44,12 @@ const useStyles = makeStyles(theme =>({
     '&:hover': {
       backgroundColor: 'hsl(0, 0%, 95%)',
     },
-    '&::after': {
-      content: '"|"',
-      position: 'absolute',
-      right: -6,
-      color: 'hsl(0, 0%, 75%)',
-    },
+    // '&::after': {
+    //   content: '"|"',
+    //   position: 'absolute',
+    //   right: -6,
+    //   color: 'hsl(0, 0%, 75%)',
+    // },
     '&.active': {
       backgroundColor: '#3f51b5',
       color: '#fff',
@@ -76,8 +77,8 @@ const LoanStats = ({ selectedStatsCard, handleClick }) => {
   const [selectedPeriod, setSelectedPeriod] = useState({});
   const [showPicker, setShowPicker] = useState();
   const [dateRange, setDateRange] = useState({
-    startDate: new Date(),
-    endDate: null,
+    startDate: subDays(new Date(), 8),
+    endDate: new Date(),
     key: 'range'
   });
   const [chartData, setChartData] = useState([{}, {}, {}, {}, {}, {}]);
@@ -140,8 +141,8 @@ const LoanStats = ({ selectedStatsCard, handleClick }) => {
       region: selectedRegion.value,
     }
     if (selectedPeriod?.from) {
-      qry.from = format(selectedPeriod.from, 'yyyy-MM-dd');
-      qry.to = format(selectedPeriod.to, 'yyyy-MM-dd');
+      qry.from = format(selectedPeriod?.from || new Date(), 'yyyy-MM-dd');
+      qry.to = format(selectedPeriod?.to || new Date(), 'yyyy-MM-dd');
     }
     getStats(qry)
   }, [selectedRegion, selectedPeriod])
@@ -181,8 +182,10 @@ const LoanStats = ({ selectedStatsCard, handleClick }) => {
         <Box pb={1} display='flex' flexDirection='row' justifyContent='space-between' alignItems='center'>
           <Typography variant="h5">Loans' Statistics</Typography>
           <Box display='flex' flexDirection='row'>
+            <Box pr={1} display='flex' justifyContent='center' alignItems='center'>
+              <div style={{ color: 'hsl(0,0%,75%)' }}>Region</div>
+            </Box>
             <Box style={{ width: '200px' }}>
-              {/* <small>Region</small> */}
               <Select
                 options={regions}
                 value={selectedRegion}
@@ -190,22 +193,28 @@ const LoanStats = ({ selectedStatsCard, handleClick }) => {
                 styles={{
                   control: (provided) => ({
                     ...provided,
-                    border: 0,
-                    borderRadius: 0,
-                    borderBottom: '1px solid hsl(0, 0%, 80%)',
-                    minHeight: 28,
+                    // borderWidth: 0,
+                    // borderRadius: 0,
+                    // borderBottomWidth: 1, 
+                    borderColor: 'hsl(0, 0%, 90%)',
+                    minHeight: 29,
                     '&:hover': {
                       boxShadow: 'none',
-                      minHeight: 28,
+                      minHeight: 29,
                     },
+                  }),
+                  menu: (provided) => ({
+                    ...provided,
+                    zIndex: 9999
                   }),
                   indicatorsContainer: (provided) => ({
                     ...provided,
-                    // padding: 6
+                    '> div': {
+                      padding: 5
+                    }
                   }),
                   indicatorContainer: (provided) => ({
                     ...provided,
-                    padding: 6
                   })
                 }}
               />
@@ -221,7 +230,13 @@ const LoanStats = ({ selectedStatsCard, handleClick }) => {
                   <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')}>UTD</div>
                 </Tooltip>
                 <Tooltip title='Choose custom dates'>
-                  <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')}>Custom</div>
+                  <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')}>
+                    {
+                      selectedPeriodType === 'Custom' ? (
+                        `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`
+                      ) : 'Custom'
+                    }
+                  </div>
                 </Tooltip>
               </div>
               <Popover
@@ -238,20 +253,24 @@ const LoanStats = ({ selectedStatsCard, handleClick }) => {
                   horizontal: 'center',
                 }}
               >
-                <DateRangePicker
+                <DateRange
                   ranges={[dateRange]}
                   onChange={onDatePickerChange}
                   maxDate={new Date()}
-                  direction="vertical"
-                  scroll={{ enabled: true }}
+                  months={2}
+                  direction="horizontal"
+                  // scroll={{ enabled: true }}
                   minDate={subDays(new Date(), 1095)}
                 />
                 <Box p={1} textAlign='right'>
-                  <button className={`${classes.filterItem} active`} onClick={onDateRangeClose}>OK</button>
+                  <Button variant="contained" color="primary" onClick={onDateRangeClose}>
+                    Apply
+                  </Button>
+                  {/* <button className={`${classes.filterItem} active`} onClick={onDateRangeClose}>Apply</button> */}
                 </Box>
               </Popover>
             </Box>
-            <Box pl={1}>
+            {/* <Box pl={1}>
               {
                 selectedPeriodType === 'Custom' && (
                   <div className={`${classes.filterItem} disabled`} onClick={(event) => setShowPicker(event?.currentTarget)}>
@@ -261,7 +280,7 @@ const LoanStats = ({ selectedStatsCard, handleClick }) => {
                   </div>
                 )
               }
-            </Box>
+            </Box> */}
           
           </Box>
         </Box>

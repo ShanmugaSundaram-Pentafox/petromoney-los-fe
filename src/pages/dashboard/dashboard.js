@@ -18,9 +18,10 @@ import { getLoanStats, getAll_ls1_Metrices, getAll_ls2_Metrices } from '../../se
 import { SummaryTile, PieChartData, BarChartData } from './components/MetricsComponents';
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import { Typography } from '@material-ui/core';
-import { yellow } from '@material-ui/core/colors';
+// import { yellow } from '@material-ui/core/colors';
 import { getDealerDetails } from '../../services/dealers.service';
 import Currency from '../../../src/components/Number/Currency';
+import LoanStats from './components/LoanStats';
 
 const useStyles = makeStyles(theme =>({
   card :{
@@ -45,7 +46,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   usePageTitle('Dashboard');
   const classes = useStyles();
 
-  const [chartData, setChartData] = useState([{}, {}, {}, {}, {}, {}]);
+  // const [chartData, setChartData] = useState([{}, {}, {}, {}, {}, {}]);
   const [ls1_metrices, setLs1Metrices] = useState({});
   const [ls2_metrices, setLs2Metrices] = useState([]);
   const [daysChartData, setdaysChartData] = useState(['Days', 'Amount']);
@@ -59,25 +60,25 @@ const Dashboard = ({ currentUser, dashboardView }) => {
     setSelectedReportStatsCard(name)
   }
   useMount(() => {
-    getLoanStats()
-      .then(data => {
-        // const data = _countBy(res, item => {
-        //   return item.status?.toLowerCase()
-        // });
-        let cdata = [
-          { name: 'Submitted', count: data.submitted_count },
-          { name: 'Pending Approval', count: data.loan_approval_count || 0 },
-          { name: 'Approved', count: data.approved_count },
-          { name: 'Pending Disbursement Approval', count: data.disbursement_approval_count || 0 },
-          { name: 'Disbursement Approved',count:data.disbursement_approved_count || 0 },
-          { name: 'Disbursed', count: data.disbursed_count },
-          { name: 'Rejected', count: data.rejected_count },
-        ];
-        setChartData(cdata);
-      })
-      .catch(err => {
-        console.log(err);
-      })
+    // getLoanStats()
+    //   .then(data => {
+    //     // const data = _countBy(res, item => {
+    //     //   return item.status?.toLowerCase()
+    //     // });
+    //     let cdata = [
+    //       { name: 'Submitted', count: data.submitted_count },
+    //       { name: 'Pending Approval', count: data.loan_approval_count || 0 },
+    //       { name: 'Approved', count: data.approved_count },
+    //       { name: 'Pending Disbursement Approval', count: data.disbursement_approval_count || 0 },
+    //       { name: 'Disbursement Approved',count:data.disbursement_approved_count || 0 },
+    //       { name: 'Disbursed', count: data.disbursed_count },
+    //       { name: 'Rejected', count: data.rejected_count },
+    //     ];
+    //     setChartData(cdata);
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //   })
 
 
     setTimeout(() => {
@@ -163,17 +164,11 @@ const Dashboard = ({ currentUser, dashboardView }) => {
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   {
-                    Array.isArray(chartData) && dashboardView === "LOS" && (
-                      <Box p={2} borderRadius={4} bgcolor="background.paper">
-                        <Typography variant="h5">Loans' Statistics</Typography>
-                        <Box className={classes.card} borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="nowrap">
-                          {
-                            chartData.map((item, i) => (
-                              <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name} selected={item.name === selectedStatsCard} action={() => handleClick(item.name)} />
-                            ))
-                          }
-                        </Box>
-                      </Box>
+                    dashboardView === "LOS" && (
+                      <LoanStats
+                        selectedStatsCard={selectedStatsCard}
+                        handleClick={handleClick}
+                      />  
                     )
                   }
                   {

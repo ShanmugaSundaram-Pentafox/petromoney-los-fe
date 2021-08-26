@@ -15,12 +15,16 @@ const DashCardWrapper = styled.div`
   cursor: pointer;
 
   .amount-text {
-    position: absolute;
+    /* position: absolute;
     bottom: -8px;
     left: 20px;
-    right: 20px;
+    right: 20px; */
+    display: inline-block;
+    margin: 8px;
+    margin-bottom: -8px;
+
     text-align: center;
-    padding: 4px;
+    padding: 4px 10px;
     color: #fff;
     font-size: 14px;
     font-weight: 600;
@@ -104,10 +108,10 @@ const DashCard = ({
         <div className="stat-desc">{text || ''}</div>
       </div>
         
-      {amount ? (
-        <Tooltip title={amount ? convertCurrencyWithUnit(amount) : null}>
+      {amount > 0 ? (
+        <Tooltip title={amount ? <Currency value={amount} /> : null}>
           <div className='amount-text'>
-            <Currency value={amount} />
+            ₹ {convertCurrencyWithUnit(amount)}
           </div>
         </Tooltip>) : null}
     </DashCardWrapper>

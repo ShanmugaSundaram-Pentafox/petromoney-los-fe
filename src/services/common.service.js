@@ -83,8 +83,28 @@ export const downloadPDF = ({ file, isBase64, name }) => {
   downloadLink.download = fileName;
   downloadLink.click();
 }
-export const getAllRegion = () => {
 
+export const getAllRegions = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('regions', {}, 'GET')
+      .then(response => {
+        if (response?.status === 'SUCCESS') {
+          const result = response?.data.map(item => ({
+            label: item.region,
+            value: item.id,
+          }))
+          resolve(result || [])
+        } else {
+          reject(new Error(response.message || 'Unable to get regions'))
+        }
+      })
+      .catch(err => {
+        reject(err)
+      })
+  })
+}
+
+export const getAllRegion = () => {
   return new Promise((resolve, reject) => {
     apiCall(URL.region)
       .then(({ status, data, message }) => {

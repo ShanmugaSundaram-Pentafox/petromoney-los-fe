@@ -42,7 +42,8 @@ const useStyles = makeStyles((theme) => ({
 const BlacklistTable = () => {
     const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [data, setData] = useState([])
+    const [resolvedData, setResolvedData] = useState([])
+    const [unresolvedData, setUnresolvedData] = useState([])
     const [selectedTab, setSelectedTab] = useState("resolved");
     const classes = useStyles()
     usePageTitle('Withheld loan', true)
@@ -159,7 +160,9 @@ const BlacklistTable = () => {
     useMount(() => {
         getAllWithheldLoans()
             .then((data) => {
-                setData(data)
+                console.log("dataaaaaaaa", data.resolved)
+                setResolvedData(data.resolved)
+                setUnresolvedData(data.unresolved)
                 setLoading(false)
             })
             .catch((e) => {
@@ -172,8 +175,8 @@ const BlacklistTable = () => {
     const columns = useMemo(() => {
         return [
             {
-                label: "Code",
-                name: "dealership_id",
+                label: "ID",
+                name: "id",
                 options: {
                     filter: false,
                     sort: true,
@@ -275,14 +278,14 @@ const BlacklistTable = () => {
                 </Box>
             </PaperWrapper>
             <Grid item md={12}>
-                {Array.isArray(data) && data.length ? (
+                {Array.isArray(resolvedData) && resolvedData.length ? (
                     <MUIDataTable
                         title={
                             <Typography className={classes.title} variant="h5" component="h5">
                                 Withheld Loans
                             </Typography>
                         }
-                        data={data}
+                        data={selectedTab === "resolved" ? resolvedData : unresolvedData}
                         columns={columns}
                         options={options}
                     />
@@ -298,7 +301,7 @@ const BlacklistTable = () => {
                 onClose={() => setOpenModal(false)}
                 variant="temporary"
             >
-                <AddBlackListForm callback={() => setOpenModal(false)} data={data} />
+                <AddBlackListForm callback={() => setOpenModal(false)} data={resolvedData} />
 
             </Drawer>
         </>

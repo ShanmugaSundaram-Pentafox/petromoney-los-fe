@@ -5,7 +5,7 @@ import MUIDataTable from "mui-datatables";
 import Typography from "@material-ui/core/Typography";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { Paper } from "@material-ui/core";
-import { useMount } from 'react-use';
+
 
 const useStyles = makeStyles((theme) => ({
     title: {
@@ -17,13 +17,14 @@ const ResolvedTable = ({ data }) => {
     const [loading, setLoading] = useState(false);
     const classes = useStyles()
 
+
     const columns = useMemo(() => {
         return [
             {
                 label: "ID",
                 name: "id",
                 options: {
-                    filter: false,
+                    filter: true,
                     sort: true,
                     customBodyRender: (value) => {
                         return <div>{value}</div>
@@ -34,7 +35,7 @@ const ResolvedTable = ({ data }) => {
                 label: "Name",
                 name: "name",
                 options: {
-                    filter: false,
+                    filter: true,
                     sort: true,
                     customBodyRender: (value) => {
                         return <>{value?.toUpperCase()}</>
@@ -45,7 +46,7 @@ const ResolvedTable = ({ data }) => {
                 label: "Region",
                 name: "region",
                 options: {
-                    filter: false,
+                    filter: true,
                     sort: true,
                 },
             },
@@ -53,7 +54,7 @@ const ResolvedTable = ({ data }) => {
                 label: "Remarks",
                 name: "remarks",
                 options: {
-                    filter: true,
+                    filter: false,
                     sort: true,
                     setCellProps: () => ({
                         align: 'left',
@@ -79,9 +80,9 @@ const ResolvedTable = ({ data }) => {
         selectableRows: "none",
         rowsPerPage: 10,
         viewColumns: false,
-        print: false,
-        download: false,
-        filter: false,
+        print: true,
+        download: true,
+        filter: true,
         isRowSelectable: () => false,
 
     }
@@ -89,9 +90,6 @@ const ResolvedTable = ({ data }) => {
     return (
         <>
             <Grid item md={12}>
-                {
-
-                }
                 {Array.isArray(data) && data.length ? (
                     <MUIDataTable
                         title={

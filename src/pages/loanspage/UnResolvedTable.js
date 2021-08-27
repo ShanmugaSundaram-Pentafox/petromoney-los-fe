@@ -12,6 +12,7 @@ import { Drawer } from "@material-ui/core";
 import { green } from '@material-ui/core/colors';
 import AddBlackListForm from './AddBlackListForm';
 import { deleteRemarks, resolveRemarks } from '../../services/withheld.services';
+import { useSnackbar } from 'notistack';
 
 
 
@@ -25,24 +26,63 @@ const UnresolvedTable = ({ data }) => {
     const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const classes = useStyles()
+    const { enqueueSnackbar } = useSnackbar();
 
     const handleResolve = (id) => {
         resolveRemarks(id)
-            .then((data) => {
-                console.log(data)
+            .then(res => {
+                enqueueSnackbar(res, {
+                    anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'right',
+                    },
+                    variant: 'success',
+                }
+                )
+                setTimeout(() => {
+                    window.location.reload()
+                }, 1500);
             })
-            .catch((e) => {
+            .catch(e => {
                 console.log(e);
+                enqueueSnackbar(e, {
+                    anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'right',
+                    },
+                    variant: 'error',
+                }
+                )
             })
-
     }
     const handleDelete = (id) => {
         deleteRemarks(id)
-            .then((data) => {
-                console.log(data)
+            .then(res => {
+                enqueueSnackbar(res, {
+                    anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'right',
+                    },
+                    variant: 'success',
+                }
+                )
+                setTimeout(() => {
+                    window.location.reload()
+                }, 1500);
             })
             .catch((e) => {
                 console.log(e);
+                enqueueSnackbar(e, {
+                    anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'right',
+                    },
+                    variant: 'error',
+                }
+                )
+                setTimeout(() => {
+                    window.location.reload()
+                }, 1500);
             })
     }
 
@@ -52,7 +92,7 @@ const UnresolvedTable = ({ data }) => {
                 label: "ID",
                 name: "id",
                 options: {
-                    filter: false,
+                    filter: true,
                     sort: true,
                     customBodyRender: (value) => {
                         return <div>{value}</div>
@@ -63,7 +103,7 @@ const UnresolvedTable = ({ data }) => {
                 label: "Name",
                 name: "name",
                 options: {
-                    filter: false,
+                    filter: true,
                     sort: true,
                     customBodyRender: (value) => {
                         return <>{value?.toUpperCase()}</>
@@ -74,7 +114,7 @@ const UnresolvedTable = ({ data }) => {
                 label: "Region",
                 name: "region",
                 options: {
-                    filter: false,
+                    filter: true,
                     sort: true,
                 },
             },
@@ -82,7 +122,7 @@ const UnresolvedTable = ({ data }) => {
                 label: "Remarks",
                 name: "remarks",
                 options: {
-                    filter: true,
+                    filter: false,
                     sort: true,
                     setCellProps: () => ({
                         align: 'left',
@@ -119,8 +159,8 @@ const UnresolvedTable = ({ data }) => {
         rowsPerPage: 10,
         viewColumns: false,
         print: false,
-        download: false,
-        filter: false,
+        download: true,
+        filter: true,
         isRowSelectable: () => false,
         customToolbar: () => {
             return (

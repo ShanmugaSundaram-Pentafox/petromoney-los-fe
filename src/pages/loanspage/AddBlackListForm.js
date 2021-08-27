@@ -7,12 +7,12 @@ import Divider from '@material-ui/core/Divider';
 import clsx from 'clsx';
 import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from "@material-ui/styles";
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import TextInput from '../../components/TextInput/TextInput';
 import { useMount } from 'react-use';
 import { addNewRemarks, AddNewRemarks, getAllWithheldRemarks, updateRemarks } from '../../services/withheld.services';
 import CreatableSelect from 'react-select/creatable';
-import Select from 'react-select'
+import Select from 'react-select';
+import { useSnackbar } from 'notistack';
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -64,13 +64,14 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-const AddBlackListForm = ({ rowData, data, callback }) => {
+const AddBlackListForm = ({ data, callback }) => {
     const [newRemarks, setNewRemarks] = useState()
     const [dealerID, setDealerID] = useState()
     const [remarks, setRemarks] = useState()
     const [list, setList] = useState([])
     const [value, setValue] = useState()
     const classes = useStyles()
+    const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
         if (data?.length) {
@@ -81,23 +82,6 @@ const AddBlackListForm = ({ rowData, data, callback }) => {
         }
     }, [data])
 
-    // const remarks = [
-    //     {
-    //         "id": "1",
-    //         "remarks": "Transporter Agreement not Signed",
-    //         "is_resolved": 0
-    //     },
-    //     {
-    //         "id": "2",
-    //         "remarks": "Fuel Credit Agreement not signed",
-    //         "is_resolved": 1
-    //     },
-    //     {
-    //         "id": "3",
-    //         "remarks": "Renewal Processing fee is not collected",
-    //         "is_resolved": 1
-    //     }
-    // ]
     useMount(() => {
         getAllWithheldRemarks()
             .then((data) => {
@@ -109,46 +93,75 @@ const AddBlackListForm = ({ rowData, data, callback }) => {
 
     })
 
-    const inputProps = {
-        direction: "column",
-        alignTop: true,
-        // onChange: handleChange,
-    }
     const handleRemarkChange = (newValue, actionMeta) => {
-        if (remarks.includes(newValue.label)) {
-            setNewRemarks(newValue.value)
+        if (remarks.includes(newValue?.label)) {
+            setNewRemarks(newValue?.label)
         }
         else {
-            setValue(newValue.label)
-
-
+            setValue(newValue?.label)
         }
     };
     const handleSave = () => {
         const res = value ? value : newRemarks;
         if (!value) {
-            updateRemarks(dealerID.value, res)
+            updateRemarks(dealerID.label, res)
                 .then(res => {
-                    console.log("result", res)
+                    enqueueSnackbar(res, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'success',
+                    }
+                    )
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1500);
                     setNewRemarks("")
                     setValue("")
                 })
                 .catch(err => {
                     console.log(err)
+                    enqueueSnackbar(err, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'error',
+                    }
+                    )
+
                 })
         }
         else {
             addNewRemarks(dealerID.value, res)
                 .then(res => {
-                    console.log("result", res)
+                    enqueueSnackbar(res, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'success',
+                    }
+                    )
+                    setNewRemarks("")
+                    setValue("")
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1500);
                 })
                 .catch(err => {
                     console.log(err)
+                    enqueueSnackbar(res.message, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'error',
+                    }
+                    )
                 })
-
         }
-
-
     }
 
     return (

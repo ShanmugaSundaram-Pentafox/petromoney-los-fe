@@ -228,6 +228,27 @@ export const postDealershipSalesById = (id, body) => {
   });
 };
 
+export const deleteDealershipSalesById = (id, body) => {
+  return new Promise((resolve, reject) => {
+    // API.post(`${URL.dealership}/${id}/salesdata`, body)
+    apiCall(`${URL.dealership}/${id}/salesdata`, {
+      method :'DELETE',
+      body:body
+    })
+      .then(async ({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          const res = await getDealershipSalesById(id)
+          resolve(res);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
+
 export const getDealershipCheckList = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.checklist}/${id}`)

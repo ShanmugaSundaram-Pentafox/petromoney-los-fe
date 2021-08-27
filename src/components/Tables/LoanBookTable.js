@@ -5,9 +5,7 @@ import MUIDataTable from "mui-datatables";
 import Typography from '@material-ui/core/Typography';
 import { useMount } from 'react-use';
 import Paper from '@material-ui/core/Paper';
-// import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
-import moment from 'moment';
 import clsx from 'clsx';
 import { getLoanBookData } from '../../services/loans.service';
 import { setLoanBook } from '../../store/loans/loans.actions';
@@ -94,7 +92,7 @@ const LoanBookTable = ({ title, loanBookData, setLoanBookData }) => {
           sort: true,
           customBodyRender: value => {
             return <div>
-              {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
+              {value || '-'}
             </div>
           }
         }
@@ -115,7 +113,7 @@ const LoanBookTable = ({ title, loanBookData, setLoanBookData }) => {
           sort: true,
           customBodyRender: value => {
             return <div>
-              {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
+              {value || '-'}
             </div>
           }
         }
@@ -128,7 +126,7 @@ const LoanBookTable = ({ title, loanBookData, setLoanBookData }) => {
           sort: true,
           customBodyRender: value => {
             return <div>
-              {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
+              {value || '-'}
             </div>
           }
         }

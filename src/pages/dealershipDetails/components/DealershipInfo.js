@@ -18,7 +18,7 @@ import { rulesList } from '../../../config/userRules';
 // import apiCall from '../../../utils/api.util';
 import Button from '../../../components/CommonComponents/Button/Button';
 import { encrypt } from '../../../services/crypto.service';
-import { getBusinessTypes, getRegionById, getStates } from '../../../services/common.service';
+import { getBusinessTypes, getRegionById, getStates, getActiveStates } from '../../../services/common.service';
 import { useSnackbar } from 'notistack';
 // import { Typography } from '@material-ui/core';
 
@@ -115,15 +115,17 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
       .catch(err => {
         console.log('BusinessTypes fetch error - ', err)
       })
-    getStates()
+    getActiveStates()
       .then(d => {
-        setStates(d)
+        setStates([{ id: '', name: 'Choose State' }, ...d])
         return d;
       })
       .then(d => {
         let res = d.find(({ id }) => id === parseInt(values.state));
 
-        fetchRegions(parseInt(res.id));
+        if(res) {
+          fetchRegions(parseInt(res.id));
+        }
       })
       .catch(err => {
         console.log('BusinessTypes fetch error - ', err)
@@ -267,6 +269,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
             </Grid>
             <Grid {...gridProps} xs={6}>
               <TextInput
+                name="district"
                 labelText="District"
                 labelWidth={40}
                 value={values.district}

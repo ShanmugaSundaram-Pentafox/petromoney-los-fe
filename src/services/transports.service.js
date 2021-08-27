@@ -455,3 +455,33 @@ export const deleteVehicleDoc = (id, rowData, vehicle) => {
       })
   })
 }
+export const deleteTransportProfileDoc = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`transporters/${id}`, {
+      method: "DELETE",
+      body: data
+
+    })
+      .then(async ({ res, status, message }) => {
+        resolve({ res, message });
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+export const deleteTransportOwnerProfileDoc = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`transport/owner/${id}`, {
+      method: "DELETE",
+      body: data
+
+    })
+      .then(async ({ res, status, message }) => {
+        resolve({ res, message });
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

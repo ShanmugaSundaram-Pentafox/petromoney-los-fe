@@ -4,11 +4,12 @@ import { makeStyles, withStyles } from '@material-ui/styles';
 import Grid from '@material-ui/core/Grid';
 import TextInput from '../../../components/TextInput/TextInput';
 // import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
-import Typography from '@material-ui/core/Typography'
+import Typography from '@material-ui/core/Typography';
+import { useSnackbar } from 'notistack';
 import Switch from '@material-ui/core/Switch';
 import Box from '@material-ui/core/Box';
 // import AttachmentOutlinedIcon from '@material-ui/icons/AttachmentOutlined';
-// import DeleteIcon from '@material-ui/icons/Delete';
+import DeleteIcon from '@material-ui/icons/Delete';
 import UploadIcon from '@material-ui/icons/Backup';
 import { grey } from '@material-ui/core/colors';
 import 'date-fns';
@@ -20,6 +21,7 @@ import {
 import FileUpload from '../../../components/FileUpload';
 import { AvatarCard, ViewData } from '../../../components/CommonComponents/FilePreview';
 import { Divider } from '@material-ui/core';
+import { deleteProfileDoc } from '../../../services/dealers.service';
 
 
 const useStyles = makeStyles({
@@ -83,7 +85,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
         checkedA: true,
         checkedB: true,
     });
-
+    const { enqueueSnackbar } = useSnackbar();
     const [selectedDate, setSelectedDate] = useState(data.dob)
     const handleDateChange = (date) => {
         setSelectedDate(date)
@@ -96,6 +98,27 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
     const docUpload = (val) => {
         setShowUpload(true)
         setFileType(val)
+    }
+    const onDocDelete = (data) => {
+        deleteProfileDoc(data, values.id, values.dealership_id, modelType)
+            .then(res => {
+                enqueueSnackbar(res.message, {
+                    anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'right',
+                    },
+                    variant: 'success',
+                });
+            })
+            .catch(err => {
+                enqueueSnackbar(err, {
+                    anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'right',
+                    },
+                    variant: 'error',
+                });
+            })
     }
 
     const gridItem = {
@@ -145,9 +168,9 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 <Tooltip title={'Click to edit'}>
                     <UploadIcon fontSize="small" padding={2} onClick={() => docUpload('Back')} />
                 </Tooltip>
-                {/* <Tooltip title={'Click to delete'}>
-                    <DeleteIcon fontSize="small" padding={2} />
-                </Tooltip> */}
+                <Tooltip title={'Click to delete'}>
+                    <DeleteIcon onClick={() => onDocDelete({ aadhar_b_file_url: "" })} fontSize="small" padding={2} />
+                </Tooltip>
             </div>
         )
     }
@@ -159,9 +182,9 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 <Tooltip title={'Click to edit'}>
                     <UploadIcon fontSize="small" style={{ color: grey[800] }} padding={2} onClick={() => docUpload('Profile')} />
                 </Tooltip>
-                {/* <Tooltip title={'Click to delete'}>
-                    <DeleteIcon fontSize="small" style={{ color: grey[800] }} padding={2} />
-                </Tooltip> */}
+                <Tooltip title={'Click to delete'}>
+                    <DeleteIcon onClick={() => onDocDelete({ profile_image_url: "" })} fontSize="small" style={{ color: grey[800] }} padding={2} />
+                </Tooltip>
             </div>
         )
     }
@@ -174,9 +197,9 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 <Tooltip title={'Click to edit'}>
                     <UploadIcon fontSize="small" style={{ color: grey[800] }} padding={2} onClick={() => docUpload('Front')} />
                 </Tooltip>
-                {/* <Tooltip title={'Click to delete'}>
-                    <DeleteIcon fontSize="small" style={{ color: grey[800] }} padding={2} />
-                </Tooltip> */}
+                <Tooltip title={'Click to delete'}>
+                    <DeleteIcon onClick={() => onDocDelete({ aadhar_f_file_url: "" })} fontSize="small" style={{ color: grey[800] }} padding={2} />
+                </Tooltip>
             </div>
         )
     }
@@ -188,9 +211,9 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 <Tooltip title={'Click to edit'}>
                     <UploadIcon fontSize="small" padding={2} style={{ color: grey[800] }} onClick={() => docUpload('PAN')} />
                 </Tooltip>
-                {/* <Tooltip title={'Click to delete'}>
-                    <DeleteIcon fontSize="small" style={{ color: grey[800] }} padding={2} />
-                </Tooltip> */}
+                <Tooltip title={'Click to delete'}>
+                    <DeleteIcon onClick={() => onDocDelete({ pan_file_url: "" })} fontSize="small" style={{ color: grey[800] }} padding={2} />
+                </Tooltip>
             </div>
         )
     }
@@ -223,23 +246,23 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                         <Divider />
                         {
                             values?.profile_image_url || values?.pan_file_url || values?.aadhar_f_file_url || values?.aadhar_b_file_url ? (
-                        <div className={classes.readOnlyWrapper}>
-                            <Typography variant="h4">Attachments</Typography>
-                            <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: 16 }}>
-                                {values.profile_image_url && <AvatarCard tooltip='View profile' file={values?.profile_image_url} title='Profile' />}
-                                {values.pan_file_url && <AvatarCard tooltip='View PAN' file={values?.pan_file_url} title='PAN' />}
-                                {values.aadhar_f_file_url && <AvatarCard tooltip='View Aadhar Front' file={values?.aadhar_f_file_url} title='Aadhar front' />}
-                                {values.aadhar_b_file_url && < AvatarCard tooltip='View Aadhar back' file={values?.aadhar_b_file_url} title='Aadhar back' />}
-                            </div>
-                        </div>
+                                <div className={classes.readOnlyWrapper}>
+                                    <Typography variant="h4">Attachments</Typography>
+                                    <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: 16 }}>
+                                        {values.profile_image_url && <AvatarCard tooltip='View profile' file={values?.profile_image_url} title='Profile' />}
+                                        {values.pan_file_url && <AvatarCard tooltip='View PAN' file={values?.pan_file_url} title='PAN' />}
+                                        {values.aadhar_f_file_url && <AvatarCard tooltip='View Aadhar Front' file={values?.aadhar_f_file_url} title='Aadhar front' />}
+                                        {values.aadhar_b_file_url && < AvatarCard tooltip='View Aadhar back' file={values?.aadhar_b_file_url} title='Aadhar back' />}
+                                    </div>
+                                </div>
 
                             ) : (
-                        <div className={classes.readOnlyWrapper}>
-                            <Typography variant="h4">Attachments</Typography>
-                            <div style={{display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
-                                <Typography variant="h7">No Attachments Found</Typography>
-                            </div>
-                        </div>
+                                <div className={classes.readOnlyWrapper}>
+                                    <Typography variant="h4">Attachments</Typography>
+                                    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                                        <Typography variant="h7">No Attachments Found</Typography>
+                                    </div>
+                                </div>
                             )
                         }
                     </>

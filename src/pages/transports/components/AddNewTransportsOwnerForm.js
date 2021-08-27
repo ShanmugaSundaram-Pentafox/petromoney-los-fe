@@ -781,12 +781,12 @@ const AddNewTransportsOwnerForm = ({
                             onClick={() => docUpload('PAN')}
                           >
                             <Tooltip title={'Click to attach profile'}>
-                              <div>
+                              <>
                                 <UploadIcon fontSize='small' />
                                 <Typography style={{ marginLeft: 12 }}>
                                   Attach profile
                                 </Typography>
-                              </div>
+                              </>
                             </Tooltip>
                           </div>
                         )

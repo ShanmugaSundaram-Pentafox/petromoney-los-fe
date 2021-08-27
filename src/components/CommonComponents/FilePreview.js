@@ -16,11 +16,13 @@ const useStyles = makeStyles((theme) => ({
     details: {
         borderColor: 'grey',
         minWidth: 80,
-        height: 50,
+        minHeight: 50,
+        maxWidth: 250,
         display: 'flex',
         textAlign: 'left',
         alignItems: 'left',
-        justifyContent: 'left'
+        justifyContent: 'left',
+        marginBottom: 4,
     },
     text: {
         fontSize: 12

@@ -94,10 +94,11 @@ const Docs = ({ data }) => {
     temp += file.file_url ? 1 : 0;
     return file.file_url ? (
       <div>
+        {console.log(imageModal.type)}
         <Button onClick={() => setImageModal({ open: true, image: file.file_url, type: (file.file_url?.split("/")[file.file_url?.split("/").length - 1].split('.'))[1] })}>
-          <a style={{ display: 'inline-block', borderRadius: 4, lineHeight: 1, marginRight: 8, marginBottom: 8, padding: 8, backgroundColor: '#f0f0f0' }} href={file.file_url} >{getFileNameFromUrl(file?.file_url)} </a>
+          <a style={{ display: 'inline-block', borderRadius: 4, lineHeight: 1, marginRight: 8, marginBottom: 8, padding: 8, backgroundColor: '#f0f0f0' }}>{getFileNameFromUrl(file?.file_url)} </a>
         </Button>
-        <FormDialog title={"File Preview"} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
+        <FormDialog title={"File Preview"} onDownload={imageModal.image} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
           <FilePreview data={imageModal} />
         </FormDialog>
       </div>
@@ -263,7 +264,7 @@ const DocList = ({ id }) => {
               {
                 modalData.map(item => {
                   return (
-                    < Paper key={item.file_id} >
+                    <Paper key={item.file_id} style={{minWidth: '500px'}}>
                       <FormGroup>
                         <FormControlLabel
                           key={item.file_id}

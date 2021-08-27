@@ -19,6 +19,7 @@ import SidebarNav from './components/SidebarNav';
 import { permissionCheck } from '../UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import ListIcon from '@material-ui/icons/List';
+import SettingsIcon from '@material-ui/icons/Settings';
 // import { ExitToApp } from '@material-ui/icons';
 // import { connect } from 'formik';
 
@@ -155,6 +156,14 @@ const Sidebar = props => {
       title: 'Users',
       href: '/users',
       icon: <AccountBoxIcon />
+    })
+  }
+
+  {
+    pages.push({
+      title: 'Settings',
+      href: '/settings',
+      icon: <SettingsIcon />
     })
   }
 

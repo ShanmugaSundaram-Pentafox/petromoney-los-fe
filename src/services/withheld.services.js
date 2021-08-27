@@ -1,5 +1,4 @@
 import { URL } from "../config/serverUrls"
-import { getDealershipLoansById } from "./dealerships.service";
 import apiCall from "../utils/api.util";
 
 export const getAllWithheldLoans = () => {
@@ -16,4 +15,104 @@ export const getAllWithheldLoans = () => {
                 reject(e.message)
             })
     })
+}
+export const getAllWithheldRemarks = () => {
+    return new Promise((resolve, reject) => {
+        apiCall(`withheld/loans/remarks`)
+            .then(({ status, data, message }) => {
+                if (status === "SUCCESS") {
+                    const result = data.map(item => ({
+                        label: item.remarks,
+                        value: item.id,
+                    }))
+                    resolve(result || [])
+                } else {
+                    reject(message)
+                }
+            })
+            .catch((e) => {
+                reject(e.message)
+            })
+    })
+}
+export const updateRemarks = (id, remarks) => {
+    return new Promise((resolve, reject) => {
+        apiCall(`withheld/loans`, {
+            method: 'POST',
+            body: {
+                dealership_id: id,
+                remarks_id: remarks
+            }
+        })
+            .then(({ status, data, message }) => {
+                if (status === "SUCCESS") {
+                    resolve(message);
+                } else {
+                    reject(message);
+                }
+            })
+            .catch(e => {
+                reject(e.message);
+            })
+    });
+}
+export const addNewRemarks = (id, remarks) => {
+    return new Promise((resolve, reject) => {
+        apiCall(`withheld/loans`, {
+            method: 'POST',
+            body: {
+                dealership_id: id,
+                is_other: 1,
+                remarks: remarks
+            }
+        })
+            .then(({ status, data, message }) => {
+                if (status === "SUCCESS") {
+                    resolve(message);
+                } else {
+                    reject(message);
+                }
+            })
+            .catch(e => {
+                reject(e.message);
+            })
+    });
+}
+export const resolveRemarks = (id) => {
+    return new Promise((resolve, reject) => {
+        apiCall(`withheld/loans/${id}`, {
+            method: 'POST',
+            body: {
+                is_resolved: 1
+            }
+        })
+            .then(({ status, data, message }) => {
+                if (status === "SUCCESS") {
+                    resolve(message);
+                } else {
+                    reject(message);
+                }
+            })
+            .catch(e => {
+                reject(e.message);
+            })
+    });
+}
+export const deleteRemarks = (id) => {
+    return new Promise((resolve, reject) => {
+        apiCall(`withheld/loans/${id}`, {
+            method: 'DELETE',
+
+        })
+            .then(({ status, data, message }) => {
+                if (status === "SUCCESS") {
+                    resolve(message);
+                } else {
+                    reject(message);
+                }
+            })
+            .catch(e => {
+                reject(e.message);
+            })
+    });
 }

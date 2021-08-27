@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Button from '../../components/CommonComponents/Button/Button';
@@ -9,6 +9,10 @@ import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from "@material-ui/styles";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextInput from '../../components/TextInput/TextInput';
+import { useMount } from 'react-use';
+import { addNewRemarks, AddNewRemarks, getAllWithheldRemarks, updateRemarks } from '../../services/withheld.services';
+import CreatableSelect from 'react-select/creatable';
+import Select from 'react-select'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -60,41 +64,93 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-const AddBlackListForm = ({ rowData, data, handleChange, callback }) => {
-    const [newRemark, setNewRemark] = useState()
+const AddBlackListForm = ({ rowData, data, callback }) => {
+    const [newRemarks, setNewRemarks] = useState()
+    const [dealerID, setDealerID] = useState()
+    const [remarks, setRemarks] = useState()
+    const [list, setList] = useState([])
+    const [value, setValue] = useState()
     const classes = useStyles()
 
-    const remarks = [
-        {
-            "id": "1",
-            "remarks": "Transporter Agreement not Signed",
-            "is_resolved": 0
-        },
-        {
-            "id": "2",
-            "remarks": "Fuel Credit Agreement not signed",
-            "is_resolved": 1
-        },
-        {
-            "id": "3",
-            "remarks": "Renewal Processing fee is not collected",
-            "is_resolved": 1
+    useEffect(() => {
+        if (data?.length) {
+            setList(data.map(({ id }) => ({
+                label: id,
+                value: id
+            })))
         }
-    ]
+    }, [data])
+
+    // const remarks = [
+    //     {
+    //         "id": "1",
+    //         "remarks": "Transporter Agreement not Signed",
+    //         "is_resolved": 0
+    //     },
+    //     {
+    //         "id": "2",
+    //         "remarks": "Fuel Credit Agreement not signed",
+    //         "is_resolved": 1
+    //     },
+    //     {
+    //         "id": "3",
+    //         "remarks": "Renewal Processing fee is not collected",
+    //         "is_resolved": 1
+    //     }
+    // ]
+    useMount(() => {
+        getAllWithheldRemarks()
+            .then((data) => {
+                setRemarks(data)
+            })
+            .catch((e) => {
+                console.log(e);
+            })
+
+    })
 
     const inputProps = {
         direction: "column",
         alignTop: true,
-        onChange: handleChange,
+        // onChange: handleChange,
     }
-    const handleSubmit = () => {
-        console.log("submit")
-    }
-    const mapList = (rowData, newValue) => {
-        console.log("mapped")
+    const handleRemarkChange = (newValue, actionMeta) => {
+        if (remarks.includes(newValue.label)) {
+            setNewRemarks(newValue.value)
+        }
+        else {
+            setValue(newValue.label)
+
+
+        }
+    };
+    const handleSave = () => {
+        const res = value ? value : newRemarks;
+        if (!value) {
+            updateRemarks(dealerID.value, res)
+                .then(res => {
+                    console.log("result", res)
+                    setNewRemarks("")
+                    setValue("")
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        }
+        else {
+            addNewRemarks(dealerID.value, res)
+                .then(res => {
+                    console.log("result", res)
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+
+        }
 
 
     }
+
     return (
         <div className={classes.sidePanelFormWrapper}>
             <Typography className={classes.sidePanelTitle} variant="h4">
@@ -104,55 +160,21 @@ const AddBlackListForm = ({ rowData, data, handleChange, callback }) => {
             <div className={classes.sidePanelFormContentWrapper}>
                 <div className={classes.stepperRoot}>
                     <Box>
-                        <form onSubmit={handleSubmit}>
+                        <form>
                             <Grid container spacing={2}>
                                 <Grid item md={7}>
-                                    <Autocomplete
-                                        size="small"
-                                        options={data}
-                                        getOptionLabel={(option) => option?.dealership_id?.toString()}
-                                        id="Choose id"
-                                        debug
-                                        renderInput={(params) => (
-                                            <div ref={params.InputProps.ref}>
-                                                <TextInput
-                                                    {...inputProps}
-                                                    {...params}
-                                                    variant="standard"
-                                                    placeholder="Choose ID"
-                                                    label="ID"
-                                                    InputLabelProps={{ shrink: true }}
-                                                />
-                                            </div>
-                                        )}
-                                        onChange={(event, newValue) => {
-                                            mapList(rowData, newValue)
-                                        }}
+                                    <Select
+                                        isClearable
+                                        onChange={setDealerID}
+                                        options={list}
                                     />
                                 </Grid>
                                 <Grid item md={7}>
-                                    <Autocomplete
-                                        size="small"
+                                    <label style={{ marginBottom: 8 }}>Remarks</label>
+                                    <CreatableSelect
+                                        isClearable
+                                        onChange={handleRemarkChange}
                                         options={remarks}
-                                        getOptionLabel={(option) => option?.remarks?.toString()}
-                                        id="Choose id"
-                                        debug
-                                        renderInput={(params) => (
-                                            <div ref={params.InputProps.ref}>
-                                                <TextInput
-                                                    {...inputProps}
-                                                    {...params}
-                                                    onChange={(e) => setNewRemark(e.target.value)}
-                                                    variant="standard"
-                                                    placeholder="Choose ID"
-                                                    label="ID"
-                                                    InputLabelProps={{ shrink: true }}
-                                                />
-                                            </div>
-                                        )}
-                                        onChange={(event, newValue) => {
-                                            mapList(rowData, newValue)
-                                        }}
                                     />
                                 </Grid>
                             </Grid>
@@ -175,7 +197,7 @@ const AddBlackListForm = ({ rowData, data, handleChange, callback }) => {
                         <Button
                             variant="contained"
                             type="submit"
-                            onClick={handleSubmit}
+                            onClick={handleSave}
                             className={clsx(classes.btn, classes.editButton)}
                         >
                             Save

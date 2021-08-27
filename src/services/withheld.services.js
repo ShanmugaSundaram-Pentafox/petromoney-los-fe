@@ -37,10 +37,9 @@ export const getAllWithheldRemarks = () => {
 }
 export const updateRemarks = (id, remarks) => {
     return new Promise((resolve, reject) => {
-        apiCall(`withheld/loans`, {
+        apiCall(`dealership/${id}/withheld/loans`, {
             method: 'POST',
             body: {
-                dealership_id: id,
                 remarks_id: remarks
             }
         })
@@ -58,11 +57,9 @@ export const updateRemarks = (id, remarks) => {
 }
 export const addNewRemarks = (id, remarks) => {
     return new Promise((resolve, reject) => {
-        apiCall(`withheld/loans`, {
+        apiCall(`dealership/${id}/withheld/loans`, {
             method: 'POST',
             body: {
-                dealership_id: id,
-                is_other: 1,
                 remarks: remarks
             }
         })

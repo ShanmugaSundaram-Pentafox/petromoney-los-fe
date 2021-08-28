@@ -128,17 +128,6 @@ const Profile = ({ readOnly,currentUser }) => {
                             onChange={handleChange}
                         />
                     </Grid>
-                    <Grid {...gridItem} md={12}>
-                        <TextInput
-                            label="Address"
-                            name="address"
-                            error={errors.address}
-                            readOnly={readOnly}
-                            value={values.address?.toUpperCase()}
-                            helperText={errors.address}
-                            onChange={handleChange}
-                        />
-                    </Grid>
                     <Grid {...gridItem} md={6}>
                         <TextInput
                             label="City"
@@ -147,28 +136,6 @@ const Profile = ({ readOnly,currentUser }) => {
                             readOnly={readOnly}
                             defaultValue={currentUser.region_name}
                             helperText={errors.city}
-                            onChange={handleChange}
-                        />
-                    </Grid>
-                    <Grid {...gridItem} md={6}>
-                        <TextInput
-                            label="State"
-                            name="state"
-                            error={errors.state}
-                            readOnly={readOnly}
-                            defaultValue={values.state}
-                            helperText={errors.state}
-                            onChange={handleChange}
-                        />
-                    </Grid>
-                    <Grid {...gridItem} md={6}>
-                        <TextInput
-                            label="Pin Code"
-                            name="pincode"
-                            error={errors.pincode}
-                            readOnly={readOnly}
-                            defaultValue={values.pincode}
-                            helperText={errors.pincode}
                             onChange={handleChange}
                         />
                     </Grid>
@@ -184,13 +151,6 @@ const Profile = ({ readOnly,currentUser }) => {
                         />
                     </Grid>
                 </Grid>
-                <Button
-                    color="primary"
-                    variant="contained"
-                    className={classes.button}
-                >
-                    Save
-                </Button>
             </Paper>
         </>
     )

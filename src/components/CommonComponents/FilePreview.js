@@ -16,11 +16,13 @@ const useStyles = makeStyles((theme) => ({
     details: {
         borderColor: 'grey',
         minWidth: 80,
-        height: 50,
+        minHeight: 50,
+        maxWidth: 250,
         display: 'flex',
         textAlign: 'left',
         alignItems: 'left',
-        justifyContent: 'left'
+        justifyContent: 'left',
+        marginBottom: 4,
     },
     text: {
         fontSize: 12
@@ -49,7 +51,6 @@ export const ViewData = ({ title, value }) => {
 export const AvatarCard = ({ file, title, tooltip }) => {
     const classes = useStyles()
     const [imageModal, setImageModal] = useState({})
-    console.log("image modal", imageModal)
     return (
         <>
             <div onClick={() => setImageModal({ open: true, image: file, type: (file?.split("/")[file?.split("/").length - 1]?.split('.'))[1] })} >

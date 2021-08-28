@@ -182,7 +182,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
               ) : null
             }
             {
-              value === "Pending Disbursement Approval" ? (
+              value === "Disb. Approval" ? (
                 <Grid item md={12}>
                   <Paper className={classes.tableContainer}>
                     <DisbursementReqestTable title={"Pending for Disbursement Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} />
@@ -228,7 +228,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
               ) : null
             }
             {
-              value === "Disbursement Approved" ? (
+              value === "Disb. Approved" ? (
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
                     <DisbursementApprovedTable  title={"Disbursement Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />

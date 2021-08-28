@@ -7,7 +7,6 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-import { Button } from '@material-ui/core';
 import CloudDownloadOutlinedIcon from '@material-ui/icons/CloudDownloadOutlined';
 
 const styles = (theme) => ({
@@ -36,8 +35,8 @@ const DialogTitle = withStyles(styles)((props) => {
       <Typography variant="h5">{children}</Typography>
       {
         onDownload ? (
-          <IconButton aria-label="close" className={classes.downloadButton}>
-            <a href={onDownload} style={{ color: '#4682B4' }}><CloudDownloadOutlinedIcon /></a>
+          <IconButton aria-label="close" className={classes.downloadButton} onClick={onDownload}>
+            <CloudDownloadOutlinedIcon />
           </IconButton>
         ) : null
       }

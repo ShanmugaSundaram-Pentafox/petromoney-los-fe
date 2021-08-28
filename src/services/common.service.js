@@ -83,8 +83,28 @@ export const downloadPDF = ({ file, isBase64, name }) => {
   downloadLink.download = fileName;
   downloadLink.click();
 }
-export const getAllRegion = () => {
 
+export const getAllRegions = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('regions', {}, 'GET')
+      .then(response => {
+        if (response?.status === 'SUCCESS') {
+          const result = response?.data.map(item => ({
+            label: item.region,
+            value: item.id,
+          }))
+          resolve(result || [])
+        } else {
+          reject(new Error(response.message || 'Unable to get regions'))
+        }
+      })
+      .catch(err => {
+        reject(err)
+      })
+  })
+}
+
+export const getAllRegion = () => {
   return new Promise((resolve, reject) => {
     apiCall(URL.region)
       .then(({ status, data, message }) => {
@@ -234,6 +254,21 @@ export const getPassbookDetails = (id) => {
 }
 export const getStates = () => {
   return new Promise((resolve, reject) => {
+    apiCall("master/states")
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(err => {
+        reject(err.message);
+      })
+  })
+}
+export const getActiveStates = () => {
+  return new Promise((resolve, reject) => {
     apiCall("states")
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
@@ -247,9 +282,26 @@ export const getStates = () => {
       })
   })
 }
+
+// export const getMasterRegionById = (res) => {
+//   return new Promise((resolve, reject) => {
+//     apiCall(`master/regions/${res}`)
+//       .then(({ status, data, message }) => {
+//         if (status === "SUCCESS") {
+//           resolve(data);
+//         } else {
+//           reject(message);
+//         }
+//       })
+//       .catch(err => {
+//         reject(err.message);
+//       })
+//   })
+// }
+
 export const getRegionById = (res) => {
   return new Promise((resolve, reject) => {
-    apiCall(`regions/${res}`)
+    apiCall(`states/regions/${res}`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data);
@@ -259,6 +311,177 @@ export const getRegionById = (res) => {
       })
       .catch(err => {
         reject(err.message);
+      })
+  })
+}
+
+export const updateOmcsById = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`omcs/${id}`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const updateRegionById = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`master/regions/${id}`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const updateStateById = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`master/states/${id}`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const addOmcs = (data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`omcs`, {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const addRegion = (data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`regions`, {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+
+}
+export const addState = (data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`master/states`, {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const deleteOmcs = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`omcs/${id}`, {
+      method: 'DELETE',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const deleteRegion = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`master/regions/${id}`, {
+      method: 'DELETE',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+
+}
+export const deleteState = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`master/states/${id}`, {
+      method: 'DELETE',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
       })
   })
 }

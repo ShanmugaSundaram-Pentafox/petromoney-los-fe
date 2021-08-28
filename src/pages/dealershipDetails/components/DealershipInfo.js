@@ -205,7 +205,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
               >
                 <option value="">{businessTypes[values.business_type]?.name}</option>
                 {
-                  businessTypes.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
+                  businessTypes?.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
                 }
               </TextInput>
             </Grid>
@@ -259,7 +259,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                   {...fieldProps}
                 >
                   {
-                    regionList.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))
+                    regionList?.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))
                   }
                 </TextInput>
               }

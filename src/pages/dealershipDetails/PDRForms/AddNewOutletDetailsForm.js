@@ -15,6 +15,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
+import { addOutletDetails } from '../../../services/PDReport.services';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -78,44 +79,34 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
 
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
         initialValues: {
-            ...data,
+            ...data[0],
         },
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
-            transport_name: Yup.string().required('Please enter transporter name'),
+            // transport_name: Yup.string().required('Please enter transporter name'),
 
         }),
-        // onSubmit: values => {
-        //     updateFleetOperator(values, dealer_id, data.id)
-        //         .then(res => {
-        //             console.log(res)
-        //             enqueueSnackbar(res, {
-        //                 anchorOrigin: {
-        //                     vertical: 'top',
-        //                     horizontal: 'right',
-        //                 },
-        //                 variant: 'success',
-        //             }
-        //             )
-        //             setTimeout(() => {
-        //                 window.location.reload()
-        //             }, 1500);
+        onSubmit: values => {
+            const data = {...values}
 
-        //         })
-        //         .catch(e => {
-        //             enqueueSnackbar(e, {
-        //                 anchorOrigin: {
-        //                     vertical: 'top',
-        //                     horizontal: 'right',
-        //                 },
-        //                 variant: 'error',
-        //             }
-        //             )
-        //         })
-
-
-        // }
+            addOutletDetails(data, dealer_id)
+            .then(res => {
+                enqueueSnackbar(res, {
+                    anchorOrigin: {
+                      vertical: 'top',
+                      horizontal: 'right',
+                    },
+                    variant: 'success',
+                  });
+                setTimeout(() => {
+                    window.location.reload()
+                },1500);
+            })
+            .catch(e => {
+                console.log(e);
+            })
+        }
     });
     const inputProps = {
         direction: "column",
@@ -218,6 +209,7 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         name="land_type"
                                         value={values.land_type}
                                         readOnly={readOnly}
+                                        disabled={readOnly}
                                         error={errors.land_type}
                                         helperText={errors.land_type}
                                     >
@@ -255,6 +247,7 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         name="outlet_operated_by"
                                         value={values.outlet_operated_by}
                                         readOnly={readOnly}
+                                        disabled={readOnly}
                                         error={errors.outlet_operated_by}
                                         helperText={errors.outlet_operated_by}
                                     >
@@ -271,6 +264,7 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         name="relation_type"
                                         value={values.relation_type}
                                         readOnly={readOnly}
+                                        disabled={readOnly}
                                         error={errors.relation_type}
                                         helperText={errors.relation_type}
                                     />

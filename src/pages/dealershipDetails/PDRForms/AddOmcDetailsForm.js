@@ -21,6 +21,9 @@ import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker
 } from '@material-ui/pickers';
+import { addOmcDetails, getOmcDetailsById } from '../../../services/PDReport.services';
+import moment from 'moment';
+import { useMount } from 'react-use';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -67,8 +70,12 @@ const useStyles = makeStyles((theme) => ({
 const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
     const [loading, setLoading] = useState(false)
-    const [selectedDate, setSelectedDate] = useState()
-
+    const [executedDate, setExecutedDate] = useState()
+    const [validDate, setValidDate] = useState()
+    // const [data, setData] = useState()
+    // console.log(data);
+    // const formData = data? data[0] : data
+    // console.log(formData);
 
     const handleEdit = () => {
         setReadOnly(!readOnly)
@@ -76,53 +83,45 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
     const handleClose = () => {
         callback();
     };
-    const handleDateChange = (date) => {
-        setSelectedDate(date)
+    const handleExecutedDateChange = (date) => {
+        setExecutedDate(date)
         // handleDate(date)
+    }
+    const handleValidDateChange = (date) => {
+        setValidDate(date)
     }
     const { enqueueSnackbar } = useSnackbar();
     const classes = useStyles()
 
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
-        initialValues: {
-            ...data,
-        },
+        initialValues:{ ...data[0]},
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
-            transport_name: Yup.string().required('Please enter transporter name'),
-
+            // transport_name: Yup.string().required('Please enter transporter name'),
         }),
-        // onSubmit: values => {
-        //     updateFleetOperator(values, dealer_id, data.id)
-        //         .then(res => {
-        //             console.log(res)
-        //             enqueueSnackbar(res, {
-        //                 anchorOrigin: {
-        //                     vertical: 'top',
-        //                     horizontal: 'right',
-        //                 },
-        //                 variant: 'success',
-        //             }
-        //             )
-        //             setTimeout(() => {
-        //                 window.location.reload()
-        //             }, 1500);
+        onSubmit: values => {
+            const executed_date = moment(executedDate).format('DD-MM-YYYY');
+            const valid_date = moment(validDate).format('DD-MM-YYYY');
+            const data = { ...values, agreement_executed_on: executed_date, agreement_valid_till: valid_date };
 
-        //         })
-        //         .catch(e => {
-        //             enqueueSnackbar(e, {
-        //                 anchorOrigin: {
-        //                     vertical: 'top',
-        //                     horizontal: 'right',
-        //                 },
-        //                 variant: 'error',
-        //             }
-        //             )
-        //         })
-
-
-        // }
+            addOmcDetails(data ,dealer_id)
+            .then(res => {
+                enqueueSnackbar(res, {
+                    anchorOrigin: {
+                      vertical: 'top',
+                      horizontal: 'right',
+                    },
+                    variant: 'success',
+                  });
+                setTimeout(() => {
+                    window.location.reload()
+                },1500);
+            })
+            .catch(e => {
+                console.log(e);
+            })
+        }
     });
     const inputProps = {
         direction: "column",
@@ -168,10 +167,10 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                                         {...inputProps}
                                         labelText="Sales officer name"
                                         name="sales_officer_name"
-                                        value={values.id}
+                                        value={values.sales_officer_name}
                                         readOnly={readOnly}
-                                        error={errors.id}
-                                        helperText={errors.id}
+                                        error={errors.sales_officer_name}
+                                        helperText={errors.sales_officer_name}
                                     />
                                 </Grid>
                                 <Grid item md={6}>
@@ -179,10 +178,10 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                                         {...inputProps}
                                         labelText="Sales officer mobile"
                                         name="sales_officer_mobile"
-                                        value={values.id}
+                                        value={values.sales_officer_mobile}
                                         readOnly={readOnly}
-                                        error={errors.id}
-                                        helperText={errors.id}
+                                        error={errors.sales_officer_mobile}
+                                        helperText={errors.sales_officer_mobile}
                                     />
                                 </Grid>
                             </Grid>
@@ -196,14 +195,16 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                                                 hideTabs={true}
                                                 variant='inline'
                                                 inputVariant='outlined'
-                                                format='MM/dd/yyy'
+                                                readOnly={readOnly}
+                                                disabled={readOnly}
+                                                format='MM-dd-yyyy'
                                                 animateYearScrolling={true}
                                                 invalidDateMessage='Invalid Date Format'
                                                 margin='normal'
                                                 id='date-picker'
                                                 autoOk={true}
-                                                value={selectedDate}
-                                                onChange={handleDateChange}
+                                                value={values.agreement_executed_on}
+                                                onChange={handleExecutedDateChange}
                                                 keyboardButtonProps={{
                                                     'aria-label': 'change date'
                                                 }}
@@ -243,14 +244,16 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                                                 hideTabs={true}
                                                 variant='inline'
                                                 inputVariant='outlined'
-                                                format='MM/dd/yyy'
+                                                format='MM-dd-yyyy'
+                                                readOnly={readOnly}
+                                                disabled={readOnly}
                                                 animateYearScrolling={true}
                                                 invalidDateMessage='Invalid Date Format'
                                                 margin='normal'
                                                 id='date-picker'
                                                 autoOk={true}
-                                                value={selectedDate}
-                                                onChange={handleDateChange}
+                                                value={validDate}
+                                                onChange={handleValidDateChange}
                                                 keyboardButtonProps={{
                                                     'aria-label': 'change date'
                                                 }}
@@ -272,8 +275,9 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                                         {...inputProps}
                                         labelText="Outlet category"
                                         name="outlet_category"
-                                        value={values.id}
+                                        value={values.outlet_category}
                                         readOnly={readOnly}
+                                        disabled={readOnly}
                                         error={errors.id}
                                         helperText={errors.id}
                                     >

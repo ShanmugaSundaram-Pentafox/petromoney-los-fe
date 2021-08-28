@@ -179,7 +179,7 @@ const DealershipDetails = ({ currentUser, match }) => {
               <Tab label={<InfoBox active={activeTab === 4} number={5} title="Documents" />} {...tabA11yProps(4)} />
               <Tab label={<InfoBox active={activeTab === 5} number={6} title="Transports" />} {...tabA11yProps(5)} />
               <Tab label={<InfoBox active={activeTab === 6} number={7} title="Fleet Operators" />} {...tabA11yProps(6)} />
-              {/* <Tab label={<InfoBox active={activeTab === 7} number={8} title="Personal Discussion Report" />} {...tabA11yProps(7)} /> */}
+              <Tab label={<InfoBox active={activeTab === 7} number={8} title="Personal Discussion Report" />} {...tabA11yProps(7)} />
             </Tabs>
           </Collapse>
           {/* <div>
@@ -238,9 +238,9 @@ const DealershipDetails = ({ currentUser, match }) => {
         <TabPanel activeTab={activeTab} index={6}>
           <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
         </TabPanel>
-        {/* <TabPanel activeTab={activeTab} index={7}>
+        <TabPanel activeTab={activeTab} index={7}>
           <PersonalDiscussionReport id ={id} textAlign="left" currentUser={currentUser} />
-        </TabPanel> */}
+        </TabPanel>
         <SolarEnquiryForm
           dealershipId={id}
           mainApplicant={mainApplicant}

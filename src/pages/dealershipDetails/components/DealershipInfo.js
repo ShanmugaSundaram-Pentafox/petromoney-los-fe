@@ -50,8 +50,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         data.append(key, values[key]);
       })
       // console.log('Form Values >> ', values.id);
-      let pan = values?.pan ? encrypt(values.pan) : values?.pan;
-      let gst = values?.gst ? encrypt(values.gst) : values?.gst;
+      // let pan = values?.pan ? encrypt(values.pan) : values?.pan;
+      // let gst = values?.gst ? encrypt(values.gst) : values?.gst;
       setLoading(true);
       // setApiStatus({});
       fetch(`${URL.base}${URL.dealership}/${values.id}`, {

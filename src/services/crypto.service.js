@@ -2,15 +2,16 @@ import { AES } from "crypto-es/lib/aes.js";
 import { Utf8 } from "crypto-es/lib/core";
 
 export const encrypt = text => {
-  try {
-    const ciphertext = AES.encrypt(text, process.env.REACT_APP_CRYPT_KEY);
-    // console.log('>> CIPHER TEXT -- ', text, ciphertext.toString());
-    const result = ciphertext.toString();
-    return result || text;
-  } catch(e) {
-    console.log(e)
-    return text;
-  }
+  return text;
+  // try {
+  //   const ciphertext = AES.encrypt(text, process.env.REACT_APP_CRYPT_KEY);
+  //   // console.log('>> CIPHER TEXT -- ', text, ciphertext.toString());
+  //   const result = ciphertext.toString();
+  //   return result || text;
+  // } catch(e) {
+  //   console.log(e)
+  //   return text;
+  // }
 }
 
 export const decrypt = cipher => {

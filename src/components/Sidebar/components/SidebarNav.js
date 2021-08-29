@@ -20,6 +20,7 @@ import { useMount } from "react-use";
 import Badge from '@material-ui/core/Badge';
 import { connect } from 'react-redux';
 import { resetCurrentUser } from '../../../store/user/user.actions';
+import { getAllWithheldLoans } from '../../../services/withheld.services';
 
 
 const useStyles = makeStyles(theme => ({
@@ -68,7 +69,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(3)
   },
   active: {
-    padding: '6px 8px',
+    padding: '10px 8px',
     backgroundColor: 'rgba(248, 213, 138, 1)',
     color: colors.blueGrey[800],
     fontWeight: theme.typography.fontWeightMedium,
@@ -91,11 +92,19 @@ const SidebarNav = props => {
   const { pages, className, logout, ...rest } = props;
   const classes = useStyles();
   const [checked, setChecked] = React.useState(false);
+  const [withheldCount, setWithheldCount] = useState()
   const [exceptions, setExceptions] = useState([]);
   const [transException, setTransException] = useState([]);
   const [check, setCheck] = React.useState(false);
   const [checkStatus, setCheckStatus] = useState(false);
   useMount(() => {
+    getAllWithheldLoans()
+      .then((data) => {
+        setWithheldCount(data?.resolved?.length + data?.unresolved?.length)
+      })
+      .catch((e) => {
+        console.log(e);
+      });
     getAllExceptions()
       .then((data) => {
         setExceptions(data)
@@ -197,6 +206,24 @@ const SidebarNav = props => {
                 >
                   <div className={classes.icon}><BookmarkBorderIcon /></div>
                   {'Vehicle Loans'}
+                </Button>
+              </ListItem>
+              <ListItem
+                className={classes.itemSub}
+                disableGutters
+                key={'All'}
+              >
+                <Button
+                  activeClassName={classes.active}
+                  className={classes.button}
+                  component={CustomRouterLink}
+                  to={'/withheld'}
+                  exact
+                >
+                  <Badge badgeContent={withheldCount} style={{ paddingTop: 2, paddingRight: 8 }} max={999} color="primary">
+                    <div className={classes.icon}><BookmarkBorderIcon /></div>
+                    {'Withheld'}
+                  </Badge>
                 </Button>
               </ListItem>
             </Collapse>

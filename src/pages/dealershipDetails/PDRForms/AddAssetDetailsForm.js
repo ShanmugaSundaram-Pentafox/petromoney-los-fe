@@ -29,6 +29,7 @@ import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker
 } from '@material-ui/pickers';
+import { addAssetDetailsById } from '../../../services/PDReport.services';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -145,44 +146,32 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
 
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
         initialValues: {
-            ...data,
+            ...data[0],
         },
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
-            transport_name: Yup.string().required('Please enter transporter name'),
-
+            // transport_name: Yup.string().required('Please enter transporter name'),
         }),
-        // onSubmit: values => {
-        //     updateFleetOperator(values, dealer_id, data.id)
-        //         .then(res => {
-        //             console.log(res)
-        //             enqueueSnackbar(res, {
-        //                 anchorOrigin: {
-        //                     vertical: 'top',
-        //                     horizontal: 'right',
-        //                 },
-        //                 variant: 'success',
-        //             }
-        //             )
-        //             setTimeout(() => {
-        //                 window.location.reload()
-        //             }, 1500);
-
-        //         })
-        //         .catch(e => {
-        //             enqueueSnackbar(e, {
-        //                 anchorOrigin: {
-        //                     vertical: 'top',
-        //                     horizontal: 'right',
-        //                 },
-        //                 variant: 'error',
-        //             }
-        //             )
-        //         })
-
-
-        // }
+        onSubmit: values => {
+            const data = {...values}
+            addAssetDetailsById(data ,dealer_id)
+            .then(res => {
+                enqueueSnackbar(res, {
+                    anchorOrigin: {
+                      vertical: 'top',
+                      horizontal: 'right',
+                    },
+                    variant: 'success',
+                  });
+                setTimeout(() => {
+                    window.location.reload()
+                },1500);
+            })
+            .catch(e => {
+                console.log(e);
+            })
+        }
     });
     const inputProps = {
         direction: "column",
@@ -206,8 +195,8 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                         select
                                         labelText="Assets"
                                         name="assets"
-                                        value={values.outlet_address}
                                         readOnly={readOnly}
+                                        disabled={readOnly}
                                         error={errors.outlet_address}
                                         helperText={errors.outlet_address}
                                     >
@@ -218,9 +207,132 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                         <option>CV</option>
                                     </TextInput>
                                 </Grid>
-                               
                             </Grid>
                         </form>
+                        <Grid container spacing={2}>
+                                <Grid item md={6}>
+                                    <TextInput
+                                        {...inputProps}
+                                        labelText="Land Address"
+                                        name="land_address"
+                                        value={values.land_address}
+                                        readOnly={readOnly}
+                                        disabled={readOnly}
+                                        error={errors.land_address}
+                                        helperText={errors.land_address}
+                                    >
+                                    </TextInput>
+                                </Grid>
+                                <Grid item md={6}>    
+                                    <TextInput
+                                        {...inputProps}
+                                        money
+                                        labelText="Land Value"
+                                        name="land_value"
+                                        value={values.land_value}
+                                        readOnly={readOnly}
+                                        disabled={readOnly}
+                                        error={errors.land_value}
+                                        helperText={errors.land_value}
+                                    >
+                                    </TextInput>
+                                </Grid>
+                                <Grid item md={6}>
+                                    <TextInput
+                                        {...inputProps}
+                                        labelText="Building Address"
+                                        name="building_address"
+                                        value={values.building_address}
+                                        readOnly={readOnly}
+                                        disabled={readOnly}
+                                        error={errors.building_address}
+                                        helperText={errors.building_address}
+                                    >
+                                    </TextInput>
+                                </Grid>
+                                <Grid item md={6}>    
+                                    <TextInput
+                                        {...inputProps}
+                                        money
+                                        labelText="Building Value"
+                                        name="building_value"
+                                        value={values.building_value}
+                                        readOnly={readOnly}
+                                        disabled={readOnly}
+                                        error={errors.building_value}
+                                        helperText={errors.building_value}
+                                    >
+                                    </TextInput>
+                                </Grid>
+                                <Grid item md={6}>
+                                    <TextInput
+                                        {...inputProps}
+                                        labelText="Gold Quantity"
+                                        name="gold_quantity"
+                                        placeholder="in grams"
+                                        value={values.gold_quantity}
+                                        readOnly={readOnly}
+                                        disabled={readOnly}
+                                        error={errors.gold_quantity}
+                                        helperText={errors.gold_quantity}
+                                    >
+                                    </TextInput>
+                                </Grid>
+                                <Grid item md={6}>    
+                                    <TextInput
+                                        {...inputProps}
+                                        money
+                                        labelText="Gold Value"
+                                        name="gold_value"
+                                        value={values.gold_value}
+                                        readOnly={readOnly}
+                                        disabled={readOnly}
+                                        error={errors.gold_value}
+                                        helperText={errors.gold_value}
+                                    >
+                                    </TextInput>
+                                </Grid>
+                                <Grid item md={6}>
+                                    <TextInput
+                                        {...inputProps}
+                                        labelText="Car Model"
+                                        name="car_model"
+                                        value={values.car_model}
+                                        readOnly={readOnly}
+                                        disabled={readOnly}
+                                        error={errors.car_model}
+                                        helperText={errors.car_model}
+                                    >
+                                    </TextInput>
+                                </Grid>
+                                <Grid item md={6}>    
+                                    <TextInput
+                                        {...inputProps}
+                                        labelText="Car Manufacture Year"
+                                        name="car_yom"
+                                        value={values.car_yom}
+                                        readOnly={readOnly}
+                                        disabled={readOnly}
+                                        error={errors.car_yom}
+                                        helperText={errors.car_yom}
+                                    >
+                                    </TextInput>
+                                </Grid>
+                                <Grid item md={6}>    
+                                    <TextInput
+                                        {...inputProps}
+                                        money
+                                        labelText="Car Value"
+                                        name="car_value"
+                                        value={values.car_value}
+                                        readOnly={readOnly}
+                                        disabled={readOnly}
+                                        error={errors.car_value}
+                                        helperText={errors.car_value}
+                                    >
+                                    </TextInput>
+                                </Grid>
+                        </Grid>
                     </Box >
                 </div>
             </div>

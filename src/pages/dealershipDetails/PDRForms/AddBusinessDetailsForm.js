@@ -33,6 +33,11 @@ const useStyles = makeStyles((theme) => ({
         zIndex: 0,
         boxShadow: '0 1px 4px -3px #333'
     },
+    actionButtonsWrapper: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        padding: '12px 16px'
+    },
     sidePanelFormWrapper: {
         position: 'relative',
         display: 'flex',

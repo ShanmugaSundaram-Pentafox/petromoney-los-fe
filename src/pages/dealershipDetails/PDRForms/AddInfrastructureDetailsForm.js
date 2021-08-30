@@ -22,6 +22,7 @@ import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded'
 import { useSnackbar } from 'notistack';
 import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
 import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
+import { addInfrastructureDetails } from '../../../services/PDReport.services';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -133,10 +134,10 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
         }
     }
     const saveNewTanker = () => {
-        console.log('Income api body - ', apiData)
+        // console.log('Income api body - ', apiData)
         if (Object.keys(apiData).length < 3) return null;
         const objBody = {
-            user_id: currentUser.id, ...apiData
+            user_id: currentUser.id, ...apiData, ...data
         }
         // postDealershipIncomeById(id, objBody)
         //     .then(res => {
@@ -153,44 +154,33 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
 
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
         initialValues: {
-            ...data,
+            ...data[0],
         },
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
-            transport_name: Yup.string().required('Please enter transporter name'),
+            // transport_name: Yup.string().required('Please enter transporter name'),
 
         }),
-        // onSubmit: values => {
-        //     updateFleetOperator(values, dealer_id, data.id)
-        //         .then(res => {
-        //             console.log(res)
-        //             enqueueSnackbar(res, {
-        //                 anchorOrigin: {
-        //                     vertical: 'top',
-        //                     horizontal: 'right',
-        //                 },
-        //                 variant: 'success',
-        //             }
-        //             )
-        //             setTimeout(() => {
-        //                 window.location.reload()
-        //             }, 1500);
-
-        //         })
-        //         .catch(e => {
-        //             enqueueSnackbar(e, {
-        //                 anchorOrigin: {
-        //                     vertical: 'top',
-        //                     horizontal: 'right',
-        //                 },
-        //                 variant: 'error',
-        //             }
-        //             )
-        //         })
-
-
-        // }
+        onSubmit: values => {
+            const data = {...values}
+            addInfrastructureDetails(data ,dealer_id)
+            .then(res => {
+                enqueueSnackbar(res, {
+                    anchorOrigin: {
+                      vertical: 'top',
+                      horizontal: 'right',
+                    },
+                    variant: 'success',
+                  });
+                setTimeout(() => {
+                    window.location.reload()
+                },1500);
+            })
+            .catch(e => {
+                console.log(e);
+            })
+        }
     });
     const inputProps = {
         direction: "column",
@@ -262,6 +252,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                                         name="is_solar"
                                         value={values.is_solar}
                                         readOnly={readOnly}
+                                        disabled={readOnly}
                                         error={errors.is_solar}
                                         helperText={errors.is_solar}
                                     >
@@ -367,6 +358,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                                                                     label="Tanker Type"
                                                                     name="tanker_type"
                                                                     value={apiData.tanker_type}
+                                                                    disabled={readOnly}
                                                                     onChange={onTextChange}
                                                                 >
                                                                     <option>Owned</option>

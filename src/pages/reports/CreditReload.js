@@ -21,6 +21,7 @@ import { CircularProgress } from '@material-ui/core';
 import { Grid } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
 import ReplayIcon from '@material-ui/icons/Replay';
+import { Tooltip } from '@material-ui/core';
 
 const useStyes = makeStyles((theme) => ({
     root: {
@@ -47,9 +48,8 @@ const CreditReload = () => {
           });
       })
 
-    const handleCreditReload = (data) => {
+    const handleCreditReload = () => {
         setReloadDialog(true)
-        console.log(data);
     }
 
     const handleClose = () => {
@@ -74,7 +74,9 @@ const CreditReload = () => {
                 filter: false,
                 customBodyRender: () => {
                     return (
-                        <Button variant='outlined' color='primary' className={classes.btn} startIcon={<CachedIcon fontSize='small'/>} size='small' onClick={handleCreditReload}>Reload Credit</Button>
+                        <Tooltip title='credit reload'>
+                            <Button variant='outlined' color='primary' className={classes.btn} startIcon={<CachedIcon fontSize='small'/>} size='small' onClick={handleCreditReload}>Reload Credit</Button>
+                        </Tooltip>
                     )
                 }
             }}

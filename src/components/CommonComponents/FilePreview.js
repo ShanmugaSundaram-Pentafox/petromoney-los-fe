@@ -30,11 +30,24 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const PreviewWrapper = styled.div`
-.image {
-    width: 500px;
-    height: 400px;
-    object-fit: 'cover';
-}
+    width:45vw;
+    .image {
+        width: 100%;
+        object-fit: contain;
+        }
+    .iframe-container {
+        height:72vh;
+        overflow: hidden;
+        padding-top: 45%;
+        position: relative;
+    }
+    .iframe-container iframe {
+        width:100%;
+        height:100%;
+        left: 0;
+        position: absolute;
+        top: 0;
+    }
 `;
 
 export const ViewData = ({ title, value }) => {
@@ -61,7 +74,7 @@ export const AvatarCard = ({ file, title, tooltip }) => {
                     </div>
                 </Tooltip>
             </div>
-            <FormDialog title={title} onDownload={imageModal.image} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
+            <FormDialog className={classes.dialogBox} title={title} onDownload={imageModal.image} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
                 <FilePreview data={imageModal} />
             </FormDialog>
         </>
@@ -75,7 +88,10 @@ const FilePreview = ({ data }) => {
             {
                 ['jpg', 'png', 'jpeg'].includes(data.type) ?
                     <img className="image" src={data.image} alt="image-viewer" /> :
-                    <PdfViewer file={data.image} />
+                    <div className="iframe-container">
+                        {/* <PdfViewer file={data.image} /> */}
+                        <iframe src={data.image} frameBorder="0" ></iframe>
+                    </div>
             }
         </PreviewWrapper>
     )

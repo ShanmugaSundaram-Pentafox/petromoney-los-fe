@@ -97,8 +97,8 @@ const Docs = ({ data }) => {
         <Button onClick={() => setImageModal({ open: true, image: file.file_url, type: (file.file_url?.split("/")[file.file_url?.split("/").length - 1].split('.'))[1] })}>
           <a style={{ display: 'inline-block', borderRadius: 4, lineHeight: 1, marginRight: 8, marginBottom: 8, padding: 8, backgroundColor: '#f0f0f0' }}>{getFileNameFromUrl(file?.file_url)} </a>
         </Button>
-        <FormDialog title={"File Preview"} onDownload={imageModal.image} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
-          <FilePreview data={imageModal} />
+        <FormDialog  title={"File Preview"} onDownload={imageModal.image} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
+          <FilePreview  data={imageModal} />
         </FormDialog>
       </div>
 

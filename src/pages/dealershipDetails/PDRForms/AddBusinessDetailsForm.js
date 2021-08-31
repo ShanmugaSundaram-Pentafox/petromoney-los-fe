@@ -213,7 +213,6 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                                         <>
                                             <Grid item md={6}>
                                                 <TextInput
-                                                    select
                                                     {...inputProps}
                                                     labelText="Proprietor name"
                                                     name="proprietor_name"
@@ -226,7 +225,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                                             <Grid item md={6}>
                                                 <TextInput
                                                     {...inputProps}
-                                                    labelText="ProPrietor mobile"
+                                                    labelText="Proprietor mobile"
                                                     name="proprietor_mobile"
                                                     value={values.proprietor_mobile}
                                                     readOnly={readOnly}

@@ -94,7 +94,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
     const classes = useStyles()
 
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
-        initialValues:{ ...data[0]},
+        initialValues:{ ...data},
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({

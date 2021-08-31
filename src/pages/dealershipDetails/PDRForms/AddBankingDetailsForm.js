@@ -280,7 +280,6 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                                         {...inputProps}
                                         labelText="Is Secured"
                                         name="is_secured"
-                                        type="number"
                                         value={values.is_secured}
                                         readOnly={readOnly}
                                         error={errors.is_secured}
@@ -289,7 +288,7 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                                 </Grid>
                                 <Grid item md={12}>
                                     <Fragment className={classes.table}>
-                                        <Typography className={classes.subTitle} variant="h4">Tanker Details</Typography>
+                                        {/* <Typography className={classes.subTitle} variant="h4">Tanker Details</Typography>
                                         <Grid md={6}>
                                             <TextInput
                                                 {...inputProps}
@@ -301,8 +300,8 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                                                 error={errors.no_of_tanker}
                                                 helperText={errors.no_of_tanker}
                                             />
-                                        </Grid>
-                                        <Table className={classes.table} size="small" aria-label="Income">
+                                        </Grid> */}
+                                        {/* <Table className={classes.table} size="small" aria-label="Income">
                                             <TableHead>
                                                 <TableRow>
                                                     <TableCell>Tanker  Type</TableCell>
@@ -435,7 +434,7 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                                                     </TableCell>
                                                 </TableRow>
                                             </TableBody>
-                                        </Table>
+                                        </Table> */}
                                     </Fragment>
                                 </Grid>
 

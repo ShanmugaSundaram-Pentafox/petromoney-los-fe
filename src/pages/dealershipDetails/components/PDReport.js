@@ -72,7 +72,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
     const [openOutletForm, setOpenOutletForm] = useState(false)
     const [openInfrastructureForm, setOpenInfrastructureForm] = useState(false)
     const [openAssetForm, setOpenAssetForm] = useState(false)
-    const [openBankingForm,setOpenBankingForm] =useState(false)
+    const [openBankingForm, setOpenBankingForm] = useState(false)
     const [omcData, setOmcData] = useState()
     const [outletData, setOutletData] = useState()
     const [infrastructureDetails, setInfrastructureDetails] = useState()
@@ -91,15 +91,15 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
     useMount(() => {
         getOmcDetailsById(id)
             .then(data => {
-                setOmcData(data)
+                setOmcData(data[0])
             })
             .catch((e) => {
                 console.log(e);
             })
-        
+
         getOutletDetailsById(id)
             .then(data => {
-                setOutletData(data)
+                setOutletData(data[0])
                 console.log(data);
 
             })
@@ -109,21 +109,21 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
 
         getInfrastructureDetailsById(id)
             .then(data => {
-                setInfrastructureDetails(data)
-            })
-            .catch((e) => {
-                console.log(e);
-            })
-        
-        getAssetDetailsById (id)
-            .then(data => {
-                setAssetDetails(data)
+                setInfrastructureDetails(data[0])
             })
             .catch((e) => {
                 console.log(e);
             })
 
-        
+        getAssetDetailsById(id)
+            .then(data => {
+                setAssetDetails(data[0])
+            })
+            .catch((e) => {
+                console.log(e);
+            })
+
+
     })
 
     return (
@@ -197,7 +197,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                 onClose={() => setOpenOmcForm(false)}
                 variant="temporary"
             >
-                <AddOmcDetailsForm dealer_id={id} isEdit={omcData? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={omcData}/>
+                <AddOmcDetailsForm dealer_id={id} isEdit={omcData ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={omcData} />
             </Drawer>
             <Drawer
                 anchor="right"
@@ -205,7 +205,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                 onClose={() => setOpenOutletForm(false)}
                 variant="temporary"
             >
-                <AddNewOutletDetailsForm dealer_id={id} isEdit={outletData? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={outletData}/>
+                <AddNewOutletDetailsForm dealer_id={id} isEdit={outletData ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={outletData} />
             </Drawer>
             <Drawer
                 anchor="right"
@@ -221,7 +221,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                 onClose={() => setOpenInfrastructureForm(false)}
                 variant="temporary"
             >
-                <AddInfrastructureDetailsForm dealer_id={id} isEdit={infrastructureDetails? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={infrastructureDetails}/>
+                <AddInfrastructureDetailsForm dealer_id={id} isEdit={infrastructureDetails ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={infrastructureDetails} />
             </Drawer>
             <Drawer
                 anchor="right"
@@ -229,7 +229,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                 onClose={() => setOpenAssetForm(false)}
                 variant="temporary"
             >
-                <AddAssetDetailsForm dealer_id={id} isEdit={assetDetails? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={assetDetails}/>
+                <AddAssetDetailsForm dealer_id={id} isEdit={assetDetails ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={assetDetails} />
             </Drawer>
             <Drawer
                 anchor="right"

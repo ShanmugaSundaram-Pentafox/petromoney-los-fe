@@ -79,7 +79,7 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
 
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
         initialValues: {
-            ...data[0],
+            ...data,
         },
         validateOnChange: false,
         validateOnBlur: true,

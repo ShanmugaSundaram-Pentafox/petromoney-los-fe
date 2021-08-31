@@ -154,7 +154,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
 
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
         initialValues: {
-            ...data[0],
+            ...data,
         },
         validateOnChange: false,
         validateOnBlur: true,

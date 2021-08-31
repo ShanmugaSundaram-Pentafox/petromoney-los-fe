@@ -44,6 +44,18 @@ const useStyles = makeStyles(() => ({
       borderColor: '#2CAE66',
       boxShadow: 'none'
     }
+  },
+  number: {
+    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0
+    }
+  },
+  input: {
+    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0
+    }
   }
 }));
 
@@ -56,7 +68,7 @@ const Login = ({ setCurrentUser }) => {
     initialValues: {},
     validateOnChange: false,
     validationSchema: Yup.object().shape({
-      mobile: Yup.number().required("Enter mobile number"),
+      mobile: Yup.number().test("maxDigits","Mobile Number mush have 10 digits", (number) => String(number).length === 10).required("Enter mobile number"),
       password: Yup.string().required("Enter password"),
     }),
     onSubmit: values => {
@@ -103,6 +115,8 @@ const Login = ({ setCurrentUser }) => {
 
         <form onSubmit={handleSubmit}>
           <TextField
+            className={classes.number}
+            inputProps={{className: classes.input}}
             name="mobile"
             label="Mobile Number"
             type="number"

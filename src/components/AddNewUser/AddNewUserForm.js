@@ -87,12 +87,10 @@ const AddNewUserForm = ({ callback, action }) => {
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       role_id: Yup.number().required('Choose Proper User Role'),
-      first_name: Yup.string().required('Enter first name'),
-      last_name: Yup.string().min(1).required('Enter last name'),
-      mobile: Yup.number()
-        .min(10, 'Enter valid mobile number')
-        .required('Enter Mobile number'),
-      email: Yup.string().email('Enter valid email'),
+      first_name: Yup.string().matches(/^[A-Za-z]+$/,"Enter valid name").required('Enter first name'),
+      last_name: Yup.string().min(1).matches(/^[A-Za-z]+$/,"Enter valid name").required('Enter last name'),
+      mobile: Yup.string().matches(/^\d{10}$/,"Enter valid mobile number").required("Enter mobile number"),
+      email: Yup.string().email('Enter valid email').required('Enter email'),
       password: Yup.string(),
     }),
     onSubmit: (formData) => {

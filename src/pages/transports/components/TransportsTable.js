@@ -70,7 +70,7 @@ const TransportsTable = ({ transports, setAllTransports, onRowClick }) => {
         label: "Mobile Number",
         name: "mobile",
         options: {
-          filter: true,
+          filter: false,
           sort: true,
         },
       },

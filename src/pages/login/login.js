@@ -56,7 +56,7 @@ const Login = ({ setCurrentUser }) => {
     initialValues: {},
     validateOnChange: false,
     validationSchema: Yup.object().shape({
-      mobile: Yup.number().required("Enter mobile number"),
+      mobile: Yup.string().matches(/^\d{10}$/,"Enter valid mobile number").required("Enter mobile number"),
       password: Yup.string().required("Enter password"),
     }),
     onSubmit: values => {
@@ -105,11 +105,10 @@ const Login = ({ setCurrentUser }) => {
           <TextField
             name="mobile"
             label="Mobile Number"
-            type="number"
             fullWidth
             className={classes.textFieldStyle}
             onChange={handleChange}
-            value={String(values.mobile)}
+            value={values.mobile}
             error={errors.mobile}
             helperText={errors.mobile}
           />

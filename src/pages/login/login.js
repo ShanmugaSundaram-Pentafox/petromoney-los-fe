@@ -68,7 +68,7 @@ const Login = ({ setCurrentUser }) => {
     initialValues: {},
     validateOnChange: false,
     validationSchema: Yup.object().shape({
-      mobile: Yup.number().test("maxDigits","Mobile Number mush have 10 digits", (number) => String(number).length === 10).required("Enter mobile number"),
+      mobile: Yup.number().required("Enter mobile number").test("maxDigits","Mobile Number mush have 10 digits", (number) => String(number).length === 10),
       password: Yup.string().required("Enter password"),
     }),
     onSubmit: values => {

@@ -66,7 +66,7 @@ export const AvatarCard = ({ file, title, tooltip }) => {
     const [imageModal, setImageModal] = useState({})
     return (
         <>
-            <div onClick={() => setImageModal({ open: true, image: file, type: (file?.split("/")[file?.split("/").length - 1]?.split('.'))[1] })} >
+            <div onClick={() => setImageModal({ open: true, image: file, type: file.endsWith('.pdf') })} >
                 <Tooltip title={tooltip}>
                     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                         <Avatar src={`${file}`} />
@@ -85,13 +85,20 @@ export const AvatarCard = ({ file, title, tooltip }) => {
 const FilePreview = ({ data }) => {
     return (
         <PreviewWrapper>
-            {
+            {/* {
                 ['jpg', 'png', 'jpeg'].includes(data.type) ?
                     <img className="image" src={data.image} alt="image-viewer" /> :
                     <div className="iframe-container">
-                        {/* <PdfViewer file={data.image} /> */}
+                        <PdfViewer file={data.image} /> 
                         <iframe src={data.image} frameBorder="0" ></iframe>
                     </div>
+            } */}
+            {
+                data.type ?
+                    <div className="iframe-container">
+                        <iframe src={data.image} frameBorder="0" ></iframe>
+                    </div> :
+                    <img className="image" src={data.image} alt="image-viewer" />
             }
         </PreviewWrapper>
     )

@@ -72,10 +72,6 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
     const [loading, setLoading] = useState(false)
     const [executedDate, setExecutedDate] = useState()
     const [validDate, setValidDate] = useState()
-    // const [data, setData] = useState()
-    // console.log(data);
-    // const formData = data? data[0] : data
-    // console.log(formData);
 
     const handleEdit = () => {
         setReadOnly(!readOnly)
@@ -85,7 +81,6 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
     };
     const handleExecutedDateChange = (date) => {
         setExecutedDate(date)
-        // handleDate(date)
     }
     const handleValidDateChange = (date) => {
         setValidDate(date)
@@ -94,7 +89,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
     const classes = useStyles()
 
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
-        initialValues:{ ...data},
+        initialValues: { ...data },
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
@@ -105,22 +100,22 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
             const valid_date = moment(validDate).format('DD-MM-YYYY');
             const data = { ...values, agreement_executed_on: executed_date, agreement_valid_till: valid_date };
 
-            addOmcDetails(data ,dealer_id)
-            .then(res => {
-                enqueueSnackbar(res, {
-                    anchorOrigin: {
-                      vertical: 'top',
-                      horizontal: 'right',
-                    },
-                    variant: 'success',
-                  });
-                setTimeout(() => {
-                    window.location.reload()
-                },1500);
-            })
-            .catch(e => {
-                console.log(e);
-            })
+            addOmcDetails(data, dealer_id)
+                .then(res => {
+                    enqueueSnackbar(res, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'success',
+                    });
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1500);
+                })
+                .catch(e => {
+                    console.log(e);
+                })
         }
     });
     const inputProps = {
@@ -139,29 +134,6 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                     <Box>
                         <form onSubmit={handleSubmit}>
                             <Grid container spacing={2}>
-                                {/* <Grid item md={6}>
-                                    <TextInput
-                                        select
-                                        {...inputProps}
-                                        labelText="OMC"
-                                        name="omc"
-                                        value={values.id}
-                                        readOnly={readOnly}
-                                        error={errors.id}
-                                        helperText={errors.id}
-                                    />
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        labelText="Region"
-                                        name="omc_region"
-                                        value={values.id}
-                                        readOnly={readOnly}
-                                        error={errors.id}
-                                        helperText={errors.id}
-                                    />
-                                </Grid> */}
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
@@ -184,91 +156,6 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                                         helperText={errors.sales_officer_mobile}
                                     />
                                 </Grid>
-                            </Grid>
-                            {/* <Typography className={classes.subTitle} variant="h5"><div>OMC Agreement Details</div></Typography> */}
-                            <Grid container spacing={2}>
-                                <Grid item md={6}>
-                                    <InputWrapper direction top>
-                                        <label className="input-label">Agreement executed on</label>
-                                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                            <KeyboardDatePicker
-                                                hideTabs={true}
-                                                variant='inline'
-                                                inputVariant='outlined'
-                                                readOnly={readOnly}
-                                                disabled={readOnly}
-                                                format='MM-dd-yyyy'
-                                                animateYearScrolling={true}
-                                                invalidDateMessage='Invalid Date Format'
-                                                margin='normal'
-                                                id='date-picker'
-                                                autoOk={true}
-                                                value={values.agreement_executed_on}
-                                                onChange={handleExecutedDateChange}
-                                                keyboardButtonProps={{
-                                                    'aria-label': 'change date'
-                                                }}
-                                                PopoverProps={{
-                                                    anchorOrigin: {
-                                                        vertical: 'bottom',
-                                                        horizontal: 'center',
-                                                    }
-                                                }}
-                                            />
-                                        </MuiPickersUtilsProvider>
-                                    </InputWrapper>
-                                    {/* <TextInput
-                                        {...inputProps}
-                                        labelText="Agreement Executed on"
-                                        name="agreement_executed_on"
-                                        value={values.id}
-                                        readOnly={readOnly}
-                                        error={errors.id}
-                                        helperText={errors.id}
-                                    /> */}
-                                </Grid>
-                                <Grid item md={6}>
-                                    {/* <TextInput
-                                        {...inputProps}
-                                        labelText="Agreement valid till"
-                                        name="agreement_validity"
-                                        value={values.id}
-                                        readOnly={readOnly}
-                                        error={errors.id}
-                                        helperText={errors.id}
-                                    /> */}
-                                    <InputWrapper direction top>
-                                        <label className="input-label">Agreement valid till</label>
-                                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                            <KeyboardDatePicker
-                                                hideTabs={true}
-                                                variant='inline'
-                                                inputVariant='outlined'
-                                                format='MM-dd-yyyy'
-                                                readOnly={readOnly}
-                                                disabled={readOnly}
-                                                animateYearScrolling={true}
-                                                invalidDateMessage='Invalid Date Format'
-                                                margin='normal'
-                                                id='date-picker'
-                                                autoOk={true}
-                                                value={validDate}
-                                                onChange={handleValidDateChange}
-                                                keyboardButtonProps={{
-                                                    'aria-label': 'change date'
-                                                }}
-                                                PopoverProps={{
-                                                    anchorOrigin: {
-                                                        vertical: 'bottom',
-                                                        horizontal: 'center',
-                                                    }
-                                                }}
-                                            />
-                                        </MuiPickersUtilsProvider>
-                                    </InputWrapper>
-                                </Grid>
-                            </Grid>
-                            <Grid container spacing={2}>
                                 <Grid item md={6}>
                                     <TextInput
                                         select
@@ -286,22 +173,65 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                                         <option value="C">C</option>
                                     </TextInput>
                                 </Grid>
-                            </Grid>
-
-                            {/* <Grid container spacing={2}>
                                 <Grid item md={6}>
-                                    <TextInput
-                                        select
-                                        {...inputProps}
-                                        labelText="Vintage of the outlet"
-                                        name="outlet_vintage"
-                                        value={values.id}
-                                        readOnly={readOnly}
-                                        error={errors.id}
-                                        helperText={errors.id}
-                                    />
+                                    <label className="input-label">Agreement executed on</label>
+                                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                        <KeyboardDatePicker
+                                            hideTabs={true}
+                                            variant='inline'
+                                            inputVariant='outlined'
+                                            readOnly={readOnly}
+                                            disabled={readOnly}
+                                            format='dd-MM-yyyy'
+                                            animateYearScrolling={true}
+                                            invalidDateMessage='Invalid Date Format'
+                                            margin='normal'
+                                            id='date-picker'
+                                            autoOk={true}
+                                            value={executedDate}
+                                            onChange={handleExecutedDateChange}
+                                            keyboardButtonProps={{
+                                                'aria-label': 'change date'
+                                            }}
+                                            PopoverProps={{
+                                                anchorOrigin: {
+                                                    vertical: 'bottom',
+                                                    horizontal: 'center',
+                                                }
+                                            }}
+                                        />
+                                    </MuiPickersUtilsProvider>
                                 </Grid>
-                            </Grid> */}
+                                <Grid item md={6}>
+                                    <label className="input-label">Agreement valid till</label>
+                                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                        <KeyboardDatePicker
+                                            hideTabs={true}
+                                            variant='inline'
+                                            inputVariant='outlined'
+                                            format='dd-MM-yyyy'
+                                            readOnly={readOnly}
+                                            disabled={readOnly}
+                                            animateYearScrolling={true}
+                                            invalidDateMessage='Invalid Date Format'
+                                            margin='normal'
+                                            id='date-picker'
+                                            autoOk={true}
+                                            value={validDate}
+                                            onChange={handleValidDateChange}
+                                            keyboardButtonProps={{
+                                                'aria-label': 'change date'
+                                            }}
+                                            PopoverProps={{
+                                                anchorOrigin: {
+                                                    vertical: 'bottom',
+                                                    horizontal: 'center',
+                                                }
+                                            }}
+                                        />
+                                    </MuiPickersUtilsProvider>
+                                </Grid>
+                            </Grid>
                         </form>
                     </Box >
                 </div>
@@ -333,7 +263,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
 
 
     )

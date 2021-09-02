@@ -147,7 +147,7 @@ export const addInfrastructureDetails = (data, id) => {
 
 export const addAssetDetailsById = (data, id) => {
     return new Promise((resolve, reject) => {
-        apiCall(`asset_details/${id}`, {
+        apiCall(`dealership/${id}/assets`, {
           method: 'POST',
           body: data,
         })

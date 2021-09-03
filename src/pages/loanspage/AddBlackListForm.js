@@ -94,7 +94,7 @@ const AddBlackListForm = ({ data, callback }) => {
     })
 
     const handleRemarkChange = (newValue, actionMeta) => {
-        if (remarks.includes(newValue?.label)) {
+        if (remarks?.includes(newValue?.label)) {
             setNewRemarks(newValue?.label)
         }
         else {
@@ -104,7 +104,7 @@ const AddBlackListForm = ({ data, callback }) => {
     const handleSave = () => {
         const res = value ? value : newRemarks;
         if (!value) {
-            updateRemarks(dealerID.label, res)
+            updateRemarks(dealerID?.label, res)
                 .then(res => {
                     enqueueSnackbar(res, {
                         anchorOrigin: {
@@ -176,6 +176,7 @@ const AddBlackListForm = ({ data, callback }) => {
                         <form>
                             <Grid container spacing={2}>
                                 <Grid item md={7}>
+                                    <label style={{ marginBottom: 8 }}>Dealership ID</label>
                                     <Select
                                         isClearable
                                         onChange={setDealerID}

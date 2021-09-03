@@ -12,6 +12,7 @@ import { addNewRemarks, AddNewRemarks, getAllWithheldRemarks, updateRemarks } fr
 import CreatableSelect from 'react-select/creatable';
 import Select from 'react-select';
 import { useSnackbar } from 'notistack';
+import { getAllDealership } from '../../services/dealerships.service';
 
 
 
@@ -64,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-const AddBlackListForm = ({ data, callback }) => {
+const AddBlackListForm = ({ callback }) => {
     const [newRemarks, setNewRemarks] = useState()
     const [dealerID, setDealerID] = useState()
     const [remarks, setRemarks] = useState()
@@ -73,16 +74,26 @@ const AddBlackListForm = ({ data, callback }) => {
     const classes = useStyles()
     const { enqueueSnackbar } = useSnackbar();
 
-    useEffect(() => {
-        if (data?.length) {
-            setList(data.map(({ id }) => ({
-                label: id,
-                value: id
-            })))
-        }
-    }, [data])
+    // useEffect(() => {
+    //     if (data?.length) {
+    //         setList(data.map(({ id }) => ({
+    //             label: id,
+    //             value: id
+    //         })))
+    //     }
+    // }, [data])
 
     useMount(() => {
+        getAllDealership()
+            .then((data) => {
+                setList(data.map(({ id }) => ({
+                    label: id,
+                    value: id
+                })))
+            })
+            .catch((e) => {
+                console.log(e);
+            })
         getAllWithheldRemarks()
             .then((data) => {
                 setRemarks(data)
@@ -98,12 +109,12 @@ const AddBlackListForm = ({ data, callback }) => {
             setNewRemarks(newValue?.label)
         }
         else {
-            setValue(newValue?.label)
+            setValue(newValue?.value)
         }
     };
     const handleSave = () => {
         const res = value ? value : newRemarks;
-        if (!value) {
+        if (typeof res === "number") {
             updateRemarks(dealerID?.label, res)
                 .then(res => {
                     enqueueSnackbar(res, {

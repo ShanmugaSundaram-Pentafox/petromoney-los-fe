@@ -202,7 +202,7 @@ const UnresolvedTable = ({ data }) => {
                 onClose={() => setOpenModal(false)}
                 variant="temporary"
             >
-                <AddBlackListForm callback={() => setOpenModal(false)} data={data} />
+                <AddBlackListForm callback={() => setOpenModal(false)} />
             </Drawer>
         </>
     )

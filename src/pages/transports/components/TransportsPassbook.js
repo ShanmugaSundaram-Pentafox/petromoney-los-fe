@@ -24,6 +24,7 @@ import { format } from 'validate.js';
 import moment from 'moment';
 import FileUpload from '../../../components/FileUpload';
 import PublishIcon from '@material-ui/icons/Publish';
+import { CircularProgress } from '@material-ui/core';
 
 const useStyles = makeStyles({
   root: {
@@ -81,6 +82,38 @@ const useStyles = makeStyles({
       color: '#fff',
     },
   },
+  inputFile: {
+    width: '0.1px',
+    height: '0.1px',
+    opacity: 0,
+    overflow: 'hidden',
+    position: 'absolute',
+    zIndex: -1,
+  },
+
+  label: {
+    border: '1px solid #8CADFF',
+    padding: '8px 15px',
+    borderRadius: 3,
+    color: '#2965FF',
+    cursor: 'pointer',
+    transition: '.300s',
+    '&:hover': {
+      backgroundColor: '#F4FCFF',
+      border: '1px solid #3A71FB',
+    },
+    display: 'flex',
+    alignItems: 'center',
+  },
+
+  disabled: {
+    border: '1px solid #6A6A6A',
+    padding: '8px 15px',
+    borderRadius: 3,
+    color: '#363636',
+    display: 'flex',
+    alignItems: 'center',
+  }
 });
 
 function FastTagPassbook() {
@@ -89,10 +122,14 @@ function FastTagPassbook() {
   const [searchValue, setSearchValue] = useState();
   const [selectedPeriodType, setSelectedPeriodType] = useState('D');
   const [showUpload, setShowUpload] = useState(false);
+  const [file, setFile] = useState();
+  const [loading, setLoading] = useState(false);
+  const [disable, setDisable] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState({
     from: moment(new Date()).format('YYYY-MM-DD'),
     to: moment(new Date()).format('YYYY-MM-DD'),
   });
+  console.log(file);
 
   const columns = useMemo(() => {
     return [
@@ -150,23 +187,14 @@ function FastTagPassbook() {
     isRowSelectable: () => false,
   };
 
-  // useMount(() => {
-  //       getAllTransport()
-  //         .then((data) => {
-  //           setTestData(data)
-  //         })
-  //         .catch((e) => {
-  //           console.log(e);
-  //         })
-  //   })
 
   const docUpload = () => {
     setShowUpload(true);
   };
 
-  const handleKeyPress = event => {
-      console.log("key");
-  }
+  const handleKeyPress = (event) => {
+    console.log('key');
+  };
 
   useEffect(() => {
     let qry = {};
@@ -225,6 +253,14 @@ function FastTagPassbook() {
       method: 'POST',
       body: data,
     });
+  };
+  const onChangeHandler = (event) => {
+    setFile(event.target.files[0]);
+    setLoading(true);
+    setDisable(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 5000);
   };
 
   return (
@@ -310,9 +346,9 @@ function FastTagPassbook() {
               value={searchValue}
               onChange={handleValues}
               onKeyPress={(event) => {
-                  if(event.key === 'Enter'){
-                      handleSubmit();
-                  }
+                if (event.key === 'Enter') {
+                  handleSubmit();
+                }
               }}
               InputProps={{
                 startAdornment: (
@@ -338,14 +374,26 @@ function FastTagPassbook() {
             </Button>
           </div>
           <div className={classes.icon}>
-            <Button
+            {/* <Button
               variant='outlined'
               startIcon={<PublishIcon />}
               color='primary'
               onClick={docUpload}
             >
               Upload Statement
-            </Button>
+            </Button> */}
+            <input
+              type='file'
+              name='file'
+              id='file'
+              className={classes.inputFile}
+              onChange={onChangeHandler}
+              disabled={disable}
+              accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            />
+            <label for='file' className={!file? classes.label : classes.disabled}>
+              {file ? loading? <><CircularProgress size={11} style={{marginRight: 7}}/> {file.name}</> : file.name : <><PublishIcon fontSize='small' style={{paddingRight: 4,}}/> Upload Statement</>}
+            </label>
           </div>
         </div>
       </Paper>

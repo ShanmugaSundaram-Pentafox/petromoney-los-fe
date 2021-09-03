@@ -129,7 +129,6 @@ function FastTagPassbook() {
     from: moment(new Date()).format('YYYY-MM-DD'),
     to: moment(new Date()).format('YYYY-MM-DD'),
   });
-  console.log(file);
 
   const columns = useMemo(() => {
     return [
@@ -192,10 +191,6 @@ function FastTagPassbook() {
     setShowUpload(true);
   };
 
-  const handleKeyPress = (event) => {
-    console.log('key');
-  };
-
   useEffect(() => {
     let qry = {};
     qry.from = moment(selectedPeriod.from).format('YYYY-MM-DD');
@@ -245,10 +240,8 @@ function FastTagPassbook() {
     );
   };
   const handleSave = (value) => {
-    //   console.log(value);
     const data = new FormData();
     data.append('fastag_statement', value);
-    console.log('fastag_statement :', value);
     apiCall(`fastag/upload_statement`, {
       method: 'POST',
       body: data,

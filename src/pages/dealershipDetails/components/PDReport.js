@@ -122,8 +122,6 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
             .catch((e) => {
                 console.log(e);
             })
-
-
     })
     return (
 

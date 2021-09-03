@@ -29,7 +29,8 @@ import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker
 } from '@material-ui/pickers';
-import { addAssetDetailsById } from '../../../services/PDReport.services';
+import { addAssetDetailsById, getAssetList } from '../../../services/PDReport.services';
+import { useMount } from 'react-use';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -90,6 +91,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
     const classes = useStyles()
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
     const [loading, setLoading] = useState(false)
+    const [assetList, setAssetList] = useState([])
     const [selectedDate, setSelectedDate] = useState()
     const [businessType, setBusinessType] = useState('proprietorship')
     const [tankerData, setTankerData] = useState([])
@@ -100,6 +102,17 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
     const [apiData, setApiData] = useState({});
     const [editRow, setEditRow] = useState({});
 
+    useMount(() => {
+        getAssetList()
+            .then(data => {
+                setAssetList(data)
+            })
+            .catch((e) => {
+                console.log(e);
+            })
+
+
+    })
 
     const handleEdit = () => {
         setReadOnly(!readOnly)

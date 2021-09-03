@@ -143,6 +143,21 @@ export const addInfrastructureDetails = (data, id) => {
       });
   });
 }
+export const getAssetList = () => {
+  return new Promise((resolve, reject) => {
+    apiCall(`assets`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  });
+}
 
 export const addAssetDetailsById = (data, id) => {
   return new Promise((resolve, reject) => {
@@ -165,7 +180,7 @@ export const addAssetDetailsById = (data, id) => {
 
 export const getAssetDetailsById = (id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`asset_details/${id}`)
+    apiCall(`dealership/${id}/assets`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data)

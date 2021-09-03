@@ -70,8 +70,8 @@ const useStyles = makeStyles((theme) => ({
 const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
     const [loading, setLoading] = useState(false)
-    const [executedDate, setExecutedDate] = useState(data.agreement_executed_on)
-    const [validDate, setValidDate] = useState(data.agreement_valid_till)
+    const [executedDate, setExecutedDate] = useState(data?.agreement_executed_on)
+    const [validDate, setValidDate] = useState(data?.agreement_valid_till)
 
     const handleEdit = () => {
         setReadOnly(!readOnly)

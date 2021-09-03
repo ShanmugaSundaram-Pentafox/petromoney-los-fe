@@ -139,8 +139,6 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
         alignTop: true,
         onChange: handleChange,
     }
-    console.log("tanker data", tankerData)
-    console.log("valuessssssss", values)
     return (
         <div className={classes.sidePanelFormWrapper}>
             <Typography className={classes.sidePanelTitle} variant="h4">

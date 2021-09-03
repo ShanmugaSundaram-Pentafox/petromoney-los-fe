@@ -125,7 +125,6 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
 
 
     })
-
     return (
 
         <div>

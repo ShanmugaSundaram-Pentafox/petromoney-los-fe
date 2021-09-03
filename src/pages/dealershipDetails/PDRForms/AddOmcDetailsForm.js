@@ -70,8 +70,8 @@ const useStyles = makeStyles((theme) => ({
 const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
     const [loading, setLoading] = useState(false)
-    const [executedDate, setExecutedDate] = useState()
-    const [validDate, setValidDate] = useState()
+    const [executedDate, setExecutedDate] = useState(data.agreement_executed_on)
+    const [validDate, setValidDate] = useState(data.agreement_valid_till)
 
     const handleEdit = () => {
         setReadOnly(!readOnly)
@@ -96,8 +96,8 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
             // transport_name: Yup.string().required('Please enter transporter name'),
         }),
         onSubmit: values => {
-            const executed_date = moment(executedDate).format('DD-MM-YYYY');
-            const valid_date = moment(validDate).format('DD-MM-YYYY');
+            const executed_date = moment(executedDate).format('DD-MMM-YYYY');
+            const valid_date = moment(validDate).format('DD-MMM-YYYY');
             const data = { ...values, agreement_executed_on: executed_date, agreement_valid_till: valid_date };
 
             addOmcDetails(data, dealer_id)

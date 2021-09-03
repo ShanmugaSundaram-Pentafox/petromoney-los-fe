@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
 import Button from '../../../components/CommonComponents/Button/Button';
 import * as Yup from 'yup';
-import { useFormik } from 'formik'; 
+import { useFormik } from 'formik';
 import clsx from 'clsx';
 import Divider from '@material-ui/core/Divider';
 import { makeStyles } from "@material-ui/styles";
@@ -65,8 +65,6 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
     const classes = useStyles()
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
     const [loading, setLoading] = useState(false)
-    const [apiData, setApiData] = useState({});
-    const [editRow, setEditRow] = useState({});
 
 
     const handleEdit = () => {
@@ -74,7 +72,38 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
     };
     const handleClose = () => {
         callback();
-    };
+    }; const relationShipOptions = [
+        { label: "Choose Relationship", value: "" },
+        { label: "Father", value: "FATHER" },
+        { label: "Mother", value: "MOTHER" },
+        { label: "Uncle", value: "UNCLE" },
+        { label: "Aunt", value: "AUNT" },
+        { label: "Son", value: "SON" },
+        { label: "Daughter", value: "DAUGHTER" },
+        { label: "Grandfather", value: "GRANDFATHER" },
+        { label: "Grandmother", value: "GRANDMOTHER" },
+        { label: "Mother-in-law", value: "MOTHER-IN-LAW" },
+        { label: "Father-in-law", value: "FATHER-IN-LAW" },
+        { label: "Sister-in-law", value: "SISTER-IN-LAW" },
+        { label: "Brother-in-law", value: "BROTHER-IN-LAW" },
+        { label: "Brother", value: "BROTHER" },
+        { label: "Newphew", value: "NEPHEW" },
+        { label: "Partner", value: "PARTNER" },
+        { label: "Friend", value: "FRIEND" },
+        { label: "Shareholder", value: "SHAREHOLDER" },
+        { label: "Buyer", value: "BUYER" },
+        { label: "Supplier", value: "SUPPLIER" },
+        { label: "Business Neighbour", value: "BUSINESS NEIGHBOUR" },
+        { label: "Home Neighbour", value: "HOME NEIGHBOUR" },
+        { label: "Director", value: "DIRECTOR" },
+        { label: "Proprietor", value: "PROPRIETOR" },
+        { label: "Debtors", value: "DEBTORS" },
+        { label: "Creditors", value: "CREDITORS" },
+        { label: "Principal", value: "PRINCIPAL" },
+        { label: "Others", value: "OTHERS" }
+    ]
+
+
 
 
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
@@ -88,24 +117,24 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
 
         }),
         onSubmit: values => {
-            const data = {...values}
+            const data = { ...values }
 
             addOutletDetails(data, dealer_id)
-            .then(res => {
-                enqueueSnackbar(res, {
-                    anchorOrigin: {
-                      vertical: 'top',
-                      horizontal: 'right',
-                    },
-                    variant: 'success',
-                  });
-                setTimeout(() => {
-                    window.location.reload()
-                },1500);
-            })
-            .catch(e => {
-                console.log(e);
-            })
+                .then(res => {
+                    enqueueSnackbar(res, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'success',
+                    });
+                    // setTimeout(() => {
+                    //     window.location.reload()
+                    // }, 1500);
+                })
+                .catch(e => {
+                    console.log(e);
+                })
         }
     });
     const inputProps = {
@@ -149,12 +178,13 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
-                                        labelText="Distance from Headquaters"
-                                        name="distance_from_headquater"
-                                        value={values.distance_from_headquater}
+                                        labelText="Distance from Headquarters"
+                                        name="distance_from_headquarters"
+                                        placeholder="in Km"
+                                        value={values.distance_from_headquarters}
                                         readOnly={readOnly}
-                                        error={errors.distance_from_headquater}
-                                        helperText={errors.distance_from_headquater}
+                                        error={errors.distance_from_headquarters}
+                                        helperText={errors.distance_from_headquarters}
                                     />
                                 </Grid>
                                 <Grid item md={6}>
@@ -184,6 +214,7 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         {...inputProps}
                                         labelText="Distance from Terminal"
                                         name="distance_from_terminal"
+                                        placeholder="in Km"
                                         value={values.distance_from_terminal}
                                         readOnly={readOnly}
                                         error={errors.distance_from_terminal}
@@ -216,7 +247,8 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         <option value="Owned">Owned</option>
                                         <option value="leased">Leased</option>
                                     </TextInput>
-                                </Grid><Grid item md={6}>
+                                </Grid>
+                                <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
                                         labelText="Land Owner Name"
@@ -262,12 +294,20 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         select
                                         labelText="Relationship with owner"
                                         name="relation_type"
-                                        value={values.relation_type}
-                                        readOnly={readOnly}
-                                        disabled={readOnly}
                                         error={errors.relation_type}
                                         helperText={errors.relation_type}
-                                    />
+                                        readOnly={readOnly}
+                                        value={values.relation_type}
+                                        disabled={readOnly}
+                                    >
+                                        {
+                                            relationShipOptions.map((item, i) => {
+                                                return (
+                                                    <option value={item.value}>{item.label}</option>
+                                                )
+                                            })
+                                        }
+                                    </TextInput>
                                 </Grid>
                                 <Grid item md={6}>
                                     <TextInput

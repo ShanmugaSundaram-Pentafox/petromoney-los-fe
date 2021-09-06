@@ -13,6 +13,8 @@ import { green } from '@material-ui/core/colors';
 import AddBlackListForm from './AddBlackListForm';
 import { deleteRemarks, resolveRemarks } from '../../services/withheld.services';
 import { useSnackbar } from 'notistack';
+import { useMount } from 'react-use';
+import { getAllDealership } from '../../services/dealerships.service';
 
 
 
@@ -25,8 +27,23 @@ const useStyles = makeStyles((theme) => ({
 const UnresolvedTable = ({ data }) => {
     const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [dealershipData, setDealershipData] = useState([]);
     const classes = useStyles()
     const { enqueueSnackbar } = useSnackbar();
+
+    useMount(() => {
+        getAllDealership()
+            .then((data) => {
+                setDealershipData(data.map(({ id }) => ({
+                    label: id,
+                    value: id
+                })))
+            })
+            .catch((e) => {
+                console.log(e);
+            })
+
+    })
 
     const handleResolve = (id) => {
         resolveRemarks(id)
@@ -179,7 +196,7 @@ const UnresolvedTable = ({ data }) => {
     return (
         <>
             <Grid item md={12}>
-                {Array.isArray(data) && data.length ? (
+                {Array.isArray(data) ? (
                     <MUIDataTable
                         title={
                             <Typography className={classes.title} variant="h5" component="h5">
@@ -202,7 +219,9 @@ const UnresolvedTable = ({ data }) => {
                 onClose={() => setOpenModal(false)}
                 variant="temporary"
             >
-                <AddBlackListForm callback={() => setOpenModal(false)} data={data} />
+                {
+                    <AddBlackListForm data={dealershipData} callback={() => setOpenModal(false)} />
+                }
             </Drawer>
         </>
     )

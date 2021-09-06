@@ -68,19 +68,18 @@ const AddBlackListForm = ({ data, callback }) => {
     const [newRemarks, setNewRemarks] = useState()
     const [dealerID, setDealerID] = useState()
     const [remarks, setRemarks] = useState()
-    const [list, setList] = useState([])
     const [value, setValue] = useState()
     const classes = useStyles()
     const { enqueueSnackbar } = useSnackbar();
 
-    useEffect(() => {
-        if (data?.length) {
-            setList(data.map(({ id }) => ({
-                label: id,
-                value: id
-            })))
-        }
-    }, [data])
+    // useEffect(() => {
+    //     if (data?.length) {
+    //         setList(data.map(({ id }) => ({
+    //             label: id,
+    //             value: id
+    //         })))
+    //     }
+    // }, [data])
 
     useMount(() => {
         getAllWithheldRemarks()
@@ -94,17 +93,17 @@ const AddBlackListForm = ({ data, callback }) => {
     })
 
     const handleRemarkChange = (newValue, actionMeta) => {
-        if (remarks.includes(newValue?.label)) {
+        if (remarks?.includes(newValue?.label)) {
             setNewRemarks(newValue?.label)
         }
         else {
-            setValue(newValue?.label)
+            setValue(newValue?.value)
         }
     };
     const handleSave = () => {
         const res = value ? value : newRemarks;
-        if (!value) {
-            updateRemarks(dealerID.label, res)
+        if (typeof res === "number") {
+            updateRemarks(dealerID?.label, res)
                 .then(res => {
                     enqueueSnackbar(res, {
                         anchorOrigin: {
@@ -170,55 +169,65 @@ const AddBlackListForm = ({ data, callback }) => {
                 <div>Add Withheld Form</div>
                 <CloseIcon onClick={callback} />
             </Typography>
-            <div className={classes.sidePanelFormContentWrapper}>
-                <div className={classes.stepperRoot}>
-                    <Box>
-                        <form>
-                            <Grid container spacing={2}>
-                                <Grid item md={7}>
-                                    <Select
-                                        isClearable
-                                        onChange={setDealerID}
-                                        options={list}
-                                    />
-                                </Grid>
-                                <Grid item md={7}>
-                                    <label style={{ marginBottom: 8 }}>Remarks</label>
-                                    <CreatableSelect
-                                        isClearable
-                                        onChange={handleRemarkChange}
-                                        options={remarks}
-                                    />
-                                </Grid>
-                            </Grid>
-                        </form>
-                    </Box>
-                </div>
-            </div>
-            <div className={classes.actionFooter}>
-                <Divider />
-                <div className={classes.actionButtonsWrapper}>
-                    <div>
-                        <Button
-                            variant="outlined"
-                            onClick={callback}
-                        >
-                            Back
-                        </Button>
-                    </div>
-                    <div>
-                        <Button
-                            variant="contained"
-                            type="submit"
-                            onClick={handleSave}
-                            className={clsx(classes.btn, classes.editButton)}
-                        >
-                            Save
-                        </Button>
-                    </div>
-                </div>
-            </div>
-        </div >
+            {
+                Array.isArray(data) ? (
+                    <>
+                        <div className={classes.sidePanelFormContentWrapper}>
+                            <div className={classes.stepperRoot}>
+                                <Box>
+                                    <form>
+                                        <Grid container spacing={2}>
+                                            <Grid item md={7}>
+                                                <label style={{ marginBottom: 8 }}>Dealership ID</label>
+                                                <Select
+                                                    isClearable
+                                                    onChange={setDealerID}
+                                                    options={data}
+                                                />
+                                            </Grid>
+                                            <Grid item md={7}>
+                                                <label style={{ marginBottom: 8 }}>Remarks</label>
+                                                <CreatableSelect
+                                                    isClearable
+                                                    onChange={handleRemarkChange}
+                                                    options={remarks}
+                                                />
+                                            </Grid>
+                                        </Grid>
+                                    </form>
+                                </Box>
+                            </div>
+                        </div>
+                        <div className={classes.actionFooter}>
+                            <Divider />
+                            <div className={classes.actionButtonsWrapper}>
+                                <div>
+                                    <Button
+                                        variant="outlined"
+                                        onClick={callback}
+                                    >
+                                        Back
+                                    </Button>
+                                </div>
+                                <div>
+                                    <Button
+                                        variant="contained"
+                                        type="submit"
+                                        onClick={handleSave}
+                                        className={clsx(classes.btn, classes.editButton)}
+                                    >
+                                        Save
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                ) : (
+                    <Typography style={{ textAlign: 'center', marginTop: 12 }}>Getting dealership data...</Typography>
+                )
+            }
+
+        </div>
     )
 
 }

@@ -90,20 +90,26 @@ const useStyles = makeStyles((theme) => ({
 const Docs = ({ data }) => {
   const [imageModal, setImageModal] = useState({})
   let temp = 0;
-  return data.map((file, i) => {
-    temp += file.file_url ? 1 : 0;
-    return file.file_url ? (
-      <div>
-        <Button onClick={() => setImageModal({ open: true, image: file.file_url, type: (file.file_url?.split("/")[file.file_url?.split("/").length - 1].split('.'))[1] })}>
-          <a style={{ display: 'inline-block', borderRadius: 4, lineHeight: 1, marginRight: 8, marginBottom: 8, padding: 8, backgroundColor: '#f0f0f0' }}>{getFileNameFromUrl(file?.file_url)} </a>
-        </Button>
-        <FormDialog title={"File Preview"} onDownload={imageModal.image} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
-          <FilePreview data={imageModal} />
-        </FormDialog>
-      </div>
+  return (
+    <>
+      {
+        data.map((file, i) => {
+          temp += file.file_url ? 1 : 0;
+          return file.file_url ? (
+            <div>
+              <Button onClick={() => setImageModal({ open: true, image: file.file_url, type: file.file_url.endsWith('.pdf') })}>
+                <a style={{ display: 'inline-block', borderRadius: 4, lineHeight: 1, marginRight: 8, marginBottom: 8, padding: 8, backgroundColor: '#f0f0f0' }}>{getFileNameFromUrl(file?.file_url)} </a>
+              </Button>
+            </div>
 
-    ) : null
-  });
+          ) : null
+        })
+      }
+      <FormDialog title={"File Preview"} onDownload={imageModal.image} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
+        <FilePreview data={imageModal} />
+      </FormDialog>
+    </>
+  );
 
 }
 
@@ -263,7 +269,7 @@ const DocList = ({ id }) => {
               {
                 modalData.map(item => {
                   return (
-                    <Paper key={item.file_id} style={{minWidth: '500px'}}>
+                    <Paper key={item.file_id} style={{minWidth: '350px'}}>
                       <FormGroup>
                         <FormControlLabel
                           key={item.file_id}
@@ -279,11 +285,11 @@ const DocList = ({ id }) => {
               }
             </div>
           </div>
-          {/* {
+          {
             array.length !== 0 ? <DeleteButton className={classes.button} variant="contained" onClick={() => DeleteDocs()}>Delete</DeleteButton> : null
-          } */}
-        </div>
-      </FormDialog>
+          }
+      </div>
+      </FormDialog> 
 
       {/* <Modal
         className={classes.modal}

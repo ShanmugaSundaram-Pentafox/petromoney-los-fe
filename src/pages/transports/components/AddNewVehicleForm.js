@@ -88,7 +88,7 @@ const AddNewVehicleForm = ({
     setSubmitting,
   } = useFormik({
     initialValues: {
-      ...number,
+      tt_no: number,
     },
     validateOnChange: false,
     validateOnBlur: true,

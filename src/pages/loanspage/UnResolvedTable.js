@@ -179,7 +179,7 @@ const UnresolvedTable = ({ data }) => {
     return (
         <>
             <Grid item md={12}>
-                {Array.isArray(data) && data.length ? (
+                {Array.isArray(data) ? (
                     <MUIDataTable
                         title={
                             <Typography className={classes.title} variant="h5" component="h5">
@@ -202,7 +202,7 @@ const UnresolvedTable = ({ data }) => {
                 onClose={() => setOpenModal(false)}
                 variant="temporary"
             >
-                <AddBlackListForm callback={() => setOpenModal(false)} data={data} />
+                <AddBlackListForm callback={() => setOpenModal(false)} />
             </Drawer>
         </>
     )

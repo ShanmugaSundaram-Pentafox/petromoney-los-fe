@@ -285,9 +285,6 @@ const DocList = ({ id }) => {
               }
             </div>
           </div>
-          {
-            array.length !== 0 ? <DeleteButton className={classes.button} variant="contained" onClick={() => DeleteDocs()}>Delete</DeleteButton> : null
-          }
       </div>
       </FormDialog> 
 

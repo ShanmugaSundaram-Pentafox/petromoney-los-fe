@@ -169,56 +169,65 @@ const AddBlackListForm = ({ data, callback }) => {
                 <div>Add Withheld Form</div>
                 <CloseIcon onClick={callback} />
             </Typography>
-            <div className={classes.sidePanelFormContentWrapper}>
-                <div className={classes.stepperRoot}>
-                    <Box>
-                        <form>
-                            <Grid container spacing={2}>
-                                <Grid item md={7}>
-                                    <label style={{ marginBottom: 8 }}>Dealership ID</label>
-                                    <Select
-                                        isClearable
-                                        onChange={setDealerID}
-                                        options={data}
-                                    />
-                                </Grid>
-                                <Grid item md={7}>
-                                    <label style={{ marginBottom: 8 }}>Remarks</label>
-                                    <CreatableSelect
-                                        isClearable
-                                        onChange={handleRemarkChange}
-                                        options={remarks}
-                                    />
-                                </Grid>
-                            </Grid>
-                        </form>
-                    </Box>
-                </div>
-            </div>
-            <div className={classes.actionFooter}>
-                <Divider />
-                <div className={classes.actionButtonsWrapper}>
-                    <div>
-                        <Button
-                            variant="outlined"
-                            onClick={callback}
-                        >
-                            Back
-                        </Button>
-                    </div>
-                    <div>
-                        <Button
-                            variant="contained"
-                            type="submit"
-                            onClick={handleSave}
-                            className={clsx(classes.btn, classes.editButton)}
-                        >
-                            Save
-                        </Button>
-                    </div>
-                </div>
-            </div>
-        </div >
+            {
+                Array.isArray(data) ? (
+                    <>
+                        <div className={classes.sidePanelFormContentWrapper}>
+                            <div className={classes.stepperRoot}>
+                                <Box>
+                                    <form>
+                                        <Grid container spacing={2}>
+                                            <Grid item md={7}>
+                                                <label style={{ marginBottom: 8 }}>Dealership ID</label>
+                                                <Select
+                                                    isClearable
+                                                    onChange={setDealerID}
+                                                    options={data}
+                                                />
+                                            </Grid>
+                                            <Grid item md={7}>
+                                                <label style={{ marginBottom: 8 }}>Remarks</label>
+                                                <CreatableSelect
+                                                    isClearable
+                                                    onChange={handleRemarkChange}
+                                                    options={remarks}
+                                                />
+                                            </Grid>
+                                        </Grid>
+                                    </form>
+                                </Box>
+                            </div>
+                        </div>
+                        <div className={classes.actionFooter}>
+                            <Divider />
+                            <div className={classes.actionButtonsWrapper}>
+                                <div>
+                                    <Button
+                                        variant="outlined"
+                                        onClick={callback}
+                                    >
+                                        Back
+                                    </Button>
+                                </div>
+                                <div>
+                                    <Button
+                                        variant="contained"
+                                        type="submit"
+                                        onClick={handleSave}
+                                        className={clsx(classes.btn, classes.editButton)}
+                                    >
+                                        Save
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                ) : (
+                    <Typography style={{ textAlign: 'center', marginTop: 12 }}>Getting dealership data...</Typography>
+                )
+            }
+
+        </div>
     )
 
 }

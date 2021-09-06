@@ -220,7 +220,6 @@ const UnresolvedTable = ({ data }) => {
                 variant="temporary"
             >
                 {
-                    dealershipData &&
                     <AddBlackListForm data={dealershipData} callback={() => setOpenModal(false)} />
                 }
             </Drawer>

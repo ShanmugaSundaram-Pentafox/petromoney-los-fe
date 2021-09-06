@@ -22,6 +22,8 @@ import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded'
 import { useSnackbar } from 'notistack';
 import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
 import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
+import { useMount } from 'react-use';
+import { getBankDetailsbyID, updateBankDetailsByID } from '../../../services/PDReport.services';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -37,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         flexDirection: 'column',
         height: '100vh',
-        width: '40vw'
+        width: '55vw'
     },
     sidePanelFormContentWrapper: {
         flex: 1,
@@ -108,11 +110,23 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
     const classes = useStyles()
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
     const [loading, setLoading] = useState(false)
+    const [bankData, setBankData] = useState([])
+    const [addNew, setAddNew] = useState(bankData ? false : true)
     const [tankerData, setTankerData] = useState([])
     const [editable, setEditable] = useState(true)
     const [addNewRow, setAddNewRow] = useState();
     const [apiData, setApiData] = useState({});
     const [editRow, setEditRow] = useState({});
+
+    useMount(() => {
+        getBankDetailsbyID(dealer_id)
+            .then(data => {
+                setBankData(data)
+            })
+            .catch((e) => {
+                console.log(e);
+            })
+    })
 
 
     const handleEdit = () => {
@@ -121,88 +135,48 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
     const handleClose = () => {
         callback();
     };
-    const onTextChange = e => {
-        const { name, value } = e.target;
-        setApiData({
-            ...apiData,
-            [name]: value
-        })
-    }
-    const onEditTextChange = e => {
-        const { name, value } = e.target;
-        setEditRow({
-            ...editRow,
-            [name]: value
-        })
-    }
-    const editTankerRow = (rowData, rowIndex) => {
-        setEditRow({ ...rowData, rowIndex });
-    }
-    const saveIncomeRow = (rowData, rowIndex) => {
-        const objBody = {
-            user_id: currentUser.id, ...rowData
-        }
-    }
-    const saveNewTanker = () => {
-        console.log('Income api body - ', apiData)
-        if (Object.keys(apiData).length < 3) return null;
-        const objBody = {
-            user_id: currentUser.id, ...apiData
-        }
-        // postDealershipIncomeById(id, objBody)
-        //     .then(res => {
-        //         setIncome(res);
-        //         setLoading(false);
-        //         setAddNewRow(false);
-        //         setApiData({});
-        //     })
-        //     .catch(err => {
-        //         console.log('Income data save error - ', err);
-        //         setLoading(false);
-        //     })
-    }
 
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
-        initialValues: {
-            ...data,
-        },
+        initialValues: {},
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
-            transport_name: Yup.string().required('Please enter transporter name'),
+            // transport_name: Yup.string().required('Please enter transporter name'),
 
         }),
-        // onSubmit: values => {
-        //     updateFleetOperator(values, dealer_id, data.id)
-        //         .then(res => {
-        //             console.log(res)
-        //             enqueueSnackbar(res, {
-        //                 anchorOrigin: {
-        //                     vertical: 'top',
-        //                     horizontal: 'right',
-        //                 },
-        //                 variant: 'success',
-        //             }
-        //             )
-        //             setTimeout(() => {
-        //                 window.location.reload()
-        //             }, 1500);
+        onSubmit: values => {
+            console.log("values", values)
+            updateBankDetailsByID(values, dealer_id)
+                .then(res => {
+                    console.log(res)
+                    enqueueSnackbar(res, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'success',
+                    }
+                    )
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1500);
 
-        //         })
-        //         .catch(e => {
-        //             enqueueSnackbar(e, {
-        //                 anchorOrigin: {
-        //                     vertical: 'top',
-        //                     horizontal: 'right',
-        //                 },
-        //                 variant: 'error',
-        //             }
-        //             )
-        //         })
-
-
-        // }
+                })
+                .catch(e => {
+                    enqueueSnackbar(e, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'error',
+                    }
+                    )
+                })
+        }
     });
+    const date = new Date();
+    const currentYear = date.getFullYear();
+    const currentYearDiff = date.getFullYear() - 1970;
     const inputProps = {
         direction: "column",
         alignTop: true,
@@ -216,231 +190,135 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
             </Typography>
             <div className={classes.sidePanelFormContentWrapper}>
                 <div className={classes.stepperRoot}>
-                    <Box>
-                        <form onSubmit={handleSubmit}>
-                            <Grid container spacing={2}>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        labelText="Account Type"
-                                        name="aacount_type"
-                                        value={values.aacount_type}
-                                        readOnly={readOnly}
-                                        error={errors.aacount_type}
-                                        helperText={errors.aacount_type}
-                                    />
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => { setAddNew(!addNew) }}
+                        style={{ marginBottom: 12 }}
+                    >
+                        Add Bank
+                    </Button>
+                    {
+                        addNew && (
+                            <Box>
+                                <Grid container spacing={2}>
+                                    <Grid item md={6}>
+                                        <TextInput
+                                            {...inputProps}
+                                            labelText="Name of the Bank"
+                                            name="bank_name"
+                                            value={values.bank_name}
+                                            error={errors.bank_name}
+                                            helperText={errors.bank_name}
+                                        />
+                                    </Grid>
+                                    <Grid item md={6}>
+                                        <TextInput
+                                            {...inputProps}
+                                            labelText="Account Number"
+                                            name="account_no"
+                                            value={values.account_no}
+                                            error={errors.account_no}
+                                            helperText={errors.account_no}
+                                        />
+                                    </Grid>
+                                    <Grid item md={6}>
+                                        <TextInput
+                                            {...inputProps}
+                                            labelText="Account Type"
+                                            name="aacount_type"
+                                            value={values.aacount_type}
+                                            error={errors.aacount_type}
+                                            helperText={errors.aacount_type}
+                                        />
+                                    </Grid>
+                                    <Grid item md={6}>
+                                        <TextInput
+                                            select
+                                            {...inputProps}
+                                            labelText="Vintage with Banker"
+                                            name="account_since"
+                                            value={values.account_since}
+                                            error={errors.account_since}
+                                            helperText={errors.account_since}
+                                        >
+                                            {
+                                                <>
+                                                    <option value="null">Vintage with banker</option>
+                                                    {[...Array(currentYearDiff)].map((_, i) => {
+                                                        return (
+                                                            <option value={currentYear - i}>{currentYear - i}</option>
+                                                        )
+                                                    })}
+                                                </>
+                                            }
+                                        </TextInput>
+                                    </Grid>
+                                    <Grid item md={6}>
+                                        <TextInput
+                                            {...inputProps}
+                                            money
+                                            labelText="Transaction Limit"
+                                            name="transaction_limit"
+                                            value={values.transaction_limit}
+                                            error={errors.transaction_limit}
+                                            helperText={errors.transaction_limit}
+                                        />
+                                    </Grid>
+                                    <Grid item md={6}>
+                                        <TextInput
+                                            select
+                                            {...inputProps}
+                                            labelText="Is Secured"
+                                            name="security"
+                                            value={values.is_security}
+                                            error={errors.is_security}
+                                            helperText={errors.is_security}
+                                        >
+                                            <option>Secured</option>
+                                            <option>Unsecured</option>
+                                        </TextInput>
+                                    </Grid>
                                 </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        labelText="Name of the Bank"
-                                        name="bank_name"
-                                        value={values.bank_name}
-                                        readOnly={readOnly}
-                                        error={errors.bank_name}
-                                        helperText={errors.bank_name}
-                                    />
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        labelText="Account Number"
-                                        name="account_no"
-                                        type="number"
-                                        value={values.account_no}
-                                        readOnly={readOnly}
-                                        error={errors.account_no}
-                                        helperText={errors.account_no}
-                                    />
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        labelText="Vintage with Banker"
-                                        name="vintage_with_banker"
-                                        value={values.vintage_with_banker}
-                                        readOnly={readOnly}
-                                        error={errors.vintage_with_banker}
-                                        helperText={errors.vintage_with_banker}
-                                    />
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        labelText="Transaction Limit"
-                                        name="transaction_limit"
-                                        value={values.transaction_limit}
-                                        readOnly={readOnly}
-                                        error={errors.transaction_limit}
-                                        helperText={errors.transaction_limit}
-                                    />
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        labelText="Is Secured"
-                                        name="is_secured"
-                                        value={values.is_secured}
-                                        readOnly={readOnly}
-                                        error={errors.is_secured}
-                                        helperText={errors.is_secured}
-                                    />
-                                </Grid>
-                                <Grid item md={12}>
-                                    <Fragment className={classes.table}>
-                                        {/* <Typography className={classes.subTitle} variant="h4">Tanker Details</Typography>
-                                        <Grid md={6}>
-                                            <TextInput
-                                                {...inputProps}
-                                                labelText="Number of Tanker"
-                                                name="no_of_tanker"
-                                                type="number"
-                                                value={values.no_of_tanker}
-                                                readOnly={readOnly}
-                                                error={errors.no_of_tanker}
-                                                helperText={errors.no_of_tanker}
-                                            />
-                                        </Grid> */}
-                                        {/* <Table className={classes.table} size="small" aria-label="Income">
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell>Tanker  Type</TableCell>
-                                                    <TableCell>Tanker Capacitys</TableCell>
-                                                    <TableCell align="right">Tanker Operation hours</TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                            <TableBody>
-                                                {
-                                                    Array.isArray(tankerData) && tankerData.map((item, i) => editRow.rowIndex === i ? (
-                                                        <TableRow key={i}>
-                                                            <TableCell>
-                                                                <TextInput
-                                                                    label="Tanker Type"
-                                                                    name="tanker_type"
-                                                                    value={editRow.tanker_type}
-                                                                    onChange={onEditTextChange}
-                                                                >
-                                                                    <option>Owned</option>
-                                                                    <option>Rented</option>
-                                                                </TextInput>
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                <TextInput
-                                                                    label="Tanker Capacity"
-                                                                    name="tanker_capacity"
-                                                                    type="number"
-                                                                    value={editRow.tanker_capacity}
-                                                                    onChange={onEditTextChange}
-                                                                />
-                                                            </TableCell>
-                                                            <TableCell align={"right"}>
-                                                                <Button
-                                                                    size="small"
-                                                                    variant="outlined"
-                                                                    color="success"
-                                                                    className={classes.btnSuccess}
-                                                                    onClick={() => saveIncomeRow(editRow, i)}>
-                                                                    Save
-                                                                </Button>
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    ) : (
-                                                        <TableRow key={i}>
-                                                            <TableCell>{item.tanker_type}</TableCell>
-                                                            <TableCell>{item.tanker_capacity}</TableCell>
-                                                            <TableCell align={"right"}>{item.operating_time}</TableCell>
-                                                            <TableCell align={"right"}>
-                                                                <Button
-                                                                    size="small"
-                                                                    variant="outlined"
-                                                                    color="success"
-                                                                    className={classes.btnSuccess}
-                                                                    onClick={() => editTankerRow(item, i)}>
-                                                                    Edit
-                                                                </Button>
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    ))
-                                                }
-                                                {
-                                                    addNewRow && (
-                                                        <TableRow key={"new-row"}>
-                                                            <TableCell>
-                                                                <TextInput
-                                                                    select
-                                                                    label="Tanker Type"
-                                                                    name="tanker_type"
-                                                                    value={apiData.tanker_type}
-                                                                    onChange={onTextChange}
-                                                                >
-                                                                    <option>Owned</option>
-                                                                    <option>Rented</option>
-                                                                </TextInput>
-                                                            </TableCell>
-                                                            <TableCell align={"right"}>
-                                                                <TextInput
-                                                                    label="Tanker_capacity"
-                                                                    name="tanker_capacity"
-                                                                    type="number"
-                                                                    value={apiData.tanker_capacity}
-                                                                    onChange={onTextChange}
-                                                                />
-                                                            </TableCell>
-                                                            <TableCell >
-                                                                <TextInput
-                                                                    label="Operation hours"
-                                                                    type="number"
-                                                                    name="operating_time"
-                                                                    value={apiData.operating_time}
-                                                                    onChange={onTextChange}
-                                                                />
-                                                            </TableCell>
-                                                            <TableCell align={"right"}></TableCell>
-                                                        </TableRow>
-                                                    )
-                                                }
-                                                <TableRow key={"add-row"}>
-                                                    <TableCell align="right" colSpan={4}>
-                                                        {
-                                                            addNewRow ? (
-                                                                <Fragment>
-                                                                    <Button
-                                                                        size="small"
-                                                                        variant="outlined"
-                                                                        color="error"
-                                                                        onClick={() => {
-                                                                            setAddNewRow(false);
-                                                                        }}>
-                                                                        <DeleteForeverRoundedIcon fontSize="small" />
-                                                                    </Button>
-                                                                    &nbsp;&nbsp;
-                                                                    <Button
-                                                                        size="small"
-                                                                        variant="outlined"
-                                                                        color="success"
-                                                                        className={classes.btnSuccess}
-                                                                        onClick={saveNewTanker}>
-                                                                        <DoneRoundedIcon fontSize="small" />
-                                                                    </Button>
-                                                                </Fragment>
-                                                            ) : (editable && (
+                            </Box >
+                        )
+                    }
+                    {
+                        bankData && (
+                            <>
+                                <div className={classes.table}>
+                                    <Table size="small">
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell align="left">Bank name</TableCell>
+                                                <TableCell align="left">Account No.</TableCell>
+                                                <TableCell align="left">Account since</TableCell>
+                                                <TableCell align="left">Transaction limit</TableCell>
+                                                <TableCell align="left">Branch</TableCell>
 
-                                                                <Button
-                                                                    variant="contained"
-                                                                    className={clsx(classes.btn, classes.btnSuccess)}
-                                                                    onClick={() => setAddNewRow(true)}>Add Tanker</Button>
-                                                            ))
-                                                        }
-                                                    </TableCell>
-                                                </TableRow>
-                                            </TableBody>
-                                        </Table> */}
-                                    </Fragment>
-                                </Grid>
+                                            </TableRow>
+                                        </TableHead>
+                                        {
+                                            bankData.map((row, i) => {
+                                                return (
+                                                    <TableBody>
+                                                        <TableRow>
+                                                            <TableCell align="left">{row.bank_name}</TableCell>
+                                                            <TableCell align="left">{row.account_no}</TableCell>
+                                                            <TableCell align="left">{row.account_since}</TableCell>
+                                                            <TableCell align="left">{row.transaction_limit}</TableCell>
+                                                            <TableCell align="left">{row.bank_branch}</TableCell>
+                                                        </TableRow>
+                                                    </TableBody>
+                                                )
+                                            })
+                                        }
+                                    </Table>
+                                </div>
+                            </>
+                        )
+                    }
 
-                            </Grid>
-                        </form>
-                    </Box >
                 </div>
             </div>
             <div className={classes.actionFooter}>
@@ -462,15 +340,14 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                             type="submit"
                             className={clsx(classes.btn, classes.editButton)}
                             startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                            onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
+                            onClick={handleSubmit}
                         >
-                            {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` :
-                                'Save'}
+                            Save
                         </Button>
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
 
 
     )

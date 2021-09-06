@@ -158,6 +158,21 @@ export const getAssetList = () => {
       })
   });
 }
+export const getAssetDataById = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/assets`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  });
+}
 
 export const addAssetDetailsById = (data, id) => {
   return new Promise((resolve, reject) => {
@@ -247,3 +262,58 @@ export const updateTankerByID = (data, id) => {
       });
   });
 }
+
+
+export const getBankDetailsbyID = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/bank`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  });
+}
+export const updateBankDetailsByID = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/bank`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+export const updateBusinessDetailsByID = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/bank`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+
+

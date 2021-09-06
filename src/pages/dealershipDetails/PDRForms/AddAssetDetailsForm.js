@@ -18,9 +18,10 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
-import { addAssetDetailsById, getAssetList } from '../../../services/PDReport.services';
+import { addAssetDetailsById, getAssetDataById, getAssetList } from '../../../services/PDReport.services';
 import Select from 'react-select';
 import { useMount } from 'react-use';
+import { TableBody } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -93,11 +94,18 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                     label: name,
                     value: asset_id
                 })))
+            })
+            .catch((e) => {
+                console.log(e);
+            })
+        getAssetDataById(dealer_id)
+            .then(data => {
                 setAssetData(data)
             })
             .catch((e) => {
                 console.log(e);
             })
+
     })
 
     const handleClose = () => {
@@ -106,16 +114,14 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
 
 
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
-        initialValues: {
-            ...data,
-        },
+        initialValues: {},
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
             // transport_name: Yup.string().required('Please enter transporter name'),
         }),
         onSubmit: values => {
-            const data = { ...values }
+            const data = { details: { ...values }, asset_id: type.value }
             addAssetDetailsById(data, dealer_id)
                 .then(res => {
                     enqueueSnackbar(res, {
@@ -159,20 +165,6 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                                     isClearable
                                                     onChange={setType}
                                                     options={assetList} />
-                                                {/* <TextInput
-                                                    {...inputProps}
-                                                    select
-                                                    labelText="Assets"
-                                                    name="assets_type"
-                                                    error={errors.assets}
-                                                    helperText={errors.assets}
-                                                >
-                                                    <option>Land</option>
-                                                    <option>Building</option>
-                                                    <option>Gold</option>
-                                                    <option>Car</option>
-                                                    <option>CV</option>
-                                                </TextInput> */}
                                             </Grid>
                                         </Grid>
                                     </form>
@@ -188,9 +180,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                                                 {...inputProps}
                                                                 labelText="Land Address"
                                                                 name="land_address"
-                                                                value={values.land_address}
-                                                                readOnly={readOnly}
-                                                                disabled={readOnly}
+                                                                value={values?.land_address}
                                                                 error={errors.land_address}
                                                                 helperText={errors.land_address}
                                                             >
@@ -202,9 +192,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                                                 money
                                                                 labelText="Land Value"
                                                                 name="land_value"
-                                                                value={values.land_value}
-                                                                readOnly={readOnly}
-                                                                disabled={readOnly}
+                                                                value={values?.land_value}
                                                                 error={errors.land_value}
                                                                 helperText={errors.land_value}
                                                             >
@@ -218,9 +206,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                                                 {...inputProps}
                                                                 labelText="Building Address"
                                                                 name="building_address"
-                                                                value={values.building_address}
-                                                                readOnly={readOnly}
-                                                                disabled={readOnly}
+                                                                value={values?.building_address}
                                                                 error={errors.building_address}
                                                                 helperText={errors.building_address}
                                                             >
@@ -232,9 +218,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                                                 money
                                                                 labelText="Building Value"
                                                                 name="building_value"
-                                                                value={values.building_value}
-                                                                readOnly={readOnly}
-                                                                disabled={readOnly}
+                                                                value={values?.building_value}
                                                                 error={errors.building_value}
                                                                 helperText={errors.building_value}
                                                             >
@@ -250,9 +234,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                                                 labelText="Gold Quantity"
                                                                 name="gold_quantity"
                                                                 placeholder="in grams"
-                                                                value={values.gold_quantity}
-                                                                readOnly={readOnly}
-                                                                disabled={readOnly}
+                                                                value={values?.gold_quantity}
                                                                 error={errors.gold_quantity}
                                                                 helperText={errors.gold_quantity}
                                                             >
@@ -264,9 +246,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                                                 money
                                                                 labelText="Gold Value"
                                                                 name="gold_value"
-                                                                value={values.gold_value}
-                                                                readOnly={readOnly}
-                                                                disabled={readOnly}
+                                                                value={values?.gold_value}
                                                                 error={errors.gold_value}
                                                                 helperText={errors.gold_value}
                                                             >
@@ -280,9 +260,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                                                 {...inputProps}
                                                                 labelText="Car Model"
                                                                 name="car_model"
-                                                                value={values.car_model}
-                                                                readOnly={readOnly}
-                                                                disabled={readOnly}
+                                                                value={values?.car_model}
                                                                 error={errors.car_model}
                                                                 helperText={errors.car_model}
                                                             >
@@ -293,9 +271,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                                                 {...inputProps}
                                                                 labelText="Car Manufacture Year"
                                                                 name="car_yom"
-                                                                value={values.car_yom}
-                                                                readOnly={readOnly}
-                                                                disabled={readOnly}
+                                                                value={values?.car_yom}
                                                                 error={errors.car_yom}
                                                                 helperText={errors.car_yom}
                                                             >
@@ -307,9 +283,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                                                 money
                                                                 labelText="Car Value"
                                                                 name="car_value"
-                                                                value={values.car_value}
-                                                                readOnly={readOnly}
-                                                                disabled={readOnly}
+                                                                value={values?.car_value}
                                                                 error={errors.car_value}
                                                                 helperText={errors.car_value}
                                                             >
@@ -321,66 +295,102 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                     </Grid>
                                 </div>
                                 <>
-                                    <div className={classes.table}>
-                                        <Typography className={classes.typography}>Land</Typography>
-                                        <Table size="small">
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell>S.No</TableCell>
-                                                    <TableCell align="center">Land address</TableCell>
-                                                    {/* <TableCell align="center">MS Gross</TableCell> */}
-                                                    <TableCell align="center">Value</TableCell>
-                                                    {/* <TableCell align="center">HSD Gross</TableCell> */}
-                                                    <TableCell align="right">Action</TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                        </Table>
-                                    </div>
-                                    <div className={classes.table}>
-                                        <Typography className={classes.typography}>Building</Typography>
-                                        <Table size="small">
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell>S.No</TableCell>
-                                                    <TableCell align="center">Land address</TableCell>
-                                                    {/* <TableCell align="center">MS Gross</TableCell> */}
-                                                    <TableCell align="center">Value</TableCell>
-                                                    {/* <TableCell align="center">HSD Gross</TableCell> */}
-                                                    <TableCell align="right">Action</TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                        </Table>
-                                    </div>
-                                    <div className={classes.table}>
-                                        <Typography className={classes.typography}>Gold</Typography>
-                                        <Table size="small">
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell>S.No</TableCell>
-                                                    <TableCell align="center">Land address</TableCell>
-                                                    {/* <TableCell align="center">MS Gross</TableCell> */}
-                                                    <TableCell align="center">Value</TableCell>
-                                                    {/* <TableCell align="center">HSD Gross</TableCell> */}
-                                                    <TableCell align="right">Action</TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                        </Table>
-                                    </div>
-                                    <div className={classes.table}>
-                                        <Typography className={classes.typography}>Car</Typography>
-                                        <Table size="small">
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell>S.No</TableCell>
-                                                    <TableCell align="center">Land address</TableCell>
-                                                    {/* <TableCell align="center">MS Gross</TableCell> */}
-                                                    <TableCell align="center">Value</TableCell>
-                                                    {/* <TableCell align="center">HSD Gross</TableCell> */}
-                                                    <TableCell align="right">Action</TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                        </Table>
-                                    </div>
+                                    {
+                                        assetData.map((row, i) => {
+                                            return (
+                                                <>
+                                                    {
+                                                        row.asset_id === 4 && (
+                                                            <div className={classes.table}>
+                                                                <Typography className={classes.typography}>Land</Typography>
+                                                                <Table size="small">
+                                                                    <TableHead>
+                                                                        <TableRow>
+                                                                            <TableCell align="left">Address</TableCell>
+                                                                            <TableCell align="left">Value</TableCell>
+                                                                            {/* <TableCell align="right">Action</TableCell> */}
+                                                                        </TableRow>
+                                                                    </TableHead>
+                                                                    <TableBody>
+                                                                        <TableRow>
+                                                                            <TableCell align="left">{row.details.land_address}</TableCell>
+                                                                            <TableCell align="left">{row.details.land_value}</TableCell>
+                                                                        </TableRow>
+                                                                    </TableBody>
+                                                                </Table>
+                                                            </div>
+                                                        )
+                                                    }
+                                                    {
+                                                        row.asset_id === 5 && (
+                                                            <div className={classes.table}>
+                                                                <Typography className={classes.typography}>Building</Typography>
+                                                                <Table size="small">
+                                                                    <TableHead>
+                                                                        <TableRow>
+                                                                            <TableCell align="left">Address</TableCell>
+                                                                            <TableCell align="left">Value</TableCell>
+                                                                            {/* <TableCell align="right">Action</TableCell> */}
+                                                                        </TableRow>
+                                                                    </TableHead>
+                                                                    <TableBody>
+                                                                        <TableRow>
+                                                                            <TableCell align="left">{row.details.building_address}</TableCell>
+                                                                            <TableCell align="left">{row.details.building_value}</TableCell>
+                                                                        </TableRow>
+                                                                    </TableBody>
+                                                                </Table>
+                                                            </div>
+                                                        )
+                                                    }
+                                                    {
+                                                        row.asset_id === 2 && (
+                                                            <div className={classes.table}>
+                                                                <Typography className={classes.typography}>Gold</Typography>
+                                                                <Table size="small">
+                                                                    <TableHead>
+                                                                        <TableRow>
+                                                                            <TableCell align="left">Quantity</TableCell>
+                                                                            <TableCell align="left">Value</TableCell>
+                                                                        </TableRow>
+                                                                    </TableHead>
+                                                                    <TableBody>
+                                                                        <TableRow>
+                                                                            <TableCell align="left">{row.details.gold_quantity}</TableCell>
+                                                                            <TableCell align="left">{row.details.gold_value}</TableCell>
+                                                                        </TableRow>
+                                                                    </TableBody>
+                                                                </Table>
+                                                            </div>
+                                                        )
+                                                    }
+                                                    {
+                                                        row.asset_id === 1 && (
+                                                            <div className={classes.table}>
+                                                                <Typography className={classes.typography}>Car</Typography>
+                                                                <Table size="small">
+                                                                    <TableHead>
+                                                                        <TableRow>
+                                                                            <TableCell align="left">Model</TableCell>
+                                                                            <TableCell align="left">Year of Manufacture</TableCell>
+                                                                            <TableCell align="left">value</TableCell>
+                                                                        </TableRow>
+                                                                    </TableHead>
+                                                                    <TableBody>
+                                                                        <TableRow>
+                                                                            <TableCell align="left">{row.details.car_model}</TableCell>
+                                                                            <TableCell align="left">{row.details.car_yom}</TableCell>
+                                                                            <TableCell align="left">{row.details.car_value}</TableCell>
+                                                                        </TableRow>
+                                                                    </TableBody>
+                                                                </Table>
+                                                            </div>
+                                                        )
+                                                    }
+                                                </>
+                                            )
+                                        })
+                                    }
                                 </>
                             </div>
                         </>

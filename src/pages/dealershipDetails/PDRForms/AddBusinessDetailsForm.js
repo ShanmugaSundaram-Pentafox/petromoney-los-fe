@@ -22,6 +22,7 @@ import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded'
 import { useSnackbar } from 'notistack';
 import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
 import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
+import { updateBusinessDetailsByID } from '../../../services/PDReport.services';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -51,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
     },
     table: {
         padding: 8,
-        marginTop:8
+        marginTop: 8
     },
     btnSuccess: {
         '&.MuiButton-contained': {
@@ -161,36 +162,36 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
             transport_name: Yup.string().required('Please enter transporter name'),
 
         }),
-        // onSubmit: values => {
-        //     updateFleetOperator(values, dealer_id, data.id)
-        //         .then(res => {
-        //             console.log(res)
-        //             enqueueSnackbar(res, {
-        //                 anchorOrigin: {
-        //                     vertical: 'top',
-        //                     horizontal: 'right',
-        //                 },
-        //                 variant: 'success',
-        //             }
-        //             )
-        //             setTimeout(() => {
-        //                 window.location.reload()
-        //             }, 1500);
+        onSubmit: values => {
+            updateBusinessDetailsByID(values, dealer_id)
+                .then(res => {
+                    console.log(res)
+                    enqueueSnackbar(res, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'success',
+                    }
+                    )
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1500);
 
-        //         })
-        //         .catch(e => {
-        //             enqueueSnackbar(e, {
-        //                 anchorOrigin: {
-        //                     vertical: 'top',
-        //                     horizontal: 'right',
-        //                 },
-        //                 variant: 'error',
-        //             }
-        //             )
-        //         })
+                })
+                .catch(e => {
+                    enqueueSnackbar(e, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'error',
+                    }
+                    )
+                })
 
 
-        // }
+        }
     });
     const inputProps = {
         direction: "column",
@@ -236,7 +237,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                                             <Grid item md={12}>
                                                 <Fragment className={classes.table}>
                                                     <Typography className={classes.subTitle} variant="h4">Partner Details</Typography>
-                                                    <Grid  md={6}>
+                                                    <Grid md={6}>
                                                         <TextInput
                                                             {...inputProps}
                                                             labelText="Number of Partner"

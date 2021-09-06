@@ -6,7 +6,7 @@ import { classes } from 'istanbul-lib-coverage';
 import MUIDataTable from 'mui-datatables';
 import { useState } from 'react';
 import { useMount } from 'react-use';
-import { getReport } from '../../services/users.service';
+import { getCreditReport, getCreditReportById, getReport, getTypeOfAccount } from '../../services/users.service';
 import Currency from '../../components/Number/Currency';
 import { Paper } from '@material-ui/core';
 import { Button } from '@material-ui/core';
@@ -31,21 +31,44 @@ const useStyes = makeStyles((theme) => ({
 
 const CreditReload = () => {
     const [loans, setLoans] = useState([])
+    const [tableData, setTableData] = useState()
+    const [accountType, setAccountType] = useState()
+    // console.log(accountType);
+    const [rowData, setRowData] = useState()
+    // console.log(rowData)
     const [loading, setLoading] = useState(false)
     const [reloadDialog, setReloadDialog] = useState(false)
     const [submitLoading, setSubmitLoading] = useState(false)
 
     useMount(async () => {
-        setLoading(true)
-        getReport()
-          .then((data) => {
-            setLoading(false);
-            setLoans(data.overdue)
-          })
-          .catch((e) => {
-            setLoading(false);
-            console.log(e);
-          });
+        // setLoading(true)
+        getCreditReport()
+            .then((data) => {
+                // setLoading(false);
+                setTableData(data)
+            })
+            .catch((e) => {
+                // setLoading(false);
+                console.log(e);
+            })
+        getTypeOfAccount()
+            .then((data) => {
+                // setLoading(false);
+                setAccountType(data)
+            })
+            .catch((e) => {
+                // setLoading(false);
+                console.log(e);
+            })
+        // getReport()
+        //   .then((data) => {
+        //     setLoading(false);
+        //     setLoans(data.overdue)
+        //   })
+        //   .catch((e) => {
+        //     setLoading(false);
+        //     console.log(e);
+        //   });
       })
 
     const handleCreditReload = () => {
@@ -58,24 +81,26 @@ const CreditReload = () => {
 
     const handleSubmit = () => {
         setSubmitLoading(true)
-        setTimeout(() => {
-            window.location.reload();
-        }, 3000)
+        // setTimeout(() => {
+        //     window.location.reload();
+        // }, 3000)
+        const data = {'request_source': 'MDM', 'amount': rowData.amount, 'mobile': rowData.mobile, 'account_id': 1}
+        console.log(data);
     }
 
 
     usePageTitle('Credit Report')
     const columns = useMemo(() => {
         return[
-            { name: 'applicant_name', label: 'Applicant Name' },
-            { name: 'cust_code', label: 'Customer Code' },
-            { name: 'cust_region', label: 'Customer Region' },
+            { name: 'dealership_id', label: 'Dealership ID' },
+            { name: 'request_id', label: 'Request ID' },
+            { name: 'amount', label: 'Amount' },
             { name: 'credit', label: 'Credit Reload', options: { 
                 filter: false,
                 customBodyRender: () => {
                     return (
                         <Tooltip title='credit reload'>
-                            <Button variant='outlined' color='primary' className={classes.btn} startIcon={<CachedIcon fontSize='small'/>} size='small' onClick={handleCreditReload}>Reload Credit</Button>
+                            <Button variant='outlined' color='primary' className={classes.btn} startIcon={<CachedIcon fontSize='small'/>} size='small' onClick={() => handleCreditReload()}>Reload Credit</Button>
                         </Tooltip>
                     )
                 }
@@ -88,6 +113,12 @@ const CreditReload = () => {
         selectableRows: 'none',
         rowsPerPage: 15,
         rowsPerPageOptions: [15, 20, 30],
+        onRowClick: (rowData) => {
+            getCreditReportById(rowData[0])
+                .then((data) => {
+                    setRowData(data[0])
+                })
+        }
     };
 
     return(
@@ -102,7 +133,7 @@ const CreditReload = () => {
                         title={"Credit Reload Moderation"}
                         columns={columns}
                         options={options}
-                        data={loans}
+                        data={tableData}
                     />
                 )
             }

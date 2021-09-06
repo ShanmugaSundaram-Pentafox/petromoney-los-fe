@@ -1,13 +1,12 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
+import TextInput from '../../../components/TextInput/TextInput';
 import Button from '../../../components/CommonComponents/Button/Button';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
@@ -15,21 +14,12 @@ import clsx from 'clsx';
 import Divider from '@material-ui/core/Divider';
 import { makeStyles } from "@material-ui/styles";
 import CloseIcon from '@material-ui/icons/Close';
-import EditIcon from '@material-ui/icons/Edit';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
-import Currency from '../../../components/Number/Currency';
-import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
-import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
-import 'date-fns';
-import DateFnsUtils from '@date-io/date-fns';
-import {
-    MuiPickersUtilsProvider,
-    KeyboardDatePicker
-} from '@material-ui/pickers';
 import { addAssetDetailsById, getAssetList } from '../../../services/PDReport.services';
+import Select from 'react-select';
 import { useMount } from 'react-use';
 
 const useStyles = makeStyles((theme) => ({
@@ -90,69 +80,30 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
     const { enqueueSnackbar } = useSnackbar();
     const classes = useStyles()
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
+    const [type, setType] = useState()
     const [loading, setLoading] = useState(false)
+    const [assetData, setAssetData] = useState([])
     const [assetList, setAssetList] = useState([])
-    const [selectedDate, setSelectedDate] = useState()
-    const [businessType, setBusinessType] = useState('proprietorship')
-    const [tankerData, setTankerData] = useState([])
-    const [editable, setEditable] = useState(true)
-    const [applicantsList, setApplicantsList] = useState([]);
-    const [addNewRow, setAddNewRow] = useState();
-    const [type, setType] = useState();
-    const [apiData, setApiData] = useState({});
-    const [editRow, setEditRow] = useState({});
+
 
     useMount(() => {
         getAssetList()
-            .then(data => {
-                setAssetList(data)
+            .then(result => {
+                setAssetList(result.map(({ name, asset_id }) => ({
+                    label: name,
+                    value: asset_id
+                })))
+                setAssetData(data)
             })
             .catch((e) => {
                 console.log(e);
             })
-
-
     })
 
-    const handleEdit = () => {
-        setReadOnly(!readOnly)
-    };
     const handleClose = () => {
         callback();
     };
-    const handleDateChange = (date) => {
-        setSelectedDate(date)
-        // handleDate(date)
-    }
-    const onTextChange = e => {
-        const { name, value } = e.target;
-        setApiData({
-            ...apiData,
-            [name]: value
-        })
-    }
-    const onEditTextChange = e => {
-        const { name, value } = e.target;
-        setEditRow({
-            ...editRow,
-            [name]: value
-        })
-    }
-    const editTankerRow = (rowData, rowIndex) => {
-        setEditRow({ ...rowData, rowIndex });
-    }
-    const saveIncomeRow = (rowData, rowIndex) => {
-        const objBody = {
-            user_id: currentUser.id, ...rowData
-        }
-    }
-    const saveNewTanker = () => {
-        console.log('Income api body - ', apiData)
-        if (Object.keys(apiData).length < 3) return null;
-        const objBody = {
-            user_id: currentUser.id, ...apiData
-        }
-    }
+
 
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
         initialValues: {
@@ -203,7 +154,12 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                     <form>
                                         <Grid container spacing={2}>
                                             <Grid item md={6}>
-                                                <TextInput
+                                                <label style={{ marginBottom: 8 }}>Asset type</label>
+                                                <Select
+                                                    isClearable
+                                                    onChange={setType}
+                                                    options={assetList} />
+                                                {/* <TextInput
                                                     {...inputProps}
                                                     select
                                                     labelText="Assets"
@@ -216,7 +172,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                                     <option>Gold</option>
                                                     <option>Car</option>
                                                     <option>CV</option>
-                                                </TextInput>
+                                                </TextInput> */}
                                             </Grid>
                                         </Grid>
                                     </form>
@@ -224,7 +180,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                 <div>
                                     <Grid container spacing={2}>
                                         {
-                                            values.assets_type === "Land" ?
+                                            type?.label === "Land" ?
                                                 (
                                                     <>
                                                         <Grid item md={6}>
@@ -255,7 +211,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                                             </TextInput>
                                                         </Grid>
                                                     </>
-                                                ) : values.assets_type === "Building" ? (
+                                                ) : type?.label === "Building" ? (
                                                     <>
                                                         <Grid item md={6}>
                                                             <TextInput
@@ -286,7 +242,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                                         </Grid>
                                                     </>
 
-                                                ) : values.assets_type === "Gold" ? (
+                                                ) : type?.label === "Gold" ? (
                                                     <>
                                                         <Grid item md={6}>
                                                             <TextInput
@@ -317,7 +273,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                                             </TextInput>
                                                         </Grid>
                                                     </>
-                                                ) : values.assets_type === "Car" ? (
+                                                ) : type?.label === "Car" ? (
                                                     <>
                                                         <Grid item md={6}>
                                                             <TextInput
@@ -428,7 +384,6 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                 </>
                             </div>
                         </>
-                        )
                     </Box >
                 </div >
             </div >

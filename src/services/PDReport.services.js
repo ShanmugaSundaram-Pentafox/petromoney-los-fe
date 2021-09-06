@@ -145,7 +145,7 @@ export const addInfrastructureDetails = (data, id) => {
 }
 export const getAssetList = () => {
   return new Promise((resolve, reject) => {
-    apiCall(`assets`)
+    apiCall(`asset`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data)

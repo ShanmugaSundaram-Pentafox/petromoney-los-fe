@@ -12,7 +12,6 @@ import { addNewRemarks, AddNewRemarks, getAllWithheldRemarks, updateRemarks } fr
 import CreatableSelect from 'react-select/creatable';
 import Select from 'react-select';
 import { useSnackbar } from 'notistack';
-import { getAllDealership } from '../../services/dealerships.service';
 
 
 
@@ -65,11 +64,10 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-const AddBlackListForm = ({ callback }) => {
+const AddBlackListForm = ({ data, callback }) => {
     const [newRemarks, setNewRemarks] = useState()
     const [dealerID, setDealerID] = useState()
     const [remarks, setRemarks] = useState()
-    const [list, setList] = useState([])
     const [value, setValue] = useState()
     const classes = useStyles()
     const { enqueueSnackbar } = useSnackbar();
@@ -84,16 +82,6 @@ const AddBlackListForm = ({ callback }) => {
     // }, [data])
 
     useMount(() => {
-        getAllDealership()
-            .then((data) => {
-                setList(data.map(({ id }) => ({
-                    label: id,
-                    value: id
-                })))
-            })
-            .catch((e) => {
-                console.log(e);
-            })
         getAllWithheldRemarks()
             .then((data) => {
                 setRemarks(data)
@@ -191,7 +179,7 @@ const AddBlackListForm = ({ callback }) => {
                                     <Select
                                         isClearable
                                         onChange={setDealerID}
-                                        options={list}
+                                        options={data}
                                     />
                                 </Grid>
                                 <Grid item md={7}>

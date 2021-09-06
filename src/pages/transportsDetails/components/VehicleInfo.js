@@ -458,7 +458,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
                           <TableRow>
                             <TableCell>{row.description}</TableCell>
                             <TableCell>
-                              <Button onClick={() => setImageModal({ open: true, image: row.file_path, type: (row.file_path?.split("/")[row.file_path?.split("/").length - 1].split('.'))[1] })}>
+                              <Button onClick={() => setImageModal({ open: true, image: row.file_path, type: row.file_path.endsWith('.pdf') })} >
                                 <a href={row.file_path}>{row.file_path?.split("/")[row.file_path?.split("/").length - 1] || '-'}</a>
                               </Button>
                             </TableCell>

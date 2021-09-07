@@ -18,6 +18,8 @@ import { Button } from '@material-ui/core';
 import AddBankingDetailsForm from '../PDRForms/AddBankingDetailsForm';
 import { getAssetDetailsById, getInfrastructureDetailsById, getOmcDetailsById, getOutletDetailsById } from '../../../services/PDReport.services';
 import { useMount } from 'react-use';
+import AddOtherDetailsForm from '../PDRForms/AddOtherDetailsForm';
+import AddLoanDetailsForm from '../PDRForms/AddLoanDetailsForm';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -73,6 +75,8 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
     const [openInfrastructureForm, setOpenInfrastructureForm] = useState(false)
     const [openAssetForm, setOpenAssetForm] = useState(false)
     const [openBankingForm, setOpenBankingForm] = useState(false)
+    const [openOtherForm, setOpenOtherForm] = useState(false)
+    const [openLoanForm, setOpenLoanForm] = useState(false)
     const [omcData, setOmcData] = useState()
     const [outletData, setOutletData] = useState()
     const [infrastructureDetails, setInfrastructureDetails] = useState()
@@ -86,6 +90,8 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         setOpenInfrastructureForm(false)
         setOpenAssetForm(false)
         setOpenBankingForm(false)
+        setOpenOtherForm(false)
+        setOpenLoanForm(false)
     }
 
     useMount(() => {
@@ -185,6 +191,22 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                             </div>
                         </Tooltip>
                     </Grid>
+                    <Grid item md={2}>
+                        <Tooltip title="click to edit other details">
+                            <div className={classes.content} onClick={() => setOpenOtherForm(true)}>
+                                <LoanIcon width={30} className={classes.icons} />
+                                <Typography variant="h5" align='center' className={classes.title} >Others</Typography>
+                            </div>
+                        </Tooltip>
+                    </Grid>
+                    <Grid item md={2}>
+                        <Tooltip title="click to edit Loan details">
+                            <div className={classes.content} onClick={() => setOpenLoanForm(true)}>
+                                <LoanIcon width={30} className={classes.icons} />
+                                <Typography variant="h5" align='center' className={classes.title} >Loan Details</Typography>
+                            </div>
+                        </Tooltip>
+                    </Grid>
                 </Grid>
             </div>
 
@@ -235,6 +257,22 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                 variant="temporary"
             >
                 <AddBankingDetailsForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} />
+            </Drawer>
+            <Drawer
+                anchor="right"
+                open={openOtherForm}
+                onClose={() => setOpenOtherForm(false)}
+                variant="temporary"
+            >
+                <AddOtherDetailsForm dealer_id={id} isEdit={omcData ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={omcData} />
+            </Drawer>
+            <Drawer
+                anchor="right"
+                open={openLoanForm}
+                onClose={() => setOpenLoanForm(false)}
+                variant="temporary"
+            >
+                <AddLoanDetailsForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} />
             </Drawer>
         </div >
 

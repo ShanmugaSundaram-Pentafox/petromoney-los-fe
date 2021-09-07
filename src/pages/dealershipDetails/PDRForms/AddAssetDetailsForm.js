@@ -157,17 +157,15 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                         <>
                             <div>
                                 <div className={classes.typeField}>
-                                    <form>
-                                        <Grid container spacing={2}>
-                                            <Grid item md={6}>
-                                                <label style={{ marginBottom: 8 }}>Asset type</label>
-                                                <Select
-                                                    isClearable
-                                                    onChange={setType}
-                                                    options={assetList} />
-                                            </Grid>
+                                    <Grid container spacing={2}>
+                                        <Grid item md={6}>
+                                            <label style={{ marginBottom: 8 }}>Asset type</label>
+                                            <Select
+                                                isClearable
+                                                onChange={setType}
+                                                options={assetList} />
                                         </Grid>
-                                    </form>
+                                    </Grid>
                                 </div>
                                 <div>
                                     <Grid container spacing={2}>

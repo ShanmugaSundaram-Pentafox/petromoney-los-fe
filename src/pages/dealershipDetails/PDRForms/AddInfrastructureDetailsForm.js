@@ -193,6 +193,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                                         name="tank_capacity"
                                         value={values.tank_capacity}
                                         readOnly={readOnly}
+                                        placeholder="in liters"
                                         error={errors.tank_capacity}
                                         helperText={errors.tank_capacity}
                                     />
@@ -229,7 +230,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                                 <Grid item md={12}>
                                     <Fragment className={classes.table}>
                                         <Typography className={classes.subTitle} variant="h4">Tanker Details</Typography>
-                                        <Grid md={6}>
+                                        {/* <Grid md={6}>
                                             <TextInput
                                                 {...inputProps}
                                                 labelText="Number of Tanker"
@@ -240,7 +241,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                                                 error={errors.no_of_tanker}
                                                 helperText={errors.no_of_tanker}
                                             />
-                                        </Grid>
+                                        </Grid> */}
                                         <AddTankerDetails dealer_id={dealer_id} length={values.no_of_tanker} />
                                     </Fragment>
                                     {/* <IncomeTa id={id} editable={editable} currentUser={currentUser} /> */}

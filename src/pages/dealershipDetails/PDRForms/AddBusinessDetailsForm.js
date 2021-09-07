@@ -2,15 +2,10 @@ import React, { Fragment, useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
+import TextInput from '../../../components/TextInput/TextInput';
 import Button from '../../../components/CommonComponents/Button/Button';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import clsx from 'clsx';
 import Divider from '@material-ui/core/Divider';
 import { makeStyles } from "@material-ui/styles";
@@ -20,9 +15,17 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
-import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
-import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
-import { updateBusinessDetailsByID } from '../../../services/PDReport.services';
+import { getBusinessDetailsbyID, getPartnerDetailsbyID, updateBusinessDetailsByID, updatePartnersByID } from '../../../services/PDReport.services';
+import { useMount } from 'react-use';
+import Select from 'react-select';
+import { getBusinessTypes } from '../../../services/common.service';
+import AddPartnerDetails from './AddPartnerDetails';
+import { Table } from '@material-ui/core';
+import { TableHead } from '@material-ui/core';
+import { TableRow } from '@material-ui/core';
+import TableCell from '@material-ui/core/TableCell';
+import { TableBody } from '@material-ui/core';
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -91,14 +94,39 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
     const classes = useStyles()
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
     const [loading, setLoading] = useState(false)
-    const [selectedDate, setSelectedDate] = useState()
-    const [businessType, setBusinessType] = useState('proprietorship')
+    const [businessTypes, setBusinessTypes] = useState([]);
     const [partnerData, setPartnerData] = useState([])
-    const [editable, setEditable] = useState(true)
-    const [applicantsList, setApplicantsList] = useState([]);
-    const [addNewRow, setAddNewRow] = useState();
-    const [apiData, setApiData] = useState({});
-    const [editRow, setEditRow] = useState({});
+    const [type, setType] = useState()
+    const [businessData, setBusinessData] = useState();
+
+
+    useMount(() => {
+        getBusinessTypes()
+            .then(result => {
+                setBusinessTypes(result.map(({ name, id }) => ({
+                    label: name,
+                    value: id
+                })))
+            })
+            .catch((e) => {
+                console.log(e);
+            })
+        getBusinessDetailsbyID(dealer_id)
+            .then(data => {
+                setBusinessData(data)
+            })
+            .catch((e) => {
+                console.log(e);
+            })
+        getPartnerDetailsbyID(dealer_id)
+            .then(data => {
+                setPartnerData(data)
+            })
+            .catch((e) => {
+                console.log(e);
+            })
+
+    })
 
 
     const handleEdit = () => {
@@ -107,50 +135,6 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
     const handleClose = () => {
         callback();
     };
-    const handleDateChange = (date) => {
-        setSelectedDate(date)
-        // handleDate(date)
-    }
-    const onTextChange = e => {
-        const { name, value } = e.target;
-        setApiData({
-            ...apiData,
-            [name]: value
-        })
-    }
-    const onEditTextChange = e => {
-        const { name, value } = e.target;
-        setEditRow({
-            ...editRow,
-            [name]: value
-        })
-    }
-    const editPartnerRow = (rowData, rowIndex) => {
-        setEditRow({ ...rowData, rowIndex });
-    }
-    const saveIncomeRow = (rowData, rowIndex) => {
-        const objBody = {
-            user_id: currentUser.id, ...rowData
-        }
-    }
-    const saveNewPartner = () => {
-        console.log('Income api body - ', apiData)
-        if (Object.keys(apiData).length < 3) return null;
-        const objBody = {
-            user_id: currentUser.id, ...apiData
-        }
-        // postDealershipIncomeById(id, objBody)
-        //     .then(res => {
-        //         setIncome(res);
-        //         setLoading(false);
-        //         setAddNewRow(false);
-        //         setApiData({});
-        //     })
-        //     .catch(err => {
-        //         console.log('Income data save error - ', err);
-        //         setLoading(false);
-        //     })
-    }
 
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
         initialValues: {
@@ -189,8 +173,6 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                     }
                     )
                 })
-
-
         }
     });
     const inputProps = {
@@ -207,10 +189,19 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
             <div className={classes.sidePanelFormContentWrapper}>
                 <div className={classes.stepperRoot}>
                     <Box>
+                        <Grid container spacing={2}>
+                            <Grid item md={6} style={{ marginBottom: 16 }}>
+                                <label style={{ marginBottom: 12 }}>Business type</label>
+                                <Select
+                                    isClearable
+                                    onChange={setType}
+                                    options={businessTypes} />
+                            </Grid>
+                        </Grid>
                         <form onSubmit={handleSubmit}>
                             <Grid container spacing={2}>
                                 {
-                                    businessType === 'proprietorship' && (
+                                    type?.label === 'Proprietorship' && (
                                         <>
                                             <Grid item md={6}>
                                                 <TextInput
@@ -234,27 +225,70 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                                                     helperText={errors.proprietor_mobile}
                                                 />
                                             </Grid>
+                                        </>
+                                    )
+                                }
+                                {
+                                    type?.label === 'Partnership' && (
+                                        <>
                                             <Grid item md={12}>
                                                 <Fragment className={classes.table}>
                                                     <Typography className={classes.subTitle} variant="h4">Partner Details</Typography>
-                                                    <Grid md={6}>
+                                                    {/* <Grid md={6}>
                                                         <TextInput
                                                             {...inputProps}
                                                             labelText="Number of Partner"
-                                                            name="no_of_partner"
+                                                            name="no_of_partners"
                                                             type="number"
-                                                            value={values.no_of_partner}
+                                                            value={values.no_of_partners}
                                                             readOnly={readOnly}
-                                                            error={errors.no_of_partner}
-                                                            helperText={errors.no_of_partner}
+                                                            error={errors.no_of_partners}
+                                                            helperText={errors.no_of_partners}
                                                         />
-                                                    </Grid>
-                                                    <Table className={classes.table} size="small" aria-label="Income">
+                                                    </Grid> */}
+                                                </Fragment>
+                                            </Grid>
+
+                                        </>
+                                    )
+                                }
+                                {
+                                    type?.label !== 'Partnership' && Array.isArray(partnerData) ? (
+                                        <Table>
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell>Partner name</TableCell>
+                                                    <TableCell>Mobile number</TableCell>
+                                                    <TableCell>Managing partner name</TableCell>
+                                                    <TableCell></TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                {
+                                                    partnerData?.map((row, i) => {
+                                                        return (
+                                                            <TableRow>
+                                                                <TableCell>{row.partner_name}</TableCell>
+                                                                <TableCell>{row.partner_mobile}</TableCell>
+                                                                <TableCell>{row.managing_partner_name}</TableCell>
+                                                            </TableRow>
+                                                        )
+                                                    }
+                                                    )
+                                                }
+                                            </TableBody>
+                                        </Table>
+                                    ) : (
+                                        < AddPartnerDetails dealer_id={dealer_id} />
+                                    )
+                                }
+                                {/* <Table className={classes.table} size="small" aria-label="Income">
                                                         <TableHead>
                                                             <TableRow>
                                                                 <TableCell>Partner name</TableCell>
                                                                 <TableCell>Partner mobile</TableCell>
                                                                 <TableCell align="right">Managing partner name</TableCell>
+                                                                <TableCell></TableCell>
                                                             </TableRow>
                                                         </TableHead>
                                                         <TableBody>
@@ -265,7 +299,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                                                                             <TextInput
                                                                                 label="Partner Name"
                                                                                 name="partner_name"
-                                                                                value={editRow.business_name?.toUpperCase()}
+                                                                                value={editRow.partner_name}
                                                                                 onChange={onEditTextChange}
                                                                             />
                                                                         </TableCell>
@@ -273,8 +307,15 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                                                                             <TextInput
                                                                                 label="Partner Mobile"
                                                                                 name="partner_mobile"
-                                                                                type="number"
-                                                                                value={editRow.business_age}
+                                                                                value={editRow.partner_mobile}
+                                                                                onChange={onEditTextChange}
+                                                                            />
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            <TextInput
+                                                                                label="Managing partner name"
+                                                                                name="managing_partner_name"
+                                                                                value={editRow.managing_partner_name}
                                                                                 onChange={onEditTextChange}
                                                                             />
                                                                         </TableCell>
@@ -284,7 +325,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                                                                                 variant="outlined"
                                                                                 color="success"
                                                                                 className={classes.btnSuccess}
-                                                                                onClick={() => saveIncomeRow(editRow, i)}>
+                                                                                onClick={() => updatePartner(editRow, i)}>
                                                                                 Save
                                                                             </Button>
                                                                         </TableCell>
@@ -293,7 +334,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                                                                     <TableRow key={i}>
                                                                         <TableCell>{item.partner_name}</TableCell>
                                                                         <TableCell>{item.partner_mobile}</TableCell>
-                                                                        <TableCell align={"right"}>{item.managig_partner_name}</TableCell>
+                                                                        <TableCell align={"right"}>{item.managing_partner_name}</TableCell>
                                                                         <TableCell align={"right"}>
                                                                             <Button
                                                                                 size="small"
@@ -323,7 +364,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                                                                                 label="Partner Mobile"
                                                                                 name="partner_mobile"
                                                                                 type="number"
-                                                                                value={apiData.business_age}
+                                                                                value={apiData.partner_mobile}
                                                                                 onChange={onTextChange}
                                                                             />
                                                                         </TableCell>
@@ -374,13 +415,8 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                                                                 </TableCell>
                                                             </TableRow>
                                                         </TableBody>
-                                                    </Table>
-                                                </Fragment>
-                                                {/* <IncomeTa id={id} editable={editable} currentUser={currentUser} /> */}
-                                            </Grid>
-                                        </>
-                                    )
-                                }
+                                                    </Table> */}
+                                {/* <IncomeTa id={id} editable={editable} currentUser={currentUser} /> */}
                             </Grid>
                         </form>
                     </Box >
@@ -413,7 +449,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
 
 
     )

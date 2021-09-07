@@ -145,6 +145,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                                         helperText={errors.sales_officer_name}
                                     />
                                 </Grid>
+
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}

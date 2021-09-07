@@ -91,9 +91,12 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
         setSelectedDate(date)
         handleDate(date)
     }
-    const handleChange = (event) => {
-        setState({ ...state, [event.target.name]: event.target.checked });
+    useEffect(() => {
+        // console.log(state)
         handleState(state)
+    })
+    const handleChange = (event) => {
+        setState({ ...state, [event.target.name]: event.target.checked },);
     };
     const docUpload = (val) => {
         setShowUpload(true)

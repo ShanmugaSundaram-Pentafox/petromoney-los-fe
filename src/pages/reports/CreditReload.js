@@ -68,14 +68,14 @@ const CreditReload = () => {
         setReloadDialog(false)
     }
 
-    // const handleSubmit = () => {
+    const handleSubmit = () => {
     //     setSubmitLoading(true)
     //     // setTimeout(() => {
     //     //     window.location.reload();
     //     // }, 3000)
     //     const data = {'request_source': 'MDM', 'amount': rowData.amount, 'mobile': rowData.mobile, 'account_id': 1}
     //     console.log(data);
-    // }
+    }
 
 
     usePageTitle('Credit Report')

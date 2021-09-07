@@ -3,7 +3,7 @@ import apiCall from '../utils/api.util';
 
 export const addOmcDetails = (data, id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`dealership/${id}/omc`, {
+    apiCall(`dealership/${id}`, {
       method: 'POST',
       body: data,
     })
@@ -22,7 +22,7 @@ export const addOmcDetails = (data, id) => {
 
 export const getOmcDetailsById = (id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`dealership/${id}/omc`)
+    apiCall(`dealership/${id}`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data)
@@ -227,7 +227,7 @@ export const getTankersById = (id) => {
 
 export const addNewTanker = (data, id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`dealership/${id}/tanker/${data.vehicle_no}`, {
+    apiCall(`dealership/${id}/tanker`, {
       method: 'POST',
       body: data,
     })
@@ -243,10 +243,28 @@ export const addNewTanker = (data, id) => {
       });
   });
 }
+export const deleteTanker = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/tanker/${data.vehicle_no}`, {
+      method: 'DELETE',
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+
 
 export const updateTankerByID = (data, id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`dealership/${id}/tanker/${data.vehicle_no}`, {
+    apiCall(`dealership/${id}/tanker`, {
       method: 'POST',
       body: data,
     })
@@ -280,6 +298,24 @@ export const getBankDetailsbyID = (id) => {
   });
 }
 export const updateBankDetailsByID = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/bank`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+export const deleteBankDetailsByID = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/bank`, {
       method: 'POST',

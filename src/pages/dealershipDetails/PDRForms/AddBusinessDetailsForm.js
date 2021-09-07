@@ -180,6 +180,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
         alignTop: true,
         onChange: handleChange,
     }
+    
     return (
         <div className={classes.sidePanelFormWrapper}>
             <Typography className={classes.sidePanelTitle} variant="h4">
@@ -198,43 +199,42 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                                     options={businessTypes} />
                             </Grid>
                         </Grid>
-                        <form onSubmit={handleSubmit}>
-                            <Grid container spacing={2}>
-                                {
-                                    type?.label === 'Proprietorship' && (
-                                        <>
-                                            <Grid item md={6}>
-                                                <TextInput
-                                                    {...inputProps}
-                                                    labelText="Proprietor name"
-                                                    name="proprietor_name"
-                                                    value={values.proprietor_name}
-                                                    readOnly={readOnly}
-                                                    error={errors.proprietor_name}
-                                                    helperText={errors.proprietor_name}
-                                                />
-                                            </Grid>
-                                            <Grid item md={6}>
-                                                <TextInput
-                                                    {...inputProps}
-                                                    labelText="Proprietor mobile"
-                                                    name="proprietor_mobile"
-                                                    value={values.proprietor_mobile}
-                                                    readOnly={readOnly}
-                                                    error={errors.proprietor_mobile}
-                                                    helperText={errors.proprietor_mobile}
-                                                />
-                                            </Grid>
-                                        </>
-                                    )
-                                }
-                                {
-                                    type?.label === 'Partnership' && (
-                                        <>
-                                            <Grid item md={12}>
-                                                <Fragment className={classes.table}>
-                                                    <Typography className={classes.subTitle} variant="h4">Partner Details</Typography>
-                                                    {/* <Grid md={6}>
+                        <Grid container spacing={2}>
+                            {
+                                type?.label === 'Proprietorship' && (
+                                    <>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                {...inputProps}
+                                                labelText="Proprietor name"
+                                                name="proprietor_name"
+                                                value={values.proprietor_name}
+                                                readOnly={readOnly}
+                                                error={errors.proprietor_name}
+                                                helperText={errors.proprietor_name}
+                                            />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                {...inputProps}
+                                                labelText="Proprietor mobile"
+                                                name="proprietor_mobile"
+                                                value={values.proprietor_mobile}
+                                                readOnly={readOnly}
+                                                error={errors.proprietor_mobile}
+                                                helperText={errors.proprietor_mobile}
+                                            />
+                                        </Grid>
+                                    </>
+                                )
+                            }
+                            {
+                                type?.label === 'Partnership' && (
+                                    <>
+                                        <Grid item md={12}>
+                                            <Fragment className={classes.table}>
+                                                <Typography className={classes.subTitle} variant="h4">Partner Details</Typography>
+                                                {/* <Grid md={6}>
                                                         <TextInput
                                                             {...inputProps}
                                                             labelText="Number of Partner"
@@ -246,14 +246,14 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                                                             helperText={errors.no_of_partners}
                                                         />
                                                     </Grid> */}
-                                                </Fragment>
-                                            </Grid>
-
-                                        </>
-                                    )
-                                }
-                                {
-                                    type?.label !== 'Partnership' && Array.isArray(partnerData) ? (
+                                            </Fragment>
+                                        </Grid>
+                                        < AddPartnerDetails dealer_id={dealer_id} />
+                                    </>
+                                )
+                            }
+                            {/* {
+                                    Array.isArray(partnerData) && (
                                         <Table>
                                             <TableHead>
                                                 <TableRow>
@@ -278,147 +278,9 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                                                 }
                                             </TableBody>
                                         </Table>
-                                    ) : (
-                                        < AddPartnerDetails dealer_id={dealer_id} />
                                     )
-                                }
-                                {/* <Table className={classes.table} size="small" aria-label="Income">
-                                                        <TableHead>
-                                                            <TableRow>
-                                                                <TableCell>Partner name</TableCell>
-                                                                <TableCell>Partner mobile</TableCell>
-                                                                <TableCell align="right">Managing partner name</TableCell>
-                                                                <TableCell></TableCell>
-                                                            </TableRow>
-                                                        </TableHead>
-                                                        <TableBody>
-                                                            {
-                                                                Array.isArray(partnerData) && partnerData.map((item, i) => editRow.rowIndex === i ? (
-                                                                    <TableRow key={i}>
-                                                                        <TableCell>
-                                                                            <TextInput
-                                                                                label="Partner Name"
-                                                                                name="partner_name"
-                                                                                value={editRow.partner_name}
-                                                                                onChange={onEditTextChange}
-                                                                            />
-                                                                        </TableCell>
-                                                                        <TableCell>
-                                                                            <TextInput
-                                                                                label="Partner Mobile"
-                                                                                name="partner_mobile"
-                                                                                value={editRow.partner_mobile}
-                                                                                onChange={onEditTextChange}
-                                                                            />
-                                                                        </TableCell>
-                                                                        <TableCell>
-                                                                            <TextInput
-                                                                                label="Managing partner name"
-                                                                                name="managing_partner_name"
-                                                                                value={editRow.managing_partner_name}
-                                                                                onChange={onEditTextChange}
-                                                                            />
-                                                                        </TableCell>
-                                                                        <TableCell align={"right"}>
-                                                                            <Button
-                                                                                size="small"
-                                                                                variant="outlined"
-                                                                                color="success"
-                                                                                className={classes.btnSuccess}
-                                                                                onClick={() => updatePartner(editRow, i)}>
-                                                                                Save
-                                                                            </Button>
-                                                                        </TableCell>
-                                                                    </TableRow>
-                                                                ) : (
-                                                                    <TableRow key={i}>
-                                                                        <TableCell>{item.partner_name}</TableCell>
-                                                                        <TableCell>{item.partner_mobile}</TableCell>
-                                                                        <TableCell align={"right"}>{item.managing_partner_name}</TableCell>
-                                                                        <TableCell align={"right"}>
-                                                                            <Button
-                                                                                size="small"
-                                                                                variant="outlined"
-                                                                                color="success"
-                                                                                className={classes.btnSuccess}
-                                                                                onClick={() => editPartnerRow(item, i)}>
-                                                                                Edit
-                                                                            </Button>
-                                                                        </TableCell>
-                                                                    </TableRow>
-                                                                ))
-                                                            }
-                                                            {
-                                                                addNewRow && (
-                                                                    <TableRow key={"new-row"}>
-                                                                        <TableCell>
-                                                                            <TextInput
-                                                                                label="Partner Name"
-                                                                                name="partner_name"
-                                                                                value={apiData.business_name?.toUpperCase()}
-                                                                                onChange={onTextChange}
-                                                                            />
-                                                                        </TableCell>
-                                                                        <TableCell align={"right"}>
-                                                                            <TextInput
-                                                                                label="Partner Mobile"
-                                                                                name="partner_mobile"
-                                                                                type="number"
-                                                                                value={apiData.partner_mobile}
-                                                                                onChange={onTextChange}
-                                                                            />
-                                                                        </TableCell>
-                                                                        <TableCell >
-                                                                            <TextInput
-                                                                                label="Managining partner name"
-                                                                                name="managing_partner_name"
-                                                                                value={apiData.managing_partner_name}
-                                                                                onChange={onTextChange}
-                                                                            />
-                                                                        </TableCell>
-                                                                        <TableCell align={"right"}></TableCell>
-                                                                    </TableRow>
-                                                                )
-                                                            }
-                                                            <TableRow key={"add-row"}>
-                                                                <TableCell align="right" colSpan={4}>
-                                                                    {
-                                                                        addNewRow ? (
-                                                                            <Fragment>
-                                                                                <Button
-                                                                                    size="small"
-                                                                                    variant="outlined"
-                                                                                    color="error"
-                                                                                    onClick={() => {
-                                                                                        setAddNewRow(false);
-                                                                                    }}>
-                                                                                    <DeleteForeverRoundedIcon fontSize="small" />
-                                                                                </Button>
-                                                                                &nbsp;&nbsp;
-                                                                                <Button
-                                                                                    size="small"
-                                                                                    variant="outlined"
-                                                                                    color="success"
-                                                                                    className={classes.btnSuccess}
-                                                                                    onClick={saveNewPartner}>
-                                                                                    <DoneRoundedIcon fontSize="small" />
-                                                                                </Button>
-                                                                            </Fragment>
-                                                                        ) : (editable && (
-
-                                                                            <Button
-                                                                                variant="contained"
-                                                                                className={clsx(classes.btn, classes.btnSuccess)}
-                                                                                onClick={() => setAddNewRow(true)}>Add Partner</Button>
-                                                                        ))
-                                                                    }
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        </TableBody>
-                                                    </Table> */}
-                                {/* <IncomeTa id={id} editable={editable} currentUser={currentUser} /> */}
-                            </Grid>
-                        </form>
+                                } */}
+                        </Grid>
                     </Box >
                 </div>
             </div>
@@ -441,7 +303,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                             type="submit"
                             className={clsx(classes.btn, classes.editButton)}
                             startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                            onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
+                            onClick={handleSubmit}
                         >
                             {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` :
                                 'Save'}

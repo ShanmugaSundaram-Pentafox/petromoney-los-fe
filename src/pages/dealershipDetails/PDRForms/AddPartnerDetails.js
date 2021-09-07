@@ -64,7 +64,7 @@ const AddPartnerDetails = ({ dealer_id, isEdit }) => {
         setEditRow({ ...rowData, rowIndex });
     }
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
-        initialValues: { partnerData },
+        initialValues: {},
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
@@ -221,7 +221,7 @@ const AddPartnerDetails = ({ dealer_id, isEdit }) => {
                     )
                 }
                 <TableRow key={"add-row"}>
-                    <TableCell colSpan={4}>
+                    <TableCell align="right" colSpan={4}>
                         {
                             addNewRow ? (
                                 <Fragment>

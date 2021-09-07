@@ -161,7 +161,26 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                             <Grid container spacing={2}>
                                 <Grid item md={6}>
                                     <TextInput
+                                        select
                                         {...inputProps}
+                                        labelText="Outlet category"
+                                        name="outlet_category"
+                                        value={values.outlet_category}
+                                        readOnly={readOnly}
+                                        disabled={readOnly}
+                                        error={errors.id}
+                                        helperText={errors.id}
+                                    >
+                                        <option value="">Choose category</option>
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C">C</option>
+                                    </TextInput>
+                                </Grid>
+                                {/* <Grid item md={6}>
+                                    <TextInput
+                                        {...inputProps}
+                                        multiline={true}
                                         labelText="Outlet Address"
                                         name="outlet_address"
                                         value={values.outlet_address}
@@ -169,8 +188,8 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         error={errors.outlet_address}
                                         helperText={errors.outlet_address}
                                     />
-                                </Grid>
-                                <Grid item md={6}>
+                                </Grid> */}
+                                {/* <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
                                         labelText="Outlet Landmark"
@@ -180,19 +199,7 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         error={errors.outlet_landmark}
                                         helperText={errors.outlet_landmark}
                                     />
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        labelText="Distance from Headquarters"
-                                        name="distance_from_headquarters"
-                                        placeholder="in Km"
-                                        value={values.distance_from_headquarters}
-                                        readOnly={readOnly}
-                                        error={errors.distance_from_headquarters}
-                                        helperText={errors.distance_from_headquarters}
-                                    />
-                                </Grid>
+                                </Grid> */}
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
@@ -213,6 +220,18 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         readOnly={readOnly}
                                         error={errors.terminal_name}
                                         helperText={errors.terminal_name}
+                                    />
+                                </Grid>
+                                <Grid item md={6}>
+                                    <TextInput
+                                        {...inputProps}
+                                        labelText="Distance from Terminal"
+                                        name="distance_from_headquarters"
+                                        placeholder="in Km"
+                                        value={values.distance_from_headquarters}
+                                        readOnly={readOnly}
+                                        error={errors.distance_from_headquarters}
+                                        helperText={errors.distance_from_headquarters}
                                     />
                                 </Grid>
                                 <Grid item md={6}>
@@ -299,11 +318,11 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         {...inputProps}
                                         select
                                         labelText="Relationship with owner"
-                                        name="relation_type"
-                                        error={errors.relation_type}
-                                        helperText={errors.relation_type}
+                                        name="relation_type_with_owner"
+                                        error={errors.relation_type_with_owner}
+                                        helperText={errors.relation_type_with_owner}
                                         readOnly={readOnly}
-                                        value={values.relation_type}
+                                        value={values.relation_type_with_owner}
                                         disabled={readOnly}
                                     >
                                         {
@@ -326,7 +345,7 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         helperText={errors.operator_mobile}
                                     />
                                 </Grid>
-                                <Grid item md={6}>
+                                {/* <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
                                         money
@@ -349,23 +368,23 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         error={errors.eb_charge_per_month}
                                         helperText={errors.eb_charge_per_month}
                                     />
-                                </Grid>
-                                <Grid item md={7}>
+                                </Grid> */}
+                                {/* <Grid item md={7}>
                                     <div style={{ paddingTop: 12 }}>
                                         <label>Is the customer a PEP (Politically Exposed Person) or closely associated to PEP</label>
                                     </div>
                                 </Grid>
                                 <Grid item md={4}>
                                     <FormControl>
-                                        <RadioGroup name="other_bunks_owned" value={values.is_pep} onChange={handleChange}>
+                                        <RadioGroup name="is_pep" value={values.is_pep} defaultValue={values.is_pep} onChange={handleChange}>
                                             <FormGroup row>
                                                 <FormControlLabel value="yes" control={<Radio color="secondary" />} label="Yes" />
                                                 <FormControlLabel value="no" control={<Radio color="secondary" />} label="No" />
                                             </FormGroup>
                                         </RadioGroup>
                                     </FormControl>
-                                </Grid>
-                                {
+                                </Grid> */}
+                                {/* {
                                     values.is_pep === "yes" ? (
                                         <>
                                             <Grid item md={6}>
@@ -390,7 +409,7 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                             </Grid>
                                         </>
                                     ) : null
-                                }
+                                } */}
                             </Grid>
                         </form>
                     </Box >

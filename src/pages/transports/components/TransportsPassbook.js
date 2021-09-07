@@ -257,9 +257,24 @@ function FastTagPassbook() {
     setFile(event.target.files[0]);
     setLoading(true);
     setDisable(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 5000);
+    // setTimeout(() => {
+    //   setLoading(false);
+    // }, 5000);
+    const formData = new FormData();
+    formData.append('file', event.target.files[0])
+    fetch(`fastag/upload_statement`, {
+      method: "POST",
+      body: formData
+    })
+      .then(res => {
+        setLoading(false)
+        console.log(res);
+      })
+      .catch(e => {
+        setLoading(false)
+        setDisable(false)
+        console.log(e);
+      })
   };
 
   return (

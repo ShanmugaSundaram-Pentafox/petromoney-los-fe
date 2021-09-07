@@ -244,7 +244,7 @@ const SalesInfo = ({
             </TableHead>
             <TableBody>
               {
-                info.map((row, i) => i === editRow.rowIndex ? (
+                info?.map((row, i) => i === editRow?.rowIndex ? (
                   <TableRow key={`edit-row-${i}`}>
                     <TableCell scope="row" component="th">
                       <TextInput

@@ -459,7 +459,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
                             <TableCell>{row.description}</TableCell>
                             <TableCell>
                               <Button onClick={() => setImageModal({ open: true, image: row.file_path, type: row.file_path.endsWith('.pdf') })} >
-                                <a href={row.file_path}>{row.file_path?.split("/")[row.file_path?.split("/").length - 1] || '-'}</a>
+                                <a>{row.file_path?.split("/")[row.file_path?.split("/").length - 1] || '-'}</a>
                               </Button>
                             </TableCell>
                             <TableCell>
@@ -595,7 +595,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
           </div>
         )
       })}
-      <FormDialog title={"image preview"} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
+      <FormDialog title={"File Preview"} onDownload={imageModal.image} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
         <FilePreview data={imageModal} />
       </FormDialog>
       {

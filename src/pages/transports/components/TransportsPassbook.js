@@ -25,6 +25,7 @@ import moment from 'moment';
 import FileUpload from '../../../components/FileUpload';
 import PublishIcon from '@material-ui/icons/Publish';
 import { CircularProgress } from '@material-ui/core';
+import Currency from '../../../components/Number/Currency';
 
 const useStyles = makeStyles({
   root: {
@@ -125,6 +126,7 @@ function FastTagPassbook() {
   const [file, setFile] = useState();
   const [loading, setLoading] = useState(false);
   const [disable, setDisable] = useState(false);
+  const [data, setData] = useState();
   const [selectedPeriod, setSelectedPeriod] = useState({
     from: moment(new Date()).format('YYYY-MM-DD'),
     to: moment(new Date()).format('YYYY-MM-DD'),
@@ -134,18 +136,18 @@ function FastTagPassbook() {
     return [
       {
         label: 'Transaction Date',
-        name: 'transporter_id',
+        name: 'transactionDateTime',
         options: {
           filter: false,
           sort: true,
           customBodyRender: (value) => {
-            return <>{value}</>;
+            return <>{moment(new Date(value)).format('DD-MM-YYYY')}</>;
           },
         },
       },
       {
         label: 'Toll Name',
-        name: 'name',
+        name: 'plazaName',
         options: {
           filter: false,
           sort: true,
@@ -156,7 +158,7 @@ function FastTagPassbook() {
       },
       {
         label: 'Transaction Id',
-        name: 'mobile',
+        name: 'tollTransactionID',
         options: {
           filter: true,
           sort: true,
@@ -164,10 +166,11 @@ function FastTagPassbook() {
       },
       {
         label: 'Amount',
-        name: 'omc',
+        name: 'transactionAmount',
         options: {
           filter: true,
           sort: true,
+          customBodyRender: value => <strong><Currency value={value} /></strong>
         },
       },
     ];
@@ -235,9 +238,12 @@ function FastTagPassbook() {
     setSearchValue(event.target.value);
   };
   const handleSubmit = () => {
-    apiCall(
-      `fastag/details?${selectedValue}=${searchValue}&from=${selectedPeriod.from}&to=${selectedPeriod.to}`
-    );
+    apiCall(`fastag/detials/${searchValue}`)
+      .then(res => {
+        if(res.status === "SUCCESS"){
+          setData(res.data)
+        }
+      })
   };
   const handleSave = (value) => {
     const data = new FormData();
@@ -389,9 +395,6 @@ function FastTagPassbook() {
             </label>
           </div>
         </div>
-      </Paper>
-      <Paper className={classes.root} style={{ marginTop: 20 }}>
-        <MUIDataTable columns={columns} options={options} />
         {showUpload && (
           <FileUpload
             handleSave={(value) => {
@@ -408,6 +411,13 @@ function FastTagPassbook() {
           />
         )}
       </Paper>
+      {
+        data ? (
+      <Paper className={classes.root} style={{ marginTop: 20 }}>
+        <MUIDataTable columns={columns} options={options} data={data}/>
+      </Paper>
+        ) : null
+      }
     </>
   );
 }

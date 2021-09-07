@@ -263,7 +263,7 @@ function FastTagPassbook( {currentUser} ) {
   };
   const handleSubmit = () => {
     if(searchValue){
-      apiCall(`fastag/detials&${selectedValue}=${searchValue}&from=${from}&to=${to}`)
+      apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${from}&to=${to}`)
         .then(res => {
           if(res.status === "SUCCESS"){
             setData(res.data)
@@ -285,7 +285,7 @@ function FastTagPassbook( {currentUser} ) {
     setDisable(true);
     const formData = new FormData();
     formData.append('file', event.target.files[0])
-    fetch(`${URL.base}fastag/upload_statement`, {
+    fetch(`${URL.base}fastag/upload/statement`, {
       method: "POST",
       body: formData,
       headers: {
@@ -339,7 +339,7 @@ function FastTagPassbook( {currentUser} ) {
             Find By
           </Typography>
           <RadioGroup row style={{ marginLeft: 15 }}>
-            <FormControlLabel
+            {/* <FormControlLabel
               control={
                 <Radio
                   color='primary'
@@ -350,7 +350,7 @@ function FastTagPassbook( {currentUser} ) {
                 />
               }
               label='Mobile'
-            />
+            /> */}
             <FormControlLabel
               control={
                 <Radio

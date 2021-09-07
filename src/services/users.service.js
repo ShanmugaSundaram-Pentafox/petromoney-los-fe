@@ -220,3 +220,51 @@ export const passReset = (password,userId) => {
       })
   });
 }
+
+export const getCreditReport = () => {
+  return new Promise((resolve, reject) => {
+    apiCall(`credit/reload`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const getCreditReportById = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`credit/reload/${id}`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const getTypeOfAccount = () => {
+  return new Promise((resolve, reject) => {
+    apiCall(`credit/reload/typeofaccount`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}

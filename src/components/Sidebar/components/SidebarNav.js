@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import InputIcon from '@material-ui/icons/Input';
+import CachedIcon from '@material-ui/icons/Cached';
 import { List, ListItem, IconButton, Button, colors, Hidden } from '@material-ui/core';
 import LocalShippingIcon from '@material-ui/icons/LocalShipping';
 import ListAltIcon from '@material-ui/icons/ListAlt';
@@ -363,6 +364,22 @@ const SidebarNav = props => {
                 >
                   <div className={classes.icon}><ReportProblemIcon /></div>
                   {'Loan Overdue'}
+                </Button>
+              </ListItem>
+              <ListItem
+                className={classes.itemSub}
+                disableGutters
+                key={'CreditReload'}
+              >
+                <Button
+                  className={classes.button}
+                  activeClassName={classes.active}
+                  component={CustomRouterLink}
+                  to={'/reports/creditreload'}
+                  exact
+                >
+                  <div className={classes.icon}><CachedIcon /></div>
+                  {'Credit Reload'}
                 </Button>
               </ListItem>
             </Collapse>

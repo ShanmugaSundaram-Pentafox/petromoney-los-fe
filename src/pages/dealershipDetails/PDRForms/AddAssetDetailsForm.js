@@ -1,13 +1,12 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
+import TextInput from '../../../components/TextInput/TextInput';
 import Button from '../../../components/CommonComponents/Button/Button';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
@@ -15,20 +14,14 @@ import clsx from 'clsx';
 import Divider from '@material-ui/core/Divider';
 import { makeStyles } from "@material-ui/styles";
 import CloseIcon from '@material-ui/icons/Close';
-import EditIcon from '@material-ui/icons/Edit';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
-import Currency from '../../../components/Number/Currency';
-import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
-import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
-import 'date-fns';
-import DateFnsUtils from '@date-io/date-fns';
-import {
-    MuiPickersUtilsProvider,
-    KeyboardDatePicker
-} from '@material-ui/pickers';
+import { addAssetDetailsById, getAssetDataById, getAssetList } from '../../../services/PDReport.services';
+import Select from 'react-select';
+import { useMount } from 'react-use';
+import { TableBody } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -53,6 +46,13 @@ const useStyles = makeStyles((theme) => ({
     title: {
         paddingLeft: 8,
         marginBottom: 8
+    },
+    table: {
+        marginTop: 20,
+
+    },
+    typeField: {
+        marginBottom: 20,
     },
     stepperRoot: {
         padding: 16,
@@ -81,108 +81,64 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
     const { enqueueSnackbar } = useSnackbar();
     const classes = useStyles()
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
+    const [type, setType] = useState()
     const [loading, setLoading] = useState(false)
-    const [selectedDate, setSelectedDate] = useState()
-    const [businessType, setBusinessType] = useState('proprietorship')
-    const [tankerData, setTankerData] = useState([])
-    const [editable, setEditable] = useState(true)
-    const [applicantsList, setApplicantsList] = useState([]);
-    const [addNewRow, setAddNewRow] = useState();
-    const [apiData, setApiData] = useState({});
-    const [editRow, setEditRow] = useState({});
+    const [assetData, setAssetData] = useState([])
+    const [assetList, setAssetList] = useState([])
 
 
-    const handleEdit = () => {
-        setReadOnly(!readOnly)
-    };
+    useMount(() => {
+        getAssetList()
+            .then(result => {
+                setAssetList(result.map(({ name, asset_id }) => ({
+                    label: name,
+                    value: asset_id
+                })))
+            })
+            .catch((e) => {
+                console.log(e);
+            })
+        getAssetDataById(dealer_id)
+            .then(data => {
+                setAssetData(data)
+            })
+            .catch((e) => {
+                console.log(e);
+            })
+
+    })
+
     const handleClose = () => {
         callback();
     };
-    const handleDateChange = (date) => {
-        setSelectedDate(date)
-        // handleDate(date)
-    }
-    const onTextChange = e => {
-        const { name, value } = e.target;
-        setApiData({
-            ...apiData,
-            [name]: value
-        })
-    }
-    const onEditTextChange = e => {
-        const { name, value } = e.target;
-        setEditRow({
-            ...editRow,
-            [name]: value
-        })
-    }
-    const editTankerRow = (rowData, rowIndex) => {
-        setEditRow({ ...rowData, rowIndex });
-    }
-    const saveIncomeRow = (rowData, rowIndex) => {
-        const objBody = {
-            user_id: currentUser.id, ...rowData
-        }
-    }
-    const saveNewTanker = () => {
-        console.log('Income api body - ', apiData)
-        if (Object.keys(apiData).length < 3) return null;
-        const objBody = {
-            user_id: currentUser.id, ...apiData
-        }
-        // postDealershipIncomeById(id, objBody)
-        //     .then(res => {
-        //         setIncome(res);
-        //         setLoading(false);
-        //         setAddNewRow(false);
-        //         setApiData({});
-        //     })
-        //     .catch(err => {
-        //         console.log('Income data save error - ', err);
-        //         setLoading(false);
-        //     })
-    }
+
 
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
-        initialValues: {
-            ...data,
-        },
+        initialValues: {},
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
-            transport_name: Yup.string().required('Please enter transporter name'),
-
+            // transport_name: Yup.string().required('Please enter transporter name'),
         }),
-        // onSubmit: values => {
-        //     updateFleetOperator(values, dealer_id, data.id)
-        //         .then(res => {
-        //             console.log(res)
-        //             enqueueSnackbar(res, {
-        //                 anchorOrigin: {
-        //                     vertical: 'top',
-        //                     horizontal: 'right',
-        //                 },
-        //                 variant: 'success',
-        //             }
-        //             )
-        //             setTimeout(() => {
-        //                 window.location.reload()
-        //             }, 1500);
-
-        //         })
-        //         .catch(e => {
-        //             enqueueSnackbar(e, {
-        //                 anchorOrigin: {
-        //                     vertical: 'top',
-        //                     horizontal: 'right',
-        //                 },
-        //                 variant: 'error',
-        //             }
-        //             )
-        //         })
-
-
-        // }
+        onSubmit: values => {
+            const data = { details: { ...values }, asset_id: type.value }
+            addAssetDetailsById(data, dealer_id)
+                .then(res => {
+                    enqueueSnackbar(res, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'success',
+                    });
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1500);
+                })
+                .catch(e => {
+                    console.log(e);
+                })
+        }
     });
     const inputProps = {
         direction: "column",
@@ -198,32 +154,247 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
             <div className={classes.sidePanelFormContentWrapper}>
                 <div className={classes.stepperRoot}>
                     <Box>
-                        <form onSubmit={handleSubmit}>
-                            <Grid container spacing={2}>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        select
-                                        labelText="Assets"
-                                        name="assets"
-                                        value={values.outlet_address}
-                                        readOnly={readOnly}
-                                        error={errors.outlet_address}
-                                        helperText={errors.outlet_address}
-                                    >
-                                        <option>Land</option>
-                                        <option>Building</option>
-                                        <option>Gold</option>
-                                        <option>Car</option>
-                                        <option>CV</option>
-                                    </TextInput>
-                                </Grid>
-                               
-                            </Grid>
-                        </form>
+                        <>
+                            <div>
+                                <div className={classes.typeField}>
+                                    <Grid container spacing={2}>
+                                        <Grid item md={6}>
+                                            <label style={{ marginBottom: 8 }}>Asset type</label>
+                                            <Select
+                                                isClearable
+                                                onChange={setType}
+                                                options={assetList} />
+                                        </Grid>
+                                    </Grid>
+                                </div>
+                                <div>
+                                    <Grid container spacing={2}>
+                                        {
+                                            type?.label === "Land" ?
+                                                (
+                                                    <>
+                                                        <Grid item md={6}>
+                                                            <TextInput
+                                                                {...inputProps}
+                                                                labelText="Land Address"
+                                                                name="land_address"
+                                                                value={values?.land_address}
+                                                                error={errors.land_address}
+                                                                helperText={errors.land_address}
+                                                            >
+                                                            </TextInput>
+                                                        </Grid>
+                                                        <Grid item md={6}>
+                                                            <TextInput
+                                                                {...inputProps}
+                                                                money
+                                                                labelText="Land Value"
+                                                                name="land_value"
+                                                                value={values?.land_value}
+                                                                error={errors.land_value}
+                                                                helperText={errors.land_value}
+                                                            >
+                                                            </TextInput>
+                                                        </Grid>
+                                                    </>
+                                                ) : type?.label === "Building" ? (
+                                                    <>
+                                                        <Grid item md={6}>
+                                                            <TextInput
+                                                                {...inputProps}
+                                                                labelText="Building Address"
+                                                                name="building_address"
+                                                                value={values?.building_address}
+                                                                error={errors.building_address}
+                                                                helperText={errors.building_address}
+                                                            >
+                                                            </TextInput>
+                                                        </Grid>
+                                                        <Grid item md={6}>
+                                                            <TextInput
+                                                                {...inputProps}
+                                                                money
+                                                                labelText="Building Value"
+                                                                name="building_value"
+                                                                value={values?.building_value}
+                                                                error={errors.building_value}
+                                                                helperText={errors.building_value}
+                                                            >
+                                                            </TextInput>
+                                                        </Grid>
+                                                    </>
+
+                                                ) : type?.label === "Gold" ? (
+                                                    <>
+                                                        <Grid item md={6}>
+                                                            <TextInput
+                                                                {...inputProps}
+                                                                labelText="Gold Quantity"
+                                                                name="gold_quantity"
+                                                                placeholder="in grams"
+                                                                value={values?.gold_quantity}
+                                                                error={errors.gold_quantity}
+                                                                helperText={errors.gold_quantity}
+                                                            >
+                                                            </TextInput>
+                                                        </Grid>
+                                                        <Grid item md={6}>
+                                                            <TextInput
+                                                                {...inputProps}
+                                                                money
+                                                                labelText="Gold Value"
+                                                                name="gold_value"
+                                                                value={values?.gold_value}
+                                                                error={errors.gold_value}
+                                                                helperText={errors.gold_value}
+                                                            >
+                                                            </TextInput>
+                                                        </Grid>
+                                                    </>
+                                                ) : type?.label === "Car" ? (
+                                                    <>
+                                                        <Grid item md={6}>
+                                                            <TextInput
+                                                                {...inputProps}
+                                                                labelText="Car Model"
+                                                                name="car_model"
+                                                                value={values?.car_model}
+                                                                error={errors.car_model}
+                                                                helperText={errors.car_model}
+                                                            >
+                                                            </TextInput>
+                                                        </Grid>
+                                                        <Grid item md={6}>
+                                                            <TextInput
+                                                                {...inputProps}
+                                                                labelText="Car Manufacture Year"
+                                                                name="car_yom"
+                                                                value={values?.car_yom}
+                                                                error={errors.car_yom}
+                                                                helperText={errors.car_yom}
+                                                            >
+                                                            </TextInput>
+                                                        </Grid>
+                                                        <Grid item md={6}>
+                                                            <TextInput
+                                                                {...inputProps}
+                                                                money
+                                                                labelText="Car Value"
+                                                                name="car_value"
+                                                                value={values?.car_value}
+                                                                error={errors.car_value}
+                                                                helperText={errors.car_value}
+                                                            >
+                                                            </TextInput>
+                                                        </Grid>
+                                                    </>
+                                                ) : null
+                                        }
+                                    </Grid>
+                                </div>
+                                <>
+                                    {
+                                        assetData.map((row, i) => {
+                                            return (
+                                                <>
+                                                    {
+                                                        row.asset_id === 4 && (
+                                                            <div className={classes.table}>
+                                                                <Typography className={classes.typography}>Land</Typography>
+                                                                <Table size="small">
+                                                                    <TableHead>
+                                                                        <TableRow>
+                                                                            <TableCell align="left">Address</TableCell>
+                                                                            <TableCell align="left">Value</TableCell>
+                                                                            {/* <TableCell align="right">Action</TableCell> */}
+                                                                        </TableRow>
+                                                                    </TableHead>
+                                                                    <TableBody>
+                                                                        <TableRow>
+                                                                            <TableCell align="left">{row.details.land_address}</TableCell>
+                                                                            <TableCell align="left">{row.details.land_value}</TableCell>
+                                                                        </TableRow>
+                                                                    </TableBody>
+                                                                </Table>
+                                                            </div>
+                                                        )
+                                                    }
+                                                    {
+                                                        row.asset_id === 5 && (
+                                                            <div className={classes.table}>
+                                                                <Typography className={classes.typography}>Building</Typography>
+                                                                <Table size="small">
+                                                                    <TableHead>
+                                                                        <TableRow>
+                                                                            <TableCell align="left">Address</TableCell>
+                                                                            <TableCell align="left">Value</TableCell>
+                                                                            {/* <TableCell align="right">Action</TableCell> */}
+                                                                        </TableRow>
+                                                                    </TableHead>
+                                                                    <TableBody>
+                                                                        <TableRow>
+                                                                            <TableCell align="left">{row.details.building_address}</TableCell>
+                                                                            <TableCell align="left">{row.details.building_value}</TableCell>
+                                                                        </TableRow>
+                                                                    </TableBody>
+                                                                </Table>
+                                                            </div>
+                                                        )
+                                                    }
+                                                    {
+                                                        row.asset_id === 2 && (
+                                                            <div className={classes.table}>
+                                                                <Typography className={classes.typography}>Gold</Typography>
+                                                                <Table size="small">
+                                                                    <TableHead>
+                                                                        <TableRow>
+                                                                            <TableCell align="left">Quantity</TableCell>
+                                                                            <TableCell align="left">Value</TableCell>
+                                                                        </TableRow>
+                                                                    </TableHead>
+                                                                    <TableBody>
+                                                                        <TableRow>
+                                                                            <TableCell align="left">{row.details.gold_quantity}</TableCell>
+                                                                            <TableCell align="left">{row.details.gold_value}</TableCell>
+                                                                        </TableRow>
+                                                                    </TableBody>
+                                                                </Table>
+                                                            </div>
+                                                        )
+                                                    }
+                                                    {
+                                                        row.asset_id === 1 && (
+                                                            <div className={classes.table}>
+                                                                <Typography className={classes.typography}>Car</Typography>
+                                                                <Table size="small">
+                                                                    <TableHead>
+                                                                        <TableRow>
+                                                                            <TableCell align="left">Model</TableCell>
+                                                                            <TableCell align="left">Year of Manufacture</TableCell>
+                                                                            <TableCell align="left">value</TableCell>
+                                                                        </TableRow>
+                                                                    </TableHead>
+                                                                    <TableBody>
+                                                                        <TableRow>
+                                                                            <TableCell align="left">{row.details.car_model}</TableCell>
+                                                                            <TableCell align="left">{row.details.car_yom}</TableCell>
+                                                                            <TableCell align="left">{row.details.car_value}</TableCell>
+                                                                        </TableRow>
+                                                                    </TableBody>
+                                                                </Table>
+                                                            </div>
+                                                        )
+                                                    }
+                                                </>
+                                            )
+                                        })
+                                    }
+                                </>
+                            </div>
+                        </>
                     </Box >
-                </div>
-            </div>
+                </div >
+            </div >
             <div className={classes.actionFooter}>
                 <Divider />
                 <div className={classes.actionButtonsWrapper}>
@@ -242,16 +413,16 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                             variant="contained"
                             type="submit"
                             className={clsx(classes.btn, classes.editButton)}
-                            startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                            onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
+                            startIcon={<NavigateNextRounded />}
+                            onClick={loading ? () => null : handleSubmit}
                         >
-                            {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` :
+                            {loading ? <CircularProgress size={20} /> :
                                 'Save'}
                         </Button>
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
 
 
     )

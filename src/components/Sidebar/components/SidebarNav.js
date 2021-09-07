@@ -8,6 +8,9 @@ import { makeStyles } from '@material-ui/styles';
 import InputIcon from '@material-ui/icons/Input';
 import CachedIcon from '@material-ui/icons/Cached';
 import { List, ListItem, IconButton, Button, colors, Hidden } from '@material-ui/core';
+import LocalShippingIcon from '@material-ui/icons/LocalShipping';
+import ListAltIcon from '@material-ui/icons/ListAlt';
+import BookIcon from '@material-ui/icons/Book';
 import Collapse from '@material-ui/core/Collapse';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -27,6 +30,8 @@ import { getAllWithheldLoans } from '../../../services/withheld.services';
 const useStyles = makeStyles(theme => ({
   block1: {
     display: 'flex',
+    width: '100%',
+    justifyContent: 'space-between'
   },
   block2: {
     display: 'flex',
@@ -93,6 +98,7 @@ const SidebarNav = props => {
   const { pages, className, logout, ...rest } = props;
   const classes = useStyles();
   const [checked, setChecked] = React.useState(false);
+  const [tap, setTap] = React.useState(false);
   const [withheldCount, setWithheldCount] = useState()
   const [exceptions, setExceptions] = useState([]);
   const [transException, setTransException] = useState([]);
@@ -127,6 +133,9 @@ const SidebarNav = props => {
   const handleClick = () => {
     setCheck((prev) => !prev);
   };
+  const handleTap = () => {
+    setTap((prev) => !prev);
+  }
   const handleOpen = () => {
     setCheckStatus((prev) => !prev);
   }
@@ -136,7 +145,7 @@ const SidebarNav = props => {
       className={clsx(classes.root, className)}
     >
       {pages.map(page => (
-        page.title !== "Loans" && page.title !== "Report" && page.title !== "Exception" ? (
+        page.title !== "Loans" && page.title !== "Transports" && page.title !== "Report" && page.title !== "Exception" ? (
           <ListItem
             className={classes.item}
             disableGutters
@@ -167,13 +176,17 @@ const SidebarNav = props => {
                 // to={page.href}
                 exact
               >
+                <div className={classes.block1}>
+                <div className={classes.block2}>
                 <div className={classes.icon}>{page.icon}</div>
                 {page.title}
+                </div>
                 {(check) ?
                   <div className={classes.iconArrow}><ExpandLessIcon /></div>
                   :
                   <div className={classes.iconArrow}><ExpandMoreIcon /></div>
                 }
+                </div>
               </Button>
             </ListItem>
             <Collapse in={check} >
@@ -229,7 +242,71 @@ const SidebarNav = props => {
               </ListItem>
             </Collapse>
           </Fragment>
-        ) : page.title === "Report" ? (
+        ) : page.title === "Transports" ? (
+          <Fragment key={page.title}>
+            <ListItem
+              className={classes.item}
+              disableGutters
+              key={page.title}
+            >
+              <Button
+                activeClassName={classes.active}
+                className={classes.button}
+                onClick={handleTap}
+                exact
+              >
+                <div className={classes.block1}>
+                  <div className={classes.block2}>
+                    <div className={classes.icon}><LocalShippingIcon /></div>
+                    {page.title}
+                  </div>
+                  {(tap) ?
+                    <div className={classes.iconArrow}><ExpandLessIcon /></div>
+                    :
+                    <div className={classes.iconArrow}><ExpandMoreIcon /></div>
+                  }
+
+                </div>
+              </Button>
+            </ListItem>
+            <Collapse in={tap} >
+              <ListItem
+                className={classes.itemSub}
+                disableGutters
+                key={'List'}
+              >
+                <Button
+                  activeClassName={classes.active}
+                  className={classes.button}
+                  component={CustomRouterLink}
+                  to={'/transports'}
+                  exact
+                >
+                  <div className={classes.icon}><ListAltIcon /></div>
+                  {'Transports List'}
+                </Button>
+              </ListItem>
+              <ListItem
+                className={classes.itemSub}
+                disableGutters
+                key={'Passbook'}
+              >
+                <Button
+                  className={classes.button}
+                  activeClassName={classes.active}
+                  component={CustomRouterLink}
+                  to={'/transport/fastag/details'}
+                  exact
+                >
+                  <div className={classes.icon}><BookIcon /></div>
+                  {'Passbook'}
+                </Button>
+              </ListItem>
+            </Collapse> 
+          </Fragment>
+
+        ) :
+        page.title === "Report" ? (
           <Fragment key={page.title}>
             <ListItem
               className={classes.item}
@@ -322,13 +399,17 @@ const SidebarNav = props => {
                 onClick={handleOpen}
                 exact
               >
-                <div className={classes.icon}>{page.icon}</div>
-                {page.title}
-                {(checkStatus) ?
+                <div className={classes.block1}>
+                  <div className={classes.block2}>
+                  <div className={classes.icon}>{page.icon}</div>
+                  {page.title}
+                  </div>
+                  {(checkStatus) ?
                   <div className={classes.iconArrow}><ExpandLessIcon /></div>
                   :
                   <div className={classes.iconArrow}><ExpandMoreIcon /></div>
                 }
+                </div>
               </Button>
             </ListItem>
             <Collapse in={checkStatus}>

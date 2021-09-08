@@ -26,6 +26,12 @@ import FileUpload from '../../../components/FileUpload';
 import PublishIcon from '@material-ui/icons/Publish';
 import { CircularProgress } from '@material-ui/core';
 import Currency from '../../../components/Number/Currency';
+import { URL } from '../../../config/serverUrls';
+import { useSnackbar } from 'notistack';
+import { Popover } from '@material-ui/core';
+import { DateRange } from 'react-date-range';
+import { Box } from '@material-ui/core';
+
 
 const useStyles = makeStyles({
   root: {
@@ -61,7 +67,7 @@ const useStyles = makeStyles({
     minHeight: 32,
     boxSizing: 'border-box',
     padding: '0 4px',
-    width: 170,
+    width: 220,
     marginLeft: 10,
   },
   filterItem: {
@@ -117,9 +123,9 @@ const useStyles = makeStyles({
   }
 });
 
-function FastTagPassbook() {
+function FastTagPassbook( {currentUser} ) {
   const classes = useStyles();
-  const [selectedValue, setSelectedValue] = React.useState('mobile');
+  const [selectedValue, setSelectedValue] = React.useState('vehicle');
   const [searchValue, setSearchValue] = useState();
   const [selectedPeriodType, setSelectedPeriodType] = useState('D');
   const [showUpload, setShowUpload] = useState(false);
@@ -127,9 +133,18 @@ function FastTagPassbook() {
   const [loading, setLoading] = useState(false);
   const [disable, setDisable] = useState(false);
   const [data, setData] = useState();
+  const { enqueueSnackbar } = useSnackbar();
+  const [from, setFrom] = useState();
+  const [to, setTo] = useState();
+  const [showPicker, setShowPicker] = useState();
   const [selectedPeriod, setSelectedPeriod] = useState({
     from: moment(new Date()).format('YYYY-MM-DD'),
     to: moment(new Date()).format('YYYY-MM-DD'),
+  });
+  const [dateRange, setDateRange] = useState({
+    startDate: subDays(new Date(), 8),
+    endDate: new Date(),
+    key: 'range'
   });
 
   const columns = useMemo(() => {
@@ -198,10 +213,15 @@ function FastTagPassbook() {
     let qry = {};
     qry.from = moment(selectedPeriod.from).format('YYYY-MM-DD');
     qry.to = moment(selectedPeriod.to).format('YYYY-MM-DD');
+    setFrom(qry.from);
+    setTo(qry.to);
     if (searchValue) {
-      apiCall(
-        `fastag/details?${selectedValue}=${searchValue}&from=${qry.from}&to=${qry.to}`
-      );
+      apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${qry.from}&to=${qry.to}`)
+        .then(res => {
+          if(res.status === "SUCCESS"){
+            setData(res.data)
+          }
+        })
     }
   }, [selectedPeriod]);
 
@@ -226,6 +246,10 @@ function FastTagPassbook() {
           to: subDays(new Date(), 1),
         });
         break;
+      case 'Custom':
+        setShowPicker(event.currentTarget)
+          break;
+      
       default:
         break;
     }
@@ -238,29 +262,71 @@ function FastTagPassbook() {
     setSearchValue(event.target.value);
   };
   const handleSubmit = () => {
-    apiCall(`fastag/detials/${searchValue}`)
-      .then(res => {
-        if(res.status === "SUCCESS"){
-          setData(res.data)
-        }
-      })
+    if(searchValue){
+      apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${from}&to=${to}`)
+        .then(res => {
+          if(res.status === "SUCCESS"){
+            setData(res.data)
+          }
+        })
+    }
   };
-  const handleSave = (value) => {
-    const data = new FormData();
-    data.append('fastag_statement', value);
-    apiCall(`fastag/upload_statement`, {
-      method: 'POST',
-      body: data,
-    });
-  };
+  // const handleSave = (value) => {
+  //   const data = new FormData();
+  //   data.append('fastag_statement', value);
+  //   apiCall(`fastag/upload_statement`, {
+  //     method: 'POST',
+  //     body: data,
+  //   });
+  // };
   const onChangeHandler = (event) => {
     setFile(event.target.files[0]);
     setLoading(true);
     setDisable(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 5000);
+    const formData = new FormData();
+    formData.append('file', event.target.files[0])
+    fetch(`${URL.base}fastag/upload/statement`, {
+      method: "POST",
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${currentUser.token}`,
+      },
+    })
+      .then(res => {
+        setLoading(false)
+        enqueueSnackbar("Upload Success", {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
+      })
+      .catch(e => {
+        setLoading(false)
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+        setDisable(false)
+        console.log(e);
+      })
   };
+
+  const onDateRangeClose = () => {
+    setSelectedPeriod({
+      from: dateRange.startDate,
+      to: dateRange.endDate,
+    });
+    setShowPicker();
+  }
+
+  const onDatePickerChange = ({ range }) => {
+    setDateRange(range)
+  }
 
   return (
     <>
@@ -273,7 +339,7 @@ function FastTagPassbook() {
             Find By
           </Typography>
           <RadioGroup row style={{ marginLeft: 15 }}>
-            <FormControlLabel
+            {/* <FormControlLabel
               control={
                 <Radio
                   color='primary'
@@ -284,7 +350,7 @@ function FastTagPassbook() {
                 />
               }
               label='Mobile'
-            />
+            /> */}
             <FormControlLabel
               control={
                 <Radio
@@ -335,7 +401,45 @@ function FastTagPassbook() {
             >
               2W
             </div>
+            <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')}>
+            {
+              // selectedPeriodType === 'Custom' ? (
+              // `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`
+              // ) : 'Custom'
+              'Custom'
+            }
+            </div>
           </div>
+          <Popover
+                id={Boolean(showPicker) ? 'dp' : undefined}
+                open={Boolean(showPicker)}
+                anchorEl={showPicker}
+                onClose={onDateRangeClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'center',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'center',
+                }}
+              >
+                <DateRange
+                  ranges={[dateRange]}
+                  onChange={onDatePickerChange}
+                  maxDate={new Date()}
+                  months={2}
+                  direction="horizontal"
+                  // scroll={{ enabled: true }}
+                  minDate={subDays(new Date(), 1095)}
+                />
+                <Box p={1} textAlign='right'>
+                  <Button variant="contained" color="primary" onClick={onDateRangeClose}>
+                    Apply
+                  </Button>
+                  {/* <button className={`${classes.filterItem} active`} onClick={onDateRangeClose}>Apply</button> */}
+                </Box>
+              </Popover>
         </div>
         <div className={classes.top}>
           <div className={classes.search}>
@@ -395,7 +499,7 @@ function FastTagPassbook() {
             </label>
           </div>
         </div>
-        {showUpload && (
+        {/* {showUpload && (
           <FileUpload
             handleSave={(value) => {
               handleSave(value);
@@ -409,7 +513,7 @@ function FastTagPassbook() {
               setShowUpload(false);
             }}
           />
-        )}
+        )} */}
       </Paper>
       {
         data ? (

@@ -16,6 +16,8 @@ import { TextField } from '@material-ui/core';
 import apiCall from '../../utils/api.util';
 import { useSnackbar } from 'notistack';
 import { URL } from '../../config/serverUrls';
+import { InputAdornment } from '@material-ui/core';
+import Currency from '../../components/Number/Currency';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelFormWrapper: {
@@ -177,6 +179,13 @@ const {
                     helperText={errors.amount}
                     variant='outlined'
                     onChange={handleChange}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position='start'>
+                         ₹
+                        </InputAdornment>
+                      ),
+                    }}
                     fullWidth
                     />
                   </Grid>

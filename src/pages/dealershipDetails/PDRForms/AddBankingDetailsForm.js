@@ -214,6 +214,16 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                                     <Grid item md={6}>
                                         <TextInput
                                             {...inputProps}
+                                            labelText="Account Holder name"
+                                            name="account_name"
+                                            value={values.account_name}
+                                            error={errors.account_name}
+                                            helperText={errors.account_name}
+                                        />
+                                    </Grid>
+                                    <Grid item md={6}>
+                                        <TextInput
+                                            {...inputProps}
                                             labelText="Account Number"
                                             name="account_no"
                                             value={values.account_no}
@@ -225,17 +235,27 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                                         <TextInput
                                             {...inputProps}
                                             labelText="Account Type"
-                                            name="aacount_type"
-                                            value={values.aacount_type}
-                                            error={errors.aacount_type}
-                                            helperText={errors.aacount_type}
+                                            name="account_type"
+                                            value={values.account_type}
+                                            error={errors.account_type}
+                                            helperText={errors.account_type}
+                                        />
+                                    </Grid>
+                                    <Grid item md={6}>
+                                        <TextInput
+                                            {...inputProps}
+                                            labelText="IFSC"
+                                            name="ifsc"
+                                            value={values.ifsc}
+                                            error={errors.ifsc}
+                                            helperText={errors.ifsc}
                                         />
                                     </Grid>
                                     <Grid item md={6}>
                                         <TextInput
                                             select
                                             {...inputProps}
-                                            labelText="Vintage with Banker"
+                                            labelText="Account since"
                                             name="account_since"
                                             value={values.account_since}
                                             error={errors.account_since}
@@ -270,9 +290,9 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                                             {...inputProps}
                                             labelText="Is Secured"
                                             name="security"
-                                            value={values.is_security}
-                                            error={errors.is_security}
-                                            helperText={errors.is_security}
+                                            value={values.security}
+                                            error={errors.security}
+                                            helperText={errors.security}
                                         >
                                             <option>Secured</option>
                                             <option>Unsecured</option>
@@ -291,6 +311,7 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                                             <TableRow>
                                                 <TableCell align="left">Bank name</TableCell>
                                                 <TableCell align="left">Account No.</TableCell>
+                                                <TableCell align="left">IFSC</TableCell>
                                                 <TableCell align="left">Account since</TableCell>
                                                 <TableCell align="left">Transaction limit</TableCell>
                                                 <TableCell align="left">Branch</TableCell>
@@ -304,6 +325,7 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                                                         <TableRow>
                                                             <TableCell align="left">{row.bank_name}</TableCell>
                                                             <TableCell align="left">{row.account_no}</TableCell>
+                                                            <TableCell align="left">{row.ifsc}</TableCell>
                                                             <TableCell align="left">{row.account_since}</TableCell>
                                                             <TableCell align="left">{row.transaction_limit}</TableCell>
                                                             <TableCell align="left">{row.bank_branch}</TableCell>

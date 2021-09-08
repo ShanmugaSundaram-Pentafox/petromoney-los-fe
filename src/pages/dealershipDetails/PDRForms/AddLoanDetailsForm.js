@@ -261,7 +261,7 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
                                                         <TableRow>
                                                             <TableCell align="left">{row.loan_type}</TableCell>
                                                             <TableCell align="left">{row.bank_name}</TableCell>
-                                                            <TableCell align="left">{row.Amount}</TableCell>
+                                                            <TableCell align="left">{row.loan_amount}</TableCell>
                                                         </TableRow>
                                                     </TableBody>
                                                 )

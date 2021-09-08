@@ -188,16 +188,6 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                                             <Grid item md={6}>
                                                 <TextInput
                                                     {...inputProps}
-                                                    labelText="OMC Referred/Recommended"
-                                                    name="omc_referred_by"
-                                                    value={values.omc_referred_by}
-                                                    error={errors.omc_referred_by}
-                                                    helperText={errors.omc_referred_by}
-                                                />
-                                            </Grid>
-                                            <Grid item md={6}>
-                                                <TextInput
-                                                    {...inputProps}
                                                     labelText="Sales officer name"
                                                     name="sales_officer_name"
                                                     value={values.sales_officer_name}
@@ -208,11 +198,11 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                                             <Grid item md={6}>
                                                 <TextInput
                                                     {...inputProps}
-                                                    labelText="Mode Call/Mail"
-                                                    name="omc_referred_mode"
-                                                    value={values.omc_referred_mode}
-                                                    error={errors.omc_referred_mode}
-                                                    helperText={errors.omc_referred_mode}
+                                                    labelText="Sales officer mobile"
+                                                    name="sales_officer_mobile"
+                                                    value={values.sales_officer_mobile}
+                                                    error={errors.sales_officer_mobile}
+                                                    helperText={errors.sales_officer_mobile}
                                                 />
                                             </Grid>
                                         </>

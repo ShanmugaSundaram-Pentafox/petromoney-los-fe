@@ -13,7 +13,7 @@ import { makeStyles } from "@material-ui/styles";
 import { useSnackbar } from 'notistack';
 import ClearRoundedIcon from '@material-ui/icons/ClearRounded';
 import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
-import { addInfrastructureDetails, addNewTanker, getTankersById, updateTankerByID } from '../../../services/PDReport.services';
+import { addInfrastructureDetails, addNewTanker, deleteTanker, getTankersById, updateTankerByID } from '../../../services/PDReport.services';
 import { useMount } from 'react-use';
 
 const useStyles = makeStyles((theme) => ({
@@ -63,8 +63,18 @@ const AddTankerDetails = ({ dealer_id, isEdit }) => {
     const editTankerRow = (rowData, rowIndex) => {
         setEditRow({ ...rowData, rowIndex });
     }
+    const deleteTankerRow = (row, index) => {
+        deleteTanker(row, dealer_id)
+            .then(data => {
+                console.log(data)
+            })
+            .catch((e) => {
+                console.log(e);
+            })
+
+    }
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
-        initialValues: { tankerData },
+        initialValues: {},
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
@@ -145,9 +155,8 @@ const AddTankerDetails = ({ dealer_id, isEdit }) => {
                             </TableCell>
                             <TableCell>
                                 <TextInput
-                                    label="Tanker capacity"
+                                    label="Tanker capacity in liters"
                                     name="tanker_capacity"
-                                    placeholder="in liters"
                                     value={editRow.tanker_capacity}
                                     onChange={onEditTextChange}
                                 />
@@ -189,14 +198,24 @@ const AddTankerDetails = ({ dealer_id, isEdit }) => {
                             <TableCell align="right">
                                 {
                                     editable ? (
-                                        <Button
-                                            size="small"
-                                            variant="outlined"
-                                            color="success"
-                                            className={classes.btnSuccess}
-                                            onClick={() => editTankerRow(row, i)}>
-                                            Edit
-                                        </Button>
+                                        <>
+                                            <Button
+                                                size="small"
+                                                variant="outlined"
+                                                color="success"
+                                                className={classes.btnSuccess}
+                                                onClick={() => editTankerRow(row, i)}>
+                                                Edit
+                                            </Button>
+                                            <Button
+                                                size="small"
+                                                variant="outlined"
+                                                color="success"
+                                                className={classes.btnSuccess}
+                                                onClick={() => deleteTankerRow(row, i)}>
+                                                Delete
+                                            </Button>
+                                        </>
                                     ) : null
                                 }
 

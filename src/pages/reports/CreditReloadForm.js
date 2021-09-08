@@ -4,6 +4,8 @@ import { useMount } from 'react-use';
 import CloseIcon from '@material-ui/icons/Close';
 import { getTypeOfAccount } from '../../services/users.service';
 import { Typography } from '@material-ui/core';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import { Box } from '@material-ui/core';
 import { Grid } from '@material-ui/core';
 import Select from 'react-select';
@@ -64,7 +66,7 @@ editButton: {
 }
 }));
 
-const CreditReloadForm = ({ data, callback, currentUser }) => {
+const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
   const [accountId, setAccountId] = useState();
   const [dealershipId, setDealershipId] = useState();
   const [mobile, setMobile] = useState();
@@ -72,55 +74,62 @@ const CreditReloadForm = ({ data, callback, currentUser }) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
+const {
+  values,
+  errors,
+  handleChange,
+  handleSubmit,
+  isSubmitting,
+  setSubmitting,
+} = useFormik({
+  initialValues: {
+    mobile: mobile,
+    amount: amount,
+  },
+  validateOnChange: false,
+  validateOnBlur: true,
+  validationSchema: Yup.object().shape({
+    mobile: Yup.number().required("Enter mobile number").test("maxDigits","Mobile Number mush have 10 digits", (number) => String(number).length === 10),
+    amount: Yup.number().required("Enter Request Amount"),
+  }),
+  onSubmit: (data) => {
+    const submitData = {'request_source': 'MDM', 'amount': data.amount, 'mobile': data.mobile, 'account_id': accountId?.id}
 
-//   useMount(() => {
-//     getTypeOfAccount()
-//       .then((data) => {
-//         // setLoading(false);
-//         setAccountType(data);
-//       })
-//       .catch((e) => {
-//         // setLoading(false);
-//         console.log(e);
-//       });
-//   });
-
-  const handleSave = () => {
-      if(accountId || amount || mobile || dealershipId){
-          const data = {'request_source': 'MDM', 'amount': amount, 'mobile': mobile, 'account_id': accountId?.id}
-          apiCall(`credit/reload/${dealershipId}`, {
-              method: 'POST',
-              body: data,
-              headers: {
-                Authorization: `Bearer ${currentUser.token} `
-              }
-          })
-          .then(res => {
-              console.log(res);
-              callback()
-              enqueueSnackbar(res.message, {
-                anchorOrigin: {
-                  vertical: 'top',
-                  horizontal: 'right',
-                },
-                variant: 'success',
-              });
-              setTimeout(() => {
-                window.location.reload(false)
-            }, 1000);
-          })
-          .catch(e => {
-              console.log(e);
-              enqueueSnackbar(e, {
-                anchorOrigin: {
-                  vertical: 'top',
-                  horizontal: 'right',
-                },
-                variant: 'error',
-              });
-          })
-      }
+    if(accountId && amount && mobile && dealershipId){
+      apiCall(`credit/reload/${dealershipId?.value}`, {
+          method: 'POST',
+          body: submitData,
+          headers: {
+            Authorization: `Bearer ${currentUser.token} `
+          }
+      })
+      .then(res => {
+          console.log(res);
+          callback()
+          enqueueSnackbar(res.message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          });
+          setTimeout(() => {
+            window.location.reload(false)
+        }, 1000);
+      })
+      .catch(e => {
+          console.log(e);
+          enqueueSnackbar(e, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          });
+      })
   }
+  }
+})
 
   return (
     <div className={classes.sidePanelFormWrapper}>
@@ -136,27 +145,24 @@ const CreditReloadForm = ({ data, callback, currentUser }) => {
                 <Grid container spacing={2}>
                   <Grid item md={6} style={{marginBottom: 10}}>
                     <label style={{ marginBottom: 8 }}>Account Type</label>
-                    <Select isClearable onChange={setAccountId} options={data}/>
+                    <Select isClearable onChange={setAccountId} options={data} />
+                  </Grid>
+                  <Grid item md={6} style={{marginBottom: 10}}>
+                    <label style={{ marginBottom: 8 }}>Dealership ID</label>
+                    <Select isClearable onChange={setDealershipId} options={dealershipData} />
                   </Grid>
                 </Grid>
                 <Grid container spacing={2}>
-                  <Grid item md={6}>
-                    <label style={{ marginBottom: 8 }}>Dealership ID</label>
-                    <TextField
-                    name="dealership id"
-                    type="number"
-                    variant='outlined'
-                    onChange={(e) => setDealershipId(e.target.value)}
-                    fullWidth
-                    />
-                  </Grid>
                   <Grid item md={6}>
                     <label style={{ marginBottom: 8 }}>Mobile Number</label>
                     <TextField
                     name="mobile"
                     type="number"
+                    value={values.mobile}
+                    error={errors.mobile}
+                    helperText={errors.mobile}
                     variant='outlined'
-                    onChange={(e) => setMobile(e.target.value)}
+                    onChange={handleChange}
                     fullWidth
                     />
                   </Grid>
@@ -166,8 +172,11 @@ const CreditReloadForm = ({ data, callback, currentUser }) => {
                     <TextField 
                     name="amount"
                     type="number"
+                    value={values.amount}
+                    error={errors.amount}
+                    helperText={errors.amount}
                     variant='outlined'
-                    onChange={(e) => setAmount(e.target.value)}
+                    onChange={handleChange}
                     fullWidth
                     />
                   </Grid>
@@ -188,7 +197,7 @@ const CreditReloadForm = ({ data, callback, currentUser }) => {
               <Button
                 variant='contained'
                 type='submit'
-                onClick={handleSave}
+                onClick={handleSubmit}
                 className={clsx(classes.btn, classes.editButton)}
               >
                 Submit

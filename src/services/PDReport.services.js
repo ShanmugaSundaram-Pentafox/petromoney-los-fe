@@ -335,7 +335,7 @@ export const deleteBankDetailsByID = (data, id) => {
 }
 export const updateBusinessDetailsByID = (data, id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`dealership/${id}/bank`, {
+    apiCall(`dealership/${id}/business/details`, {
       method: 'POST',
       body: data,
     })

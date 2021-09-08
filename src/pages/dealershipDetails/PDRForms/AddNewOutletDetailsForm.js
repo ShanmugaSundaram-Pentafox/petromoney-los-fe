@@ -369,47 +369,6 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         helperText={errors.eb_charge_per_month}
                                     />
                                 </Grid> */}
-                                {/* <Grid item md={7}>
-                                    <div style={{ paddingTop: 12 }}>
-                                        <label>Is the customer a PEP (Politically Exposed Person) or closely associated to PEP</label>
-                                    </div>
-                                </Grid>
-                                <Grid item md={4}>
-                                    <FormControl>
-                                        <RadioGroup name="is_pep" value={values.is_pep} defaultValue={values.is_pep} onChange={handleChange}>
-                                            <FormGroup row>
-                                                <FormControlLabel value="yes" control={<Radio color="secondary" />} label="Yes" />
-                                                <FormControlLabel value="no" control={<Radio color="secondary" />} label="No" />
-                                            </FormGroup>
-                                        </RadioGroup>
-                                    </FormControl>
-                                </Grid> */}
-                                {/* {
-                                    values.is_pep === "yes" ? (
-                                        <>
-                                            <Grid item md={6}>
-                                                <TextInput
-                                                    {...inputProps}
-                                                    labelText="Relationship with Politician"
-                                                    name="relationship"
-                                                    value={values.relationship}
-                                                    error={errors.relationship}
-                                                    helperText={errors.relationship}
-                                                />
-                                            </Grid>
-                                            <Grid item md={6}>
-                                                <TextInput
-                                                    {...inputProps}
-                                                    labelText="Politician's position"
-                                                    name="position"
-                                                    value={values.position}
-                                                    error={errors.position}
-                                                    helperText={errors.position}
-                                                />
-                                            </Grid>
-                                        </>
-                                    ) : null
-                                } */}
                             </Grid>
                         </form>
                     </Box >

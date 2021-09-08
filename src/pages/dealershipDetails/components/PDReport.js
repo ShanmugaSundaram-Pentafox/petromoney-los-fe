@@ -16,7 +16,7 @@ import { ReactComponent as LoanIcon } from '../../../icons/loan.svg';
 import { ReactComponent as OutletIcon } from '../../../icons/outlet.svg';
 import { Button } from '@material-ui/core';
 import AddBankingDetailsForm from '../PDRForms/AddBankingDetailsForm';
-import { getAssetDetailsById, getInfrastructureDetailsById, getOmcDetailsById, getOutletDetailsById } from '../../../services/PDReport.services';
+import { getAssetDetailsById, getBusinessDetailsbyID, getInfrastructureDetailsById, getOmcDetailsById, getOutletDetailsById } from '../../../services/PDReport.services';
 import { useMount } from 'react-use';
 import AddOtherDetailsForm from '../PDRForms/AddOtherDetailsForm';
 import AddLoanDetailsForm from '../PDRForms/AddLoanDetailsForm';
@@ -89,6 +89,8 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
     const [outletData, setOutletData] = useState()
     const [infrastructureDetails, setInfrastructureDetails] = useState()
     const [assetDetails, setAssetDetails] = useState()
+    const [businessData, setBusinessData] = useState();
+
 
 
     const handleEdit = () => {
@@ -127,6 +129,13 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                 console.log(e);
             })
 
+        getBusinessDetailsbyID(id)
+            .then(data => {
+                setBusinessData(data[0])
+            })
+            .catch((e) => {
+                console.log(e);
+            })
         getAssetDetailsById(id)
             .then(data => {
                 setAssetDetails(data[0])
@@ -237,7 +246,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                 onClose={() => setOpenBusinessForm(false)}
                 variant="temporary"
             >
-                <AddBusinessDetailsForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} />
+                <AddBusinessDetailsForm dealer_id={id} isEdit={businessData ? null : 'Edit'} callback={handleEdit} data={businessData} currentUser={currentUser} />
             </Drawer>
             <Drawer
                 anchor="right"

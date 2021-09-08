@@ -92,7 +92,6 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
         handleDate(date)
     }
     useEffect(() => {
-        // console.log(state)
         handleState(state)
     })
     const handleChange = (event) => {

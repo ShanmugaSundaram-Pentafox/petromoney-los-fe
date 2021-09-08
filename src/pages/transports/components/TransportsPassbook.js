@@ -137,6 +137,8 @@ function FastTagPassbook( {currentUser} ) {
   const [from, setFrom] = useState();
   const [to, setTo] = useState();
   const [showPicker, setShowPicker] = useState();
+  const [page, setPage] = useState(0);
+  const [total, setTotal] = useState(15);
   const [selectedPeriod, setSelectedPeriod] = useState({
     from: moment(new Date()).format('YYYY-MM-DD'),
     to: moment(new Date()).format('YYYY-MM-DD'),
@@ -202,6 +204,17 @@ function FastTagPassbook( {currentUser} ) {
     search: false,
     rowsPerPage: 10,
     isRowSelectable: () => false,
+    serverSide: true,
+    count: total,
+    onTableChange: (action, tableState) => {
+      switch(action) {
+        case "changePage":
+          // setPage(tableState.page)
+          console.log(tableState.page);
+          pageChange(tableState.page)
+          break;
+      }
+    }
   };
 
 
@@ -216,10 +229,11 @@ function FastTagPassbook( {currentUser} ) {
     setFrom(qry.from);
     setTo(qry.to);
     if (searchValue) {
-      apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${qry.from}&to=${qry.to}`)
+      apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${qry.from}&to=${qry.to}&start=${page}&row_count=15`)
         .then(res => {
           if(res.status === "SUCCESS"){
-            setData(res.data)
+            setData(res.data.list)
+            setTotal(res.data.count)
           }
         })
     }
@@ -261,12 +275,24 @@ function FastTagPassbook( {currentUser} ) {
   const handleValues = (event) => {
     setSearchValue(event.target.value);
   };
-  const handleSubmit = () => {
+  const pageChange = (page) => {
     if(searchValue){
-      apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${from}&to=${to}`)
+      apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${from}&to=${to}&start=${page}&row_count=15`)
         .then(res => {
           if(res.status === "SUCCESS"){
-            setData(res.data)
+            setData(res.data.list)
+            setTotal(res.data.count)
+          }
+        })
+    }
+  }
+  const handleSubmit = () => {
+    if(searchValue){
+      apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${from}&to=${to}&start=${page}&row_count=15`)
+        .then(res => {
+          if(res.status === "SUCCESS"){
+            setData(res.data.list)
+            setTotal(res.data.count)
           }
         })
     }
@@ -301,6 +327,9 @@ function FastTagPassbook( {currentUser} ) {
           },
           variant: 'success',
         })
+        setTimeout(() => {
+          window.location.reload()
+      }, 1500);
       })
       .catch(e => {
         setLoading(false)

@@ -10,6 +10,7 @@ import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import TextInput from '../../../components/TextInput/TextInput';
 import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import { URL } from '../../../config/serverUrls';
 import { logger } from '../../../config/logger';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -44,6 +45,27 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
   const { enqueueSnackbar } = useSnackbar();
   const { values, handleChange: onChange, handleSubmit } = useFormik({
     initialValues: data,
+    validateOnChange: false,
+    validateOnBlur: true,
+    validationSchema: Yup.object().shape({
+      // id: Yup.number().required('Please enter transporter code'),
+      name: Yup.string().required('Please enter transporter name'),
+      mobile: Yup.number()
+        .min(10, 'Enter valid mobile number')
+        .required('please Enter your mobile number'),
+      // region: Yup.string().required('Please choose region'),
+      address: Yup.string().required('Please enter address'),
+      state: Yup.string().required('Please choose state'),
+      district: Yup.string().required('Please choose district'),
+      pincode: Yup.number()
+        .min(6, 'Pincode must be 6 digits')
+        .required('Enter pincode'),
+      pan: Yup.string()
+        .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
+        .required('Enter PAN')
+        .uppercase(),
+      gst: Yup.number().min(15, 'Enter valid GST'),
+    }),
     onSubmit: values => {
       const data = new FormData();
       Object.keys(values).forEach(key => {
@@ -123,7 +145,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
       .then(d => {
         let res = d.find(({ id }) => id === parseInt(values.state));
 
-        if(res) {
+        if (res) {
           fetchRegions(parseInt(res.id));
         }
       })
@@ -179,6 +201,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
               <TextInput
                 labelText="Name"
                 name="name"
+                error={values.name}
                 readOnly={readOnly}
                 value={values.name?.toUpperCase()}
                 {...fieldProps}
@@ -189,8 +212,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 multiline
                 labelText="Address"
                 name="address"
-                readOnly={readOnly}
-                disabled={readOnly}
+                error={values.address}
                 value={values.address?.toUpperCase()}
                 {...fieldProps}
               />
@@ -200,7 +222,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 select
                 labelText="Business Type"
                 name="business_type"
-                readOnly={readOnly}
+                error={values.address}
                 disabled={readOnly}
                 defaultValue={businessTypes[values.business_type - 1]?.name}
                 {...fieldProps}
@@ -318,7 +340,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 <Button variant="contained" size="small" onClick={() => { setReadOnly(true); }}>Cancel</Button>
                 <Button type="submit" color="primary" variant="contained" size="small">Save</Button>
               </>
-            ) : <CircularProgress size={20}/>
+            ) : <CircularProgress size={20} />
           ) : (
             <Button
               disabled={!permissionCheck(currentUser.role_name, rulesList.dealership_edit)}

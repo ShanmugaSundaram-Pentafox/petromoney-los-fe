@@ -1,5 +1,8 @@
 import { AES } from "crypto-es/lib/aes.js";
 import { Utf8 } from "crypto-es/lib/core";
+import CryptoJS from "crypto-js";
+
+const key = "12ASFD52356QWE";
 
 export const encrypt = text => {
   return text;
@@ -30,5 +33,29 @@ export const decrypt = cipher => {
     
     // console.log(cipher, e)
     return cipher;
+  }
+}
+
+export const cryptoEncrypt = (data) => {
+  try{
+    const encrypted = CryptoJS.AES.encrypt(data, process.env.REACT_APP_CRYPT_KEY_NEW);
+    const result = encrypted.toString();
+
+    return result || data;
+  } catch(e) {
+    console.log(e)
+    return data;
+  }
+}
+
+export const cryptoDecrypt = (data) => {
+  try{
+    const decrypted = CryptoJS.AES.decrypt(data, process.env.REACT_APP_CRYPT_KEY_NEW);
+    const result = decrypted.toString(CryptoJS.enc.Utf8);
+
+    return result || data;
+  } catch(e) {
+    console.log(e)
+    return data;
   }
 }

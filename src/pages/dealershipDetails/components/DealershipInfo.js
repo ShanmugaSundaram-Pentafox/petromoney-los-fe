@@ -17,7 +17,7 @@ import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 // import apiCall from '../../../utils/api.util';
 import Button from '../../../components/CommonComponents/Button/Button';
-import { encrypt } from '../../../services/crypto.service';
+import { cryptoEncrypt, encrypt } from '../../../services/crypto.service';
 import { getBusinessTypes, getRegionById, getStates, getActiveStates } from '../../../services/common.service';
 import { useSnackbar } from 'notistack';
 // import { Typography } from '@material-ui/core';
@@ -47,10 +47,13 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
     onSubmit: values => {
       const data = new FormData();
       Object.keys(values).forEach(key => {
+        if(key === 'pan'){
+          let pan = values?.pan ? cryptoEncrypt(values.pan) : values?.pan;
+          data.append(key, pan)          
+        }
         data.append(key, values[key]);
       })
       // console.log('Form Values >> ', values.id);
-      // let pan = values?.pan ? encrypt(values.pan) : values?.pan;
       // let gst = values?.gst ? encrypt(values.gst) : values?.gst;
       setLoading(true);
       // setApiStatus({});

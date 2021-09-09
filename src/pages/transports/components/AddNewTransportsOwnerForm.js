@@ -34,6 +34,7 @@ import {
 } from '../../../components/CommonComponents/FilePreview';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { deleteTransportOwnerProfileDoc } from '../../../services/transports.service';
+import { cryptoEncrypt } from '../../../services/crypto.service';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -213,6 +214,14 @@ const AddNewTransportsOwnerForm = ({
       };
       const data = new FormData();
       Object.keys(date_values).forEach((key) => {
+        if( key === 'pan' ){
+          let pan = date_values?.pan ? cryptoEncrypt(date_values.pan) : date_values?.pan;
+          data.append(key, pan);
+        }
+        if( key === 'aadhar' ){
+          let aadhar = date_values?.aadhar ? cryptoEncrypt(date_values.aadhar) : date_values?.aadhar;
+          data.append(key, aadhar);
+        }
         data.append(key, date_values[key]);
       });
 

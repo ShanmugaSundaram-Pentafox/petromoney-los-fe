@@ -25,6 +25,7 @@ import apiCall from '../../../utils/api.util';
 import { useSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
 import moment from 'moment';
+import { cryptoEncrypt } from '../../../services/crypto.service';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -202,6 +203,14 @@ const DealerEditSideWrapper = ({
       const data = new FormData();
 
       Object.keys(date_values).forEach((key) => {
+        if(key === 'pan'){
+          let pan = date_values?.pan ? cryptoEncrypt(date_values.pan) : date_values?.pan;
+          data.append(key, pan)
+        }
+        if(key === 'aadhar'){
+          let aadhar = date_values?.aadhar ? cryptoEncrypt(date_values.aadhar) : date_values?.aadhar;
+          data.append(key, aadhar)
+        }
         data.append(key, date_values[key]);
       });
       const apiURL =

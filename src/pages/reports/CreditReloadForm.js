@@ -29,7 +29,6 @@ const useStyles = makeStyles((theme) => ({
   },
 
   sidePanelTitle: {
-    // textAlign: 'center',
     padding: '24px 16px',
     display: 'flex',
     justifyContent: 'space-between',
@@ -97,7 +96,7 @@ const {
   onSubmit: (data) => {
     const submitData = {'request_source': 'MDM', 'amount': data.amount, 'mobile': data.mobile, 'account_id': accountId?.id}
 
-    if(accountId && amount && mobile && dealershipId){
+    if(dealershipId && accountId){
       apiCall(`credit/reload/${dealershipId?.value}`, {
           method: 'POST',
           body: submitData,

@@ -139,6 +139,7 @@ function FastTagPassbook( {currentUser} ) {
   const [showPicker, setShowPicker] = useState();
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(15);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
   const [selectedPeriod, setSelectedPeriod] = useState({
     from: moment(new Date()).format('YYYY-MM-DD'),
     to: moment(new Date()).format('YYYY-MM-DD'),
@@ -148,6 +149,18 @@ function FastTagPassbook( {currentUser} ) {
     endDate: new Date(),
     key: 'range'
   });
+
+  const APICALL = (pageQry) => {
+    if(searchValue){
+      apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${from}&to=${to}&start=${pageQry}&row_count=${rowsPerPage}`)
+        .then(res => {
+          if(res.status === "SUCCESS"){
+            setData(res.data.list)
+            setTotal(res.data.count)
+          }
+        })
+    }
+  }
 
   const columns = useMemo(() => {
     return [
@@ -194,7 +207,6 @@ function FastTagPassbook( {currentUser} ) {
   }, []);
 
   const options = {
-    // filterType: 'checkbox',
     selectableRowsHeader: false,
     selectableRows: 'none',
     print: false,
@@ -202,15 +214,17 @@ function FastTagPassbook( {currentUser} ) {
     download: false,
     filter: false,
     search: false,
-    rowsPerPage: 10,
+    rowsPerPage: rowsPerPage,
+    onChangeRowsPerPage	: (rows) => {
+      setRowsPerPage(rows)
+    },
+    rowsPerPageOptions: [10, 15, 50],
     isRowSelectable: () => false,
     serverSide: true,
     count: total,
     onTableChange: (action, tableState) => {
       switch(action) {
         case "changePage":
-          // setPage(tableState.page)
-          console.log(tableState.page);
           pageChange(tableState.page)
           break;
       }
@@ -229,7 +243,7 @@ function FastTagPassbook( {currentUser} ) {
     setFrom(qry.from);
     setTo(qry.to);
     if (searchValue) {
-      apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${qry.from}&to=${qry.to}&start=${page}&row_count=15`)
+      apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${qry.from}&to=${qry.to}&start=${page}&row_count=${rowsPerPage}`)
         .then(res => {
           if(res.status === "SUCCESS"){
             setData(res.data.list)
@@ -237,7 +251,7 @@ function FastTagPassbook( {currentUser} ) {
           }
         })
     }
-  }, [selectedPeriod]);
+  }, [selectedPeriod, rowsPerPage]);
 
   const onDateChange = (type) => (event) => {
     setSelectedPeriodType(type);
@@ -276,35 +290,12 @@ function FastTagPassbook( {currentUser} ) {
     setSearchValue(event.target.value);
   };
   const pageChange = (page) => {
-    if(searchValue){
-      apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${from}&to=${to}&start=${page}&row_count=15`)
-        .then(res => {
-          if(res.status === "SUCCESS"){
-            setData(res.data.list)
-            setTotal(res.data.count)
-          }
-        })
-    }
+    APICALL(page);
   }
   const handleSubmit = () => {
-    if(searchValue){
-      apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${from}&to=${to}&start=${page}&row_count=15`)
-        .then(res => {
-          if(res.status === "SUCCESS"){
-            setData(res.data.list)
-            setTotal(res.data.count)
-          }
-        })
-    }
+    APICALL(page);
   };
-  // const handleSave = (value) => {
-  //   const data = new FormData();
-  //   data.append('fastag_statement', value);
-  //   apiCall(`fastag/upload_statement`, {
-  //     method: 'POST',
-  //     body: data,
-  //   });
-  // };
+  
   const onChangeHandler = (event) => {
     setFile(event.target.files[0]);
     setLoading(true);
@@ -432,9 +423,6 @@ function FastTagPassbook( {currentUser} ) {
             </div>
             <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')}>
             {
-              // selectedPeriodType === 'Custom' ? (
-              // `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`
-              // ) : 'Custom'
               'Custom'
             }
             </div>
@@ -459,14 +447,12 @@ function FastTagPassbook( {currentUser} ) {
                   maxDate={new Date()}
                   months={2}
                   direction="horizontal"
-                  // scroll={{ enabled: true }}
                   minDate={subDays(new Date(), 1095)}
                 />
                 <Box p={1} textAlign='right'>
                   <Button variant="contained" color="primary" onClick={onDateRangeClose}>
                     Apply
                   </Button>
-                  {/* <button className={`${classes.filterItem} active`} onClick={onDateRangeClose}>Apply</button> */}
                 </Box>
               </Popover>
         </div>
@@ -506,14 +492,6 @@ function FastTagPassbook( {currentUser} ) {
             </Button>
           </div>
           <div className={classes.icon}>
-            {/* <Button
-              variant='outlined'
-              startIcon={<PublishIcon />}
-              color='primary'
-              onClick={docUpload}
-            >
-              Upload Statement
-            </Button> */}
             <input
               type='file'
               name='file'
@@ -528,21 +506,6 @@ function FastTagPassbook( {currentUser} ) {
             </label>
           </div>
         </div>
-        {/* {showUpload && (
-          <FileUpload
-            handleSave={(value) => {
-              handleSave(value);
-              showUpload && setShowUpload(false);
-            }}
-            excel={true}
-            title='Upload Documents'
-            open={showUpload}
-            limit={1}
-            onCloseUploader={() => {
-              setShowUpload(false);
-            }}
-          />
-        )} */}
       </Paper>
       {
         data ? (

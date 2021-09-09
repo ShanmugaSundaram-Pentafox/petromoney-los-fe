@@ -29,12 +29,13 @@ import ReplayIcon from '@material-ui/icons/Replay';
 import { Tooltip } from '@material-ui/core';
 import { Drawer } from '@material-ui/core';
 import CreditReloadForm from './CreditReloadForm';
+import { getAllDealership } from '../../services/dealerships.service';
 
 const useStyes = makeStyles((theme) => ({
   root: {},
 }));
 
-const CreditReload = ( {currentUser} ) => {
+const CreditReload = ({ currentUser }) => {
   const [loans, setLoans] = useState([]);
   const [tableData, setTableData] = useState();
   const [accountType, setAccountType] = useState();
@@ -43,6 +44,8 @@ const CreditReload = ( {currentUser} ) => {
   const [reloadDialog, setReloadDialog] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [dealershipData, setDealershipData] = useState();
+
 
   useMount(async () => {
     // setLoading(true)
@@ -58,20 +61,35 @@ const CreditReload = ( {currentUser} ) => {
     getTypeOfAccount()
       .then((data) => {
         // setLoading(false);
-        setAccountType(data.map(({ id, type_of_account }) => ({
+        setAccountType(
+          data.map(({ id, type_of_account }) => ({
             label: type_of_account,
-            id: id
-        })))
+            id: id,
+          }))
+        );
       })
       .catch((e) => {
         // setLoading(false);
         console.log(e);
       });
+
+    getAllDealership()
+      .then((data) => {
+        setDealershipData(
+          data.map(({ id }) => ({
+            label: id,
+            value: id,
+          }))
+        );
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   });
 
-  const handleCreditReload = () => {
-    setReloadDialog(true);
-  };
+  // const handleCreditReload = () => {
+  //   setReloadDialog(true);
+  // };
 
   const handleClose = () => {
     setReloadDialog(false);
@@ -174,6 +192,7 @@ const CreditReload = ( {currentUser} ) => {
           <CreditReloadForm
             callback={() => setOpenModal(false)}
             data={accountType}
+            dealershipData={dealershipData}
             currentUser={currentUser}
           />
         }

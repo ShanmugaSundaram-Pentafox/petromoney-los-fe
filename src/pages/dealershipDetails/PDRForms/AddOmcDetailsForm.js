@@ -112,21 +112,29 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                     Authorization: `Bearer ${currentUser.token}`,
                 },
             })
+                .then((res) => {
+                    return res.json();
+                })
                 .then(res => {
-                    console.log(res)
-                    // enqueueSnackbar(res, {
-                    //     anchorOrigin: {
-                    //         vertical: 'top',
-                    //         horizontal: 'right',
-                    //     },
-                    //     variant: 'success',
-                    // });
-                    // setTimeout(() => {
-                    //     window.location.reload()
-                    // }, 1500);
+                    enqueueSnackbar(res.message, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'success',
+                    });
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1500);
                 })
                 .catch(e => {
-                    console.log(e);
+                    enqueueSnackbar(e.message, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'error',
+                    });
                 })
         }
     });

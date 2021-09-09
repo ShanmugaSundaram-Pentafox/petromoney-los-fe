@@ -22,6 +22,7 @@ import { addAssetDetailsById, getAssetDataById, getAssetList } from '../../../se
 import Select from 'react-select';
 import { useMount } from 'react-use';
 import { TableBody } from '@material-ui/core';
+import { URL } from '../../../config/serverUrls';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -83,6 +84,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
     const [type, setType] = useState()
     const [loading, setLoading] = useState(false)
+    const [asset, setAsset] = useState([])
     const [assetData, setAssetData] = useState([])
     const [assetList, setAssetList] = useState([])
 
@@ -94,13 +96,14 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                     label: name,
                     value: asset_id
                 })))
+                setAssetData(result)
             })
             .catch((e) => {
                 console.log(e);
             })
         getAssetDataById(dealer_id)
             .then(data => {
-                setAssetData(data)
+                setAsset(data)
             })
             .catch((e) => {
                 console.log(e);
@@ -122,7 +125,20 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
         }),
         onSubmit: values => {
             const data = { details: { ...values }, asset_id: type.value }
-            addAssetDetailsById(data, dealer_id)
+            const formData = new FormData();
+            Object.keys(data).forEach((key) => {
+                formData.append(key, data[key]);
+            });
+            fetch(`dealership/${dealer_id}/assets`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    Authorization: `Bearer ${currentUser.token}`,
+                },
+            })
+                .then((res) => {
+                    return res.json();
+                })
                 .then(res => {
                     enqueueSnackbar(res, {
                         anchorOrigin: {
@@ -168,6 +184,64 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                     </Grid>
                                 </div>
                                 <div>
+                                    <>
+                                        {
+                                            assetData.map((data) => {
+                                                return (
+                                                    <>
+                                                        {
+                                                            data.asset_id === type?.value ? (
+                                                                <Grid container spacing={2}>
+                                                                    {
+                                                                        data.details.map((item, i) => {
+                                                                            return (
+                                                                                <Grid item md={6}>
+                                                                                    <TextInput
+                                                                                        {...inputProps}
+                                                                                        labelText={item.label}
+                                                                                        name={item.key}
+                                                                                        // value={item.key}
+                                                                                        error={errors.key}
+                                                                                        helperText={errors.key}
+                                                                                    >
+                                                                                    </TextInput>
+                                                                                </Grid>
+                                                                            )
+                                                                        })
+                                                                    }
+                                                                    <Grid item md={6}>
+                                                                        <TextInput
+                                                                            {...inputProps}
+                                                                            labelText="Ownership"
+                                                                            name="ownership"
+                                                                            value={values.ownership}
+                                                                            error={errors.ownership}
+                                                                            helperText={errors.ownership}
+                                                                        >
+                                                                        </TextInput>
+                                                                    </Grid>
+                                                                    <Grid item md={6}>
+                                                                        <TextInput
+                                                                            {...inputProps}
+                                                                            labelText="Ownership proof"
+                                                                            name="ownership_proof"
+                                                                            value={values.ownership_proof}
+                                                                            error={errors.ownership_proof}
+                                                                            helperText={errors.ownership_proof}
+                                                                        >
+                                                                        </TextInput>
+                                                                    </Grid>
+
+                                                                </Grid>
+                                                            ) : null
+                                                        }
+                                                    </>
+                                                )
+                                            })
+                                        }
+                                    </>
+                                </div>
+                                {/* <div>
                                     <Grid container spacing={2}>
                                         {
                                             type?.label === "Land" ?
@@ -291,8 +365,8 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                                 ) : null
                                         }
                                     </Grid>
-                                </div>
-                                <>
+                                </div> */}
+                                {/* <>
                                     {
                                         assetData.map((row, i) => {
                                             return (
@@ -306,7 +380,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                                                         <TableRow>
                                                                             <TableCell align="left">Address</TableCell>
                                                                             <TableCell align="left">Value</TableCell>
-                                                                            {/* <TableCell align="right">Action</TableCell> */}
+                                                                            <TableCell align="right">Action</TableCell>
                                                                         </TableRow>
                                                                     </TableHead>
                                                                     <TableBody>
@@ -328,7 +402,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                                                         <TableRow>
                                                                             <TableCell align="left">Address</TableCell>
                                                                             <TableCell align="left">Value</TableCell>
-                                                                            {/* <TableCell align="right">Action</TableCell> */}
+                                                                            <TableCell align="right">Action</TableCell>
                                                                         </TableRow>
                                                                     </TableHead>
                                                                     <TableBody>
@@ -389,7 +463,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser })
                                             )
                                         })
                                     }
-                                </>
+                                </> */}
                             </div>
                         </>
                     </Box >

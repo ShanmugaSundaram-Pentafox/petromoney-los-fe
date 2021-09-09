@@ -20,6 +20,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
+import ClearRoundedIcon from '@material-ui/icons/ClearRounded';
 import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
 import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
 import { useMount } from 'react-use';
@@ -39,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         flexDirection: 'column',
         height: '100vh',
-        width: '55vw'
+        width: '80vw'
     },
     sidePanelFormContentWrapper: {
         flex: 1,
@@ -127,6 +128,19 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                 console.log(e);
             })
     })
+    const editBankRow = (rowData, rowIndex) => {
+        setEditRow({ ...rowData, rowIndex });
+    }
+    const deleteBankRow = (row, index) => {
+        // deleteTanker(row, dealer_id)
+        //     .then(data => {
+        //         console.log(data)
+        //     })
+        //     .catch((e) => {
+        //         console.log(e);
+        //     })
+
+    }
 
 
     const handleEdit = () => {
@@ -181,6 +195,23 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
         alignTop: true,
         onChange: handleChange,
     }
+    const saveEditRow = (data, i) => {
+        updateBankDetailsByID(data, dealer_id)
+            .then(res => {
+                setTankerData(res);
+                setEditRow({});
+            })
+            .catch(err => {
+                console.log('Sales data save error - ', err);
+            })
+    }
+    const onEditTextChange = e => {
+        const { name, value } = e.target;
+        setEditRow({
+            ...editRow,
+            [name]: value
+        })
+    }
     return (
         <div className={classes.sidePanelFormWrapper}>
             <Typography className={classes.sidePanelTitle} variant="h4">
@@ -192,117 +223,279 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                     <Button
                         variant="contained"
                         color="primary"
-                        onClick={() => { setAddNew(!addNew) }}
+                        onClick={() => { setAddNewRow(!addNewRow) }}
                         style={{ marginBottom: 12 }}
                     >
                         Add Bank
                     </Button>
-                    {
-                        addNew && (
-                            <Box>
-                                <Grid container spacing={2}>
-                                    <Grid item md={6}>
-                                        <TextInput
-                                            {...inputProps}
-                                            labelText="Name of the Bank"
-                                            name="bank_name"
-                                            value={values.bank_name}
-                                            error={errors.bank_name}
-                                            helperText={errors.bank_name}
-                                        />
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        <TextInput
-                                            {...inputProps}
-                                            labelText="Account Holder name"
-                                            name="account_name"
-                                            value={values.account_name}
-                                            error={errors.account_name}
-                                            helperText={errors.account_name}
-                                        />
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        <TextInput
-                                            {...inputProps}
-                                            labelText="Account Number"
-                                            name="account_no"
-                                            value={values.account_no}
-                                            error={errors.account_no}
-                                            helperText={errors.account_no}
-                                        />
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        <TextInput
-                                            {...inputProps}
-                                            labelText="Account Type"
-                                            name="account_type"
-                                            value={values.account_type}
-                                            error={errors.account_type}
-                                            helperText={errors.account_type}
-                                        />
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        <TextInput
-                                            {...inputProps}
-                                            labelText="IFSC"
-                                            name="ifsc"
-                                            value={values.ifsc}
-                                            error={errors.ifsc}
-                                            helperText={errors.ifsc}
-                                        />
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        <TextInput
-                                            select
-                                            {...inputProps}
-                                            labelText="Account since"
-                                            name="account_since"
-                                            value={values.account_since}
-                                            error={errors.account_since}
-                                            helperText={errors.account_since}
-                                        >
+
+                    <Table className={classes.table} size="small" aria-label="Income">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell align="left">Account Holder name</TableCell>
+                                <TableCell align="left">Bank name</TableCell>
+                                <TableCell align="left">Account No.</TableCell>
+                                <TableCell align="left">Branch</TableCell>
+                                <TableCell align="left">IFSC</TableCell>
+                                <TableCell align="left">Account Type</TableCell>
+                                <TableCell align="left">Account since</TableCell>
+                                <TableCell align="left">Transaction limit</TableCell>
+                                <TableCell align="left">security</TableCell>
+                                <TableCell align="left"></TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {
+                                bankData?.map((row, i) => i === editRow?.rowIndex ? (
+                                    <TableRow key={`edit-row-${i}`}>
+                                        <TableCell md={6}>
+                                            <TextInput
+                                                label="Account Holder name"
+                                                name="account_name"
+                                                value={values.account_name}
+                                                error={errors.account_name}
+                                                helperText={errors.account_name}
+                                                onChange={onEditTextChange}
+                                            />
+                                        </TableCell>
+                                        <TableCell md={6}>
+                                            <TextInput
+                                                label="Name of the Bank"
+                                                name="bank_name"
+                                                value={values.bank_name}
+                                                error={errors.bank_name}
+                                                helperText={errors.bank_name}
+                                                onChange={onEditTextChange}
+                                            />
+                                        </TableCell>
+                                        <TableCell md={6}>
+                                            <TextInput
+                                                label="Account Number"
+                                                name="account_no"
+                                                value={editRow.account_no}
+                                                error={errors.account_no}
+                                                helperText={errors.account_no}
+                                                onChange={onEditTextChange}
+                                            />
+                                        </TableCell>
+                                        <TableCell md={6}>
+                                            <TextInput
+                                                label="Account Number"
+                                                name="bank_branch"
+                                                value={editRow.bank_branch}
+                                                error={errors.bank_branch}
+                                                helperText={errors.bank_branch}
+                                                onChange={onEditTextChange}
+                                            />
+                                        </TableCell>
+                                        <TableCell md={6}>
+                                            <TextInput
+                                                label="IFSC"
+                                                name="ifsc"
+                                                value={editRow.ifsc}
+                                                error={errors.ifsc}
+                                                helperText={errors.ifsc}
+                                                onChange={onEditTextChange}
+                                            />
+                                        </TableCell>
+                                        <TableCell md={6}>
+                                            <TextInput
+                                                label="Account Type"
+                                                name="account_type"
+                                                value={editRow.account_type}
+                                                error={errors.account_type}
+                                                helperText={errors.account_type}
+                                                onChange={onEditTextChange}
+                                            />
+                                        </TableCell>
+                                        <TableCell md={6}>
+                                            <TextInput
+                                                select
+                                                label="Account since"
+                                                name="account_since"
+                                                value={editRow.account_since}
+                                                error={errors.account_since}
+                                                onChange={onEditTextChange}
+                                                helperText={errors.account_since}
+                                            >
+                                                {
+                                                    <>
+                                                        <option value="null">Vintage with bank</option>
+                                                        {[...Array(currentYearDiff)].map((_, i) => {
+                                                            return (
+                                                                <option value={currentYear - i}>{currentYear - i}</option>
+                                                            )
+                                                        })}
+                                                    </>
+                                                }
+                                            </TextInput>
+                                        </TableCell>
+                                        <TableCell md={6}>
+                                            <TextInput
+                                                money
+                                                label="Transaction Limit"
+                                                name="transaction_limit"
+                                                value={editRow.transaction_limit}
+                                                error={errors.transaction_limit}
+                                                helperText={errors.transaction_limit}
+                                            />
+                                        </TableCell>
+                                        <TableCell item md={6}>
+                                            <TextInput
+                                                select
+                                                labelText="Is Secured"
+                                                name="security"
+                                                value={editRow.security}
+                                                error={errors.security}
+                                                helperText={errors.security}
+                                            >
+                                                <option>Secured</option>
+                                                <option>Unsecured</option>
+                                            </TextInput>
+                                        </TableCell>
+                                        {/* <TableCell>
+                                            <TextInput
+                                                label="Tanker number"
+                                                name="vehicle_no"
+                                                value={editRow.vehicle_no}
+                                                onChange={onEditTextChange}
+                                            />
+                                        </TableCell>
+                                        <TableCell>
+                                            <TextInput
+                                                select
+                                                label="Tanker type"
+                                                name="tanker_type"
+                                                value={editRow.tanker_type}
+                                                onChange={onEditTextChange}
+                                            >
+                                                <option>Owned</option>
+                                                <option>Rented</option>
+                                            </TextInput>
+                                        </TableCell>
+                                        <TableCell>
+                                            <TextInput
+                                                label="Tanker capacity in liters"
+                                                name="tanker_capacity"
+                                                value={editRow.tanker_capacity}
+                                                onChange={onEditTextChange}
+                                            />
+                                        </TableCell>
+                                        <TableCell>
+                                            <TextInput
+                                                label="Operational hours"
+                                                name="operation_hours"
+                                                value={editRow.operation_hours}
+                                                onChange={onEditTextChange}
+                                            />
+                                        </TableCell> */}
+                                        <TableCell align="center">
+                                            <Button
+                                                size="small"
+                                                variant="outlined"
+                                                color="success"
+                                                className={classes.btnSuccess}
+                                                onClick={() => saveEditRow(editRow, i)}>
+                                                Save
+                                            </Button>
+                                            <Button
+                                                size="small"
+                                                variant="outlined"
+                                                color="error"
+                                                onClick={() => {
+                                                    setEditRow({});
+                                                }}>
+                                                Cancel
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ) : (
+                                    <TableRow key={i}>
+                                        <TableCell align="left">{row.account_name}</TableCell>
+                                        <TableCell align="left">{row.bank_name}</TableCell>
+                                        <TableCell align="left">{row.account_no}</TableCell>
+                                        <TableCell align="left">{row.bank_branch}</TableCell>
+                                        <TableCell align="left">{row.ifsc}</TableCell>
+                                        <TableCell align="left">{row.account_type}</TableCell>
+                                        <TableCell align="left">{row.account_since}</TableCell>
+                                        <TableCell align="left">{row.bank_branch}</TableCell>
+                                        <TableCell align="right">
                                             {
-                                                <>
-                                                    <option value="null">Vintage with banker</option>
-                                                    {[...Array(currentYearDiff)].map((_, i) => {
-                                                        return (
-                                                            <option value={currentYear - i}>{currentYear - i}</option>
-                                                        )
-                                                    })}
-                                                </>
+                                                editable ? (
+                                                    <>
+                                                        <Button
+                                                            size="small"
+                                                            variant="outlined"
+                                                            color="success"
+                                                            className={classes.btnSuccess}
+                                                            onClick={() => editBankRow(row, i)}>
+                                                            Edit
+                                                        </Button>
+                                                        <Button
+                                                            size="small"
+                                                            variant="outlined"
+                                                            color="success"
+                                                            className={classes.btnSuccess}
+                                                            onClick={() => deleteBankRow(row, i)}>
+                                                            Delete
+                                                        </Button>
+                                                    </>
+                                                ) : null
                                             }
-                                        </TextInput>
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        <TextInput
-                                            {...inputProps}
-                                            money
-                                            labelText="Transaction Limit"
-                                            name="transaction_limit"
-                                            value={values.transaction_limit}
-                                            error={errors.transaction_limit}
-                                            helperText={errors.transaction_limit}
-                                        />
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        <TextInput
-                                            select
-                                            {...inputProps}
-                                            labelText="Is Secured"
-                                            name="security"
-                                            value={values.security}
-                                            error={errors.security}
-                                            helperText={errors.security}
-                                        >
-                                            <option>Secured</option>
-                                            <option>Unsecured</option>
-                                        </TextInput>
-                                    </Grid>
-                                </Grid>
-                            </Box >
-                        )
-                    }
-                    {
+
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            }
+                            {
+                                addNewRow && (
+                                    <TableRow key={"new-row"}>
+                                        <TableCell>
+                                            <TextInput
+                                                label="Tanker number"
+                                                name="vehicle_no"
+                                                value={values.vehicle_no}
+                                                onChange={handleChange}
+                                            >
+                                            </TextInput>
+                                        </TableCell>
+                                        <TableCell>
+                                            <TextInput
+                                                select
+                                                label="Tanker Type"
+                                                name="tanker_type"
+                                                value={values.tanker_type}
+                                                onChange={handleChange}
+                                            >
+                                                <option>Owned</option>
+                                                <option>Rented</option>
+                                            </TextInput>
+                                        </TableCell>
+                                        <TableCell align={"right"}>
+                                            <TextInput
+                                                label="Tanker_capacity"
+                                                name="tanker_capacity"
+                                                value={values.tanker_capacity}
+                                                onChange={handleChange}
+                                            />
+                                        </TableCell>
+                                        <TableCell >
+                                            <TextInput
+                                                label="Operation hours"
+                                                name="operation_hours"
+                                                value={values.operation_hours}
+                                                onChange={handleChange}
+                                            />
+                                        </TableCell>
+                                        <TableCell align={"right"}></TableCell>
+                                    </TableRow>
+                                )
+                            }
+                        </TableBody>
+                    </Table>
+
+                    {/* {
+
                         bankData && (
                             <>
                                 <div className={classes.table}>
@@ -315,7 +508,7 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                                                 <TableCell align="left">Account since</TableCell>
                                                 <TableCell align="left">Transaction limit</TableCell>
                                                 <TableCell align="left">Branch</TableCell>
-
+                                                <TableCell align="left"></TableCell>
                                             </TableRow>
                                         </TableHead>
                                         {
@@ -329,6 +522,31 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                                                             <TableCell align="left">{row.account_since}</TableCell>
                                                             <TableCell align="left">{row.transaction_limit}</TableCell>
                                                             <TableCell align="left">{row.bank_branch}</TableCell>
+                                                            <TableCell align="right">
+                                                                {
+                                                                    editable ? (
+                                                                        <>
+                                                                            <Button
+                                                                                size="small"
+                                                                                variant="outlined"
+                                                                                color="success"
+                                                                                className={classes.btnSuccess}
+                                                                                onClick={() => editBankRow(row, i)}>
+                                                                                Edit
+                                                                            </Button>
+                                                                            <Button
+                                                                                size="small"
+                                                                                variant="outlined"
+                                                                                color="success"
+                                                                                className={classes.btnSuccess}
+                                                                                onClick={() => deleteBankRow(row, i)}>
+                                                                                Delete
+                                                                            </Button>
+                                                                        </>
+                                                                    ) : null
+                                                                }
+                                                            </TableCell>
+
                                                         </TableRow>
                                                     </TableBody>
                                                 )
@@ -338,7 +556,7 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                                 </div>
                             </>
                         )
-                    }
+                    } */}
 
                 </div>
             </div>

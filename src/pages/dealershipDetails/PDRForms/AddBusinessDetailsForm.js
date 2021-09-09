@@ -156,9 +156,9 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                         variant: 'success',
                     }
                     )
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 1500);
+                    // setTimeout(() => {
+                    //     window.location.reload()
+                    // }, 1500);
 
                 })
                 .catch(e => {
@@ -293,6 +293,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                             {/* <Grid item md={6}>
                                 <TextInput
                                     {...inputProps}
+                                    money
                                     labelText="Monthly average sale"
                                     name="monthly_average_sale"
                                     value={values.monthly_average_sale}
@@ -301,7 +302,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                                     helperText={errors.monthly_average_sale}
                                 />
                             </Grid> */}
-                            {/* <Grid item md={6}>
+                            <Grid item md={6}>
                                 <TextInput
                                     {...inputProps}
                                     labelText="LPG count"
@@ -311,7 +312,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                                     error={errors.lpg_count}
                                     helperText={errors.lpg_count}
                                 />
-                            </Grid> */}
+                            </Grid>
                             <Grid item md={6}>
                                 <TextInput
                                     {...inputProps}
@@ -381,7 +382,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                             </Grid>
                             <Grid item md={4}>
                                 <FormControl>
-                                    <RadioGroup name="is_microatm" value={values.is_microatm} defaultValue={values.is_microatm} onChange={handleChange}>
+                                    <RadioGroup name="is_microatm" value={values.is_microatm} onChange={handleChange}>
                                         <FormGroup row>
                                             <FormControlLabel value={1} control={<Radio color="secondary" />} label="Yes" />
                                             <FormControlLabel value={0} control={<Radio color="secondary" />} label="No" />
@@ -396,10 +397,10 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                             </Grid>
                             <Grid item md={4}>
                                 <FormControl>
-                                    <RadioGroup name="is_pep" value={values.is_pep} defaultValue={values.is_pep} onChange={handleChange}>
+                                    <RadioGroup name="is_pep" value={values.is_pep} onChange={handleChange}>
                                         <FormGroup row>
-                                            <FormControlLabel value="yes" control={<Radio color="secondary" />} label="Yes" />
-                                            <FormControlLabel value="no" control={<Radio color="secondary" />} label="No" />
+                                            <FormControlLabel value={1} control={<Radio color="secondary" />} label="Yes" />
+                                            <FormControlLabel value={0} control={<Radio color="secondary" />} label="No" />
                                         </FormGroup>
                                     </RadioGroup>
                                 </FormControl>

@@ -134,12 +134,18 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                         },
                         variant: 'success',
                     });
-                    // setTimeout(() => {
-                    //     window.location.reload()
-                    // }, 1500);
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1500);
                 })
                 .catch(e => {
-                    console.log(e);
+                    enqueueSnackbar(e, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'error',
+                    });
                 })
         }
     });

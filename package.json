@@ -22,7 +22,7 @@
     "match-sorter": "^4.0.2",
     "material-ui-dropzone": "^3.0.0",
     "moment": "^2.24.0",
-    "mui-datatables": "^2.14.0",
+    "mui-datatables": "^3.7.8",
     "node-sass": "^4.13.1",
     "notistack": "^0.9.17",
     "prop-types": "^15.7.2",

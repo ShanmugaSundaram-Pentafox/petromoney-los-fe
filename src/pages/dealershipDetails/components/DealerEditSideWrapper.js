@@ -96,6 +96,7 @@ const DealerEditSideWrapper = ({
   const [apicallStatus, setApicallStatus] = useState(null);
   const [apiCallMessage, setApiCallMessage] = useState('');
   const [selectedDate, setSelectedDate] = useState();
+  const [selectedState, setSelectedState] = useState();
   const { enqueueSnackbar } = useSnackbar();
 
   const handleEdit = () => {
@@ -197,7 +198,7 @@ const DealerEditSideWrapper = ({
       values.last_name = values.last_name.toUpperCase();
       setLoading(true);
       const date = moment(selectedDate).format('DD-MMM-YYYY');
-      const date_values = { ...values, dob: date };
+      const date_values = { ...values, dob: date, is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0 };
       const data = new FormData();
 
       Object.keys(date_values).forEach((key) => {
@@ -262,6 +263,9 @@ const DealerEditSideWrapper = ({
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
+  const handleStateChange = (state) => {
+    setSelectedState(state);
+  }
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant='h4'>
@@ -289,6 +293,7 @@ const DealerEditSideWrapper = ({
               modelType={modelType}
               data={data}
               handleDate={handleDateChange}
+              handleState={handleStateChange}
               values={values}
               errors={errors}
               onChange={handleChange}

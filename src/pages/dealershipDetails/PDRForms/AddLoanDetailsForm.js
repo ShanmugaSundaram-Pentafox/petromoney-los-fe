@@ -23,7 +23,7 @@ import { useSnackbar } from 'notistack';
 import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
 import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
 import { useMount } from 'react-use';
-import { getBankDetailsbyID, updateBankDetailsByID } from '../../../services/PDReport.services';
+import { getBankDetailsbyID, getLoanDetailsbyID, updateBankDetailsByID, updateLoanDetailsByID } from '../../../services/PDReport.services';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -104,7 +104,7 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) => {
+const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) => {
 
     const { enqueueSnackbar } = useSnackbar();
     const classes = useStyles()
@@ -112,14 +112,14 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
     const [loading, setLoading] = useState(false)
     const [bankData, setBankData] = useState([])
     const [addNew, setAddNew] = useState(bankData ? false : true)
-    const [tankerData, setTankerData] = useState([])
-    const [editable, setEditable] = useState(true)
-    const [addNewRow, setAddNewRow] = useState();
-    const [apiData, setApiData] = useState({});
-    const [editRow, setEditRow] = useState({});
+    // const [tankerData, setTankerData] = useState([])
+    // const [editable, setEditable] = useState(true)
+    // const [addNewRow, setAddNewRow] = useState();
+    // const [apiData, setApiData] = useState({});
+    // const [editRow, setEditRow] = useState({});
 
     useMount(() => {
-        getBankDetailsbyID(dealer_id)
+        getLoanDetailsbyID(dealer_id)
             .then(data => {
                 setBankData(data)
             })
@@ -145,7 +145,7 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
 
         }),
         onSubmit: values => {
-            updateBankDetailsByID(values, dealer_id)
+            updateLoanDetailsByID(values, dealer_id)
                 .then(res => {
                     console.log(res)
                     enqueueSnackbar(res, {
@@ -184,7 +184,7 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
     return (
         <div className={classes.sidePanelFormWrapper}>
             <Typography className={classes.sidePanelTitle} variant="h4">
-                <div>Add Banking &amp; Loan Details</div>
+                <div>Add Loan Details</div>
                 <CloseIcon onClick={handleClose} />
             </Typography>
             <div className={classes.sidePanelFormContentWrapper}>
@@ -195,7 +195,7 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                         onClick={() => { setAddNew(!addNew) }}
                         style={{ marginBottom: 12 }}
                     >
-                        Add Bank
+                        Add Loan
                     </Button>
                     {
                         addNew && (
@@ -204,7 +204,23 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                                     <Grid item md={6}>
                                         <TextInput
                                             {...inputProps}
-                                            labelText="Name of the Bank"
+                                            select
+                                            labelText="Loan Type"
+                                            name="loan_type"
+                                            value={values.loan_type}
+                                            error={errors.loan_type}
+                                            helperText={errors.loan_type}
+                                        >
+                                            <option value="">Choose type</option>
+                                            <option>Bank</option>
+                                            <option>Finance</option>
+                                            <option>Monthly EMI</option>
+                                        </TextInput>
+                                    </Grid>
+                                    <Grid item md={6}>
+                                        <TextInput
+                                            {...inputProps}
+                                            labelText="Bank Name"
                                             name="bank_name"
                                             value={values.bank_name}
                                             error={errors.bank_name}
@@ -214,89 +230,12 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                                     <Grid item md={6}>
                                         <TextInput
                                             {...inputProps}
-                                            labelText="Account Holder name"
-                                            name="account_name"
-                                            value={values.account_name}
-                                            error={errors.account_name}
-                                            helperText={errors.account_name}
+                                            labelText="Loan amount"
+                                            name="loan_amount"
+                                            value={values.loan_amount}
+                                            error={errors.loan_amount}
+                                            helperText={errors.loan_amount}
                                         />
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        <TextInput
-                                            {...inputProps}
-                                            labelText="Account Number"
-                                            name="account_no"
-                                            value={values.account_no}
-                                            error={errors.account_no}
-                                            helperText={errors.account_no}
-                                        />
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        <TextInput
-                                            {...inputProps}
-                                            labelText="Account Type"
-                                            name="account_type"
-                                            value={values.account_type}
-                                            error={errors.account_type}
-                                            helperText={errors.account_type}
-                                        />
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        <TextInput
-                                            {...inputProps}
-                                            labelText="IFSC"
-                                            name="ifsc"
-                                            value={values.ifsc}
-                                            error={errors.ifsc}
-                                            helperText={errors.ifsc}
-                                        />
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        <TextInput
-                                            select
-                                            {...inputProps}
-                                            labelText="Account since"
-                                            name="account_since"
-                                            value={values.account_since}
-                                            error={errors.account_since}
-                                            helperText={errors.account_since}
-                                        >
-                                            {
-                                                <>
-                                                    <option value="null">Vintage with banker</option>
-                                                    {[...Array(currentYearDiff)].map((_, i) => {
-                                                        return (
-                                                            <option value={currentYear - i}>{currentYear - i}</option>
-                                                        )
-                                                    })}
-                                                </>
-                                            }
-                                        </TextInput>
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        <TextInput
-                                            {...inputProps}
-                                            money
-                                            labelText="Transaction Limit"
-                                            name="transaction_limit"
-                                            value={values.transaction_limit}
-                                            error={errors.transaction_limit}
-                                            helperText={errors.transaction_limit}
-                                        />
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        <TextInput
-                                            select
-                                            {...inputProps}
-                                            labelText="Is Secured"
-                                            name="security"
-                                            value={values.security}
-                                            error={errors.security}
-                                            helperText={errors.security}
-                                        >
-                                            <option>Secured</option>
-                                            <option>Unsecured</option>
-                                        </TextInput>
                                     </Grid>
                                 </Grid>
                             </Box >
@@ -309,13 +248,10 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                                     <Table size="small">
                                         <TableHead>
                                             <TableRow>
-                                                <TableCell align="left">Bank name</TableCell>
-                                                <TableCell align="left">Account No.</TableCell>
-                                                <TableCell align="left">IFSC</TableCell>
-                                                <TableCell align="left">Account since</TableCell>
-                                                <TableCell align="left">Transaction limit</TableCell>
-                                                <TableCell align="left">Branch</TableCell>
-
+                                                <TableCell align="left">Loan Type</TableCell>
+                                                <TableCell align="left">Bank Name</TableCell>
+                                                <TableCell align="left">Amount</TableCell>
+                                                <TableCell></TableCell>
                                             </TableRow>
                                         </TableHead>
                                         {
@@ -323,12 +259,9 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                                                 return (
                                                     <TableBody>
                                                         <TableRow>
+                                                            <TableCell align="left">{row.loan_type}</TableCell>
                                                             <TableCell align="left">{row.bank_name}</TableCell>
-                                                            <TableCell align="left">{row.account_no}</TableCell>
-                                                            <TableCell align="left">{row.ifsc}</TableCell>
-                                                            <TableCell align="left">{row.account_since}</TableCell>
-                                                            <TableCell align="left">{row.transaction_limit}</TableCell>
-                                                            <TableCell align="left">{row.bank_branch}</TableCell>
+                                                            <TableCell align="left">{row.loan_amount}</TableCell>
                                                         </TableRow>
                                                     </TableBody>
                                                 )
@@ -374,4 +307,4 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
     )
 }
 
-export default AddBankingDetailsForm;
+export default AddLoanDetailsForm;

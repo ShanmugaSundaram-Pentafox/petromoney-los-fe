@@ -60,7 +60,7 @@ const FleetOperatorsTable = ({ id, editable, titleAlign, dealersClickRow }) => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {operatorsData.map(row => (
+                    {operatorsData?.map(row => (
                         <TableRow className={classes.tableRow} key={row.id} onClick={e => dealersClickRow(e, row)}>
                             <TableCell>{row.id}&nbsp;&nbsp;</TableCell>
                             <TableCell align="center">{row.transport_name ? row.transport_name.toUpperCase() : "-"}</TableCell>

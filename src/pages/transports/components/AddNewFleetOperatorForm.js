@@ -330,7 +330,19 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
                                         <Grid item md={12}>
                                             <Typography className={classes.title} variant="h4">Billing Details</Typography>
                                         </Grid>
-
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                label="Client Name"
+                                                name="client_name"
+                                                value={values.client_name}
+                                                error={errors.client_name}
+                                                readOnly={readOnly}
+                                                helperText={errors.client_name}
+                                                InputLabelProps={{ shrink: true }}
+                                                onChange={handleChange}
+                                            >
+                                            </TextInput>
+                                        </Grid>
                                         <Grid item md={6}>
                                             <TextInput
                                                 label="Monthly_billing"
@@ -412,52 +424,52 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
             <div className={classes.actionFooter}>
                 <Divider />
                 <div className={classes.actionButtonsWrapper}>
-                        <div>
-                            <Button
-                                    variant="outlined"
-                                    startIcon={<NavigateBeforeRoundedIcon />}
-                                    // disabled={loading}
-                                    onClick={handleClose}
-                                >
-                                Back
-                                </Button>
-                        </div>
+                    <div>
+                        <Button
+                            variant="outlined"
+                            startIcon={<NavigateBeforeRoundedIcon />}
+                            // disabled={loading}
+                            onClick={handleClose}
+                        >
+                            Back
+                        </Button>
+                    </div>
 
-                        {
+                    {
                         !readOnly ? (
                             !loading ? (
                                 <>
-                                <Button
-                                    variant="contained"
-                                    type="submit"
-                                    className={clsx(classes.btn, classes.editButton)}
-                                    startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                                    // disabled={loading}
-                                    onClick={loading ? () => null : handleSubmit}
+                                    <Button
+                                        variant="contained"
+                                        type="submit"
+                                        className={clsx(classes.btn, classes.editButton)}
+                                        startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
+                                        // disabled={loading}
+                                        onClick={loading ? () => null : handleSubmit}
                                     >
-                                    Save
-                                </Button>
-                                </>   
+                                        Save
+                                    </Button>
+                                </>
                             ) : (
-                                <div style={{display: 'flex', justifyContent: 'flex-end', width: '90%', margin: '0 auto'}}>
-                                  <CircularProgress size={30}/>
+                                <div style={{ display: 'flex', justifyContent: 'flex-end', width: '90%', margin: '0 auto' }}>
+                                    <CircularProgress size={30} />
                                 </div>
                             )
                         ) : (
                             <>
-                            <div>
-                            <Button
-                            variant="contained"
-                            type="submit"
-                            className={clsx(classes.btn, classes.editButton)}
-                            startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                            // disabled={loading}
-                            onClick={loading ? () => null : handleEdit }
-                        >
-                            Edit
-                        </Button>
-                        </div>
-                        </>
+                                <div>
+                                    <Button
+                                        variant="contained"
+                                        type="submit"
+                                        className={clsx(classes.btn, classes.editButton)}
+                                        startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
+                                        // disabled={loading}
+                                        onClick={loading ? () => null : handleEdit}
+                                    >
+                                        Edit
+                                    </Button>
+                                </div>
+                            </>
                         )
                     }
                 </div>

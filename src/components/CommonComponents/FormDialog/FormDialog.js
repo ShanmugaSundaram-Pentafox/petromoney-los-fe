@@ -35,9 +35,11 @@ const DialogTitle = withStyles(styles)((props) => {
       <Typography variant="h5">{children}</Typography>
       {
         onDownload ? (
-          <IconButton aria-label="close" className={classes.downloadButton} onClick={onDownload}>
-            <CloudDownloadOutlinedIcon />
-          </IconButton>
+          <a href={onDownload} target="_blank">
+            <IconButton aria-label="close" className={classes.downloadButton} onClick={onDownload}>
+              <CloudDownloadOutlinedIcon />
+            </IconButton>
+          </a>
         ) : null
       }
       {onClose ? (

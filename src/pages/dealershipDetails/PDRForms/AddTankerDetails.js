@@ -43,13 +43,13 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 
-const AddTankerDetails = ({ dealer_id, isEdit }) => {
-    const classes = useStyles()
+const AddTankerDetails = ({ dealer_id }) => {
     const [tankerData, setTankerData] = useState([])
     const [editable, setEditable] = useState(true)
     const [addNewRow, setAddNewRow] = useState();
     const [editRow, setEditRow] = useState({});
     const { enqueueSnackbar } = useSnackbar();
+    const classes = useStyles()
 
     useMount(() => {
         getTankersById(dealer_id)
@@ -66,7 +66,16 @@ const AddTankerDetails = ({ dealer_id, isEdit }) => {
     const deleteTankerRow = (row, index) => {
         deleteTanker(row, dealer_id)
             .then(data => {
-                console.log(data)
+                enqueueSnackbar(data, {
+                    anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'right',
+                    },
+                    variant: 'success',
+                });
+                setTimeout(() => {
+                    window.location.reload()
+                }, 1000);
             })
             .catch((e) => {
                 console.log(e);
@@ -112,7 +121,18 @@ const AddTankerDetails = ({ dealer_id, isEdit }) => {
             .then(res => {
                 setTankerData(res);
                 setEditRow({});
+                enqueueSnackbar(res, {
+                    anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'right',
+                    },
+                    variant: 'success',
+                });
+                setTimeout(() => {
+                    window.location.reload()
+                }, 1000);
             })
+
             .catch(err => {
                 console.log('Sales data save error - ', err);
             })

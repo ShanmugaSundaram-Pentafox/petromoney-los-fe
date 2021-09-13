@@ -100,7 +100,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
         callback();
     };
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
-        initialValues: { data },
+        initialValues: { ...data },
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({

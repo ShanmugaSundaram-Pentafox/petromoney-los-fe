@@ -318,7 +318,7 @@ export const updateBankDetailsByID = (data, id) => {
 export const deleteBankDetailsByID = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/bank`, {
-      method: 'POST',
+      method: 'DELETE',
       body: data,
     })
       .then(({ status, message }) => {
@@ -432,7 +432,7 @@ export const getLoanDetailsbyID = (id) => {
       })
   });
 }
-export const updateLoanDetailsByID = (data, id) => {
+export const addLoanDetailsByID = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/bank/loans`, {
       method: 'POST',
@@ -448,6 +448,58 @@ export const updateLoanDetailsByID = (data, id) => {
       .catch((e) => {
         reject(e.message);
       });
+  });
+}
+export const updateLoanDetailsByID = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/bank/loans/${data.loan_id}`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+export const deleteLoanDetailsByID = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/bank/loans/${data.loan_id}`, {
+      method: 'DELETE',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+
+export const downloadPDReport = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/pdr`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
   });
 }
 

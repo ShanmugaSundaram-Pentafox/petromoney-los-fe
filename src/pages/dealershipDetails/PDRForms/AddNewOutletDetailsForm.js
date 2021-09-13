@@ -1,8 +1,8 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
+import TextInput from '../../../components/TextInput/TextInput';
 import Button from '../../../components/CommonComponents/Button/Button';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
@@ -16,16 +16,9 @@ import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
 import { addOutletDetails } from '../../../services/PDReport.services';
-import { FormControl } from '@material-ui/core';
-import { FormLabel } from '@material-ui/core';
-import { RadioGroup } from '@material-ui/core';
-import { FormControlLabel } from '@material-ui/core';
-import { Radio } from '@material-ui/core';
-import { FormGroup } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
-        // textAlign: 'center',
         padding: '24px 16px',
         display: 'flex',
         justifyContent: 'space-between',
@@ -37,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         flexDirection: 'column',
         height: '100vh',
-        width: '40vw'
+        width: '55vw'
     },
     sidePanelFormContentWrapper: {
         flex: 1,
@@ -194,8 +187,8 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         error={errors.outlet_address}
                                         helperText={errors.outlet_address}
                                     />
-                                </Grid> */}
-                                {/* <Grid item md={6}>
+                                </Grid>
+                                <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
                                         labelText="Outlet Landmark"

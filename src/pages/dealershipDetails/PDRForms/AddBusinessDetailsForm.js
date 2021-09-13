@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -15,9 +15,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
-import { getBusinessDetailsbyID, getPartnerDetailsbyID, updateBusinessDetailsByID, updatePartnersByID } from '../../../services/PDReport.services';
-import { useMount } from 'react-use';
-import { getBusinessTypes } from '../../../services/common.service';
+import { updateBusinessDetailsByID } from '../../../services/PDReport.services';
 import { FormControl } from '@material-ui/core';
 import { RadioGroup } from '@material-ui/core';
 import { FormControlLabel } from '@material-ui/core';
@@ -28,7 +26,6 @@ import { FormGroup } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
-        // textAlign: 'center',
         padding: '24px 16px',
         display: 'flex',
         justifyContent: 'space-between',
@@ -92,41 +89,6 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
     const classes = useStyles()
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
     const [loading, setLoading] = useState(false)
-    const [businessTypes, setBusinessTypes] = useState([]);
-    const [partnerData, setPartnerData] = useState([])
-    const [type, setType] = useState()
-    const [businessData, setBusinessData] = useState();
-
-
-    // useMount(() => {
-    //     getBusinessTypes()
-    //         .then(result => {
-    //             setBusinessTypes(result.map(({ name, id }) => ({
-    //                 label: name,
-    //                 value: id
-    //             })))
-    //         })
-    //         .catch((e) => {
-    //             console.log(e);
-    //         })
-    //     getBusinessDetailsbyID(dealer_id)
-    //         .then(data => {
-    //             setBusinessData(data)
-    //         })
-    //         .catch((e) => {
-    //             console.log(e);
-    //         })
-    //     getPartnerDetailsbyID(dealer_id)
-    //         .then(data => {
-    //             setPartnerData(data)
-    //         })
-    //         .catch((e) => {
-    //             console.log(e);
-    //         })
-
-    // })
-
-
     const handleEdit = () => {
         setReadOnly(!readOnly)
     };
@@ -156,9 +118,9 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                         variant: 'success',
                     }
                     )
-                    // setTimeout(() => {
-                    //     window.location.reload()
-                    // }, 1500);
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1500);
 
                 })
                 .catch(e => {
@@ -188,15 +150,6 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
             <div className={classes.sidePanelFormContentWrapper}>
                 <div className={classes.stepperRoot}>
                     <Box>
-                        {/* <Grid container spacing={2}>
-                            <Grid item md={6} style={{ marginBottom: 16 }}>
-                                <label style={{ marginBottom: 12 }}>Business type</label>
-                                <Select
-                                    isClearable
-                                    onChange={setType}
-                                    options={businessTypes} />
-                            </Grid>
-                        </Grid> */}
                         <Grid container spacing={2}>
                             <Grid item md={6}>
                                 <TextInput
@@ -290,18 +243,6 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                                     helperText={errors.insurance_all}
                                 />
                             </Grid>
-                            {/* <Grid item md={6}>
-                                <TextInput
-                                    {...inputProps}
-                                    money
-                                    labelText="Monthly average sale"
-                                    name="monthly_average_sale"
-                                    value={values.monthly_average_sale}
-                                    readOnly={readOnly}
-                                    error={errors.monthly_average_sale}
-                                    helperText={errors.monthly_average_sale}
-                                />
-                            </Grid> */}
                             <Grid item md={6}>
                                 <TextInput
                                     {...inputProps}
@@ -405,112 +346,6 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                                     </RadioGroup>
                                 </FormControl>
                             </Grid>
-                            {/* {
-                                values.is_pep === "yes" ? (
-                                    <>
-                                        <Grid item md={6}>
-                                            <TextInput
-                                                {...inputProps}
-                                                labelText="Relationship with Politician"
-                                                name="relationship"
-                                                value={values.relationship}
-                                                error={errors.relationship}
-                                                helperText={errors.relationship}
-                                            />
-                                        </Grid>
-                                        <Grid item md={6}>
-                                            <TextInput
-                                                {...inputProps}
-                                                labelText="Politician's position"
-                                                name="position"
-                                                value={values.position}
-                                                error={errors.position}
-                                                helperText={errors.position}
-                                            />
-                                        </Grid>
-                                    </>
-                                ) : null
-                            } */}
-                            {/* {
-                                type?.label === 'Proprietorship' && (
-                                    <>
-                                        <Grid item md={6}>
-                                            <TextInput
-                                                {...inputProps}
-                                                labelText="Proprietor name"
-                                                name="proprietor_name"
-                                                value={values.proprietor_name}
-                                                readOnly={readOnly}
-                                                error={errors.proprietor_name}
-                                                helperText={errors.proprietor_name}
-                                            />
-                                        </Grid>
-                                        <Grid item md={6}>
-                                            <TextInput
-                                                {...inputProps}
-                                                labelText="Proprietor mobile"
-                                                name="proprietor_mobile"
-                                                value={values.proprietor_mobile}
-                                                readOnly={readOnly}
-                                                error={errors.proprietor_mobile}
-                                                helperText={errors.proprietor_mobile}
-                                            />
-                                        </Grid>
-                                    </>
-                                )
-                            }
-                            {
-                                type?.label === 'Partnership' && (
-                                    <>
-                                        <Grid item md={12}>
-                                            <Fragment className={classes.table}>
-                                                <Typography className={classes.subTitle} variant="h4">Partner Details</Typography>
-                                                <Grid md={6}>
-                                                    <TextInput
-                                                        {...inputProps}
-                                                        labelText="Number of Partner"
-                                                        name="no_of_partners"
-                                                        type="number"
-                                                        value={values.no_of_partners}
-                                                        readOnly={readOnly}
-                                                        error={errors.no_of_partners}
-                                                        helperText={errors.no_of_partners}
-                                                    />
-                                                </Grid>
-                                            </Fragment>
-                                        </Grid>
-                                        < AddPartnerDetails dealer_id={dealer_id} />
-                                    </>
-                                )
-                            } */}
-                            {/* {
-                                    Array.isArray(partnerData) && (
-                                        <Table>
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell>Partner name</TableCell>
-                                                    <TableCell>Mobile number</TableCell>
-                                                    <TableCell>Managing partner name</TableCell>
-                                                    <TableCell></TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                            <TableBody>
-                                                {
-                                                    partnerData?.map((row, i) => {
-                                                        return (
-                                                            <TableRow>
-                                                                <TableCell>{row.partner_name}</TableCell>
-                                                                <TableCell>{row.partner_mobile}</TableCell>
-                                                                <TableCell>{row.managing_partner_name}</TableCell>
-                                                            </TableRow>
-                                                        )
-                                                    }
-                                                    )
-                                                }
-                                            </TableBody>
-                                        </Table>
-                                    )
-                                } */}
                         </Grid>
                     </Box >
                 </div>
@@ -522,7 +357,6 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                         <Button
                             variant="outlined"
                             startIcon={<NavigateBeforeRoundedIcon />}
-                            // disabled={loading}
                             onClick={handleClose}
                         >
                             Back
@@ -543,8 +377,6 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                 </div>
             </div>
         </div >
-
-
     )
 }
 

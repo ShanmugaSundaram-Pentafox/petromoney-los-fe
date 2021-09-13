@@ -16,14 +16,11 @@ import Divider from '@material-ui/core/Divider';
 import { makeStyles } from "@material-ui/styles";
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import { useSnackbar } from 'notistack';
-import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
-import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
+import { useSnackbar } from 'notistack';d';
 import { useMount } from 'react-use';
-import { getBankDetailsbyID, getLoanDetailsbyID, updateBankDetailsByID, updateLoanDetailsByID } from '../../../services/PDReport.services';
+import { addLoanDetailsByID, deleteLoanDetailsByID, getBankDetailsbyID, getLoanDetailsbyID, updateBankDetailsByID, updateLoanDetailsByID } from '../../../services/PDReport.services';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -110,18 +107,17 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
     const classes = useStyles()
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
     const [loading, setLoading] = useState(false)
-    const [bankData, setBankData] = useState([])
-    const [addNew, setAddNew] = useState(bankData ? false : true)
-    // const [tankerData, setTankerData] = useState([])
-    // const [editable, setEditable] = useState(true)
-    // const [addNewRow, setAddNewRow] = useState();
-    // const [apiData, setApiData] = useState({});
-    // const [editRow, setEditRow] = useState({});
+    const [loanData, setLoanData] = useState([])
+    const [addNew, setAddNew] = useState(loanData ? false : true)
+    const [editable, setEditable] = useState(true)
+    const [addNewRow, setAddNewRow] = useState();
+    const [apiData, setApiData] = useState({});
+    const [editRow, setEditRow] = useState({});
 
     useMount(() => {
         getLoanDetailsbyID(dealer_id)
             .then(data => {
-                setBankData(data)
+                setLoanData(data)
             })
             .catch((e) => {
                 console.log(e);
@@ -129,9 +125,6 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
     })
 
 
-    const handleEdit = () => {
-        setReadOnly(!readOnly)
-    };
     const handleClose = () => {
         callback();
     };
@@ -145,7 +138,7 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
 
         }),
         onSubmit: values => {
-            updateLoanDetailsByID(values, dealer_id)
+            addLoanDetailsByID(values, dealer_id)
                 .then(res => {
                     console.log(res)
                     enqueueSnackbar(res, {
@@ -156,9 +149,9 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
                         variant: 'success',
                     }
                     )
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 1500);
+                    // setTimeout(() => {
+                    //     window.location.reload()
+                    // }, 1500);
 
                 })
                 .catch(e => {
@@ -173,14 +166,41 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
                 })
         }
     });
-    const date = new Date();
-    const currentYear = date.getFullYear();
-    const currentYearDiff = date.getFullYear() - 1970;
     const inputProps = {
         direction: "column",
         alignTop: true,
         onChange: handleChange,
     }
+    const editLoanRow = (rowData, rowIndex) => {
+        setEditRow({ ...rowData, rowIndex });
+    }
+    const deleteLoanRow = (row, index) => {
+        deleteLoanDetailsByID(row, dealer_id)
+            .then(data => {
+                console.log(data)
+            })
+            .catch((e) => {
+                console.log(e);
+            })
+
+    }
+    const saveEditRow = (data, i) => {
+        updateLoanDetailsByID(data, dealer_id)
+            .then(res => {
+                setEditRow({});
+            })
+            .catch(err => {
+                console.log('Sales data save error - ', err);
+            })
+    }
+    const onEditTextChange = e => {
+        const { name, value } = e.target;
+        setEditRow({
+            ...editRow,
+            [name]: value
+        })
+    }
+
     return (
         <div className={classes.sidePanelFormWrapper}>
             <Typography className={classes.sidePanelTitle} variant="h4">
@@ -242,7 +262,7 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
                         )
                     }
                     {
-                        bankData && (
+                        loanData && (
                             <>
                                 <div className={classes.table}>
                                     <Table size="small">
@@ -254,19 +274,138 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
                                                 <TableCell></TableCell>
                                             </TableRow>
                                         </TableHead>
-                                        {
-                                            bankData.map((row, i) => {
-                                                return (
-                                                    <TableBody>
-                                                        <TableRow>
-                                                            <TableCell align="left">{row.loan_type}</TableCell>
-                                                            <TableCell align="left">{row.bank_name}</TableCell>
-                                                            <TableCell align="left">{row.loan_amount}</TableCell>
-                                                        </TableRow>
-                                                    </TableBody>
+                                        <TableBody>
+                                            {
+                                                loanData?.map((row, i) => i === editRow?.rowIndex ? (
+                                                    <TableRow key={`edit-row-${i}`}>
+                                                        <TableCell md={6}>
+                                                            <TextInput
+                                                                label="Loan Type"
+                                                                name="loan_type"
+                                                                value={editRow.loan_type}
+                                                                error={errors.loan_type}
+                                                                helperText={errors.loan_type}
+                                                                onChange={onEditTextChange}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell md={6}>
+                                                            <TextInput
+                                                                label="Name of the Bank"
+                                                                name="bank_name"
+                                                                value={editRow.bank_name}
+                                                                error={errors.bank_name}
+                                                                helperText={errors.bank_name}
+                                                                onChange={onEditTextChange}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell md={6}>
+                                                            <TextInput
+                                                                label="Loan amount"
+                                                                name="loan_amount"
+                                                                value={editRow.loan_amount}
+                                                                error={errors.loan_amount}
+                                                                helperText={errors.loan_amount}
+                                                                onChange={onEditTextChange}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell align="center">
+                                                            <Button
+                                                                size="small"
+                                                                variant="outlined"
+                                                                color="success"
+                                                                className={classes.btnSuccess}
+                                                                onClick={() => saveEditRow(editRow, i)}>
+                                                                Save
+                                                            </Button>
+                                                            <Button
+                                                                size="small"
+                                                                variant="outlined"
+                                                                color="error"
+                                                                onClick={() => {
+                                                                    setEditRow({});
+                                                                }}>
+                                                                Cancel
+                                                            </Button>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ) : (
+                                                    <TableRow key={i}>
+                                                        <TableCell align="left">{row.loan_type}</TableCell>
+                                                        <TableCell align="left">{row.bank_name}</TableCell>
+                                                        <TableCell align="left">{row.loan_amount}</TableCell>
+                                                        <TableCell align="right">
+                                                            {
+                                                                editable ? (
+                                                                    <>
+                                                                        <Button
+                                                                            size="small"
+                                                                            variant="outlined"
+                                                                            color="success"
+                                                                            className={classes.btnSuccess}
+                                                                            onClick={() => editLoanRow(row, i)}>
+                                                                            Edit
+                                                                        </Button>
+                                                                        <Button
+                                                                            size="small"
+                                                                            variant="outlined"
+                                                                            color="success"
+                                                                            className={classes.btnSuccess}
+                                                                            onClick={() => deleteLoanRow(row, i)}>
+                                                                            Delete
+                                                                        </Button>
+                                                                    </>
+                                                                ) : null
+                                                            }
+
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))
+                                            }
+                                            {
+                                                addNewRow && (
+                                                    <TableRow key={"new-row"}>
+                                                        <TableCell>
+                                                            <TextInput
+                                                                label="Tanker number"
+                                                                name="vehicle_no"
+                                                                value={values.vehicle_no}
+                                                                onChange={handleChange}
+                                                            >
+                                                            </TextInput>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <TextInput
+                                                                select
+                                                                label="Tanker Type"
+                                                                name="tanker_type"
+                                                                value={values.tanker_type}
+                                                                onChange={handleChange}
+                                                            >
+                                                                <option>Owned</option>
+                                                                <option>Rented</option>
+                                                            </TextInput>
+                                                        </TableCell>
+                                                        <TableCell align={"right"}>
+                                                            <TextInput
+                                                                label="Tanker_capacity"
+                                                                name="tanker_capacity"
+                                                                value={values.tanker_capacity}
+                                                                onChange={handleChange}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell >
+                                                            <TextInput
+                                                                label="Operation hours"
+                                                                name="operation_hours"
+                                                                value={values.operation_hours}
+                                                                onChange={handleChange}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell align={"right"}></TableCell>
+                                                    </TableRow>
                                                 )
-                                            })
-                                        }
+                                            }
+                                        </TableBody>
                                     </Table>
                                 </div>
                             </>

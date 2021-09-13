@@ -16,9 +16,10 @@ import Divider from '@material-ui/core/Divider';
 import { makeStyles } from "@material-ui/styles";
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import { useSnackbar } from 'notistack';d';
+import { useSnackbar } from 'notistack';
 import { useMount } from 'react-use';
 import { addLoanDetailsByID, deleteLoanDetailsByID, getBankDetailsbyID, getLoanDetailsbyID, updateBankDetailsByID, updateLoanDetailsByID } from '../../../services/PDReport.services';
 

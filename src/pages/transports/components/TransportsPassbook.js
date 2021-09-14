@@ -1,31 +1,27 @@
 import { FormControlLabel } from '@material-ui/core';
-import { FormGroup } from '@material-ui/core';
-import { Checkbox } from '@material-ui/core';
 import { TextField } from '@material-ui/core';
 import { Tooltip } from '@material-ui/core';
 import { InputAdornment } from '@material-ui/core';
 import { Paper } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { makeStyles } from '@material-ui/styles';
-import { mergeClasses } from '@material-ui/styles';
 import React, { useMemo, useState, useEffect } from 'react';
-import { useMount } from 'react-use';
 import { Typography } from '@material-ui/core';
 import MUIDataTable from 'mui-datatables';
-import { getAllTransport } from '../../../services/transports.service';
-import { data } from 'browserslist';
 import { Button } from '@material-ui/core';
 import { Radio } from '@material-ui/core';
 import { RadioGroup } from '@material-ui/core';
 import apiCall from '../../../utils/api.util';
-import { subDays } from 'date-fns/esm';
-import { format } from 'validate.js';
-import moment from 'moment';
-import FileUpload from '../../../components/FileUpload';
+import { subDays, format } from 'date-fns';
 import PublishIcon from '@material-ui/icons/Publish';
 import { CircularProgress } from '@material-ui/core';
 import Currency from '../../../components/Number/Currency';
+import { URL } from '../../../config/serverUrls';
+import { useSnackbar } from 'notistack';
+import { Popover } from '@material-ui/core';
+import { DateRange } from 'react-date-range';
+import { Box } from '@material-ui/core';
+
 
 const useStyles = makeStyles({
   root: {
@@ -61,7 +57,7 @@ const useStyles = makeStyles({
     minHeight: 32,
     boxSizing: 'border-box',
     padding: '0 4px',
-    width: 170,
+    width: 220,
     marginLeft: 10,
   },
   filterItem: {
@@ -117,9 +113,9 @@ const useStyles = makeStyles({
   }
 });
 
-function FastTagPassbook() {
+function FastTagPassbook( {currentUser} ) {
   const classes = useStyles();
-  const [selectedValue, setSelectedValue] = React.useState('mobile');
+  const [selectedValue, setSelectedValue] = React.useState('vehicle');
   const [searchValue, setSearchValue] = useState();
   const [selectedPeriodType, setSelectedPeriodType] = useState('D');
   const [showUpload, setShowUpload] = useState(false);
@@ -127,10 +123,40 @@ function FastTagPassbook() {
   const [loading, setLoading] = useState(false);
   const [disable, setDisable] = useState(false);
   const [data, setData] = useState();
+  const { enqueueSnackbar } = useSnackbar();
+  const [from, setFrom] = useState();
+  const [to, setTo] = useState();
+  const [showPicker, setShowPicker] = useState();
+  const [page, setPage] = useState(0);
+  const [total, setTotal] = useState(15);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
+  const [pageLoader, setPageLoader] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState({
-    from: moment(new Date()).format('YYYY-MM-DD'),
-    to: moment(new Date()).format('YYYY-MM-DD'),
+    from: new Date(),
+    to: new Date(),
   });
+  const [dateRange, setDateRange] = useState({
+    startDate: subDays(new Date(), 8),
+    endDate: new Date(),
+    key: 'range'
+  });
+
+  const fetchResult = (pageQry) => {
+    if(searchValue){
+      setPageLoader(true);
+      apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${from}&to=${to}&page=${pageQry}&row_count=${rowsPerPage}`)
+        .then(res => {
+          setPageLoader(false)
+          if(res.status === "SUCCESS"){
+            setData(res.data.list)
+            setTotal(res.data.count)
+          }
+        })
+        .catch(e => {
+          console.log(e)
+        })
+    }
+  }
 
   const columns = useMemo(() => {
     return [
@@ -141,7 +167,18 @@ function FastTagPassbook() {
           filter: false,
           sort: true,
           customBodyRender: (value) => {
-            return <>{moment(new Date(value)).format('DD-MM-YYYY')}</>;
+            return <>{format(new Date(value), 'dd-MM-yyyy')}</>;
+          },
+        },
+      },
+      {
+        label: 'Vehicle No',
+        name: 'vehicleRegistrationNo',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: (value) => {
+            return <>{value?.toUpperCase()}</>;
           },
         },
       },
@@ -170,14 +207,34 @@ function FastTagPassbook() {
         options: {
           filter: true,
           sort: true,
-          customBodyRender: value => <strong><Currency value={value} /></strong>
+          customBodyRender: (value, tableMeta) => {
+            if(tableMeta?.rowData[5] === 'SUCCESS'){
+              return <strong><Currency value={value} /></strong> 
+            }
+            else{
+              return (
+              <Tooltip title={tableMeta?.rowData[5]}>
+                <strong>
+                  <Currency value={value} style={{color: 'red'}}/>
+                </strong>
+              </Tooltip>
+              )
+            }
+        }
+        },
+      },
+      {
+        name: 'transactionStatus',
+        options: {
+          filter: true,
+          sort: true,
+          display: 'excluded',
         },
       },
     ];
   }, []);
 
   const options = {
-    // filterType: 'checkbox',
     selectableRowsHeader: false,
     selectableRows: 'none',
     print: false,
@@ -185,33 +242,51 @@ function FastTagPassbook() {
     download: false,
     filter: false,
     search: false,
-    rowsPerPage: 10,
+    rowsPerPage: rowsPerPage,
+    onChangeRowsPerPage	: (rows) => {
+      setRowsPerPage(rows)
+    },
+    rowsPerPageOptions: [10, 15, 50],
     isRowSelectable: () => false,
-  };
-
-
-  const docUpload = () => {
-    setShowUpload(true);
+    serverSide: true,
+    count: total,
+    onTableChange: (action, tableState) => {
+      switch(action) {
+        case "changePage":
+          pageChange(tableState.page)
+          break;
+      }
+    }
   };
 
   useEffect(() => {
     let qry = {};
-    qry.from = moment(selectedPeriod.from).format('YYYY-MM-DD');
-    qry.to = moment(selectedPeriod.to).format('YYYY-MM-DD');
-    if (searchValue) {
-      apiCall(
-        `fastag/details?${selectedValue}=${searchValue}&from=${qry.from}&to=${qry.to}`
-      );
+    if(selectedPeriod?.from){
+      qry.from = format(selectedPeriod?.from , 'yyyy-MM-dd');
+      qry.to = format(selectedPeriod?.to ,'yyyy-MM-dd');
+      setFrom(qry.from);
+      setTo(qry.to);
     }
-  }, [selectedPeriod]);
+    if (searchValue) {
+      setPageLoader(true)
+      apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${qry.from}&to=${qry.to}&page=${page}&row_count=${rowsPerPage}`)
+        .then(res => {
+          setPageLoader(false)
+          if(res.status === "SUCCESS"){
+            setData(res.data.list)
+            setTotal(res.data.count)
+          }
+        })
+    }
+  }, [selectedPeriod, rowsPerPage]);
 
   const onDateChange = (type) => (event) => {
     setSelectedPeriodType(type);
     switch (type) {
       case 'D':
         setSelectedPeriod({
-          from: moment(new Date()).format('YYYY-MM-DD'),
-          to: moment(new Date()).format('YYYY-MM-DD'),
+          from: new Date(),
+          to: new Date(),
         });
         break;
       case 'W':
@@ -226,6 +301,10 @@ function FastTagPassbook() {
           to: subDays(new Date(), 1),
         });
         break;
+      case 'Custom':
+        setShowPicker(event.currentTarget)
+          break;
+      
       default:
         break;
     }
@@ -237,30 +316,83 @@ function FastTagPassbook() {
   const handleValues = (event) => {
     setSearchValue(event.target.value);
   };
+  const pageChange = (page) => {
+    fetchResult(page);
+  }
   const handleSubmit = () => {
-    apiCall(`fastag/detials/${searchValue}`)
-      .then(res => {
-        if(res.status === "SUCCESS"){
-          setData(res.data)
-        }
-      })
+    fetchResult(page);
   };
-  const handleSave = (value) => {
-    const data = new FormData();
-    data.append('fastag_statement', value);
-    apiCall(`fastag/upload_statement`, {
-      method: 'POST',
-      body: data,
-    });
-  };
+  
   const onChangeHandler = (event) => {
     setFile(event.target.files[0]);
     setLoading(true);
     setDisable(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 5000);
+    const formData = new FormData();
+    formData.append('file', event.target.files[0])
+    fetch(`${URL.base}fastag/upload/statement`, {
+      method: "POST",
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${currentUser.token}`,
+      },
+    })
+    .then(res => {
+      return res.json()
+    })
+      .then(({ status, message}) => {
+        setFile('')
+        setDisable(false)
+        setLoading(false);
+        setDisable(false);
+        if(status === 'SUCCESS'){
+          setLoading(false)
+          enqueueSnackbar(message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+            style: { width: 400 },
+            autoHideDuration: 10000,
+          })
+        }
+        else {
+          setLoading(false)
+        enqueueSnackbar(message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+        }
+      })
+      .catch(e => {
+        enqueueSnackbar('Error Uploading File', {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+        setFile('')
+        setLoading(false)
+        setDisable(false)
+        console.log(e);
+      })
   };
+
+  const onDateRangeClose = () => {
+    setSelectedPeriod({
+      from: dateRange.startDate,
+      to: dateRange.endDate,
+    });
+    setShowPicker();
+  }
+
+  const onDatePickerChange = ({ range }) => {
+    setDateRange(range)
+  }
 
   return (
     <>
@@ -273,18 +405,6 @@ function FastTagPassbook() {
             Find By
           </Typography>
           <RadioGroup row style={{ marginLeft: 15 }}>
-            <FormControlLabel
-              control={
-                <Radio
-                  color='primary'
-                  checked={selectedValue === 'mobile'}
-                  onChange={handleChange}
-                  name='mobile'
-                  value='mobile'
-                />
-              }
-              label='Mobile'
-            />
             <FormControlLabel
               control={
                 <Radio
@@ -335,7 +455,40 @@ function FastTagPassbook() {
             >
               2W
             </div>
+            <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')}>
+            {
+              'Custom'
+            }
+            </div>
           </div>
+          <Popover
+                id={Boolean(showPicker) ? 'dp' : undefined}
+                open={Boolean(showPicker)}
+                anchorEl={showPicker}
+                onClose={onDateRangeClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'center',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'center',
+                }}
+              >
+                <DateRange
+                  ranges={[dateRange]}
+                  onChange={onDatePickerChange}
+                  maxDate={new Date()}
+                  months={2}
+                  direction="horizontal"
+                  minDate={subDays(new Date(), 1095)}
+                />
+                <Box p={1} textAlign='right'>
+                  <Button variant="contained" color="primary" onClick={onDateRangeClose}>
+                    Apply
+                  </Button>
+                </Box>
+              </Popover>
         </div>
         <div className={classes.top}>
           <div className={classes.search}>
@@ -373,14 +526,6 @@ function FastTagPassbook() {
             </Button>
           </div>
           <div className={classes.icon}>
-            {/* <Button
-              variant='outlined'
-              startIcon={<PublishIcon />}
-              color='primary'
-              onClick={docUpload}
-            >
-              Upload Statement
-            </Button> */}
             <input
               type='file'
               name='file'
@@ -395,26 +540,21 @@ function FastTagPassbook() {
             </label>
           </div>
         </div>
-        {showUpload && (
-          <FileUpload
-            handleSave={(value) => {
-              handleSave(value);
-              showUpload && setShowUpload(false);
-            }}
-            excel={true}
-            title='Upload Documents'
-            open={showUpload}
-            limit={1}
-            onCloseUploader={() => {
-              setShowUpload(false);
-            }}
-          />
-        )}
       </Paper>
       {
         data ? (
       <Paper className={classes.root} style={{ marginTop: 20 }}>
-        <MUIDataTable columns={columns} options={options} data={data}/>
+        <MUIDataTable columns={columns} options={options} data={data} 
+        title={
+          <Typography variant="h6" style={{display: 'flex', alignItems: 'center'}}>
+            Fastag Passbook {
+              pageLoader && (
+                <CircularProgress size={24} style={{ marginLeft: 15, position: "relative"}} />
+              )
+            }
+          </Typography>
+        }
+        />
       </Paper>
         ) : null
       }

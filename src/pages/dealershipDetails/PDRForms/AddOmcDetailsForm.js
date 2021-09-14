@@ -24,6 +24,7 @@ import {
 import { addOmcDetails, getOmcDetailsById } from '../../../services/PDReport.services';
 import moment from 'moment';
 import { useMount } from 'react-use';
+import { URL } from '../../../config/serverUrls';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -67,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
+const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) => {
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
     const [loading, setLoading] = useState(false)
     const [executedDate, setExecutedDate] = useState(data?.agreement_executed_on)
@@ -96,22 +97,33 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
             // transport_name: Yup.string().required('Please enter transporter name'),
         }),
         onSubmit: values => {
-            const executed_date = moment(executedDate).format('DD-MMM-YYYY');
-            const valid_date = moment(validDate).format('DD-MMM-YYYY');
-            const data = { ...values, agreement_executed_on: executed_date, agreement_valid_till: valid_date };
 
-            addOmcDetails(data, dealer_id)
+            const executed_date = moment(executedDate).format('YYYY-MM-DD');
+            const valid_date = moment(validDate).format('YYYY-MM-DD');
+            const date = { ...values, agreement_executed_on: executed_date, agreement_valid_till: valid_date };
+            const data = new FormData();
+            Object.keys(date).forEach((key) => {
+                data.append(key, date[key]);
+            });
+            fetch(`${URL.base}dealership/${dealer_id}`, {
+                method: 'POST',
+                body: data,
+                headers: {
+                    Authorization: `Bearer ${currentUser.token}`,
+                },
+            })
                 .then(res => {
-                    enqueueSnackbar(res, {
-                        anchorOrigin: {
-                            vertical: 'top',
-                            horizontal: 'right',
-                        },
-                        variant: 'success',
-                    });
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 1500);
+                    console.log(res)
+                    // enqueueSnackbar(res, {
+                    //     anchorOrigin: {
+                    //         vertical: 'top',
+                    //         horizontal: 'right',
+                    //     },
+                    //     variant: 'success',
+                    // });
+                    // setTimeout(() => {
+                    //     window.location.reload()
+                    // }, 1500);
                 })
                 .catch(e => {
                     console.log(e);
@@ -145,7 +157,6 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                                         helperText={errors.sales_officer_name}
                                     />
                                 </Grid>
-
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
@@ -159,20 +170,13 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                                 </Grid>
                                 <Grid item md={6}>
                                     <TextInput
-                                        select
                                         {...inputProps}
-                                        labelText="Outlet category"
-                                        name="outlet_category"
-                                        value={values.outlet_category}
-                                        readOnly={readOnly}
-                                        disabled={readOnly}
-                                        error={errors.id}
-                                        helperText={errors.id}
-                                    >
-                                        <option value="A">A</option>
-                                        <option value="B">B</option>
-                                        <option value="C">C</option>
-                                    </TextInput>
+                                        labelText="Mode Call/Mail"
+                                        name="communication_mode"
+                                        value={values.communication_mode}
+                                        error={errors.communication_mode}
+                                        helperText={errors.communication_mode}
+                                    />
                                 </Grid>
                                 <Grid item md={6}>
                                     <label className="input-label">Agreement executed on</label>
@@ -183,7 +187,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                                             inputVariant='outlined'
                                             readOnly={readOnly}
                                             disabled={readOnly}
-                                            format='dd-MM-yyyy'
+                                            format='yyyy-MM-dd'
                                             animateYearScrolling={true}
                                             invalidDateMessage='Invalid Date Format'
                                             margin='normal'
@@ -210,7 +214,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                                             hideTabs={true}
                                             variant='inline'
                                             inputVariant='outlined'
-                                            format='dd-MM-yyyy'
+                                            format='yyyy-MM-dd'
                                             readOnly={readOnly}
                                             disabled={readOnly}
                                             animateYearScrolling={true}

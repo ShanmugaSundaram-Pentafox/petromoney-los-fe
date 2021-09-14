@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { makeStyles } from "@material-ui/styles";
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, rgbToHex, Typography } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import { Drawer } from "@material-ui/core";
 import AddOmcDetailsForm from '../PDRForms/AddOmcDetailsForm';
@@ -50,6 +50,14 @@ const useStyles = makeStyles((theme) => ({
     },
     content: {
         textAlign: 'center',
+        borderRadius: 6,
+        paddingTop: 16,
+        paddingBottom: 12,
+        cursor: 'pointer',
+        transition: 'all 0.35s',
+        '&:hover': {
+            backgroundColor: '#e6e6e6',
+        },
     },
     icons: {
         textAlign: 'center',
@@ -106,8 +114,6 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         getOutletDetailsById(id)
             .then(data => {
                 setOutletData(data[0])
-                console.log(data);
-
             })
             .catch((e) => {
                 console.log(e);
@@ -135,7 +141,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
             <div className={classes.wrapper}>
                 <div className={classes.header}>
                     <Typography style={{ width: '70%' }} variant="h4" align={textAlign} className={classes.WrapperTitle} >Personal Discussion Report</Typography>
-                    <Button variant="contained" size="small" className={classes.btnSuccess}>Download</Button>
+                    <Button variant="contained" size="small" className={classes.btnSuccess} >Download</Button>
                 </div>
                 <Grid container spacing={1} className={classes.root} >
                     <Grid item md={2}>
@@ -143,7 +149,6 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                             <div className={classes.content} onClick={() => setOpenOmcForm(true)}>
                                 <BunkIcon width={30} className={classes.icons} />
                                 <Typography variant="h5" align='center' className={classes.title} >OMC details</Typography>
-
                             </div>
                         </Tooltip>
                     </Grid>
@@ -192,18 +197,18 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                         </Tooltip>
                     </Grid>
                     <Grid item md={2}>
-                        <Tooltip title="click to edit other details">
-                            <div className={classes.content} onClick={() => setOpenOtherForm(true)}>
-                                <LoanIcon width={30} className={classes.icons} />
-                                <Typography variant="h5" align='center' className={classes.title} >Others</Typography>
-                            </div>
-                        </Tooltip>
-                    </Grid>
-                    <Grid item md={2}>
                         <Tooltip title="click to edit Loan details">
                             <div className={classes.content} onClick={() => setOpenLoanForm(true)}>
                                 <LoanIcon width={30} className={classes.icons} />
                                 <Typography variant="h5" align='center' className={classes.title} >Loan Details</Typography>
+                            </div>
+                        </Tooltip>
+                    </Grid>
+                    <Grid item md={2}>
+                        <Tooltip title="click to edit other details">
+                            <div className={classes.content} onClick={() => setOpenOtherForm(true)}>
+                                <LoanIcon width={30} className={classes.icons} />
+                                <Typography variant="h5" align='center' className={classes.title} >Others</Typography>
                             </div>
                         </Tooltip>
                     </Grid>

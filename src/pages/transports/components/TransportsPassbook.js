@@ -21,6 +21,8 @@ import { useSnackbar } from 'notistack';
 import { Popover } from '@material-ui/core';
 import { DateRange } from 'react-date-range';
 import { Box } from '@material-ui/core';
+import GetAppIcon from '@material-ui/icons/GetApp';
+import { IconButton } from '@material-ui/core';
 
 
 const useStyles = makeStyles({
@@ -131,6 +133,9 @@ function FastTagPassbook( {currentUser} ) {
   const [total, setTotal] = useState(15);
   const [rowsPerPage, setRowsPerPage] = useState(15);
   const [pageLoader, setPageLoader] = useState(false);
+  const [period, setPeriod] = useState('today');
+  const [vehicle, setVehicle] = useState();
+  const [amount, setAmount] = useState();
   const [selectedPeriod, setSelectedPeriod] = useState({
     from: new Date(),
     to: new Date(),
@@ -149,6 +154,8 @@ function FastTagPassbook( {currentUser} ) {
           setPageLoader(false)
           if(res.status === "SUCCESS"){
             setData(res.data.list)
+            setVehicle(res.data.total_vehicles)
+            setAmount(res.data.total_amount)
             setTotal(res.data.count)
           }
         })
@@ -274,6 +281,8 @@ function FastTagPassbook( {currentUser} ) {
           setPageLoader(false)
           if(res.status === "SUCCESS"){
             setData(res.data.list)
+            setVehicle(res.data.total_vehicles)
+            setAmount(res.data.total_amount)
             setTotal(res.data.count)
           }
         })
@@ -288,21 +297,25 @@ function FastTagPassbook( {currentUser} ) {
           from: new Date(),
           to: new Date(),
         });
+        setPeriod('today')
         break;
       case 'W':
         setSelectedPeriod({
           from: subDays(new Date(), 8),
           to: subDays(new Date(), 1),
         });
+        setPeriod('1week')
         break;
       case '2W':
         setSelectedPeriod({
           from: subDays(new Date(), 16),
           to: subDays(new Date(), 1),
         });
+        setPeriod('2week')
         break;
       case 'Custom':
         setShowPicker(event.currentTarget)
+        setPeriod('custom')
           break;
       
       default:
@@ -312,6 +325,7 @@ function FastTagPassbook( {currentUser} ) {
 
   const handleChange = (event) => {
     setSelectedValue(event.target.value);
+    setData()
   };
   const handleValues = (event) => {
     setSearchValue(event.target.value);
@@ -322,13 +336,27 @@ function FastTagPassbook( {currentUser} ) {
   const handleSubmit = () => {
     fetchResult(page);
   };
-  
+  const handleDownload = () => {
+    if(searchValue)
+    {
+      apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${from}&to=${to}&pagination=1&download=1`)
+    .then(res => {
+      window.open(res?.data[0])
+    })
+    .catch(e => {
+      console.log(e)
+    })
+  }
+  }
+
   const onChangeHandler = (event) => {
     setFile(event.target.files[0]);
     setLoading(true);
     setDisable(true);
     const formData = new FormData();
     formData.append('file', event.target.files[0])
+    event.target.type = 'submit';
+    event.target.type = 'file';
     fetch(`${URL.base}fastag/upload/statement`, {
       method: "POST",
       body: formData,
@@ -524,6 +552,15 @@ function FastTagPassbook( {currentUser} ) {
             >
               Search
             </Button>
+            <Button
+              variant='outlined'
+              color='primary'
+              type='submit'
+              onClick={handleDownload}
+              startIcon={<GetAppIcon/>}
+            >
+              Download
+            </Button>
           </div>
           <div className={classes.icon}>
             <input
@@ -546,13 +583,45 @@ function FastTagPassbook( {currentUser} ) {
       <Paper className={classes.root} style={{ marginTop: 20 }}>
         <MUIDataTable columns={columns} options={options} data={data} 
         title={
-          <Typography variant="h6" style={{display: 'flex', alignItems: 'center'}}>
-            Fastag Passbook {
+          <>
+        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+          <Typography variant="h6">
+            Fastag Passbook
+          </Typography>
+          {
+            period === 'today' ? (
+              <Typography variant="h6">
+                <span style={{color: '#999999'}}>Period:</span> {format(selectedPeriod.from, 'dd-MM-yyyy')}
+              </Typography>
+            ) : (
+              <Typography variant="h6">
+                <span style={{color: '#999999'}}>Period:</span> {format(selectedPeriod.from, 'dd-MM-yyyy')} - {format(selectedPeriod.to, 'dd-MM-yyyy')}
+              </Typography>
+            )
+          }
+          {
+            selectedValue === 'id' ? (
+              <Typography variant="h6">
+                <span style={{color: '#999999'}}>Vehicle:</span> {vehicle}
+              </Typography>
+            ) : (null)
+          }
+          <Typography variant='h6'>
+            <span style={{color: '#999999'}}>Transactions:</span> {total}
+          </Typography>
+          
+          <Typography variant='h6'>
+            <span style={{color: '#999999'}}>Amount:</span> <Currency value={amount? amount : '0'}/>
+          </Typography>
+        </div>
+        <div style={{position: 'absolute', top: '15px', right: '10px'}}>
+          {
               pageLoader && (
                 <CircularProgress size={24} style={{ marginLeft: 15, position: "relative"}} />
               )
             }
-          </Typography>
+        </div>
+        </>
         }
         />
       </Paper>

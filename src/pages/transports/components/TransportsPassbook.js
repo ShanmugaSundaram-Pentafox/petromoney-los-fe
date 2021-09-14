@@ -341,7 +341,20 @@ function FastTagPassbook( {currentUser} ) {
     {
       apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${from}&to=${to}&pagination=1&download=1`)
     .then(res => {
-      window.open(res?.data[0])
+      if(res.status === 'SUCCESS')
+      {
+        window.open(res?.data[0])
+      }
+      else {
+        enqueueSnackbar(res.message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+          style: { width: 400 },
+        })
+      }
     })
     .catch(e => {
       console.log(e)

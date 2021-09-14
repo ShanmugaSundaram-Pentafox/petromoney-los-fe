@@ -24,7 +24,7 @@ import DealerEditForm from './DealerEditForm';
 import apiCall from '../../../utils/api.util';
 import { useSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
-import moment from 'moment';
+import { format } from 'date-fns';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -197,7 +197,8 @@ const DealerEditSideWrapper = ({
       values.first_name = values.first_name.toUpperCase();
       values.last_name = values.last_name.toUpperCase();
       setLoading(true);
-      const date = moment(selectedDate).format('DD-MMM-YYYY');
+      // const date = moment(selectedDate).format('DD-MMM-YYYY');
+      const date = format(new Date(selectedDate), 'yyyy-MM-dd')
       const date_values = { ...values, dob: date, is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0 };
       const data = new FormData();
 
@@ -208,8 +209,8 @@ const DealerEditSideWrapper = ({
         modelType === 'DEALER'
           ? URL.dealers
           : modelType === 'GUARANTOR'
-          ? URL.guarantor
-          : URL.coApplicants;
+            ? URL.guarantor
+            : URL.coApplicants;
       let url = `${apiURL}/${dealershipId}`;
       if (values.id) {
         url += `/${values.id}`;
@@ -273,8 +274,8 @@ const DealerEditSideWrapper = ({
           {modelType === 'DEALER'
             ? 'Dealer Edit Form'
             : modelType === 'GUARANTOR'
-            ? 'Guarantor Edit Form'
-            : 'CoApplicant Edit Form'}
+              ? 'Guarantor Edit Form'
+              : 'CoApplicant Edit Form'}
         </div>
         <CloseIcon onClick={onClose} />
       </Typography>

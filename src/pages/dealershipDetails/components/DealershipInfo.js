@@ -25,6 +25,7 @@ import { Typography } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import FileUpload from '../../../components/FileUpload';
 import moment from 'moment';
+import { format } from 'date-fns';
 // import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -67,14 +68,17 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
   const { values, handleChange: onChange, handleSubmit, setFieldValue } = useFormik({
     initialValues: { ...data },
     onSubmit: values => {
-      let d = { ...values, agreement_executed_on: (moment(new Date(values.agreement_executed_on)).format('YYYY-MM-DD')), agreement_valid_till: (moment(new Date(values.agreement_valid_till)).format('YYYY-MM-DD')) }
-      console.log("ddddddddddddddddddddddddddd", d)
+      let eDate = format(new Date(values.agreement_executed_on), 'yyyy-MM-dd')
+      let vDate = format(new Date(values.agreement_valid_till), 'yyyy-MM-dd')
+      const date_values = {
+        ...values,
+        agreement_valid_till: vDate,
+        agreement_executed_on: eDate
+      };
       const data = new FormData();
-      Object.keys(d).forEach(key => {
-        data.append(key, d[key]);
+      Object.keys(date_values).forEach(key => {
+        data.append(key, date_values[key]);
       })
-      // let pan = values?.pan ? encrypt(values.pan) : values?.pan;
-      // let gst = values?.gst ? encrypt(values.gst) : values?.gst;
       setLoading(true);
       fetch(`${URL.base}${URL.dealership}/${values.id}`, {
         method: 'POST',
@@ -194,7 +198,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
     readOnly,
     onChange
   }
-  console.log("dealership data check", data)
 
   return (
     <Card className={clsx(classes.root, className)}>

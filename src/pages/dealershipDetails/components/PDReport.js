@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { makeStyles } from "@material-ui/styles";
-import { Grid, rgbToHex, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import { Drawer } from "@material-ui/core";
 import AddOmcDetailsForm from '../PDRForms/AddOmcDetailsForm';
@@ -16,17 +16,17 @@ import { ReactComponent as LoanIcon } from '../../../icons/loan.svg';
 import { ReactComponent as OutletIcon } from '../../../icons/outlet.svg';
 import { Button } from '@material-ui/core';
 import AddBankingDetailsForm from '../PDRForms/AddBankingDetailsForm';
-import { getAssetDetailsById, getInfrastructureDetailsById, getOmcDetailsById, getOutletDetailsById } from '../../../services/PDReport.services';
+import { downloadPDReport, getAssetDetailsById, getBusinessDetailsbyID, getInfrastructureDetailsById, getOmcDetailsById, getOutletDetailsById } from '../../../services/PDReport.services';
 import { useMount } from 'react-use';
 import AddOtherDetailsForm from '../PDRForms/AddOtherDetailsForm';
 import AddLoanDetailsForm from '../PDRForms/AddLoanDetailsForm';
+import { useSnackbar } from 'notistack';
 
 
 const useStyles = makeStyles((theme) => ({
     root: {
         marginTop: 4,
         flexGrow: 1,
-        // maxWidth:'50vw'
     },
     header: {
         display: 'flex',
@@ -41,7 +41,6 @@ const useStyles = makeStyles((theme) => ({
 
     wrapper: {
         padding: 8,
-        // width: '55vw',
     },
     title: {
         fontSize: 12,
@@ -61,7 +60,6 @@ const useStyles = makeStyles((theme) => ({
     },
     icons: {
         textAlign: 'center',
-        // fontSize: '40px',
     },
     btnSuccess: {
         '&.MuiButton-contained': {
@@ -76,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
 
 const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
     const classes = useStyles()
-    const [openModal, setOpenModal] = useState(false)
+    const { enqueueSnackbar } = useSnackbar();
     const [openOmcForm, setOpenOmcForm] = useState(false)
     const [openBusinessForm, setOpenBusinessForm] = useState(false)
     const [openOutletForm, setOpenOutletForm] = useState(false)
@@ -89,7 +87,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
     const [outletData, setOutletData] = useState()
     const [infrastructureDetails, setInfrastructureDetails] = useState()
     const [assetDetails, setAssetDetails] = useState()
-
+    const [businessData, setBusinessData] = useState();
 
     const handleEdit = () => {
         setOpenOmcForm(false)
@@ -101,7 +99,6 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         setOpenOtherForm(false)
         setOpenLoanForm(false)
     }
-
     useMount(() => {
         getOmcDetailsById(id)
             .then(data => {
@@ -127,21 +124,49 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                 console.log(e);
             })
 
+        getBusinessDetailsbyID(id)
+            .then(data => {
+                setBusinessData(data[0])
+            })
+            .catch((e) => {
+                console.log(e);
+            })
         getAssetDetailsById(id)
             .then(data => {
-                setAssetDetails(data[0])
+                setAssetDetails(data)
             })
             .catch((e) => {
                 console.log(e);
             })
     })
+    const handleDownload = () => {
+        downloadPDReport(id)
+            .then(data => {
+                enqueueSnackbar(data.message, {
+                    anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'right',
+                    },
+                    variant: 'success',
+                });
+            })
+            .catch((e) => {
+                enqueueSnackbar(e, {
+                    anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'right',
+                    },
+                    variant: 'error',
+                });
+            })
+    }
     return (
 
         <div>
             <div className={classes.wrapper}>
                 <div className={classes.header}>
                     <Typography style={{ width: '70%' }} variant="h4" align={textAlign} className={classes.WrapperTitle} >Personal Discussion Report</Typography>
-                    <Button variant="contained" size="small" className={classes.btnSuccess} >Download</Button>
+                    <Button variant="contained" size="small" className={classes.btnSuccess} onClick={handleDownload} >Download</Button>
                 </div>
                 <Grid container spacing={1} className={classes.root} >
                     <Grid item md={2}>
@@ -204,14 +229,14 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                             </div>
                         </Tooltip>
                     </Grid>
-                    <Grid item md={2}>
+                    {/* <Grid item md={2}>
                         <Tooltip title="click to edit other details">
                             <div className={classes.content} onClick={() => setOpenOtherForm(true)}>
                                 <LoanIcon width={30} className={classes.icons} />
                                 <Typography variant="h5" align='center' className={classes.title} >Others</Typography>
                             </div>
                         </Tooltip>
-                    </Grid>
+                    </Grid> */}
                 </Grid>
             </div>
 
@@ -237,7 +262,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                 onClose={() => setOpenBusinessForm(false)}
                 variant="temporary"
             >
-                <AddBusinessDetailsForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} />
+                <AddBusinessDetailsForm dealer_id={id} isEdit={businessData ? null : 'Edit'} callback={handleEdit} data={businessData} currentUser={currentUser} />
             </Drawer>
             <Drawer
                 anchor="right"
@@ -280,7 +305,6 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                 <AddLoanDetailsForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} />
             </Drawer>
         </div >
-
     );
 
 }

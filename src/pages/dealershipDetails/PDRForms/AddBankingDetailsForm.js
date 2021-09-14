@@ -1,29 +1,20 @@
 import React, { Fragment, useState } from 'react';
-import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
+import TextInput from '../../../components/TextInput/TextInput';
 import Button from '../../../components/CommonComponents/Button/Button';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import clsx from 'clsx';
 import Divider from '@material-ui/core/Divider';
 import { makeStyles } from "@material-ui/styles";
 import CloseIcon from '@material-ui/icons/Close';
-import EditIcon from '@material-ui/icons/Edit';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
+import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
-import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
-import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
 import { useMount } from 'react-use';
-import { getBankDetailsbyID, updateBankDetailsByID } from '../../../services/PDReport.services';
+import { deleteBankDetailsByID, getBankDetailsbyID, updateBankDetailsByID } from '../../../services/PDReport.services';
+import BankDetailsCard from './Components/BankDetailsCard';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -53,8 +44,10 @@ const useStyles = makeStyles((theme) => ({
         width: '40vw',
         padding: 14,
     },
-    actionButtons: {
-        // paddingTop: 8
+    actionFoot: {
+        marginBottom: 16,
+        marginTop: 12,
+
     },
     tableRow: {
         cursor: 'pointer'
@@ -67,6 +60,9 @@ const useStyles = makeStyles((theme) => ({
     table: {
         padding: 8,
         marginTop: 8
+    },
+    btn: {
+        margin: 8
     },
     btnSuccess: {
         '&.MuiButton-contained': {
@@ -89,7 +85,6 @@ const useStyles = makeStyles((theme) => ({
     subTitle: {
         marginTop: 8,
         marginBottom: 8
-
     },
     editButton: {
         marginRight: '8px',
@@ -100,23 +95,16 @@ const useStyles = makeStyles((theme) => ({
         '&.MuiButton-contained:hover': {
             backgroundColor: theme.palette.success.dark
         }
-    }
+    },
 
 }))
 
-const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) => {
-
+const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => {
     const { enqueueSnackbar } = useSnackbar();
     const classes = useStyles()
-    const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
-    const [loading, setLoading] = useState(false)
     const [bankData, setBankData] = useState([])
-    const [addNew, setAddNew] = useState(bankData ? false : true)
-    const [tankerData, setTankerData] = useState([])
-    const [editable, setEditable] = useState(true)
-    const [addNewRow, setAddNewRow] = useState();
-    const [apiData, setApiData] = useState({});
-    const [editRow, setEditRow] = useState({});
+    const [addNewRow, setAddNewRow] = useState(false);
+    const [editRow, setEditRow] = useState(false);
 
     useMount(() => {
         getBankDetailsbyID(dealer_id)
@@ -127,22 +115,21 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                 console.log(e);
             })
     })
-
-
-    const handleEdit = () => {
-        setReadOnly(!readOnly)
-    };
+    const editBankRow = (rowData, rowIndex) => {
+        // setEditRow({ ...rowData, rowIndex });
+        setEditRow(true)
+        setValues(rowData)
+    }
     const handleClose = () => {
         callback();
     };
 
-    const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
+    const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues, setFieldValue } = useFormik({
         initialValues: {},
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
             // transport_name: Yup.string().required('Please enter transporter name'),
-
         }),
         onSubmit: values => {
             updateBankDetailsByID(values, dealer_id)
@@ -156,9 +143,9 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                         variant: 'success',
                     }
                     )
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 1500);
+                    // setTimeout(() => {
+                    //     window.location.reload()
+                    // }, 1500);
 
                 })
                 .catch(e => {
@@ -176,6 +163,7 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
     const date = new Date();
     const currentYear = date.getFullYear();
     const currentYearDiff = date.getFullYear() - 1970;
+
     const inputProps = {
         direction: "column",
         alignTop: true,
@@ -184,33 +172,16 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
     return (
         <div className={classes.sidePanelFormWrapper}>
             <Typography className={classes.sidePanelTitle} variant="h4">
-                <div>Add Banking &amp; Loan Details</div>
+                <div>Add Banking Details</div>
                 <CloseIcon onClick={handleClose} />
             </Typography>
             <div className={classes.sidePanelFormContentWrapper}>
                 <div className={classes.stepperRoot}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => { setAddNew(!addNew) }}
-                        style={{ marginBottom: 12 }}
-                    >
-                        Add Bank
-                    </Button>
+
                     {
-                        addNew && (
-                            <Box>
+                        addNewRow || editRow ? (
+                            <>
                                 <Grid container spacing={2}>
-                                    <Grid item md={6}>
-                                        <TextInput
-                                            {...inputProps}
-                                            labelText="Name of the Bank"
-                                            name="bank_name"
-                                            value={values.bank_name}
-                                            error={errors.bank_name}
-                                            helperText={errors.bank_name}
-                                        />
-                                    </Grid>
                                     <Grid item md={6}>
                                         <TextInput
                                             {...inputProps}
@@ -219,6 +190,16 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                                             value={values.account_name}
                                             error={errors.account_name}
                                             helperText={errors.account_name}
+                                        />
+                                    </Grid>
+                                    <Grid item md={6}>
+                                        <TextInput
+                                            {...inputProps}
+                                            labelText="Name of the Bank"
+                                            name="bank_name"
+                                            value={values.bank_name}
+                                            error={errors.bank_name}
+                                            helperText={errors.bank_name}
                                         />
                                     </Grid>
                                     <Grid item md={6}>
@@ -234,11 +215,11 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                                     <Grid item md={6}>
                                         <TextInput
                                             {...inputProps}
-                                            labelText="Account Type"
-                                            name="account_type"
-                                            value={values.account_type}
-                                            error={errors.account_type}
-                                            helperText={errors.account_type}
+                                            labelText="Branch"
+                                            name="bank_branch"
+                                            value={values.bank_branch}
+                                            error={errors.bank_branch}
+                                            helperText={errors.bank_branch}
                                         />
                                     </Grid>
                                     <Grid item md={6}>
@@ -253,8 +234,18 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                                     </Grid>
                                     <Grid item md={6}>
                                         <TextInput
-                                            select
                                             {...inputProps}
+                                            labelText="Account Type"
+                                            name="account_type"
+                                            value={values.account_type}
+                                            error={errors.account_type}
+                                            helperText={errors.account_type}
+                                        />
+                                    </Grid>
+                                    <Grid item md={6}>
+                                        <TextInput
+                                            {...inputProps}
+                                            select
                                             labelText="Account since"
                                             name="account_since"
                                             value={values.account_since}
@@ -263,7 +254,7 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                                         >
                                             {
                                                 <>
-                                                    <option value="null">Vintage with banker</option>
+                                                    <option value="null">Vintage with bank</option>
                                                     {[...Array(currentYearDiff)].map((_, i) => {
                                                         return (
                                                             <option value={currentYear - i}>{currentYear - i}</option>
@@ -286,8 +277,8 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                                     </Grid>
                                     <Grid item md={6}>
                                         <TextInput
-                                            select
                                             {...inputProps}
+                                            select
                                             labelText="Is Secured"
                                             name="security"
                                             value={values.security}
@@ -299,49 +290,37 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                                         </TextInput>
                                     </Grid>
                                 </Grid>
-                            </Box >
-                        )
-                    }
-                    {
-                        bankData && (
-                            <>
-                                <div className={classes.table}>
-                                    <Table size="small">
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell align="left">Bank name</TableCell>
-                                                <TableCell align="left">Account No.</TableCell>
-                                                <TableCell align="left">IFSC</TableCell>
-                                                <TableCell align="left">Account since</TableCell>
-                                                <TableCell align="left">Transaction limit</TableCell>
-                                                <TableCell align="left">Branch</TableCell>
-
-                                            </TableRow>
-                                        </TableHead>
-                                        {
-                                            bankData.map((row, i) => {
-                                                return (
-                                                    <TableBody>
-                                                        <TableRow>
-                                                            <TableCell align="left">{row.bank_name}</TableCell>
-                                                            <TableCell align="left">{row.account_no}</TableCell>
-                                                            <TableCell align="left">{row.ifsc}</TableCell>
-                                                            <TableCell align="left">{row.account_since}</TableCell>
-                                                            <TableCell align="left">{row.transaction_limit}</TableCell>
-                                                            <TableCell align="left">{row.bank_branch}</TableCell>
-                                                        </TableRow>
-                                                    </TableBody>
-                                                )
-                                            })
-                                        }
-                                    </Table>
+                                <div className={classes.actionFoot}>
+                                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                        <div>
+                                            <Button
+                                                variant="outlined"
+                                                className={classes.btn}
+                                                onClick={() => { setAddNewRow(false); setEditRow(false) }}
+                                            >
+                                                Cancel
+                                            </Button>
+                                        </div>
+                                        <div>
+                                            <Button
+                                                variant="contained"
+                                                type="submit"
+                                                className={clsx(classes.btn, classes.editButton)}
+                                                startIcon={<CheckOutlinedIcon />}
+                                                onClick={handleSubmit}
+                                            >
+                                                Save
+                                            </Button>
+                                        </div>
+                                    </div>
                                 </div>
                             </>
+                        ) : (
+                            <BankDetailsCard id={dealer_id} data={bankData} editBankDetails={editBankRow} />
                         )
                     }
-
                 </div>
-            </div>
+            </div >
             <div className={classes.actionFooter}>
                 <Divider />
                 <div className={classes.actionButtonsWrapper}>
@@ -349,7 +328,6 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                         <Button
                             variant="outlined"
                             startIcon={<NavigateBeforeRoundedIcon />}
-                            // disabled={loading}
                             onClick={handleClose}
                         >
                             Back
@@ -358,12 +336,11 @@ const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser 
                     <div>
                         <Button
                             variant="contained"
-                            type="submit"
-                            className={clsx(classes.btn, classes.editButton)}
-                            startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                            onClick={handleSubmit}
+                            color="primary"
+                            onClick={() => { setAddNewRow(true); setValues({}) }}
+                            style={{ marginBottom: 12 }}
                         >
-                            Save
+                            Add Bank
                         </Button>
                     </div>
                 </div>

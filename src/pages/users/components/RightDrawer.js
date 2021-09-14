@@ -257,9 +257,8 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
       role_id: Yup.number().required('Choose Proper User Role'),
       first_name: Yup.string().required('Enter first name'),
       last_name: Yup.string().required('Enter last name'),
-      mobile: Yup.number().min(10, 'Enter valid mobile number').required('Enter Mobile number'),
+      mobile: Yup.string().matches(/^\d{10}$/,"Enter valid mobile number").required("Enter mobile number"),
       email: Yup.string().email("Enter valid email"),
-
     }),
     onSubmit: values => {
       const { status, ...d } = values;

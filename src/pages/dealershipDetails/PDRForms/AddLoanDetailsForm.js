@@ -21,7 +21,10 @@ import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
 import { useMount } from 'react-use';
+import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
 import { addLoanDetailsByID, deleteLoanDetailsByID, getBankDetailsbyID, getLoanDetailsbyID, updateBankDetailsByID, updateLoanDetailsByID } from '../../../services/PDReport.services';
+import PreviewCard from '../../../components/CommonComponents/Cards/PreviewCard';
+import { ViewData } from '../../../components/CommonComponents/FilePreview';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -89,6 +92,14 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: 8
 
     },
+    actionFoot: {
+        marginBottom: 16,
+        marginTop: 12,
+
+    },
+    btn: {
+        margin: 8
+    },
     editButton: {
         marginRight: '8px',
         '&.MuiButton-contained': {
@@ -110,10 +121,7 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
     const [loading, setLoading] = useState(false)
     const [loanData, setLoanData] = useState([])
     const [addNew, setAddNew] = useState(loanData ? false : true)
-    const [editable, setEditable] = useState(true)
-    const [addNewRow, setAddNewRow] = useState();
-    const [apiData, setApiData] = useState({});
-    const [editRow, setEditRow] = useState({});
+    const [editRow, setEditRow] = useState(false);
 
     useMount(() => {
         getLoanDetailsbyID(dealer_id)
@@ -124,8 +132,6 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
                 console.log(e);
             })
     })
-
-
     const handleClose = () => {
         callback();
     };
@@ -139,32 +145,65 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
 
         }),
         onSubmit: values => {
-            addLoanDetailsByID(values, dealer_id)
-                .then(res => {
-                    console.log(res)
-                    enqueueSnackbar(res, {
-                        anchorOrigin: {
-                            vertical: 'top',
-                            horizontal: 'right',
-                        },
-                        variant: 'success',
-                    }
-                    )
-                    // setTimeout(() => {
-                    //     window.location.reload()
-                    // }, 1500);
+            if (editRow) {
+                updateLoanDetailsByID(values, dealer_id)
+                    .then(res => {
+                        console.log(res)
+                        enqueueSnackbar(res, {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'right',
+                            },
+                            variant: 'success',
+                        }
+                        )
+                        // setTimeout(() => {
+                        //     window.location.reload()
+                        // }, 1500);
 
-                })
-                .catch(e => {
-                    enqueueSnackbar(e, {
-                        anchorOrigin: {
-                            vertical: 'top',
-                            horizontal: 'right',
-                        },
-                        variant: 'error',
-                    }
-                    )
-                })
+                    })
+                    .catch(e => {
+                        enqueueSnackbar(e, {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'right',
+                            },
+                            variant: 'error',
+                        }
+                        )
+                    })
+
+            }
+            else {
+                addLoanDetailsByID(values, dealer_id)
+                    .then(res => {
+                        console.log(res)
+                        enqueueSnackbar(res, {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'right',
+                            },
+                            variant: 'success',
+                        }
+                        )
+                        // setTimeout(() => {
+                        //     window.location.reload()
+                        // }, 1500);
+
+                    })
+                    .catch(e => {
+                        enqueueSnackbar(e, {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'right',
+                            },
+                            variant: 'error',
+                        }
+                        )
+                    })
+
+            }
+
         }
     });
     const inputProps = {
@@ -173,7 +212,8 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
         onChange: handleChange,
     }
     const editLoanRow = (rowData, rowIndex) => {
-        setEditRow({ ...rowData, rowIndex });
+        setEditRow(true)
+        setValues(rowData)
     }
     const deleteLoanRow = (row, index) => {
         deleteLoanDetailsByID(row, dealer_id)
@@ -210,16 +250,8 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
             </Typography>
             <div className={classes.sidePanelFormContentWrapper}>
                 <div className={classes.stepperRoot}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => { setAddNew(!addNew) }}
-                        style={{ marginBottom: 12 }}
-                    >
-                        Add Loan
-                    </Button>
                     {
-                        addNew && (
+                        addNew || editRow ? (
                             <Box>
                                 <Grid container spacing={2}>
                                     <Grid item md={6}>
@@ -232,7 +264,7 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
                                             error={errors.loan_type}
                                             helperText={errors.loan_type}
                                         >
-                                            <option value="">Choose type</option>
+                                            <option value="">choose loan type</option>
                                             <option>Bank</option>
                                             <option>Finance</option>
                                             <option>Monthly EMI</option>
@@ -259,160 +291,57 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
                                         />
                                     </Grid>
                                 </Grid>
-                            </Box >
-                        )
-                    }
-                    {
-                        loanData && (
-                            <>
-                                <div className={classes.table}>
-                                    <Table size="small">
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell align="left">Loan Type</TableCell>
-                                                <TableCell align="left">Bank Name</TableCell>
-                                                <TableCell align="left">Amount</TableCell>
-                                                <TableCell></TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {
-                                                loanData?.map((row, i) => i === editRow?.rowIndex ? (
-                                                    <TableRow key={`edit-row-${i}`}>
-                                                        <TableCell md={6}>
-                                                            <TextInput
-                                                                label="Loan Type"
-                                                                name="loan_type"
-                                                                value={editRow.loan_type}
-                                                                error={errors.loan_type}
-                                                                helperText={errors.loan_type}
-                                                                onChange={onEditTextChange}
-                                                            />
-                                                        </TableCell>
-                                                        <TableCell md={6}>
-                                                            <TextInput
-                                                                label="Name of the Bank"
-                                                                name="bank_name"
-                                                                value={editRow.bank_name}
-                                                                error={errors.bank_name}
-                                                                helperText={errors.bank_name}
-                                                                onChange={onEditTextChange}
-                                                            />
-                                                        </TableCell>
-                                                        <TableCell md={6}>
-                                                            <TextInput
-                                                                label="Loan amount"
-                                                                name="loan_amount"
-                                                                value={editRow.loan_amount}
-                                                                error={errors.loan_amount}
-                                                                helperText={errors.loan_amount}
-                                                                onChange={onEditTextChange}
-                                                            />
-                                                        </TableCell>
-                                                        <TableCell align="center">
-                                                            <Button
-                                                                size="small"
-                                                                variant="outlined"
-                                                                color="success"
-                                                                className={classes.btnSuccess}
-                                                                onClick={() => saveEditRow(editRow, i)}>
-                                                                Save
-                                                            </Button>
-                                                            <Button
-                                                                size="small"
-                                                                variant="outlined"
-                                                                color="error"
-                                                                onClick={() => {
-                                                                    setEditRow({});
-                                                                }}>
-                                                                Cancel
-                                                            </Button>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                ) : (
-                                                    <TableRow key={i}>
-                                                        <TableCell align="left">{row.loan_type}</TableCell>
-                                                        <TableCell align="left">{row.bank_name}</TableCell>
-                                                        <TableCell align="left">{row.loan_amount}</TableCell>
-                                                        <TableCell align="right">
-                                                            {
-                                                                editable ? (
-                                                                    <>
-                                                                        <Button
-                                                                            size="small"
-                                                                            variant="outlined"
-                                                                            color="success"
-                                                                            className={classes.btnSuccess}
-                                                                            onClick={() => editLoanRow(row, i)}>
-                                                                            Edit
-                                                                        </Button>
-                                                                        <Button
-                                                                            size="small"
-                                                                            variant="outlined"
-                                                                            color="success"
-                                                                            className={classes.btnSuccess}
-                                                                            onClick={() => deleteLoanRow(row, i)}>
-                                                                            Delete
-                                                                        </Button>
-                                                                    </>
-                                                                ) : null
-                                                            }
-
-                                                        </TableCell>
-                                                    </TableRow>
-                                                ))
-                                            }
-                                            {
-                                                addNewRow && (
-                                                    <TableRow key={"new-row"}>
-                                                        <TableCell>
-                                                            <TextInput
-                                                                label="Tanker number"
-                                                                name="vehicle_no"
-                                                                value={values.vehicle_no}
-                                                                onChange={handleChange}
-                                                            >
-                                                            </TextInput>
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            <TextInput
-                                                                select
-                                                                label="Tanker Type"
-                                                                name="tanker_type"
-                                                                value={values.tanker_type}
-                                                                onChange={handleChange}
-                                                            >
-                                                                <option>Owned</option>
-                                                                <option>Rented</option>
-                                                            </TextInput>
-                                                        </TableCell>
-                                                        <TableCell align={"right"}>
-                                                            <TextInput
-                                                                label="Tanker_capacity"
-                                                                name="tanker_capacity"
-                                                                value={values.tanker_capacity}
-                                                                onChange={handleChange}
-                                                            />
-                                                        </TableCell>
-                                                        <TableCell >
-                                                            <TextInput
-                                                                label="Operation hours"
-                                                                name="operation_hours"
-                                                                value={values.operation_hours}
-                                                                onChange={handleChange}
-                                                            />
-                                                        </TableCell>
-                                                        <TableCell align={"right"}></TableCell>
-                                                    </TableRow>
-                                                )
-                                            }
-                                        </TableBody>
-                                    </Table>
+                                <div className={classes.actionFoot}>
+                                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                        <div>
+                                            <Button
+                                                variant="outlined"
+                                                className={classes.btn}
+                                                onClick={() => { setAddNew(false); setEditRow(false) }}
+                                            >
+                                                Cancel
+                                            </Button>
+                                        </div>
+                                        <div>
+                                            <Button
+                                                variant="contained"
+                                                type="submit"
+                                                className={clsx(classes.btn, classes.editButton)}
+                                                startIcon={<CheckOutlinedIcon />}
+                                                onClick={handleSubmit}
+                                            >
+                                                Save
+                                            </Button>
+                                        </div>
+                                    </div>
                                 </div>
-                            </>
+                            </Box >
+                        ) : (
+                            <Grid container spacing={2}>{
+                                loanData.map((item, i) => {
+                                    return (
+                                        <Grid item md={6}>
+                                            <PreviewCard
+                                                onEdit={() => { editLoanRow(item, i) }}
+                                                onDelete={() => deleteLoanRow(item, i)}
+                                            >
+                                                <Grid container spacing={2}>
+                                                    <Grid item md={6}>
+                                                        <ViewData title="Bank name" value={item.bank_name} />
+                                                        <ViewData title="Loan type" value={item.loan_type} />
+                                                        <ViewData title="Amount" value={item.loan_amount} />
+                                                    </Grid>
+                                                    <Grid item md={6}>
+                                                    </Grid>
+                                                </Grid>
+                                            </PreviewCard>
+                                        </Grid>
+                                    )
+                                })
+                            }
+                            </Grid>
                         )
                     }
-
                 </div>
             </div>
             <div className={classes.actionFooter}>
@@ -431,13 +360,21 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
                     <div>
                         <Button
                             variant="contained"
+                            color="primary"
+                            onClick={() => { setAddNew(true); setValues({}) }}
+                            style={{ marginBottom: 12 }}
+                        >
+                            Add Loan
+                        </Button>
+                        {/* <Button
+                            variant="contained"
                             type="submit"
                             className={clsx(classes.btn, classes.editButton)}
                             startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
                             onClick={handleSubmit}
                         >
                             Save
-                        </Button>
+                        </Button> */}
                     </div>
                 </div>
             </div>

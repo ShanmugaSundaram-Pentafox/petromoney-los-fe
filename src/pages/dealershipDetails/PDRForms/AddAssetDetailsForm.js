@@ -124,6 +124,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
             ownership_proof: null
         }
     ])
+    const [assetCheck, setAssetCheck] = useState([])
     const [assetData, setAssetData] = useState([])
     const [assetList, setAssetList] = useState([])
 
@@ -148,20 +149,20 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
             .catch((e) => {
                 console.log(e);
             })
-        // getAssetDataById(dealer_id)
-        //     .then(data => {
-        //         let d = [];
-        //         data.forEach((item, i) => {
-        //             d.push({
-        //                 ...item,
-        //                 details: typeof (item.details) === "string" ? JSON.parse(item.details) : (item.details || [])
-        //             })
-        //         })
-        //         setAsset(d)
-        //     })
-        //     .catch((e) => {
-        //         console.log(e);
-        //     })
+        getAssetDataById(dealer_id)
+            .then(data => {
+                let d = [];
+                data.forEach((item, i) => {
+                    d.push({
+                        ...item,
+                        details: typeof (item.details) === "string" ? JSON.parse(item.details) : (item.details || [])
+                    })
+                })
+                setAssetCheck(d)
+            })
+            .catch((e) => {
+                console.log(e);
+            })
 
     })
 
@@ -295,7 +296,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                                     <Grid container spacing={2}>
                                         {
                                             editRow ? (
-                                                <AssetDetailsCard id={dealer_id} data={editRowData} />
+                                                <AssetDetailsCard id={dealer_id} assetData={assetCheck} data={editRowData} />
                                             ) : (
                                                 asset.map((item, i) => {
                                                     return (
@@ -324,7 +325,6 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                                                         </Grid>
                                                     )
                                                 })
-
                                             )
                                         }
                                     </Grid>

@@ -96,11 +96,6 @@ const useStyles = makeStyles((theme) => ({
             backgroundColor: theme.palette.success.dark
         }
     },
-    field: {
-        '&.MuiTextField-root .MuiInputLabel-outlined.MuiInputLabel-shrink': {
-            fontSize: 9
-        }
-    }
 
 }))
 
@@ -342,7 +337,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
                         <Button
                             variant="contained"
                             color="primary"
-                            onClick={() => { setAddNewRow(true) }}
+                            onClick={() => { setAddNewRow(true); setValues({}) }}
                             style={{ marginBottom: 12 }}
                         >
                             Add Bank

@@ -24,6 +24,7 @@ import { AvatarCard, ViewData } from '../../../components/CommonComponents/FileP
 import { Typography } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import FileUpload from '../../../components/FileUpload';
+import moment from 'moment';
 // import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -64,11 +65,13 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
   const [regionList, setRegionList] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
   const { values, handleChange: onChange, handleSubmit, setFieldValue } = useFormik({
-    initialValues: data,
+    initialValues: { ...data },
     onSubmit: values => {
+      let d = { ...values, agreement_executed_on: (moment(new Date(values.agreement_executed_on)).format('YYYY-MM-DD')), agreement_valid_till: (moment(new Date(values.agreement_valid_till)).format('YYYY-MM-DD')) }
+      console.log("ddddddddddddddddddddddddddd", d)
       const data = new FormData();
-      Object.keys(values).forEach(key => {
-        data.append(key, values[key]);
+      Object.keys(d).forEach(key => {
+        data.append(key, d[key]);
       })
       // let pan = values?.pan ? encrypt(values.pan) : values?.pan;
       // let gst = values?.gst ? encrypt(values.gst) : values?.gst;
@@ -191,6 +194,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
     readOnly,
     onChange
   }
+  console.log("dealership data check", data)
 
   return (
     <Card className={clsx(classes.root, className)}>
@@ -304,19 +308,23 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                   />
                 </Grid>
                 <Grid {...gridProps} md={2}>
-                  <div
-                    className={classes.fileAttachement}
-                    onClick={() => docUpload('PAN')}
-                  >
-                    <Tooltip title={'Click and attach'}>
-                      <>
-                        <UploadIcon
-                          className={classes.icon}
-                          disabled={readOnly}
-                        />
-                      </>
-                    </Tooltip>
-                  </div>
+                  {
+                    values.gst && (
+                      <div
+                        className={classes.fileAttachement}
+                        onClick={() => docUpload('PAN')}
+                      >
+                        <Tooltip title={'Click and attach'}>
+                          <>
+                            <UploadIcon
+                              className={classes.icon}
+                              disabled={readOnly}
+                            />
+                          </>
+                        </Tooltip>
+                      </div>
+                    )
+                  }
                 </Grid>
                 <Grid {...gridProps} md={4}>
                   <TextInput
@@ -329,19 +337,23 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                   />
                 </Grid>
                 <Grid {...gridProps} md={2}>
-                  <div
-                    className={classes.fileAttachement}
-                    onClick={() => docUpload('PAN')}
-                  >
-                    <Tooltip title={'Click and attach'}>
-                      <>
-                        <UploadIcon
-                          className={classes.icon}
-                          disabled={readOnly}
-                        />
-                      </>
-                    </Tooltip>
-                  </div>
+                  {
+                    values.pan && (
+                      <div
+                        className={classes.fileAttachement}
+                        onClick={() => docUpload('PAN')}
+                      >
+                        <Tooltip title={'Click and attach'}>
+                          <>
+                            <UploadIcon
+                              className={classes.icon}
+                              disabled={readOnly}
+                            />
+                          </>
+                        </Tooltip>
+                      </div>
+                    )
+                  }
                 </Grid>
                 <Divider />
                 <Grid {...gridProps} sm={6} md={6}>
@@ -390,7 +402,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     direction="column"
                     {...fieldProps}
                   >
-                    
+
                   </TextInput>
                 </Grid>
                 <Grid {...gridProps} md={6}>
@@ -407,7 +419,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
           )
         }
         <Divider />
-        
+
         {showUpload && (
           <FileUpload
             handleSave={(value) => handleSave(value)}

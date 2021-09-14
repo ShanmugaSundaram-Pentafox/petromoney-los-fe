@@ -10,19 +10,20 @@ import FormDialog from './FormDialog/FormDialog';
 
 const useStyles = makeStyles((theme) => ({
     title: {
-        marginBottom: 4,
+        // marginBottom: 4,
         fontSize: 11,
+        color: '#888',
     },
     details: {
         borderColor: 'grey',
         minWidth: 80,
-        minHeight: 50,
+        // minHeight: 50,
         maxWidth: 250,
-        display: 'flex',
+        // display: 'flex',
         textAlign: 'left',
-        alignItems: 'left',
-        justifyContent: 'left',
-        marginBottom: 4,
+        // alignItems: 'left',
+        // justifyContent: 'left',
+        marginBottom: 8,
     },
     text: {
         fontSize: 12
@@ -54,10 +55,8 @@ export const ViewData = ({ title, value }) => {
     const classes = useStyles()
     return (
         <Box className={classes.details}>
-            <div>
-                <p className={classes.title}>{title}</p>
-                <strong className={classes.text}>{value ? value : '-'}</strong>
-            </div>
+            <p className={classes.title}>{title}</p>
+            <strong className={classes.text}>{value ? value : '-'}</strong>
         </Box >
     )
 }

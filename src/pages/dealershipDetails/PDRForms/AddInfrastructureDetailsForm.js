@@ -91,14 +91,6 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
     const classes = useStyles()
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
     const [loading, setLoading] = useState(false)
-    const [selectedDate, setSelectedDate] = useState()
-    const [businessType, setBusinessType] = useState('proprietorship')
-    const [tankerData, setTankerData] = useState([])
-    const [editable, setEditable] = useState(true)
-    const [applicantsList, setApplicantsList] = useState([]);
-    const [addNewRow, setAddNewRow] = useState();
-    const [apiData, setApiData] = useState({});
-    const [editRow, setEditRow] = useState({});
 
 
     const handleEdit = () => {
@@ -107,12 +99,8 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
     const handleClose = () => {
         callback();
     };
-    const handleDateChange = (date) => {
-        setSelectedDate(date)
-        // handleDate(date)
-    }
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
-        initialValues: { data },
+        initialValues: { ...data },
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
@@ -130,12 +118,18 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                         },
                         variant: 'success',
                     });
-                    // setTimeout(() => {
-                    //     window.location.reload()
-                    // },1500);
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1500);
                 })
                 .catch(e => {
-                    console.log(e);
+                    enqueueSnackbar(e, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'error',
+                    });
                 })
         }
     });

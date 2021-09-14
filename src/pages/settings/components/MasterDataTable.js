@@ -11,6 +11,7 @@ import TextInput from '../../../components/TextInput/TextInput';
 import SearchIcon from '@material-ui/icons/Search';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { Tooltip } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -101,7 +102,6 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
   const [status, setStatus] = useState();
   const [openAddForm, setOpenAddForm] = useState(false);
   const [AddData, setAddData] = useState({});
-  console.log(AddData);
   const [openActiveForm, setOpenActiveForm] = useState(false);
   const [openDeactiveForm, setOpenDeactiveForm] = useState(false);
   const [deactivateId, setDeactivateId] = useState();
@@ -557,7 +557,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
                       color='primary'
                       style={{ marginTop: 15 }}
                       onClick={() => {
-                        setOpenAddForm(true);
+                        setOpenRegionForm(true);
                         setStatus(title)
                       }}
                     >
@@ -569,7 +569,6 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
             )
           ) : (
             data.map((item) => {
-              // console.log(item);
               return (
                 <>
                   <div className={classes.label}>
@@ -732,16 +731,18 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
       >
         <DialogTitle>Add {title}</DialogTitle>
         <DialogContent style={{width: 400}}>
+          <Grid item md={12}>
+          <label>{title}</label>
           <TextField 
           id='add'
           autoFocus
+          style={{ marginTop: 8 }}
           variant='outlined'
-          // placeholder={title}
-          label={title}
           fullWidth
           value={AddData.name}
           onChange={handleAdd}
           />
+          </Grid>
         </DialogContent>
         <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
@@ -760,10 +761,12 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
       >
         <DialogTitle>Add {title}</DialogTitle>
         <DialogContent style={{width: 400, display: 'flex', alignItems: 'center' ,justifyContent: 'space-around'}}>
+          <Grid container spacing={2}>
+            <Grid item md={6}>
+            <label style={{ marginBottom: 8 }}>States</label>
           <TextInput
           select
           name='states'
-          label='States'
           variant='outlined'
           onChange={handleStateAdd}
           >
@@ -771,13 +774,18 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
               states?.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
             }
           </TextInput>
+          </Grid>
+          <Grid item md={6}>
+          <label style={{ marginBottom: 8 }}>{title}</label>
           <TextField 
           id='add'
+          style={{width: '100%', marginTop: 4}}
           autoFocus
           variant='outlined'
-          label={title}
           onChange={handleAdd}
           />
+          </Grid>
+          </Grid>
         </DialogContent>
         <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>

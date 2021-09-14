@@ -42,7 +42,8 @@ const DueTable = () => {
   const [loans, setLoans] = useState([])
   const [loading, setLoading] = useState(false)
 
-  useMount(async () => {setLoading(true)
+  useMount(async () => {
+    setLoading(true)
     getReport()
       .then((data) => {
         setLoading(false);
@@ -56,10 +57,28 @@ const DueTable = () => {
   usePageTitle('Report')
   const columns = useMemo(() => {
     return [
-      { name: 'applicant_code', label: 'Applicant Code' },
-      { name: 'applicant_name', label: 'Applicant Name' },
-      { name: 'cust_code', label: 'Dealership ID' },
-      { name: 'cust_region', label: 'Customer Region' },
+      {
+        name: 'applicant_code',
+        label: 'Applicant Code',
+        options: {
+          filter: false,
+        }
+      },
+      {
+        name: 'applicant_name',
+        label: 'Applicant Name',
+        options: {
+          filter: false,
+        }
+      },
+      {
+        name: 'cust_code',
+        label: 'Dealership ID',
+        options: {
+          filter: false,
+        }
+      },
+      { name: 'cust_region',label: 'Customer Region' },
       {
         name: 'duedate',
         label: 'Due Date',

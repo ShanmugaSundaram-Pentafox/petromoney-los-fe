@@ -1,8 +1,8 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
+import TextInput from '../../../components/TextInput/TextInput';
 import Button from '../../../components/CommonComponents/Button/Button';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
@@ -16,16 +16,9 @@ import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
 import { addOutletDetails } from '../../../services/PDReport.services';
-import { FormControl } from '@material-ui/core';
-import { FormLabel } from '@material-ui/core';
-import { RadioGroup } from '@material-ui/core';
-import { FormControlLabel } from '@material-ui/core';
-import { Radio } from '@material-ui/core';
-import { FormGroup } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
-        // textAlign: 'center',
         padding: '24px 16px',
         display: 'flex',
         justifyContent: 'space-between',
@@ -37,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         flexDirection: 'column',
         height: '100vh',
-        width: '40vw'
+        width: '55vw'
     },
     sidePanelFormContentWrapper: {
         flex: 1,
@@ -134,12 +127,18 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                         },
                         variant: 'success',
                     });
-                    // setTimeout(() => {
-                    //     window.location.reload()
-                    // }, 1500);
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1500);
                 })
                 .catch(e => {
-                    console.log(e);
+                    enqueueSnackbar(e, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'error',
+                    });
                 })
         }
     });
@@ -188,8 +187,8 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         error={errors.outlet_address}
                                         helperText={errors.outlet_address}
                                     />
-                                </Grid> */}
-                                {/* <Grid item md={6}>
+                                </Grid>
+                                <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
                                         labelText="Outlet Landmark"
@@ -369,47 +368,6 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         helperText={errors.eb_charge_per_month}
                                     />
                                 </Grid> */}
-                                {/* <Grid item md={7}>
-                                    <div style={{ paddingTop: 12 }}>
-                                        <label>Is the customer a PEP (Politically Exposed Person) or closely associated to PEP</label>
-                                    </div>
-                                </Grid>
-                                <Grid item md={4}>
-                                    <FormControl>
-                                        <RadioGroup name="is_pep" value={values.is_pep} defaultValue={values.is_pep} onChange={handleChange}>
-                                            <FormGroup row>
-                                                <FormControlLabel value="yes" control={<Radio color="secondary" />} label="Yes" />
-                                                <FormControlLabel value="no" control={<Radio color="secondary" />} label="No" />
-                                            </FormGroup>
-                                        </RadioGroup>
-                                    </FormControl>
-                                </Grid> */}
-                                {/* {
-                                    values.is_pep === "yes" ? (
-                                        <>
-                                            <Grid item md={6}>
-                                                <TextInput
-                                                    {...inputProps}
-                                                    labelText="Relationship with Politician"
-                                                    name="relationship"
-                                                    value={values.relationship}
-                                                    error={errors.relationship}
-                                                    helperText={errors.relationship}
-                                                />
-                                            </Grid>
-                                            <Grid item md={6}>
-                                                <TextInput
-                                                    {...inputProps}
-                                                    labelText="Politician's position"
-                                                    name="position"
-                                                    value={values.position}
-                                                    error={errors.position}
-                                                    helperText={errors.position}
-                                                />
-                                            </Grid>
-                                        </>
-                                    ) : null
-                                } */}
                             </Grid>
                         </form>
                     </Box >

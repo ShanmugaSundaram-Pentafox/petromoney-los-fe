@@ -119,11 +119,10 @@ const Login = ({ setCurrentUser }) => {
             inputProps={{className: classes.input}}
             name="mobile"
             label="Mobile Number"
-            type="number"
             fullWidth
             className={classes.textFieldStyle}
             onChange={handleChange}
-            value={String(values.mobile)}
+            value={values.mobile}
             error={errors.mobile}
             helperText={errors.mobile}
           />

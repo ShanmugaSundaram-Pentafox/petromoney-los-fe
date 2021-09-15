@@ -180,7 +180,7 @@ export const addAssetDetailsById = (data, id) => {
 }
 export const updateAssetDetailsById = (data, id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`dealership/${id}/assets`, {
+    apiCall(`dealership/${id}/assets/${data.id}`, {
       method: 'POST',
       body: data,
     })

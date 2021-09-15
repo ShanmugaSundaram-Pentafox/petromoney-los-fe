@@ -82,52 +82,10 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
     const [loading, setLoading] = useState(false)
     const [editRowData, setEditRowData] = useState({})
     const [editRow, setEditRow] = useState(false);
-    const [asset, setAsset] = useState([
-        {
-            asset_id: 2,
-            comments: null,
-            cost: 0.0,
-            dealership_id: 111018,
-            description: "Details of quantity of gold",
-            // "details": "{\"quantity\": \"400\", \"asset_value\": \"2000\", \"ownership\": \"madhu\"}",
-            details: [{ label: "quantity", value: 400 }, { label: "asset_value", value: 2000 }, { label: "ownership", value: "madhu" }],
-            id: 4,
-            market_value: 0.0,
-            name: "Gold",
-            ownership: "owner",
-            ownership_proof: null
-        },
-        {
-            asset_id: 4,
-            comments: null,
-            cost: 0.0,
-            dealership_id: 111018,
-            description: "Details of Land",
-            details: [{ label: "Address", key: "address", value: "test  land address" }],
-            id: 5,
-            market_value: 0.0,
-            name: "Land",
-            ownership: "owner",
-            ownership_proof: null
-        },
-        {
-            asset_id: 4,
-            comments: null,
-            cost: 0.0,
-            dealership_id: 111018,
-            description: "Details of Land",
-            details: [{ label: "address", value: "test  land address" }, { label: "asset_value", value: "200" }, { label: "ownership", value: "owner name new" }],
-            id: 6,
-            market_value: 0.0,
-            name: "Land",
-            ownership: "owner",
-            ownership_proof: null
-        }
-    ])
+    const [asset, setAsset] = useState([])
     const [assetCheck, setAssetCheck] = useState([])
     const [assetData, setAssetData] = useState([])
     const [assetList, setAssetList] = useState([])
-
 
     useMount(() => {
         getAssetList()
@@ -158,7 +116,8 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                         details: typeof (item.details) === "string" ? JSON.parse(item.details) : (item.details || [])
                     })
                 })
-                setAssetCheck(d)
+                setAsset(d)
+                console.log("dealer asset >>", d)
             })
             .catch((e) => {
                 console.log(e);
@@ -228,7 +187,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                                 <div className={classes.typeField}>
                                     <Grid container spacing={2}>
                                         <Grid item md={6}>
-                                            <label style={{ marginBottom: 8 }}>Asset type</label>
+                                            <label style={{ marginBottom: 8 }}>Choose asset type to add</label>
                                             <Select
                                                 isClearable
                                                 onChange={setType}
@@ -265,25 +224,19 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                                                                     <Grid item md={6}>
                                                                         <TextInput
                                                                             {...inputProps}
+                                                                            select
                                                                             labelText="Ownership"
                                                                             name="ownership"
                                                                             value={values.ownership}
                                                                             error={errors.ownership}
                                                                             helperText={errors.ownership}
                                                                         >
+                                                                            <option>Self owned</option>
+                                                                            <option>Family owned</option>
+                                                                            <option>Partnership</option>
+                                                                            {type.label !== "Gold" && <option>Leased</option>}
                                                                         </TextInput>
                                                                     </Grid>
-                                                                    {/* <Grid item md={6}>
-                                                                        <TextInput
-                                                                            {...inputProps}
-                                                                            labelText="Ownership proof"
-                                                                            name="ownership_proof"
-                                                                            value={values.ownership_proof}
-                                                                            error={errors.ownership_proof}
-                                                                            helperText={errors.ownership_proof}
-                                                                        >
-                                                                        </TextInput>
-                                                                    </Grid> */}
                                                                 </Grid>
                                                             ) : null
                                                         }
@@ -299,6 +252,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                                                 <AssetDetailsCard id={dealer_id} assetData={assetCheck} data={editRowData} />
                                             ) : (
                                                 asset.map((item, i) => {
+                                                    console.log("item >>>", item)
                                                     return (
                                                         <Grid item md={6}>
                                                             <PreviewCard
@@ -309,16 +263,20 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                                                                     <Grid item md={6}>
                                                                         <ViewData title="Asset Type" value={item.name} />
                                                                         <ViewData title="Ownership" value={item.ownership} />
-
                                                                     </Grid>
                                                                     <Grid item md={6}>
-                                                                        {
-                                                                            item.details?.map((item, i) => {
+                                                                        {/* {
+                                                                            assetData.map((data, i) => {
                                                                                 return (
-                                                                                    <ViewData title={item.label} value={item.value} />
+                                                                                    data.asset_id === item.asset_id ? (
+                                                                                        <ViewData title={data.label} value={item.}
+
+                                                                                    ): null                                                                                 
                                                                                 )
                                                                             })
-                                                                        }
+
+
+                                                                        } */}
                                                                     </Grid>
                                                                 </Grid>
                                                             </PreviewCard>

@@ -503,3 +503,34 @@ export const downloadPDReport = (id) => {
   });
 }
 
+export const getIncomeDetailsById = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/income/details`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  });
+}
+export const getExpensesDetailsById = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/expense/details`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  });
+}
+

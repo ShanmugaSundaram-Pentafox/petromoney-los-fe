@@ -184,7 +184,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                                     />
                                 </Grid>
                                 <Grid item md={6}>
-                                    <label className="input-label">Agreement executed on</label>
+                                    <label className="input-label">Dealership agreement executed on</label>
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                         <KeyboardDatePicker
                                             hideTabs={true}
@@ -213,7 +213,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                                     </MuiPickersUtilsProvider>
                                 </Grid>
                                 <Grid item md={6}>
-                                    <label className="input-label">Agreement valid till</label>
+                                    <label className="input-label">Dealership agreement valid till</label>
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                         <KeyboardDatePicker
                                             hideTabs={true}

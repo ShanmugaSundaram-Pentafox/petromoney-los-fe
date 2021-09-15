@@ -21,6 +21,8 @@ import { useMount } from 'react-use';
 import AddOtherDetailsForm from '../PDRForms/AddOtherDetailsForm';
 import AddLoanDetailsForm from '../PDRForms/AddLoanDetailsForm';
 import { useSnackbar } from 'notistack';
+import AddReferenceForm from '../PDRForms/AddReferenceForm';
+import AddIncomeDetailsForm from '../PDRForms/AddIncomeDetailsForm';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -83,6 +85,9 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
     const [openBankingForm, setOpenBankingForm] = useState(false)
     const [openOtherForm, setOpenOtherForm] = useState(false)
     const [openLoanForm, setOpenLoanForm] = useState(false)
+    const [openReferenceForm, setOpenReferenceForm] = useState(false);
+    const [openIncomeForm, setOpenIncomeForm] = useState(false)
+    const [omcEdit, setOmcEdit] = useState(false)
     const [omcData, setOmcData] = useState()
     const [outletData, setOutletData] = useState()
     const [infrastructureDetails, setInfrastructureDetails] = useState()
@@ -98,11 +103,16 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         setOpenBankingForm(false)
         setOpenOtherForm(false)
         setOpenLoanForm(false)
+        setOpenReferenceForm(false)
+        setOpenIncomeForm(false)
     }
     useMount(() => {
         getOmcDetailsById(id)
             .then(data => {
                 setOmcData(data[0])
+                if (data[0].agreement_executed_on || data[0].agreement_valid_till || data[0].communication_mode || data[0].sales_officer_name || data[0].sales_officer_mobile) {
+                    setOmcEdit(true)
+                }
             })
             .catch((e) => {
                 console.log(e);
@@ -229,14 +239,30 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                             </div>
                         </Tooltip>
                     </Grid>
-                    {/* <Grid item md={2}>
+                    <Grid item md={2}>
+                        <Tooltip title="click to edit income details">
+                            <div className={classes.content} onClick={() => setOpenIncomeForm(true)}>
+                                <LoanIcon width={30} className={classes.icons} />
+                                <Typography variant="h5" align='center' className={classes.title} >Income/Expenses Details</Typography>
+                            </div>
+                        </Tooltip>
+                    </Grid>
+                    <Grid item md={2}>
+                        <Tooltip title="click to edit reference details">
+                            <div className={classes.content} onClick={() => setOpenReferenceForm(true)}>
+                                <LoanIcon width={30} className={classes.icons} />
+                                <Typography variant="h5" align='center' className={classes.title} >Reference Details</Typography>
+                            </div>
+                        </Tooltip>
+                    </Grid>
+                    <Grid item md={2}>
                         <Tooltip title="click to edit other details">
                             <div className={classes.content} onClick={() => setOpenOtherForm(true)}>
                                 <LoanIcon width={30} className={classes.icons} />
-                                <Typography variant="h5" align='center' className={classes.title} >Others</Typography>
+                                <Typography variant="h5" align='center' className={classes.title} >Other Details</Typography>
                             </div>
                         </Tooltip>
-                    </Grid> */}
+                    </Grid>
                 </Grid>
             </div>
 
@@ -246,7 +272,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                 onClose={() => setOpenOmcForm(false)}
                 variant="temporary"
             >
-                <AddOmcDetailsForm dealer_id={id} isEdit={omcData ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={omcData} />
+                <AddOmcDetailsForm dealer_id={id} isEdit={omcEdit ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={omcData} />
             </Drawer>
             <Drawer
                 anchor="right"
@@ -303,6 +329,22 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                 variant="temporary"
             >
                 <AddLoanDetailsForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} />
+            </Drawer>
+            <Drawer
+                anchor="right"
+                open={openReferenceForm}
+                onClose={() => setOpenReferenceForm(false)}
+                variant="temporary"
+            >
+                <AddReferenceForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} />
+            </Drawer>
+            <Drawer
+                anchor="right"
+                open={openIncomeForm}
+                onClose={() => setOpenIncomeForm(false)}
+                variant="temporary"
+            >
+                <AddIncomeDetailsForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} />
             </Drawer>
         </div >
     );

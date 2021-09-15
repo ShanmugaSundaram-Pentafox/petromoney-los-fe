@@ -32,5 +32,6 @@ export const URL = {
   regionDel: "region-del/",
   regionMapAdd: "region-map-add/",
   passReset: "passReset",
-  guarantor: "guarantors"
+  guarantor: "guarantors",
+  ifscApiUrl: "https://ifsc.razorpay.com/",
 }

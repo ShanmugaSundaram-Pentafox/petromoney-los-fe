@@ -221,7 +221,7 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         helperText={errors.terminal_name}
                                     />
                                 </Grid>
-                                <Grid item md={6}>
+                                {/* <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
                                         labelText="Distance from Terminal"
@@ -232,13 +232,12 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         error={errors.distance_from_headquarters}
                                         helperText={errors.distance_from_headquarters}
                                     />
-                                </Grid>
+                                </Grid> */}
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
-                                        labelText="Distance from Terminal"
+                                        labelText="Distance from Terminal (in Km)"
                                         name="distance_from_terminal"
-                                        placeholder="in Km"
                                         value={values.distance_from_terminal}
                                         readOnly={readOnly}
                                         error={errors.distance_from_terminal}
@@ -248,8 +247,7 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
-                                        labelText="Size of the Outlet"
-                                        placeholder="in Sq. ft"
+                                        labelText="Size of the Outlet (in Sq. ft)"
                                         name="size_of_outlet"
                                         value={values.size_of_outlet}
                                         readOnly={readOnly}

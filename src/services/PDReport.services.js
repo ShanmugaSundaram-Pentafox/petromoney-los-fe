@@ -158,26 +158,48 @@ export const getAssetList = () => {
       })
   });
 }
-export const getAssetDataById = (id) => {
-  return new Promise((resolve, reject) => {
-    apiCall(`dealership/${id}/assets`)
-      .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
-          resolve(data)
-        } else {
-          reject(message)
-        }
-      })
-      .catch((e) => {
-        reject(e.message)
-      })
-  });
-}
+
 
 export const addAssetDetailsById = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/assets`, {
       method: 'POST',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+export const updateAssetDetailsById = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/assets`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+export const deleteAssetDetailsById = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/assets/${data.id}`, {
+      method: 'DELETE',
       body: data,
     })
       .then(({ status, message }) => {

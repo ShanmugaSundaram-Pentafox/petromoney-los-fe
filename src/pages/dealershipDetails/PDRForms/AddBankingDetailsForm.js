@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextInput from '../../../components/TextInput/TextInput';
@@ -11,11 +11,10 @@ import { makeStyles } from "@material-ui/styles";
 import CloseIcon from '@material-ui/icons/Close';
 import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import { useSnackbar } from 'notistack';
 import { useMount } from 'react-use';
-import { deleteBankDetailsByID, getBankDetailsbyID, updateBankDetailsByID } from '../../../services/PDReport.services';
+import { useSnackbar } from 'notistack';
+import { getBankDetailsbyID, updateBankDetailsByID } from '../../../services/PDReport.services';
 import BankDetailsCard from './Components/BankDetailsCard';
-import { URL } from '../../../config/serverUrls';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -170,38 +169,38 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
         alignTop: true,
         onChange: handleChange,
     }
-    const onChangeIFSC = (value) => {
-        fetch(`${URL.ifscApiUrl}${value}`)
-            .then(res => {
-                return res.json()
-            })
-            .then(data => {
-                console.log("data 111", data)
-                if (data.BANK) {
-                    console.log("data", data)
-                } else {
-                    enqueueSnackbar("please enter valid IFSC code", {
-                        anchorOrigin: {
-                            vertical: 'top',
-                            horizontal: 'right',
-                        },
-                        variant: 'warning',
-                    }
-                    )
-                }
-            })
-            .catch(err => {
-                console.log('GET IFSC DATA ERR >> ', err)
-                enqueueSnackbar("please enter valid IFSC code", {
-                    anchorOrigin: {
-                        vertical: 'top',
-                        horizontal: 'right',
-                    },
-                    variant: 'warning',
-                }
-                )
-            })
-    }
+    // const onChangeIFSC = (value) => {
+    //     fetch(`${URL.ifscApiUrl}${value}`)
+    //         .then(res => {
+    //             return res.json()
+    //         })
+    //         .then(data => {
+    //             console.log("data 111", data)
+    //             if (data.BANK) {
+    //                 console.log("data", data)
+    //             } else {
+    //                 enqueueSnackbar("please enter valid IFSC code", {
+    //                     anchorOrigin: {
+    //                         vertical: 'top',
+    //                         horizontal: 'right',
+    //                     },
+    //                     variant: 'warning',
+    //                 }
+    //                 )
+    //             }
+    //         })
+    //         .catch(err => {
+    //             console.log('GET IFSC DATA ERR >> ', err)
+    //             enqueueSnackbar("please enter valid IFSC code", {
+    //                 anchorOrigin: {
+    //                     vertical: 'top',
+    //                     horizontal: 'right',
+    //                 },
+    //                 variant: 'warning',
+    //             }
+    //             )
+    //         })
+    // }
     return (
         <div className={classes.sidePanelFormWrapper}>
             <Typography className={classes.sidePanelTitle} variant="h4">
@@ -265,7 +264,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
                                             value={values.ifsc}
                                             error={errors.ifsc}
                                             helperText={errors.ifsc}
-                                            onChange={(e) => { onChangeIFSC(e.target.value) }}
+                                            onChange={handleChange}
                                         />
                                     </Grid>
                                     <Grid item md={6}>

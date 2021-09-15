@@ -158,6 +158,16 @@ function FastTagPassbook( {currentUser} ) {
             setAmount(res.data.total_amount)
             setTotal(res.data.count)
           }
+          else {
+            enqueueSnackbar(res.message, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+              style: { width: 400 },
+            })
+          }
         })
         .catch(e => {
           console.log(e)
@@ -174,7 +184,7 @@ function FastTagPassbook( {currentUser} ) {
           filter: false,
           sort: true,
           customBodyRender: (value) => {
-            return <>{format(new Date(value), 'dd-MM-yyyy')}</>;
+            return <>{value}</>;
           },
         },
       },
@@ -215,7 +225,7 @@ function FastTagPassbook( {currentUser} ) {
           filter: true,
           sort: true,
           customBodyRender: (value, tableMeta) => {
-            if(tableMeta?.rowData[5] === 'SUCCESS'){
+            if(tableMeta?.rowData[5].toLowerCase() === 'success'){
               return <strong><Currency value={value} /></strong> 
             }
             else{

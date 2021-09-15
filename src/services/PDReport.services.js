@@ -540,6 +540,27 @@ export const getIncomeDetailsById = (id) => {
       })
   });
 }
+
+export const addIncomeDetailsByID = (data, id, isEdit) => {
+  return new Promise((resolve, reject) => {
+    let url = isEdit ? `dealership/income/details/${data.id}` : `dealership/${id}/income/details`
+    apiCall(url, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+
 export const getExpensesDetailsById = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/expense/details`)
@@ -553,6 +574,25 @@ export const getExpensesDetailsById = (id) => {
       .catch((e) => {
         reject(e.message)
       })
+  });
+}
+export const addExpenseDetailsByID = (data, id, isEdit) => {
+  return new Promise((resolve, reject) => {
+    let url = isEdit ? `dealership/expense/details/${data.id}` : `dealership/${id}/expense/details`
+    apiCall(url, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
   });
 }
 

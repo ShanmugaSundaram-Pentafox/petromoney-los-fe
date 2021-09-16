@@ -158,26 +158,48 @@ export const getAssetList = () => {
       })
   });
 }
-export const getAssetDataById = (id) => {
-  return new Promise((resolve, reject) => {
-    apiCall(`dealership/${id}/assets`)
-      .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
-          resolve(data)
-        } else {
-          reject(message)
-        }
-      })
-      .catch((e) => {
-        reject(e.message)
-      })
-  });
-}
+
 
 export const addAssetDetailsById = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/assets`, {
       method: 'POST',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+export const updateAssetDetailsById = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/assets/${data.id}`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+export const deleteAssetDetailsById = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/assets/${data.id}`, {
+      method: 'DELETE',
       body: data,
     })
       .then(({ status, message }) => {
@@ -318,7 +340,7 @@ export const updateBankDetailsByID = (data, id) => {
 export const deleteBankDetailsByID = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/bank`, {
-      method: 'POST',
+      method: 'DELETE',
       body: data,
     })
       .then(({ status, message }) => {
@@ -335,7 +357,7 @@ export const deleteBankDetailsByID = (data, id) => {
 }
 export const updateBusinessDetailsByID = (data, id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`dealership/${id}/bank`, {
+    apiCall(`dealership/${id}/business/details`, {
       method: 'POST',
       body: data,
     })
@@ -432,9 +454,132 @@ export const getLoanDetailsbyID = (id) => {
       })
   });
 }
-export const updateLoanDetailsByID = (data, id) => {
+export const addLoanDetailsByID = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/bank/loans`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+export const updateLoanDetailsByID = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/bank/loans/${data.loan_id}`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+export const deleteLoanDetailsByID = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/bank/loans/${data.loan_id}`, {
+      method: 'DELETE',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+
+export const downloadPDReport = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/pdr`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  });
+}
+
+export const getIncomeDetailsById = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/income/details`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  });
+}
+
+export const addIncomeDetailsByID = (data, id, isEdit) => {
+  return new Promise((resolve, reject) => {
+    let url = isEdit ? `dealership/income/details/${data.id}` : `dealership/${id}/income/details`
+    apiCall(url, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+
+export const getExpensesDetailsById = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/expense/details`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  });
+}
+export const addExpenseDetailsByID = (data, id, isEdit) => {
+  return new Promise((resolve, reject) => {
+    let url = isEdit ? `dealership/expense/details/${data.id}` : `dealership/${id}/expense/details`
+    apiCall(url, {
       method: 'POST',
       body: data,
     })

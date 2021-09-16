@@ -20,10 +20,11 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
-import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
-import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
 import { useMount } from 'react-use';
-import { getBankDetailsbyID, getLoanDetailsbyID, updateBankDetailsByID, updateLoanDetailsByID } from '../../../services/PDReport.services';
+import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
+import { addLoanDetailsByID, deleteLoanDetailsByID, getBankDetailsbyID, getLoanDetailsbyID, updateBankDetailsByID, updateLoanDetailsByID } from '../../../services/PDReport.services';
+import PreviewCard from '../../../components/CommonComponents/Cards/PreviewCard';
+import { ViewData } from '../../../components/CommonComponents/FilePreview';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
@@ -91,6 +92,14 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: 8
 
     },
+    actionFoot: {
+        marginBottom: 16,
+        marginTop: 12,
+
+    },
+    btn: {
+        margin: 8
+    },
     editButton: {
         marginRight: '8px',
         '&.MuiButton-contained': {
@@ -110,28 +119,19 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
     const classes = useStyles()
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
     const [loading, setLoading] = useState(false)
-    const [bankData, setBankData] = useState([])
-    const [addNew, setAddNew] = useState(bankData ? false : true)
-    // const [tankerData, setTankerData] = useState([])
-    // const [editable, setEditable] = useState(true)
-    // const [addNewRow, setAddNewRow] = useState();
-    // const [apiData, setApiData] = useState({});
-    // const [editRow, setEditRow] = useState({});
+    const [loanData, setLoanData] = useState([])
+    const [addNew, setAddNew] = useState(loanData ? false : true)
+    const [editRow, setEditRow] = useState(false);
 
     useMount(() => {
         getLoanDetailsbyID(dealer_id)
             .then(data => {
-                setBankData(data)
+                setLoanData(data)
             })
             .catch((e) => {
                 console.log(e);
             })
     })
-
-
-    const handleEdit = () => {
-        setReadOnly(!readOnly)
-    };
     const handleClose = () => {
         callback();
     };
@@ -145,42 +145,103 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
 
         }),
         onSubmit: values => {
-            updateLoanDetailsByID(values, dealer_id)
-                .then(res => {
-                    console.log(res)
-                    enqueueSnackbar(res, {
-                        anchorOrigin: {
-                            vertical: 'top',
-                            horizontal: 'right',
-                        },
-                        variant: 'success',
-                    }
-                    )
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 1500);
+            if (editRow) {
+                updateLoanDetailsByID(values, dealer_id)
+                    .then(res => {
+                        console.log(res)
+                        enqueueSnackbar(res, {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'right',
+                            },
+                            variant: 'success',
+                        }
+                        )
+                        // setTimeout(() => {
+                        //     window.location.reload()
+                        // }, 1500);
 
-                })
-                .catch(e => {
-                    enqueueSnackbar(e, {
-                        anchorOrigin: {
-                            vertical: 'top',
-                            horizontal: 'right',
-                        },
-                        variant: 'error',
-                    }
-                    )
-                })
+                    })
+                    .catch(e => {
+                        enqueueSnackbar(e, {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'right',
+                            },
+                            variant: 'error',
+                        }
+                        )
+                    })
+
+            }
+            else {
+                addLoanDetailsByID(values, dealer_id)
+                    .then(res => {
+                        console.log(res)
+                        enqueueSnackbar(res, {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'right',
+                            },
+                            variant: 'success',
+                        }
+                        )
+                        // setTimeout(() => {
+                        //     window.location.reload()
+                        // }, 1500);
+
+                    })
+                    .catch(e => {
+                        enqueueSnackbar(e, {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'right',
+                            },
+                            variant: 'error',
+                        }
+                        )
+                    })
+
+            }
+
         }
     });
-    const date = new Date();
-    const currentYear = date.getFullYear();
-    const currentYearDiff = date.getFullYear() - 1970;
     const inputProps = {
         direction: "column",
         alignTop: true,
         onChange: handleChange,
     }
+    const editLoanRow = (rowData, rowIndex) => {
+        setEditRow(true)
+        setValues(rowData)
+    }
+    const deleteLoanRow = (row, index) => {
+        deleteLoanDetailsByID(row, dealer_id)
+            .then(data => {
+                console.log(data)
+            })
+            .catch((e) => {
+                console.log(e);
+            })
+
+    }
+    const saveEditRow = (data, i) => {
+        updateLoanDetailsByID(data, dealer_id)
+            .then(res => {
+                setEditRow({});
+            })
+            .catch(err => {
+                console.log('Sales data save error - ', err);
+            })
+    }
+    const onEditTextChange = e => {
+        const { name, value } = e.target;
+        setEditRow({
+            ...editRow,
+            [name]: value
+        })
+    }
+
     return (
         <div className={classes.sidePanelFormWrapper}>
             <Typography className={classes.sidePanelTitle} variant="h4">
@@ -189,16 +250,8 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
             </Typography>
             <div className={classes.sidePanelFormContentWrapper}>
                 <div className={classes.stepperRoot}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => { setAddNew(!addNew) }}
-                        style={{ marginBottom: 12 }}
-                    >
-                        Add Loan
-                    </Button>
                     {
-                        addNew && (
+                        addNew || editRow ? (
                             <Box>
                                 <Grid container spacing={2}>
                                     <Grid item md={6}>
@@ -211,7 +264,7 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
                                             error={errors.loan_type}
                                             helperText={errors.loan_type}
                                         >
-                                            <option value="">Choose type</option>
+                                            <option value="">choose loan type</option>
                                             <option>Bank</option>
                                             <option>Finance</option>
                                             <option>Monthly EMI</option>
@@ -238,41 +291,57 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
                                         />
                                     </Grid>
                                 </Grid>
-                            </Box >
-                        )
-                    }
-                    {
-                        bankData && (
-                            <>
-                                <div className={classes.table}>
-                                    <Table size="small">
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell align="left">Loan Type</TableCell>
-                                                <TableCell align="left">Bank Name</TableCell>
-                                                <TableCell align="left">Amount</TableCell>
-                                                <TableCell></TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        {
-                                            bankData.map((row, i) => {
-                                                return (
-                                                    <TableBody>
-                                                        <TableRow>
-                                                            <TableCell align="left">{row.loan_type}</TableCell>
-                                                            <TableCell align="left">{row.bank_name}</TableCell>
-                                                            <TableCell align="left">{row.loan_amount}</TableCell>
-                                                        </TableRow>
-                                                    </TableBody>
-                                                )
-                                            })
-                                        }
-                                    </Table>
+                                <div className={classes.actionFoot}>
+                                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                        <div>
+                                            <Button
+                                                variant="outlined"
+                                                className={classes.btn}
+                                                onClick={() => { setAddNew(false); setEditRow(false) }}
+                                            >
+                                                Cancel
+                                            </Button>
+                                        </div>
+                                        <div>
+                                            <Button
+                                                variant="contained"
+                                                type="submit"
+                                                className={clsx(classes.btn, classes.editButton)}
+                                                startIcon={<CheckOutlinedIcon />}
+                                                onClick={handleSubmit}
+                                            >
+                                                Save
+                                            </Button>
+                                        </div>
+                                    </div>
                                 </div>
-                            </>
+                            </Box >
+                        ) : (
+                            <Grid container spacing={2}>{
+                                loanData.map((item, i) => {
+                                    return (
+                                        <Grid item md={6}>
+                                            <PreviewCard
+                                                onEdit={() => { editLoanRow(item, i) }}
+                                                onDelete={() => deleteLoanRow(item, i)}
+                                            >
+                                                <Grid container spacing={2}>
+                                                    <Grid item md={6}>
+                                                        <ViewData title="Bank name" value={item.bank_name} />
+                                                        <ViewData title="Loan type" value={item.loan_type} />
+                                                        <ViewData title="Amount" value={item.loan_amount} />
+                                                    </Grid>
+                                                    <Grid item md={6}>
+                                                    </Grid>
+                                                </Grid>
+                                            </PreviewCard>
+                                        </Grid>
+                                    )
+                                })
+                            }
+                            </Grid>
                         )
                     }
-
                 </div>
             </div>
             <div className={classes.actionFooter}>
@@ -291,13 +360,21 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
                     <div>
                         <Button
                             variant="contained"
+                            color="primary"
+                            onClick={() => { setAddNew(true); setValues({}) }}
+                            style={{ marginBottom: 12 }}
+                        >
+                            Add Loan
+                        </Button>
+                        {/* <Button
+                            variant="contained"
                             type="submit"
                             className={clsx(classes.btn, classes.editButton)}
                             startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
                             onClick={handleSubmit}
                         >
                             Save
-                        </Button>
+                        </Button> */}
                     </div>
                 </div>
             </div>

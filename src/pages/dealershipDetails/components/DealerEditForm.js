@@ -92,7 +92,6 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
         handleDate(date)
     }
     useEffect(() => {
-        // console.log(state)
         handleState(state)
     })
     const handleChange = (event) => {
@@ -322,7 +321,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                                         variant='inline'
                                         inputVariant='outlined'
                                         label="Date of Birth"
-                                        format='dd/MM/yyy'
+                                        format='dd/MM/yyyy'
                                         animateYearScrolling={true}
                                         invalidDateMessage='Invalid Date Format'
                                         error={errors.dob}

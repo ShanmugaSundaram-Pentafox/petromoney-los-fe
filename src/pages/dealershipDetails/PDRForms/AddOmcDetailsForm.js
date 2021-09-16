@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
+import TextInput from '../../../components/TextInput/TextInput';
 import Button from '../../../components/CommonComponents/Button/Button';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
@@ -21,14 +21,11 @@ import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker
 } from '@material-ui/pickers';
-import { addOmcDetails, getOmcDetailsById } from '../../../services/PDReport.services';
-import moment from 'moment';
-import { useMount } from 'react-use';
+import { format } from 'date-fns';
 import { URL } from '../../../config/serverUrls';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
-        // textAlign: 'center',
         padding: '24px 16px',
         display: 'flex',
         justifyContent: 'space-between',
@@ -98,8 +95,8 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
         }),
         onSubmit: values => {
 
-            const executed_date = moment(executedDate).format('YYYY-MM-DD');
-            const valid_date = moment(validDate).format('YYYY-MM-DD');
+            const executed_date = format(new Date(executedDate), 'yyyy-MM-dd');
+            const valid_date = format(new Date(validDate), 'yyyy-MM-dd');
             const date = { ...values, agreement_executed_on: executed_date, agreement_valid_till: valid_date };
             const data = new FormData();
             Object.keys(date).forEach((key) => {
@@ -112,21 +109,29 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                     Authorization: `Bearer ${currentUser.token}`,
                 },
             })
+                .then((res) => {
+                    return res.json();
+                })
                 .then(res => {
-                    console.log(res)
-                    // enqueueSnackbar(res, {
-                    //     anchorOrigin: {
-                    //         vertical: 'top',
-                    //         horizontal: 'right',
-                    //     },
-                    //     variant: 'success',
-                    // });
-                    // setTimeout(() => {
-                    //     window.location.reload()
-                    // }, 1500);
+                    enqueueSnackbar(res.message, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'success',
+                    });
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1500);
                 })
                 .catch(e => {
-                    console.log(e);
+                    enqueueSnackbar(e.message, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'error',
+                    });
                 })
         }
     });
@@ -179,7 +184,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                                     />
                                 </Grid>
                                 <Grid item md={6}>
-                                    <label className="input-label">Agreement executed on</label>
+                                    <label className="input-label">Dealership agreement executed on</label>
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                         <KeyboardDatePicker
                                             hideTabs={true}
@@ -208,7 +213,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                                     </MuiPickersUtilsProvider>
                                 </Grid>
                                 <Grid item md={6}>
-                                    <label className="input-label">Agreement valid till</label>
+                                    <label className="input-label">Dealership agreement valid till</label>
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                         <KeyboardDatePicker
                                             hideTabs={true}
@@ -248,7 +253,6 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                         <Button
                             variant="outlined"
                             startIcon={<NavigateBeforeRoundedIcon />}
-                            // disabled={loading}
                             onClick={handleClose}
                         >
                             Back
@@ -269,8 +273,6 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                 </div>
             </div>
         </div >
-
-
     )
 }
 

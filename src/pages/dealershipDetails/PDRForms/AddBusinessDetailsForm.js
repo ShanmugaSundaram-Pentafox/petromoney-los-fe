@@ -21,6 +21,9 @@ import { RadioGroup } from '@material-ui/core';
 import { FormControlLabel } from '@material-ui/core';
 import { Radio } from '@material-ui/core';
 import { FormGroup } from '@material-ui/core';
+import FormLabel from '@material-ui/core/FormLabel';
+import { string } from 'prop-types';
+
 
 
 
@@ -89,11 +92,17 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
     const classes = useStyles()
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
     const [loading, setLoading] = useState(false)
+    const [value, setValue] = React.useState(0);
+    const [pepButton, setPepButton] = useState((data?.is_pep).toString())
+    const [atmButton, setAtmButton] = useState((data?.has_atm).toString())
     const handleEdit = () => {
         setReadOnly(!readOnly)
     };
     const handleClose = () => {
         callback();
+    };
+    const handlebuttonChange = (event) => {
+        setValue(event.target.value);
     };
 
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
@@ -140,7 +149,6 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
         alignTop: true,
         onChange: handleChange,
     }
-
     return (
         <div className={classes.sidePanelFormWrapper}>
             <Typography className={classes.sidePanelTitle} variant="h4">
@@ -308,15 +316,15 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                             </Grid>
                             <Grid item md={4}>
                                 <FormControl>
-                                    <RadioGroup name="has_atm" value={values.has_atm} defaultValue={values.has_atm} onChange={handleChange}>
+                                    <RadioGroup name="has_atm" value={values.has_atm} onChange={handleChange}>
                                         <FormGroup row>
-                                            <FormControlLabel value={1} control={<Radio color="secondary" />} label="Yes" />
-                                            <FormControlLabel value={0} control={<Radio color="secondary" />} label="No" />
+                                            <FormControlLabel value='1' control={<Radio color="secondary" />} label="Yes" />
+                                            <FormControlLabel value='0' control={<Radio color="secondary" />} label="No" />
                                         </FormGroup>
                                     </RadioGroup>
                                 </FormControl>
                             </Grid>
-                            <Grid item md={7}>
+                            {/* <Grid item md={7}>
                                 <div style={{ paddingTop: 12 }}>
                                     <label>Micro ATM Interested</label>
                                 </div>
@@ -330,7 +338,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                                         </FormGroup>
                                     </RadioGroup>
                                 </FormControl>
-                            </Grid>
+                            </Grid> */}
                             <Grid item md={7}>
                                 <div style={{ paddingTop: 12 }}>
                                     <label>Is the customer a PEP (Politically Exposed Person) or closely associated to PEP</label>
@@ -338,10 +346,10 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                             </Grid>
                             <Grid item md={4}>
                                 <FormControl>
-                                    <RadioGroup name="is_pep" value={values.is_pep} onChange={handleChange}>
+                                    <RadioGroup name="is_pep" value={pepButton} onChange={handleChange}>
                                         <FormGroup row>
-                                            <FormControlLabel value={1} control={<Radio color="secondary" />} label="Yes" />
-                                            <FormControlLabel value={0} control={<Radio color="secondary" />} label="No" />
+                                            <FormControlLabel value='1' control={<Radio color="secondary" />} label="Yes" />
+                                            <FormControlLabel value='0' control={<Radio color="secondary" />} label="No" />
                                         </FormGroup>
                                     </RadioGroup>
                                 </FormControl>

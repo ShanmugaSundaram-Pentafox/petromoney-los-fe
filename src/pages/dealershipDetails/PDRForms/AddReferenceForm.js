@@ -16,16 +16,8 @@ import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
 import 'date-fns';
-import DateFnsUtils from '@date-io/date-fns';
-import {
-    MuiPickersUtilsProvider,
-    KeyboardDatePicker
-} from '@material-ui/pickers';
 import { addOmcDetails, getOmcDetailsById } from '../../../services/PDReport.services';
-import moment from 'moment';
-import { useMount } from 'react-use';
 import { FormControl } from '@material-ui/core';
-import { FormLabel } from '@material-ui/core';
 import { RadioGroup } from '@material-ui/core';
 import { FormControlLabel } from '@material-ui/core';
 import { Radio } from '@material-ui/core';
@@ -73,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
+const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
     const [loading, setLoading] = useState(false)
     const [executedDate, setExecutedDate] = useState(data?.agreement_executed_on)
@@ -97,22 +89,22 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
         }),
         onSubmit: values => {
 
-            // addOmcDetails(values, dealer_id)
-            //     .then(res => {
-            //         enqueueSnackbar(res, {
-            //             anchorOrigin: {
-            //                 vertical: 'top',
-            //                 horizontal: 'right',
-            //             },
-            //             variant: 'success',
-            //         });
-            //         setTimeout(() => {
-            //             window.location.reload()
-            //         }, 1500);
-            //     })
-            //     .catch(e => {
-            //         console.log(e);
-            //     })
+            addOmcDetails(values, dealer_id)
+                .then(res => {
+                    enqueueSnackbar(res, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'success',
+                    });
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1500);
+                })
+                .catch(e => {
+                    console.log(e);
+                })
         }
     });
     const inputProps = {
@@ -123,7 +115,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
     return (
         <div className={classes.sidePanelFormWrapper}>
             <Typography className={classes.sidePanelTitle} variant="h4">
-                <div>Add Other Details</div>
+                <div>Add Reference Details</div>
                 <CloseIcon onClick={handleClose} />
             </Typography>
             <div className={classes.sidePanelFormContentWrapper}>
@@ -147,45 +139,40 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                                         <option>No</option>
                                     </TextInput>
                                 </Grid> */}
-                                <Grid item md={6}>
-                                    <div style={{ paddingTop: 12 }}>
-                                        <label>Other Bunks owned in family member</label>
-                                    </div>
-                                </Grid>
-                                <Grid item md={6}>
-                                    <FormControl>
-                                        <RadioGroup name="other_bunks_owned" value={values.other_bunks_owned} defaultValue={values.other_bunks_owned} onChange={handleChange}>
-                                            <FormGroup row>
-                                                <FormControlLabel value="yes" control={<Radio color="secondary" />} label="Yes" />
-                                                <FormControlLabel value="no" control={<Radio color="secondary" />} label="No" />
-                                            </FormGroup>
-                                        </RadioGroup>
-                                    </FormControl>
-                                </Grid>
                                 {
-                                    values.other_bunks_owned === 'yes' ? (
-                                        <>
-                                            <Grid item md={6}>
-                                                <TextInput
-                                                    {...inputProps}
-                                                    labelText="OMC name"
-                                                    name="omc_name"
-                                                    value={values.omc_name}
-                                                    error={errors.omc_name}
-                                                    helperText={errors.omc_name}
-                                                />
-                                            </Grid>
-                                            <Grid item md={6}>
-                                                <TextInput
-                                                    {...inputProps}
-                                                    labelText="Dealer name"
-                                                    name="dealer_name"
-                                                    value={values.dealer_name}
-                                                    error={errors.dealer_name}
-                                                    helperText={errors.dealer_name}
-                                                />
-                                            </Grid>
-                                            {/* <Grid item md={6}>
+                                    <>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                {...inputProps}
+                                                labelText="Dealer name"
+                                                name="dealer_name"
+                                                value={values.dealer_name}
+                                                error={errors.dealer_name}
+                                                helperText={errors.dealer_name}
+                                            />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextInput
+                                                {...inputProps}
+                                                labelText="Dealer mobile"
+                                                name="dealer_mobile"
+                                                value={values.dealer_mobile}
+                                                error={errors.dealer_mobile}
+                                                helperText={errors.dealer_mobile}
+                                            />
+                                        </Grid>
+                                        <Grid item md={12}>
+                                            <TextInput
+                                                {...inputProps}
+                                                multiline
+                                                labelText="Remarks"
+                                                name="remarks"
+                                                value={values.remarks}
+                                                error={errors.remarks}
+                                                helperText={errors.remarks}
+                                            />
+                                        </Grid>
+                                        {/* <Grid item md={6}>
                                                 <TextInput
                                                     {...inputProps}
                                                     labelText="Sales officer name"
@@ -205,8 +192,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                                                     helperText={errors.sales_officer_mobile}
                                                 />
                                             </Grid> */}
-                                        </>
-                                    ) : null
+                                    </>
                                 }
                             </Grid>
                         </form>
@@ -241,9 +227,6 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                 </div>
             </div>
         </div >
-
-
     )
 }
-
-export default AddOtherDetailsForm;
+export default AddReferenceForm;

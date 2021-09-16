@@ -514,7 +514,11 @@ export default function VehicleInfo({ id, data, currentUser }) {
                   </Table>
                 </Box>
                 <Box mb={2}>
-                  <Typography variant="h6" component="h4">Services</Typography>
+                  {
+                    services[expanded] ? (
+                      <Typography variant="h6" component="h4">Services</Typography>
+                    ) : null
+                  }
 
                   {
                     Array.isArray(services[expanded]) && services[expanded].map(row => (

@@ -196,9 +196,7 @@ const AddNewTransportsOwnerForm = ({
       first_name: Yup.string().required('Please enter transporter name'),
       last_name: Yup.string().required('Please enter transporter name'),
       email: Yup.string().email('Enter valid mail id '),
-      mobile: Yup.number()
-        .min(10, 'Enter valid mobile number')
-        .required('please Enter your mobile number'),
+      mobile: Yup.number().required("Enter mobile number").test("maxDigits","Mobile Number mush have 10 digits", (number) => String(number).length === 10),
       address: Yup.string().required('Please enter address'),
     }),
     onSubmit: (values) => {
@@ -255,7 +253,7 @@ const AddNewTransportsOwnerForm = ({
           .catch((error) => {
             setLoading(false);
             console.log(error);
-            enqueueSnackbar(error.profile_status, {
+            enqueueSnackbar('Something went wrong, Please try Again!', {
               anchorOrigin: {
                 vertical: 'top',
                 horizontal: 'right',
@@ -302,7 +300,7 @@ const AddNewTransportsOwnerForm = ({
           .catch((error) => {
             setLoading(false);
             console.log(error);
-            enqueueSnackbar(error.message, {
+            enqueueSnackbar('Something went wrong, Please try Again!', {
               anchorOrigin: {
                 vertical: 'top',
                 horizontal: 'right',

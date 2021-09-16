@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
+import TextInput from '../../../components/TextInput/TextInput';
 import Button from '../../../components/CommonComponents/Button/Button';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
@@ -21,13 +21,11 @@ import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker
 } from '@material-ui/pickers';
-import { addOmcDetails, getOmcDetailsById } from '../../../services/PDReport.services';
-import moment from 'moment';
-import { useMount } from 'react-use';
+import { format } from 'date-fns';
+import { URL } from '../../../config/serverUrls';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
-        // textAlign: 'center',
         padding: '24px 16px',
         display: 'flex',
         justifyContent: 'space-between',
@@ -67,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
+const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) => {
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
     const [loading, setLoading] = useState(false)
     const [executedDate, setExecutedDate] = useState(data?.agreement_executed_on)
@@ -96,13 +94,26 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
             // transport_name: Yup.string().required('Please enter transporter name'),
         }),
         onSubmit: values => {
-            const executed_date = moment(executedDate).format('DD-MMM-YYYY');
-            const valid_date = moment(validDate).format('DD-MMM-YYYY');
-            const data = { ...values, agreement_executed_on: executed_date, agreement_valid_till: valid_date };
 
-            addOmcDetails(data, dealer_id)
+            const executed_date = format(new Date(executedDate), 'yyyy-MM-dd');
+            const valid_date = format(new Date(validDate), 'yyyy-MM-dd');
+            const date = { ...values, agreement_executed_on: executed_date, agreement_valid_till: valid_date };
+            const data = new FormData();
+            Object.keys(date).forEach((key) => {
+                data.append(key, date[key]);
+            });
+            fetch(`${URL.base}dealership/${dealer_id}`, {
+                method: 'POST',
+                body: data,
+                headers: {
+                    Authorization: `Bearer ${currentUser.token}`,
+                },
+            })
+                .then((res) => {
+                    return res.json();
+                })
                 .then(res => {
-                    enqueueSnackbar(res, {
+                    enqueueSnackbar(res.message, {
                         anchorOrigin: {
                             vertical: 'top',
                             horizontal: 'right',
@@ -114,7 +125,13 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                     }, 1500);
                 })
                 .catch(e => {
-                    console.log(e);
+                    enqueueSnackbar(e.message, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'error',
+                    });
                 })
         }
     });
@@ -145,7 +162,6 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                                         helperText={errors.sales_officer_name}
                                     />
                                 </Grid>
-
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
@@ -159,23 +175,16 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                                 </Grid>
                                 <Grid item md={6}>
                                     <TextInput
-                                        select
                                         {...inputProps}
-                                        labelText="Outlet category"
-                                        name="outlet_category"
-                                        value={values.outlet_category}
-                                        readOnly={readOnly}
-                                        disabled={readOnly}
-                                        error={errors.id}
-                                        helperText={errors.id}
-                                    >
-                                        <option value="A">A</option>
-                                        <option value="B">B</option>
-                                        <option value="C">C</option>
-                                    </TextInput>
+                                        labelText="Mode Call/Mail"
+                                        name="communication_mode"
+                                        value={values.communication_mode}
+                                        error={errors.communication_mode}
+                                        helperText={errors.communication_mode}
+                                    />
                                 </Grid>
                                 <Grid item md={6}>
-                                    <label className="input-label">Agreement executed on</label>
+                                    <label className="input-label">Dealership agreement executed on</label>
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                         <KeyboardDatePicker
                                             hideTabs={true}
@@ -183,7 +192,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                                             inputVariant='outlined'
                                             readOnly={readOnly}
                                             disabled={readOnly}
-                                            format='dd-MM-yyyy'
+                                            format='yyyy-MM-dd'
                                             animateYearScrolling={true}
                                             invalidDateMessage='Invalid Date Format'
                                             margin='normal'
@@ -204,13 +213,13 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                                     </MuiPickersUtilsProvider>
                                 </Grid>
                                 <Grid item md={6}>
-                                    <label className="input-label">Agreement valid till</label>
+                                    <label className="input-label">Dealership agreement valid till</label>
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                         <KeyboardDatePicker
                                             hideTabs={true}
                                             variant='inline'
                                             inputVariant='outlined'
-                                            format='dd-MM-yyyy'
+                                            format='yyyy-MM-dd'
                                             readOnly={readOnly}
                                             disabled={readOnly}
                                             animateYearScrolling={true}
@@ -244,7 +253,6 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                         <Button
                             variant="outlined"
                             startIcon={<NavigateBeforeRoundedIcon />}
-                            // disabled={loading}
                             onClick={handleClose}
                         >
                             Back
@@ -265,8 +273,6 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                 </div>
             </div>
         </div >
-
-
     )
 }
 

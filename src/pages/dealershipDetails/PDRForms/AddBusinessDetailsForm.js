@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -15,22 +15,20 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
-import { getBusinessDetailsbyID, getPartnerDetailsbyID, updateBusinessDetailsByID, updatePartnersByID } from '../../../services/PDReport.services';
-import { useMount } from 'react-use';
-import Select from 'react-select';
-import { getBusinessTypes } from '../../../services/common.service';
-import AddPartnerDetails from './AddPartnerDetails';
-import { Table } from '@material-ui/core';
-import { TableHead } from '@material-ui/core';
-import { TableRow } from '@material-ui/core';
-import TableCell from '@material-ui/core/TableCell';
-import { TableBody } from '@material-ui/core';
+import { updateBusinessDetailsByID } from '../../../services/PDReport.services';
+import { FormControl } from '@material-ui/core';
+import { RadioGroup } from '@material-ui/core';
+import { FormControlLabel } from '@material-ui/core';
+import { Radio } from '@material-ui/core';
+import { FormGroup } from '@material-ui/core';
+import FormLabel from '@material-ui/core/FormLabel';
+import { string } from 'prop-types';
+
 
 
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
-        // textAlign: 'center',
         padding: '24px 16px',
         display: 'flex',
         justifyContent: 'space-between',
@@ -94,56 +92,27 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
     const classes = useStyles()
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
     const [loading, setLoading] = useState(false)
-    const [businessTypes, setBusinessTypes] = useState([]);
-    const [partnerData, setPartnerData] = useState([])
-    const [type, setType] = useState()
-    const [businessData, setBusinessData] = useState();
-
-
-    useMount(() => {
-        getBusinessTypes()
-            .then(result => {
-                setBusinessTypes(result.map(({ name, id }) => ({
-                    label: name,
-                    value: id
-                })))
-            })
-            .catch((e) => {
-                console.log(e);
-            })
-        getBusinessDetailsbyID(dealer_id)
-            .then(data => {
-                setBusinessData(data)
-            })
-            .catch((e) => {
-                console.log(e);
-            })
-        getPartnerDetailsbyID(dealer_id)
-            .then(data => {
-                setPartnerData(data)
-            })
-            .catch((e) => {
-                console.log(e);
-            })
-
-    })
-
-
+    const [value, setValue] = React.useState(0);
+    const [pepButton, setPepButton] = useState((data?.is_pep).toString())
+    const [atmButton, setAtmButton] = useState((data?.has_atm).toString())
     const handleEdit = () => {
         setReadOnly(!readOnly)
     };
     const handleClose = () => {
         callback();
     };
+    const handlebuttonChange = (event) => {
+        setValue(event.target.value);
+    };
 
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
         initialValues: {
-            ...data,
+            ...data
         },
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
-            transport_name: Yup.string().required('Please enter transporter name'),
+            // transport_name: Yup.string().required('Please enter transporter name'),
 
         }),
         onSubmit: values => {
@@ -190,235 +159,202 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                 <div className={classes.stepperRoot}>
                     <Box>
                         <Grid container spacing={2}>
-                            <Grid item md={6} style={{ marginBottom: 16 }}>
-                                <label style={{ marginBottom: 12 }}>Business type</label>
-                                <Select
-                                    isClearable
-                                    onChange={setType}
-                                    options={businessTypes} />
+                            <Grid item md={6}>
+                                <TextInput
+                                    {...inputProps}
+                                    labelText="No. of years in fuel business"
+                                    name="business_age"
+                                    value={values.business_age}
+                                    readOnly={readOnly}
+                                    error={errors.business_age}
+                                    helperText={errors.business_age}
+                                />
+                            </Grid>
+                            <Grid item md={6}>
+                                <TextInput
+                                    {...inputProps}
+                                    labelText="No. of HSD Dispensers"
+                                    name="hsd_count"
+                                    value={values.hsd_count}
+                                    readOnly={readOnly}
+                                    error={errors.hsd_count}
+                                    helperText={errors.hsd_count}
+                                />
+                            </Grid>
+                            <Grid item md={6}>
+                                <TextInput
+                                    {...inputProps}
+                                    labelText="No. of MS Dispensers"
+                                    name="ms_count"
+                                    value={values.ms_count}
+                                    readOnly={readOnly}
+                                    error={errors.ms_count}
+                                    helperText={errors.ms_count}
+                                />
+                            </Grid>
+
+                            <Grid item md={6}>
+                                <TextInput
+                                    {...inputProps}
+                                    labelText="Area of fuel station (in Sq. ft)"
+                                    name="fuel_station_area"
+                                    value={values.fuel_station_area}
+                                    readOnly={readOnly}
+                                    error={errors.fuel_station_area}
+                                    helperText={errors.fuel_station_area}
+                                />
+                            </Grid>
+                            <Grid item md={6}>
+                                <TextInput
+                                    {...inputProps}
+                                    labelText="Electricity units (per month)"
+                                    name="electricity_units_month"
+                                    value={values.electricity_units_month}
+                                    readOnly={readOnly}
+                                    error={errors.electricity_units_month}
+                                    helperText={errors.electricity_units_month}
+                                />
+                            </Grid>
+                            <Grid item md={6}>
+                                <TextInput
+                                    {...inputProps}
+                                    money
+                                    labelText="Electricity bill per month"
+                                    name="electricity_bill_month"
+                                    value={values.electricity_bill_month}
+                                    readOnly={readOnly}
+                                    error={errors.electricity_bill_month}
+                                    helperText={errors.electricity_bill_month}
+                                />
+                            </Grid>
+                            <Grid item md={6}>
+                                <TextInput
+                                    {...inputProps}
+                                    money
+                                    labelText="Insurance premium for pump"
+                                    name="insurance_pump"
+                                    value={values.insurance_pump}
+                                    readOnly={readOnly}
+                                    error={errors.insurance_pump}
+                                    helperText={errors.insurance_pump}
+                                />
+                            </Grid>
+                            <Grid item md={6}>
+                                <TextInput
+                                    {...inputProps}
+                                    money
+                                    labelText="Total Insurance premium"
+                                    name="insurance_all"
+                                    value={values.insurance_all}
+                                    readOnly={readOnly}
+                                    error={errors.insurance_all}
+                                    helperText={errors.insurance_all}
+                                />
+                            </Grid>
+                            <Grid item md={6}>
+                                <TextInput
+                                    {...inputProps}
+                                    labelText="LPG count"
+                                    name="lpg_count"
+                                    value={values.lpg_count}
+                                    readOnly={readOnly}
+                                    error={errors.lpg_count}
+                                    helperText={errors.lpg_count}
+                                />
+                            </Grid>
+                            <Grid item md={6}>
+                                <TextInput
+                                    {...inputProps}
+                                    money
+                                    labelText="Credit sales per day"
+                                    name="credit_sales_day"
+                                    value={values.credit_sales_day}
+                                    readOnly={readOnly}
+                                    error={errors.credit_sales_day}
+                                    helperText={errors.credit_sales_day}
+                                />
+                            </Grid>
+                            <Grid item md={6}>
+                                <TextInput
+                                    {...inputProps}
+                                    money
+                                    labelText="Credit sales per month"
+                                    name="credit_sales_month"
+                                    value={values.credit_sales_month}
+                                    readOnly={readOnly}
+                                    error={errors.credit_sales_month}
+                                    helperText={errors.credit_sales_month}
+                                />
+                            </Grid>
+                            <Grid item md={6}>
+                                <TextInput
+                                    {...inputProps}
+                                    labelText="Average realization period"
+                                    name="avg_realization_period"
+                                    value={values.avg_realization_period}
+                                    readOnly={readOnly}
+                                    error={errors.avg_realization_period}
+                                    helperText={errors.avg_realization_period}
+                                />
+                            </Grid>
+                            <Grid item md={6}>
+                                <TextInput
+                                    {...inputProps}
+                                    money
+                                    labelText="Outstanding any given time"
+                                    name="credit_outstanding"
+                                    value={values.credit_outstanding}
+                                    readOnly={readOnly}
+                                    error={errors.credit_outstanding}
+                                    helperText={errors.credit_outstanding}
+                                />
+                            </Grid>
+                            <Grid item md={7}>
+                                <div style={{ paddingTop: 12 }}>
+                                    <label>Is ATM available in outlet</label>
+                                </div>
+                            </Grid>
+                            <Grid item md={4}>
+                                <FormControl>
+                                    <RadioGroup name="has_atm" value={values.has_atm} onChange={handleChange}>
+                                        <FormGroup row>
+                                            <FormControlLabel value='1' control={<Radio color="secondary" />} label="Yes" />
+                                            <FormControlLabel value='0' control={<Radio color="secondary" />} label="No" />
+                                        </FormGroup>
+                                    </RadioGroup>
+                                </FormControl>
+                            </Grid>
+                            {/* <Grid item md={7}>
+                                <div style={{ paddingTop: 12 }}>
+                                    <label>Micro ATM Interested</label>
+                                </div>
+                            </Grid>
+                            <Grid item md={4}>
+                                <FormControl>
+                                    <RadioGroup name="is_microatm" value={values.is_microatm} onChange={handleChange}>
+                                        <FormGroup row>
+                                            <FormControlLabel value={1} control={<Radio color="secondary" />} label="Yes" />
+                                            <FormControlLabel value={0} control={<Radio color="secondary" />} label="No" />
+                                        </FormGroup>
+                                    </RadioGroup>
+                                </FormControl>
+                            </Grid> */}
+                            <Grid item md={7}>
+                                <div style={{ paddingTop: 12 }}>
+                                    <label>Is the customer a PEP (Politically Exposed Person) or closely associated to PEP</label>
+                                </div>
+                            </Grid>
+                            <Grid item md={4}>
+                                <FormControl>
+                                    <RadioGroup name="is_pep" value={pepButton} onChange={handleChange}>
+                                        <FormGroup row>
+                                            <FormControlLabel value='1' control={<Radio color="secondary" />} label="Yes" />
+                                            <FormControlLabel value='0' control={<Radio color="secondary" />} label="No" />
+                                        </FormGroup>
+                                    </RadioGroup>
+                                </FormControl>
                             </Grid>
                         </Grid>
-                        <form onSubmit={handleSubmit}>
-                            <Grid container spacing={2}>
-                                {
-                                    type?.label === 'Proprietorship' && (
-                                        <>
-                                            <Grid item md={6}>
-                                                <TextInput
-                                                    {...inputProps}
-                                                    labelText="Proprietor name"
-                                                    name="proprietor_name"
-                                                    value={values.proprietor_name}
-                                                    readOnly={readOnly}
-                                                    error={errors.proprietor_name}
-                                                    helperText={errors.proprietor_name}
-                                                />
-                                            </Grid>
-                                            <Grid item md={6}>
-                                                <TextInput
-                                                    {...inputProps}
-                                                    labelText="Proprietor mobile"
-                                                    name="proprietor_mobile"
-                                                    value={values.proprietor_mobile}
-                                                    readOnly={readOnly}
-                                                    error={errors.proprietor_mobile}
-                                                    helperText={errors.proprietor_mobile}
-                                                />
-                                            </Grid>
-                                        </>
-                                    )
-                                }
-                                {
-                                    type?.label === 'Partnership' && (
-                                        <>
-                                            <Grid item md={12}>
-                                                <Fragment className={classes.table}>
-                                                    <Typography className={classes.subTitle} variant="h4">Partner Details</Typography>
-                                                    {/* <Grid md={6}>
-                                                        <TextInput
-                                                            {...inputProps}
-                                                            labelText="Number of Partner"
-                                                            name="no_of_partners"
-                                                            type="number"
-                                                            value={values.no_of_partners}
-                                                            readOnly={readOnly}
-                                                            error={errors.no_of_partners}
-                                                            helperText={errors.no_of_partners}
-                                                        />
-                                                    </Grid> */}
-                                                </Fragment>
-                                            </Grid>
-
-                                        </>
-                                    )
-                                }
-                                {
-                                    type?.label !== 'Partnership' && Array.isArray(partnerData) ? (
-                                        <Table>
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell>Partner name</TableCell>
-                                                    <TableCell>Mobile number</TableCell>
-                                                    <TableCell>Managing partner name</TableCell>
-                                                    <TableCell></TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                            <TableBody>
-                                                {
-                                                    partnerData?.map((row, i) => {
-                                                        return (
-                                                            <TableRow>
-                                                                <TableCell>{row.partner_name}</TableCell>
-                                                                <TableCell>{row.partner_mobile}</TableCell>
-                                                                <TableCell>{row.managing_partner_name}</TableCell>
-                                                            </TableRow>
-                                                        )
-                                                    }
-                                                    )
-                                                }
-                                            </TableBody>
-                                        </Table>
-                                    ) : (
-                                        < AddPartnerDetails dealer_id={dealer_id} />
-                                    )
-                                }
-                                {/* <Table className={classes.table} size="small" aria-label="Income">
-                                                        <TableHead>
-                                                            <TableRow>
-                                                                <TableCell>Partner name</TableCell>
-                                                                <TableCell>Partner mobile</TableCell>
-                                                                <TableCell align="right">Managing partner name</TableCell>
-                                                                <TableCell></TableCell>
-                                                            </TableRow>
-                                                        </TableHead>
-                                                        <TableBody>
-                                                            {
-                                                                Array.isArray(partnerData) && partnerData.map((item, i) => editRow.rowIndex === i ? (
-                                                                    <TableRow key={i}>
-                                                                        <TableCell>
-                                                                            <TextInput
-                                                                                label="Partner Name"
-                                                                                name="partner_name"
-                                                                                value={editRow.partner_name}
-                                                                                onChange={onEditTextChange}
-                                                                            />
-                                                                        </TableCell>
-                                                                        <TableCell>
-                                                                            <TextInput
-                                                                                label="Partner Mobile"
-                                                                                name="partner_mobile"
-                                                                                value={editRow.partner_mobile}
-                                                                                onChange={onEditTextChange}
-                                                                            />
-                                                                        </TableCell>
-                                                                        <TableCell>
-                                                                            <TextInput
-                                                                                label="Managing partner name"
-                                                                                name="managing_partner_name"
-                                                                                value={editRow.managing_partner_name}
-                                                                                onChange={onEditTextChange}
-                                                                            />
-                                                                        </TableCell>
-                                                                        <TableCell align={"right"}>
-                                                                            <Button
-                                                                                size="small"
-                                                                                variant="outlined"
-                                                                                color="success"
-                                                                                className={classes.btnSuccess}
-                                                                                onClick={() => updatePartner(editRow, i)}>
-                                                                                Save
-                                                                            </Button>
-                                                                        </TableCell>
-                                                                    </TableRow>
-                                                                ) : (
-                                                                    <TableRow key={i}>
-                                                                        <TableCell>{item.partner_name}</TableCell>
-                                                                        <TableCell>{item.partner_mobile}</TableCell>
-                                                                        <TableCell align={"right"}>{item.managing_partner_name}</TableCell>
-                                                                        <TableCell align={"right"}>
-                                                                            <Button
-                                                                                size="small"
-                                                                                variant="outlined"
-                                                                                color="success"
-                                                                                className={classes.btnSuccess}
-                                                                                onClick={() => editPartnerRow(item, i)}>
-                                                                                Edit
-                                                                            </Button>
-                                                                        </TableCell>
-                                                                    </TableRow>
-                                                                ))
-                                                            }
-                                                            {
-                                                                addNewRow && (
-                                                                    <TableRow key={"new-row"}>
-                                                                        <TableCell>
-                                                                            <TextInput
-                                                                                label="Partner Name"
-                                                                                name="partner_name"
-                                                                                value={apiData.business_name?.toUpperCase()}
-                                                                                onChange={onTextChange}
-                                                                            />
-                                                                        </TableCell>
-                                                                        <TableCell align={"right"}>
-                                                                            <TextInput
-                                                                                label="Partner Mobile"
-                                                                                name="partner_mobile"
-                                                                                type="number"
-                                                                                value={apiData.partner_mobile}
-                                                                                onChange={onTextChange}
-                                                                            />
-                                                                        </TableCell>
-                                                                        <TableCell >
-                                                                            <TextInput
-                                                                                label="Managining partner name"
-                                                                                name="managing_partner_name"
-                                                                                value={apiData.managing_partner_name}
-                                                                                onChange={onTextChange}
-                                                                            />
-                                                                        </TableCell>
-                                                                        <TableCell align={"right"}></TableCell>
-                                                                    </TableRow>
-                                                                )
-                                                            }
-                                                            <TableRow key={"add-row"}>
-                                                                <TableCell align="right" colSpan={4}>
-                                                                    {
-                                                                        addNewRow ? (
-                                                                            <Fragment>
-                                                                                <Button
-                                                                                    size="small"
-                                                                                    variant="outlined"
-                                                                                    color="error"
-                                                                                    onClick={() => {
-                                                                                        setAddNewRow(false);
-                                                                                    }}>
-                                                                                    <DeleteForeverRoundedIcon fontSize="small" />
-                                                                                </Button>
-                                                                                &nbsp;&nbsp;
-                                                                                <Button
-                                                                                    size="small"
-                                                                                    variant="outlined"
-                                                                                    color="success"
-                                                                                    className={classes.btnSuccess}
-                                                                                    onClick={saveNewPartner}>
-                                                                                    <DoneRoundedIcon fontSize="small" />
-                                                                                </Button>
-                                                                            </Fragment>
-                                                                        ) : (editable && (
-
-                                                                            <Button
-                                                                                variant="contained"
-                                                                                className={clsx(classes.btn, classes.btnSuccess)}
-                                                                                onClick={() => setAddNewRow(true)}>Add Partner</Button>
-                                                                        ))
-                                                                    }
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        </TableBody>
-                                                    </Table> */}
-                                {/* <IncomeTa id={id} editable={editable} currentUser={currentUser} /> */}
-                            </Grid>
-                        </form>
                     </Box >
                 </div>
             </div>
@@ -429,7 +365,6 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                         <Button
                             variant="outlined"
                             startIcon={<NavigateBeforeRoundedIcon />}
-                            // disabled={loading}
                             onClick={handleClose}
                         >
                             Back
@@ -450,8 +385,6 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                 </div>
             </div>
         </div >
-
-
     )
 }
 

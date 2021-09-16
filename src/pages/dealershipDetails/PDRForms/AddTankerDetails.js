@@ -13,7 +13,7 @@ import { makeStyles } from "@material-ui/styles";
 import { useSnackbar } from 'notistack';
 import ClearRoundedIcon from '@material-ui/icons/ClearRounded';
 import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
-import { addInfrastructureDetails, addNewTanker, getTankersById, updateTankerByID } from '../../../services/PDReport.services';
+import { addInfrastructureDetails, addNewTanker, deleteTanker, getTankersById, updateTankerByID } from '../../../services/PDReport.services';
 import { useMount } from 'react-use';
 
 const useStyles = makeStyles((theme) => ({
@@ -39,17 +39,22 @@ const useStyles = makeStyles((theme) => ({
         '&.MuiButton-contained:hover': {
             backgroundColor: theme.palette.success.dark
         }
+    },
+    field: {
+        '&.MuiTextField-root .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+            fontSize: 11
+        }
     }
 }))
 
 
-const AddTankerDetails = ({ dealer_id, isEdit }) => {
-    const classes = useStyles()
+const AddTankerDetails = ({ dealer_id }) => {
     const [tankerData, setTankerData] = useState([])
     const [editable, setEditable] = useState(true)
     const [addNewRow, setAddNewRow] = useState();
     const [editRow, setEditRow] = useState({});
     const { enqueueSnackbar } = useSnackbar();
+    const classes = useStyles()
 
     useMount(() => {
         getTankersById(dealer_id)
@@ -63,8 +68,27 @@ const AddTankerDetails = ({ dealer_id, isEdit }) => {
     const editTankerRow = (rowData, rowIndex) => {
         setEditRow({ ...rowData, rowIndex });
     }
+    const deleteTankerRow = (row, index) => {
+        deleteTanker(row, dealer_id)
+            .then(data => {
+                enqueueSnackbar(data, {
+                    anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'right',
+                    },
+                    variant: 'success',
+                });
+                setTimeout(() => {
+                    window.location.reload()
+                }, 1000);
+            })
+            .catch((e) => {
+                console.log(e);
+            })
+
+    }
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
-        initialValues: { tankerData },
+        initialValues: {},
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
@@ -82,12 +106,18 @@ const AddTankerDetails = ({ dealer_id, isEdit }) => {
                         },
                         variant: 'success',
                     });
-                    // setTimeout(() => {
-                    //     window.location.reload()
-                    // },1500);
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1500);
                 })
                 .catch(e => {
-                    console.log(e);
+                    enqueueSnackbar(e, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'error',
+                    });
                 })
         }
     });
@@ -96,7 +126,18 @@ const AddTankerDetails = ({ dealer_id, isEdit }) => {
             .then(res => {
                 setTankerData(res);
                 setEditRow({});
+                enqueueSnackbar(res, {
+                    anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'right',
+                    },
+                    variant: 'success',
+                });
+                setTimeout(() => {
+                    window.location.reload()
+                }, 1000);
             })
+
             .catch(err => {
                 console.log('Sales data save error - ', err);
             })
@@ -125,6 +166,7 @@ const AddTankerDetails = ({ dealer_id, isEdit }) => {
                         <TableRow key={`edit-row-${i}`}>
                             <TableCell>
                                 <TextInput
+                                    className={classes.field}
                                     label="Tanker number"
                                     name="vehicle_no"
                                     value={editRow.vehicle_no}
@@ -134,6 +176,7 @@ const AddTankerDetails = ({ dealer_id, isEdit }) => {
                             <TableCell>
                                 <TextInput
                                     select
+                                    className={classes.field}
                                     label="Tanker type"
                                     name="tanker_type"
                                     value={editRow.tanker_type}
@@ -145,15 +188,16 @@ const AddTankerDetails = ({ dealer_id, isEdit }) => {
                             </TableCell>
                             <TableCell>
                                 <TextInput
-                                    label="Tanker capacity"
+                                    className={classes.field}
+                                    label="Tanker capacity in liters"
                                     name="tanker_capacity"
-                                    placeholder="in liters"
                                     value={editRow.tanker_capacity}
                                     onChange={onEditTextChange}
                                 />
                             </TableCell>
                             <TableCell>
                                 <TextInput
+                                    className={classes.field}
                                     label="Operational hours"
                                     name="operation_hours"
                                     value={editRow.operation_hours}
@@ -189,14 +233,24 @@ const AddTankerDetails = ({ dealer_id, isEdit }) => {
                             <TableCell align="right">
                                 {
                                     editable ? (
-                                        <Button
-                                            size="small"
-                                            variant="outlined"
-                                            color="success"
-                                            className={classes.btnSuccess}
-                                            onClick={() => editTankerRow(row, i)}>
-                                            Edit
-                                        </Button>
+                                        <>
+                                            <Button
+                                                size="small"
+                                                variant="outlined"
+                                                color="success"
+                                                className={classes.btnSuccess}
+                                                onClick={() => editTankerRow(row, i)}>
+                                                Edit
+                                            </Button>
+                                            <Button
+                                                size="small"
+                                                variant="outlined"
+                                                color="success"
+                                                className={classes.btnSuccess}
+                                                onClick={() => deleteTankerRow(row, i)}>
+                                                Delete
+                                            </Button>
+                                        </>
                                     ) : null
                                 }
 
@@ -204,86 +258,92 @@ const AddTankerDetails = ({ dealer_id, isEdit }) => {
                         </TableRow>
                     ))
                 }
-                {
-                    addNewRow && (
-                        <TableRow key={"new-row"}>
-                            <TableCell>
-                                <TextInput
-                                    label="Tanker number"
-                                    name="vehicle_no"
-                                    value={values.vehicle_no}
-                                    onChange={handleChange}
-                                >
-                                </TextInput>
-                            </TableCell>
-                            <TableCell>
-                                <TextInput
-                                    select
-                                    label="Tanker Type"
-                                    name="tanker_type"
-                                    value={values.tanker_type}
-                                    onChange={handleChange}
-                                >
-                                    <option>Owned</option>
-                                    <option>Rented</option>
-                                </TextInput>
-                            </TableCell>
-                            <TableCell align={"right"}>
-                                <TextInput
-                                    label="Tanker_capacity"
-                                    name="tanker_capacity"
-                                    value={values.tanker_capacity}
-                                    onChange={handleChange}
-                                />
-                            </TableCell>
-                            <TableCell >
-                                <TextInput
-                                    label="Operation hours"
-                                    name="operation_hours"
-                                    value={values.operation_hours}
-                                    onChange={handleChange}
-                                />
-                            </TableCell>
-                            <TableCell align={"right"}></TableCell>
-                        </TableRow>
-                    )
-                }
-                <TableRow key={"add-row"}>
-                    <TableCell align="right" colSpan={4}>
-                        {
-                            addNewRow ? (
-                                <Fragment>
-                                    <Button
-                                        size="small"
-                                        variant="outlined"
-                                        color="error"
-                                        onClick={() => {
-                                            setAddNewRow(false);
-                                        }}>
-                                        <ClearRoundedIcon fontSize="small" />
-                                    </Button>
-                                    &nbsp;&nbsp;
-                                    <Button
-                                        size="small"
-                                        variant="outlined"
-                                        color="success"
-                                        className={classes.btnSuccess}
-                                        onClick={handleSubmit}>
-                                        <DoneRoundedIcon fontSize="small" />
-                                    </Button>
-                                </Fragment>
-                            ) : (editable && (
-
-                                <Button
-                                    variant="contained"
-                                    className={clsx(classes.btn, classes.btnSuccess)}
-                                    onClick={() => setAddNewRow(true)}>Add Tanker</Button>
-                            ))
-                        }
-                    </TableCell>
+                <TableRow key={"new-row"}>
+                    {
+                        addNewRow && (
+                            <>
+                                <TableCell>
+                                    <TextInput
+                                        className={classes.field}
+                                        label="Tanker number"
+                                        name="vehicle_no"
+                                        value={values.vehicle_no}
+                                        onChange={handleChange}
+                                    >
+                                    </TextInput>
+                                </TableCell>
+                                <TableCell>
+                                    <TextInput
+                                        select
+                                        className={classes.field}
+                                        label="Tanker Type"
+                                        name="tanker_type"
+                                        value={values.tanker_type}
+                                        onChange={handleChange}
+                                    >
+                                        <option>Owned</option>
+                                        <option>Rented</option>
+                                    </TextInput>
+                                </TableCell>
+                                <TableCell align={"right"}>
+                                    <TextInput
+                                        className={classes.field}
+                                        label="Tanker_capacity"
+                                        name="tanker_capacity"
+                                        value={values.tanker_capacity}
+                                        onChange={handleChange}
+                                    />
+                                </TableCell>
+                                <TableCell >
+                                    <TextInput
+                                        className={classes.field}
+                                        label="Operation hours"
+                                        name="operation_hours"
+                                        value={values.operation_hours}
+                                        onChange={handleChange}
+                                    />
+                                </TableCell>
+                                <TableCell align={"right"}></TableCell>
+                            </>
+                        )
+                    }
                 </TableRow>
+                {
+                    addNewRow ? (
+                        <TableCell align="right">
+
+                            <Button
+                                size="small"
+                                variant="outlined"
+                                color="error"
+                                onClick={() => {
+                                    setAddNewRow(false);
+                                }}>
+                                Cancel
+                            </Button>
+                            &nbsp;&nbsp;
+                            <Button
+                                size="small"
+                                variant="outlined"
+                                color="success"
+                                className={classes.btnSuccess}
+                                onClick={handleSubmit}>
+                                Save
+                            </Button>
+                        </TableCell>
+                    ) : (editable && (
+                        <TableCell align="right" colSpan={12}>
+                            <Button
+                                variant="contained"
+                                className={clsx(classes.btn, classes.btnSuccess)}
+                                onClick={() => setAddNewRow(true)}>
+                                Add Tanker
+                            </Button>
+                        </TableCell>
+                    ))
+                }
             </TableBody>
-        </Table>
+        </Table >
 
     )
 }

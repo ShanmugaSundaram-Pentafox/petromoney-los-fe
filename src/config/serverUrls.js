@@ -1,6 +1,5 @@
 export const URL = {
   base: process.env.REACT_APP_API_BASE,
-  // base: "http://127.0.0.1:5000/api/",
   login: "login/user",
   allUsers: "users",
   userRoles: "user/roles",
@@ -33,5 +32,6 @@ export const URL = {
   regionDel: "region-del/",
   regionMapAdd: "region-map-add/",
   passReset: "passReset",
-  guarantor: "guarantors"
+  guarantor: "guarantors",
+  ifscApiUrl: "https://ifsc.razorpay.com/",
 }

@@ -375,7 +375,7 @@ const SidebarNav = props => {
                   className={classes.button}
                   activeClassName={classes.active}
                   component={CustomRouterLink}
-                  to={'/reports/creditreload'}
+                  to={'/reports/credit/reload'}
                   exact
                 >
                   <div className={classes.icon}><CachedIcon /></div>

@@ -17,6 +17,12 @@ import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded'
 import { useSnackbar } from 'notistack';
 import { addInfrastructureDetails } from '../../../services/PDReport.services';
 import AddTankerDetails from './AddTankerDetails';
+import { FormControl } from '@material-ui/core';
+import { FormLabel } from '@material-ui/core';
+import { RadioGroup } from '@material-ui/core';
+import { FormControlLabel } from '@material-ui/core';
+import { Radio } from '@material-ui/core';
+import { FormGroup } from '@material-ui/core';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -85,14 +91,6 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
     const classes = useStyles()
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
     const [loading, setLoading] = useState(false)
-    const [selectedDate, setSelectedDate] = useState()
-    const [businessType, setBusinessType] = useState('proprietorship')
-    const [tankerData, setTankerData] = useState([])
-    const [editable, setEditable] = useState(true)
-    const [applicantsList, setApplicantsList] = useState([]);
-    const [addNewRow, setAddNewRow] = useState();
-    const [apiData, setApiData] = useState({});
-    const [editRow, setEditRow] = useState({});
 
 
     const handleEdit = () => {
@@ -101,12 +99,8 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
     const handleClose = () => {
         callback();
     };
-    const handleDateChange = (date) => {
-        setSelectedDate(date)
-        // handleDate(date)
-    }
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
-        initialValues: {},
+        initialValues: { ...data },
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
@@ -114,7 +108,6 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
 
         }),
         onSubmit: values => {
-            console.log("valuessssssss new", values)
             const data = { ...values }
             addInfrastructureDetails(data, dealer_id)
                 .then(res => {
@@ -125,12 +118,18 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                         },
                         variant: 'success',
                     });
-                    // setTimeout(() => {
-                    //     window.location.reload()
-                    // },1500);
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1500);
                 })
                 .catch(e => {
-                    console.log(e);
+                    enqueueSnackbar(e, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'error',
+                    });
                 })
         }
     });
@@ -189,35 +188,6 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
-                                        labelText="Tank Capacity"
-                                        name="tank_capacity"
-                                        value={values.tank_capacity}
-                                        readOnly={readOnly}
-                                        placeholder="in liters"
-                                        error={errors.tank_capacity}
-                                        helperText={errors.tank_capacity}
-                                    />
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        select
-                                        labelText="Using Solar"
-                                        name="is_solar"
-                                        value={values.is_solar}
-                                        readOnly={readOnly}
-                                        disabled={readOnly}
-                                        error={errors.is_solar}
-                                        helperText={errors.is_solar}
-                                    >
-                                        <option>YES</option>
-                                        <option>NO</option>
-
-                                    </TextInput>
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
                                         labelText="No of Hoarding"
                                         name="no_of_hoarding"
                                         type="number"
@@ -227,6 +197,45 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                                         helperText={errors.no_of_hoarding}
                                     />
                                 </Grid>
+                                <Grid item md={6}>
+                                    <TextInput
+                                        {...inputProps}
+                                        labelText="Tank Capacity (in liters)"
+                                        name="tank_capacity"
+                                        value={values.tank_capacity}
+                                        readOnly={readOnly}
+                                        error={errors.tank_capacity}
+                                        helperText={errors.tank_capacity}
+                                    />
+                                </Grid>
+                                <Grid item md={2} style={{ marginTop: 22 }}>
+                                    <div>
+                                        <label>Using Solar</label>
+                                    </div>
+                                </Grid>
+                                <Grid item md={3} style={{ marginTop: 12 }} >
+                                    <FormControl>
+                                        <RadioGroup name="is_solar" value={values.is_solar} onChange={handleChange}>
+                                            <FormGroup row>
+                                                <FormControlLabel value="yes" control={<Radio color="secondary" />} label="Yes" />
+                                                <FormControlLabel value="no" control={<Radio color="secondary" />} label="No" />
+                                            </FormGroup>
+                                        </RadioGroup>
+                                    </FormControl>
+                                </Grid>
+                                {/* <Grid item md={6}>
+                                    <TextInput
+                                        {...inputProps}
+                                        labelText="Using Solar"
+                                        name="is_solar"
+                                        value={values.is_solar}
+                                        readOnly={readOnly}
+                                        disabled={readOnly}
+                                        error={errors.is_solar}
+                                        helperText={errors.is_solar}
+                                    >
+                                    </TextInput>
+                                </Grid> */}
                                 <Grid item md={12}>
                                     <Fragment className={classes.table}>
                                         <Typography className={classes.subTitle} variant="h4">Tanker Details</Typography>
@@ -244,7 +253,6 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                                         </Grid> */}
                                         <AddTankerDetails dealer_id={dealer_id} length={values.no_of_tanker} />
                                     </Fragment>
-                                    {/* <IncomeTa id={id} editable={editable} currentUser={currentUser} /> */}
                                 </Grid>
 
                             </Grid>

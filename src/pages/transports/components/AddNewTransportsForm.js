@@ -810,18 +810,6 @@ const AddNewTransportsForm = ({
                                 {/* <Typography className={classes.typography}>Attach GST</Typography> */}
                               </>
                             </Tooltip>
-                            {/* <TextInput
-                                                                            type="file"
-                                                                            accept="image/*"
-                                                                            name="gst_file_url"
-                                                                            value={data.aadhar_f_file_url}
-                                                                            readOnly={readOnly}
-                                                                            disabled={readOnly}
-                                                                            onChange={(event) => {
-                                                                                values[event.target.name] = event.currentTarget.files[0];
-                                                                            }}
-                                                                            InputLabelProps={{ shrink: true }}
-                                                                        ></TextInput> */}
                           </div>
                         )}
                       </>

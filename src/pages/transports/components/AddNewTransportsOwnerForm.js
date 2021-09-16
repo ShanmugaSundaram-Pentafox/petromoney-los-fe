@@ -34,6 +34,7 @@ import {
 } from '../../../components/CommonComponents/FilePreview';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { deleteTransportOwnerProfileDoc } from '../../../services/transports.service';
+import { format } from 'date-fns';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -204,7 +205,7 @@ const AddNewTransportsOwnerForm = ({
     onSubmit: (values) => {
       values.first_name = values.first_name.toUpperCase();
       values.last_name = values.last_name.toUpperCase();
-      const date = moment(selectedDate).format('DD-MMM-YYYY');
+      const date = format(new Date(selectedDate), 'yyyy-MM-dd');
       const date_values = {
         ...values,
         dob: date,

@@ -65,7 +65,7 @@ export const AvatarCard = ({ file, title, tooltip }) => {
     const [imageModal, setImageModal] = useState({})
     return (
         <>
-            <div onClick={() => setImageModal({ open: true, image: file, type: file.endsWith('.pdf') })} >
+            <div onClick={() => setImageModal({ open: true, image: file, type: file?.endsWith('.pdf') })} style={{ margin: 10, paddingLeft: 10 }}>
                 <Tooltip title={tooltip}>
                     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                         <Avatar src={`${file}`} />

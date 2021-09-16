@@ -21,7 +21,7 @@ import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker
 } from '@material-ui/pickers';
-import moment from 'moment';
+import { format } from 'date-fns';
 import { URL } from '../../../config/serverUrls';
 
 const useStyles = makeStyles((theme) => ({
@@ -95,8 +95,8 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
         }),
         onSubmit: values => {
 
-            const executed_date = moment(executedDate).format('YYYY-MM-DD');
-            const valid_date = moment(validDate).format('YYYY-MM-DD');
+            const executed_date = format(new Date(executedDate), 'yyyy-MM-dd');
+            const valid_date = format(new Date(validDate), 'yyyy-MM-dd');
             const date = { ...values, agreement_executed_on: executed_date, agreement_valid_till: valid_date };
             const data = new FormData();
             Object.keys(date).forEach((key) => {

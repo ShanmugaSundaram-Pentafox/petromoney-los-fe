@@ -370,7 +370,7 @@ function FastTagPassbook( {currentUser} ) {
   const handleDownload = () => {
     if(searchValue)
     {
-      apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${from}&to=${to}&download=1`)
+      apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${from}&to=${to}&pagination=1&download=1`)
     .then(res => {
       if(res.status === 'SUCCESS')
       {

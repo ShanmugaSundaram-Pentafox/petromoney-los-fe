@@ -71,7 +71,7 @@ const AddNewVehicleForm = ({
   isAdd,
   callback,
 }) => {
-  const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
+  const [readOnly, setReadOnly] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
   const classes = useStyles();
@@ -93,7 +93,7 @@ const AddNewVehicleForm = ({
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      tt_no: Yup.string().required('Please enter vehicle number'),
+      tt_no: Yup.string().required('Please enter vehicle number').matches(/^[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}$/, 'Invalid Vehicle Number'),
     }),
     onSubmit: (formData) => {
       setLoading(true);

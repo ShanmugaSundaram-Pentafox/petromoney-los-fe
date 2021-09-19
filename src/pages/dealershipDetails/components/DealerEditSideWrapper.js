@@ -264,7 +264,7 @@ const DealerEditSideWrapper = ({
   };
   const handleStateChange = (state) => {
     setSelectedState(state);
-  }
+  };
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant='h4'>

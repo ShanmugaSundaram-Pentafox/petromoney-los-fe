@@ -24,7 +24,6 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
-import moment from 'moment';
 import FileUpload from '../../../components/FileUpload';
 import UploadIcon from '@material-ui/icons/Backup';
 import { grey } from '@material-ui/core/colors';
@@ -34,7 +33,7 @@ import {
 } from '../../../components/CommonComponents/FilePreview';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { deleteTransportOwnerProfileDoc } from '../../../services/transports.service';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -205,7 +204,7 @@ const AddNewTransportsOwnerForm = ({
     onSubmit: (values) => {
       values.first_name = values.first_name.toUpperCase();
       values.last_name = values.last_name.toUpperCase();
-      const date = format(new Date(selectedDate), 'yyyy-MM-dd');
+      const date = format(parse(selectedDate, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd');
       const date_values = {
         ...values,
         dob: date,

@@ -213,7 +213,7 @@ const AddNewTransportsForm = ({
         .required('please Enter your mobile number'),
       omc: Yup.string().required('Please Choose OMC'),
       business_type: Yup.string().required('Please choose bussiness type'),
-      // region: Yup.string().required('Please choose region'),
+      region: Yup.string().required('Please choose region'),
       address: Yup.string().required('Please enter address'),
       state: Yup.string().required('Please choose state'),
       district: Yup.string().required('Please choose district'),
@@ -224,7 +224,7 @@ const AddNewTransportsForm = ({
         .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
         .required('Enter PAN')
         .uppercase(),
-      gst: Yup.number().min(15, 'Enter valid GST'),
+      gst: Yup.number("Enter valid GST").min(15, 'Enter valid GST'),
     }),
     onSubmit: (values) => {
       setLoading(true);
@@ -850,7 +850,6 @@ const AddNewTransportsForm = ({
                 <Button
                   variant='contained'
                   type='submit'
-                  onClick={handleSubmit}
                   className={clsx(classes.btn, classes.editButton)}
                   startIcon={
                     !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />

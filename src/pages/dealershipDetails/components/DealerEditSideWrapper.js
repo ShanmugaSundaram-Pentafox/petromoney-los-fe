@@ -24,7 +24,7 @@ import DealerEditForm from './DealerEditForm';
 import apiCall from '../../../utils/api.util';
 import { useSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -197,11 +197,9 @@ const DealerEditSideWrapper = ({
       values.first_name = values.first_name.toUpperCase();
       values.last_name = values.last_name.toUpperCase();
       setLoading(true);
-      // const date = moment(selectedDate).format('DD-MMM-YYYY');
-      const date = format(new Date(selectedDate), 'yyyy-MM-dd')
-      const date_values = { ...values, dob: date, is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0 };
+      const d = selectedDate ? format(parse(selectedDate, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : format(parse(values.dob, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
+      const date_values = { ...values, dob: d, is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0 };
       const data = new FormData();
-
       Object.keys(date_values).forEach((key) => {
         data.append(key, date_values[key]);
       });

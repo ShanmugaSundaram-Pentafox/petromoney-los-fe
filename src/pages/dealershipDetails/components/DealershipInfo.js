@@ -9,24 +9,23 @@ import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import TextInput from '../../../components/TextInput/TextInput';
 import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import { URL } from '../../../config/serverUrls';
 import { logger } from '../../../config/logger';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-// import apiCall from '../../../utils/api.util';
 import Button from '../../../components/CommonComponents/Button/Button';
 import UploadIcon from '@material-ui/icons/Backup';
-import { encrypt } from '../../../services/crypto.service';
+import DeleteIcon from '@material-ui/icons/Delete';
 import { getBusinessTypes, getRegionById, getStates, getActiveStates } from '../../../services/common.service';
 import { useSnackbar } from 'notistack';
 import { AvatarCard, ViewData } from '../../../components/CommonComponents/FilePreview';
 import { Typography } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import FileUpload from '../../../components/FileUpload';
-import moment from 'moment';
-import { format } from 'date-fns';
-// import { Typography } from '@material-ui/core';
+import { format, parse } from 'date-fns';
+import { deleteDealershipDocument } from '../../../services/dealerships.service';
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -50,6 +49,14 @@ const useStyles = makeStyles(theme => ({
     marginRight: 4,
     marginTop: 12,
   },
+  fileStyle: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginTop: 24,
+  },
+  icons: {
+    marginRight: 16
+  }
 }));
 
 
@@ -64,12 +71,32 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
   const [businessTypes, setBusinessTypes] = useState([{}, {}, {}, {}, {}]);
   const [states, setStates] = useState([]);
   const [regionList, setRegionList] = useState([]);
+  const [imageModal, setImageModal] = useState({});
+
   const { enqueueSnackbar } = useSnackbar();
-  const { values, handleChange: onChange, handleSubmit, setFieldValue } = useFormik({
-    initialValues: { ...data },
+
+
+  const { values, errors, handleChange: onChange, handleSubmit, setFieldValue } = useFormik({
+    initialValues: data,
+    validateOnChange: false,
+    validateOnBlur: true,
+    validationSchema: Yup.object().shape({
+      name: Yup.string().required('Please enter transporter name'),
+      address: Yup.string().required('Please enter address'),
+      state: Yup.string().required('Please choose state'),
+      district: Yup.string().required('Please choose district'),
+      pincode: Yup.number()
+        .min(6, 'Pincode must be 6 digits')
+        .required('Enter pincode'),
+      pan: Yup.string()
+        .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
+        .required('Enter PAN')
+        .uppercase(),
+      gst: Yup.number().min(15, 'Enter valid GST'),
+    }),
     onSubmit: values => {
-      let eDate = format(new Date(values.agreement_executed_on), 'yyyy-MM-dd')
-      let vDate = format(new Date(values.agreement_valid_till), 'yyyy-MM-dd')
+      let eDate = format(parse(values.agreement_executed_on, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
+      let vDate = format(parse(values.agreement_valid_till, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
       const date_values = {
         ...values,
         agreement_valid_till: vDate,
@@ -175,6 +202,29 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
     handleSubmit(values);
     onCloseUploader();
   };
+  const onDocDelete = (value) => {
+    deleteDealershipDocument(value, data.id)
+      .then(res => {
+        enqueueSnackbar(res.message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        });
+      })
+      .catch(err => {
+        enqueueSnackbar(err.message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      })
+
+  }
+
 
   const fetchRegions = (res) => {
     getRegionById(res)
@@ -198,7 +248,48 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
     readOnly,
     onChange
   }
-
+  const gstAttachment = () => {
+    return (
+      <div className={classes.fileStyle}>
+        {/* <Button
+          onClick={() =>
+            setImageModal({ open: true, image: data.gst_file_url })
+          }
+        >
+          <a className={classes.profileLink} target='_blank' title={'GST Attachment'}>{'GST Attachment'}</a>
+        </Button> */}
+        <Tooltip title={'Click to edit'}>
+          <UploadIcon
+            fontSize='small'
+            padding={2}
+            className={classes.icons}
+            onClick={() => docUpload('GST')}
+          />
+        </Tooltip>
+        <Tooltip title={'Click to delete'}>
+          <DeleteIcon onClick={() => onDocDelete({ gst_file_url: "" })} fontSize="small" padding={2} />
+        </Tooltip>
+      </div>
+    );
+  };
+  const panAttachment = () => {
+    return (
+      <div className={classes.fileStyle}>
+        {/* <a className={classes.profileLink} href={data.pan_file_url} target='_blank' title={'PAN Attachment'}>{'PAN Attachment'}</a> */}
+        <Tooltip title={'Click to edit'}>
+          <UploadIcon
+            fontSize='small'
+            padding={2}
+            className={classes.icons}
+            onClick={() => docUpload('PAN')}
+          />
+        </Tooltip>
+        <Tooltip title={'Click to delete'}>
+          <DeleteIcon onClick={() => onDocDelete({ pan_file_url: "" })} fontSize="small" padding={2} />
+        </Tooltip>
+      </div>
+    );
+  };
   return (
     <Card className={clsx(classes.root, className)}>
       <form
@@ -270,6 +361,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     name="name"
                     readOnly={readOnly}
                     value={values.name?.toUpperCase()}
+                    error={errors.name}
+                    helperText={errors.name}
                     {...fieldProps}
                   />
                 </Grid>
@@ -280,7 +373,9 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     name="address"
                     readOnly={readOnly}
                     disabled={readOnly}
-                    value={values.address?.toUpperCase()}
+                    value={values.address}
+                    error={errors.address}
+                    helperText={errors.address}
                     {...fieldProps}
                   />
                 </Grid>
@@ -292,6 +387,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     readOnly={readOnly}
                     disabled={readOnly}
                     defaultValue={businessTypes[values.business_type - 1]?.name}
+                    error={errors.business_type}
+                    helperText={errors.business_typeF}
                     {...fieldProps}
                   >
                     <option value="">{businessTypes[values.business_type]?.name}</option>
@@ -307,27 +404,37 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     readOnly={readOnly}
                     // disabled={readOnly}
                     defaultValue={values.gst}
+                    error={errors.gst}
+                    helperText={errors.gst}
                     {...fieldProps}
                   />
                 </Grid>
                 <Grid {...gridProps} md={2}>
-                  {
-                    values.gst && (
-                      <div
-                        className={classes.fileAttachement}
-                        onClick={() => docUpload('PAN')}
-                      >
-                        <Tooltip title={'Click and attach'}>
-                          <>
-                            <UploadIcon
-                              className={classes.icon}
-                              disabled={readOnly}
-                            />
-                          </>
-                        </Tooltip>
-                      </div>
-                    )
-                  }
+                  {values.gst ? (
+                    <Grid item md={6}>
+                      <>
+                        {data.gst_file_url ? (
+                          gstAttachment()
+                        ) : (
+                          <div
+                            className={classes.fileAttachement}
+                            onClick={() => docUpload('GST')}
+                          >
+                            <Tooltip title={'Click and attach'}>
+                              <>
+                                <UploadIcon
+                                  className={classes.icon}
+                                  disabled={readOnly}
+                                />
+                                {/* <Typography className={classes.typography}>Attach GST</Typography> */}
+                              </>
+                            </Tooltip>
+                          </div>
+                        )}
+                      </>
+                    </Grid>
+                  ) : null}
+
                 </Grid>
                 <Grid {...gridProps} md={4}>
                   <TextInput
@@ -336,27 +443,37 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     readOnly={readOnly}
                     // disabled={readOnly}
                     defaultValue={values.pan}
+                    error={errors.pan}
+                    helperText={errors.pan}
                     {...fieldProps}
                   />
                 </Grid>
                 <Grid {...gridProps} md={2}>
-                  {
-                    values.pan && (
-                      <div
-                        className={classes.fileAttachement}
-                        onClick={() => docUpload('PAN')}
-                      >
-                        <Tooltip title={'Click and attach'}>
-                          <>
-                            <UploadIcon
-                              className={classes.icon}
-                              disabled={readOnly}
-                            />
-                          </>
-                        </Tooltip>
-                      </div>
-                    )
-                  }
+                  {values.pan ? (
+                    <Grid item md={2}>
+                      <>
+                        {
+                          data.pan_file_url ? (
+                            panAttachment()
+                          ) : (
+                            <div
+                              className={classes.fileAttachement}
+                              onClick={() => docUpload('PAN')}
+                            >
+                              <Tooltip title={'Click and attach'}>
+                                <>
+                                  <UploadIcon
+                                    className={classes.icon}
+                                    disabled={readOnly}
+                                  />
+                                </>
+                              </Tooltip>
+                            </div>
+                          )
+                        }
+                      </>
+                    </Grid>
+                  ) : null}
                 </Grid>
                 <Divider />
                 <Grid {...gridProps} sm={6} md={6}>
@@ -367,6 +484,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     readOnly={readOnly}
                     disabled={readOnly}
                     value={values.state}
+                    error={errors.state}
+                    helperText={errors.state}
                     {...fieldProps}
                   >
                     {
@@ -383,6 +502,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                       value={values.region}
                       readOnly={readOnly}
                       disabled={readOnly}
+                      error={errors.region}
+                      helperText={errors.region}
                       {...fieldProps}
                     >
                       {
@@ -400,6 +521,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     value={values.district}
                     readOnly={readOnly}
                     disabled={readOnly}
+                    error={errors.district}
+                    helperText={errors.district}
                     // select
                     alignTop
                     direction="column"
@@ -414,6 +537,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     name="pincode"
                     readOnly={readOnly}
                     defaultValue={values.pincode}
+                    error={errors.pincode}
+                    helperText={errors.pincode}
                     {...fieldProps}
                   />
                 </Grid>

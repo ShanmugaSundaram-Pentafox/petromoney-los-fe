@@ -22,6 +22,8 @@ import { Popover } from '@material-ui/core';
 import { DateRange } from 'react-date-range';
 import { Box } from '@material-ui/core';
 import GetAppIcon from '@material-ui/icons/GetApp';
+import Select from 'react-select';
+import AsyncSelect from 'react-select/async';
 import { IconButton } from '@material-ui/core';
 
 
@@ -41,6 +43,7 @@ const useStyles = makeStyles({
   search: {
     display: 'flex',
     alignItems: 'center',
+    marginLeft: 83,
   },
   icon: {
     margin: 5,
@@ -136,6 +139,8 @@ function FastTagPassbook( {currentUser} ) {
   const [period, setPeriod] = useState('today');
   const [vehicle, setVehicle] = useState();
   const [amount, setAmount] = useState();
+  const [option, setOption] = useState([]);
+  const [selectedOption, setSelectedOption] = useState();
   const [selectedPeriod, setSelectedPeriod] = useState({
     from: new Date(),
     to: new Date(),
@@ -335,6 +340,7 @@ function FastTagPassbook( {currentUser} ) {
 
   const handleChange = (event) => {
     setSelectedValue(event.target.value);
+    setSearchValue()
     setData()
   };
   const handleValues = (event) => {
@@ -346,6 +352,21 @@ function FastTagPassbook( {currentUser} ) {
   const handleSubmit = () => {
     fetchResult(page);
   };
+
+  const getOptions = (inputValue, callback) => {
+    if(inputValue.toString().length >2){
+      apiCall(`fastag/search?${selectedValue}=${inputValue}`)
+        .then(res => {
+          callback(res.data);
+        })
+        .catch(e => {
+          console.log(e);
+        })
+    }
+  }
+  const onChangeOption = (newValue) => {
+    setSearchValue(newValue.value)
+  }
   const handleDownload = () => {
     if(searchValue)
     {
@@ -447,7 +468,12 @@ function FastTagPassbook( {currentUser} ) {
 
   return (
     <>
-      <Paper className={classes.root}>
+      <Paper className={classes.root} onKeyPress={(event) => 
+      {
+        if (event.key === 'Enter') {
+          handleSubmit();
+         }
+      }}>
         <div className={classes.find}>
           <Typography
             variant='h4'
@@ -478,7 +504,7 @@ function FastTagPassbook( {currentUser} ) {
                   value='id'
                 />
               }
-              label='Transport Code'
+              label='Transports'
             />
           </RadioGroup>
           <div className={classes.filterWrapper}>
@@ -543,29 +569,16 @@ function FastTagPassbook( {currentUser} ) {
         </div>
         <div className={classes.top}>
           <div className={classes.search}>
-            <TextField
-              id='search'
-              variant='outlined'
-              value={searchValue}
-              onChange={handleValues}
-              onKeyPress={(event) => {
-                if (event.key === 'Enter') {
-                  handleSubmit();
-                }
+            <div style={{width: 200}}>
+              <AsyncSelect
+              styles={{
+                menu: provided => ({ ...provided, zIndex: 9999 })
               }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position='end'>
-                    <SearchIcon fontSize='small' />
-                  </InputAdornment>
-                ),
-              }}
-              margin='normal'
-              style={{
-                marginLeft: 83,
-                width: 220,
-              }}
-            />
+              onChange={onChangeOption}
+              loadOptions={getOptions}
+              placeholder = {selectedValue === 'vehicle' ? `Enter Vehicle Number` : `Enter Transports`}
+              />
+            </div>
             <Button
               variant='outlined'
               color='secondary'
@@ -604,7 +617,7 @@ function FastTagPassbook( {currentUser} ) {
       {
         data ? (
       <Paper className={classes.root} style={{ marginTop: 20 }}>
-        <MUIDataTable columns={columns} options={options} data={data} 
+        <MUIDataTable columns={columns} options={options} data={data}
         title={
           <>
         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>

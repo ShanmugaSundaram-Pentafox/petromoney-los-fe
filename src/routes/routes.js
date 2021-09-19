@@ -35,7 +35,12 @@ const Routes = ({ currentUser }) => {
   return (<>
     <EnvTag />
     <Switch>
-      <ProtectedRoute allow exact path="/" component={Dashboard} />
+      <ProtectedRoute
+        exact
+        path="/"
+        component={Dashboard}
+        allow={permissionCheck(currentUser?.role_name, rulesList.dashboard)}
+        />
       <ProtectedRoute allow exact path="/solar" component={Solar} />
       <ProtectedRoute allow exact path="/solar/feasibility" component={Solar} />
       <ProtectedRoute allow exact path="/dealership" component={Dealership} />
@@ -56,7 +61,6 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/profile" component={Profile} />
       <ProtectedRoute allow exact path="/withheld" component={BlacklistTable} />
 
-
       <ProtectedRoute
         exact
         path="/users"
@@ -64,7 +68,6 @@ const Routes = ({ currentUser }) => {
         allow={permissionCheck(currentUser?.role_name, rulesList.users_view)}
       />
       <ProtectedRoute
-        allow
         exact
         path="/passbook"
         component={PassbookDetails}

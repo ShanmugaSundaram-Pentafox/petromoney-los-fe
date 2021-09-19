@@ -83,7 +83,7 @@ const useStyles = makeStyles(theme => ({
 const Sidebar = props => {
   const { open, variant, onClose, className, user, logout, currentUser, ...rest } = props;
   const classes = useStyles();
-  const pages = [
+  let pages = [
     {
       title: 'Dashboard',
       href: '/',
@@ -151,6 +151,21 @@ const Sidebar = props => {
     )
   }
 
+  if (permissionCheck(currentUser.role_name, rulesList.transporter_view)) {
+    pages = [
+      {
+        title: 'Profile',
+        href: `/transports/${currentUser.id}`,
+        icon: <PersonOutlineIcon />
+      },
+      {
+        title: 'FASTag Passbook',
+        href: '/transport/fastag/details',
+        icon: <ListIcon />
+      }
+    ]
+  }
+
   if (permissionCheck(currentUser.role_name, rulesList.users_view)) {
     pages.push({
       title: 'Users',
@@ -159,7 +174,7 @@ const Sidebar = props => {
     })
   }
 
-  {
+  if (permissionCheck(currentUser.role_name, rulesList.settings_view)) {
     pages.push({
       title: 'Settings',
       href: '/settings',

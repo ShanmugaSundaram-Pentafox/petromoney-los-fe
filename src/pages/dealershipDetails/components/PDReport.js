@@ -294,14 +294,14 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
               </div>
             </Tooltip>
           </Grid>
-          {/* <Grid item md={2}>
+          <Grid item md={2}>
             <Tooltip title="click to edit other details">
               <div className={classes.content} onClick={() => setOpenOtherForm(true)}>
                 <OtherIcon width={30} className={classes.icons} />
                 <Typography variant="h5" align='center' className={classes.title} >Other Details</Typography>
               </div>
             </Tooltip>
-          </Grid> */}
+          </Grid>
           {/* <Grid item md={2}>
             <Tooltip title="click to edit other details">
               <div className={classes.content} onClick={() => setOpenCreditPdForm(true)}>

@@ -87,22 +87,29 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
             // transport_name: Yup.string().required('Please enter transporter name'),
         }),
         onSubmit: values => {
-            addReferenceDetails(values, dealer_id)
-                .then(res => {
-                    enqueueSnackbar(res, {
-                        anchorOrigin: {
-                            vertical: 'top',
-                            horizontal: 'right',
-                        },
-                        variant: 'success',
-                    });
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 1500);
-                })
-                .catch(e => {
-                    console.log(e);
-                })
+            enqueueSnackbar('you are not allowed to add references details,Please contact admin', {
+                anchorOrigin: {
+                    vertical: 'top',
+                    horizontal: 'right',
+                },
+                variant: 'error',
+            });
+            // addReferenceDetails(values, dealer_id)
+            //     .then(res => {
+            //         enqueueSnackbar(res, {
+            //             anchorOrigin: {
+            //                 vertical: 'top',
+            //                 horizontal: 'right',
+            //             },
+            //             variant: 'success',
+            //         });
+            //         setTimeout(() => {
+            //             window.location.reload()
+            //         }, 1500);
+            //     })
+            //     .catch(e => {
+            //         console.log(e);
+            //     })
         }
     });
     const inputProps = {

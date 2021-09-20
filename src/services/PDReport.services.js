@@ -598,7 +598,7 @@ export const getReferenceDetailsbyID = (id) => {
 }
 export const addReferenceDetails = (data, id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`dealership/${id}/infrastructure`, {
+    apiCall(`dealership/${id}/references`, {
       method: 'POST',
       body: data,
     })
@@ -631,7 +631,7 @@ export const getOtherDetailsbyID = (id) => {
 }
 export const addAdditionalDetails = (data, id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`dealership/${id}/infrastructure`, {
+    apiCall(`dealership/${id}/addl/details`, {
       method: 'POST',
       body: data,
     })

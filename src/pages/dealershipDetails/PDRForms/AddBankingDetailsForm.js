@@ -96,6 +96,10 @@ const useStyles = makeStyles((theme) => ({
             backgroundColor: theme.palette.success.dark
         }
     },
+    typography: {
+        marginTop: 12,
+        textAlign: 'center'
+    }
 }))
 
 const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => {
@@ -209,6 +213,10 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
             </Typography>
             <div className={classes.sidePanelFormContentWrapper}>
                 <div className={classes.stepperRoot}>
+                    {
+                        bankData.length || addNewRow ? null :
+                            <Typography className={classes.typography}>No bank found,Click 'Add Bank' to add new bank.</Typography>
+                    }
 
                     {
                         addNewRow || editRow ? (

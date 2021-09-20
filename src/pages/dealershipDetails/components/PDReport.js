@@ -29,6 +29,10 @@ import { useSnackbar } from 'notistack';
 import AddReferenceForm from '../PDRForms/AddReferenceForm';
 import AddIncomeDetailsForm from '../PDRForms/AddIncomeDetailsForm';
 import AddCreditPdForm from '../PDRForms/AddCreditPdForm';
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import PdfViewer from '../../../components/CommonComponents/PdfViewer/PdfViewer';
+import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -78,6 +82,13 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.success.dark
     }
   },
+  dialogBox: {
+    position: 'relative',
+    overflow: 'hidden',
+    width: '100%',
+    paddingTop: 20,
+
+  }
 }))
 
 const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
@@ -100,6 +111,8 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
   const [assetDetails, setAssetDetails] = useState()
   const [businessData, setBusinessData] = useState();
   const [openCreditPdForm, setOpenCreditPdForm] = useState();
+  const [fileCode, setFileCode] = useState()
+  const [openDialog, setOpenDialog] = useState(false)
 
   const handleEdit = () => {
     setOpenOmcForm(false)
@@ -158,14 +171,9 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
   })
   const handleDownload = () => {
     downloadPDReport(id)
-      .then(data => {
-        enqueueSnackbar(data.message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
-        });
+      .then(res => {
+        setFileCode(res)
+        setOpenDialog(true)
       })
       .catch((e) => {
         enqueueSnackbar(e, {
@@ -183,8 +191,19 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       <div className={classes.wrapper}>
         <div className={classes.header}>
           <Typography style={{ width: '70%' }} variant="h4" align={textAlign} className={classes.WrapperTitle} >Personal Discussion Report</Typography>
-          <Button variant="contained" size="small" className={classes.btnSuccess} onClick={handleDownload} >Download</Button>
+          <Button variant="contained" size="small" className={classes.btnSuccess} onClick={handleDownload} >Report</Button>
         </div>
+
+        <FormDialog
+          open={openDialog}
+          title={'Personal Discussion Report'}
+          onClose={() => { setOpenDialog(false) }}
+        >
+          <div className={classes.dialogBox} >
+            <iframe src={`data:application/pdf;base64,${fileCode}`} height="900" width="500" frameBorder="0"></iframe>
+          </div>
+          {/* <PdfViewer title="Personal Description Report" file={fileCode} isBase64 showDownload /> */}
+        </FormDialog>
         <Grid container spacing={1} className={classes.root} >
           <Grid item md={2}>
             <Tooltip title="click to edit OMC details">
@@ -254,30 +273,30 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
               </div>
             </Tooltip>
           </Grid>
-          <Grid item md={2}>
+          {/* <Grid item md={2}>
             <Tooltip title="click to edit reference details">
               <div className={classes.content} onClick={() => setOpenReferenceForm(true)}>
                 <ReferenceIcon width={30} className={classes.icons} />
                 <Typography variant="h5" align='center' className={classes.title} >Reference Details</Typography>
               </div>
             </Tooltip>
-          </Grid>
-          <Grid item md={2}>
+          </Grid> */}
+          {/* <Grid item md={2}>
             <Tooltip title="click to edit other details">
               <div className={classes.content} onClick={() => setOpenOtherForm(true)}>
                 <OtherIcon width={30} className={classes.icons} />
                 <Typography variant="h5" align='center' className={classes.title} >Other Details</Typography>
               </div>
             </Tooltip>
-          </Grid>
-          <Grid item md={2}>
+          </Grid> */}
+          {/* <Grid item md={2}>
             <Tooltip title="click to edit other details">
               <div className={classes.content} onClick={() => setOpenCreditPdForm(true)}>
                 <CreditIcon width={30} className={classes.icons} />
                 <Typography variant="h5" align='center' className={classes.title} >Credit PD</Typography>
               </div>
             </Tooltip>
-          </Grid>
+          </Grid> */}
         </Grid>
       </div>
 

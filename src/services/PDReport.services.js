@@ -512,15 +512,15 @@ export const deleteLoanDetailsByID = (data, id) => {
 export const downloadPDReport = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/pdr`)
-      .then(({ status, data, message }) => {
+      .then(({ status, base64, message }) => {
         if (status === "SUCCESS") {
-          resolve(data)
+          resolve(base64)
         } else {
           reject(message)
         }
       })
-      .catch((e) => {
-        reject(e.message)
+      .catch(({ message }) => {
+        reject(message)
       })
   });
 }

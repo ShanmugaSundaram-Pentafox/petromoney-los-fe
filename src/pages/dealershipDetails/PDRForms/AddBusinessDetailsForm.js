@@ -21,10 +21,6 @@ import { RadioGroup } from '@material-ui/core';
 import { FormControlLabel } from '@material-ui/core';
 import { Radio } from '@material-ui/core';
 import { FormGroup } from '@material-ui/core';
-import FormLabel from '@material-ui/core/FormLabel';
-import { string } from 'prop-types';
-
-
 
 
 const useStyles = makeStyles((theme) => ({
@@ -87,12 +83,10 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) => {
-
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles()
   const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
   const [loading, setLoading] = useState(false)
-  const [value, setValue] = React.useState(0);
   const handleEdit = () => {
     setReadOnly(!readOnly)
   };
@@ -107,17 +101,19 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      business_age: Yup.number().required("Enter business date"),
-      hsd_count: Yup.number().required("Enter number of HS dispensers"),
-      msd_count: Yup.number().required("Enter number of MS dispensers"),
-      fuel_station_area: Yup.string().required("Enter fuel station area"),
-      electricity_bill_month: Yup.number().required("Enter electricity bill per month "),
-      lpg_count: Yup.number().required("Enter LPG count"),
-      credit_sales_month: Yup.number().required("Enter credit sales per month"),
-      avg_realization_period: Yup.number().required("Enter average realization period "),
+      // business_age: Yup.number().required("Enter business date"),
+      // hsd_count: Yup.number().required("Enter number of HS dispensers"),
+      // msd_count: Yup.number().required("Enter number of MS dispensers"),
+      // fuel_station_area: Yup.string().required("Enter fuel station area"),
+      // electricity_bill_month: Yup.number().required("Enter electricity bill per month "),
+      // lpg_count: Yup.number().required("Enter LPG count"),
+      // credit_sales_month: Yup.number().required("Enter credit sales per month"),
+      // avg_realization_period: Yup.number().required("Enter average realization period "),
     }),
     onSubmit: values => {
-      updateBusinessDetailsByID(values, dealer_id)
+      console.log("values", values)
+      let data = { ...values, has_atm: values.has_atm === "yes" ? 1 : 0, is_pep: values.is_pep === "yes" ? 1 : 0 }
+      updateBusinessDetailsByID(data, dealer_id)
         .then(res => {
           console.log(res)
           enqueueSnackbar(res, {
@@ -128,9 +124,9 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
             variant: 'success',
           }
           )
-          setTimeout(() => {
-            window.location.reload()
-          }, 1500);
+          // setTimeout(() => {
+          //   window.location.reload()
+          // }, 1500);
 
         })
         .catch(e => {

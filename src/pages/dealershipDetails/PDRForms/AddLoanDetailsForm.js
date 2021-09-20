@@ -109,6 +109,10 @@ const useStyles = makeStyles((theme) => ({
         '&.MuiButton-contained:hover': {
             backgroundColor: theme.palette.success.dark
         }
+    },
+    typography: {
+        marginTop: 12,
+        textAlign: 'center'
     }
 
 }))
@@ -250,6 +254,10 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
             </Typography>
             <div className={classes.sidePanelFormContentWrapper}>
                 <div className={classes.stepperRoot}>
+                    {
+                        loanData.length || addNew ? null :
+                            <Typography className={classes.typography}>No loan found,Click 'Add Loan' to add new loan.</Typography>
+                    }
                     {
                         addNew || editRow ? (
                             <Box>

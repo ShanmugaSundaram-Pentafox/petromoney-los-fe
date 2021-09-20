@@ -205,7 +205,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
   const onDocDelete = (value) => {
     deleteDealershipDocument(value, data.id)
       .then(res => {
-        enqueueSnackbar(res.message, {
+        enqueueSnackbar(res, {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',
@@ -214,7 +214,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         });
       })
       .catch(err => {
-        enqueueSnackbar(err.message, {
+        enqueueSnackbar(err, {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',
@@ -222,7 +222,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
           variant: 'error',
         });
       })
-
   }
 
 

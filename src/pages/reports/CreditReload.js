@@ -193,7 +193,7 @@ const CreditReload = ({ currentUser }) => {
 
       <Drawer
         anchor='right'
-        open={true}
+        open={statusModal}
         onClose={() => setStatusModal(false)}
         variant='temporary'
       >

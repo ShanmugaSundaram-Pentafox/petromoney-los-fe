@@ -165,6 +165,7 @@ const {
                     value={values.mobile}
                     error={errors.mobile}
                     helperText={errors.mobile}
+                    helperText="Mobile Number for Whatsapp Notifications."
                     variant='outlined'
                     onChange={handleChange}
                     fullWidth

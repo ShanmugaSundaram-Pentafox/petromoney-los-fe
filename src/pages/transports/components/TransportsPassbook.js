@@ -126,6 +126,7 @@ function FastTagPassbook( {currentUser} ) {
   const [showUpload, setShowUpload] = useState(false);
   const [file, setFile] = useState();
   const [loading, setLoading] = useState(false);
+  const [optionsLoading, setOptionsLoading] = useState(false);
   const [disable, setDisable] = useState(false);
   const [data, setData] = useState();
   const { enqueueSnackbar } = useSnackbar();
@@ -355,12 +356,15 @@ function FastTagPassbook( {currentUser} ) {
 
   const getOptions = (inputValue, callback) => {
     if(inputValue.toString().length >2){
+      setOptionsLoading(true)
       apiCall(`fastag/search?${selectedValue}=${inputValue}`)
         .then(res => {
+          setOptionsLoading(false)
           callback(res.data);
         })
         .catch(e => {
           console.log(e);
+          setOptionsLoading(false)
         })
     }
   }
@@ -571,9 +575,11 @@ function FastTagPassbook( {currentUser} ) {
           <div className={classes.search}>
             <div style={{width: 200}}>
               <AsyncSelect
+              components={optionsLoading? null : {LoadingIndicator: null}}
               styles={{
                 menu: provided => ({ ...provided, zIndex: 9999 })
               }}
+              loadingMessage={() => ' '}
               onChange={onChangeOption}
               loadOptions={getOptions}
               placeholder = {selectedValue === 'vehicle' ? `Enter Vehicle Number` : `Enter Transports`}

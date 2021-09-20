@@ -18,6 +18,7 @@ import { ReactComponent as BankIcon } from '../../../icons/bankIcon.svg';
 import { ReactComponent as OtherIcon } from '../../../icons/other_icons.svg';
 import { ReactComponent as IncomeIcon } from '../../../icons/income.svg';
 import { ReactComponent as ReferenceIcon } from '../../../icons/reference.svg';
+import { ReactComponent as CreditIcon } from '../../../icons/credits_pd.svg';
 import { Button } from '@material-ui/core';
 import AddBankingDetailsForm from '../PDRForms/AddBankingDetailsForm';
 import { downloadPDReport, getAssetDetailsById, getBusinessDetailsbyID, getInfrastructureDetailsById, getOmcDetailsById, getOutletDetailsById } from '../../../services/PDReport.services';
@@ -27,6 +28,7 @@ import AddLoanDetailsForm from '../PDRForms/AddLoanDetailsForm';
 import { useSnackbar } from 'notistack';
 import AddReferenceForm from '../PDRForms/AddReferenceForm';
 import AddIncomeDetailsForm from '../PDRForms/AddIncomeDetailsForm';
+import AddCreditPdForm from '../PDRForms/AddCreditPdForm';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -97,6 +99,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
   const [infrastructureDetails, setInfrastructureDetails] = useState()
   const [assetDetails, setAssetDetails] = useState()
   const [businessData, setBusinessData] = useState();
+  const [openCreditPdForm, setOpenCreditPdForm] = useState();
 
   const handleEdit = () => {
     setOpenOmcForm(false)
@@ -267,6 +270,14 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
               </div>
             </Tooltip>
           </Grid>
+          <Grid item md={2}>
+            <Tooltip title="click to edit other details">
+              <div className={classes.content} onClick={() => setOpenCreditPdForm(true)}>
+                <CreditIcon width={30} className={classes.icons} />
+                <Typography variant="h5" align='center' className={classes.title} >Credit PD</Typography>
+              </div>
+            </Tooltip>
+          </Grid>
         </Grid>
       </div>
 
@@ -350,6 +361,15 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       >
         <AddIncomeDetailsForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} />
       </Drawer>
+      <Drawer
+        anchor="right"
+        open={openCreditPdForm}
+        onClose={() => setOpenCreditPdForm(false)}
+        variant="temporary"
+      >
+        <AddCreditPdForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} />
+      </Drawer>
+
     </div >
   );
 

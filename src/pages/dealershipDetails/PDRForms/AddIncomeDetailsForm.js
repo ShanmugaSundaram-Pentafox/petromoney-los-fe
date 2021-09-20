@@ -77,6 +77,7 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
   const [addExpense, setAddExpense] = useState(false);
   const [editExpenseData, setEditExpenseData] = useState({});
   const [type, setType] = useState(false)
+  const classes = useStyles()
 
 
   useMount(() => {
@@ -105,7 +106,6 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
   const handleClose = () => {
     callback();
   };
-  const classes = useStyles()
   const handleCancel = () => {
     setAddIncome(false)
     setAddExpense(false)

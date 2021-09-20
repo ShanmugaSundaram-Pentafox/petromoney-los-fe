@@ -288,8 +288,8 @@ export const deleteDealershipDocument = (data, id) => {
       method: 'DELETE',
       body: data
     })
-      .then(({ data }) => {
-        resolve(data);
+      .then(({ message }) => {
+        resolve(message);
       })
       .catch((e) => {
         reject(e.message);

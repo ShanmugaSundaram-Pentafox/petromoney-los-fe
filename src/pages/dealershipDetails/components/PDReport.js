@@ -21,7 +21,7 @@ import { ReactComponent as ReferenceIcon } from '../../../icons/reference.svg';
 import { ReactComponent as CreditIcon } from '../../../icons/credits_pd.svg';
 import { Button } from '@material-ui/core';
 import AddBankingDetailsForm from '../PDRForms/AddBankingDetailsForm';
-import { downloadPDReport, getAssetDetailsById, getBusinessDetailsbyID, getInfrastructureDetailsById, getOmcDetailsById, getOutletDetailsById } from '../../../services/PDReport.services';
+import { downloadPDReport, getAssetDetailsById, getBusinessDetailsbyID, getInfrastructureDetailsById, getOmcDetailsById, getOtherDetailsbyID, getOutletDetailsById, getReferenceDetailsbyID } from '../../../services/PDReport.services';
 import { useMount } from 'react-use';
 import AddOtherDetailsForm from '../PDRForms/AddOtherDetailsForm';
 import AddLoanDetailsForm from '../PDRForms/AddLoanDetailsForm';
@@ -29,6 +29,10 @@ import { useSnackbar } from 'notistack';
 import AddReferenceForm from '../PDRForms/AddReferenceForm';
 import AddIncomeDetailsForm from '../PDRForms/AddIncomeDetailsForm';
 import AddCreditPdForm from '../PDRForms/AddCreditPdForm';
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import PdfViewer from '../../../components/CommonComponents/PdfViewer/PdfViewer';
+import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -78,6 +82,13 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.success.dark
     }
   },
+  dialogBox: {
+    position: 'relative',
+    overflow: 'hidden',
+    width: '100%',
+    paddingTop: 20,
+
+  }
 }))
 
 const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
@@ -96,10 +107,14 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
   const [omcEdit, setOmcEdit] = useState(false)
   const [omcData, setOmcData] = useState()
   const [outletData, setOutletData] = useState()
+  const [referenceData, setReferenceData] = useState()
+  const [addlData, setAddlData] = useState()
   const [infrastructureDetails, setInfrastructureDetails] = useState()
   const [assetDetails, setAssetDetails] = useState()
   const [businessData, setBusinessData] = useState();
   const [openCreditPdForm, setOpenCreditPdForm] = useState();
+  const [fileCode, setFileCode] = useState()
+  const [openDialog, setOpenDialog] = useState(false)
 
   const handleEdit = () => {
     setOpenOmcForm(false)
@@ -124,7 +139,6 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       .catch((e) => {
         console.log(e);
       })
-
     getOutletDetailsById(id)
       .then(data => {
         setOutletData(data[0])
@@ -132,7 +146,6 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       .catch((e) => {
         console.log(e);
       })
-
     getInfrastructureDetailsById(id)
       .then(data => {
         setInfrastructureDetails(data[0])
@@ -140,7 +153,6 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       .catch((e) => {
         console.log(e);
       })
-
     getBusinessDetailsbyID(id)
       .then(data => {
         setBusinessData(data[0])
@@ -155,17 +167,26 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       .catch((e) => {
         console.log(e);
       })
+    getReferenceDetailsbyID(id)
+      .then(data => {
+        setReferenceData(data)
+      })
+      .catch((e) => {
+        console.log(e);
+      })
+    getOtherDetailsbyID(id)
+      .then(data => {
+        setAddlData(data)
+      })
+      .catch((e) => {
+        console.log(e);
+      })
   })
   const handleDownload = () => {
     downloadPDReport(id)
-      .then(data => {
-        enqueueSnackbar(data.message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
-        });
+      .then(res => {
+        setFileCode(res)
+        setOpenDialog(true)
       })
       .catch((e) => {
         enqueueSnackbar(e, {
@@ -183,8 +204,19 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       <div className={classes.wrapper}>
         <div className={classes.header}>
           <Typography style={{ width: '70%' }} variant="h4" align={textAlign} className={classes.WrapperTitle} >Personal Discussion Report</Typography>
-          <Button variant="contained" size="small" className={classes.btnSuccess} onClick={handleDownload} >Download</Button>
+          <Button variant="contained" size="small" className={classes.btnSuccess} onClick={handleDownload} >Report</Button>
         </div>
+
+        <FormDialog
+          open={openDialog}
+          title={'Personal Discussion Report'}
+          onClose={() => { setOpenDialog(false) }}
+        >
+          <div className={classes.dialogBox} >
+            <iframe src={`data:application/pdf;base64,${fileCode}`} height="900" width="500" frameBorder="0"></iframe>
+          </div>
+          {/* <PdfViewer title="Personal Description Report" file={fileCode} isBase64 showDownload /> */}
+        </FormDialog>
         <Grid container spacing={1} className={classes.root} >
           <Grid item md={2}>
             <Tooltip title="click to edit OMC details">
@@ -270,14 +302,14 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
               </div>
             </Tooltip>
           </Grid>
-          <Grid item md={2}>
+          {/* <Grid item md={2}>
             <Tooltip title="click to edit other details">
               <div className={classes.content} onClick={() => setOpenCreditPdForm(true)}>
                 <CreditIcon width={30} className={classes.icons} />
                 <Typography variant="h5" align='center' className={classes.title} >Credit PD</Typography>
               </div>
             </Tooltip>
-          </Grid>
+          </Grid> */}
         </Grid>
       </div>
 
@@ -335,7 +367,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         onClose={() => setOpenOtherForm(false)}
         variant="temporary"
       >
-        <AddOtherDetailsForm dealer_id={id} isEdit={omcData ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={omcData} />
+        <AddOtherDetailsForm dealer_id={id} isEdit={addlData ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={omcData} />
       </Drawer>
       <Drawer
         anchor="right"
@@ -351,7 +383,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         onClose={() => setOpenReferenceForm(false)}
         variant="temporary"
       >
-        <AddReferenceForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} />
+        <AddReferenceForm dealer_id={id} isEdit={referenceData ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} />
       </Drawer>
       <Drawer
         anchor="right"

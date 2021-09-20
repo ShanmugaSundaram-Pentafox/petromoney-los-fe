@@ -21,7 +21,7 @@ import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker
 } from '@material-ui/pickers';
-import { addOmcDetails, getOmcDetailsById } from '../../../services/PDReport.services';
+import { addAdditionalDetails, addOmcDetails, getOmcDetailsById } from '../../../services/PDReport.services';
 import moment from 'moment';
 import { useMount } from 'react-use';
 import { FormControl } from '@material-ui/core';
@@ -96,23 +96,22 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
             // transport_name: Yup.string().required('Please enter transporter name'),
         }),
         onSubmit: values => {
-
-            // addOmcDetails(values, dealer_id)
-            //     .then(res => {
-            //         enqueueSnackbar(res, {
-            //             anchorOrigin: {
-            //                 vertical: 'top',
-            //                 horizontal: 'right',
-            //             },
-            //             variant: 'success',
-            //         });
-            //         setTimeout(() => {
-            //             window.location.reload()
-            //         }, 1500);
-            //     })
-            //     .catch(e => {
-            //         console.log(e);
-            //     })
+            addAdditionalDetails(values, dealer_id)
+                .then(res => {
+                    enqueueSnackbar(res, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'success',
+                    });
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1500);
+                })
+                .catch(e => {
+                    console.log(e);
+                })
         }
     });
     const inputProps = {

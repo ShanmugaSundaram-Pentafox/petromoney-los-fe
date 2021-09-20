@@ -127,6 +127,9 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
               variant: 'success',
             }
             )
+            setTimeout(() => {
+              window.location.reload()
+            }, 1500);
             setLoading(false);
             setReadOnly(true);
           }
@@ -212,6 +215,9 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
           },
           variant: 'success',
         });
+        setTimeout(() => {
+          window.location.reload()
+        }, 1500);
       })
       .catch(err => {
         enqueueSnackbar(err, {

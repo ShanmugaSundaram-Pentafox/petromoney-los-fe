@@ -124,7 +124,6 @@ export const getInfrastructureDetailsById = (id) => {
       })
   });
 }
-
 export const addInfrastructureDetails = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/infrastructure`, {
@@ -158,8 +157,6 @@ export const getAssetList = () => {
       })
   });
 }
-
-
 export const addAssetDetailsById = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/assets`, {
@@ -214,7 +211,6 @@ export const deleteAssetDetailsById = (data, id) => {
       });
   });
 }
-
 export const getAssetDetailsById = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/assets`)
@@ -230,7 +226,6 @@ export const getAssetDetailsById = (id) => {
       })
   });
 }
-
 export const getTankersById = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/tanker`)
@@ -246,7 +241,6 @@ export const getTankersById = (id) => {
       })
   });
 }
-
 export const addNewTanker = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/tanker`, {
@@ -282,8 +276,6 @@ export const deleteTanker = (data, id) => {
       });
   });
 }
-
-
 export const updateTankerByID = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/tanker`, {
@@ -302,8 +294,6 @@ export const updateTankerByID = (data, id) => {
       });
   });
 }
-
-
 export const getBankDetailsbyID = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/bank`)
@@ -508,7 +498,6 @@ export const deleteLoanDetailsByID = (data, id) => {
       });
   });
 }
-
 export const downloadPDReport = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/pdr`)
@@ -524,7 +513,6 @@ export const downloadPDReport = (id) => {
       })
   });
 }
-
 export const getIncomeDetailsById = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/income/details`)
@@ -540,7 +528,6 @@ export const getIncomeDetailsById = (id) => {
       })
   });
 }
-
 export const addIncomeDetailsByID = (data, id, isEdit) => {
   return new Promise((resolve, reject) => {
     let url = isEdit ? `dealership/income/details/${data.id}` : `dealership/${id}/income/details`
@@ -560,7 +547,6 @@ export const addIncomeDetailsByID = (data, id, isEdit) => {
       });
   });
 }
-
 export const getExpensesDetailsById = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/expense/details`)
@@ -580,6 +566,72 @@ export const addExpenseDetailsByID = (data, id, isEdit) => {
   return new Promise((resolve, reject) => {
     let url = isEdit ? `dealership/expense/details/${data.id}` : `dealership/${id}/expense/details`
     apiCall(url, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+export const getReferenceDetailsbyID = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/references`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  });
+}
+export const addReferenceDetails = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/infrastructure`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+export const getOtherDetailsbyID = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/addl/details`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  });
+}
+export const addAdditionalDetails = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/infrastructure`, {
       method: 'POST',
       body: data,
     })

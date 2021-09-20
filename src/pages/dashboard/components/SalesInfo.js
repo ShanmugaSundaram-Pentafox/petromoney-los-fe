@@ -121,7 +121,7 @@ const SalesInfo = ({
   const open = Boolean(anchorEl);
 
   const saveNewSalesData = () => {
-    if (parseInt(apiData.from_year) >= parseInt(apiData.to_year)){
+    if (parseInt(apiData.from_year) < 1900 || parseInt(apiData.from_year) >= parseInt(apiData.to_year)){
       enqueueSnackbar("Year error, Please check...", {
         anchorOrigin: {
           vertical: "top",
@@ -148,7 +148,7 @@ const SalesInfo = ({
   }
 
   const saveEditRow = (data, i) => {
-    if(parseInt(data.from_year) >= parseInt(data.to_year)){
+  if (parseInt(data.from_year) < 1900 || parseInt(data.from_year) >= parseInt(data.to_year)){
       enqueueSnackbar("Year error, Please check...", {
         anchorOrigin: {
           vertical: "top",

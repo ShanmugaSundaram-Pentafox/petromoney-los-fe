@@ -21,7 +21,7 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker
 } from '@material-ui/pickers';
-import moment from 'moment';
+import { format } from 'date-fns';
 import { URL } from '../../../config/serverUrls';
 
 const useStyles = makeStyles((theme) => ({

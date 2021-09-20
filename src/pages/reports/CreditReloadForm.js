@@ -91,7 +91,7 @@ const {
   validateOnBlur: true,
   validationSchema: Yup.object().shape({
     mobile: Yup.number().required("Enter mobile number").test("maxDigits","Mobile Number mush have 10 digits", (number) => String(number).length === 10),
-    amount: Yup.number().required("Enter Request Amount"),
+    amount: Yup.number().required('Enter Amount').moreThan(0, 'Invalid Amount').test("maxDigits","Request Amount Invalid", (value) => String(value).length < 9)
   }),
   onSubmit: (data) => {
     const submitData = {'request_source': 'MDM', 'amount': data.amount, 'mobile': data.mobile, 'account_id': accountId?.id}

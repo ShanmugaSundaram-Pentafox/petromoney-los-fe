@@ -35,7 +35,6 @@ const FleetOperatorsDetails = ({ id, currentUser, titleAlign }) => {
         setData({});
     }
     const handleClick = (e, row) => {
-        console.log(e.target.value)
         setData(row)
         setOpenModal(true)
         setEdit(true)
@@ -63,7 +62,7 @@ const FleetOperatorsDetails = ({ id, currentUser, titleAlign }) => {
             <Drawer
                 anchor="right"
                 open={openModal}
-                onClose={() => setOpenModal(false)}
+                onClose={handleEdit}
                 variant="temporary"
             >
                 {

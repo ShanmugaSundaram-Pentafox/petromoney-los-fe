@@ -101,7 +101,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
   const [openDeleteForm, setOpenDeleteForm] = useState(false);
   const [status, setStatus] = useState();
   const [openAddForm, setOpenAddForm] = useState(false);
-  const [AddData, setAddData] = useState({});
+  const [AddData, setAddData] = useState();
   const [openActiveForm, setOpenActiveForm] = useState(false);
   const [openDeactiveForm, setOpenDeactiveForm] = useState(false);
   const [deactivateId, setDeactivateId] = useState();
@@ -240,83 +240,85 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
   };
 
   const submitAdd = () => {
-    if(status === 'OMCs'){
-      addOmcs(AddData)
-      .then((res) => {
-        handleClose()
-        enqueueSnackbar(res, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
+    if(AddData){
+      if(status === 'OMCs'){
+        addOmcs(AddData)
+        .then((res) => {
+          handleClose()
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
+          setTimeout(() => {  
+            window.location.reload(false);
+          }, 1500);
         })
-        setTimeout(() => {  
-          window.location.reload(false);
-        }, 1500);
-      })
-      .catch((err) => {
-        console.log(err);
-        enqueueSnackbar(err, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
+        .catch((err) => {
+          console.log(err);
+          enqueueSnackbar(err, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
         })
-      })
-    }
-    if(status === 'Region'){
-      addRegion(AddData)
-      .then((res) => {
-        handleClose()
-        enqueueSnackbar(res, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
+      }
+      if(status === 'Region'){
+        addRegion(AddData)
+        .then((res) => {
+          handleClose()
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
+          setTimeout(() => {
+            window.location.reload(false);
+          }, 1500);
         })
-        setTimeout(() => {
-          window.location.reload(false);
-        }, 1500);
-      })
-      .catch((err) => {
-        console.log(err);
-        enqueueSnackbar(err, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
+        .catch((err) => {
+          console.log(err);
+          enqueueSnackbar(err, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
         })
-      })
-    }
-    if(status === 'State'){
-      addState(AddData)
-      .then((res) => {
-        handleClose()
-        enqueueSnackbar(res, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
+      }
+      if(status === 'State'){
+        addState(AddData)
+        .then((res) => {
+          handleClose()
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
+          setTimeout(() => {
+            window.location.reload(false);
+          }, 1500);
         })
-        setTimeout(() => {
-          window.location.reload(false);
-        }, 1500);
-      })
-      .catch((err) => {
-        console.log(err);
-        enqueueSnackbar(err, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
+        .catch((err) => {
+          console.log(err);
+          enqueueSnackbar(err, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
         })
-      })
+      }
     }
   }
 
@@ -557,8 +559,13 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
                       color='primary'
                       style={{ marginTop: 15 }}
                       onClick={() => {
-                        setOpenRegionForm(true);
-                        setStatus(title)
+                        if(title === 'Region'){
+                          setOpenRegionForm(true)
+                          setStatus(title)
+                        } else {
+                          setOpenAddForm(true);
+                          setStatus(title)
+                        }
                       }}
                     >
                       ADD
@@ -739,7 +746,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
           style={{ marginTop: 8 }}
           variant='outlined'
           fullWidth
-          value={AddData.name}
+          value={AddData?.name}
           onChange={handleAdd}
           />
           </Grid>

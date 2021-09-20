@@ -24,7 +24,7 @@ import DealerEditForm from './DealerEditForm';
 import apiCall from '../../../utils/api.util';
 import { useSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
-import moment from 'moment';
+import { format, parse } from 'date-fns';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -197,10 +197,9 @@ const DealerEditSideWrapper = ({
       values.first_name = values.first_name.toUpperCase();
       values.last_name = values.last_name.toUpperCase();
       setLoading(true);
-      const date = moment(selectedDate).format('DD-MMM-YYYY');
-      const date_values = { ...values, dob: date, is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0 };
+      const d = selectedDate ? format(parse(selectedDate, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : format(parse(values.dob, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
+      const date_values = { ...values, dob: d, is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0 };
       const data = new FormData();
-
       Object.keys(date_values).forEach((key) => {
         data.append(key, date_values[key]);
       });
@@ -208,8 +207,8 @@ const DealerEditSideWrapper = ({
         modelType === 'DEALER'
           ? URL.dealers
           : modelType === 'GUARANTOR'
-          ? URL.guarantor
-          : URL.coApplicants;
+            ? URL.guarantor
+            : URL.coApplicants;
       let url = `${apiURL}/${dealershipId}`;
       if (values.id) {
         url += `/${values.id}`;
@@ -265,7 +264,7 @@ const DealerEditSideWrapper = ({
   };
   const handleStateChange = (state) => {
     setSelectedState(state);
-  }
+  };
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant='h4'>
@@ -273,8 +272,8 @@ const DealerEditSideWrapper = ({
           {modelType === 'DEALER'
             ? 'Dealer Edit Form'
             : modelType === 'GUARANTOR'
-            ? 'Guarantor Edit Form'
-            : 'CoApplicant Edit Form'}
+              ? 'Guarantor Edit Form'
+              : 'CoApplicant Edit Form'}
         </div>
         <CloseIcon onClick={onClose} />
       </Typography>

@@ -12,7 +12,7 @@ import Box from '@material-ui/core/Box';
 import DeleteIcon from '@material-ui/icons/Delete';
 import UploadIcon from '@material-ui/icons/Backup';
 import { grey } from '@material-ui/core/colors';
-import 'date-fns';
+import { format, parse } from 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import {
     MuiPickersUtilsProvider,
@@ -79,17 +79,16 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
     const classes = useStyles();
     const [showUpload, setShowUpload] = useState(false);
     const [fileType, setFileType] = useState()
-    const [currentFileUpload, setCurrentFileUpload] = useState('');
-    const [formValue, setformValue] = useState(values);
     const [state, setState] = React.useState({
         checkedA: true,
         checkedB: true,
     });
     const { enqueueSnackbar } = useSnackbar();
-    const [selectedDate, setSelectedDate] = useState(data.dob)
+    const [selectedDate, setSelectedDate] = useState(data?.dob && parse(data?.dob, 'dd-MM-yyyy', new Date()))
     const handleDateChange = (date) => {
+        const d = format(new Date(date), "dd-MM-yyyy")
         setSelectedDate(date)
-        handleDate(date)
+        handleDate(d)
     }
     useEffect(() => {
         handleState(state)
@@ -321,7 +320,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                                         variant='inline'
                                         inputVariant='outlined'
                                         label="Date of Birth"
-                                        format='dd/MM/yyy'
+                                        format='dd/MM/yyyy'
                                         animateYearScrolling={true}
                                         invalidDateMessage='Invalid Date Format'
                                         error={errors.dob}
@@ -417,7 +416,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                                     label="Address"
                                     name="address"
                                     readOnly={readOnly}
-                                    value={values.address?.toUpperCase()}
+                                    value={values.address}
                                     error={errors.address}
                                     helperText={errors.address}
                                     onChange={onChange}
@@ -631,7 +630,6 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                                             }
                                         </Grid>
                                     </>
-
                                 ) : null
                             }
                             {

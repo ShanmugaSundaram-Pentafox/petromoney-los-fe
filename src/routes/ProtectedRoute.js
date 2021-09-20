@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectCurrentUser } from '../store/user/user.selector';
 import MainLayout from '../layout/main.layout';
+import { permissionCheck } from '../components/UserCan/UserCan';
+import { rulesList } from '../config/userRules';
 
 const ProtectedRoute = ({ component: Component, currentUser, allow, ...rest }) => {
   return (
@@ -11,11 +13,21 @@ const ProtectedRoute = ({ component: Component, currentUser, allow, ...rest }) =
       {...rest}
       render={props => {
         if(currentUser) {
-          return allow ? (
-            <MainLayout currentUser={currentUser}>
-              <Component {...props} currentUser={currentUser} />
-            </MainLayout>
-          ) : <Redirect to="/" />
+          if (allow) {
+            return (
+              <MainLayout currentUser={currentUser}>
+                <Component {...props} currentUser={currentUser} />
+              </MainLayout>
+            )
+          } else {
+            if (permissionCheck(currentUser.role_name, rulesList.transporter_view)) {
+              return <Redirect to={`/transports/${currentUser.id}`} />
+            }
+            if (permissionCheck(currentUser.role_name, rulesList.dealer_view)) {
+              return <Redirect to={`/dealership/${currentUser.dealership_id}`} />
+            }
+            return <Redirect to="/" />
+          }
         }
         // store url for redirection after login
         window.sessionStorage.setItem('pm-login-url', props.location.pathname);

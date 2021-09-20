@@ -135,7 +135,7 @@ const {
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant='h4'>
-        <div>Add Withheld Form</div>
+        <div>Credit Reload Form</div>
         <CloseIcon onClick={callback} />
       </Typography>
       <>
@@ -145,16 +145,19 @@ const {
               <form>
                 <Grid container spacing={2}>
                   <Grid item md={6} style={{marginBottom: 10}}>
-                    <label style={{ marginBottom: 8 }}>Account Type</label>
-                    <Select isClearable onChange={setAccountId} options={data} />
-                  </Grid>
-                  <Grid item md={6} style={{marginBottom: 10}}>
                     <label style={{ marginBottom: 8 }}>Dealership ID</label>
                     <Select isClearable onChange={setDealershipId} options={dealershipData} />
                   </Grid>
                 </Grid>
+
                 <Grid container spacing={2}>
-                  <Grid item md={6}>
+                  <Grid item md={6} style={{marginBottom: 10}}>
+                    <label style={{ marginBottom: 8 }}>Account Type</label>
+                    <Select isClearable onChange={setAccountId} options={data} />
+                  </Grid>
+                </Grid>
+                <Grid container spacing={2}>
+                  <Grid item md={6} style={{marginBottom: 10}}>
                     <label style={{ marginBottom: 8 }}>Mobile Number</label>
                     <TextField
                     name="mobile"
@@ -167,8 +170,9 @@ const {
                     fullWidth
                     />
                   </Grid>
-
-                  <Grid item md={6}>
+                </Grid>
+                <Grid container spacing={2}>
+                <Grid item md={6}>
                     <label style={{ marginBottom: 8 }}>Amount</label>
                     <TextField 
                     name="amount"

@@ -30,6 +30,7 @@ import { Tooltip } from '@material-ui/core';
 import { Drawer } from '@material-ui/core';
 import CreditReloadForm from './CreditReloadForm';
 import { getAllDealership } from '../../services/dealerships.service';
+import CreditReloadRemarks from './CreditReloadRemarks';
 
 const useStyes = makeStyles((theme) => ({
   root: {},
@@ -44,6 +45,7 @@ const CreditReload = ({ currentUser }) => {
   const [reloadDialog, setReloadDialog] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [statusModal, setStatusModal] = useState(false);
   const [dealershipData, setDealershipData] = useState();
 
 
@@ -51,8 +53,10 @@ const CreditReload = ({ currentUser }) => {
     // setLoading(true)
     getCreditReport()
       .then((data) => {
+        if(data != 0){
+          setTableData(data);
+        }
         // setLoading(false);
-        setTableData(data);
       })
       .catch((e) => {
         // setLoading(false);
@@ -132,12 +136,13 @@ const CreditReload = ({ currentUser }) => {
         </Button>
       );
     },
-    // onRowClick: (rowData) => {
-    //     getCreditReportById(rowData[0])
-    //         .then((data) => {
-    //             setRowData(data[0])
-    //         })
-    // }
+    onRowClick: (rowData) => {
+        getCreditReportById(rowData[0])
+        .then((data) => {
+          setRowData(data[0])
+          setStatusModal(true)
+      })
+    }
   };
 
   return (
@@ -154,7 +159,9 @@ const CreditReload = ({ currentUser }) => {
           data={tableData}
         />
       )}
-      <Dialog open={reloadDialog} onClose={handleClose}>
+
+
+      {/* <Dialog open={reloadDialog} onClose={handleClose}>
         <DialogTitle>Credit Reload Request</DialogTitle>
         <DialogContent style={{ width: 450 }}>
           <Typography variant='h7'>
@@ -181,7 +188,20 @@ const CreditReload = ({ currentUser }) => {
             </Button>
           )}
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
+
+
+      <Drawer
+        anchor='right'
+        open={true}
+        onClose={() => setStatusModal(false)}
+        variant='temporary'
+      >
+        {
+          <CreditReloadRemarks callback={() => setStatusModal(false)}/>
+        }
+      </Drawer>
+
       <Drawer
         anchor='right'
         open={openModal}

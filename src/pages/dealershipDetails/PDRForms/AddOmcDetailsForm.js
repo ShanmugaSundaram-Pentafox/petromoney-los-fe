@@ -21,7 +21,7 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker
 } from '@material-ui/pickers';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import { URL } from '../../../config/serverUrls';
 
 const useStyles = makeStyles((theme) => ({
@@ -68,8 +68,8 @@ const useStyles = makeStyles((theme) => ({
 const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) => {
   const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
   const [loading, setLoading] = useState(false)
-  const [executedDate, setExecutedDate] = useState(data?.agreement_executed_on)
-  const [validDate, setValidDate] = useState(data?.agreement_valid_till)
+  const [executedDate, setExecutedDate] = useState(data ? parse(data?.agreement_executed_on, 'dd-MM-yyyy', new Date()) : new Date())
+  const [validDate, setValidDate] = useState(data ? parse(data?.agreement_valid_till, 'dd-MM-yyyy', new Date()) : new Date())
 
   const handleEdit = () => {
     setReadOnly(!readOnly)
@@ -101,8 +101,8 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
     }),
     onSubmit: values => {
 
-      const executed_date = moment(executedDate).format('YYYY-MM-DD');
-      const valid_date = moment(validDate).format('YYYY-MM-DD');
+      const executed_date = format(new Date(executedDate), 'yyyy-MM-dd');
+      const valid_date = format(new Date(validDate), 'yyyy-MM-dd');
       const date = { ...values, agreement_executed_on: executed_date, agreement_valid_till: valid_date };
       const data = new FormData();
       Object.keys(date).forEach((key) => {
@@ -200,7 +200,9 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                       disabled={readOnly}
                       format='yyyy-MM-dd'
                       animateYearScrolling={true}
-                      invalidDateMessage='Invalid Date Format'
+                      error={errors.agreement_executed_on}
+                      helperText={errors.agreement_executed_on}
+                      // invalidDateMessage='Invalid Date Format'
                       margin='normal'
                       id='date-picker'
                       autoOk={true}
@@ -226,10 +228,13 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                       variant='inline'
                       inputVariant='outlined'
                       format='yyyy-MM-dd'
+                      maxDate={new Date('2050-01-01')}
                       readOnly={readOnly}
                       disabled={readOnly}
+                      error={errors.agreement_valid_till}
+                      helperText={errors.agreement_valid_till}
                       animateYearScrolling={true}
-                      invalidDateMessage='Invalid Date Format'
+                      // invalidDateMessage='Invalid Date Format'
                       margin='normal'
                       id='date-picker'
                       autoOk={true}

@@ -159,9 +159,10 @@ const AddNewTransportsOwnerForm = ({
     checkedA: true,
     checkedB: true,
   });
-  const [selectedDate, setSelectedDate] = useState(rowData && rowData.dob);
+  const [selectedDate, setSelectedDate] = useState(rowData ? parse(rowData.dob, 'dd-MM-yyyy', new Date()) : new Date());
   const handleDateChange = (e) => {
-    setSelectedDate(e);
+    const d = format(new Date(e), "dd-MM-yyyy")
+    setSelectedDate(d);
   };
   const handleStateChange = (event) => {
     setState({ ...state, [event.target.name]: event.target.checked });
@@ -196,7 +197,7 @@ const AddNewTransportsOwnerForm = ({
       first_name: Yup.string().required('Please enter transporter name'),
       last_name: Yup.string().required('Please enter transporter name'),
       email: Yup.string().email('Enter valid mail id '),
-      mobile: Yup.number().required("Enter mobile number").test("maxDigits","Mobile Number mush have 10 digits", (number) => String(number).length === 10),
+      mobile: Yup.number().required("Enter mobile number").test("maxDigits", "Mobile Number mush have 10 digits", (number) => String(number).length === 10),
       address: Yup.string().required('Please enter address'),
     }),
     onSubmit: (values) => {
@@ -570,9 +571,7 @@ const AddNewTransportsOwnerForm = ({
                         margin='normal'
                         id='date-picker'
                         autoOk={true}
-                        value={
-                          selectedDate !== null ? selectedDate : values.dob
-                        }
+                        value={selectedDate}
                         onChange={handleDateChange}
                         InputLabelProps={{ shrink: true }}
                         keyboardButtonProps={{

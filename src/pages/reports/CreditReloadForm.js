@@ -18,6 +18,7 @@ import { useSnackbar } from 'notistack';
 import { URL } from '../../config/serverUrls';
 import { InputAdornment } from '@material-ui/core';
 import Currency from '../../components/Number/Currency';
+import AsyncSelect from 'react-select/async';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelFormWrapper: {
@@ -72,7 +73,9 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
   const [dealershipId, setDealershipId] = useState();
   const [mobile, setMobile] = useState();
   const [amount, setAmount] = useState();
+  const [selectedValue, setSelectedValue] = useState();
   const classes = useStyles();
+  const [optionsLoading, setOptionsLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
 const {
@@ -96,8 +99,8 @@ const {
   onSubmit: (data) => {
     const submitData = {'request_source': 'MDM', 'amount': data.amount, 'mobile': data.mobile, 'account_id': accountId?.id}
 
-    if(dealershipId && accountId){
-      apiCall(`credit/reload/${dealershipId?.value}`, {
+    if(selectedValue && accountId){
+      apiCall(`credit/reload/${selectedValue}`, {
           method: 'POST',
           body: submitData,
           headers: {
@@ -105,7 +108,7 @@ const {
           }
       })
       .then(res => {
-          console.log(res);
+        if(res.status === "SUCCESS"){
           callback()
           enqueueSnackbar(res.message, {
             anchorOrigin: {
@@ -117,6 +120,15 @@ const {
           setTimeout(() => {
             window.location.reload(false)
         }, 1000);
+        } else {
+          enqueueSnackbar(res.message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          });
+        }
       })
       .catch(e => {
           console.log(e);
@@ -132,6 +144,25 @@ const {
   }
 })
 
+const getOptions = (inputValue, callback) => {
+  if(inputValue.toString().length >2){
+    setOptionsLoading(true)
+    apiCall(`dealership/search?dealership=${inputValue}`)
+      .then(res => {
+        setOptionsLoading(false)
+        callback(res.data);
+      })
+      .catch(e => {
+        console.log(e);
+        setOptionsLoading(false)
+      })
+  }
+}
+
+const onChangeOption = (newValue) => {
+  setSelectedValue(newValue.id)
+}
+
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant='h4'>
@@ -145,8 +176,17 @@ const {
               <form>
                 <Grid container spacing={2}>
                   <Grid item md={6} style={{marginBottom: 10}}>
-                    <label style={{ marginBottom: 8 }}>Dealership ID</label>
-                    <Select isClearable onChange={setDealershipId} options={dealershipData} />
+                    <label style={{ marginBottom: 8 }}>Dealership</label>
+                    <AsyncSelect
+                    components={optionsLoading? null : {LoadingIndicator: null}}
+                    styles={{
+                      menu: provided => ({ ...provided, zIndex: 9999 })
+                    }}
+                    onChange={onChangeOption}
+                    loadingMessage={() => ' '}
+                    loadOptions={getOptions}
+                    placeholder = 'Search Dealership ID or Name'
+                    />
                   </Grid>
                 </Grid>
 
@@ -164,8 +204,7 @@ const {
                     type="number"
                     value={values.mobile}
                     error={errors.mobile}
-                    helperText={errors.mobile}
-                    helperText="Mobile Number for Whatsapp Notifications."
+                    helperText={errors.mobile? errors.mobile : "Mobile Number for Whatsapp Notifications."}
                     variant='outlined'
                     onChange={handleChange}
                     fullWidth

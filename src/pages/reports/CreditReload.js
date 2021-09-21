@@ -88,7 +88,7 @@ const CreditReload = ({ currentUser }) => {
       { name: 'mobile', label: 'Mobile' },
       { name: 'amount', label: 'Amount' },
       { name: 'type_of_account', label: 'Account Type' },
-      { name: 'name', label: 'Submited By', options: {
+      { name: 'name', label: 'Submitted By', options: {
         customBodyRender: (value, tableMeta) => {
           return <div>{`${value} (${tableMeta?.rowData[9]})`}</div>
         }

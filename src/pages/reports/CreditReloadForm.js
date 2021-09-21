@@ -175,7 +175,7 @@ const onChangeOption = (newValue) => {
             <Box>
               <form>
                 <Grid container spacing={2}>
-                  <Grid item md={6} style={{marginBottom: 10}}>
+                  <Grid item md={8} style={{marginBottom: 10}}>
                     <label style={{ marginBottom: 8 }}>Dealership</label>
                     <AsyncSelect
                     components={optionsLoading? null : {LoadingIndicator: null}}
@@ -191,13 +191,13 @@ const onChangeOption = (newValue) => {
                 </Grid>
 
                 <Grid container spacing={2}>
-                  <Grid item md={6} style={{marginBottom: 10}}>
+                  <Grid item md={8} style={{marginBottom: 10}}>
                     <label style={{ marginBottom: 8 }}>Account Type</label>
                     <Select isClearable onChange={setAccountId} options={data} />
                   </Grid>
                 </Grid>
                 <Grid container spacing={2}>
-                  <Grid item md={6} style={{marginBottom: 10}}>
+                  <Grid item md={8} style={{marginBottom: 10}}>
                     <label style={{ marginBottom: 8 }}>Mobile Number</label>
                     <TextField
                     name="mobile"
@@ -212,7 +212,7 @@ const onChangeOption = (newValue) => {
                   </Grid>
                 </Grid>
                 <Grid container spacing={2}>
-                <Grid item md={6}>
+                <Grid item md={8}>
                     <label style={{ marginBottom: 8 }}>Amount</label>
                     <TextField 
                     name="amount"

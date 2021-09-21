@@ -198,7 +198,7 @@ const DealerEditSideWrapper = ({
       values.last_name = values.last_name.toUpperCase();
       setLoading(true);
       const d = selectedDate ? format(parse(selectedDate, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : format(parse(values.dob, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
-      const date_values = { ...values, dob: d, is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0 };
+      const date_values = { ...values, dob: d, pan: values.pan.toUpperCase(),  is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0 };
       const data = new FormData();
       Object.keys(date_values).forEach((key) => {
         data.append(key, date_values[key]);

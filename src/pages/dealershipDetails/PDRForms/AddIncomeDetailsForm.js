@@ -1,18 +1,11 @@
 import React, { useState } from 'react';
-import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
 import Button from '../../../components/CommonComponents/Button/Button';
-import * as Yup from 'yup';
-import { useFormik } from 'formik';
 import clsx from 'clsx';
 import Divider from '@material-ui/core/Divider';
 import { makeStyles } from "@material-ui/styles";
 import CloseIcon from '@material-ui/icons/Close';
-import EditIcon from '@material-ui/icons/Edit';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
 import { useMount } from 'react-use';
@@ -64,6 +57,11 @@ const useStyles = makeStyles((theme) => ({
   },
   typography: {
     marginBottom: 12
+  },
+  typo: {
+    marginTop: 12,
+    marginBottom: 36,
+    textAlign: 'center'
   }
 
 }))
@@ -78,6 +76,7 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
   const [editExpenseData, setEditExpenseData] = useState({});
   const [type, setType] = useState(false)
   const classes = useStyles()
+  const { enqueueSnackbar } = useSnackbar();
 
 
   useMount(() => {
@@ -116,7 +115,13 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
     setEditIncomeData(item)
   }
   const handleIncomeDelete = (item, i) => {
-
+    enqueueSnackbar('You are not allowed to delete.Please contact admin', {
+      anchorOrigin: {
+        vertical: 'top',
+        horizontal: 'right',
+      },
+      variant: 'error',
+    })
   }
   const handleExpenseEdit = (item, i) => {
     setAddExpense(true)
@@ -125,7 +130,13 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
 
   }
   const handleExpenseDelete = (item, i) => {
-
+    enqueueSnackbar('You are not allowed to delete.Please contact admin', {
+      anchorOrigin: {
+        vertical: 'top',
+        horizontal: 'right',
+      },
+      variant: 'error',
+    })
   }
 
   return (
@@ -142,6 +153,10 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
                 <div>
                   <Typography variant="h4" component="h2" className={classes.typography}>Income details</Typography>
                 </div>
+                {
+                  incomeData.length ? null :
+                    <Typography className={classes.typo}>No income data found...</Typography>
+                }
                 <Grid container spacing={2}>
                   {
                     Array.isArray(incomeData) && incomeData?.map((item, i) => {
@@ -170,6 +185,11 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
                 <div>
                   <Typography variant="h4" component="h2" className={classes.typography}>Expense details</Typography>
                 </div>
+                {
+                  expenseData.length ? null :
+                    <Typography className={classes.typo}>No expense data found...</Typography>
+
+                }
                 <Grid container spacing={2}>
                   {
                     Array.isArray(expenseData) && expenseData?.map((item, i) => {

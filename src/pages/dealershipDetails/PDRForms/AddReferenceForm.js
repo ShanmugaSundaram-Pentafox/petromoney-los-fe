@@ -16,7 +16,7 @@ import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
 import 'date-fns';
-import { addOmcDetails, getOmcDetailsById } from '../../../services/PDReport.services';
+import { addOmcDetails, addReferenceDetails, getOmcDetailsById } from '../../../services/PDReport.services';
 import { FormControl } from '@material-ui/core';
 import { RadioGroup } from '@material-ui/core';
 import { FormControlLabel } from '@material-ui/core';
@@ -62,7 +62,6 @@ const useStyles = makeStyles((theme) => ({
             backgroundColor: theme.palette.success.dark
         }
     }
-
 }))
 
 const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
@@ -88,23 +87,29 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
             // transport_name: Yup.string().required('Please enter transporter name'),
         }),
         onSubmit: values => {
-
-            addOmcDetails(values, dealer_id)
-                .then(res => {
-                    enqueueSnackbar(res, {
-                        anchorOrigin: {
-                            vertical: 'top',
-                            horizontal: 'right',
-                        },
-                        variant: 'success',
-                    });
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 1500);
-                })
-                .catch(e => {
-                    console.log(e);
-                })
+            enqueueSnackbar('you are not allowed to add references details,Please contact admin', {
+                anchorOrigin: {
+                    vertical: 'top',
+                    horizontal: 'right',
+                },
+                variant: 'error',
+            });
+            // addReferenceDetails(values, dealer_id)
+            //     .then(res => {
+            //         enqueueSnackbar(res, {
+            //             anchorOrigin: {
+            //                 vertical: 'top',
+            //                 horizontal: 'right',
+            //             },
+            //             variant: 'success',
+            //         });
+            //         setTimeout(() => {
+            //             window.location.reload()
+            //         }, 1500);
+            //     })
+            //     .catch(e => {
+            //         console.log(e);
+            //     })
         }
     });
     const inputProps = {

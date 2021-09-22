@@ -161,9 +161,9 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
                             variant: 'success',
                         }
                         )
-                        // setTimeout(() => {
-                        //     window.location.reload()
-                        // }, 1500);
+                        setTimeout(() => {
+                            window.location.reload()
+                        }, 1500);
 
                     })
                     .catch(e => {
@@ -228,22 +228,6 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
                 console.log(e);
             })
 
-    }
-    const saveEditRow = (data, i) => {
-        updateLoanDetailsByID(data, dealer_id)
-            .then(res => {
-                setEditRow({});
-            })
-            .catch(err => {
-                console.log('Sales data save error - ', err);
-            })
-    }
-    const onEditTextChange = e => {
-        const { name, value } = e.target;
-        setEditRow({
-            ...editRow,
-            [name]: value
-        })
     }
 
     return (

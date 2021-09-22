@@ -107,8 +107,8 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
   const [omcEdit, setOmcEdit] = useState(false)
   const [omcData, setOmcData] = useState()
   const [outletData, setOutletData] = useState()
-  const [referenceData, setReferenceData] = useState()
-  const [addlData, setAddlData] = useState()
+  const [referenceData, setReferenceData] = useState([])
+  const [addlData, setAddlData] = useState([])
   const [infrastructureDetails, setInfrastructureDetails] = useState()
   const [assetDetails, setAssetDetails] = useState()
   const [businessData, setBusinessData] = useState();
@@ -367,7 +367,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         onClose={() => setOpenOtherForm(false)}
         variant="temporary"
       >
-        <AddOtherDetailsForm dealer_id={id} isEdit={addlData ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={omcData} />
+        <AddOtherDetailsForm dealer_id={id} isEdit={addlData ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={addlData} />
       </Drawer>
       <Drawer
         anchor="right"
@@ -383,7 +383,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         onClose={() => setOpenReferenceForm(false)}
         variant="temporary"
       >
-        <AddReferenceForm dealer_id={id} isEdit={referenceData ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} />
+        <AddReferenceForm dealer_id={id} isEdit={referenceData ? null : 'Edit'} data={referenceData} callback={handleEdit} currentUser={currentUser} />
       </Drawer>
       <Drawer
         anchor="right"

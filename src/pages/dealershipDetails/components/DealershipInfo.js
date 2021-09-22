@@ -75,7 +75,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
 
 
   const { values, errors, handleChange: onChange, handleSubmit, setFieldValue } = useFormik({
-    initialValues: data,
+    initialValues: { ...data },
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({

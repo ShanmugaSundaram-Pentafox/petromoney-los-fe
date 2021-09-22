@@ -63,6 +63,7 @@ const IncomeTable = ({ id, editable, currentUser }) => {
   const { values, errors, handleChange, handleSubmit, handleReset, setValues } = useFormik({
     initialValues: {},
     onSubmit: values => {
+      values.business_name = values.business_name.toUpperCase();
       setLoading(true);
       const objBody = {
         user_id: currentUser.id, ...values

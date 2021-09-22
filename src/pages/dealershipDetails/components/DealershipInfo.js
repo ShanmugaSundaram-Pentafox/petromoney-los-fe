@@ -81,7 +81,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      name: Yup.string().required('Please enter transporter name'),
+      name: Yup.string().required('Please enter transporter name').matches(/^[aA-zZ & - .\s]+$/, "Only alphabets are allowed for this field ").max(50),
       address: Yup.string().required('Please enter address'),
       state: Yup.string().required('Please choose state'),
       district: Yup.string().required('Please choose district'),
@@ -92,11 +92,14 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
         .required('Enter PAN')
         .uppercase(),
-      gst: Yup.number().min(15, 'Enter valid GST'),
+      gst: Yup.string().min(15, 'Enter valid GST'),
     }),
     onSubmit: values => {
-      let eDate = format(parse(values.agreement_executed_on, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
-      let vDate = format(parse(values.agreement_valid_till, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
+      values.name = values.name.toUpperCase();
+      values.gst = values.gst.toUpperCase();
+      values.pan = values.pan.toUpperCase();
+      let eDate = values.agreement_executed_on? format(parse(values.agreement_executed_on, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : null;
+      let vDate = values.agreement_valid_till? format(parse(values.agreement_valid_till, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : null;
       const date_values = {
         ...values,
         agreement_valid_till: vDate,
@@ -307,7 +310,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                   <ViewData title='PAN' value={values.pan} />
                 </Grid>
                 <Grid md={4}>
-                  <ViewData title='Mobile' value={values.mobile} />
                   <ViewData title='State' value={values.state} />
                   <ViewData title='GST' value={values.gst} />
                 </Grid>
@@ -403,7 +405,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     name="gst"
                     readOnly={readOnly}
                     // disabled={readOnly}
-                    defaultValue={values.gst}
+                    defaultValue={values.gst?.toUpperCase()}
+                    value={values.gst?.toUpperCase()}
                     error={errors.gst}
                     helperText={errors.gst}
                     {...fieldProps}
@@ -442,7 +445,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     name="pan"
                     readOnly={readOnly}
                     // disabled={readOnly}
-                    defaultValue={values.pan}
+                    defaultValue={values.pan.toUpperCase()}
+                    value={values.pan.toUpperCase()}
                     error={errors.pan}
                     helperText={errors.pan}
                     {...fieldProps}

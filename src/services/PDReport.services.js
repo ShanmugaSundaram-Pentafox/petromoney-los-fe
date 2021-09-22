@@ -614,9 +614,45 @@ export const addReferenceDetails = (data, id) => {
       });
   });
 }
+export const updateReferenceById = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/references/${data.id}`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+export const deleteReferenceDetailsByID = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/reference/${data.id}`, {
+      method: 'DELETE',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
 export const getOtherDetailsbyID = (id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`dealership/${id}/addl/details`)
+    apiCall(`dealership/${id}/details`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data)
@@ -631,8 +667,44 @@ export const getOtherDetailsbyID = (id) => {
 }
 export const addAdditionalDetails = (data, id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`dealership/${id}/addl/details`, {
+    apiCall(`dealership/${id}/details`, {
       method: 'POST',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+export const updateAdditionalDetails = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/details/${data.id}`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+export const deleteOtherDetailsByID = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/details/${data.id}`, {
+      method: 'DELETE',
       body: data,
     })
       .then(({ status, message }) => {

@@ -65,26 +65,24 @@ const useStyles = makeStyles(theme => ({
 const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) => {
   const [readOnly, setReadOnly] = useState(true);
   const [loading, setLoading] = useState();
-  const [apiStatus, setApiStatus] = useState({});
   const [showUpload, setShowUpload] = useState(false);
   const [fileType, setFileType] = useState('');
   const [businessTypes, setBusinessTypes] = useState([{}, {}, {}, {}, {}]);
   const [states, setStates] = useState([]);
   const [regionList, setRegionList] = useState([]);
-  const [imageModal, setImageModal] = useState({});
 
   const { enqueueSnackbar } = useSnackbar();
 
 
   const { values, errors, handleChange: onChange, handleSubmit, setFieldValue } = useFormik({
-    initialValues: data,
+    initialValues: { ...data },
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      name: Yup.string().required('Please enter transporter name'),
+      name: Yup.string().required('Please enter dealership name').matches(/^[A-Za-z]/, "Please Enter valid name"),
       address: Yup.string().required('Please enter address'),
       state: Yup.string().required('Please choose state'),
-      district: Yup.string().required('Please choose district'),
+      district: Yup.string().required('Please enter district'),
       pincode: Yup.number()
         .min(6, 'Pincode must be 6 digits')
         .required('Enter pincode'),
@@ -92,15 +90,19 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
         .required('Enter PAN')
         .uppercase(),
-      gst: Yup.number().min(15, 'Enter valid GST'),
+      gst: Yup.string().matches(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/, "Invalid GST").required("Enter GST").uppercase(),
+
     }),
     onSubmit: values => {
       let eDate = format(parse(values.agreement_executed_on, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
       let vDate = format(parse(values.agreement_valid_till, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
       const date_values = {
         ...values,
+        name: values.name.toUpperCase(),
         agreement_valid_till: vDate,
-        agreement_executed_on: eDate
+        agreement_executed_on: eDate,
+        gst: values.gst.toUpperCase(),
+        pan: values.pan.toUpperCase()
       };
       const data = new FormData();
       Object.keys(date_values).forEach(key => {
@@ -131,7 +133,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
               window.location.reload()
             }, 1500);
             setLoading(false);
-            setReadOnly(true);
+            // setReadOnly(true);
           }
           else {
             enqueueSnackbar(message, {
@@ -144,7 +146,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
             )
             setLoading(false);
             setReadOnly(true);
-
           }
         })
         .catch(e => {
@@ -229,8 +230,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         });
       })
   }
-
-
   const fetchRegions = (res) => {
     getRegionById(res)
       .then(res => {
@@ -308,17 +307,20 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
               <Grid container spacing={2} className={classes.readOnlyWrapper}>
                 <Grid md={4}>
                   <ViewData title='Name' value={values.name} />
-                  <ViewData title='Address' value={values.address + ' - ' + values.pincode} />
+                  <ViewData title='Address' value={values.address + ' - ' + values.pincode ? values.pincode : ''} />
                   <ViewData title='PAN' value={values.pan} />
                 </Grid>
                 <Grid md={4}>
                   <ViewData title='Mobile' value={values.mobile} />
-                  <ViewData title='State' value={values.state} />
+                  <ViewData title='State' value={(states.find(function (state, index) {
+                    if (state.id == values.state)
+                      return true;
+                  }))?.name} />
                   <ViewData title='GST' value={values.gst} />
                 </Grid>
                 <Grid md={4}>
-                  <ViewData title='Business type' value={values.business_type} />
-                  <ViewData title='Region' value={values.region} />
+                  <ViewData title='Business type' value={businessTypes[values.business_type - 1]?.name} />
+                  <ViewData title='Region' value={regionList[values.region - 1]?.name} />
                 </Grid>
               </Grid>
               {
@@ -391,12 +393,12 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     name="business_type"
                     readOnly={readOnly}
                     disabled={readOnly}
-                    defaultValue={businessTypes[values.business_type - 1]?.name}
+                    defaultValue={values.business_type}
                     error={errors.business_type}
                     helperText={errors.business_typeF}
                     {...fieldProps}
                   >
-                    <option value="">{businessTypes[values.business_type]?.name}</option>
+                    {/* <option value="">{businessTypes[values.business_type]?.name}</option> */}
                     {
                       businessTypes?.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
                     }
@@ -408,7 +410,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     name="gst"
                     readOnly={readOnly}
                     // disabled={readOnly}
-                    defaultValue={values.gst}
+                    value={values.gst.toUpperCase()}
                     error={errors.gst}
                     helperText={errors.gst}
                     {...fieldProps}
@@ -447,7 +449,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     name="pan"
                     readOnly={readOnly}
                     // disabled={readOnly}
-                    defaultValue={values.pan}
+                    value={values.pan.toUpperCase()}
                     error={errors.pan}
                     helperText={errors.pan}
                     {...fieldProps}

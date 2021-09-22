@@ -345,17 +345,6 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
 
                                     />
                                 </MuiPickersUtilsProvider>
-                                {/* <TextInput
-                        id="date"
-                        label="Date of Birth"
-                        name="dob"
-                        error={errors.dob}
-                        helperText={errors.dob}
-                        readOnly={readOnly}
-                        defaultValue={values.dob}
-                        onChange={onChange}
-                        InputLabelProps={{ shrink: true }}
-                    /> */}
                             </Grid>
                             {modelType === 'COAPPLICANT' || modelType === 'GUARANTOR' ?
                                 <>
@@ -561,7 +550,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                                 <TextInput
                                     label="PAN Number"
                                     name="pan"
-                                    value={values.pan}
+                                    value={values.pan.toUpperCase()}
                                     error={errors.pan}
                                     helperText={errors.pan}
                                     readOnly={readOnly}

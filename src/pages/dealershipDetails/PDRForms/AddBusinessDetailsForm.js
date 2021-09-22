@@ -112,7 +112,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
     }),
     onSubmit: values => {
       console.log("values", values)
-      let data = { ...values, has_atm: values.has_atm === "yes" ? 1 : 0, is_pep: values.is_pep === "yes" ? 1 : 0 }
+      let data = { ...values, has_atm: values.has_atm === "Yes" ? 1 : 0, is_pep: values.is_pep === "Yes" ? 1 : 0 }
       updateBusinessDetailsByID(data, dealer_id)
         .then(res => {
           console.log(res)
@@ -315,8 +315,8 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                 <FormControl>
                   <RadioGroup name="has_atm" value={values.has_atm} onChange={handleChange}>
                     <FormGroup row>
-                      <FormControlLabel value="yes" control={<Radio color="secondary" />} label="Yes" />
-                      <FormControlLabel value="no" control={<Radio color="secondary" />} label="No" />
+                      <FormControlLabel value="Yes" control={<Radio color="secondary" />} label="Yes" />
+                      <FormControlLabel value="No" control={<Radio color="secondary" />} label="No" />
                     </FormGroup>
                   </RadioGroup>
                 </FormControl>
@@ -330,8 +330,8 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                 <FormControl>
                   <RadioGroup name="is_pep" value={values.is_pep} onChange={handleChange}>
                     <FormGroup row>
-                      <FormControlLabel value="yes" control={<Radio color="secondary" />} label="Yes" />
-                      <FormControlLabel value="no" control={<Radio color="secondary" />} label="No" />
+                      <FormControlLabel value="Yes" control={<Radio color="secondary" />} label="Yes" />
+                      <FormControlLabel value="No" control={<Radio color="secondary" />} label="No" />
                     </FormGroup>
                   </RadioGroup>
                 </FormControl>

@@ -34,6 +34,7 @@ import { useSnackbar } from 'notistack';
 // import CloseIcon from '@material-ui/icons/Close';
 import CloseIcon from '@material-ui/icons/CloseRounded';
 import { CircularProgress } from '@material-ui/core';
+import { getAllRegion } from '../../../services/common.service';
 
 // import Button from '../../../components/CommonComponents/Button/Button'
 
@@ -355,6 +356,7 @@ const DealershipDetails = ({
   const [loanInfo, setLoanInfo] = useState({});
   const [reLoader, setReloader] = useState(false);
   const [rejectLoader, setRejectLoader] = useState(false);
+  const [regions, setRegions] = useState([]);
   const [approveLoader, setApproveLoader] = useState(false);
   const [apiStatus, setApiStatus] = useState({});
   const [readOnly, setReadOnly] = useState(true);
@@ -380,6 +382,13 @@ const DealershipDetails = ({
           console.log(err)
         })
     }
+    getAllRegion()
+      .then(data => {
+        setRegions(data);
+      })
+      .catch(err => {
+        console.log(err)
+      });
   }, [data, loanData]);
 
   useEffect(() => {
@@ -596,7 +605,10 @@ const DealershipDetails = ({
               <Grid {...gridProps} md={6}>
                 <TextInput
                   labelText="Region"
-                  value={values.region}
+                  value={(regions.find(function (region, index) {
+                    if (region.region == values.region)
+                      return true;
+                  }))?.name}
                   readOnly={readOnly}
                   onChange={handleChange}
                   {...fieldProps}

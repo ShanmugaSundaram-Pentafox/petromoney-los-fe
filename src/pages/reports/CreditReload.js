@@ -13,23 +13,12 @@ import {
   getTypeOfAccount,
 } from '../../services/users.service';
 import Currency from '../../components/Number/Currency';
-import { Paper } from '@material-ui/core';
 import { Button } from '@material-ui/core';
-import { borderRadius, display } from '@material-ui/system';
-import CachedIcon from '@material-ui/icons/Cached';
-import { Dialog } from '@material-ui/core';
-import { DialogTitle } from '@material-ui/core';
-import { DialogContent } from '@material-ui/core';
-import { Typography } from '@material-ui/core';
-import { DialogActions } from '@material-ui/core';
-import { CircularProgress } from '@material-ui/core';
 import { Grid } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
-import ReplayIcon from '@material-ui/icons/Replay';
 import { Tooltip } from '@material-ui/core';
 import { Drawer } from '@material-ui/core';
 import CreditReloadForm from './CreditReloadForm';
-import { getAllDealership } from '../../services/dealerships.service';
 import CreditReloadRemarks from './CreditReloadRemarks';
 
 const useStyes = makeStyles((theme) => ({
@@ -86,17 +75,34 @@ const CreditReload = ({ currentUser }) => {
       { name: 'dealership_id', label: 'Dealership ID' },
       { name: 'request_id', label: 'Request ID' },
       { name: 'mobile', label: 'Mobile' },
-      { name: 'amount', label: 'Amount' },
+      { name: 'amount', label: 'Amount', options: {
+        customBodyRender: (value) => {
+          return <Currency value={value} />
+        }
+      }},
       { name: 'type_of_account', label: 'Account Type' },
       { name: 'name', label: 'Submitted By', options: {
         customBodyRender: (value, tableMeta) => {
-          return <div>{`${value} (${tableMeta?.rowData[9]})`}</div>
+          return <div>{`${value} (${tableMeta?.rowData[8]})`}</div>
         }
       }},
-      { name: 'is_cancel', options: {display: 'excluded'}},
-      { name: 'is_status', label: 'Status', options: {
+      { name: 'status', label: 'Status', options: {
         customBodyRender: (value, tableMeta) => {
-          return <Tooltip title={tableMeta?.rowData[8]}>{tableMeta?.rowData[6] === 1 ? <div style={{color: '#FF5C58'}}>Declined</div> : tableMeta?.rowData[7] === 1 ? <div>Dispersed</div>:<div>-</div>}</Tooltip>
+          if (value === 'Declined'){
+            return (
+              <Tooltip title={tableMeta.rowData[7]}>
+                <div style={{color: '#FF5C58'}}>{value}</div>
+              </Tooltip>
+            )
+          } else if (value === 'Disbrused') {
+            return (
+              <Tooltip title={tableMeta.rowData[7]}>
+                <div>{value}</div>
+              </Tooltip>
+            )
+          } else {
+            return value
+          }
         }
       }},
       { name: 'remarks', options: {display: 'excluded'}},

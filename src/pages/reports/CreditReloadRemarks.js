@@ -8,7 +8,6 @@ import * as Yup from 'yup';
 import CreatableSelect from 'react-select/creatable';
 import { addNewRemarks, getAllWithheldRemarks, updateRemarks } from '../../services/withheld.services';
 import { useFormik } from 'formik';
-import { number } from 'prop-types';
 import { useSnackbar } from 'notistack';
 import apiCall from '../../utils/api.util';
 
@@ -134,7 +133,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
         if(value){
             if(typeof(value) === 'number'){
                 if(status === 'decline'){
-                    const submitData = {'remarks_id': value, 'is_cancel':1}
+                    const submitData = {'remarks_id': value, 'is_status':0}
                     postApiCall(submitData)
                 } else {
                     const submitData = {'remarks_id': value, 'is_status':1}
@@ -142,7 +141,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
                 }
             } else {
                 if(status === 'decline'){
-                    const submitData = {'remarks': value, 'is_cancel':1}
+                    const submitData = {'remarks': value, 'is_status':0}
                     postApiCall(submitData)
                 } else {
                     const submitData = {'remarks': value, 'is_status':1}
@@ -158,7 +157,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
       handleSubmit()
   }
   const disperseSubmit = () => {
-      setStatus('disperse')
+      setStatus('disbruse')
       handleSubmit()
   }
 
@@ -229,7 +228,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
                 onClick={disperseSubmit}
               className={clsx(classes.btn, classes.editButton)}
             >
-              Disperse
+              Disbruse
             </Button>
           </div>
         </div>

@@ -114,11 +114,8 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      // transport_name: Yup.string().required('Please enter transporter name'),
-      // email: Yup.string().email('Enter valid mail id '),
       mobile: Yup.number().required("Enter mobile number").test("maxDigits", "Mobile Number mush have 10 digits", (number) => String(number).length === 10),
       name_on_card: Yup.string().required('Please Enter your name'),
-      // amount_limit: Yup.string().required('Please Enter amount limit '),
       dtplus_card_number: Yup.string().max(16, 'Enter valid card number').required('Please enter your card number'),
 
     }),

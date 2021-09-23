@@ -98,7 +98,9 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      // transport_name: Yup.string().required('Please enter transporter name'),
+      name: Yup.string().nullable('Enter dealership name').required('Enter dealership name'),
+      omc: Yup.string().nullable('Choose OMC').required('Choose OMC'),
+      details: Yup.string().nullable('Enter details').required('Enter details')
     }),
     onSubmit: values => {
       if (editRow) {

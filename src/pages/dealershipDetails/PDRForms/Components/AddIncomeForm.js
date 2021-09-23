@@ -99,7 +99,10 @@ const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      // transport_name: Yup.string().required('Please enter transporter name'),
+      business_name: Yup.string().nullable('Enter business type').required('Enter business type'),
+      business_age: Yup.number().nullable('Enter business age').required('Enter business age'),
+      business_owner: Yup.string().nullable('Enter business owner name').required('Enter business owner name'),
+      cur_fy_income: Yup.number().nullable('Enter income').required('Enter income')
     }),
     onSubmit: values => {
       const data = { ...values, is_pdr: 1 }
@@ -111,12 +114,10 @@ const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
               horizontal: 'right',
             },
             variant: 'success',
-          }
-          )
-          // setTimeout(() => {
-          //     window.location.reload()
-          // }, 1500);
-
+          })
+          setTimeout(() => {
+            window.location.reload()
+          }, 1500);
         })
         .catch(e => {
           enqueueSnackbar(e, {
@@ -125,10 +126,8 @@ const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
               horizontal: 'right',
             },
             variant: 'error',
-          }
-          )
+          })
         })
-
     }
   });
   const inputProps = {

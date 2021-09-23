@@ -104,8 +104,11 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      // transport_name: Yup.string().required('Please enter transporter name'),
-
+      no_of_employee: Yup.number().nullable('Enter count').required('Enter valid count'),
+      no_of_nozzle: Yup.number().nullable('Enter count').required('Enter valid count'),
+      no_of_hoarding: Yup.number().nullable('Enter count').required('Enter valid count'),
+      no_of_tank: Yup.number().nullable('Enter count').required('Enter valid count'),
+      tank_capacity: Yup.number().nullable('Enter tank capacity').required('Enter tank capacity'),
     }),
     onSubmit: values => {
       delete values.created_date
@@ -224,34 +227,9 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                     </RadioGroup>
                   </FormControl>
                 </Grid>
-                {/* <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        labelText="Using Solar"
-                                        name="is_solar"
-                                        value={values.is_solar}
-                                        readOnly={readOnly}
-                                        disabled={readOnly}
-                                        error={errors.is_solar}
-                                        helperText={errors.is_solar}
-                                    >
-                                    </TextInput>
-                                </Grid> */}
                 <Grid item md={12}>
                   <Fragment className={classes.table}>
                     <Typography className={classes.subTitle} variant="h4">Tanker Details</Typography>
-                    {/* <Grid md={6}>
-                                            <TextInput
-                                                {...inputProps}
-                                                labelText="Number of Tanker"
-                                                name="no_of_tanker"
-                                                type="number"
-                                                value={values.no_of_tanker}
-                                                readOnly={readOnly}
-                                                error={errors.no_of_tanker}
-                                                helperText={errors.no_of_tanker}
-                                            />
-                                        </Grid> */}
                     <AddTankerDetails dealer_id={dealer_id} length={values.no_of_tanker} />
                   </Fragment>
                 </Grid>

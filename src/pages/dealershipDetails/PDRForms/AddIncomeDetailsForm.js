@@ -9,7 +9,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
 import { useMount } from 'react-use';
-import { getExpensesDetailsById, getIncomeDetailsById } from '../../../services/PDReport.services';
+import { deleteExpenseDetailsByID, deleteIncomeDetailsByID, getExpensesDetailsById, getIncomeDetailsById } from '../../../services/PDReport.services';
 import { getBusinessTypes } from '../../../services/common.service';
 import AddIncomeForm from './Components/AddIncomeForm';
 import AddExpenseForm from './Components/AddExpenseForm';
@@ -88,7 +88,6 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
       })
     getIncomeDetailsById(dealer_id)
       .then(data => {
-        console.log("income respnse >>>>>", data)
         setIncomeData(data)
       })
       .catch(err => {
@@ -96,7 +95,6 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
       })
     getExpensesDetailsById(dealer_id)
       .then(data => {
-        console.log("expense response >>>>", data);
         setExpenseData(data)
       })
       .catch(err => {
@@ -116,13 +114,28 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
     setEditIncomeData(item)
   }
   const handleIncomeDelete = (item, i) => {
-    enqueueSnackbar('You are not allowed to delete.Please contact admin', {
-      anchorOrigin: {
-        vertical: 'top',
-        horizontal: 'right',
-      },
-      variant: 'error',
-    })
+    deleteIncomeDetailsByID(item)
+      .then(res => {
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
+        setTimeout(() => {
+          window.location.reload()
+        }, 1000);
+      })
+      .catch(e => {
+        enqueueSnackbar('Something went wrong.Please try again!', {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+      })
   }
   const handleExpenseEdit = (item, i) => {
     setAddExpense(true)
@@ -131,13 +144,28 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
 
   }
   const handleExpenseDelete = (item, i) => {
-    enqueueSnackbar('You are not allowed to delete.Please contact admin', {
-      anchorOrigin: {
-        vertical: 'top',
-        horizontal: 'right',
-      },
-      variant: 'error',
-    })
+    deleteExpenseDetailsByID(item)
+      .then(res => {
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
+        setTimeout(() => {
+          window.location.reload()
+        }, 1000);
+      })
+      .catch(e => {
+        enqueueSnackbar('Something went wrong.Please try again!', {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+      })
   }
 
   return (

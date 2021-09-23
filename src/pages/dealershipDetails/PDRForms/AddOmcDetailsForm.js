@@ -92,11 +92,12 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      sales_officer_name: Yup.string().required('Enter sales officer name'),
+      sales_officer_name: Yup.string().nullable('Enter sales officer name').required('Enter sales officer name'),
       sales_officer_mobile: Yup.string()
+        .nullable('Enter sales officer name')
         .matches(/^\d{10}$/, 'Invalid mobile number')
         .required('Enter valid mobile number'),
-      // dob: Yup.number().required("Choose date of birth"),
+      communication_mode: Yup.string().nullable('Enter communication mode').required('Enter communication mode')
     }),
     onSubmit: values => {
 

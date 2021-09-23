@@ -159,10 +159,12 @@ const AddNewTransportsOwnerForm = ({
     checkedA: true,
     checkedB: true,
   });
-  const [selectedDate, setSelectedDate] = useState(rowData ? parse(rowData.dob, 'dd-MM-yyyy', new Date()) : new Date());
+  const [selectedDate, setSelectedDate] = useState(rowData && rowData.dob);
+  console.log(selectedDate);
   const handleDateChange = (e) => {
-    const d = format(new Date(e), "dd-MM-yyyy")
+    const d = format(e, 'dd-MM-yyyy')
     setSelectedDate(d);
+    // console.log(format(e, 'dd-MM-yyyy'));
   };
   const handleStateChange = (event) => {
     setState({ ...state, [event.target.name]: event.target.checked });
@@ -560,7 +562,8 @@ const AddNewTransportsOwnerForm = ({
                         variant='inline'
                         inputVariant='outlined'
                         label='Date of Birth'
-                        format='dd/MM/yyy'
+                        format='dd/MM/yyyy'
+                        defaultValue={format(new Date(), 'dd/MM/yyyy')}
                         // views={["date", "month", "year"]}
                         animateYearScrolling={true}
                         invalidDateMessage='Invalid Date Format'
@@ -571,7 +574,7 @@ const AddNewTransportsOwnerForm = ({
                         margin='normal'
                         id='date-picker'
                         autoOk={true}
-                        value={selectedDate}
+                        value={parse(selectedDate, 'dd-MM-yyyy', new Date())}
                         onChange={handleDateChange}
                         InputLabelProps={{ shrink: true }}
                         keyboardButtonProps={{

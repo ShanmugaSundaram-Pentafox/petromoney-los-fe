@@ -95,7 +95,7 @@ const DealerEditSideWrapper = ({
   const [loading, setLoading] = useState(false);
   const [apicallStatus, setApicallStatus] = useState(null);
   const [apiCallMessage, setApiCallMessage] = useState('');
-  const [selectedDate, setSelectedDate] = useState();
+  const [selectedDate, setSelectedDate] = useState(format(new Date(), 'dd-MM-yyyy'));
   const [selectedState, setSelectedState] = useState();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -106,7 +106,7 @@ const DealerEditSideWrapper = ({
   let coApplicantFields = {};
   if (modelType === 'COAPPLICANT') {
     coApplicantFields = {
-      dealer_id: Yup.number().required('Enter Dealer ID'),
+      dealer_id: Yup.number().required('Enter Relation'),
       relationship: Yup.string().min(2).required('Enter Relationship Type'),
     };
   }

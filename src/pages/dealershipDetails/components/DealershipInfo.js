@@ -79,7 +79,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      name: Yup.string().required('Please enter dealership name').matches(/^[A-Za-z]/, "Please Enter valid name"),
+      name: Yup.string().required('Please enter transporter name').matches(/^[aA-zZ & - .\s]+$/, "Only alphabets are allowed for this field ").max(50),
       address: Yup.string().required('Please enter address'),
       state: Yup.string().required('Please choose state'),
       district: Yup.string().required('Please enter district'),
@@ -94,8 +94,11 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
 
     }),
     onSubmit: values => {
-      let eDate = format(parse(values.agreement_executed_on, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
-      let vDate = format(parse(values.agreement_valid_till, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
+      values.name = values.name.toUpperCase();
+      values.gst = values.gst.toUpperCase();
+      values.pan = values.pan.toUpperCase();
+      let eDate = values.agreement_executed_on? format(parse(values.agreement_executed_on, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : null;
+      let vDate = values.agreement_valid_till? format(parse(values.agreement_valid_till, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : null;
       const date_values = {
         ...values,
         name: values.name.toUpperCase(),
@@ -303,7 +306,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                   <ViewData title='PAN' value={values.pan} />
                 </Grid>
                 <Grid md={4}>
-                  <ViewData title='Mobile' value={values.mobile} />
                   <ViewData title='State' value={(states.find(function (state, index) {
                     if (state.id == values.state)
                       return true;
@@ -402,7 +404,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     name="gst"
                     readOnly={readOnly}
                     // disabled={readOnly}
-                    value={values.gst.toUpperCase()}
+                    defaultValue={values.gst?.toUpperCase()}
+                    value={values.gst?.toUpperCase()}
                     error={errors.gst}
                     helperText={errors.gst}
                     {...fieldProps}
@@ -441,6 +444,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     name="pan"
                     readOnly={readOnly}
                     // disabled={readOnly}
+                    defaultValue={values.pan.toUpperCase()}
                     value={values.pan.toUpperCase()}
                     error={errors.pan}
                     helperText={errors.pan}

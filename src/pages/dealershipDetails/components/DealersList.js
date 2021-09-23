@@ -241,7 +241,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
       </Drawer>
 
       {
-        editable && ((dealerData || []).length || (coApplicantsData || []).length || (guarantorsData || []).length) && (
+        editable && ((dealerData || []).length != 0 || (coApplicantsData || []).length != 0 || (guarantorsData || []).length != 0) && (
           <div className={classes.footer}>
             <div className={classes.actionButtons}>
               <Button color="primary" variant="contained" size="small" onClick={() => openCloseCreditForm()}>View/Edit Credit Information</Button>

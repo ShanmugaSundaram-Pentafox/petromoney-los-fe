@@ -467,11 +467,15 @@ const DealershipDetails = ({
           },
           variant: 'success',
         })
+        setTimeout(() => {
+          setReloader(false);
+          window.location.reload();
+        }, 1500)
       })
       .catch(err => {
         setApproveLoader(false);
         setRejectLoader(false);
-        enqueueSnackbar(err, {
+        enqueueSnackbar('Something went wrong, Please try Again!', {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',

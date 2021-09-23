@@ -48,7 +48,7 @@ const PasswordForm = ({ data, callback, loading ,setLoading}) => {
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
-            password: Yup.string().required('Enter the Password'),
+            password: Yup.string().required('Enter the Password').min(8, 'Password should have minimum of 8 characters'),
             confirm_password: Yup.string().required('Enter the Password'),
         }),
         onSubmit: (values, { setSubmitting }) => {

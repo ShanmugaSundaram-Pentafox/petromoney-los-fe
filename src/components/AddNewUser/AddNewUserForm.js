@@ -115,7 +115,7 @@ const AddNewUserForm = ({ callback, action }) => {
         })
         .catch((e) => {
           setLoading(false);
-          enqueueSnackbar(e, {
+          enqueueSnackbar('Something went wrong, Please try Again!', {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',

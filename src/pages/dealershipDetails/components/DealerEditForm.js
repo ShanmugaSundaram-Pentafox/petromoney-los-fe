@@ -54,15 +54,11 @@ const useStyles = makeStyles({
     },
     fileAttachement: {
         display: 'flex',
-        // justifyContent:'center',
-        marginTop: 6
-    },
-    icon: {
-        marginRight: 4,
-        marginTop: 6,
+        alignItems: 'center',
+        marginTop: 8
     },
     typography: {
-        marginTop: 8,
+        marginLeft: 8,
     },
     text: {
         marginBottom: 4,
@@ -550,7 +546,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                                 <TextInput
                                     label="PAN Number"
                                     name="pan"
-                                    value={values.pan.toUpperCase()}
+                                    value={values.pan?.toUpperCase()}
                                     error={errors.pan}
                                     helperText={errors.pan}
                                     readOnly={readOnly}

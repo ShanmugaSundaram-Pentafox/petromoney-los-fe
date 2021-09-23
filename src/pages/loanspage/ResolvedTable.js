@@ -21,7 +21,7 @@ const ResolvedTable = ({ data }) => {
     const columns = useMemo(() => {
         return [
             {
-                label: "ID",
+                label: "Dealership ID",
                 name: "id",
                 options: {
                     filter: true,

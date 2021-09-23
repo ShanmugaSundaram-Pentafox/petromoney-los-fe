@@ -11,7 +11,9 @@ import { useMount } from 'react-use';
 import { addNewRemarks, AddNewRemarks, getAllWithheldRemarks, updateRemarks } from '../../services/withheld.services';
 import CreatableSelect from 'react-select/creatable';
 import Select from 'react-select';
+import AsyncSelect from 'react-select/async';
 import { useSnackbar } from 'notistack';
+import apiCall from '../../utils/api.util';
 
 
 
@@ -69,6 +71,7 @@ const AddBlackListForm = ({ data, callback }) => {
     const [dealerID, setDealerID] = useState()
     const [remarks, setRemarks] = useState()
     const [value, setValue] = useState()
+    const [optionsLoading, setOptionsLoading] = useState(false);
     const classes = useStyles()
     const { enqueueSnackbar } = useSnackbar();
 
@@ -91,6 +94,25 @@ const AddBlackListForm = ({ data, callback }) => {
             })
 
     })
+
+    const onChangeOption = (newValue) => {
+        setDealerID(newValue.id)
+      }
+
+      const getOptions = (inputValue, callback) => {
+        if(inputValue.toString().length >2){
+          setOptionsLoading(true)
+          apiCall(`dealership/search?dealership=${inputValue}`)
+            .then(res => {
+              setOptionsLoading(false)
+              callback(res.data);
+            })
+            .catch(e => {
+              console.log(e);
+              setOptionsLoading(false)
+            })
+        }
+      }
 
     const handleRemarkChange = (newValue, actionMeta) => {
         if (remarks?.includes(newValue?.label)) {
@@ -178,12 +200,22 @@ const AddBlackListForm = ({ data, callback }) => {
                                     <form>
                                         <Grid container spacing={2}>
                                             <Grid item md={7}>
-                                                <label style={{ marginBottom: 8 }}>Dealership ID</label>
-                                                <Select
+                                                <label style={{ marginBottom: 8 }}>Dealership</label>
+                                                <AsyncSelect
+                                                    components={optionsLoading? null : {LoadingIndicator: null}}
+                                                    styles={{
+                                                    menu: provided => ({ ...provided, zIndex: 9999 })
+                                                    }}
+                                                    onChange={onChangeOption}
+                                                    loadingMessage={() => ' '}
+                                                    loadOptions={getOptions}
+                                                    placeholder = 'Search Dealership ID or Name'
+                                                />
+                                                {/* <Select
                                                     isClearable
                                                     onChange={setDealerID}
                                                     options={data}
-                                                />
+                                                /> */}
                                             </Grid>
                                             <Grid item md={7}>
                                                 <label style={{ marginBottom: 8 }}>Remarks</label>

@@ -345,7 +345,7 @@ const AddNewTransportsOwnerForm = ({
         });
       })
       .catch(err => {
-        enqueueSnackbar(err, {
+        enqueueSnackbar('Something went wrong, Please try Again!', {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',

@@ -159,12 +159,10 @@ const AddNewTransportsOwnerForm = ({
     checkedA: true,
     checkedB: true,
   });
-  const [selectedDate, setSelectedDate] = useState(rowData && rowData.dob);
-  console.log(selectedDate);
+  const [selectedDate, setSelectedDate] = useState(rowData?.dob ? rowData.dob : format(new Date(), 'dd-MM-yyyy'));
   const handleDateChange = (e) => {
     const d = format(e, 'dd-MM-yyyy')
     setSelectedDate(d);
-    // console.log(format(e, 'dd-MM-yyyy'));
   };
   const handleStateChange = (event) => {
     setState({ ...state, [event.target.name]: event.target.checked });

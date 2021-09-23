@@ -45,6 +45,7 @@ const useStyles = makeStyles((theme) => ({
   },
   sidePanelFormContentWrapper: {
     flex: 1,
+    backgroundColor: '#f6f6f6',
     overflow: 'auto'
   },
   table: {
@@ -111,7 +112,6 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
       // avg_realization_period: Yup.number().required("Enter average realization period "),
     }),
     onSubmit: values => {
-      console.log("values", values)
       let data = { ...values, has_atm: values.has_atm === "Yes" ? 1 : 0, is_pep: values.is_pep === "Yes" ? 1 : 0 }
       updateBusinessDetailsByID(data, dealer_id)
         .then(res => {
@@ -122,12 +122,10 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               horizontal: 'right',
             },
             variant: 'success',
-          }
-          )
-          // setTimeout(() => {
-          //   window.location.reload()
-          // }, 1500);
-
+          })
+          setTimeout(() => {
+            window.location.reload()
+          }, 1500);
         })
         .catch(e => {
           enqueueSnackbar(e, {
@@ -136,8 +134,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               horizontal: 'right',
             },
             variant: 'error',
-          }
-          )
+          })
         })
     }
   });

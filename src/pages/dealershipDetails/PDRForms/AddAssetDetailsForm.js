@@ -38,7 +38,8 @@ const useStyles = makeStyles((theme) => ({
   },
   sidePanelFormContentWrapper: {
     flex: 1,
-    overflow: 'auto'
+    overflow: 'auto',
+    backgroundColor: '#f6f6f6',
   },
   title: {
     paddingLeft: 8,
@@ -46,7 +47,6 @@ const useStyles = makeStyles((theme) => ({
   },
   table: {
     marginTop: 20,
-
   },
   btn: {
     margin: 8
@@ -54,7 +54,6 @@ const useStyles = makeStyles((theme) => ({
   actionFoot: {
     marginBottom: 16,
     marginTop: 12,
-
   },
   typeField: {
     marginBottom: 20,
@@ -160,9 +159,9 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
             },
             variant: 'success',
           });
-          // setTimeout(() => {
-          //     window.location.reload()
-          // }, 1500);
+          setTimeout(() => {
+            window.location.reload()
+          }, 1500);
         })
         .catch(e => {
           console.log(e);

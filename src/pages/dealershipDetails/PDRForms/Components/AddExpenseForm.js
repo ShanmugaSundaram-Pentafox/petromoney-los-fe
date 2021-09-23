@@ -140,6 +140,7 @@ const AddExpenseForm = ({ data, isEdit, id, handleClose }) => {
                 <Grid item md={6}>
                   <TextInput
                     {...inputProps}
+                    money
                     labelText="Expense Amount"
                     name="expense_amount"
                     value={values.expense_amount}

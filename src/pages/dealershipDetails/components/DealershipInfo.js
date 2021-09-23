@@ -106,8 +106,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         name: values.name.toUpperCase(),
         agreement_valid_till: vDate,
         agreement_executed_on: eDate,
-        gst: values.gst.toUpperCase(),
-        pan: values.pan.toUpperCase()
+        gst: values.gst?.toUpperCase(),
+        pan: values.pan?.toUpperCase()
       };
       const data = new FormData();
       Object.keys(date_values).forEach(key => {
@@ -277,7 +277,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
   const panAttachment = () => {
     return (
       <div className={classes.fileStyle}>
-        {/* <a className={classes.profileLink} href={data.pan_file_url} target='_blank' title={'PAN Attachment'}>{'PAN Attachment'}</a> */}
         <Tooltip title={'Click to edit'}>
           <UploadIcon
             fontSize='small'

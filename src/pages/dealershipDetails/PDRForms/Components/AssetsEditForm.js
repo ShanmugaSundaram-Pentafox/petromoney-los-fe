@@ -63,9 +63,9 @@ const AssetsEditForm = ({ id, assetData = {}, data, handleClose }) => {
           },
           variant: 'success',
         });
-        // setTimeout(() => {
-        //     window.location.reload()
-        // }, 1500);
+        setTimeout(() => {
+          window.location.reload()
+        }, 1500);
       })
       .catch(e => {
         console.log(e);
@@ -75,8 +75,6 @@ const AssetsEditForm = ({ id, assetData = {}, data, handleClose }) => {
     direction: "column",
     alignTop: true,
   }
-
-
   if (!data?.details) return null
 
   return (

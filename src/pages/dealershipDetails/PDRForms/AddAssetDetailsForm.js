@@ -142,7 +142,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      // transport_name: Yup.string().required('Please enter transporter name'),
+      // type: Yup.string().nullable('Please choose type').required('Please choose type'),
     }),
     onSubmit: values => {
       const data = { asset_id: type.value, details: { ...values } }
@@ -224,6 +224,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                           <label style={{ marginBottom: 8 }}>Choose asset type to add</label>
                           <Select
                             isClearable
+                            name='type'
                             onChange={setType}
                             options={assetList} />
                         </Grid>
@@ -337,7 +338,6 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                       )
                     }
                   </Grid>
-
                 </div>
               </div>
             </>

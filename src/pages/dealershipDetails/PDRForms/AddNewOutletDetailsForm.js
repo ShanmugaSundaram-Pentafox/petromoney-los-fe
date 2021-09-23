@@ -114,7 +114,6 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
-            // transport_name: Yup.string().required('Please enter transporter name'),
             outlet_category: Yup.string().required('Choose outlet category'),
             fuel_transported_from: Yup.string().required('Please enter fuel transported from area'),
             terminal_name: Yup.string().required('Please enter terminal name'),
@@ -182,29 +181,6 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         <option value="C">C</option>
                                     </TextInput>
                                 </Grid>
-                                {/* <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        multiline={true}
-                                        labelText="Outlet Address"
-                                        name="outlet_address"
-                                        value={values.outlet_address}
-                                        readOnly={readOnly}
-                                        error={errors.outlet_address}
-                                        helperText={errors.outlet_address}
-                                    />
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        labelText="Outlet Landmark"
-                                        name="outlet_landmark"
-                                        value={values.outlet_landmark}
-                                        readOnly={readOnly}
-                                        error={errors.outlet_landmark}
-                                        helperText={errors.outlet_landmark}
-                                    />
-                                </Grid> */}
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
@@ -227,18 +203,6 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         helperText={errors.terminal_name}
                                     />
                                 </Grid>
-                                {/* <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        labelText="Distance from Terminal"
-                                        name="distance_from_headquarters"
-                                        placeholder="in Km"
-                                        value={values.distance_from_headquarters}
-                                        readOnly={readOnly}
-                                        error={errors.distance_from_headquarters}
-                                        helperText={errors.distance_from_headquarters}
-                                    />
-                                </Grid> */}
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}

@@ -1,8 +1,8 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
+import TextInput from '../../../components/TextInput/TextInput';
 import Button from '../../../components/CommonComponents/Button/Button';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
@@ -136,7 +136,9 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      // transport_name: Yup.string().required('Please enter transporter name'),
+      loan_type: Yup.string().nullable('Choose loan type').required('Choose loan type'),
+      loan_amount: Yup.number().nullable('Enter loan amount').required('Enter loan amount'),
+      bank_name: Yup.string().nullable('Enter valid bank name').required('Enter valid bank name'),
 
     }),
     onSubmit: values => {
@@ -180,9 +182,9 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
               variant: 'success',
             }
             )
-            // setTimeout(() => {
-            //     window.location.reload()
-            // }, 1500);
+            setTimeout(() => {
+              window.location.reload()
+            }, 1500);
 
           })
           .catch(e => {
@@ -211,9 +213,28 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
     deleteLoanDetailsByID(row, dealer_id)
       .then(data => {
         console.log(data)
+        enqueueSnackbar(data, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        }
+        )
+        setTimeout(() => {
+          window.location.reload()
+        }, 1500);
       })
       .catch((e) => {
         console.log(e);
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        }
+        )
       })
   }
 
@@ -252,7 +273,7 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
-                      labelText="Bank Name"
+                      labelText="Bank name"
                       name="bank_name"
                       value={values.bank_name}
                       error={errors.bank_name}

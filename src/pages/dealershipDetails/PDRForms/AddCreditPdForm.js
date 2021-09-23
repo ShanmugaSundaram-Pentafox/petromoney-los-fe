@@ -69,7 +69,6 @@ const AddCreditPdForm = ({ dealer_id, callback, currentUser }) => {
   useMount(() => {
     getDealershipById(dealer_id)
       .then(data => {
-        console.log("dataaaaaaaaaa", data)
         setDealershipData(data)
       })
       .catch((e) => {
@@ -87,7 +86,6 @@ const AddCreditPdForm = ({ dealer_id, callback, currentUser }) => {
 
     }),
     onSubmit: values => {
-      console.log("values", values)
       // let eDate = format(parse(values.agreement_executed_on, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
       // let vDate = format(parse(values.agreement_valid_till, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
       const date = {
@@ -137,7 +135,6 @@ const AddCreditPdForm = ({ dealer_id, callback, currentUser }) => {
     direction: "column",
     alignTop: true,
   }
-  console.log("dealership data", dealershipData)
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">

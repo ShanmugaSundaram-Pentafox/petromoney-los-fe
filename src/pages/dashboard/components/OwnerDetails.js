@@ -1,9 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { makeStyles } from "@material-ui/styles";
 import { NavLink as RouterLink } from 'react-router-dom';
-import clsx from 'clsx';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
 import styled from 'styled-components';
 import MUIDataTable from "mui-datatables";
 import { Typography } from '@material-ui/core';
@@ -15,11 +12,8 @@ import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 import Avatar from '@material-ui/core/Avatar';
 import EditIcon from '@material-ui/icons/Edit';
 import IconButton from '@material-ui/core/IconButton';
-import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import Button from '../../../components/CommonComponents/Button/Button';
 import Drawer from '@material-ui/core/Drawer';
-import Divider from '@material-ui/core/Divider';
-import CloseIcon from '@material-ui/icons/Close';
 import AddNewTransportForm from '../../../pages/transports/components/AddNewTransportsForm';
 import AddNewTransportsOwnerForm from '../../transports/components/AddNewTransportsOwnerForm';
 import usePageTitle from '../../../hooks/usePageTitle';
@@ -271,8 +265,6 @@ const OwnerDetails = ({ currentUser, match, loading }) => {
                 onClose={() => {
                     setOpenModal(false)
                     setRowData({})
-
-
                 }}
                 variant="temporary"
             >

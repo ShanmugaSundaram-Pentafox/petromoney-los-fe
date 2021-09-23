@@ -176,7 +176,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
         })
         .catch((err) => {
           console.log(err);
-          enqueueSnackbar(err, {
+          enqueueSnackbar('Something went wrong, Please try Again!', {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',
@@ -202,7 +202,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
         })
         .catch((err) => {
           console.log(err);
-          enqueueSnackbar(err, {
+          enqueueSnackbar('Something went wrong, Please try Again!', {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',
@@ -228,7 +228,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
         })
         .catch((err) => {
           console.log(err);
-          enqueueSnackbar(err, {
+          enqueueSnackbar('Something went wrong, Please try Again!', {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',
@@ -258,7 +258,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
         })
         .catch((err) => {
           console.log(err);
-          enqueueSnackbar(err, {
+          enqueueSnackbar('Something went wrong, Please try Again!', {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',
@@ -284,7 +284,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
         })
         .catch((err) => {
           console.log(err);
-          enqueueSnackbar(err, {
+          enqueueSnackbar('Something went wrong, Please try Again!', {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',
@@ -310,7 +310,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
         })
         .catch((err) => {
           console.log(err);
-          enqueueSnackbar(err, {
+          enqueueSnackbar('Something went wrong, Please try Again!', {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',
@@ -340,7 +340,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
       })
       .catch((err) => {
         console.log(err);
-        enqueueSnackbar(err, {
+        enqueueSnackbar('Something went wrong, Please try Again!', {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',
@@ -366,7 +366,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
       })
       .catch((err) => {
         console.log(err);
-        enqueueSnackbar(err, {
+        enqueueSnackbar('Something went wrong, Please try Again!', {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',
@@ -392,7 +392,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
       })
       .catch((err) => {
         console.log(err);
-        enqueueSnackbar(err, {
+        enqueueSnackbar('Something went wrong, Please try Again!', {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',

@@ -102,14 +102,11 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      // business_age: Yup.number().required("Enter business date"),
-      // hsd_count: Yup.number().required("Enter number of HS dispensers"),
-      // msd_count: Yup.number().required("Enter number of MS dispensers"),
-      // fuel_station_area: Yup.string().required("Enter fuel station area"),
-      // electricity_bill_month: Yup.number().required("Enter electricity bill per month "),
-      // lpg_count: Yup.number().required("Enter LPG count"),
-      // credit_sales_month: Yup.number().required("Enter credit sales per month"),
-      // avg_realization_period: Yup.number().required("Enter average realization period "),
+      business_age: Yup.number().nullable('Enter valid experience').required('Enter valid experience'),
+      hsd_count: Yup.number().nullable('Enter HSD count').required('Enter count'),
+      ms_count: Yup.number().nullable('Enter MSD count').required('Enter count'),
+      electricity_units_month: Yup.number().nullable('Enter Electricity details').required('Enter Electricity details'),
+      credit_sales_month: Yup.number().nullable('Enter sales details').required('Enter sales details')
     }),
     onSubmit: values => {
       let data = { ...values, has_atm: values.has_atm === "Yes" ? 1 : 0, is_pep: values.is_pep === "Yes" ? 1 : 0 }

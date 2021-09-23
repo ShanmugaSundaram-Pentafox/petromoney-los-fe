@@ -56,6 +56,18 @@ const useStyles = makeStyles(theme => ({
   },
   icons: {
     marginRight: 16
+  },
+  number: {
+    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0
+    }
+  },
+  input: {
+    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0
+    }
   }
 }));
 
@@ -538,7 +550,10 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 </Grid>
                 <Grid {...gridProps} md={6}>
                   <TextInput
+                    className={classes.number}
+                    inputProps={{className: classes.input}}
                     labelText="Pincode"
+                    type='number'
                     name="pincode"
                     readOnly={readOnly}
                     defaultValue={values.pincode}

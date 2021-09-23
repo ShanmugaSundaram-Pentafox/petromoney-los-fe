@@ -107,9 +107,9 @@ const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
       // transport_name: Yup.string().required('Please enter transporter name'),
     }),
     onSubmit: values => {
-      addIncomeDetailsByID(values, id, isEdit)
+      const data = { ...values, is_pdr: 1 }
+      addIncomeDetailsByID(data, id, isEdit)
         .then(res => {
-          console.log(res)
           enqueueSnackbar(res, {
             anchorOrigin: {
               vertical: 'top',

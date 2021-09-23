@@ -30,6 +30,7 @@ import { Tooltip } from '@material-ui/core';
 import { Drawer } from '@material-ui/core';
 import CreditReloadForm from './CreditReloadForm';
 import { getAllDealership } from '../../services/dealerships.service';
+import CreditReloadRemarks from './CreditReloadRemarks';
 
 const useStyes = makeStyles((theme) => ({
   root: {},
@@ -44,6 +45,7 @@ const CreditReload = ({ currentUser }) => {
   const [reloadDialog, setReloadDialog] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [statusModal, setStatusModal] = useState(false);
   const [dealershipData, setDealershipData] = useState();
 
 
@@ -51,8 +53,10 @@ const CreditReload = ({ currentUser }) => {
     // setLoading(true)
     getCreditReport()
       .then((data) => {
+        if(data != 0){
+          setTableData(data);
+        }
         // setLoading(false);
-        setTableData(data);
       })
       .catch((e) => {
         // setLoading(false);
@@ -73,45 +77,30 @@ const CreditReload = ({ currentUser }) => {
         console.log(e);
       });
 
-    getAllDealership()
-      .then((data) => {
-        setDealershipData(
-          data.map(({ id }) => ({
-            label: id,
-            value: id,
-          }))
-        );
-      })
-      .catch((e) => {
-        console.log(e);
-      });
   });
 
-  // const handleCreditReload = () => {
-  //   setReloadDialog(true);
-  // };
-
-  const handleClose = () => {
-    setReloadDialog(false);
-  };
-
-  const handleSubmit = () => {
-    //     setSubmitLoading(true)
-    //     // setTimeout(() => {
-    //     //     window.location.reload();
-    //     // }, 3000)
-    //     const data = {'request_source': 'MDM', 'amount': rowData.amount, 'mobile': rowData.mobile, 'account_id': 1}
-    //     console.log(data);
-  };
 
   usePageTitle('Credit Report');
   const columns = useMemo(() => {
     return [
       { name: 'dealership_id', label: 'Dealership ID' },
-      { name: 'mobile', label: 'Mobile' },
       { name: 'request_id', label: 'Request ID' },
+      { name: 'mobile', label: 'Mobile' },
       { name: 'amount', label: 'Amount' },
       { name: 'type_of_account', label: 'Account Type' },
+      { name: 'name', label: 'Submitted By', options: {
+        customBodyRender: (value, tableMeta) => {
+          return <div>{`${value} (${tableMeta?.rowData[9]})`}</div>
+        }
+      }},
+      { name: 'is_cancel', options: {display: 'excluded'}},
+      { name: 'is_status', label: 'Status', options: {
+        customBodyRender: (value, tableMeta) => {
+          return <Tooltip title={tableMeta?.rowData[8]}>{tableMeta?.rowData[6] === 1 ? <div style={{color: '#FF5C58'}}>Declined</div> : tableMeta?.rowData[7] === 1 ? <div>Dispersed</div>:<div>-</div>}</Tooltip>
+        }
+      }},
+      { name: 'remarks', options: {display: 'excluded'}},
+      { name: 'role_name', options: {display: 'excluded'}}
     ];
   }, []);
 
@@ -132,12 +121,13 @@ const CreditReload = ({ currentUser }) => {
         </Button>
       );
     },
-    // onRowClick: (rowData) => {
-    //     getCreditReportById(rowData[0])
-    //         .then((data) => {
-    //             setRowData(data[0])
-    //         })
-    // }
+    onRowClick: (rowData) => {
+        getCreditReportById(rowData[0])
+        .then((data) => {
+          setRowData(data[0])
+          setStatusModal(true)
+      })
+    }
   };
 
   return (
@@ -154,34 +144,19 @@ const CreditReload = ({ currentUser }) => {
           data={tableData}
         />
       )}
-      <Dialog open={reloadDialog} onClose={handleClose}>
-        <DialogTitle>Credit Reload Request</DialogTitle>
-        <DialogContent style={{ width: 450 }}>
-          <Typography variant='h7'>
-            Do you want to reload your credit?
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant='outlined'
-            onClick={handleClose}
-            disabled={submitLoading}
-          >
-            Cancel
-          </Button>
-          {submitLoading ? (
-            <CircularProgress size={30} />
-          ) : (
-            <Button
-              variant='contained'
-              style={{ backgroundColor: '#50CB93', color: 'white' }}
-              onClick={handleSubmit}
-            >
-              Submit
-            </Button>
-          )}
-        </DialogActions>
-      </Dialog>
+
+
+      <Drawer
+        anchor='right'
+        open={statusModal}
+        onClose={() => setStatusModal(false)}
+        variant='temporary'
+      >
+        {
+          <CreditReloadRemarks callback={() => setStatusModal(false)} rowData={rowData} currentUser={currentUser}/>
+        }
+      </Drawer>
+
       <Drawer
         anchor='right'
         open={openModal}

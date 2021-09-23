@@ -113,6 +113,10 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
             // transport_name: Yup.string().required('Please enter transporter name'),
+            outlet_category: Yup.string().required('Choose outlet category'),
+            fuel_transported_from: Yup.string().required('Please enter fuel transported from area'),
+            terminal_name: Yup.string().required('Please enter terminal name'),
+            size_of_outlet: Yup.number().required('Please enter outlet size'),
 
         }),
         onSubmit: values => {
@@ -167,8 +171,8 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         value={values.outlet_category}
                                         readOnly={readOnly}
                                         disabled={readOnly}
-                                        error={errors.id}
-                                        helperText={errors.id}
+                                        error={errors.outlet_category}
+                                        helperText={errors.outlet_category}
                                     >
                                         <option value="">Choose category</option>
                                         <option value="A">A</option>

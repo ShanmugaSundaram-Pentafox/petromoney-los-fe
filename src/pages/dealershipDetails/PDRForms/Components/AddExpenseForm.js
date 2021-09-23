@@ -84,7 +84,8 @@ const AddExpenseForm = ({ data, isEdit, id, handleClose }) => {
       // transport_name: Yup.string().required('Please enter transporter name'),
     }),
     onSubmit: values => {
-      addExpenseDetailsByID(values, id, isEdit)
+      const data = { ...values, is_pdr: 1 }
+      addExpenseDetailsByID(data, id, isEdit)
         .then(res => {
           console.log(res)
           enqueueSnackbar(res, {

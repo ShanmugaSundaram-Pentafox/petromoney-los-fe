@@ -148,7 +148,7 @@ const AddNewTransportsForm = ({
   const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
   const [loading, setLoading] = useState(false);
   const [omcs, setOmcs] = useState([]);
-  const [bussinessType, setBussinessType] = useState([]);
+  const [businessType, setBusinessType] = useState([]);
   const [states, setStates] = useState([]);
   const [showUpload, setShowUpload] = useState(false);
   const [regionList, setRegionList] = useState([]);
@@ -224,12 +224,12 @@ const AddNewTransportsForm = ({
         .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
         .required('Enter PAN')
         .uppercase(),
-      gst: Yup.number("Enter valid GST").min(15, 'Enter valid GST'),
+      gst: Yup.string().matches(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/, "Invalid GST").required("Enter GST").uppercase(),
     }),
     onSubmit: (values) => {
       setLoading(true);
       values.name = values.name.toUpperCase();
-      const data = { ...values, t_owner_id: id };
+      const data = { ...values, t_owner_id: id, pan: values.pan.toUpperCase(), gst: values.gst.toUpperCase() };
       // let apiURL = isAdd === 'Add' ? `transporters` : `tranporters/${data.transporter_id}`
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
@@ -317,7 +317,7 @@ const AddNewTransportsForm = ({
       });
     getBusinessTypes()
       .then((data) => {
-        setBussinessType(data);
+        setBusinessType(data);
       })
       .catch((e) => {
         console.log(e);
@@ -473,8 +473,14 @@ const AddNewTransportsForm = ({
                       value={values.transporter_id}
                     />
                     <ViewData title='Mobile' value={values.mobile} />
-                    <ViewData title='OMC' value={values.omc} />
-                    <ViewData title='Region' value={values.region} />
+                    <ViewData title='OMC' value={(omcs.find(function (omc, index) {
+                      if (omc.id == values.omc)
+                        return true;
+                    }))?.name} />
+                    <ViewData title='Region' value={(regionList.find(function (region, index) {
+                      if (region.id == values.region)
+                        return true;
+                    }))?.name} />
                     <ViewData title='District' value={values.district} />
                     <ViewData title='GST' value={values.gst} />
                   </Box>
@@ -483,11 +489,14 @@ const AddNewTransportsForm = ({
                   <Box className={classes.box}>
                     <ViewData title='Transport Name' value={values.name} />
                     <ViewData title='Address' value={values.address} />
-                    <ViewData
-                      title='Business Type'
-                      value={values.business_type}
-                    />
-                    <ViewData title='State' value={values.state} />
+                    <ViewData title='Business Type' value={(businessType.find(function (business, index) {
+                      if (business.id == values.business_type)
+                        return true;
+                    }))?.name} />
+                    <ViewData title='State' value={(states.find(function (state, index) {
+                      if (state.id == values.state)
+                        return true;
+                    }))?.name} />
                     <ViewData title='Pincode' value={values.pincode} />
                     <ViewData title='PAN' value={values.pan} />
                   </Box>
@@ -610,12 +619,7 @@ const AddNewTransportsForm = ({
                       disabled={readOnly}
                       error={errors.omc}
                     >
-                      <option value=''>Choose OMC</option>
-                      {omcs.map((omc) => (
-                        <option key={omcs.id} value={omcs.id}>
-                          {omc.name}
-                        </option>
-                      ))}
+                      {omcs.map((omc) => (<option key={omcs.id} value={omcs.id}>{omc.name}</option>))}
                     </TextInput>
                   </Grid>
                   <Grid item md={6}>
@@ -629,12 +633,7 @@ const AddNewTransportsForm = ({
                       disabled={readOnly}
                       error={errors.business_type}
                     >
-                      <option value=''>Choose bussiness type</option>
-                      {bussinessType.map((type) => (
-                        <option key={type.id} value={type.name}>
-                          {type.name}
-                        </option>
-                      ))}
+                      {businessType.map((type) => (<option key={type.id} value={type.name}>{type.name}</option>))}
                     </TextInput>
                   </Grid>
                   <Grid item md={6}>
@@ -648,11 +647,7 @@ const AddNewTransportsForm = ({
                       value={values?.state}
                       error={errors.state}
                     >
-                      {states.map((item, i) => (
-                        <option key={i} value={item.id}>
-                          {item.name}
-                        </option>
-                      ))}
+                      {states.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))}
                     </TextInput>
                   </Grid>
                   <Grid item md={6}>
@@ -666,11 +661,7 @@ const AddNewTransportsForm = ({
                       value={values?.region}
                       error={errors.region}
                     >
-                      {regionList.map((item, i) => (
-                        <option key={i} value={item.id}>
-                          {item.name}
-                        </option>
-                      ))}
+                      {regionList.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))}
                     </TextInput>
                   </Grid>
                   <Grid item md={6}>
@@ -697,11 +688,7 @@ const AddNewTransportsForm = ({
                       value={values.district}
                       error={errors.district}
                     >
-                      {getDistricts(values.state).map((item) => (
-                        <option key={item} value={item}>
-                          {item}
-                        </option>
-                      ))}
+                      {getDistricts(values.state).map((item) => (<option key={item} value={item}>{item}</option>))}
                     </TextInput>
                   </Grid>
                   <Grid item md={6}>
@@ -726,7 +713,7 @@ const AddNewTransportsForm = ({
                       {...inputProps}
                       name='pan'
                       labelText='PAN'
-                      value={values.pan}
+                      value={values.pan.toUpperCase()}
                       readOnly={readOnly}
                       disabled={readOnly}
                       error={errors.pan}
@@ -784,7 +771,7 @@ const AddNewTransportsForm = ({
                       {...inputProps}
                       name='gst'
                       labelText='GST'
-                      value={values.gst}
+                      value={values.gst.toUpperCase()}
                       readOnly={readOnly}
                       disabled={readOnly}
                       error={errors.gst}

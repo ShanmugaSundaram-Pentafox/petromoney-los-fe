@@ -21,371 +21,353 @@ import { RadioGroup } from '@material-ui/core';
 import { FormControlLabel } from '@material-ui/core';
 import { Radio } from '@material-ui/core';
 import { FormGroup } from '@material-ui/core';
-import FormLabel from '@material-ui/core/FormLabel';
-import { string } from 'prop-types';
-
-
 
 
 const useStyles = makeStyles((theme) => ({
-    sidePanelTitle: {
-        padding: '24px 16px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        zIndex: 0,
-        boxShadow: '0 1px 4px -3px #333'
+  sidePanelTitle: {
+    padding: '24px 16px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    zIndex: 0,
+    boxShadow: '0 1px 4px -3px #333'
+  },
+  actionButtonsWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '12px 16px'
+  },
+  sidePanelFormWrapper: {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    width: '55vw'
+  },
+  sidePanelFormContentWrapper: {
+    flex: 1,
+    overflow: 'auto'
+  },
+  table: {
+    padding: 8,
+    marginTop: 8
+  },
+  btnSuccess: {
+    '&.MuiButton-contained': {
+      backgroundColor: theme.palette.success.main,
+      color: theme.palette.white
     },
-    actionButtonsWrapper: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        padding: '12px 16px'
-    },
-    sidePanelFormWrapper: {
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-        width: '55vw'
-    },
-    sidePanelFormContentWrapper: {
-        flex: 1,
-        overflow: 'auto'
-    },
-    table: {
-        padding: 8,
-        marginTop: 8
-    },
-    btnSuccess: {
-        '&.MuiButton-contained': {
-            backgroundColor: theme.palette.success.main,
-            color: theme.palette.white
-        },
-        '&.MuiButton-contained:hover': {
-            backgroundColor: theme.palette.success.dark
-        }
-    },
-    stepperRoot: {
-        padding: 16,
-        paddingTop: 8
-    },
-    subTitle: {
-        marginTop: 8,
-        marginBottom: 8
-
-    },
-    editButton: {
-        marginRight: '8px',
-        '&.MuiButton-contained': {
-            backgroundColor: theme.palette.success.main,
-            color: theme.palette.white
-        },
-        '&.MuiButton-contained:hover': {
-            backgroundColor: theme.palette.success.dark
-        }
+    '&.MuiButton-contained:hover': {
+      backgroundColor: theme.palette.success.dark
     }
+  },
+  stepperRoot: {
+    padding: 16,
+    paddingTop: 8
+  },
+  subTitle: {
+    marginTop: 8,
+    marginBottom: 8
+
+  },
+  editButton: {
+    marginRight: '8px',
+    '&.MuiButton-contained': {
+      backgroundColor: theme.palette.success.main,
+      color: theme.palette.white
+    },
+    '&.MuiButton-contained:hover': {
+      backgroundColor: theme.palette.success.dark
+    }
+  }
 
 }))
 
 const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) => {
+  const { enqueueSnackbar } = useSnackbar();
+  const classes = useStyles()
+  const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
+  const [loading, setLoading] = useState(false)
+  const handleEdit = () => {
+    setReadOnly(!readOnly)
+  };
+  const handleClose = () => {
+    callback();
+  };
 
-    const { enqueueSnackbar } = useSnackbar();
-    const classes = useStyles()
-    const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
-    const [loading, setLoading] = useState(false)
-    const [value, setValue] = React.useState(0);
-    const [pepButton, setPepButton] = useState((data?.is_pep).toString())
-    const [atmButton, setAtmButton] = useState((data?.has_atm).toString())
-    const handleEdit = () => {
-        setReadOnly(!readOnly)
-    };
-    const handleClose = () => {
-        callback();
-    };
-    const handlebuttonChange = (event) => {
-        setValue(event.target.value);
-    };
+  const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
+    initialValues: {
+      ...data
+    },
+    validateOnChange: false,
+    validateOnBlur: true,
+    validationSchema: Yup.object().shape({
+      // business_age: Yup.number().required("Enter business date"),
+      // hsd_count: Yup.number().required("Enter number of HS dispensers"),
+      // msd_count: Yup.number().required("Enter number of MS dispensers"),
+      // fuel_station_area: Yup.string().required("Enter fuel station area"),
+      // electricity_bill_month: Yup.number().required("Enter electricity bill per month "),
+      // lpg_count: Yup.number().required("Enter LPG count"),
+      // credit_sales_month: Yup.number().required("Enter credit sales per month"),
+      // avg_realization_period: Yup.number().required("Enter average realization period "),
+    }),
+    onSubmit: values => {
+      console.log("values", values)
+      let data = { ...values, has_atm: values.has_atm === "Yes" ? 1 : 0, is_pep: values.is_pep === "Yes" ? 1 : 0 }
+      updateBusinessDetailsByID(data, dealer_id)
+        .then(res => {
+          console.log(res)
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          }
+          )
+          // setTimeout(() => {
+          //   window.location.reload()
+          // }, 1500);
 
-    const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
-        initialValues: {
-            ...data
-        },
-        validateOnChange: false,
-        validateOnBlur: true,
-        validationSchema: Yup.object().shape({
-            // transport_name: Yup.string().required('Please enter transporter name'),
-
-        }),
-        onSubmit: values => {
-            updateBusinessDetailsByID(values, dealer_id)
-                .then(res => {
-                    console.log(res)
-                    enqueueSnackbar(res, {
-                        anchorOrigin: {
-                            vertical: 'top',
-                            horizontal: 'right',
-                        },
-                        variant: 'success',
-                    }
-                    )
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 1500);
-
-                })
-                .catch(e => {
-                    enqueueSnackbar(e, {
-                        anchorOrigin: {
-                            vertical: 'top',
-                            horizontal: 'right',
-                        },
-                        variant: 'error',
-                    }
-                    )
-                })
-        }
-    });
-    const inputProps = {
-        direction: "column",
-        alignTop: true,
-        onChange: handleChange,
+        })
+        .catch(e => {
+          enqueueSnackbar(e, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          }
+          )
+        })
     }
-    return (
-        <div className={classes.sidePanelFormWrapper}>
-            <Typography className={classes.sidePanelTitle} variant="h4">
-                <div>Add Business Details</div>
-                <CloseIcon onClick={handleClose} />
-            </Typography>
-            <div className={classes.sidePanelFormContentWrapper}>
-                <div className={classes.stepperRoot}>
-                    <Box>
-                        <Grid container spacing={2}>
-                            <Grid item md={6}>
-                                <TextInput
-                                    {...inputProps}
-                                    labelText="No. of years in fuel business"
-                                    name="business_age"
-                                    value={values.business_age}
-                                    readOnly={readOnly}
-                                    error={errors.business_age}
-                                    helperText={errors.business_age}
-                                />
-                            </Grid>
-                            <Grid item md={6}>
-                                <TextInput
-                                    {...inputProps}
-                                    labelText="No. of HSD Dispensers"
-                                    name="hsd_count"
-                                    value={values.hsd_count}
-                                    readOnly={readOnly}
-                                    error={errors.hsd_count}
-                                    helperText={errors.hsd_count}
-                                />
-                            </Grid>
-                            <Grid item md={6}>
-                                <TextInput
-                                    {...inputProps}
-                                    labelText="No. of MS Dispensers"
-                                    name="ms_count"
-                                    value={values.ms_count}
-                                    readOnly={readOnly}
-                                    error={errors.ms_count}
-                                    helperText={errors.ms_count}
-                                />
-                            </Grid>
+  });
+  const inputProps = {
+    direction: "column",
+    alignTop: true,
+    onChange: handleChange,
+  }
+  return (
+    <div className={classes.sidePanelFormWrapper}>
+      <Typography className={classes.sidePanelTitle} variant="h4">
+        <div>Add Business Details</div>
+        <CloseIcon onClick={handleClose} />
+      </Typography>
+      <div className={classes.sidePanelFormContentWrapper}>
+        <div className={classes.stepperRoot}>
+          <Box>
+            <Grid container spacing={2}>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  labelText="No. of years in fuel business"
+                  name="business_age"
+                  value={values.business_age}
+                  readOnly={readOnly}
+                  error={errors.business_age}
+                  helperText={errors.business_age}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  labelText="No. of HSD Dispensers"
+                  name="hsd_count"
+                  value={values.hsd_count}
+                  readOnly={readOnly}
+                  error={errors.hsd_count}
+                  helperText={errors.hsd_count}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  labelText="No. of MS Dispensers"
+                  name="ms_count"
+                  value={values.ms_count}
+                  readOnly={readOnly}
+                  error={errors.ms_count}
+                  helperText={errors.ms_count}
+                />
+              </Grid>
 
-                            <Grid item md={6}>
-                                <TextInput
-                                    {...inputProps}
-                                    labelText="Area of fuel station (in Sq. ft)"
-                                    name="fuel_station_area"
-                                    value={values.fuel_station_area}
-                                    readOnly={readOnly}
-                                    error={errors.fuel_station_area}
-                                    helperText={errors.fuel_station_area}
-                                />
-                            </Grid>
-                            <Grid item md={6}>
-                                <TextInput
-                                    {...inputProps}
-                                    labelText="Electricity units (per month)"
-                                    name="electricity_units_month"
-                                    value={values.electricity_units_month}
-                                    readOnly={readOnly}
-                                    error={errors.electricity_units_month}
-                                    helperText={errors.electricity_units_month}
-                                />
-                            </Grid>
-                            <Grid item md={6}>
-                                <TextInput
-                                    {...inputProps}
-                                    money
-                                    labelText="Electricity bill per month"
-                                    name="electricity_bill_month"
-                                    value={values.electricity_bill_month}
-                                    readOnly={readOnly}
-                                    error={errors.electricity_bill_month}
-                                    helperText={errors.electricity_bill_month}
-                                />
-                            </Grid>
-                            <Grid item md={6}>
-                                <TextInput
-                                    {...inputProps}
-                                    money
-                                    labelText="Insurance premium for pump"
-                                    name="insurance_pump"
-                                    value={values.insurance_pump}
-                                    readOnly={readOnly}
-                                    error={errors.insurance_pump}
-                                    helperText={errors.insurance_pump}
-                                />
-                            </Grid>
-                            <Grid item md={6}>
-                                <TextInput
-                                    {...inputProps}
-                                    money
-                                    labelText="Total Insurance premium"
-                                    name="insurance_all"
-                                    value={values.insurance_all}
-                                    readOnly={readOnly}
-                                    error={errors.insurance_all}
-                                    helperText={errors.insurance_all}
-                                />
-                            </Grid>
-                            <Grid item md={6}>
-                                <TextInput
-                                    {...inputProps}
-                                    labelText="LPG count"
-                                    name="lpg_count"
-                                    value={values.lpg_count}
-                                    readOnly={readOnly}
-                                    error={errors.lpg_count}
-                                    helperText={errors.lpg_count}
-                                />
-                            </Grid>
-                            <Grid item md={6}>
-                                <TextInput
-                                    {...inputProps}
-                                    money
-                                    labelText="Credit sales per day"
-                                    name="credit_sales_day"
-                                    value={values.credit_sales_day}
-                                    readOnly={readOnly}
-                                    error={errors.credit_sales_day}
-                                    helperText={errors.credit_sales_day}
-                                />
-                            </Grid>
-                            <Grid item md={6}>
-                                <TextInput
-                                    {...inputProps}
-                                    money
-                                    labelText="Credit sales per month"
-                                    name="credit_sales_month"
-                                    value={values.credit_sales_month}
-                                    readOnly={readOnly}
-                                    error={errors.credit_sales_month}
-                                    helperText={errors.credit_sales_month}
-                                />
-                            </Grid>
-                            <Grid item md={6}>
-                                <TextInput
-                                    {...inputProps}
-                                    labelText="Average realization period"
-                                    name="avg_realization_period"
-                                    value={values.avg_realization_period}
-                                    readOnly={readOnly}
-                                    error={errors.avg_realization_period}
-                                    helperText={errors.avg_realization_period}
-                                />
-                            </Grid>
-                            <Grid item md={6}>
-                                <TextInput
-                                    {...inputProps}
-                                    money
-                                    labelText="Outstanding any given time"
-                                    name="credit_outstanding"
-                                    value={values.credit_outstanding}
-                                    readOnly={readOnly}
-                                    error={errors.credit_outstanding}
-                                    helperText={errors.credit_outstanding}
-                                />
-                            </Grid>
-                            <Grid item md={7}>
-                                <div style={{ paddingTop: 12 }}>
-                                    <label>Is ATM available in outlet</label>
-                                </div>
-                            </Grid>
-                            <Grid item md={4}>
-                                <FormControl>
-                                    <RadioGroup name="has_atm" value={values.has_atm} onChange={handleChange}>
-                                        <FormGroup row>
-                                            <FormControlLabel value='1' control={<Radio color="secondary" />} label="Yes" />
-                                            <FormControlLabel value='0' control={<Radio color="secondary" />} label="No" />
-                                        </FormGroup>
-                                    </RadioGroup>
-                                </FormControl>
-                            </Grid>
-                            {/* <Grid item md={7}>
-                                <div style={{ paddingTop: 12 }}>
-                                    <label>Micro ATM Interested</label>
-                                </div>
-                            </Grid>
-                            <Grid item md={4}>
-                                <FormControl>
-                                    <RadioGroup name="is_microatm" value={values.is_microatm} onChange={handleChange}>
-                                        <FormGroup row>
-                                            <FormControlLabel value={1} control={<Radio color="secondary" />} label="Yes" />
-                                            <FormControlLabel value={0} control={<Radio color="secondary" />} label="No" />
-                                        </FormGroup>
-                                    </RadioGroup>
-                                </FormControl>
-                            </Grid> */}
-                            <Grid item md={7}>
-                                <div style={{ paddingTop: 12 }}>
-                                    <label>Is the customer a PEP (Politically Exposed Person) or closely associated to PEP</label>
-                                </div>
-                            </Grid>
-                            <Grid item md={4}>
-                                <FormControl>
-                                    <RadioGroup name="is_pep" value={pepButton} onChange={handleChange}>
-                                        <FormGroup row>
-                                            <FormControlLabel value='1' control={<Radio color="secondary" />} label="Yes" />
-                                            <FormControlLabel value='0' control={<Radio color="secondary" />} label="No" />
-                                        </FormGroup>
-                                    </RadioGroup>
-                                </FormControl>
-                            </Grid>
-                        </Grid>
-                    </Box >
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  labelText="Area of fuel station (in Sq. ft)"
+                  name="fuel_station_area"
+                  value={values.fuel_station_area}
+                  readOnly={readOnly}
+                  error={errors.fuel_station_area}
+                  helperText={errors.fuel_station_area}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  labelText="Electricity units (per month)"
+                  name="electricity_units_month"
+                  value={values.electricity_units_month}
+                  readOnly={readOnly}
+                  error={errors.electricity_units_month}
+                  helperText={errors.electricity_units_month}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  money
+                  labelText="Electricity bill per month"
+                  name="electricity_bill_month"
+                  value={values.electricity_bill_month}
+                  readOnly={readOnly}
+                  error={errors.electricity_bill_month}
+                  helperText={errors.electricity_bill_month}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  money
+                  labelText="Insurance premium for pump"
+                  name="insurance_pump"
+                  value={values.insurance_pump}
+                  readOnly={readOnly}
+                  error={errors.insurance_pump}
+                  helperText={errors.insurance_pump}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  money
+                  labelText="Total Insurance premium"
+                  name="insurance_all"
+                  value={values.insurance_all}
+                  readOnly={readOnly}
+                  error={errors.insurance_all}
+                  helperText={errors.insurance_all}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  labelText="LPG count"
+                  name="lpg_count"
+                  value={values.lpg_count}
+                  readOnly={readOnly}
+                  error={errors.lpg_count}
+                  helperText={errors.lpg_count}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  money
+                  labelText="Credit sales per day"
+                  name="credit_sales_day"
+                  value={values.credit_sales_day}
+                  readOnly={readOnly}
+                  error={errors.credit_sales_day}
+                  helperText={errors.credit_sales_day}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  money
+                  labelText="Credit sales per month"
+                  name="credit_sales_month"
+                  value={values.credit_sales_month}
+                  readOnly={readOnly}
+                  error={errors.credit_sales_month}
+                  helperText={errors.credit_sales_month}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  labelText="Average realization period"
+                  name="avg_realization_period"
+                  value={values.avg_realization_period}
+                  readOnly={readOnly}
+                  error={errors.avg_realization_period}
+                  helperText={errors.avg_realization_period}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  money
+                  labelText="Outstanding any given time"
+                  name="credit_outstanding"
+                  value={values.credit_outstanding}
+                  readOnly={readOnly}
+                  error={errors.credit_outstanding}
+                  helperText={errors.credit_outstanding}
+                />
+              </Grid>
+              <Grid item md={7}>
+                <div style={{ paddingTop: 12 }}>
+                  <label>Is ATM available in outlet</label>
                 </div>
-            </div>
-            <div className={classes.actionFooter}>
-                <Divider />
-                <div className={classes.actionButtonsWrapper}>
-                    <div>
-                        <Button
-                            variant="outlined"
-                            startIcon={<NavigateBeforeRoundedIcon />}
-                            onClick={handleClose}
-                        >
-                            Back
-                        </Button>
-                    </div>
-                    <div>
-                        <Button
-                            variant="contained"
-                            type="submit"
-                            className={clsx(classes.btn, classes.editButton)}
-                            startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                            onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
-                        >
-                            {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` :
-                                'Save'}
-                        </Button>
-                    </div>
+              </Grid>
+              <Grid item md={4}>
+                <FormControl>
+                  <RadioGroup name="has_atm" value={values.has_atm} onChange={handleChange}>
+                    <FormGroup row>
+                      <FormControlLabel value="Yes" control={<Radio color="secondary" />} label="Yes" />
+                      <FormControlLabel value="No" control={<Radio color="secondary" />} label="No" />
+                    </FormGroup>
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
+              <Grid item md={7}>
+                <div style={{ paddingTop: 12 }}>
+                  <label>Is the customer a PEP (Politically Exposed Person) or closely associated to PEP</label>
                 </div>
-            </div>
-        </div >
-    )
+              </Grid>
+              <Grid item md={4}>
+                <FormControl>
+                  <RadioGroup name="is_pep" value={values.is_pep} onChange={handleChange}>
+                    <FormGroup row>
+                      <FormControlLabel value="Yes" control={<Radio color="secondary" />} label="Yes" />
+                      <FormControlLabel value="No" control={<Radio color="secondary" />} label="No" />
+                    </FormGroup>
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
+            </Grid>
+          </Box >
+        </div>
+      </div>
+      <div className={classes.actionFooter}>
+        <Divider />
+        <div className={classes.actionButtonsWrapper}>
+          <div>
+            <Button
+              variant="outlined"
+              startIcon={<NavigateBeforeRoundedIcon />}
+              onClick={handleClose}
+            >
+              Back
+            </Button>
+          </div>
+          <div>
+            <Button
+              variant="contained"
+              type="submit"
+              className={clsx(classes.btn, classes.editButton)}
+              startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
+              onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
+            >
+              {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` :
+                'Save'}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div >
+  )
 }
 
 export default AddBusinessDetailsForm;

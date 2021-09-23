@@ -199,7 +199,7 @@ const AddNewTransportsOwnerForm = ({
       first_name: Yup.string().required('Please enter transporter name'),
       last_name: Yup.string().required('Please enter transporter name'),
       email: Yup.string().email('Enter valid mail id '),
-      mobile: Yup.number().required("Enter mobile number").test("maxDigits","Mobile Number mush have 10 digits", (number) => String(number).length === 10),
+      mobile: Yup.number().required("Enter mobile number").test("maxDigits", "Mobile Number mush have 10 digits", (number) => String(number).length === 10),
       address: Yup.string().required('Please enter address'),
     }),
     onSubmit: (values) => {

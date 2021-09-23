@@ -77,8 +77,11 @@ const useStyles = makeStyles((theme) => ({
     '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.success.dark
     }
+  },
+  typography: {
+    marginTop: 12,
+    textAlign: 'center'
   }
-
 }))
 
 const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
@@ -210,6 +213,10 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
           <Box>
             <>
               <div>
+                {
+                  asset.length || addNewAsset ? null :
+                    <Typography className={classes.typography}>No asset found,Click 'Add asset' to add new asset.</Typography>
+                }
                 <div className={classes.typeField}>
                   {
                     addNewAsset && (

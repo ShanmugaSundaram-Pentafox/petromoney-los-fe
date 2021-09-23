@@ -713,7 +713,7 @@ const AddNewTransportsForm = ({
                       {...inputProps}
                       name='pan'
                       labelText='PAN'
-                      value={values.pan.toUpperCase()}
+                      value={values.pan?.toUpperCase()}
                       readOnly={readOnly}
                       disabled={readOnly}
                       error={errors.pan}
@@ -771,7 +771,7 @@ const AddNewTransportsForm = ({
                       {...inputProps}
                       name='gst'
                       labelText='GST'
-                      value={values.gst.toUpperCase()}
+                      value={values.gst?.toUpperCase()}
                       readOnly={readOnly}
                       disabled={readOnly}
                       error={errors.gst}

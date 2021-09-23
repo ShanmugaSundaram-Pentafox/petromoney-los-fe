@@ -169,7 +169,7 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
                             <Grid container spacing={2}>
                               <Grid item md={6}>
                                 <ViewData title="Business name" value={item.business_name} />
-                                <ViewData title="Business age" value={item.business_age} />
+                                <ViewData title="Business age(In years)" value={item.business_age} />
                               </Grid>
                               <Grid item md={6}>
                                 <ViewData title="Business owner" value={item.business_owner} />

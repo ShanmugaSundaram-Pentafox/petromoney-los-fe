@@ -163,6 +163,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                     labelText="Sales officer name"
                     name="sales_officer_name"
                     value={values.sales_officer_name}
+                    disabled={readOnly}
                     readOnly={readOnly}
                     error={errors.sales_officer_name}
                     helperText={errors.sales_officer_name}
@@ -174,6 +175,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                     labelText="Sales officer mobile"
                     name="sales_officer_mobile"
                     value={values.sales_officer_mobile}
+                    disabled={readOnly}
                     readOnly={readOnly}
                     error={errors.sales_officer_mobile}
                     helperText={errors.sales_officer_mobile}
@@ -184,6 +186,8 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                     {...inputProps}
                     labelText="Mode Call/Mail"
                     name="communication_mode"
+                    disabled={readOnly}
+                    readOnly={readOnly}
                     value={values.communication_mode}
                     error={errors.communication_mode}
                     helperText={errors.communication_mode}

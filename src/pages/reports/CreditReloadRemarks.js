@@ -156,8 +156,8 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
       setStatus('decline')
       handleSubmit()
   }
-  const disperseSubmit = () => {
-      setStatus('disbruse')
+  const disburseSubmit = () => {
+      setStatus('disburse')
       handleSubmit()
   }
 
@@ -225,10 +225,10 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
               variant='contained'
               type='submit'
               color='primary'
-                onClick={disperseSubmit}
+                onClick={disburseSubmit}
               className={clsx(classes.btn, classes.editButton)}
             >
-              Disbruse
+              Disburse
             </Button>
           </div>
         </div>

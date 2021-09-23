@@ -39,21 +39,19 @@ const CreditReload = ({ currentUser }) => {
 
 
   useMount(async () => {
-    // setLoading(true)
+    setLoading(true)
     getCreditReport()
       .then((data) => {
-        if(data != 0){
-          setTableData(data);
-        }
-        // setLoading(false);
+        setTableData(data);
+        setLoading(false);
       })
       .catch((e) => {
-        // setLoading(false);
+        setLoading(false);
         console.log(e);
       });
     getTypeOfAccount()
       .then((data) => {
-        // setLoading(false);
+        setLoading(false);
         setAccountType(
           data.map(({ id, type_of_account }) => ({
             label: type_of_account,
@@ -62,7 +60,7 @@ const CreditReload = ({ currentUser }) => {
         );
       })
       .catch((e) => {
-        // setLoading(false);
+        setLoading(false);
         console.log(e);
       });
 
@@ -94,7 +92,7 @@ const CreditReload = ({ currentUser }) => {
                 <div style={{color: '#FF5C58'}}>{value}</div>
               </Tooltip>
             )
-          } else if (value === 'Disbrused') {
+          } else if (value === 'Disbursed') {
             return (
               <Tooltip title={tableMeta.rowData[7]}>
                 <div>{value}</div>
@@ -132,7 +130,10 @@ const CreditReload = ({ currentUser }) => {
         .then((data) => {
           setRowData(data[0])
           setStatusModal(true)
-      })
+        })
+        .catch((e) => {
+          console.log(e);
+        })
     }
   };
 

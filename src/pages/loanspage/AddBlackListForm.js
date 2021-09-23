@@ -125,7 +125,7 @@ const AddBlackListForm = ({ data, callback }) => {
     const handleSave = () => {
         const res = value ? value : newRemarks;
         if (typeof res === "number") {
-            updateRemarks(dealerID?.label, res)
+            updateRemarks(dealerID, res)
                 .then(res => {
                     enqueueSnackbar(res, {
                         anchorOrigin: {
@@ -155,7 +155,7 @@ const AddBlackListForm = ({ data, callback }) => {
                 })
         }
         else {
-            addNewRemarks(dealerID.value, res)
+            addNewRemarks(dealerID, res)
                 .then(res => {
                     enqueueSnackbar(res, {
                         anchorOrigin: {

@@ -25,6 +25,8 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
 import { IconButton } from '@material-ui/core';
+import ShareIcon from '@material-ui/icons/Share';
+import usePageTitle from '../../../hooks/usePageTitle';
 
 
 const useStyles = makeStyles({
@@ -119,6 +121,7 @@ const useStyles = makeStyles({
 });
 
 function FastTagPassbook( {currentUser} ) {
+  usePageTitle('Fastag Passbook')
   const classes = useStyles();
   const [selectedValue, setSelectedValue] = React.useState('vehicle');
   const [searchValue, setSearchValue] = useState();
@@ -397,6 +400,10 @@ function FastTagPassbook( {currentUser} ) {
   }
   }
 
+  const handleShare = () => {
+    console.log('Sharing Statement...');
+  }
+
   const onChangeHandler = (event) => {
     setFile(event.target.files[0]);
     setLoading(true);
@@ -602,6 +609,15 @@ function FastTagPassbook( {currentUser} ) {
               startIcon={<GetAppIcon/>}
             >
               Download
+            </Button>
+            <Button
+              variant='outlined'
+              color='primary'
+              type='submit'
+              style={{marginLeft: 10 }}
+              onClick={handleShare}
+            >
+              <ShareIcon fontSize='small' style={{margin: 1.2}}/>
             </Button>
           </div>
           <div className={classes.icon}>

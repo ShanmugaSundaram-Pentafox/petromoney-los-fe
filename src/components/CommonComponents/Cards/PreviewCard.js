@@ -20,7 +20,7 @@ const Card = styled.div`
   }
 
   .card-footer {
-    background-color: #f9f9f9;
+    // background-color: #f9f9f9;
     padding: 10px;
     display: flex;
     justify-content: flex-end;

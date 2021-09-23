@@ -761,7 +761,7 @@ const AddNewTransportsForm = ({
                       {...inputProps}
                       name='gst'
                       labelText='GST'
-                      value={values.gst.toUpperCase()}
+                      value={values.gst?.toUpperCase()}
                       readOnly={readOnly}
                       disabled={readOnly}
                       error={errors.gst}

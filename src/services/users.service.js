@@ -226,7 +226,7 @@ export const getCreditReport = () => {
     apiCall(`credit/reload`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data)
+          resolve(data || [])
         } else {
           reject(message)
         }
@@ -242,7 +242,7 @@ export const getCreditReportById = (id) => {
     apiCall(`credit/reload/${id}`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data)
+          resolve(data || [])
         } else {
           reject(message)
         }

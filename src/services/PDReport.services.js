@@ -547,6 +547,25 @@ export const addIncomeDetailsByID = (data, id, isEdit) => {
       });
   });
 }
+export const deleteIncomeDetailsByID = (data) => {
+  return new Promise((resolve, reject) => {
+    let url = `dealership/income/details/${data.id}`
+    apiCall(url, {
+      method: 'DELETE',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
 export const getExpensesDetailsById = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/expense/details`)
@@ -567,6 +586,25 @@ export const addExpenseDetailsByID = (data, id, isEdit) => {
     let url = isEdit ? `dealership/expense/details/${data.id}` : `dealership/${id}/expense/details`
     apiCall(url, {
       method: 'POST',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+export const deleteExpenseDetailsByID = (data, id, isEdit) => {
+  return new Promise((resolve, reject) => {
+    let url = `dealership/expense/details/${data.id}`
+    apiCall(url, {
+      method: 'DELETE',
       body: data,
     })
       .then(({ status, message }) => {

@@ -119,7 +119,7 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       name: Yup.string().required('Please enter dealership name'),
-      dealership_id: Yup.string().required('Please enter dealership ID'),
+      referred_by: Yup.string().required('Please enter dealership ID'),
       mobile: Yup.string().required('Please enter dealership mobile number'),
     }),
     onSubmit: values => {
@@ -224,7 +224,7 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
         <div className={classes.stepperRoot}>
           {
             data.length || addNew ? null :
-              <Typography className={classes.typography}>No loan found,Click 'Add Loan' to add new loan.</Typography>
+              <Typography className={classes.typography}>No references found,Click 'Add reference' to add.</Typography>
           }
           {
             addNew || editRow ? (
@@ -234,10 +234,10 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
                     <TextInput
                       {...inputProps}
                       labelText="Dealership ID"
-                      name="dealership_id"
-                      value={values.dealership_id}
-                      error={errors.dealership_id}
-                      helperText={errors.dealership_id}
+                      name="referred_by"
+                      value={values.referred_by}
+                      error={errors.referred_by}
+                      helperText={errors.referred_by}
                     />
                   </Grid>
                   <Grid item md={6}>
@@ -311,7 +311,7 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
                       >
                         <Grid container spacing={2}>
                           <Grid item md={6}>
-                            <ViewData title="Dealership ID" value={item.dealership_id} />
+                            <ViewData title="Dealership ID" value={item.referred_by} />
                             <ViewData title="Mobile" value={item.mobile} />
                           </Grid>
                           <Grid item md={6}>

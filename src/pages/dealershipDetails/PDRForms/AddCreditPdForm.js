@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextInput from '../../../components/TextInput/TextInput';
@@ -9,6 +9,13 @@ import { makeStyles } from "@material-ui/styles";
 import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useMount } from 'react-use';
+import * as Yup from 'yup';
+import { useFormik } from 'formik';
+import { useSnackbar } from 'notistack';
+import { format, parse } from 'date-fns'
+import { getDealershipById } from '../../../services/dealerships.service';
+import { URL } from '../../../config/serverUrls';
+
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -55,20 +62,82 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
+const AddCreditPdForm = ({ dealer_id, callback, currentUser }) => {
   const classes = useStyles()
-
-
-
+  const { enqueueSnackbar } = useSnackbar();
+  const [dealershipData, setDealershipData] = useState({})
   useMount(() => {
-
+    getDealershipById(dealer_id)
+      .then(data => {
+        console.log("dataaaaaaaaaa", data)
+        setDealershipData(data)
+      })
+      .catch((e) => {
+        console.log(e);
+      })
   })
+
+
+  const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
+    initialValues: { ...dealershipData },
+    validateOnChange: false,
+    validateOnBlur: true,
+    validationSchema: Yup.object().shape({
+      // transport_name: Yup.string().required('Please enter transporter name'),
+
+    }),
+    onSubmit: values => {
+      console.log("values", values)
+      // let eDate = format(parse(values.agreement_executed_on, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
+      // let vDate = format(parse(values.agreement_valid_till, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
+      const date = {
+        ...values,
+        // agreement_valid_till: vDate,
+        // agreement_executed_on: eDate,
+      };
+      const data = new FormData();
+      Object.keys(date).forEach((key) => {
+        data.append(key, date[key]);
+      });
+      fetch(`${URL.base}dealership/${dealer_id}`, {
+        method: 'POST',
+        body: data,
+        headers: {
+          Authorization: `Bearer ${currentUser.token}`,
+        },
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then(res => {
+          enqueueSnackbar(res.message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          });
+          setTimeout(() => {
+            window.location.reload()
+          }, 1500);
+        })
+        .catch(e => {
+          enqueueSnackbar(e.message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          });
+        })
+    }
+  });
+
   const fieldProps = {
     direction: "column",
     alignTop: true,
   }
-
-
+  console.log("dealership data", dealershipData)
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
@@ -84,13 +153,15 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
                 alignTop
                 multiline
                 rows={20}
-                // rowsMax={8}
+                name='pdr_remarks'
+                value={values.pdr_remarks}
+                error={errors.pdr_remarks}
+                helperText={errors.pdr_remarks}
+                onChange={handleChange}
                 {...fieldProps}
               />
-
             </Grid>
           </Grid>
-
         </div>
       </div>
       <div className={classes.actionFooter}>
@@ -100,7 +171,6 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
             <Button
               variant="outlined"
               startIcon={<NavigateBeforeRoundedIcon />}
-              // disabled={loading}
               onClick={callback}
             >
               Back
@@ -110,7 +180,7 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
             <Button
               variant="contained"
               className={clsx(classes.btn, classes.editButton)}
-            // onClick={() => { }}
+              onClick={handleSubmit}
             >
               Save
             </Button>
@@ -121,4 +191,4 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
   )
 }
 
-export default AddIncomeDetailsForm;
+export default AddCreditPdForm;

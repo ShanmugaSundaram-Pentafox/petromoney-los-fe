@@ -83,11 +83,16 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   dialogBox: {
-    position: 'relative',
-    overflow: 'hidden',
     width: '100%',
-    paddingTop: 20,
-
+    paddingTop: 10,
+  },
+  frame: {
+    '&.MuiDialogContent-root': {
+      '&.MuiDialogContent-dividers': {
+        backgroundColor: 'pink',
+        overflow: 'hidden'
+      }
+    }
   }
 }))
 
@@ -185,11 +190,18 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
   const handleDownload = () => {
     downloadPDReport(id)
       .then(res => {
-        setFileCode(res)
+        setFileCode(res.base64)
+        enqueueSnackbar(res.message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        });
         setOpenDialog(true)
       })
       .catch((e) => {
-        enqueueSnackbar(e, {
+        enqueueSnackbar('Something went wrong please try again.', {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',
@@ -213,9 +225,10 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
           onClose={() => { setOpenDialog(false) }}
         >
           <div className={classes.dialogBox} >
-            <iframe src={`data:application/pdf;base64,${fileCode}`} height="900" width="500" frameBorder="0"></iframe>
+            <DialogContent className={classes.frame}>
+              <iframe src={`data:application/pdf;base64,${fileCode}`} height="900" width="500" frameBorder="0"></iframe>
+            </DialogContent>
           </div>
-          {/* <PdfViewer title="Personal Description Report" file={fileCode} isBase64 showDownload /> */}
         </FormDialog>
         <Grid container spacing={1} className={classes.root} >
           <Grid item md={2}>
@@ -302,14 +315,14 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
               </div>
             </Tooltip>
           </Grid>
-          {/* <Grid item md={2}>
+          <Grid item md={2}>
             <Tooltip title="click to edit other details">
               <div className={classes.content} onClick={() => setOpenCreditPdForm(true)}>
                 <CreditIcon width={30} className={classes.icons} />
                 <Typography variant="h5" align='center' className={classes.title} >Credit PD</Typography>
               </div>
             </Tooltip>
-          </Grid> */}
+          </Grid>
         </Grid>
       </div>
 
@@ -401,7 +414,6 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       >
         <AddCreditPdForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} />
       </Drawer>
-
     </div >
   );
 

@@ -501,11 +501,11 @@ export const deleteLoanDetailsByID = (data, id) => {
 export const downloadPDReport = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/pdr`)
-      .then(({ status, base64, message }) => {
-        if (status === "SUCCESS") {
-          resolve(base64)
+      .then(res => {
+        if (res.status === "SUCCESS") {
+          resolve(res)
         } else {
-          reject(message)
+          reject(res.message)
         }
       })
       .catch(({ message }) => {
@@ -616,7 +616,7 @@ export const addReferenceDetails = (data, id) => {
 }
 export const updateReferenceById = (data, id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`dealership/${id}/references/${data.id}`, {
+    apiCall(`dealership/${id}/references`, {
       method: 'POST',
       body: data,
     })
@@ -634,7 +634,7 @@ export const updateReferenceById = (data, id) => {
 }
 export const deleteReferenceDetailsByID = (data, id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`dealership/${id}/reference/${data.id}`, {
+    apiCall(`dealership/${id}/references/${data.id}`, {
       method: 'DELETE',
       body: data,
     })

@@ -114,9 +114,10 @@ const DealerEditSideWrapper = ({
   const validationSchema = Yup.object().shape({
     first_name: Yup.string().required('Enter first name'),
     last_name: Yup.string().required('Enter last name'),
-    gender: Yup.string().required('Enter gender'),
+    gender: Yup.string().nullable('Choose gender').required('Enter gender'),
     email: Yup.string().email('Invalid email').required('Enter email'),
     address: Yup.string()
+      .nullable('Enter address')
       .min(6, 'address must be atleast 6 characters')
       .required('Enter address'),
     mobile: Yup.string()
@@ -124,12 +125,14 @@ const DealerEditSideWrapper = ({
       .required('Enter valid mobile number'),
     // dob: Yup.number().required("Choose date of birth"),
     residing_since: Yup.number().required('Enter the year'),
-    marital_status: Yup.string('Enter your Marital status'),
+    marital_status: Yup.string('Enter your Marital status').nullable('Choose marital status'),
     pan: Yup.string()
+      .nullable('Enter PAN')
       .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
       .required('Enter PAN')
       .uppercase(),
     aadhar: Yup.string()
+      .nullable('Enter Aadhar')
       .matches(/^(\d{12})$|^(\d{16})$/, 'Invalid aadhar')
       .required('Enter valid aadhar'),
     ...coApplicantFields,
@@ -198,7 +201,7 @@ const DealerEditSideWrapper = ({
       values.last_name = values.last_name.toUpperCase();
       setLoading(true);
       const d = selectedDate ? format(parse(selectedDate, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : format(parse(values.dob, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
-      const date_values = { ...values, dob: d, pan: values.pan.toUpperCase(),  is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0 };
+      const date_values = { ...values, dob: d, pan: values.pan?.toUpperCase(), is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0 };
       const data = new FormData();
       Object.keys(date_values).forEach((key) => {
         data.append(key, date_values[key]);

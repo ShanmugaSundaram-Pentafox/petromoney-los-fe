@@ -10,17 +10,10 @@ import clsx from 'clsx';
 import Divider from '@material-ui/core/Divider';
 import { makeStyles } from "@material-ui/styles";
 import CloseIcon from '@material-ui/icons/Close';
-import EditIcon from '@material-ui/icons/Edit';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
+import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
 import { addAdditionalDetails, deleteOtherDetailsByID, updateAdditionalDetails } from '../../../services/PDReport.services';
-import { FormControl } from '@material-ui/core';
-import { RadioGroup } from '@material-ui/core';
-import { FormControlLabel } from '@material-ui/core';
-import { Radio } from '@material-ui/core';
-import { FormGroup } from '@material-ui/core';
 import { useMount } from 'react-use';
 import { getOmcList } from '../../../services/common.service';
 import PreviewCard from '../../../components/CommonComponents/Cards/PreviewCard';
@@ -44,6 +37,7 @@ const useStyles = makeStyles((theme) => ({
   },
   sidePanelFormContentWrapper: {
     flex: 1,
+    backgroundColor: '#f6f6f6',
     overflow: 'auto'
   },
   actionButtonsWrapper: {
@@ -71,12 +65,15 @@ const useStyles = makeStyles((theme) => ({
     '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.success.dark
     }
+  },
+  typography: {
+    marginTop: 12,
+    textAlign: 'center'
   }
 
 }))
 
 const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
-  const [loading, setLoading] = useState(false)
   const [omcs, setOmcs] = useState([])
   const [addNew, setAddNew] = useState(data ? false : true)
   const [editRow, setEditRow] = useState(false);
@@ -94,7 +91,6 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
       .catch((e) => {
         console.log(e);
       });
-
   })
 
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
@@ -120,7 +116,6 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
             setTimeout(() => {
               window.location.reload()
             }, 1500);
-
           })
           .catch(e => {
             enqueueSnackbar(e, {
@@ -172,12 +167,26 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
   const deleteOthersRow = (row, index) => {
     deleteOtherDetailsByID(row, dealer_id)
       .then(data => {
-        console.log(data)
+        enqueueSnackbar(data, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
+        setTimeout(() => {
+          window.location.reload()
+        }, 1500)
       })
       .catch((e) => {
-        console.log(e);
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
       })
-
   }
   return (
     <div className={classes.sidePanelFormWrapper}>
@@ -196,21 +205,6 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
               <Box>
                 <form onSubmit={handleSubmit}>
                   <Grid container spacing={2}>
-                    {/* <Grid item md={6}>
-                                            <div style={{ paddingTop: 12 }}>
-                                                <label>Other Bunks owned in family member</label>
-                                            </div>
-                                        </Grid>
-                                        <Grid item md={6}>
-                                            <FormControl>
-                                                <RadioGroup name="other_bunks_owned" value={values.other_bunks_owned} defaultValue={values.other_bunks_owned} onChange={handleChange}>
-                                                    <FormGroup row>
-                                                        <FormControlLabel value="yes" control={<Radio color="secondary" />} label="Yes" />
-                                                        <FormControlLabel value="no" control={<Radio color="secondary" />} label="No" />
-                                                    </FormGroup>
-                                                </RadioGroup>
-                                            </FormControl>
-                                        </Grid> */}
                     {
                       <>
                         <Grid item md={6}>
@@ -259,6 +253,30 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                       </>
                     }
                   </Grid>
+                  <div className={classes.actionFoot}>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                      <div>
+                        <Button
+                          variant="outlined"
+                          className={classes.btn}
+                          onClick={() => { setAddNew(false); setEditRow(false) }}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                      <div>
+                        <Button
+                          variant="contained"
+                          type="submit"
+                          className={clsx(classes.btn, classes.editButton)}
+                          startIcon={<CheckOutlinedIcon />}
+                          onClick={handleSubmit}
+                        >
+                          Save
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </form>
               </Box >
             ) : (
@@ -273,7 +291,10 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                         <Grid container spacing={2}>
                           <Grid item md={6}>
                             <ViewData title="Dealership ID" value={item.dealership_id} />
-                            <ViewData title="OMC" value={item.omc} />
+                            <ViewData title="OMC" value={(omcs.find(function (omc, index) {
+                              if (omc.id == item?.omc)
+                                return true;
+                            }))?.name} />
                           </Grid>
                           <Grid item md={6}>
                             <ViewData title="Name" value={item.name} />
@@ -317,8 +338,6 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
         </div>
       </div>
     </div >
-
-
   )
 }
 

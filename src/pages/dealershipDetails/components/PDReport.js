@@ -29,10 +29,9 @@ import { useSnackbar } from 'notistack';
 import AddReferenceForm from '../PDRForms/AddReferenceForm';
 import AddIncomeDetailsForm from '../PDRForms/AddIncomeDetailsForm';
 import AddCreditPdForm from '../PDRForms/AddCreditPdForm';
-import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
-import PdfViewer from '../../../components/CommonComponents/PdfViewer/PdfViewer';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
+import { CircularProgress } from '@material-ui/core';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -99,6 +98,7 @@ const useStyles = makeStyles((theme) => ({
 const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
   const classes = useStyles()
   const { enqueueSnackbar } = useSnackbar();
+  const [loading, setLoading] = useState(false)
   const [openOmcForm, setOpenOmcForm] = useState(false)
   const [openBusinessForm, setOpenBusinessForm] = useState(false)
   const [openOutletForm, setOpenOutletForm] = useState(false)
@@ -188,17 +188,12 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       })
   })
   const handleDownload = () => {
+    setLoading(true)
     downloadPDReport(id)
       .then(res => {
         setFileCode(res.base64)
-        enqueueSnackbar(res.message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
-        });
         setOpenDialog(true)
+        setLoading(false)
       })
       .catch((e) => {
         enqueueSnackbar('Something went wrong please try again.', {
@@ -216,7 +211,9 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       <div className={classes.wrapper}>
         <div className={classes.header}>
           <Typography style={{ width: '70%' }} variant="h4" align={textAlign} className={classes.WrapperTitle} >Personal Discussion Report</Typography>
-          <Button variant="contained" size="small" className={classes.btnSuccess} onClick={handleDownload} >Report</Button>
+          <Button variant="contained" size="small" className={classes.btnSuccess} onClick={handleDownload} >
+            {loading ? <CircularProgress size={20} /> : 'Report'}
+          </Button>
         </div>
 
         <FormDialog

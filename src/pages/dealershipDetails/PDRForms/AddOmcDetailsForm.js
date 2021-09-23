@@ -92,11 +92,12 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      sales_officer_name: Yup.string().required('Enter sales officer name'),
+      sales_officer_name: Yup.string().nullable('Enter sales officer name').required('Enter sales officer name'),
       sales_officer_mobile: Yup.string()
+        .nullable('Enter sales officer name')
         .matches(/^\d{10}$/, 'Invalid mobile number')
         .required('Enter valid mobile number'),
-      // dob: Yup.number().required("Choose date of birth"),
+      communication_mode: Yup.string().nullable('Enter communication mode').required('Enter communication mode')
     }),
     onSubmit: values => {
 
@@ -162,6 +163,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                     labelText="Sales officer name"
                     name="sales_officer_name"
                     value={values.sales_officer_name}
+                    disabled={readOnly}
                     readOnly={readOnly}
                     error={errors.sales_officer_name}
                     helperText={errors.sales_officer_name}
@@ -173,6 +175,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                     labelText="Sales officer mobile"
                     name="sales_officer_mobile"
                     value={values.sales_officer_mobile}
+                    disabled={readOnly}
                     readOnly={readOnly}
                     error={errors.sales_officer_mobile}
                     helperText={errors.sales_officer_mobile}
@@ -183,6 +186,8 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                     {...inputProps}
                     labelText="Mode Call/Mail"
                     name="communication_mode"
+                    disabled={readOnly}
+                    readOnly={readOnly}
                     value={values.communication_mode}
                     error={errors.communication_mode}
                     helperText={errors.communication_mode}

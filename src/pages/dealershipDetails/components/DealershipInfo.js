@@ -79,26 +79,28 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      name: Yup.string().required('Please enter transporter name').matches(/^[aA-zZ & - .\s]+$/, "Only alphabets are allowed for this field ").max(50),
-      address: Yup.string().required('Please enter address'),
-      state: Yup.string().required('Please choose state'),
-      district: Yup.string().required('Please enter district'),
+      name: Yup.string().nullable('Please enter dealership name').required('Please enter Dealership name').matches(/^[aA-zZ & - .\s]+$/, "Only alphabets are allowed for this field ").max(50),
+      address: Yup.string().nullable('Please enter address').required('Please enter address'),
+      state: Yup.string().nullable('Please choose state').required('Please choose state'),
+      district: Yup.string().nullable('Please enter district').required('Please enter district'),
       pincode: Yup.number()
-        .min(6, 'Pincode must be 6 digits')
+        .nullable('Enter pincode')
+        .test('pincode', 'Enter valid pincode', (val) => String(val).length === 6)
         .required('Enter pincode'),
       pan: Yup.string()
+        .nullable('Enter PAN')
         .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
         .required('Enter PAN')
         .uppercase(),
-      gst: Yup.string().matches(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/, "Invalid GST").required("Enter GST").uppercase(),
+      gst: Yup.string().nullable('Enter GST').matches(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/, "Invalid GST").required("Enter GST").uppercase(),
 
     }),
     onSubmit: values => {
       values.name = values.name.toUpperCase();
       values.gst = values.gst.toUpperCase();
       values.pan = values.pan.toUpperCase();
-      let eDate = values.agreement_executed_on? format(parse(values.agreement_executed_on, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : null;
-      let vDate = values.agreement_valid_till? format(parse(values.agreement_valid_till, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : null;
+      let eDate = values.agreement_executed_on ? format(parse(values.agreement_executed_on, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : null;
+      let vDate = values.agreement_valid_till ? format(parse(values.agreement_valid_till, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : null;
       const date_values = {
         ...values,
         name: values.name.toUpperCase(),
@@ -302,7 +304,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
               <Grid container spacing={2} className={classes.readOnlyWrapper}>
                 <Grid md={4}>
                   <ViewData title='Name' value={values.name} />
-                  <ViewData title='Address' value={values.address + ' - ' + values.pincode ? values.pincode : ''} />
+                  <ViewData title='Address' value={values.address + ' - ' + (values.pincode ? values.pincode : '')} />
                   <ViewData title='PAN' value={values.pan} />
                 </Grid>
                 <Grid md={4}>

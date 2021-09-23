@@ -81,7 +81,8 @@ const AddExpenseForm = ({ data, isEdit, id, handleClose }) => {
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      // transport_name: Yup.string().required('Please enter transporter name'),
+      expense_type: Yup.string().nullable('Enter type').required('Enter type'),
+      expense_amount: Yup.number().nullable('Enter expenses amount').required('Enter expenses amount')
     }),
     onSubmit: values => {
       const data = { ...values, is_pdr: 1 }
@@ -120,7 +121,6 @@ const AddExpenseForm = ({ data, isEdit, id, handleClose }) => {
   }
 
   return (
-
     <>
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
@@ -181,6 +181,5 @@ const AddExpenseForm = ({ data, isEdit, id, handleClose }) => {
       </div>
     </>
   )
-
 }
 export default AddExpenseForm;

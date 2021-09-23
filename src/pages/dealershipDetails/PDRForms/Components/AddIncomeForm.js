@@ -1,17 +1,12 @@
 import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import clsx from 'clsx';
 import Divider from '@material-ui/core/Divider';
 import { makeStyles } from "@material-ui/styles";
-import CloseIcon from '@material-ui/icons/Close';
-import EditIcon from '@material-ui/icons/Edit';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
-import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
 import { useMount } from 'react-use';
 import Button from '../../../../components/CommonComponents/Button/Button';
@@ -174,7 +169,7 @@ const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
                   <TextInput
                     {...inputProps}
                     type="number"
-                    labelText="Business age"
+                    labelText="Business age(in year)"
                     name="business_age"
                     value={values.business_age}
                     error={errors.business_age}

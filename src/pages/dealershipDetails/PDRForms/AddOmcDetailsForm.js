@@ -41,6 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
   sidePanelFormContentWrapper: {
     flex: 1,
+    backgroundColor: '#f6f6f6',
     overflow: 'auto'
   },
   actionButtonsWrapper: {
@@ -96,8 +97,6 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
         .matches(/^\d{10}$/, 'Invalid mobile number')
         .required('Enter valid mobile number'),
       // dob: Yup.number().required("Choose date of birth"),
-
-
     }),
     onSubmit: values => {
 
@@ -198,7 +197,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                       inputVariant='outlined'
                       readOnly={readOnly}
                       disabled={readOnly}
-                      format='yyyy-MM-dd'
+                      format='dd/MM/yyyy'
                       animateYearScrolling={true}
                       error={errors.agreement_executed_on}
                       helperText={errors.agreement_executed_on}
@@ -227,7 +226,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                       hideTabs={true}
                       variant='inline'
                       inputVariant='outlined'
-                      format='yyyy-MM-dd'
+                      format='dd/MM/yyyy'
                       maxDate={new Date('2050-01-01')}
                       readOnly={readOnly}
                       disabled={readOnly}

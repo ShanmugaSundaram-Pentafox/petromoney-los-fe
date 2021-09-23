@@ -34,7 +34,8 @@ const useStyles = makeStyles((theme) => ({
     },
     sidePanelFormContentWrapper: {
         flex: 1,
-        overflow: 'auto'
+        overflow: 'auto',
+        backgroundColor: '#f6f6f6',
     },
     sidePanelWrapper: {
         position: 'relative',
@@ -132,7 +133,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
-            ifsc: Yup.string().length(11).required("Enter valid IFSC code"),
+            // ifsc: Yup.string().length(11).required("Enter valid IFSC code"),
             // transport_name: Yup.string().required('Please enter transporter name'),
         }),
         onSubmit: values => {
@@ -217,7 +218,6 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
                         bankData.length || addNewRow ? null :
                             <Typography className={classes.typography}>No bank found,Click 'Add Bank' to add new bank.</Typography>
                     }
-
                     {
                         addNewRow || editRow ? (
                             <>

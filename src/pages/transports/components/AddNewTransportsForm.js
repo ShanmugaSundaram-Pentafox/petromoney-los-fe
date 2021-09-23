@@ -229,7 +229,7 @@ const AddNewTransportsForm = ({
     onSubmit: (values) => {
       setLoading(true);
       values.name = values.name.toUpperCase();
-      const data = { ...values, t_owner_id: id, pan: values.pan.toUpperCase(), gst: values.gst.toUpperCase() };
+      const data = { ...values, t_owner_id: id, pan: values.pan?.toUpperCase(), gst: values.gst?.toUpperCase() };
       // let apiURL = isAdd === 'Add' ? `transporters` : `tranporters/${data.transporter_id}`
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
@@ -281,7 +281,6 @@ const AddNewTransportsForm = ({
           .then((res) => {
             return res.json();
           })
-
           .then((res) => {
             enqueueSnackbar(res.message, {
               anchorOrigin: {
@@ -327,10 +326,10 @@ const AddNewTransportsForm = ({
         setStates([{ id: '', name: 'Choose State' }, ...d]);
         return d;
       })
-      // .then(d => {
-      //     let res = d.find(({ id }) => id === parseInt(values?.state));
-      //     fetchRegions(parseInt(res.id));
-      // })
+      .then(d => {
+        let res = d.find(({ id }) => id === parseInt(values?.state));
+        fetchRegions(parseInt(res.id));
+      })
       .catch((e) => {
         console.log(e);
       });
@@ -352,15 +351,6 @@ const AddNewTransportsForm = ({
       : setFieldValue('gst_file_url', value[0]);
     handleSubmit(values);
     onCloseUploader();
-    // enqueueSnackbar('File added successfully', {
-    //     anchorOrigin: {
-    //         vertical: 'top',
-    //         horizontal: 'right',
-    //     },
-    //     autoHideDuration: 1000,
-    //     variant: 'success',
-    // }
-    // )
   };
   const docUpload = (val) => {
     setShowUpload(true);
@@ -713,7 +703,7 @@ const AddNewTransportsForm = ({
                       {...inputProps}
                       name='pan'
                       labelText='PAN'
-                      value={values.pan.toUpperCase()}
+                      value={values.pan?.toUpperCase()}
                       readOnly={readOnly}
                       disabled={readOnly}
                       error={errors.pan}

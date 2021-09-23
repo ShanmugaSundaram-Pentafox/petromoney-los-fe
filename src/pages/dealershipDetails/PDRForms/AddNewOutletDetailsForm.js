@@ -34,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
     },
     sidePanelFormContentWrapper: {
         flex: 1,
+        backgroundColor: '#f6f6f6',
         overflow: 'auto'
     },
     actionButtonsWrapper: {
@@ -71,7 +72,8 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
     };
     const handleClose = () => {
         callback();
-    }; const relationShipOptions = [
+    };
+    const relationShipOptions = [
         { label: "Choose Relationship", value: "" },
         { label: "Father", value: "FATHER" },
         { label: "Mother", value: "MOTHER" },

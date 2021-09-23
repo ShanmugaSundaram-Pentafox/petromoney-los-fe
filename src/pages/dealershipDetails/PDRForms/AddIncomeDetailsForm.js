@@ -34,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
   },
   sidePanelFormContentWrapper: {
     flex: 1,
+    backgroundColor: '#f6f6f6',
     overflow: 'auto'
   },
   actionButtonsWrapper: {

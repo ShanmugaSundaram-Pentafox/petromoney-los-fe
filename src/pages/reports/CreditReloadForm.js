@@ -1,8 +1,6 @@
 import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react';
-import { useMount } from 'react-use';
 import CloseIcon from '@material-ui/icons/Close';
-import { getTypeOfAccount } from '../../services/users.service';
 import { Typography } from '@material-ui/core';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -15,9 +13,7 @@ import clsx from 'clsx';
 import { TextField } from '@material-ui/core';
 import apiCall from '../../utils/api.util';
 import { useSnackbar } from 'notistack';
-import { URL } from '../../config/serverUrls';
 import { InputAdornment } from '@material-ui/core';
-import Currency from '../../components/Number/Currency';
 import AsyncSelect from 'react-select/async';
 
 const useStyles = makeStyles((theme) => ({

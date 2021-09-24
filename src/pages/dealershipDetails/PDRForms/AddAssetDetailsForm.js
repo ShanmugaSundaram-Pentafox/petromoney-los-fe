@@ -145,7 +145,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
       // type: Yup.string().nullable('Please choose type').required('Please choose type'),
     }),
     onSubmit: values => {
-      const data = { asset_id: type.value, details: { ...values } }
+      const data = { asset_id: type.value, ownership: values.ownership, details: { ...values } }
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
         formData.append(key, data[key]);

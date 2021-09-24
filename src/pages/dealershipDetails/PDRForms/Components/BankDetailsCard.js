@@ -3,10 +3,13 @@ import { ViewData } from '../../../../components/CommonComponents/FilePreview';
 import Grid from '@material-ui/core/Grid';
 import { deleteBankDetailsByID } from '../../../../services/PDReport.services';
 import PreviewCard from '../../../../components/CommonComponents/Cards/PreviewCard';
+import { useSnackbar } from 'notistack';
 
 
 const BankDetailsCard = ({ id, data, editBankDetails }) => {
-    
+    const { enqueueSnackbar } = useSnackbar();
+
+
     const editBankRow = (rowData, rowIndex) => {
         editBankDetails(rowData, rowIndex)
     }
@@ -14,6 +17,17 @@ const BankDetailsCard = ({ id, data, editBankDetails }) => {
         deleteBankDetailsByID(row, id)
             .then(data => {
                 console.log(data)
+                enqueueSnackbar(data, {
+                    anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'right',
+                    },
+                    variant: 'success',
+                }
+                )
+                setTimeout(() => {
+                    window.location.reload()
+                }, 1500);
             })
             .catch((e) => {
                 console.log(e);

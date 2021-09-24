@@ -13,7 +13,7 @@ import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import { format, parse } from 'date-fns'
-import { getDealershipById } from '../../../services/dealerships.service';
+// import { getDealershipById } from '../../../services/dealerships.service';
 import { URL } from '../../../config/serverUrls';
 
 
@@ -62,23 +62,13 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const AddCreditPdForm = ({ dealer_id, callback, currentUser }) => {
+const AddCreditPdForm = ({ data, dealer_id, callback, currentUser }) => {
   const classes = useStyles()
   const { enqueueSnackbar } = useSnackbar();
-  const [dealershipData, setDealershipData] = useState({})
-  useMount(() => {
-    getDealershipById(dealer_id)
-      .then(data => {
-        setDealershipData(data)
-      })
-      .catch((e) => {
-        console.log(e);
-      })
-  })
 
 
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
-    initialValues: { ...dealershipData },
+    initialValues: { ...data },
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({

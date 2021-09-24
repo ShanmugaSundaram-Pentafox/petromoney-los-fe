@@ -114,10 +114,13 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
-            outlet_category: Yup.string().required('Choose outlet category'),
-            fuel_transported_from: Yup.string().required('Please enter fuel transported from area'),
-            terminal_name: Yup.string().required('Please enter terminal name'),
-            size_of_outlet: Yup.number().required('Please enter outlet size'),
+            outlet_category: Yup.string().nullable().required('Choose outlet category'),
+            fuel_transported_from: Yup.string().nullable().required('Please enter fuel transported from area'),
+            terminal_name: Yup.string().nullable().required('Please enter terminal name'),
+            size_of_outlet: Yup.number().nullable().required('Please enter outlet size'),
+            land_type: Yup.string().nullable().required('Enter land type'),
+            outlet_operated_by: Yup.string().nullable().required('Enter operator name'),
+            land_owner_name: Yup.string().nullable().required('Enter land owner name')
 
         }),
         onSubmit: values => {
@@ -236,6 +239,7 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         error={errors.land_type}
                                         helperText={errors.land_type}
                                     >
+                                        <option value=""></option>
                                         <option value="Owned">Owned</option>
                                         <option value="leased">Leased</option>
                                     </TextInput>
@@ -275,9 +279,10 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         error={errors.outlet_operated_by}
                                         helperText={errors.outlet_operated_by}
                                     >
-                                        <option>Proprietor</option>
-                                        <option>Managing Partner</option>
-                                        <option>Third Party</option>
+                                        <option value=""></option>
+                                        <option value="Proprietor">Proprietor</option>
+                                        <option value="Managing partner">Managing Partner</option>
+                                        <option value="Third party">Third Party</option>
                                     </TextInput>
                                 </Grid>
                                 <Grid item md={6}>
@@ -312,30 +317,6 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         helperText={errors.operator_mobile}
                                     />
                                 </Grid>
-                                {/* <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        money
-                                        labelText="Salary expenses per month"
-                                        name="salary_expense_per_month"
-                                        value={values.salary_expense_per_month}
-                                        readOnly={readOnly}
-                                        error={errors.salary_expense_per_month}
-                                        helperText={errors.salary_expense_per_month}
-                                    />
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        money
-                                        labelText="EB expenses per month"
-                                        name="eb_charge_per_month"
-                                        value={values.eb_charge_per_month}
-                                        readOnly={readOnly}
-                                        error={errors.eb_charge_per_month}
-                                        helperText={errors.eb_charge_per_month}
-                                    />
-                                </Grid> */}
                             </Grid>
                         </form>
                     </Box >

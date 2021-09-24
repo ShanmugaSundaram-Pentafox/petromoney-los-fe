@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
-  const [businessTypes, setBusinessTypes] = useState();
+  const [businessTypes, setBusinessTypes] = useState([{}, {}, {}, {}, {}]);
   const [incomeData, setIncomeData] = useState([]);
   const [expenseData, setExpenseData] = useState([]);
   const [addIncome, setAddIncome] = useState(false);
@@ -199,10 +199,11 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
                               <Grid item md={6}>
                                 <ViewData title="Business name" value={item.business_name} />
                                 <ViewData title="Business age(In years)" value={item.business_age} />
+                                <ViewData title="FY income" value={item.cur_fy_income} />
                               </Grid>
                               <Grid item md={6}>
+                                <ViewData title='Business type' value={businessTypes[item.business_type - 1]?.name} />
                                 <ViewData title="Business owner" value={item.business_owner} />
-                                <ViewData title="FY income" value={item.cur_fy_income} />
                               </Grid>
                             </Grid>
                           </PreviewCard>

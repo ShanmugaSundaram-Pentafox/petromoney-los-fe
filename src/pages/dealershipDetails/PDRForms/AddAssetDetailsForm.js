@@ -268,10 +268,11 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                                       error={errors.ownership}
                                       helperText={errors.ownership}
                                     >
-                                      <option>Self owned</option>
-                                      <option>Family owned</option>
-                                      <option>Partnership</option>
-                                      {type.label !== "Gold" && <option>Leased</option>}
+                                      <option value="">Choose ownership</option>
+                                      <option value="Self owned">Self owned</option>
+                                      <option value="Family owned">Family owned</option>
+                                      <option value="Partnership">Partnership</option>
+                                      {type.label !== "Gold" && <option value="Leased">Leased</option>}
                                     </TextInput>
                                   </Grid>
                                 </Grid>

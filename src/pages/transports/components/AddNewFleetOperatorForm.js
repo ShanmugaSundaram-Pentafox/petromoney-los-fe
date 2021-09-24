@@ -342,7 +342,7 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
                     </Grid>
                     <Grid item md={6}>
                       <TextInput
-                        label="Monthly_billing"
+                        label="Monthly billing"
                         name="monthly_billing"
                         value={values.monthly_billing}
                         error={errors.monthly_billing}

@@ -106,6 +106,19 @@ const useStyles = makeStyles((theme) => ({
   typography: {
     marginTop: 12,
     textAlign: 'center'
+  },
+  number: {
+    backgroundColor: 'white',
+    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0,
+    }
+  },
+  input: {
+    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0,
+    }
   }
 
 }))
@@ -289,6 +302,9 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
                       value={values.loan_amount}
                       error={errors.loan_amount}
                       helperText={errors.loan_amount}
+                      className={classes.number}
+                      inputProps={{className: classes.input}}
+                      type='number'
                     />
                   </Grid>
                 </Grid>

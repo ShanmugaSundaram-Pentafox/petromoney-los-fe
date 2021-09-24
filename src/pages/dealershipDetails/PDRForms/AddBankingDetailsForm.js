@@ -100,6 +100,19 @@ const useStyles = makeStyles((theme) => ({
   typography: {
     marginTop: 12,
     textAlign: 'center'
+  },
+  number: {
+    backgroundColor: 'white',
+    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0,
+    }
+  },
+  input: {
+    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0,
+    }
   }
 }))
 
@@ -256,6 +269,9 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
                       value={values.account_no}
                       error={errors.account_no}
                       helperText={errors.account_no}
+                      className={classes.number}
+                      inputProps={{className: classes.input}}
+                      type='number'
                     />
                   </Grid>
                   <Grid item md={6}>
@@ -323,6 +339,9 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
                       value={values.transaction_limit}
                       error={errors.transaction_limit}
                       helperText={errors.transaction_limit}
+                      className={classes.number}
+                      inputProps={{className: classes.input}}
+                      type='number'
                     />
                   </Grid>
                   <Grid item md={6}>

@@ -79,6 +79,19 @@ const useStyles = makeStyles((theme) => ({
     '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.success.dark
     }
+  },
+  number: {
+    backgroundColor: 'white',
+    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0,
+    }
+  },
+  input: {
+    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0,
+    }
   }
 
 }))
@@ -159,10 +172,16 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                   readOnly={readOnly}
                   error={errors.business_age}
                   helperText={errors.business_age}
+                  className={classes.number}
+                  inputProps={{className: classes.input}}
+                  type='number'
                 />
               </Grid>
               <Grid item md={6}>
                 <TextInput
+                  className={classes.number}
+                  inputProps={{className: classes.input}}
+                  type='number'
                   {...inputProps}
                   labelText="No. of HSD Dispensers"
                   name="hsd_count"
@@ -174,6 +193,9 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               </Grid>
               <Grid item md={6}>
                 <TextInput
+                  className={classes.number}
+                  inputProps={{className: classes.input}}
+                  type='number'
                   {...inputProps}
                   labelText="No. of MS Dispensers"
                   name="ms_count"
@@ -197,6 +219,9 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               </Grid>
               <Grid item md={6}>
                 <TextInput
+                  className={classes.number}
+                  inputProps={{className: classes.input}}
+                  type='number'
                   {...inputProps}
                   labelText="Electricity units (per month)"
                   name="electricity_units_month"
@@ -255,6 +280,9 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               </Grid>
               <Grid item md={6}>
                 <TextInput
+                  className={classes.number}
+                  inputProps={{className: classes.input}}
+                  type='number'
                   {...inputProps}
                   money
                   labelText="Credit sales per day"

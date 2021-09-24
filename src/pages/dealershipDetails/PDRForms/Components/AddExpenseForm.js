@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import * as Yup from 'yup';
@@ -8,10 +8,9 @@ import Divider from '@material-ui/core/Divider';
 import { makeStyles } from "@material-ui/styles";
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import { useSnackbar } from 'notistack';
-import { useMount } from 'react-use';
 import Button from '../../../../components/CommonComponents/Button/Button';
 import TextInput from '../../../../components/TextInput/TextInput';
-import { addExpenseDetailsByID, getExpensesDetailsById, getIncomeDetailsById } from '../../../../services/PDReport.services';
+import { addExpenseDetailsByID } from '../../../../services/PDReport.services';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -60,28 +59,18 @@ const useStyles = makeStyles((theme) => ({
 
 
 const AddExpenseForm = ({ data, isEdit, id, handleClose }) => {
-  const [expenseData, setExpenseData] = useState([]);
-
-  useMount(() => {
-    getExpensesDetailsById(id)
-      .then(data => {
-        console.log("expense response >>>>", data);
-        setExpenseData(data[0])
-      })
-      .catch(err => {
-        console.log('Expense details fetch error - ', err)
-      })
-  })
-
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles()
+
+
 
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
     initialValues: { ...data },
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      // transport_name: Yup.string().required('Please enter transporter name'),
+      expense_type: Yup.string().nullable('Enter type').required('Enter type'),
+      expense_amount: Yup.number().nullable('Enter expenses amount').required('Enter expenses amount')
     }),
     onSubmit: values => {
       const data = { ...values, is_pdr: 1 }
@@ -120,7 +109,6 @@ const AddExpenseForm = ({ data, isEdit, id, handleClose }) => {
   }
 
   return (
-
     <>
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
@@ -181,6 +169,5 @@ const AddExpenseForm = ({ data, isEdit, id, handleClose }) => {
       </div>
     </>
   )
-
 }
 export default AddExpenseForm;

@@ -86,10 +86,10 @@ const ExpensesTable = ({ id, editable, values = [], currentUser }) => {
   const saveNewExpense = () => {
     console.log('Expense api body - ', apiData)
     if (Object.keys(apiData).length < 2) return null;
-    const objBody = {
-      user_id: currentUser.id, ...apiData
-    }
-    postDealershipExpensesById(id, objBody)
+    // const objBody = {
+    //   user_id: currentUser.id, ...apiData
+    // }
+    postDealershipExpensesById(id, apiData)
       .then(res => {
         setExpenses(res);
         setAddNewRow(false);

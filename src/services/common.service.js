@@ -203,7 +203,7 @@ export const updateUserDetails = (data, id) => {
     apiCall(`user/${id}`, {
       method: 'POST',
       body: data
-      
+
     })
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
@@ -486,9 +486,9 @@ export const deleteState = (data, id) => {
   })
 }
 
-export const getDealershipOptions = (value) => {
+export const getDealershipForSearch = (id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`dealership/search?dealership=${value}`)
+    apiCall(`dealership/search?dealership=${id}`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data);

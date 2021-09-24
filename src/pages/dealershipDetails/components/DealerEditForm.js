@@ -86,9 +86,9 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
   const { enqueueSnackbar } = useSnackbar();
   const [selectedDate, setSelectedDate] = useState(data?.dob && parse(data?.dob, 'dd-MM-yyyy', new Date()))
   const handleDateChange = (date) => {
-    const d = format(new Date(date), "dd-MM-yyyy")
+    // const d = format(new Date(date), "dd-MM-yyyy")
     setSelectedDate(date)
-    handleDate(d)
+    handleDate(date)
   }
   useEffect(() => {
     handleState(state)

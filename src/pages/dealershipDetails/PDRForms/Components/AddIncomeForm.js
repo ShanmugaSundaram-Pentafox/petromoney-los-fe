@@ -62,10 +62,7 @@ const useStyles = makeStyles((theme) => ({
 
 const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
   const [loading, setLoading] = useState(false)
-  const [businessTypes, setBusinessTypes] = useState();
-  const [incomeData, setIncomeData] = useState([]);
-  const [expenseData, setExpenseData] = useState([]);
-
+  const [businessTypes, setBusinessTypes] = useState([{}, {}, {}, {}, {}]);
 
 
   useMount(() => {
@@ -73,19 +70,6 @@ const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
       .then(setBusinessTypes)
       .catch(err => {
         console.log('BusinessTypes fetch error - ', err)
-      })
-    getIncomeDetailsById(id)
-      .then(data => {
-        console.log("income respnse >>>>>", data)
-        setIncomeData(data[0])
-      })
-      .catch(err => {
-        console.log('Income details fetch error - ', err)
-      })
-    getExpensesDetailsById(id)
-      .then(data => {
-        console.log("expense response >>>>", data);
-        setExpenseData(data[0])
       })
       .catch(err => {
         console.log('Expense details fetch error - ', err)
@@ -99,7 +83,13 @@ const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      // transport_name: Yup.string().required('Please enter transporter name'),
+      business_name: Yup.string().nullable('Enter business type').required('Enter business type'),
+      business_age: Yup.number().nullable('Enter business age').required('Enter business age'),
+      business_owner: Yup.string().nullable('Enter business owner name').required('Enter business owner name'),
+      cur_fy_income: Yup.number().nullable('Enter income').required('Enter income'),
+      business_type: Yup.string().nullable().required('Choose business type'),
+      cur_fy_profit_loss: Yup.number().nullable().required('Enter profit/loss'),
+      cur_fy_turnover: Yup.number().nullable().required('Enter turnover')
     }),
     onSubmit: values => {
       const data = { ...values, is_pdr: 1 }
@@ -111,12 +101,10 @@ const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
               horizontal: 'right',
             },
             variant: 'success',
-          }
-          )
-          // setTimeout(() => {
-          //     window.location.reload()
-          // }, 1500);
-
+          })
+          setTimeout(() => {
+            window.location.reload()
+          }, 1500);
         })
         .catch(e => {
           enqueueSnackbar(e, {
@@ -125,10 +113,8 @@ const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
               horizontal: 'right',
             },
             variant: 'error',
-          }
-          )
+          })
         })
-
     }
   });
   const inputProps = {
@@ -154,6 +140,22 @@ const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
                     error={errors.business_name}
                     helperText={errors.business_name}
                   />
+                </Grid>
+                <Grid item md={6}>
+                  <TextInput
+                    {...inputProps}
+                    select
+                    labelText="Business Type"
+                    name="business_type"
+                    defaultValue={values.business_type}
+                    error={errors.business_type}
+                    helperText={errors.business_typeF}
+                  >
+                    <option value="">Choose type</option>
+                    {
+                      businessTypes?.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
+                    }
+                  </TextInput>
                 </Grid>
                 <Grid item md={6}>
                   <TextInput
@@ -185,6 +187,28 @@ const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
                     value={values.cur_fy_income}
                     error={errors.cur_fy_income}
                     helperText={errors.cur_fy_income}
+                  />
+                </Grid>
+                <Grid item md={6}>
+                  <TextInput
+                    {...inputProps}
+                    money
+                    labelText="FY Turnover"
+                    name="cur_fy_turnover"
+                    value={values.cur_fy_turnover}
+                    error={errors.cur_fy_turnover}
+                    helperText={errors.cur_fy_turnover}
+                  />
+                </Grid>
+                <Grid item md={6}>
+                  <TextInput
+                    {...inputProps}
+                    money
+                    labelText="FY Profit"
+                    name="cur_fy_profit_loss"
+                    value={values.cur_fy_profit_loss}
+                    error={errors.cur_fy_profit_loss}
+                    helperText={errors.cur_fy_profit_loss}
                   />
                 </Grid>
               </Grid>

@@ -9,7 +9,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
 import { useMount } from 'react-use';
-import { getExpensesDetailsById, getIncomeDetailsById } from '../../../services/PDReport.services';
+import { deleteExpenseDetailsByID, deleteIncomeDetailsByID, getExpensesDetailsById, getIncomeDetailsById } from '../../../services/PDReport.services';
 import { getBusinessTypes } from '../../../services/common.service';
 import AddIncomeForm from './Components/AddIncomeForm';
 import AddExpenseForm from './Components/AddExpenseForm';
@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
-  const [businessTypes, setBusinessTypes] = useState();
+  const [businessTypes, setBusinessTypes] = useState([{}, {}, {}, {}, {}]);
   const [incomeData, setIncomeData] = useState([]);
   const [expenseData, setExpenseData] = useState([]);
   const [addIncome, setAddIncome] = useState(false);
@@ -88,7 +88,6 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
       })
     getIncomeDetailsById(dealer_id)
       .then(data => {
-        console.log("income respnse >>>>>", data)
         setIncomeData(data)
       })
       .catch(err => {
@@ -96,7 +95,6 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
       })
     getExpensesDetailsById(dealer_id)
       .then(data => {
-        console.log("expense response >>>>", data);
         setExpenseData(data)
       })
       .catch(err => {
@@ -116,13 +114,28 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
     setEditIncomeData(item)
   }
   const handleIncomeDelete = (item, i) => {
-    enqueueSnackbar('You are not allowed to delete.Please contact admin', {
-      anchorOrigin: {
-        vertical: 'top',
-        horizontal: 'right',
-      },
-      variant: 'error',
-    })
+    deleteIncomeDetailsByID(item)
+      .then(res => {
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
+        setTimeout(() => {
+          window.location.reload()
+        }, 1000);
+      })
+      .catch(e => {
+        enqueueSnackbar('Something went wrong.Please try again!', {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+      })
   }
   const handleExpenseEdit = (item, i) => {
     setAddExpense(true)
@@ -131,13 +144,28 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
 
   }
   const handleExpenseDelete = (item, i) => {
-    enqueueSnackbar('You are not allowed to delete.Please contact admin', {
-      anchorOrigin: {
-        vertical: 'top',
-        horizontal: 'right',
-      },
-      variant: 'error',
-    })
+    deleteExpenseDetailsByID(item)
+      .then(res => {
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
+        setTimeout(() => {
+          window.location.reload()
+        }, 1000);
+      })
+      .catch(e => {
+        enqueueSnackbar('Something went wrong.Please try again!', {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+      })
   }
 
   return (
@@ -170,11 +198,12 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
                             <Grid container spacing={2}>
                               <Grid item md={6}>
                                 <ViewData title="Business name" value={item.business_name} />
-                                <ViewData title="Business age" value={item.business_age} />
+                                <ViewData title="Business age(In years)" value={item.business_age} />
+                                <ViewData title="FY income" value={item.cur_fy_income} />
                               </Grid>
                               <Grid item md={6}>
+                                <ViewData title='Business type' value={businessTypes[item.business_type - 1]?.name} />
                                 <ViewData title="Business owner" value={item.business_owner} />
-                                <ViewData title="FY income" value={item.cur_fy_income} />
                               </Grid>
                             </Grid>
                           </PreviewCard>

@@ -2,16 +2,12 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
-import StepContent from '@material-ui/core/StepContent';
 import Typography from '@material-ui/core/Typography';
 import * as Yup from 'yup';
-import DealerCreditInfoForm from './DealerCreditInfoForm';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
-import ClearRoundedIcon from '@material-ui/icons/ClearRounded';
 import EditIcon from '@material-ui/icons/Edit';
 import { useFormik } from 'formik';
 import clsx from 'clsx';
@@ -21,7 +17,6 @@ import { API } from '../../../config/api';
 import { URL } from '../../../config/serverUrls';
 import { logger } from '../../../config/logger';
 import DealerEditForm from './DealerEditForm';
-import apiCall from '../../../utils/api.util';
 import { useSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
 import { format, parse } from 'date-fns';
@@ -106,33 +101,34 @@ const DealerEditSideWrapper = ({
   let coApplicantFields = {};
   if (modelType === 'COAPPLICANT') {
     coApplicantFields = {
-      dealer_id: Yup.number().required('Enter Relation'),
-      relationship: Yup.string().min(2).required('Enter Relationship Type'),
+      dealer_id: Yup.number().nullable('Enter Relation').required('Enter Relation'),
+      relationship: Yup.string().min(2).nullable('Enter Relationship type').required('Enter Relationship Type'),
     };
   }
 
   const validationSchema = Yup.object().shape({
-    first_name: Yup.string().required('Enter first name'),
-    last_name: Yup.string().required('Enter last name'),
+    first_name: Yup.string().nullable('Enter first name').required('Enter first name'),
+    last_name: Yup.string().nullable('Enter last name').required('Enter last name'),
     gender: Yup.string().nullable('Choose gender').required('Enter gender'),
-    email: Yup.string().email('Invalid email').required('Enter email'),
+    email: Yup.string().nullable('Enter email').email('Invalid email').required('Enter email'),
     address: Yup.string()
       .nullable('Enter address')
       .min(6, 'address must be atleast 6 characters')
       .required('Enter address'),
     mobile: Yup.string()
+      .nullable('Enter mobile number')
       .matches(/^\d{10}$/, 'Invalid mobile number')
       .required('Enter valid mobile number'),
     // dob: Yup.number().required("Choose date of birth"),
-    residing_since: Yup.number().required('Enter the year'),
-    marital_status: Yup.string('Enter your Marital status').nullable('Choose marital status'),
+    residing_since: Yup.number().nullable('Enter the year').required('Enter the year'),
+    marital_status: Yup.string('Enter your Marital status'),
     pan: Yup.string()
       .nullable('Enter PAN')
       .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
       .required('Enter PAN')
       .uppercase(),
     aadhar: Yup.string()
-      .nullable('Enter Aadhar')
+      .nullable('Enter GST')
       .matches(/^(\d{12})$|^(\d{16})$/, 'Invalid aadhar')
       .required('Enter valid aadhar'),
     ...coApplicantFields,
@@ -200,8 +196,9 @@ const DealerEditSideWrapper = ({
       values.first_name = values.first_name.toUpperCase();
       values.last_name = values.last_name.toUpperCase();
       setLoading(true);
-      const d = selectedDate ? format(parse(selectedDate, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : format(parse(values.dob, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
-      const date_values = { ...values, dob: d, pan: values.pan?.toUpperCase(), is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0 };
+      const dob = format(new Date(selectedDate), "dd-MM-yyyy")
+      const d = dob ? format(parse(dob, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : format(parse(values.dob, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
+      const date_values = { ...values, dob: d, pan: values.pan.toUpperCase(), is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0 };
       const data = new FormData();
       Object.keys(date_values).forEach((key) => {
         data.append(key, date_values[key]);

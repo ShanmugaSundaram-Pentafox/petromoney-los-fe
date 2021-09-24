@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import TextInput from '../../../components/TextInput/TextInput';
 import Button from '../../../components/CommonComponents/Button/Button';
-import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -89,12 +88,8 @@ const AddTankerDetails = ({ dealer_id }) => {
     initialValues: {},
     validateOnChange: false,
     validateOnBlur: true,
-    validationSchema: Yup.object().shape({
-      // transport_name: Yup.string().required('Please enter transporter name'),
-
-    }),
     onSubmit: values => {
-      const data = { ...values }
+      const data = { ...values, vehicle_no: values.vehicle_no?.toUpperCase() }
       addNewTanker(data, dealer_id)
         .then(res => {
           enqueueSnackbar(res, {
@@ -135,9 +130,14 @@ const AddTankerDetails = ({ dealer_id }) => {
           window.location.reload()
         }, 1000);
       })
-
       .catch(err => {
-        console.log('Sales data save error - ', err);
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        });
       })
   }
   const onEditTextChange = e => {
@@ -167,7 +167,7 @@ const AddTankerDetails = ({ dealer_id }) => {
                   className={classes.field}
                   label="Tanker number"
                   name="vehicle_no"
-                  value={editRow.vehicle_no}
+                  value={editRow.vehicle_no?.toUpperCase()}
                   onChange={onEditTextChange}
                 />
               </TableCell>
@@ -279,14 +279,15 @@ const AddTankerDetails = ({ dealer_id }) => {
                     value={values.tanker_type}
                     onChange={handleChange}
                   >
-                    <option>Owned</option>
-                    <option>Rented</option>
+                    <option value=""></option>
+                    <option value="Owned">Owned</option>
+                    <option value="Rented">Rented</option>
                   </TextInput>
                 </TableCell>
                 <TableCell align={"right"}>
                   <TextInput
                     className={classes.field}
-                    label="Tanker_capacity"
+                    label="Tanker capacity"
                     name="tanker_capacity"
                     value={values.tanker_capacity}
                     onChange={handleChange}
@@ -344,7 +345,6 @@ const AddTankerDetails = ({ dealer_id }) => {
         </TableRow>
       </TableBody>
     </Table >
-
   )
 }
 export default AddTankerDetails;

@@ -13,7 +13,7 @@ import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import { format, parse } from 'date-fns'
-import { getDealershipById } from '../../../services/dealerships.service';
+// import { getDealershipById } from '../../../services/dealerships.service';
 import { URL } from '../../../config/serverUrls';
 
 
@@ -62,32 +62,21 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const AddCreditPdForm = ({ dealer_id, callback, currentUser }) => {
+const AddCreditPdForm = ({ data, dealer_id, callback, currentUser }) => {
   const classes = useStyles()
   const { enqueueSnackbar } = useSnackbar();
-  const [dealershipData, setDealershipData] = useState({})
-  useMount(() => {
-    getDealershipById(dealer_id)
-      .then(data => {
-        console.log("dataaaaaaaaaa", data)
-        setDealershipData(data)
-      })
-      .catch((e) => {
-        console.log(e);
-      })
-  })
 
 
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
-    initialValues: { ...dealershipData },
+    initialValues: { ...data },
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       // transport_name: Yup.string().required('Please enter transporter name'),
+      pdr_remarks: Yup.string().required('Enter your remarks')
 
     }),
     onSubmit: values => {
-      console.log("values", values)
       // let eDate = format(parse(values.agreement_executed_on, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
       // let vDate = format(parse(values.agreement_valid_till, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
       const date = {
@@ -137,7 +126,6 @@ const AddCreditPdForm = ({ dealer_id, callback, currentUser }) => {
     direction: "column",
     alignTop: true,
   }
-  console.log("dealership data", dealershipData)
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">

@@ -10,6 +10,7 @@ import { addNewRemarks, getAllWithheldRemarks, updateRemarks } from '../../servi
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import apiCall from '../../utils/api.util';
+import { creditReloadById } from '../../services/creditreport.service';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -81,37 +82,29 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
 
   const postApiCall = (submitData) => {
 
-      apiCall(`credit/reload/${rowData?.dealership_id}`, {
-        method: 'POST',
-        body: submitData,
-        headers: {
-          Authorization: `Bearer ${currentUser.token} `
-        }
+    creditReloadById(rowData?.dealership_id, submitData)
+    .then((res) => {
+      console.log(res);
+      enqueueSnackbar(res, {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'success',
+      });
+      setTimeout(() => {
+        window.location.reload(false)
+    }, 1000);
     })
-    .then(res => {
-        if(res.status === "SUCCESS"){
-            enqueueSnackbar(res.message, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-              variant: 'success',
-            });
-            setTimeout(() => {
-              window.location.reload(false)
-          }, 1000);
-        } else {
-            enqueueSnackbar(res.message, {
-                anchorOrigin: {
-                  vertical: 'top',
-                  horizontal: 'right',
-                },
-                variant: 'error',
-            });
-        }
-    })
-    .catch(e => {
-        console.log(e);
+    .catch((e) => {
+      console.log(e);
+      enqueueSnackbar(e, {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'error',
+      });
     })
   }
 
@@ -126,9 +119,6 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
     initialValues: {},
     validateOnChange: false,
     validateOnBlur: true,
-    validationSchema: Yup.object().shape({
-        // remarks: Yup.string().required('Need a Remark to proceed!')
-      }),
     onSubmit: () => {
         if(value){
             if(typeof(value) === 'number'){

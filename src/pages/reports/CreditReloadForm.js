@@ -15,6 +15,7 @@ import apiCall from '../../utils/api.util';
 import { useSnackbar } from 'notistack';
 import { InputAdornment } from '@material-ui/core';
 import AsyncSelect from 'react-select/async';
+import { getDealershipOptions } from '../../services/common.service';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelFormWrapper: {
@@ -90,7 +91,7 @@ const {
   validateOnBlur: true,
   validationSchema: Yup.object().shape({
     mobile: Yup.number().required("Enter mobile number").test("maxDigits","Mobile Number mush have 10 digits", (number) => String(number).length === 10),
-    amount: Yup.number().required('Enter Amount').moreThan(0, 'Invalid Amount').test("maxDigits","Request Amount Invalid", (value) => String(value).length < 9)
+    amount: Yup.number().required('Enter Amount').moreThan(0, 'Invalid Amount').test("maxDigits","Request Amount Invalid", (value) => String(value) >= 50000 && String(value) <= 3000000)
   }),
   onSubmit: (data) => {
     const submitData = {'request_source': 'MDM', 'amount': data.amount, 'mobile': data.mobile, 'account_id': accountId?.id}
@@ -143,15 +144,15 @@ const {
 const getOptions = (inputValue, callback) => {
   if(inputValue.toString().length >2){
     setOptionsLoading(true)
-    apiCall(`dealership/search?dealership=${inputValue}`)
-      .then(res => {
-        setOptionsLoading(false)
-        callback(res.data);
-      })
-      .catch(e => {
-        console.log(e);
-        setOptionsLoading(false)
-      })
+    getDealershipOptions(inputValue)
+    .then((res) => {
+      setOptionsLoading(false)
+      callback(res)
+    })
+    .catch((e) => {
+      console.log(e);
+      setOptionsLoading(false)
+    })
   }
 }
 

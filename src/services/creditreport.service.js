@@ -77,3 +77,22 @@ export const saveDealershipCreditReportData = (dealership_id, data) => {
       })
   })
 }
+
+export const creditReloadById = (dealership_id, data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`credit/reload/${dealership_id}`, {
+      method : 'POST',
+      body : data
+    })
+      .then(({ status,data,message }) => {
+        if(status === "SUCCESS") {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

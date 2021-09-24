@@ -485,3 +485,19 @@ export const deleteState = (data, id) => {
       })
   })
 }
+
+export const getDealershipOptions = (value) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/search?dealership=${value}`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(err => {
+        reject(err.message);
+      })
+  })
+}

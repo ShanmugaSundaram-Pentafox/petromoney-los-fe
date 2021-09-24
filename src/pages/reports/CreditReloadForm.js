@@ -75,26 +75,26 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
   const [optionsLoading, setOptionsLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
-  const {
-    values,
-    errors,
-    handleChange,
-    handleSubmit,
-    isSubmitting,
-    setSubmitting,
-  } = useFormik({
-    initialValues: {
-      mobile: mobile,
-      amount: amount,
-    },
-    validateOnChange: false,
-    validateOnBlur: true,
-    validationSchema: Yup.object().shape({
-      mobile: Yup.number().required("Enter mobile number").test("maxDigits", "Mobile Number mush have 10 digits", (number) => String(number).length === 10),
-      amount: Yup.number().required('Enter Amount').moreThan(0, 'Invalid Amount').test("maxDigits", "Request Amount Invalid", (value) => String(value).length < 9)
-    }),
-    onSubmit: (data) => {
-      const submitData = { 'request_source': 'MDM', 'amount': data.amount, 'mobile': data.mobile, 'account_id': accountId?.id }
+const {
+  values,
+  errors,
+  handleChange,
+  handleSubmit,
+  isSubmitting,
+  setSubmitting,
+} = useFormik({
+  initialValues: {
+    mobile: mobile,
+    amount: amount,
+  },
+  validateOnChange: false,
+  validateOnBlur: true,
+  validationSchema: Yup.object().shape({
+    mobile: Yup.number().required("Enter mobile number").test("maxDigits","Mobile Number mush have 10 digits", (number) => String(number).length === 10),
+    amount: Yup.number().required('Enter Amount').moreThan(0, 'Invalid Amount').test("maxDigits","Request Amount Invalid", (value) => String(value) >= 50000 && String(value) <= 3000000)
+  }),
+  onSubmit: (data) => {
+    const submitData = {'request_source': 'MDM', 'amount': data.amount, 'mobile': data.mobile, 'account_id': accountId?.id}
 
       if (selectedValue && accountId) {
         apiCall(`credit/reload/${selectedValue}`, {
@@ -155,7 +155,6 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
         })
     }
   }
-
   const onChangeOption = (newValue) => {
     setSelectedValue(newValue.id)
   }

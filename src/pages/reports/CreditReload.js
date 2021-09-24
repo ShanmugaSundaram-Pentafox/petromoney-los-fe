@@ -70,16 +70,17 @@ const CreditReload = ({ currentUser }) => {
   usePageTitle('Credit Report');
   const columns = useMemo(() => {
     return [
-      { name: 'dealership_id', label: 'Dealership ID' },
-      { name: 'request_id', label: 'Request ID' },
-      { name: 'mobile', label: 'Mobile' },
+      { name: 'dealership_id', label: 'Dealership ID', options: {filter: false}},
+      { name: 'request_id', label: 'Request ID' , options: {filter: false}},
+      { name: 'mobile', label: 'Mobile' , options: {filter: false}},
       { name: 'amount', label: 'Amount', options: {
+        filter: false,
         customBodyRender: (value) => {
           return <Currency value={value} />
         }
       }},
       { name: 'type_of_account', label: 'Account Type' },
-      { name: 'name', label: 'Submitted By', options: {
+      { name: 'name', label: 'Submitted or Modified by', options: {
         customBodyRender: (value, tableMeta) => {
           return <div>{`${value} (${tableMeta?.rowData[8]})`}</div>
         }
@@ -103,8 +104,8 @@ const CreditReload = ({ currentUser }) => {
           }
         }
       }},
-      { name: 'remarks', options: {display: 'excluded'}},
-      { name: 'role_name', options: {display: 'excluded'}}
+      { name: 'remarks', options: {display: 'excluded', filter: false}},
+      { name: 'role_name', options: {display: 'excluded', filter: false}}
     ];
   }, []);
 

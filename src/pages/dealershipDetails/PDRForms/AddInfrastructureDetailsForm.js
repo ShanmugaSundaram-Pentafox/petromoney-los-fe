@@ -81,6 +81,19 @@ const useStyles = makeStyles((theme) => ({
     '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.success.dark
     }
+  },
+  number: {
+    backgroundColor: 'white',
+    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0,
+    }
+  },
+  input: {
+    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0,
+    }
   }
 
 }))
@@ -163,6 +176,9 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                     readOnly={readOnly}
                     error={errors.no_of_employee}
                     helperText={errors.no_of_employee}
+                    className={classes.number}
+                    inputProps={{className: classes.input}}
+                    type='number'
                   />
                 </Grid>
                 <Grid item md={6}>
@@ -175,6 +191,9 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                     readOnly={readOnly}
                     error={errors.no_of_nozzle}
                     helperText={errors.no_of_nozzle}
+                    className={classes.number}
+                    inputProps={{className: classes.input}}
+                    type='number'
                   />
                 </Grid>
                 <Grid item md={6}>
@@ -187,6 +206,9 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                     readOnly={readOnly}
                     error={errors.no_of_tank}
                     helperText={errors.no_of_tank}
+                    className={classes.number}
+                    inputProps={{className: classes.input}}
+                    type='number'
                   />
                 </Grid>
                 <Grid item md={6}>
@@ -199,6 +221,9 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                     readOnly={readOnly}
                     error={errors.no_of_hoarding}
                     helperText={errors.no_of_hoarding}
+                    className={classes.number}
+                    inputProps={{className: classes.input}}
+                    type='number'
                   />
                 </Grid>
                 <Grid item md={6}>
@@ -210,6 +235,9 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                     readOnly={readOnly}
                     error={errors.tank_capacity}
                     helperText={errors.tank_capacity}
+                    className={classes.number}
+                    inputProps={{className: classes.input}}
+                    type='number'
                   />
                 </Grid>
                 <Grid item md={2} style={{ marginTop: 22 }}>

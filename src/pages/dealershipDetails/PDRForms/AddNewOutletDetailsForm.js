@@ -55,7 +55,20 @@ const useStyles = makeStyles((theme) => ({
         '&.MuiButton-contained:hover': {
             backgroundColor: theme.palette.success.dark
         }
-    }
+    },
+    number: {
+        backgroundColor: 'white',
+        "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+          "-webkit-appearance": "none",
+          margin: 0,
+        }
+      },
+      input: {
+        "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+          "-webkit-appearance": "none",
+          margin: 0,
+        }
+      }
 
 }))
 
@@ -223,6 +236,9 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         readOnly={readOnly}
                                         error={errors.size_of_outlet}
                                         helperText={errors.size_of_outlet}
+                                        className={classes.number}
+                                        inputProps={{className: classes.input}}
+                                        type='number'
                                     />
                                 </Grid><Grid item md={6}>
                                     <TextInput

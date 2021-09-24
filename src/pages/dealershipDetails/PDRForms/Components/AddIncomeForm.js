@@ -56,6 +56,19 @@ const useStyles = makeStyles((theme) => ({
   btn: {
     margin: 8
   },
+  number: {
+    backgroundColor: 'white',
+    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0,
+    }
+  },
+  input: {
+    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0,
+    }
+  }
 
 }))
 
@@ -173,6 +186,9 @@ const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
                     value={values.business_age}
                     error={errors.business_age}
                     helperText={errors.business_age}
+                    className={classes.number}
+                    inputProps={{className: classes.input}}
+                    type='number'
                   />
                 </Grid>
                 <Grid item md={6}>
@@ -184,6 +200,9 @@ const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
                     value={values.cur_fy_income}
                     error={errors.cur_fy_income}
                     helperText={errors.cur_fy_income}
+                    className={classes.number}
+                    inputProps={{className: classes.input}}
+                    type='number'
                   />
                 </Grid>
               </Grid>

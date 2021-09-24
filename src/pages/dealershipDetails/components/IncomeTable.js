@@ -121,10 +121,11 @@ const IncomeTable = ({ id, editable, currentUser }) => {
   }
 
   const saveIncomeRow = (rowData, rowIndex) => {
-    const objBody = {
-      user_id: currentUser.id, ...rowData
-    }
-    updateDealershipIncomeById(id, objBody)
+    // const objBody = {
+    //   user_id: currentUser.id, ...rowData
+    // }
+    const data = { ...rowData, business_name: rowData?.business_name?.toUpperCase() }
+    updateDealershipIncomeById(id, data)
       .then(res => {
         setIncome(res);
         setLoading(false);

@@ -69,8 +69,8 @@ const useStyles = makeStyles((theme) => ({
 const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) => {
   const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
   const [loading, setLoading] = useState(false)
-  const [executedDate, setExecutedDate] = useState(data ? parse(data?.agreement_executed_on, 'dd-MM-yyyy', new Date()) : new Date())
-  const [validDate, setValidDate] = useState(data ? parse(data?.agreement_valid_till, 'dd-MM-yyyy', new Date()) : new Date())
+  const [executedDate, setExecutedDate] = useState(data.agreement_executed_on ? parse(data?.agreement_executed_on, 'dd-MM-yyyy', new Date()) : new Date())
+  const [validDate, setValidDate] = useState(data.agreement_valid_till ? parse(data?.agreement_valid_till, 'dd-MM-yyyy', new Date()) : new Date())
 
   const handleEdit = () => {
     setReadOnly(!readOnly)
@@ -194,23 +194,23 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                   />
                 </Grid>
                 <Grid item md={6}>
-                  <label className="input-label">Dealership agreement executed on</label>
+                  {/* <label className="input-label">Dealership agreement executed on</label> */}
                   <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <KeyboardDatePicker
-                      hideTabs={true}
                       variant='inline'
                       inputVariant='outlined'
-                      readOnly={readOnly}
-                      disabled={readOnly}
+                      label="Dealership agreement executed on"
                       format='dd/MM/yyyy'
                       animateYearScrolling={true}
+                      invalidDateMessage='Invalid Date Format'
                       error={errors.agreement_executed_on}
                       helperText={errors.agreement_executed_on}
-                      // invalidDateMessage='Invalid Date Format'
                       margin='normal'
                       id='date-picker'
                       autoOk={true}
                       value={executedDate}
+                      readOnly={readOnly}
+                      disabled={readOnly}
                       onChange={handleExecutedDateChange}
                       keyboardButtonProps={{
                         'aria-label': 'change date'

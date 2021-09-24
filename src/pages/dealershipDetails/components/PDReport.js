@@ -134,6 +134,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
     setOpenLoanForm(false)
     setOpenReferenceForm(false)
     setOpenIncomeForm(false)
+    setOpenCreditPdForm(false)
   }
   useMount(() => {
     getOmcDetailsById(id)

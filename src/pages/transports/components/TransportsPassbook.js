@@ -388,8 +388,18 @@ function FastTagPassbook( {currentUser} ) {
         action === 'download' ? window.open(res?.data[0]) : 
           setShareLoading(false)
           setShareModal(false)
+          enqueueSnackbar(res.message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+            style: { width: 400 },
+          })
       }
       else {
+        setShareLoading(false)
+        setShareModal(false)
         enqueueSnackbar(res.message, {
           anchorOrigin: {
             vertical: 'top',
@@ -401,6 +411,15 @@ function FastTagPassbook( {currentUser} ) {
       }
     })
     .catch(e => {
+      setShareLoading(false)
+      enqueueSnackbar('Something went wrong, Please try Again!', {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'error',
+        style: { width: 400 },
+      })
       console.log(e)
     })
   }
@@ -702,7 +721,7 @@ function FastTagPassbook( {currentUser} ) {
       >
         <DialogTitle>Mail Statement</DialogTitle>
         <DialogContent style={{width: 400}}>
-          <Typography>Do you want to share this statement through mail?</Typography>
+          <Typography>Do you want to share this statement through mail ?</Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setShareModal(false)}>Cancel</Button>

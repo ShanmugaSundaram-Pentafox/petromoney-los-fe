@@ -1,4 +1,4 @@
-import { FormControlLabel } from '@material-ui/core';
+import { Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel } from '@material-ui/core';
 import { TextField } from '@material-ui/core';
 import { Tooltip } from '@material-ui/core';
 import { InputAdornment } from '@material-ui/core';
@@ -143,6 +143,8 @@ function FastTagPassbook( {currentUser} ) {
   const [period, setPeriod] = useState('today');
   const [vehicle, setVehicle] = useState();
   const [amount, setAmount] = useState();
+  const [shareModal, setShareModal] = useState(false);
+  const [shareLoading, setShareLoading] = useState(false);
   const [option, setOption] = useState([]);
   const [selectedOption, setSelectedOption] = useState();
   const [selectedPeriod, setSelectedPeriod] = useState({
@@ -374,14 +376,18 @@ function FastTagPassbook( {currentUser} ) {
   const onChangeOption = (newValue) => {
     setSearchValue(newValue.value)
   }
-  const handleDownload = () => {
+
+  const handleCSV = (action) => {
+    action === 'share' ? setShareLoading(true) : setShareLoading(false);
     if(searchValue)
     {
-      apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${from}&to=${to}&pagination=1&download=1`)
+      apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${from}&to=${to}&pagination=1&${action === 'download'? 'send=1&download=1' : 'send=1'}`)
     .then(res => {
       if(res.status === 'SUCCESS')
       {
-        window.open(res?.data[0])
+        action === 'download' ? window.open(res?.data[0]) : 
+          setShareLoading(false)
+          setShareModal(false)
       }
       else {
         enqueueSnackbar(res.message, {
@@ -399,9 +405,14 @@ function FastTagPassbook( {currentUser} ) {
     })
   }
   }
+  const handleDownload = () => {
+    handleCSV('download');
+  }
 
   const handleShare = () => {
-    console.log('Sharing Statement...');
+    if(searchValue){
+      setShareModal(true)
+    }
   }
 
   const onChangeHandler = (event) => {
@@ -685,6 +696,23 @@ function FastTagPassbook( {currentUser} ) {
       </Paper>
         ) : null
       }
+      <Dialog 
+      open={shareModal}
+      onClose={() => setShareModal(false)}
+      >
+        <DialogTitle>Mail Statement</DialogTitle>
+        <DialogContent style={{width: 400}}>
+          <Typography>Do you want to share this statement through mail?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShareModal(false)}>Cancel</Button>
+          <Button onClick={() => {
+            // setShareLoading(true)
+            handleCSV('share')
+            }}>{shareLoading ? <CircularProgress size={20}/> : 'Send'}</Button>
+        </DialogActions>
+
+      </Dialog>
     </>
   );
 }

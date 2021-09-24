@@ -67,10 +67,10 @@ const ExpensesTable = ({ id, editable, values = [], currentUser }) => {
   }
 
   const saveExpenseRow = (rowData, rowIndex) => {
-    const objBody = {
-      user_id: currentUser.id, ...rowData
-    }
-    updateDealershipExpenseById(id, objBody)
+    // const objBody = {
+    //   user_id: currentUser.id, ...rowData
+    // }
+    updateDealershipExpenseById(id, rowData)
       .then(res => {
         setExpenses(res);
         setAddNewRow(false);

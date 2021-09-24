@@ -270,7 +270,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
                       error={errors.account_no}
                       helperText={errors.account_no}
                       className={classes.number}
-                      inputProps={{className: classes.input}}
+                      inputProps={{ className: classes.input }}
                       type='number'
                     />
                   </Grid>
@@ -340,7 +340,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
                       error={errors.transaction_limit}
                       helperText={errors.transaction_limit}
                       className={classes.number}
-                      inputProps={{className: classes.input}}
+                      inputProps={{ className: classes.input }}
                       type='number'
                     />
                   </Grid>
@@ -354,8 +354,9 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
                       error={errors.security}
                       helperText={errors.security}
                     >
-                      <option>Secured</option>
-                      <option>Unsecured</option>
+                      <option value="">Choose security type</option>
+                      <option values="Secured">Secured</option>
+                      <option values="Unsecured">Unsecured</option>
                     </TextInput>
                   </Grid>
                 </Grid>

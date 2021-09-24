@@ -122,7 +122,7 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
       mobile: Yup.string().required('Please enter dealership mobile number'),
     }),
     onSubmit: values => {
-      const data = { ...values, name: values.name.toUpperCase() }
+      const data = { ...values, user_id: 1, name: values.name.toUpperCase() }
       if (editRow) {
         updateReferenceById(data, dealer_id)
           .then(res => {

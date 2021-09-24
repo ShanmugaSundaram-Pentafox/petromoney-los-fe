@@ -38,6 +38,7 @@ import {
   ViewData,
 } from '../../../components/CommonComponents/FilePreview';
 import { deleteTransportProfileDoc } from '../../../services/transports.service';
+import { format, parse } from 'date-fns';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -229,7 +230,8 @@ const AddNewTransportsForm = ({
     onSubmit: (values) => {
       setLoading(true);
       values.name = values.name.toUpperCase();
-      const data = { ...values, t_owner_id: id, pan: values.pan?.toUpperCase(), gst: values.gst?.toUpperCase() };
+      const doi = values.doi ? format(parse(values.doi, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : null
+      const data = { ...values, doi: doi, t_owner_id: id, pan: values.pan?.toUpperCase(), gst: values.gst?.toUpperCase() };
       // let apiURL = isAdd === 'Add' ? `transporters` : `tranporters/${data.transporter_id}`
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
@@ -262,7 +264,7 @@ const AddNewTransportsForm = ({
           })
           .catch((error) => {
             setLoading(false);
-            enqueueSnackbar(error, {
+            enqueueSnackbar(error.message, {
               anchorOrigin: {
                 vertical: 'top',
                 horizontal: 'right',

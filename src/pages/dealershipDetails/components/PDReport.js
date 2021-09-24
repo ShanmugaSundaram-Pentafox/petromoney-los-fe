@@ -32,6 +32,7 @@ import AddCreditPdForm from '../PDRForms/AddCreditPdForm';
 import DialogContent from '@material-ui/core/DialogContent';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import { CircularProgress } from '@material-ui/core';
+import { getDealershipById } from '../../../services/dealerships.service';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -120,6 +121,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
   const [openCreditPdForm, setOpenCreditPdForm] = useState();
   const [fileCode, setFileCode] = useState()
   const [openDialog, setOpenDialog] = useState(false)
+  const [dealershipData, setDealershipData] = useState()
 
   const handleEdit = () => {
     setOpenOmcForm(false)
@@ -132,6 +134,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
     setOpenLoanForm(false)
     setOpenReferenceForm(false)
     setOpenIncomeForm(false)
+    setOpenCreditPdForm(false)
   }
   useMount(() => {
     getOmcDetailsById(id)
@@ -182,6 +185,13 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
     getOtherDetailsbyID(id)
       .then(data => {
         setAddlData(data)
+      })
+      .catch((e) => {
+        console.log(e);
+      })
+    getDealershipById(id)
+      .then(data => {
+        setDealershipData(data)
       })
       .catch((e) => {
         console.log(e);
@@ -409,7 +419,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         onClose={() => setOpenCreditPdForm(false)}
         variant="temporary"
       >
-        <AddCreditPdForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} />
+        <AddCreditPdForm dealer_id={id} isEdit='Edit' data={dealershipData} callback={handleEdit} currentUser={currentUser} />
       </Drawer>
     </div >
   );

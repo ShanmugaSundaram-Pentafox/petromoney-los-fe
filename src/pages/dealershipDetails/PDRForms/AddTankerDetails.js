@@ -130,9 +130,14 @@ const AddTankerDetails = ({ dealer_id }) => {
           window.location.reload()
         }, 1000);
       })
-
       .catch(err => {
-        console.log('Sales data save error - ', err);
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        });
       })
   }
   const onEditTextChange = e => {
@@ -274,14 +279,15 @@ const AddTankerDetails = ({ dealer_id }) => {
                     value={values.tanker_type}
                     onChange={handleChange}
                   >
-                    <option>Owned</option>
-                    <option>Rented</option>
+                    <option value=""></option>
+                    <option value="Owned">Owned</option>
+                    <option value="Rented">Rented</option>
                   </TextInput>
                 </TableCell>
                 <TableCell align={"right"}>
                   <TextInput
                     className={classes.field}
-                    label="Tanker_capacity"
+                    label="Tanker capacity"
                     name="tanker_capacity"
                     value={values.tanker_capacity}
                     onChange={handleChange}

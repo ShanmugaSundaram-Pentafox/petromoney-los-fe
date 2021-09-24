@@ -13,9 +13,11 @@ import { makeStyles } from "@material-ui/styles";
 import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
+import AsyncSelect from 'react-select/async';
 import { addReferenceDetails, deleteReferenceDetailsByID, updateReferenceById } from '../../../services/PDReport.services';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import PreviewCard from '../../../components/CommonComponents/Cards/PreviewCard';
+import { getDealershipForSearch } from '../../../services/common.service';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -103,8 +105,6 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
-  const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
-  const [loading, setLoading] = useState(false)
   const [addNew, setAddNew] = useState(data ? false : true)
   const [editRow, setEditRow] = useState(false);
 
@@ -119,7 +119,6 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       name: Yup.string().required('Please enter dealership name'),
-      referred_by: Yup.string().required('Please enter dealership ID'),
       mobile: Yup.string().required('Please enter dealership mobile number'),
     }),
     onSubmit: values => {
@@ -233,16 +232,6 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
-                      labelText="Dealership ID"
-                      name="referred_by"
-                      value={values.referred_by}
-                      error={errors.referred_by}
-                      helperText={errors.referred_by}
-                    />
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      {...inputProps}
                       labelText="Dealer name"
                       name="name"
                       value={values.name?.toUpperCase()}
@@ -311,7 +300,7 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
                       >
                         <Grid container spacing={2}>
                           <Grid item md={6}>
-                            <ViewData title="Dealership ID" value={item.referred_by} />
+                            {/* <ViewData title="Dealership ID" value={item.referred_by} /> */}
                             <ViewData title="Mobile" value={item.mobile} />
                           </Grid>
                           <Grid item md={6}>

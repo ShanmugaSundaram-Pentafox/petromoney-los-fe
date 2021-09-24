@@ -15,6 +15,7 @@ import apiCall from '../../utils/api.util';
 import { useSnackbar } from 'notistack';
 import { InputAdornment } from '@material-ui/core';
 import AsyncSelect from 'react-select/async';
+import { getDealershipForSearch } from '../../services/common.service';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelFormWrapper: {
@@ -36,32 +37,32 @@ const useStyles = makeStyles((theme) => ({
   sidePanelFormContentWrapper: {
     flex: 1,
     overflow: 'auto'
-},
-stepperRoot: {
+  },
+  stepperRoot: {
     padding: 16,
     paddingTop: 8
-},
-actionButtonsWrapper: {
+  },
+  actionButtonsWrapper: {
     display: 'flex',
     justifyContent: 'space-between',
     padding: '12px 16px'
-},
-dropdown: {
+  },
+  dropdown: {
     boxShadow: '1px 1px 4px -3px #333'
-},
-option: {
+  },
+  option: {
     padding: 6,
-},
-editButton: {
+  },
+  editButton: {
     marginRight: '8px',
     '&.MuiButton-contained': {
-        backgroundColor: theme.palette.success.main,
-        color: theme.palette.white
+      backgroundColor: theme.palette.success.main,
+      color: theme.palette.white
     },
     '&.MuiButton-contained:hover': {
-        backgroundColor: theme.palette.success.dark
+      backgroundColor: theme.palette.success.dark
     }
-}
+  }
 }));
 
 const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
@@ -74,90 +75,90 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
   const [optionsLoading, setOptionsLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
-const {
-  values,
-  errors,
-  handleChange,
-  handleSubmit,
-  isSubmitting,
-  setSubmitting,
-} = useFormik({
-  initialValues: {
-    mobile: mobile,
-    amount: amount,
-  },
-  validateOnChange: false,
-  validateOnBlur: true,
-  validationSchema: Yup.object().shape({
-    mobile: Yup.number().required("Enter mobile number").test("maxDigits","Mobile Number mush have 10 digits", (number) => String(number).length === 10),
-    amount: Yup.number().required('Enter Amount').moreThan(0, 'Invalid Amount').test("maxDigits","Request Amount Invalid", (value) => String(value).length < 9)
-  }),
-  onSubmit: (data) => {
-    const submitData = {'request_source': 'MDM', 'amount': data.amount, 'mobile': data.mobile, 'account_id': accountId?.id}
+  const {
+    values,
+    errors,
+    handleChange,
+    handleSubmit,
+    isSubmitting,
+    setSubmitting,
+  } = useFormik({
+    initialValues: {
+      mobile: mobile,
+      amount: amount,
+    },
+    validateOnChange: false,
+    validateOnBlur: true,
+    validationSchema: Yup.object().shape({
+      mobile: Yup.number().required("Enter mobile number").test("maxDigits", "Mobile Number mush have 10 digits", (number) => String(number).length === 10),
+      amount: Yup.number().required('Enter Amount').moreThan(0, 'Invalid Amount').test("maxDigits", "Request Amount Invalid", (value) => String(value).length < 9)
+    }),
+    onSubmit: (data) => {
+      const submitData = { 'request_source': 'MDM', 'amount': data.amount, 'mobile': data.mobile, 'account_id': accountId?.id }
 
-    if(selectedValue && accountId){
-      apiCall(`credit/reload/${selectedValue}`, {
+      if (selectedValue && accountId) {
+        apiCall(`credit/reload/${selectedValue}`, {
           method: 'POST',
           body: submitData,
           headers: {
             Authorization: `Bearer ${currentUser.token} `
           }
-      })
-      .then(res => {
-        if(res.status === "SUCCESS"){
-          callback()
-          enqueueSnackbar(res.message, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'success',
-          });
-          setTimeout(() => {
-            window.location.reload(false)
-        }, 1000);
-        } else {
-          enqueueSnackbar(res.message, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'error',
-          });
-        }
-      })
-      .catch(e => {
+        })
+          .then(res => {
+            if (res.status === "SUCCESS") {
+              callback()
+              enqueueSnackbar(res.message, {
+                anchorOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+                variant: 'success',
+              });
+              setTimeout(() => {
+                window.location.reload(false)
+              }, 1000);
+            } else {
+              enqueueSnackbar(res.message, {
+                anchorOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+                variant: 'error',
+              });
+            }
+          })
+          .catch(e => {
+            console.log(e);
+            enqueueSnackbar(e, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            });
+          })
+      }
+    }
+  })
+
+  const getOptions = (inputValue, callback) => {
+    if (inputValue.toString().length > 2) {
+      setOptionsLoading(true)
+      getDealershipForSearch(inputValue)
+        .then(data => {
+          setOptionsLoading(false)
+          callback(data);
+        })
+        .catch(e => {
           console.log(e);
-          enqueueSnackbar(e, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'error',
-          });
-      })
+          setOptionsLoading(false)
+        })
+    }
   }
-  }
-})
 
-const getOptions = (inputValue, callback) => {
-  if(inputValue.toString().length >2){
-    setOptionsLoading(true)
-    apiCall(`dealership/search?dealership=${inputValue}`)
-      .then(res => {
-        setOptionsLoading(false)
-        callback(res.data);
-      })
-      .catch(e => {
-        console.log(e);
-        setOptionsLoading(false)
-      })
+  const onChangeOption = (newValue) => {
+    setSelectedValue(newValue.id)
   }
-}
-
-const onChangeOption = (newValue) => {
-  setSelectedValue(newValue.id)
-}
 
   return (
     <div className={classes.sidePanelFormWrapper}>
@@ -171,61 +172,61 @@ const onChangeOption = (newValue) => {
             <Box>
               <form>
                 <Grid container spacing={2}>
-                  <Grid item md={8} style={{marginBottom: 10}}>
+                  <Grid item md={8} style={{ marginBottom: 10 }}>
                     <label style={{ marginBottom: 8 }}>Dealership</label>
                     <AsyncSelect
-                    components={optionsLoading? null : {LoadingIndicator: null}}
-                    styles={{
-                      menu: provided => ({ ...provided, zIndex: 9999 })
-                    }}
-                    onChange={onChangeOption}
-                    loadingMessage={() => ' '}
-                    loadOptions={getOptions}
-                    placeholder = 'Search Dealership ID or Name'
+                      components={optionsLoading ? null : { LoadingIndicator: null }}
+                      styles={{
+                        menu: provided => ({ ...provided, zIndex: 9999 })
+                      }}
+                      onChange={onChangeOption}
+                      loadingMessage={() => ' '}
+                      loadOptions={getOptions}
+                      placeholder='Search Dealership ID or Name'
                     />
                   </Grid>
                 </Grid>
 
                 <Grid container spacing={2}>
-                  <Grid item md={8} style={{marginBottom: 10}}>
+                  <Grid item md={8} style={{ marginBottom: 10 }}>
                     <label style={{ marginBottom: 8 }}>Account Type</label>
                     <Select isClearable onChange={setAccountId} options={data} />
                   </Grid>
                 </Grid>
                 <Grid container spacing={2}>
-                  <Grid item md={8} style={{marginBottom: 10}}>
+                  <Grid item md={8} style={{ marginBottom: 10 }}>
                     <label style={{ marginBottom: 8 }}>Mobile Number</label>
                     <TextField
-                    name="mobile"
-                    type="number"
-                    value={values.mobile}
-                    error={errors.mobile}
-                    helperText={errors.mobile? errors.mobile : "Mobile Number for Whatsapp Notifications."}
-                    variant='outlined'
-                    onChange={handleChange}
-                    fullWidth
+                      name="mobile"
+                      type="number"
+                      value={values.mobile}
+                      error={errors.mobile}
+                      helperText={errors.mobile ? errors.mobile : "Mobile Number for Whatsapp Notifications."}
+                      variant='outlined'
+                      onChange={handleChange}
+                      fullWidth
                     />
                   </Grid>
                 </Grid>
                 <Grid container spacing={2}>
-                <Grid item md={8}>
+                  <Grid item md={8}>
                     <label style={{ marginBottom: 8 }}>Amount</label>
-                    <TextField 
-                    name="amount"
-                    type="number"
-                    value={values.amount}
-                    error={errors.amount}
-                    helperText={errors.amount}
-                    variant='outlined'
-                    onChange={handleChange}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position='start'>
-                         ₹
-                        </InputAdornment>
-                      ),
-                    }}
-                    fullWidth
+                    <TextField
+                      name="amount"
+                      type="number"
+                      value={values.amount}
+                      error={errors.amount}
+                      helperText={errors.amount}
+                      variant='outlined'
+                      onChange={handleChange}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position='start'>
+                            ₹
+                          </InputAdornment>
+                        ),
+                      }}
+                      fullWidth
                     />
                   </Grid>
                 </Grid>

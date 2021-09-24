@@ -21,7 +21,7 @@ export const getBusinessTypes = () => {
 
 export const getOmcList = () => {
   return new Promise((resolve, reject) => {
-    apiCall("omcs")
+    apiCall(`omcs`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data);

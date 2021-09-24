@@ -231,6 +231,17 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                         </Grid>
                         <Grid item md={6}>
                           <TextInput
+                            {...inputProps}
+                            labelText="Dealer mobile"
+                            name="mobile"
+                            value={values.mobile}
+                            error={errors.mobile}
+                            helperText={errors.mobile}
+                          />
+                        </Grid>
+
+                        <Grid item md={6}>
+                          <TextInput
                             select
                             {...inputProps}
                             labelText="OMC name"
@@ -294,7 +305,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                           <Grid item md={6}>
                             <ViewData title="Dealership ID" value={item.dealership_id} />
                             <ViewData title="OMC" value={(omcs.find(function (omc, index) {
-                              if (omc.id == item?.omc)
+                              if (omc.name == item?.omc)
                                 return true;
                             }))?.name} />
                           </Grid>

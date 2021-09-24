@@ -1,9 +1,6 @@
-import { FormControlLabel } from '@material-ui/core';
-import { TextField } from '@material-ui/core';
+import { Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel } from '@material-ui/core';
 import { Tooltip } from '@material-ui/core';
-import { InputAdornment } from '@material-ui/core';
 import { Paper } from '@material-ui/core';
-import SearchIcon from '@material-ui/icons/Search';
 import { makeStyles } from '@material-ui/styles';
 import React, { useMemo, useState, useEffect } from 'react';
 import { Typography } from '@material-ui/core';
@@ -22,9 +19,9 @@ import { Popover } from '@material-ui/core';
 import { DateRange } from 'react-date-range';
 import { Box } from '@material-ui/core';
 import GetAppIcon from '@material-ui/icons/GetApp';
-import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
-import { IconButton } from '@material-ui/core';
+import ShareIcon from '@material-ui/icons/Share';
+import usePageTitle from '../../../hooks/usePageTitle';
 
 
 const useStyles = makeStyles({
@@ -119,11 +116,11 @@ const useStyles = makeStyles({
 });
 
 function FastTagPassbook( {currentUser} ) {
+  usePageTitle('Fastag Passbook')
   const classes = useStyles();
   const [selectedValue, setSelectedValue] = React.useState('vehicle');
   const [searchValue, setSearchValue] = useState();
   const [selectedPeriodType, setSelectedPeriodType] = useState('D');
-  const [showUpload, setShowUpload] = useState(false);
   const [file, setFile] = useState();
   const [loading, setLoading] = useState(false);
   const [optionsLoading, setOptionsLoading] = useState(false);
@@ -140,8 +137,8 @@ function FastTagPassbook( {currentUser} ) {
   const [period, setPeriod] = useState('today');
   const [vehicle, setVehicle] = useState();
   const [amount, setAmount] = useState();
-  const [option, setOption] = useState([]);
-  const [selectedOption, setSelectedOption] = useState();
+  const [shareModal, setShareModal] = useState(false);
+  const [shareLoading, setShareLoading] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState({
     from: new Date(),
     to: new Date(),
@@ -344,9 +341,6 @@ function FastTagPassbook( {currentUser} ) {
     setSearchValue()
     setData()
   };
-  const handleValues = (event) => {
-    setSearchValue(event.target.value);
-  };
   const pageChange = (page) => {
     fetchResult(page);
   }
@@ -371,16 +365,32 @@ function FastTagPassbook( {currentUser} ) {
   const onChangeOption = (newValue) => {
     setSearchValue(newValue.value)
   }
-  const handleDownload = () => {
+
+  const handleCSV = (action) => {
+    action === 'share' ? setShareLoading(true) : setShareLoading(false);
     if(searchValue)
     {
-      apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${from}&to=${to}&pagination=1&download=1`)
+      apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${from}&to=${to}&pagination=1&${action === 'download'? 'send=1&download=1' : 'send=1'}`)
     .then(res => {
       if(res.status === 'SUCCESS')
       {
-        window.open(res?.data[0])
+        action === 'download' ? window.open(res?.data[0]) : 
+          setShareLoading(false)
+          setShareModal(false)
+          if (action === 'share'){
+            enqueueSnackbar(res.message, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'success',
+              style: { width: 400 },
+            })
+          }
       }
       else {
+        setShareLoading(false)
+        setShareModal(false)
         enqueueSnackbar(res.message, {
           anchorOrigin: {
             vertical: 'top',
@@ -392,9 +402,27 @@ function FastTagPassbook( {currentUser} ) {
       }
     })
     .catch(e => {
+      setShareLoading(false)
+      enqueueSnackbar('Something went wrong, Please try Again!', {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'error',
+        style: { width: 400 },
+      })
       console.log(e)
     })
   }
+  }
+  const handleDownload = () => {
+    handleCSV('download');
+  }
+
+  const handleShare = () => {
+    if(searchValue){
+      setShareModal(true)
+    }
   }
 
   const onChangeHandler = (event) => {
@@ -603,6 +631,15 @@ function FastTagPassbook( {currentUser} ) {
             >
               Download
             </Button>
+            <Button
+              variant='outlined'
+              color='primary'
+              type='submit'
+              style={{marginLeft: 10 }}
+              onClick={handleShare}
+            >
+              <ShareIcon fontSize='small' style={{margin: 1.2}}/>
+            </Button>
           </div>
           <div className={classes.icon}>
             <input
@@ -669,6 +706,23 @@ function FastTagPassbook( {currentUser} ) {
       </Paper>
         ) : null
       }
+      <Dialog 
+      open={shareModal}
+      onClose={() => setShareModal(false)}
+      >
+        <DialogTitle>Mail Statement</DialogTitle>
+        <DialogContent style={{width: 400}}>
+          <Typography>Do you want to share this statement through mail ?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShareModal(false)}>Cancel</Button>
+          <Button onClick={() => {
+            // setShareLoading(true)
+            handleCSV('share')
+            }}>{shareLoading ? <CircularProgress size={20}/> : 'Send'}</Button>
+        </DialogActions>
+
+      </Dialog>
     </>
   );
 }

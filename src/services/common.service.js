@@ -501,3 +501,20 @@ export const getDealershipForSearch = (id) => {
       })
   })
 }
+
+export const getLoanTypes = () => {
+  return new Promise((resolve, reject) => {
+    apiCall(`loan/types`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

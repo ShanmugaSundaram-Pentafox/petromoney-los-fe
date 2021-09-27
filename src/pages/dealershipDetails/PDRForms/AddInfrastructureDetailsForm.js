@@ -104,6 +104,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
   const classes = useStyles()
   const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
   const [loading, setLoading] = useState(false)
+  const [tankerAdd, setTankerAdd] = useState(false)
 
 
   const handleEdit = () => {
@@ -177,11 +178,11 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                     error={errors.no_of_employee}
                     helperText={errors.no_of_employee}
                     className={classes.number}
-                    inputProps={{className: classes.input}}
+                    inputProps={{ className: classes.input }}
                     type='number'
                   />
                 </Grid>
-                <Grid item md={6}>
+                {/* <Grid item md={6}>
                   <TextInput
                     {...inputProps}
                     labelText="No of Nozzles"
@@ -195,7 +196,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                     inputProps={{className: classes.input}}
                     type='number'
                   />
-                </Grid>
+                </Grid> */}
                 <Grid item md={6}>
                   <TextInput
                     {...inputProps}
@@ -207,14 +208,14 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                     error={errors.no_of_tank}
                     helperText={errors.no_of_tank}
                     className={classes.number}
-                    inputProps={{className: classes.input}}
+                    inputProps={{ className: classes.input }}
                     type='number'
                   />
                 </Grid>
                 <Grid item md={6}>
                   <TextInput
                     {...inputProps}
-                    labelText="No of Hoarding"
+                    labelText="No of Hoarding (Advertisement banners)"
                     name="no_of_hoarding"
                     type="number"
                     value={values.no_of_hoarding}
@@ -222,7 +223,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                     error={errors.no_of_hoarding}
                     helperText={errors.no_of_hoarding}
                     className={classes.number}
-                    inputProps={{className: classes.input}}
+                    inputProps={{ className: classes.input }}
                     type='number'
                   />
                 </Grid>
@@ -236,7 +237,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                     error={errors.tank_capacity}
                     helperText={errors.tank_capacity}
                     className={classes.number}
-                    inputProps={{className: classes.input}}
+                    inputProps={{ className: classes.input }}
                     type='number'
                   />
                 </Grid>
@@ -258,7 +259,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                 <Grid item md={12}>
                   <Fragment className={classes.table}>
                     <Typography className={classes.subTitle} variant="h4">Tanker Details</Typography>
-                    <AddTankerDetails dealer_id={dealer_id} length={values.no_of_tanker} />
+                    <AddTankerDetails dealer_id={dealer_id} length={values.no_of_tanker} tankerAdd={tankerAdd} setTankerAdd={setTankerAdd}/>
                   </Fragment>
                 </Grid>
 
@@ -281,6 +282,14 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
             </Button>
           </div>
           <div>
+            <Button
+              variant='contained'
+              color='primary'
+              onClick={() => setTankerAdd(true)}
+              style={{marginRight: 10}}
+            >
+              Add Tanker
+            </Button>
             <Button
               variant="contained"
               type="submit"

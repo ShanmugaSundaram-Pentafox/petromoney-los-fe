@@ -310,7 +310,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
             <Tooltip title="click to edit reference details">
               <div className={classes.content} onClick={() => setOpenReferenceForm(true)}>
                 <ReferenceIcon width={30} className={classes.icons} />
-                <Typography variant="h5" align='center' className={classes.title} >Reference Details</Typography>
+                <Typography variant="h5" align='center' className={classes.title} >Third party verification</Typography>
               </div>
             </Tooltip>
           </Grid>

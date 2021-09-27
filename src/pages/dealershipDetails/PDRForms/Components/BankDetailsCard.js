@@ -48,13 +48,14 @@ const BankDetailsCard = ({ id, data, editBankDetails }) => {
                                     <ViewData title="Acc. Holder's name" value={item.account_name} />
                                     <ViewData title="Acc. type" value={item.account_type} />
                                     <ViewData title="Bank name" value={item.bank_name} />
-                                    <ViewData title="IFSC code" value={item.ifsc} />
+                                    <ViewData title="City" value={item.bank_city} />
+                                    <ViewData title="Security" value={item.security} />
                                 </Grid>
                                 <Grid item md={6}>
                                     <ViewData title="Acc. number" value={item.account_no} />
-                                    <ViewData title="Acc. since" value={item.account_since} />
+                                    <ViewData title="IFSC code" value={item.ifsc} />
                                     <ViewData title="Branch" value={item.bank_branch} />
-                                    <ViewData title="Security" value={item.security} />
+                                    <ViewData title="Acc. since" value={item.account_since} />
                                 </Grid>
                             </Grid>
                         </PreviewCard>

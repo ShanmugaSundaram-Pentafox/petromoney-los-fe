@@ -17,6 +17,7 @@ import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
 import { addLoanDetailsByID, deleteLoanDetailsByID, getBankDetailsbyID, getLoanDetailsbyID, updateBankDetailsByID, updateLoanDetailsByID } from '../../../services/PDReport.services';
 import PreviewCard from '../../../components/CommonComponents/Cards/PreviewCard';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
+import { getLoanTypes } from '../../../services/common.service';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -128,6 +129,7 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles()
   const [loanData, setLoanData] = useState([])
+  const [loanTypes, setLoanTypes] = useState([])
   const [addNew, setAddNew] = useState(loanData ? false : true)
   const [editRow, setEditRow] = useState(false);
 
@@ -138,6 +140,13 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
       })
       .catch((e) => {
         console.log(e);
+      })
+    getLoanTypes()
+      .then(data => {
+        setLoanTypes(data)
+      })
+      .catch((e) => {
+        console.log(e)
       })
   })
   const handleClose = () => {
@@ -277,16 +286,13 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
                       error={errors.loan_type}
                       helperText={errors.loan_type}
                     >
-                      <option value="">choose loan type</option>
-                      <option>Bank</option>
-                      <option>Finance</option>
-                      <option>Monthly EMI</option>
+                      {loanTypes.map((type, i) => (<option key={i} value={type.id}>{type.name}</option>))}
                     </TextInput>
                   </Grid>
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
-                      labelText="Bank name"
+                      labelText="Bank/NBFC name"
                       name="bank_name"
                       value={values.bank_name}
                       error={errors.bank_name}
@@ -297,13 +303,13 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
                     <TextInput
                       {...inputProps}
                       money
-                      labelText="Loan amount"
+                      labelText="Monthly obligation towards this Loan"
                       name="loan_amount"
                       value={values.loan_amount}
                       error={errors.loan_amount}
                       helperText={errors.loan_amount}
                       className={classes.number}
-                      inputProps={{className: classes.input}}
+                      inputProps={{ className: classes.input }}
                       type='number'
                     />
                   </Grid>
@@ -345,7 +351,10 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
                         <Grid container spacing={2}>
                           <Grid item md={6}>
                             <ViewData title="Bank name" value={item.bank_name} />
-                            <ViewData title="Loan type" value={item.loan_type} />
+                            <ViewData title="Loan type" value={(loanTypes.find(function (type, index) {
+                              if (type.id == item?.loan_type)
+                                return true;
+                            }))?.name} />
                             <ViewData title="Amount" value={item.loan_amount} />
                           </Grid>
                           <Grid item md={6}>

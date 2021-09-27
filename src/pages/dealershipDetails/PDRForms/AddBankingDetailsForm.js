@@ -15,6 +15,7 @@ import { useMount } from 'react-use';
 import { useSnackbar } from 'notistack';
 import { getBankDetailsbyID, updateBankDetailsByID } from '../../../services/PDReport.services';
 import BankDetailsCard from './Components/BankDetailsCard';
+import { URL } from '../../../config/serverUrls';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -146,7 +147,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      ifsc: Yup.string().length(11).required("Enter valid IFSC code"),
+      ifsc: Yup.string().required("Enter IFSC code").matches(/^[A-Za-z]{4}0[A-Z0-9]{6}$/, 'Enter valid IFSC'),
       account_name: Yup.string('Enter valid name').nullable('Enter Account Holder name').required('Enter Account holder name'),
       bank_name: Yup.string('Enter valid name').nullable('').required('Enter name'),
       account_no: Yup.number().nullable('Enter account number').required('Enter account number'),
@@ -192,38 +193,40 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
     alignTop: true,
     onChange: handleChange,
   }
-  // const onChangeIFSC = (value) => {
-  //     fetch(`${URL.ifscApiUrl}${value}`)
-  //         .then(res => {
-  //             return res.json()
-  //         })
-  //         .then(data => {
-  //             console.log("data 111", data)
-  //             if (data.BANK) {
-  //                 console.log("data", data)
-  //             } else {
-  //                 enqueueSnackbar("please enter valid IFSC code", {
-  //                     anchorOrigin: {
-  //                         vertical: 'top',
-  //                         horizontal: 'right',
-  //                     },
-  //                     variant: 'warning',
-  //                 }
-  //                 )
-  //             }
-  //         })
-  //         .catch(err => {
-  //             console.log('GET IFSC DATA ERR >> ', err)
-  //             enqueueSnackbar("please enter valid IFSC code", {
-  //                 anchorOrigin: {
-  //                     vertical: 'top',
-  //                     horizontal: 'right',
-  //                 },
-  //                 variant: 'warning',
-  //             }
-  //             )
-  //         })
-  // }
+
+  const onChangeIFSC = e => {
+    if (/^[A-Za-z]{4}0[A-Za-z0-9]{6}$/.test(e.target.value)) {
+      fetch(`${URL.ifscApiUrl}${e.target.value}`)
+        .then(res => {
+          return res.json()
+        })
+        .then(data => {
+          if (data.BANK) {
+            setValues({
+              ...values,
+              ifsc: data.IFSC,
+              bank_name: data.BANK,
+              bank_branch: data.BRANCH,
+              bank_city: data.CITY
+            })
+          } else {
+            console.log(data)
+          }
+        })
+        .catch(err => {
+          console.log('GET IFSC DATA ERR >> ', err)
+        })
+    } else {
+      // console.log("value", values)
+      enqueueSnackbar("please enter valid IFSC code", {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'warning',
+      })
+    }
+  }
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
@@ -242,22 +245,28 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
                 <Grid container spacing={2}>
                   <Grid item md={6}>
                     <TextInput
+                      select
+                      {...inputProps}
+                      labelText="Account Type"
+                      name="account_type"
+                      value={values.account_type}
+                      error={errors.account_type}
+                      helperText={errors.account_type}
+                    >
+                      <option value="">Choose account type</option>
+                      <option value="Current">Current</option>
+                      <option value="Savings">Savings</option>
+                      <option value="SAP">SAP</option>
+                    </TextInput>
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
                       {...inputProps}
                       labelText="Account Holder name"
                       name="account_name"
                       value={values.account_name}
                       error={errors.account_name}
                       helperText={errors.account_name}
-                    />
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      {...inputProps}
-                      labelText="Name of the Bank"
-                      name="bank_name"
-                      value={values.bank_name}
-                      error={errors.bank_name}
-                      helperText={errors.bank_name}
                     />
                   </Grid>
                   <Grid item md={6}>
@@ -277,6 +286,27 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
+                      labelText="IFSC"
+                      name="ifsc"
+                      value={values.ifsc?.toUpperCase()}
+                      error={errors.ifsc}
+                      helperText={errors.ifsc}
+                      onChange={(e) => { onChangeIFSC(e); handleChange(e) }}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      labelText="Name of the Bank"
+                      name="bank_name"
+                      value={values.bank_name}
+                      error={errors.bank_name}
+                      helperText={errors.bank_name}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
                       labelText="Branch"
                       name="bank_branch"
                       value={values.bank_branch}
@@ -286,25 +316,12 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
                   </Grid>
                   <Grid item md={6}>
                     <TextInput
-
-                      direction="column"
-                      alignTop={true}
-                      labelText="IFSC"
-                      name="ifsc"
-                      value={values.ifsc}
-                      error={errors.ifsc}
-                      helperText={errors.ifsc}
-                      onChange={handleChange}
-                    />
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
                       {...inputProps}
-                      labelText="Account Type"
-                      name="account_type"
-                      value={values.account_type}
-                      error={errors.account_type}
-                      helperText={errors.account_type}
+                      labelText="Branch"
+                      name="bank_city"
+                      value={values.bank_city}
+                      error={errors.bank_city}
+                      helperText={errors.bank_city}
                     />
                   </Grid>
                   <Grid item md={6}>

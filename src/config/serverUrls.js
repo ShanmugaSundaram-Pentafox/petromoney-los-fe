@@ -1,5 +1,6 @@
 export const URL = {
   base: process.env.REACT_APP_API_BASE,
+  ifscApiUrl: "https://ifsc.razorpay.com/",
   login: "login/user",
   allUsers: "users",
   userRoles: "user/roles",

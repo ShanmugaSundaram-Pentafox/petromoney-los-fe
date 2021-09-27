@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
   }
 
 }))
-const AssetsEditForm = ({ id, assetData = {}, data, handleClose }) => {
+const AssetsEditForm = ({ dealer_id, assetData = {}, data, handleClose }) => {
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles()
   const [fields, setFields] = useState([]);
@@ -51,10 +51,12 @@ const AssetsEditForm = ({ id, assetData = {}, data, handleClose }) => {
       setFields(f);
     }
   }, [assetData, data])
-
   const submitForm = values => {
-    const d = { ...data, details: { ...values } }
-    updateAssetDetailsById(d, id)
+    const { asset_id, id } = data
+    const { asset_value, market_value, ownership, ownership_proof, relationship } = values
+    delete values.asset_value; delete values.market_value; delete values.ownership_proof; delete values.relationship;
+    const d = { asset_id, asset_value, market_value, ownership, ownership_proof, relationship, details: { ...values } }
+    updateAssetDetailsById(d, dealer_id, id)
       .then(res => {
         enqueueSnackbar(res, {
           anchorOrigin: {
@@ -79,7 +81,7 @@ const AssetsEditForm = ({ id, assetData = {}, data, handleClose }) => {
 
   return (
     <Formik
-      initialValues={{ ...data?.details }}
+      initialValues={{ ...data?.details, ...data }}
       validateOnBlur
       validateOnChange={false}
       onSubmit={submitForm}
@@ -103,6 +105,57 @@ const AssetsEditForm = ({ id, assetData = {}, data, handleClose }) => {
                   </Grid>
                 )) : null
               }
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  labelText="Asset Value"
+                  name="asset_value"
+                  value={values.asset_value}
+                  error={errors.asset_value}
+                  helperText={errors.asset_value}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  labelText="Market value"
+                  name="market_value"
+                  value={values.market_value}
+                  error={errors.market_value}
+                  helperText={errors.market_value}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  select
+                  labelText="Ownership"
+                  name="ownership"
+                  value={values.ownership}
+                  error={errors.ownership}
+                  helperText={errors.ownership}
+                  onChange={handleChange}
+                >
+                  <option value="">Choose ownership</option>
+                  <option value="Self owned">Self owned</option>
+                  <option value="Family owned">Family owned</option>
+                  <option value="Partnership">Partnership</option>
+                  {/* {type.label !== "Gold" && <option value="Leased">Leased</option>} */}
+                </TextInput>
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  labelText="Ownership Proof"
+                  name="ownership_proof"
+                  value={values.ownership_proof}
+                  error={errors.ownership_proof}
+                  helperText={errors.ownership_proof}
+                  onChange={handleChange}
+                />
+              </Grid>
             </Grid>
             {
               fields.length ? (
@@ -137,7 +190,7 @@ const AssetsEditForm = ({ id, assetData = {}, data, handleClose }) => {
           </>
         )
       }
-    </Formik>
+    </Formik >
   )
 }
 

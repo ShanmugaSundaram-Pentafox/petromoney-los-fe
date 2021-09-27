@@ -267,6 +267,23 @@ export const getStates = () => {
       })
   })
 }
+
+export const getAssetType = () => {
+  return new Promise((resolve, reject) => {
+    apiCall("asset")
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(err => {
+        reject(err.message);
+      })
+  })
+}
+
 export const getActiveStates = () => {
   return new Promise((resolve, reject) => {
     apiCall("states")
@@ -372,6 +389,63 @@ export const updateStateById = (data, id) => {
   });
 }
 
+export const updateAssetById = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`asset/${id}`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const updateBusinessById = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`business/types/${id}`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const updateLoanById = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`loan/types/${id}`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
 export const addOmcs = (data) => {
   return new Promise((resolve, reject) => {
     apiCall(`omcs`, {
@@ -413,6 +487,63 @@ export const addRegion = (data) => {
 export const addState = (data) => {
   return new Promise((resolve, reject) => {
     apiCall(`master/states`, {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const addBusinessType = (data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`business/types`, {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const addLoanType = (data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`loan/types`, {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const addAssetType = (data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`asset`, {
       method: 'POST',
       body: data
     })

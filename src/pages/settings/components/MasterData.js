@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/styles';
 import React, {useState} from 'react';
 import Contain from './MasterDataTable';
-import { getOmcList, getStates, getAllRegion } from '../../../services/common.service';
+import { getOmcList, getStates, getAllRegion, getBusinessTypes, getLoanTypes, getAssetType } from '../../../services/common.service';
 import { useMount } from 'react-use';
 import Skeleton from '@material-ui/lab/Skeleton';
 
@@ -17,6 +17,9 @@ function MasterData() {
   const [omc, setOmc] = useState([]);
   const [region, setRegion] = useState([]);
   const [state, setState] = useState([]);
+  const [businessType, setBusinessType] = useState([]);
+  const [loanType, setLoanType] = useState([]);
+  const [assetType, setAssetType] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useMount(() => {
@@ -44,6 +47,36 @@ function MasterData() {
         console.log(e)
         setLoading(false)
       });
+
+    getBusinessTypes()
+      .then((data) => {
+        setBusinessType(data)
+          setLoading(false)
+      }) 
+      .catch((e) => {
+        console.log(e)
+        setLoading(false)
+      });
+    
+    getLoanTypes()
+      .then((data) => {
+        setLoanType(data)
+          setLoading(false)
+      }) 
+      .catch((e) => {
+        console.log(e)
+        setLoading(false)
+      });
+    
+    getAssetType()
+      .then((data) => {
+        setAssetType(data)
+          setLoading(false)
+      }) 
+      .catch((e) => {
+        console.log(e)
+        setLoading(false)
+      });
   });
 
   return (
@@ -56,6 +89,9 @@ function MasterData() {
           <Contain title={'OMCs'} data={omc} label={'name'} setStateBtn={false} regionForm={false}/>
           <Contain title={'Region'} data={region} label={'region'} setStateBtn={false} regionForm={true}/>
           <Contain title={'State'} data={state} label={'name'} setStateBtn={true} regionForm={false}/>
+          <Contain title={'Business Type'} data={businessType} label={'id_name'} setStateBtn={false} regionForm={false}/>
+          <Contain title={'Asset Type'} data={assetType} label={'id_name'} setStateBtn={false} regionForm={false}/>
+          <Contain title={'Loan Type'} data={loanType} label={'id_name'} setStateBtn={false} regionForm={false}/>
           </>
         )
       }

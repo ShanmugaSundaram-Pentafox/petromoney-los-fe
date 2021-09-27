@@ -20,6 +20,9 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { useSnackbar } from 'notistack';
 
 import {
+  addAssetType,
+  addBusinessType,
+  addLoanType,
   addOmcs,
   addRegion,
   addState,
@@ -27,6 +30,9 @@ import {
   deleteRegion,
   deleteState,
   getActiveStates,
+  updateAssetById,
+  updateBusinessById,
+  updateLoanById,
   updateOmcsById,
   updateRegionById,
   updateStateById,
@@ -237,6 +243,87 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
           })
         });
     }
+    
+    if (status === 'Business Type') {
+      updateBusinessById(rowData, rowData.id)
+        .then((res) => {
+          handleClose()
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
+          setTimeout(() => {
+            window.location.reload(false);
+          }, 1500);
+        })
+        .catch((err) => {
+          console.log(err);
+          enqueueSnackbar('Something went wrong, Please try Again!', {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
+        });
+    }
+
+    if (status === 'Asset Type') {
+      updateAssetById(rowData, rowData.asset_id)
+        .then((res) => {
+          handleClose()
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
+          setTimeout(() => {
+            window.location.reload(false);
+          }, 1500);
+        })
+        .catch((err) => {
+          console.log(err);
+          enqueueSnackbar('Something went wrong, Please try Again!', {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
+        });
+    }
+    
+    if (status === 'Loan Type') {
+      updateLoanById(rowData, rowData.loan_id)
+        .then((res) => {
+          handleClose()
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
+          setTimeout(() => {
+            window.location.reload(false);
+          }, 1500);
+        })
+        .catch((err) => {
+          console.log(err);
+          enqueueSnackbar('Something went wrong, Please try Again!', {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
+        });
+    }
   };
 
   const submitAdd = () => {
@@ -295,6 +382,86 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
       }
       if(status === 'State'){
         addState(AddData)
+        .then((res) => {
+          handleClose()
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
+          setTimeout(() => {
+            window.location.reload(false);
+          }, 1500);
+        })
+        .catch((err) => {
+          console.log(err);
+          enqueueSnackbar('Something went wrong, Please try Again!', {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
+        })
+      }
+      if(status === 'Business Type'){
+        addBusinessType(AddData)
+        .then((res) => {
+          handleClose()
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
+          setTimeout(() => {
+            window.location.reload(false);
+          }, 1500);
+        })
+        .catch((err) => {
+          console.log(err);
+          enqueueSnackbar('Something went wrong, Please try Again!', {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
+        })
+      }
+
+      if(status === 'Loan Type'){
+        addLoanType(AddData)
+        .then((res) => {
+          handleClose()
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
+          setTimeout(() => {
+            window.location.reload(false);
+          }, 1500);
+        })
+        .catch((err) => {
+          console.log(err);
+          enqueueSnackbar('Something went wrong, Please try Again!', {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
+        })
+      }
+      
+      if(status === 'Asset Type'){
+        addAssetType(AddData)
         .then((res) => {
           handleClose()
           enqueueSnackbar(res, {

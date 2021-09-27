@@ -259,7 +259,6 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
         )
       })
   }
-
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
@@ -352,7 +351,7 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
                           <Grid item md={6}>
                             <ViewData title="Bank name" value={item.bank_name} />
                             <ViewData title="Loan type" value={(loanTypes.find(function (type, index) {
-                              if (type.id == item?.loan_type)
+                              if (type.name == item?.loan_type)
                                 return true;
                             }))?.name} />
                             <ViewData title="Amount" value={item.loan_amount} />

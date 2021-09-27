@@ -175,9 +175,9 @@ export const addAssetDetailsById = (data, id) => {
       });
   });
 }
-export const updateAssetDetailsById = (data, id) => {
+export const updateAssetDetailsById = (data, dealer_id, id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`dealership/${id}/assets/${data.id}`, {
+    apiCall(`dealership/${dealer_id}/assets/${id}`, {
       method: 'POST',
       body: data,
     })

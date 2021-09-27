@@ -145,7 +145,9 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
       // type: Yup.string().nullable('Please choose type').required('Please choose type'),
     }),
     onSubmit: values => {
-      const data = { asset_id: type.value, ownership: values.ownership, details: { ...values } }
+      const { asset_value, market_value, ownership, ownership_proof, relationship } = values
+      delete values.asset_value; delete values.market_value; delete values.ownership_proof; delete values.relationship;
+      const data = { asset_id: type.value, asset_value, market_value, ownership, ownership_proof, relationship, details: { ...values } }
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
         formData.append(key, data[key]);
@@ -261,6 +263,26 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                                   <Grid item md={6}>
                                     <TextInput
                                       {...inputProps}
+                                      labelText="Asset Value"
+                                      name="asset_value"
+                                      value={values.asset_value}
+                                      error={errors.asset_value}
+                                      helperText={errors.asset_value}
+                                    />
+                                  </Grid>
+                                  <Grid item md={6}>
+                                    <TextInput
+                                      {...inputProps}
+                                      labelText="Market value"
+                                      name="market_value"
+                                      value={values.market_value}
+                                      error={errors.market_value}
+                                      helperText={errors.market_value}
+                                    />
+                                  </Grid>
+                                  <Grid item md={6}>
+                                    <TextInput
+                                      {...inputProps}
                                       select
                                       labelText="Ownership"
                                       name="ownership"
@@ -275,6 +297,16 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                                       {type.label !== "Gold" && <option value="Leased">Leased</option>}
                                     </TextInput>
                                   </Grid>
+                                  {/* <Grid item md={6}>
+                                    <TextInput
+                                      {...inputProps}
+                                      labelText="Ownership Proof"
+                                      name="ownership_proof"
+                                      value={values.ownership_proof}
+                                      error={errors.ownership_proof}
+                                      helperText={errors.ownership_proof}
+                                    />
+                                  </Grid> */}
                                 </Grid>
                               ) : null
                             }
@@ -290,7 +322,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                               <Button
                                 variant="outlined"
                                 className={classes.btn}
-                                onClick={() => { setAddNewAsset(false); setEditRow(false) }}
+                                onClick={() => { setAddNewAsset(false); setEditRow(false); setEditRowData({}); setType('') }}
                               >
                                 Cancel
                               </Button>
@@ -314,7 +346,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                   <Grid container spacing={2}>
                     {
                       editRow ? (
-                        <AssetsEditForm id={dealer_id} assetData={assetData.find(item => item.asset_id === editRowData.asset_id)} data={editRowData} handleClose={handleCancel} />
+                        <AssetsEditForm dealer_id={dealer_id} assetData={assetData.find(item => item.asset_id === editRowData.asset_id)} data={editRowData} handleClose={handleCancel} />
                       ) : (
                         !addNewAsset && asset.map((item, i) => {
                           return (
@@ -327,8 +359,11 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                                   <Grid item md={6}>
                                     <ViewData title="Asset Type" value={item.name} />
                                     <ViewData title="Ownership" value={item.ownership} />
+                                    <ViewData title="Market value" value={item.market_value} />
+                                    {/* <ViewData title="Relationship" value={item.relationship} /> */}
                                   </Grid>
                                   <Grid item md={6}>
+                                    <ViewData title="Asset value" value={item.asset_value} />
                                     <AssetCard id={dealer_id} assetData={assetData.find(d => d.asset_id === item.asset_id)} data={item} />
                                   </Grid>
                                 </Grid>

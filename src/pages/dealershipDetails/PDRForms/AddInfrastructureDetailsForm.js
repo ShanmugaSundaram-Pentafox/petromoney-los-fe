@@ -177,11 +177,11 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                     error={errors.no_of_employee}
                     helperText={errors.no_of_employee}
                     className={classes.number}
-                    inputProps={{className: classes.input}}
+                    inputProps={{ className: classes.input }}
                     type='number'
                   />
                 </Grid>
-                <Grid item md={6}>
+                {/* <Grid item md={6}>
                   <TextInput
                     {...inputProps}
                     labelText="No of Nozzles"
@@ -195,7 +195,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                     inputProps={{className: classes.input}}
                     type='number'
                   />
-                </Grid>
+                </Grid> */}
                 <Grid item md={6}>
                   <TextInput
                     {...inputProps}
@@ -207,14 +207,14 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                     error={errors.no_of_tank}
                     helperText={errors.no_of_tank}
                     className={classes.number}
-                    inputProps={{className: classes.input}}
+                    inputProps={{ className: classes.input }}
                     type='number'
                   />
                 </Grid>
                 <Grid item md={6}>
                   <TextInput
                     {...inputProps}
-                    labelText="No of Hoarding"
+                    labelText="No of Hoarding (Advertisement banners)"
                     name="no_of_hoarding"
                     type="number"
                     value={values.no_of_hoarding}
@@ -222,7 +222,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                     error={errors.no_of_hoarding}
                     helperText={errors.no_of_hoarding}
                     className={classes.number}
-                    inputProps={{className: classes.input}}
+                    inputProps={{ className: classes.input }}
                     type='number'
                   />
                 </Grid>
@@ -236,7 +236,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                     error={errors.tank_capacity}
                     helperText={errors.tank_capacity}
                     className={classes.number}
-                    inputProps={{className: classes.input}}
+                    inputProps={{ className: classes.input }}
                     type='number'
                   />
                 </Grid>

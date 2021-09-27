@@ -194,12 +194,11 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                   />
                 </Grid>
                 <Grid item md={6}>
-                  {/* <label className="input-label">Dealership agreement executed on</label> */}
+                  <label className="input-label">Dealership agreement executed on</label>
                   <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <KeyboardDatePicker
                       variant='inline'
                       inputVariant='outlined'
-                      label="Dealership agreement executed on"
                       format='dd/MM/yyyy'
                       animateYearScrolling={true}
                       invalidDateMessage='Invalid Date Format'

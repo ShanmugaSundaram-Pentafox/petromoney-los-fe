@@ -13,7 +13,7 @@ import { useSnackbar } from 'notistack';
 import { addNewTanker, deleteTanker, getTankersById, updateTankerByID } from '../../../services/PDReport.services';
 import { useMount } from 'react-use';
 import PreviewCard from '../../../components/CommonComponents/Cards/PreviewCard';
-import { Grid, Paper } from '@material-ui/core';
+import { Grid, Paper, Typography } from '@material-ui/core';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
 import * as Yup from 'yup';
@@ -52,6 +52,10 @@ const useStyles = makeStyles((theme) => ({
   },
   btn: {
     margin: 8
+  },
+  typography: {
+    marginTop: 12,
+    textAlign: 'center'
   },
   editButton: {
     marginRight: '8px',
@@ -271,6 +275,10 @@ const AddTankerDetails = ({ dealer_id, tankerAdd, setTankerAdd }) => {
           </>
 
         ) : (
+          <>
+            {
+              tankerData.length === 0 ? <Typography className={classes.typography}>No Tankers found, Click 'Add Tanker' to add new Tankers.</Typography> : null
+            }
           <Grid container spacing={2}>
             {
               tankerData && tankerData.map((item, i) => {
@@ -300,6 +308,7 @@ const AddTankerDetails = ({ dealer_id, tankerAdd, setTankerAdd }) => {
               })
             }
           </Grid>
+          </>
         )
       }
     </div>

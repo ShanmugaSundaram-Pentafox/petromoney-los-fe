@@ -12,6 +12,11 @@ import { makeStyles } from "@material-ui/styles";
 import { useSnackbar } from 'notistack';
 import { addNewTanker, deleteTanker, getTankersById, updateTankerByID } from '../../../services/PDReport.services';
 import { useMount } from 'react-use';
+import PreviewCard from '../../../components/CommonComponents/Cards/PreviewCard';
+import { Grid, Paper } from '@material-ui/core';
+import { ViewData } from '../../../components/CommonComponents/FilePreview';
+import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
+import * as Yup from 'yup';
 
 const useStyles = makeStyles((theme) => ({
   table: {
@@ -41,13 +46,30 @@ const useStyles = makeStyles((theme) => ({
     '&.MuiTextField-root .MuiInputLabel-outlined.MuiInputLabel-shrink': {
       fontSize: 11
     }
-  }
+  },
+  actionFoot: {
+    marginTop: 12,
+  },
+  btn: {
+    margin: 8
+  },
+  editButton: {
+    marginRight: '8px',
+    '&.MuiButton-contained': {
+      backgroundColor: theme.palette.success.main,
+      color: theme.palette.white
+    },
+    '&.MuiButton-contained:hover': {
+      backgroundColor: theme.palette.success.dark
+    }
+  },
 }))
 
 
-const AddTankerDetails = ({ dealer_id }) => {
+const AddTankerDetails = ({ dealer_id, tankerAdd, setTankerAdd }) => {
   const [tankerData, setTankerData] = useState([])
   const [editable, setEditable] = useState(true)
+  const [edit, setEdit] = useState(false)
   const [addNewRow, setAddNewRow] = useState();
   const [editRow, setEditRow] = useState({});
   const { enqueueSnackbar } = useSnackbar();
@@ -89,6 +111,12 @@ const AddTankerDetails = ({ dealer_id }) => {
     initialValues: {},
     validateOnChange: false,
     validateOnBlur: true,
+    validationSchema: Yup.object().shape({
+      vehicle_no: Yup.string().required('Enter Tanker No'),
+      tanker_type: Yup.string().required('Choose Tanker Type'),
+      tanker_capacity: Yup.number().required('Enter Tanker Capacity'),
+      operation_hours: Yup.number().required('Choose Operational hours'),
+    }),
     onSubmit: values => {
       const data = { ...values, vehicle_no: values.vehicle_no?.toUpperCase() }
       addNewTanker(data, dealer_id)
@@ -149,211 +177,132 @@ const AddTankerDetails = ({ dealer_id }) => {
     })
   }
   return (
-    <Table className={classes.table} size="small" aria-label="Income">
-      <TableHead>
-        <TableRow>
-          <TableCell>Tanker number</TableCell>
-          <TableCell>Tanker  Type</TableCell>
-          <TableCell>Tanker Capacity</TableCell>
-          <TableCell>Tanker Operation hours</TableCell>
-          <TableCell></TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {
-          tankerData?.map((row, i) => i === editRow?.rowIndex ? (
-            <TableRow key={`edit-row-${i}`}>
-              <TableCell>
-                <TextInput
-                  className={classes.field}
-                  label="Tanker number"
-                  name="vehicle_no"
-                  value={editRow.vehicle_no?.toUpperCase()}
-                  onChange={onEditTextChange}
-                />
-              </TableCell>
-              <TableCell>
-                <TextInput
-                  select
-                  className={classes.field}
-                  labelText="Tanker type"
-                  name="tanker_type"
-                  value={editRow.tanker_type}
-                  onChange={onEditTextChange}
-                >
-                  <option value=" ">Choose type</option>
-                  <option value="Owned">Owned</option>
-                  <option value="Rented">Rented</option>
-                </TextInput>
-              </TableCell>
-              <TableCell>
-                <TextInput
-                  className={classes.field}
-                  label="Tanker capacity in liters"
-                  name="tanker_capacity"
-                  value={editRow.tanker_capacity}
-                  onChange={onEditTextChange}
-                />
-              </TableCell>
-              <TableCell>
-                <TextInput
-                  className={classes.field}
-                  label="Operational hours"
-                  name="operation_hours"
-                  value={editRow.operation_hours}
-                  onChange={onEditTextChange}
-                >
-                  <option value=' '>Choose time</option>
-                  {opHours.map((op, i) => (<option key={i} value={op.id}>{op.name}</option>))}
-                </TextInput>
-              </TableCell>
-              <TableCell align="center">
-                <Button
-                  size="small"
-                  variant="outlined"
-                  color="success"
-                  className={classes.btnSuccess}
-                  onClick={() => saveEditRow(editRow, i)}>
-                  Save
-                </Button>
-                <Button
-                  size="small"
-                  variant="outlined"
-                  color="error"
-                  onClick={() => {
-                    setEditRow({});
-                  }}>
-                  Cancel
-                </Button>
-              </TableCell>
-            </TableRow>
-          ) : (
-            <TableRow key={i}>
-              <TableCell>{row.vehicle_no}</TableCell>
-              <TableCell>{row.tanker_type}</TableCell>
-              <TableCell>{row.tanker_capacity}</TableCell>
-              <TableCell>{row.operation_hours}</TableCell>
-              <TableCell align="right">
-                {
-                  editable ? (
-                    <>
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        color="success"
-                        className={classes.btnSuccess}
-                        onClick={() => editTankerRow(row, i)}>
-                        Edit
-                      </Button>
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        color="success"
-                        className={classes.btnSuccess}
-                        onClick={() => deleteTankerRow(row, i)}>
-                        Delete
-                      </Button>
-                    </>
-                  ) : null
-                }
+    <div>
+      {
+        tankerAdd ? (
+          <>
+          <Paper style={{padding: 25, borderRadius: 5 }} elevation={2}>
+          <Grid container spacing={2} style={{display: 'flex', justifyContent: 'center'}}>
+            <Grid item md={6}>
+              <label><strong>Tanker number</strong></label>
+              <TextInput
+                className={classes.field}
+                name="vehicle_no"
+                value={editRow.vehicle_no?.toUpperCase()}
+                onChange={handleChange}
+                disabled={edit}
+                error={errors.vehicle_no}
+                helperText={edit ? "Cannot edit vehicle number" : errors.vehicle_no}
+              />
+            </Grid>
+            <Grid item md={6}>
+              <label><strong>Tanker type</strong></label>
+              <TextInput
+                select
+                className={classes.field}
+                name="tanker_type"
+                error={errors.tanker_type}
+                helperText={errors.tanker_type}
+                value={editRow.tanker_type}
+                onChange={ !edit ? handleChange : onEditTextChange}
+              >
+                <option value=" ">Choose type</option>
+                <option value="Owned">Owned</option>
+                <option value="Rented">Rented</option>
+              </TextInput>
+            </Grid>
+            <Grid item md={6}>
+              <label><strong>Tanker capacity in liters</strong></label>
+              <TextInput
+                className={classes.field}
+                name="tanker_capacity"
+                error={errors.tanker_capacity}
+                helperText={errors.tanker_capacity}
+                value={editRow.tanker_capacity}
+                onChange={ !edit ? handleChange : onEditTextChange}
+              />
+            </Grid>
+            <Grid item md={6}>
+              <label><strong>Operational hours</strong></label>
+              <TextInput
+                select
+                className={classes.field}
+                name="operation_hours"
+                value={editRow.operation_hours}
+                error={errors.operation_hours}
+                helperText={errors.operation_hours}
+                onChange={ !edit ? handleChange : onEditTextChange}
+              >
+                <option value=" ">Choose time</option>
+                {opHours.map((op, i) => (<option key={i} value={op.id}>{op.name}</option>))}
+              </TextInput>
+            </Grid>
+          </Grid>
 
-              </TableCell>
-            </TableRow>
-          ))
-        }
-        <TableRow key={"new-row"}>
-          {
-            addNewRow && (
-              <>
-                <TableCell>
-                  <TextInput
-                    className={classes.field}
-                    label="Tanker number"
-                    name="vehicle_no"
-                    value={values.vehicle_no}
-                    onChange={handleChange}
+            <div className={classes.actionFoot}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <div>
+                  <Button
+                    variant="outlined"
+                    className={classes.btn}
+                    onClick={() => { 
+                      setTankerAdd(false) 
+                      setEditRow({})
+                      setEdit(false)
+                    }}
                   >
-                  </TextInput>
-                </TableCell>
-                <TableCell>
-                  <TextInput
-                    select
-                    className={classes.field}
-                    label="Tanker Type"
-                    name="tanker_type"
-                    value={values.tanker_type}
-                    onChange={handleChange}
+                    Cancel
+                  </Button>
+                </div>
+                <div>
+                  <Button
+                    variant="contained"
+                    // type="submit"
+                    className={clsx(classes.btn, classes.editButton)}
+                    startIcon={<CheckOutlinedIcon />}
+                    onClick={!edit ? handleSubmit : () => saveEditRow(editRow)}
                   >
-                    <option value=" ">Choose type</option>
-                    <option value="Owned">Owned</option>
-                    <option value="Rented">Rented</option>
-                  </TextInput>
-                </TableCell>
-                <TableCell align={"right"}>
-                  <TextInput
-                    className={classes.field}
-                    label="Tanker capacity (in liters)"
-                    name="tanker_capacity"
-                    value={values.tanker_capacity}
-                    onChange={handleChange}
-                  />
-                </TableCell>
-                <TableCell >
-                  <TextInput
-                    select
-                    className={classes.field}
-                    label="Operation hours"
-                    name="operation_hours"
-                    value={values.operation_hours}
-                    onChange={handleChange}
-                  >
-                    <option value=' '>Choose time</option>
-                    {opHours.map((op, i) => (<option key={i} value={op.id}>{op.name}</option>))}
-                  </TextInput>
-                </TableCell>
-                <TableCell align={"right"}></TableCell>
-              </>
-            )
-          }
-        </TableRow>
-        <TableRow key={"new-row2"}>
+                    Save
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </Paper>
+          </>
 
-          {
-            addNewRow ? (
-              <TableCell colSpan={12} align="right">
-                <Button
-                  size="small"
-                  variant="outlined"
-                  color="error"
-                  onClick={() => {
-                    setAddNewRow(false);
-                  }}>
-                  Cancel
-                </Button>
-                &nbsp;&nbsp;
-                <Button
-                  size="small"
-                  variant="outlined"
-                  color="success"
-                  className={classes.btnSuccess}
-                  onClick={handleSubmit}>
-                  Save
-                </Button>
-              </TableCell>
-            ) : (editable && (
-              <TableCell align="right" colSpan={12}>
-                <Button
-                  variant="contained"
-                  className={clsx(classes.btn, classes.btnSuccess)}
-                  onClick={() => setAddNewRow(true)}>
-                  Add Tanker
-                </Button>
-              </TableCell>
-            ))
-          }
-        </TableRow>
-      </TableBody>
-    </Table >
+        ) : (
+          <Grid container spacing={2}>
+            {
+              tankerData && tankerData.map((item, i) => {
+                return (
+                  <Grid item md={6}>
+                  <PreviewCard
+                    onEdit = {() => {
+                      editTankerRow(item, i)
+                      setEdit(true)
+                      setTankerAdd(true)
+                    }}
+                    onDelete = {() => deleteTankerRow(item, i)}
+                  >
+                    <Grid container spacing={2} >
+                      <Grid item md={6}>
+                        <ViewData title="Tanker No" value={item.vehicle_no} />
+                        <ViewData title="Tanker Type" value={item.tanker_type} />
+                      </Grid>
+                      <Grid item md={6}>
+                        <ViewData title="Capacity" value={item.tanker_capacity} />
+                        <ViewData title="Operational Time" value={item.operation_hours} />
+                      </Grid>
+                    </Grid>
+                  </PreviewCard>
+                  </Grid>
+                )
+              })
+            }
+          </Grid>
+        )
+      }
+    </div>
   )
 }
 export default AddTankerDetails;

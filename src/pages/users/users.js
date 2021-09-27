@@ -57,7 +57,7 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
   const fo = getUsersByRole(allUsers, "FIELD_OFFICER");
   const trans = getUsersByRole(allUsers, "TRANSPORTER");
   const dealers = getUsersByRole(allUsers, "DEALER");
-  const others = allUsers.filter(user => !(["FIELD_OFFICER", "TRANSPORTER", "DEALER", "SALES_HEAD_STATE", "SALES_HEAD_REGIONAL"].includes(user.role_name)));
+  const others = allUsers.filter(user => !(["FIELD_OFFICER", "TRANSPORTER", "DEALER"].includes(user.role_name)));
   const classes = useStyles();
   const [currency, setCurrency] = React.useState();
   const handleChange = (event) => {

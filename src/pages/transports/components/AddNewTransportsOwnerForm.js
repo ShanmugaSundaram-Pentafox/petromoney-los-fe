@@ -159,10 +159,9 @@ const AddNewTransportsOwnerForm = ({
     checkedA: true,
     checkedB: true,
   });
-  const [selectedDate, setSelectedDate] = useState(rowData?.dob ? rowData.dob : format(new Date(), 'dd-MM-yyyy'));
+  const [selectedDate, setSelectedDate] = useState(rowData?.dob && parse(rowData?.dob, 'dd-MM-yyyy', new Date()));
   const handleDateChange = (e) => {
-    const d = format(e, 'dd-MM-yyyy')
-    setSelectedDate(d);
+    setSelectedDate(e);
   };
   const handleStateChange = (event) => {
     setState({ ...state, [event.target.name]: event.target.checked });
@@ -203,10 +202,14 @@ const AddNewTransportsOwnerForm = ({
     onSubmit: (values) => {
       values.first_name = values.first_name.toUpperCase();
       values.last_name = values.last_name.toUpperCase();
-      const date = format(parse(selectedDate, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd');
+      // console.log("date >>>>>>>>>>", values.dob)
+      const dob = selectedDate && format(new Date(selectedDate), "dd-MM-yyyy")
+      // console.log("dobbbbbbb >>>>", dob)
+      const d = dob ? format(parse(dob, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : format(parse(values.dob, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
+      // console.log("date >>>>>>", d)
       const date_values = {
         ...values,
-        dob: date,
+        dob: d,
         is_whatsapp: state.checkedA === true ? 1 : 0,
         is_aadhar_linked: state.checkedB === true ? 1 : 0,
       };
@@ -561,18 +564,18 @@ const AddNewTransportsOwnerForm = ({
                         inputVariant='outlined'
                         label='Date of Birth'
                         format='dd/MM/yyyy'
-                        defaultValue={format(new Date(), 'dd/MM/yyyy')}
+                        // defaultValue={format(new Date(), 'dd/MM/yyyy')}
                         // views={["date", "month", "year"]}
                         animateYearScrolling={true}
                         invalidDateMessage='Invalid Date Format'
-                        error={errors.dob}  
+                        error={errors.dob}
                         helperText={errors.dob}
                         readOnly={readOnly}
                         disabled={readOnly}
                         margin='normal'
                         id='date-picker'
                         autoOk={true}
-                        value={parse(selectedDate, 'dd-MM-yyyy', new Date())}
+                        value={selectedDate}
                         onChange={handleDateChange}
                         InputLabelProps={{ shrink: true }}
                         keyboardButtonProps={{

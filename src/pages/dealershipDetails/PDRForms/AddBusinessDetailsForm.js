@@ -119,7 +119,10 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
       hsd_count: Yup.number().nullable('Enter HSD count').required('Enter count'),
       ms_count: Yup.number().nullable('Enter MSD count').required('Enter count'),
       electricity_units_month: Yup.number().nullable('Enter Electricity details').required('Enter Electricity details'),
-      credit_sales_month: Yup.number().nullable('Enter sales details').required('Enter sales details')
+      credit_sales_month: Yup.number().nullable('Enter sales details').required('Enter sales details'),
+      // monthly_avg_sale_msd: Yup.number().nullable().required('Enter monthly average sale'),
+      // monthly_avg_sale_hsd: Yup.number().nullable().required('Enter monthly average sale'),
+      // monthly_avg_sale_lpg: Yup.number().nullable().required('Enter monthly average sale'),
     }),
     onSubmit: values => {
       let data = { ...values, has_atm: values.has_atm === "Yes" ? 1 : 0, is_pep: values.is_pep === "Yes" ? 1 : 0 }
@@ -173,14 +176,14 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                   error={errors.business_age}
                   helperText={errors.business_age}
                   className={classes.number}
-                  inputProps={{className: classes.input}}
+                  inputProps={{ className: classes.input }}
                   type='number'
                 />
               </Grid>
               <Grid item md={6}>
                 <TextInput
                   className={classes.number}
-                  inputProps={{className: classes.input}}
+                  inputProps={{ className: classes.input }}
                   type='number'
                   {...inputProps}
                   labelText="No. of HSD Dispensers"
@@ -194,7 +197,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               <Grid item md={6}>
                 <TextInput
                   className={classes.number}
-                  inputProps={{className: classes.input}}
+                  inputProps={{ className: classes.input }}
                   type='number'
                   {...inputProps}
                   labelText="No. of MS Dispensers"
@@ -220,7 +223,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               <Grid item md={6}>
                 <TextInput
                   className={classes.number}
-                  inputProps={{className: classes.input}}
+                  inputProps={{ className: classes.input }}
                   type='number'
                   {...inputProps}
                   labelText="Electricity units (per month)"
@@ -267,6 +270,39 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                   helperText={errors.insurance_all}
                 />
               </Grid>
+              {/* <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  labelText="Monthly average HSD sale"
+                  name="monthly_avg_sale_hsd"
+                  value={values.monthly_avg_sale_hsd}
+                  readOnly={readOnly}
+                  error={errors.monthly_avg_sale_hsd}
+                  helperText={errors.monthly_avg_sale_hsd}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  labelText="Monthly average MSD sale"
+                  name="monthly_avg_sale_msd"
+                  value={values.monthly_avg_sale_msd}
+                  readOnly={readOnly}
+                  error={errors.monthly_avg_sale_msd}
+                  helperText={errors.monthly_avg_sale_msd}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  labelText="Monthly average LPG sale"
+                  name="monthly_avg_sale_lpg"
+                  value={values.monthly_avg_sale_lpg}
+                  readOnly={readOnly}
+                  error={errors.monthly_avg_sale_lpg}
+                  helperText={errors.monthly_avg_sale_lpg}
+                />
+              </Grid> */}
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
@@ -281,7 +317,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               <Grid item md={6}>
                 <TextInput
                   className={classes.number}
-                  inputProps={{className: classes.input}}
+                  inputProps={{ className: classes.input }}
                   type='number'
                   {...inputProps}
                   money

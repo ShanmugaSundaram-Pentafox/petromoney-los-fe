@@ -59,16 +59,16 @@ const useStyles = makeStyles((theme) => ({
     number: {
         backgroundColor: 'white',
         "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
-          "-webkit-appearance": "none",
-          margin: 0,
+            "-webkit-appearance": "none",
+            margin: 0,
         }
-      },
-      input: {
+    },
+    input: {
         "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
-          "-webkit-appearance": "none",
-          margin: 0,
+            "-webkit-appearance": "none",
+            margin: 0,
         }
-      }
+    }
 
 }))
 
@@ -128,7 +128,7 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
             outlet_category: Yup.string().nullable().required('Choose outlet category'),
-            fuel_transported_from: Yup.string().nullable().required('Please enter fuel transported from area'),
+            distance_from_headquarters: Yup.string().nullable().required('Please enter fuel transported from area'),
             terminal_name: Yup.string().nullable().required('Please enter terminal name'),
             size_of_outlet: Yup.number().nullable().required('Please enter outlet size'),
             land_type: Yup.string().nullable().required('Enter land type'),
@@ -200,12 +200,12 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
-                                        labelText="Fuel Transported from"
-                                        name="fuel_transported_from"
-                                        value={values.fuel_transported_from}
+                                        labelText="Distance from headquarters"
+                                        name="distance_from_headquarters"
+                                        value={values.distance_from_headquarters}
                                         readOnly={readOnly}
-                                        error={errors.fuel_transported_from}
-                                        helperText={errors.fuel_transported_from}
+                                        error={errors.distance_from_headquarters}
+                                        helperText={errors.distance_from_headquarters}
                                     />
                                 </Grid>
                                 <Grid item md={6}>
@@ -240,7 +240,7 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         error={errors.size_of_outlet}
                                         helperText={errors.size_of_outlet}
                                         className={classes.number}
-                                        inputProps={{className: classes.input}}
+                                        inputProps={{ className: classes.input }}
                                         type='number'
                                     />
                                 </Grid><Grid item md={6}>

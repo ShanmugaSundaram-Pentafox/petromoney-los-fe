@@ -601,18 +601,23 @@ const AddNewTransportsForm = ({
                     />
                   </Grid>
                   <Grid item md={6}>
-                    <TextInput
-                      {...inputProps}
-                      select
-                      name='omc'
-                      labelText='OMC'
-                      value={values?.omc}
-                      readOnly={readOnly}
-                      disabled={readOnly}
-                      error={errors.omc}
-                    >
-                      {omcs.map((omc) => (<option key={omcs.id} value={omcs.id}>{omc.name}</option>))}
-                    </TextInput>
+                    {
+                      <TextInput
+                        {...inputProps}
+                        select
+                        labelText="OMC"
+                        name="omc"
+                        value={values.omc}
+                        readOnly={readOnly}
+                        disabled={readOnly}
+                        error={errors.omc}
+                        helperText={errors.omc}
+                      >
+                        {
+                          omcs?.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))
+                        }
+                      </TextInput>
+                    }
                   </Grid>
                   <Grid item md={6}>
                     <TextInput

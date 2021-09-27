@@ -51,6 +51,7 @@ const AddTankerDetails = ({ dealer_id }) => {
   const [addNewRow, setAddNewRow] = useState();
   const [editRow, setEditRow] = useState({});
   const { enqueueSnackbar } = useSnackbar();
+  const [opHours, setOpHours] = useState([{ id: 12, name: "12 hours" }, { id: 24, name: "24 hours" }])
   const classes = useStyles()
 
   useMount(() => {
@@ -175,13 +176,14 @@ const AddTankerDetails = ({ dealer_id }) => {
                 <TextInput
                   select
                   className={classes.field}
-                  label="Tanker type"
+                  labelText="Tanker type"
                   name="tanker_type"
                   value={editRow.tanker_type}
                   onChange={onEditTextChange}
                 >
-                  <option>Owned</option>
-                  <option>Rented</option>
+                  <option value=" ">Choose type</option>
+                  <option value="Owned">Owned</option>
+                  <option value="Rented">Rented</option>
                 </TextInput>
               </TableCell>
               <TableCell>
@@ -200,7 +202,10 @@ const AddTankerDetails = ({ dealer_id }) => {
                   name="operation_hours"
                   value={editRow.operation_hours}
                   onChange={onEditTextChange}
-                />
+                >
+                  <option value=' '>Choose time</option>
+                  {opHours.map((op, i) => (<option key={i} value={op.id}>{op.name}</option>))}
+                </TextInput>
               </TableCell>
               <TableCell align="center">
                 <Button
@@ -279,7 +284,7 @@ const AddTankerDetails = ({ dealer_id }) => {
                     value={values.tanker_type}
                     onChange={handleChange}
                   >
-                    <option value=""></option>
+                    <option value=" ">Choose type</option>
                     <option value="Owned">Owned</option>
                     <option value="Rented">Rented</option>
                   </TextInput>
@@ -287,7 +292,7 @@ const AddTankerDetails = ({ dealer_id }) => {
                 <TableCell align={"right"}>
                   <TextInput
                     className={classes.field}
-                    label="Tanker capacity"
+                    label="Tanker capacity (in liters)"
                     name="tanker_capacity"
                     value={values.tanker_capacity}
                     onChange={handleChange}
@@ -295,12 +300,16 @@ const AddTankerDetails = ({ dealer_id }) => {
                 </TableCell>
                 <TableCell >
                   <TextInput
+                    select
                     className={classes.field}
                     label="Operation hours"
                     name="operation_hours"
                     value={values.operation_hours}
                     onChange={handleChange}
-                  />
+                  >
+                    <option value=' '>Choose time</option>
+                    {opHours.map((op, i) => (<option key={i} value={op.id}>{op.name}</option>))}
+                  </TextInput>
                 </TableCell>
                 <TableCell align={"right"}></TableCell>
               </>

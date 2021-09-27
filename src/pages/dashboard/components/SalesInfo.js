@@ -252,6 +252,7 @@ const SalesInfo = ({
                         label="From Year"
                         name="from_year"
                         type="number"
+                        disabled={true}
                         value={editRow.from_year}
                         onChange={onEditTextChange}
                       />
@@ -261,6 +262,7 @@ const SalesInfo = ({
                         label="To Year"
                         name="to_year"
                         type="number"
+                        disabled={true}
                         value={editRow.to_year}
                         onChange={onEditTextChange}
                       />

@@ -297,7 +297,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                                       {type.label !== "Gold" && <option value="Leased">Leased</option>}
                                     </TextInput>
                                   </Grid>
-                                  <Grid item md={6}>
+                                  {/* <Grid item md={6}>
                                     <TextInput
                                       {...inputProps}
                                       labelText="Ownership Proof"
@@ -306,7 +306,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                                       error={errors.ownership_proof}
                                       helperText={errors.ownership_proof}
                                     />
-                                  </Grid>
+                                  </Grid> */}
                                 </Grid>
                               ) : null
                             }
@@ -322,7 +322,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                               <Button
                                 variant="outlined"
                                 className={classes.btn}
-                                onClick={() => { setAddNewAsset(false); setEditRow(false) }}
+                                onClick={() => { setAddNewAsset(false); setEditRow(false); setEditRowData({}); setType('') }}
                               >
                                 Cancel
                               </Button>

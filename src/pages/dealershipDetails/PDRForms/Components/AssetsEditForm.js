@@ -145,7 +145,7 @@ const AssetsEditForm = ({ dealer_id, assetData = {}, data, handleClose }) => {
                   {/* {type.label !== "Gold" && <option value="Leased">Leased</option>} */}
                 </TextInput>
               </Grid>
-              <Grid item md={6}>
+              {/* <Grid item md={6}>
                 <TextInput
                   {...inputProps}
                   labelText="Ownership Proof"
@@ -155,7 +155,7 @@ const AssetsEditForm = ({ dealer_id, assetData = {}, data, handleClose }) => {
                   helperText={errors.ownership_proof}
                   onChange={handleChange}
                 />
-              </Grid>
+              </Grid> */}
             </Grid>
             {
               fields.length ? (

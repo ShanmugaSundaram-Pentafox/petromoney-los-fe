@@ -104,6 +104,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
   const classes = useStyles()
   const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
   const [loading, setLoading] = useState(false)
+  const [tankerAdd, setTankerAdd] = useState(false)
 
 
   const handleEdit = () => {
@@ -258,7 +259,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                 <Grid item md={12}>
                   <Fragment className={classes.table}>
                     <Typography className={classes.subTitle} variant="h4">Tanker Details</Typography>
-                    <AddTankerDetails dealer_id={dealer_id} length={values.no_of_tanker} />
+                    <AddTankerDetails dealer_id={dealer_id} length={values.no_of_tanker} tankerAdd={tankerAdd} setTankerAdd={setTankerAdd}/>
                   </Fragment>
                 </Grid>
 
@@ -281,6 +282,14 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
             </Button>
           </div>
           <div>
+            <Button
+              variant='contained'
+              color='primary'
+              onClick={() => setTankerAdd(true)}
+              style={{marginRight: 10}}
+            >
+              Add Tanker
+            </Button>
             <Button
               variant="contained"
               type="submit"

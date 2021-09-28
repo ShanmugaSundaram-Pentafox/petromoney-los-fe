@@ -202,14 +202,10 @@ const AddNewTransportsOwnerForm = ({
     onSubmit: (values) => {
       values.first_name = values.first_name.toUpperCase();
       values.last_name = values.last_name.toUpperCase();
-      // console.log("date >>>>>>>>>>", values.dob)
-      const dob = selectedDate && format(new Date(selectedDate), "dd-MM-yyyy")
-      // console.log("dobbbbbbb >>>>", dob)
-      const d = dob ? format(parse(dob, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : format(parse(values.dob, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
-      // console.log("date >>>>>>", d)
+      const dob = selectedDate ? format(new Date(selectedDate), "dd-MM-yyyy") : values?.dob
       const date_values = {
         ...values,
-        dob: d,
+        dob: dob,
         is_whatsapp: state.checkedA === true ? 1 : 0,
         is_aadhar_linked: state.checkedB === true ? 1 : 0,
       };
@@ -563,9 +559,7 @@ const AddNewTransportsOwnerForm = ({
                         variant='inline'
                         inputVariant='outlined'
                         label='Date of Birth'
-                        format='dd/MM/yyyy'
-                        // defaultValue={format(new Date(), 'dd/MM/yyyy')}
-                        // views={["date", "month", "year"]}
+                        format='dd-MM-yyyy'
                         animateYearScrolling={true}
                         invalidDateMessage='Invalid Date Format'
                         error={errors.dob}

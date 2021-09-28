@@ -39,6 +39,12 @@ import {
 } from '../../../components/CommonComponents/FilePreview';
 import { deleteTransportProfileDoc } from '../../../services/transports.service';
 import { format, parse } from 'date-fns';
+import 'date-fns';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -157,6 +163,7 @@ const AddNewTransportsForm = ({
   const [regions, setRegions] = useState([]);
   const [checked, setChecked] = useState(false);
   const [imageModal, setImageModal] = useState({});
+  const [selectedDate, setSelectedDate] = useState(data?.doi && parse(data?.doi, 'dd-MM-yyyy', new Date()));
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -168,6 +175,9 @@ const AddNewTransportsForm = ({
   };
   const handleClose = () => {
     callback();
+  };
+  const handleDateChange = (e) => {
+    setSelectedDate(e);
   };
   const onDocDelete = (data) => {
     deleteTransportProfileDoc(data, values.transporter_id)
@@ -230,7 +240,7 @@ const AddNewTransportsForm = ({
     onSubmit: (values) => {
       setLoading(true);
       values.name = values.name.toUpperCase();
-      const doi = values.doi ? format(parse(values.doi, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : null
+      const doi = selectedDate ? format(selectedDate, 'dd-MM-yyyy') : values?.doi
       const data = { ...values, doi: doi, t_owner_id: id, pan: values.pan?.toUpperCase(), gst: values.gst?.toUpperCase() };
       // let apiURL = isAdd === 'Add' ? `transporters` : `tranporters/${data.transporter_id}`
       const formData = new FormData();
@@ -469,6 +479,7 @@ const AddNewTransportsForm = ({
                       if (omc.id == values.omc)
                         return true;
                     }))?.name} />
+                    <ViewData title='Date of Incoporation' value={values?.doi} />
                     <ViewData title='Region' value={(regionList.find(function (region, index) {
                       if (region.id == values.region)
                         return true;
@@ -582,7 +593,7 @@ const AddNewTransportsForm = ({
                     <TextInput
                       {...inputProps}
                       name='name'
-                      labelText='Transport Name'
+                      label='Transport Name'
                       value={values.name?.toUpperCase()}
                       readOnly={readOnly}
                       error={errors.name}
@@ -593,7 +604,7 @@ const AddNewTransportsForm = ({
                     <TextInput
                       {...inputProps}
                       name='mobile'
-                      labelText='Mobile'
+                      label='Mobile'
                       value={values?.mobile}
                       readOnly={readOnly}
                       error={errors.mobile}
@@ -605,7 +616,7 @@ const AddNewTransportsForm = ({
                       <TextInput
                         {...inputProps}
                         select
-                        labelText="OMC"
+                        label="OMC"
                         name="omc"
                         value={values.omc}
                         readOnly={readOnly}
@@ -624,7 +635,7 @@ const AddNewTransportsForm = ({
                       {...inputProps}
                       select
                       name='business_type'
-                      labelText='Business Type'
+                      label='Business Type'
                       readOnly={readOnly}
                       value={values?.business_type}
                       disabled={readOnly}
@@ -634,11 +645,44 @@ const AddNewTransportsForm = ({
                     </TextInput>
                   </Grid>
                   <Grid item md={6}>
+                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                      <KeyboardDatePicker
+                        // disableToolbar
+                        // hideTabs={true}
+                        variant='inline'
+                        inputVariant='outlined'
+                        label='Date of Birth'
+                        format='dd-MM-yyyy'
+                        animateYearScrolling={true}
+                        invalidDateMessage='Invalid Date Format'
+                        error={errors.dob}
+                        helperText={errors.dob}
+                        readOnly={readOnly}
+                        disabled={readOnly}
+                        margin='normal'
+                        id='date-picker'
+                        autoOk={true}
+                        value={selectedDate}
+                        onChange={handleDateChange}
+                        InputLabelProps={{ shrink: true }}
+                        keyboardButtonProps={{
+                          'aria-label': 'change date',
+                        }}
+                        PopoverProps={{
+                          anchorOrigin: {
+                            vertical: 'bottom',
+                            horizontal: 'center',
+                          },
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
+                  </Grid>
+                  <Grid item md={6}>
                     <TextInput
                       {...inputProps}
                       select
                       name='state'
-                      labelText='State'
+                      label='State'
                       readOnly={readOnly}
                       disabled={readOnly}
                       value={values?.state}
@@ -652,7 +696,7 @@ const AddNewTransportsForm = ({
                       {...inputProps}
                       select
                       name='region'
-                      labelText='Region'
+                      label='Region'
                       readOnly={readOnly}
                       disabled={readOnly}
                       value={values?.region}
@@ -665,7 +709,7 @@ const AddNewTransportsForm = ({
                     <TextInput
                       {...inputProps}
                       name='address'
-                      labelText='Address'
+                      label='Address'
                       value={values?.address}
                       readOnly={readOnly}
                       disabled={readOnly}
@@ -679,7 +723,7 @@ const AddNewTransportsForm = ({
                       {...inputProps}
                       // select
                       name='district'
-                      labelText='District'
+                      label='District'
                       readOnly={readOnly}
                       disabled={readOnly}
                       value={values.district}
@@ -692,7 +736,7 @@ const AddNewTransportsForm = ({
                     <TextInput
                       {...inputProps}
                       name='pincode'
-                      labelText='Pincode'
+                      label='Pincode'
                       value={values?.pincode}
                       disabled={readOnly}
                       readOnly={readOnly}
@@ -739,26 +783,6 @@ const AddNewTransportsForm = ({
                               </Tooltip>
                             </div>
                           )
-                          // <>
-
-                          //     <Typography variant="subtitle2" component="subtitle2">
-                          //         <Tooltip title={'Click Edit and attach'}>
-                          //             <AttachmentOutlinedIcon onClick={() => docUpload('PAN')} />
-                          //         </Tooltip> Attach PAN
-                          //     </Typography>
-                          //     <TextInput
-                          //                 type="file"
-                          //                 accept="image/*"
-                          //                 name="pan_file_url"
-                          //                 readOnly={readOnly}
-                          //                 disabled={readOnly}
-                          //                 value={data.pan_file_url}
-                          //                 onChange={(event) => {
-                          //                     values[event.target.name] = event.currentTarget.files[0];
-                          //                 }}
-                          //                 InputLabelProps={{ shrink: true }}
-                          //             ></TextInput>
-                          // </>
                         }
                       </>
                     </Grid>

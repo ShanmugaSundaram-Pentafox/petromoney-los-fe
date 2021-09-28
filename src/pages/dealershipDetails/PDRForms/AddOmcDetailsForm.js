@@ -101,8 +101,8 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
     }),
     onSubmit: values => {
 
-      const executed_date = format(new Date(executedDate), 'yyyy-MM-dd');
-      const valid_date = format(new Date(validDate), 'yyyy-MM-dd');
+      const executed_date = executedDate ? format(new Date(executedDate), 'yyyy-MM-dd') : values.agreement_executed_on;
+      const valid_date = validDate ? format(new Date(validDate), 'yyyy-MM-dd') : values.agreement_valid_till;
       const date = { ...values, agreement_executed_on: executed_date, agreement_valid_till: valid_date };
       const data = new FormData();
       Object.keys(date).forEach((key) => {
@@ -199,7 +199,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                     <KeyboardDatePicker
                       variant='inline'
                       inputVariant='outlined'
-                      format='dd/MM/yyyy'
+                      format='dd-MM-yyyy'
                       animateYearScrolling={true}
                       invalidDateMessage='Invalid Date Format'
                       error={errors.agreement_executed_on}

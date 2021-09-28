@@ -111,13 +111,13 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
       values.name = values.name.toUpperCase();
       values.gst = values.gst.toUpperCase();
       values.pan = values.pan.toUpperCase();
-      let eDate = values.agreement_executed_on ? format(parse(values.agreement_executed_on, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : null;
-      let vDate = values.agreement_valid_till ? format(parse(values.agreement_valid_till, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : null;
+      // let eDate = values.agreement_executed_on ? format(parse(values.agreement_executed_on, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : null;
+      // let vDate = values.agreement_valid_till ? format(parse(values.agreement_valid_till, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : null;
       const date_values = {
         ...values,
         name: values.name.toUpperCase(),
-        agreement_valid_till: vDate,
-        agreement_executed_on: eDate,
+        // agreement_valid_till: vDate,
+        // agreement_executed_on: eDate,
         gst: values.gst?.toUpperCase(),
         pan: values.pan?.toUpperCase()
       };
@@ -166,7 +166,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
           }
         })
         .catch(e => {
-          enqueueSnackbar(e, {
+          enqueueSnackbar(e.message, {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',
@@ -551,7 +551,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 <Grid {...gridProps} md={6}>
                   <TextInput
                     className={classes.number}
-                    inputProps={{className: classes.input}}
+                    inputProps={{ className: classes.input }}
                     labelText="Pincode"
                     type='number'
                     name="pincode"

@@ -250,7 +250,9 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                             error={errors.omc}
                             helperText={errors.omc}
                           >
-                            {omcs.map((omc) => (<option key={omcs.id} value={omcs.id}>{omc.name}</option>))}
+                            {
+                              omcs?.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))
+                            }
                           </TextInput>
                         </Grid>
                         <Grid item md={6}>

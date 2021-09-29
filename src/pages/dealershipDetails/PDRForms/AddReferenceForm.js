@@ -118,8 +118,8 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      name: Yup.string().required('Please enter dealership name'),
-      mobile: Yup.string().required('Please enter dealership mobile number'),
+      name: Yup.string().nullable('Please enter dealership name').required('Please enter dealership name'),
+      mobile: Yup.string().nullable('Please enter dealership mobile number').required('Please enter dealership mobile number'),
     }),
     onSubmit: values => {
       const data = { ...values, user_id: 1, name: values.name.toUpperCase() }

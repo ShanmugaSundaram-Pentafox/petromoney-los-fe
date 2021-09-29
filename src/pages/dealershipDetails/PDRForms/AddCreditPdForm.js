@@ -73,7 +73,7 @@ const AddCreditPdForm = ({ data, dealer_id, callback, currentUser }) => {
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       // transport_name: Yup.string().required('Please enter transporter name'),
-      pdr_remarks: Yup.string().required('Enter your remarks')
+      pdr_remarks: Yup.string().nullable('Enter your remarks').required('Enter your remarks')
 
     }),
     onSubmit: values => {

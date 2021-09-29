@@ -127,7 +127,6 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
 
   const handleEdit = () => {
     setReadOnly(!readOnly)
-    console.log('edit');
   };
   const handleClose = () => {
     callback();

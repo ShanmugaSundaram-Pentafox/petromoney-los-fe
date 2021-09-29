@@ -68,8 +68,8 @@ const Login = ({ setCurrentUser }) => {
     initialValues: {},
     validateOnChange: false,
     validationSchema: Yup.object().shape({
-      mobile: Yup.number().required("Enter mobile number").test("maxDigits","Mobile Number mush have 10 digits", (number) => String(number).length === 10),
-      password: Yup.string().required("Enter password"),
+      mobile: Yup.number().nullable('Enter mobile number').required("Enter mobile number").test("maxDigits", "Mobile Number mush have 10 digits", (number) => String(number).length === 10),
+      password: Yup.string().nullable('Enter password').required("Enter password"),
     }),
     onSubmit: values => {
       apiCall(URL.login, {
@@ -78,7 +78,7 @@ const Login = ({ setCurrentUser }) => {
       })
         .then(({ status, data, message }) => {
           // logger(status, data);
-          if(status == 'SUCCESS') {
+          if (status == 'SUCCESS') {
             setCurrentUser(data);
           }
           setApiStatus({ type: status, message })
@@ -116,7 +116,7 @@ const Login = ({ setCurrentUser }) => {
         <form onSubmit={handleSubmit}>
           <TextField
             className={classes.number}
-            inputProps={{className: classes.input}}
+            inputProps={{ className: classes.input }}
             name="mobile"
             label="Mobile Number"
             type='number'
@@ -150,29 +150,29 @@ const Login = ({ setCurrentUser }) => {
                 </Button>
               </>
             ) : (
-                <>
-                  <TextField
-                    name="password"
-                    label="Password"
-                    type="password"
-                    fullWidth
-                    className={classes.textFieldStyle}
-                    onChange={handleChange}
-                    value={values.password}
-                    error={errors.password}
-                    helperText={errors.password}
-                  />
-                  <Button
-                    variant="contained"
-                    size="medium"
-                    color="primary"
-                    className={classes.buttonStyle}
-                    type="submit"
-                  >
-                    Login
-                  </Button>
-                </>
-              )
+              <>
+                <TextField
+                  name="password"
+                  label="Password"
+                  type="password"
+                  fullWidth
+                  className={classes.textFieldStyle}
+                  onChange={handleChange}
+                  value={values.password}
+                  error={errors.password}
+                  helperText={errors.password}
+                />
+                <Button
+                  variant="contained"
+                  size="medium"
+                  color="primary"
+                  className={classes.buttonStyle}
+                  type="submit"
+                >
+                  Login
+                </Button>
+              </>
+            )
           }
         </form>
 

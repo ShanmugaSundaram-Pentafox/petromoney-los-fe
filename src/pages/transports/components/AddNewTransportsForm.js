@@ -218,24 +218,27 @@ const AddNewTransportsForm = ({
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       // id: Yup.number().required('Please enter transporter code'),
-      name: Yup.string().required('Please enter transporter name'),
+      name: Yup.string().required('Please enter transporter name').nullable('Enter transporter name'),
       mobile: Yup.number()
+        .nullable('Enter your mobile number')
         .min(10, 'Enter valid mobile number')
         .required('please Enter your mobile number'),
-      omc: Yup.string().required('Please Choose OMC'),
-      business_type: Yup.string().required('Please choose bussiness type'),
-      region: Yup.string().required('Please choose region'),
-      address: Yup.string().required('Please enter address'),
-      state: Yup.string().required('Please choose state'),
-      district: Yup.string().required('Please choose district'),
+      omc: Yup.string().required('Please Choose OMC').nullable('Choose OMC'),
+      business_type: Yup.string().required('Please choose bussiness type').nullable('Choose business type'),
+      region: Yup.string().required('Please choose region').nullable('Choose region'),
+      address: Yup.string().required('Please enter address').nullable('Enter address'),
+      state: Yup.string().required('Please choose state').nullable('Choose state'),
+      district: Yup.string().required('Please enter district').nullable('Enter district'),
       pincode: Yup.number()
+        .nullable('Enter pincode')
         .min(6, 'Pincode must be 6 digits')
         .required('Enter pincode'),
       pan: Yup.string()
+        .nullable('Enter PAN')
         .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
         .required('Enter PAN')
         .uppercase(),
-      gst: Yup.string().matches(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/, "Invalid GST").required("Enter GST").uppercase(),
+      gst: Yup.string().nullable('Enter GST').matches(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/, "Invalid GST").required("Enter GST").uppercase(),
     }),
     onSubmit: (values) => {
       setLoading(true);

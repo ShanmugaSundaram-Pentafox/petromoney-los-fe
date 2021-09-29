@@ -93,7 +93,7 @@ const AddNewVehicleForm = ({
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      tt_no: Yup.string().required('Please enter vehicle number').matches(/^[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}$/, 'Invalid Vehicle Number'),
+      tt_no: Yup.string().required('Please enter vehicle number').nullable('Enter vehicle number').matches(/^[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}$/, 'Invalid Vehicle Number'),
     }),
     onSubmit: (formData) => {
       setLoading(true);

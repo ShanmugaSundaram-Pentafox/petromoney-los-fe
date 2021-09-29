@@ -36,7 +36,7 @@ const TrackerUpdateModal = ({ id, currentUser, statusId, onClose, data, serviceD
   }
   const onCloseUploader = () => {
     // setShowUpload(false);
-    onCloseModal(true,serviceData)
+    onCloseModal(true, serviceData)
   }
   const handleSave = (files) => {
     const formData = new FormData();
@@ -128,9 +128,9 @@ const TrackerUpdateModal = ({ id, currentUser, statusId, onClose, data, serviceD
     const d = JSON.parse(serviceData?.tracking_details?.[1]?.details || "{}");
 
     const _vSchema = Yup.object().shape({
-      amount: Yup.number().required('Enter Amount'),
-      date: Yup.string().required('Enter valid Date'),
-      utr: Yup.string().required('Enter UTR'),
+      amount: Yup.number().required('Enter Amount').nullable('Enter Amount'),
+      date: Yup.string().required('Enter valid Date').nullable('Enter valid date'),
+      utr: Yup.string().required('Enter UTR').nullable('Enter UTR'),
     });
     return (
       <FormDialog
@@ -229,7 +229,7 @@ const TrackerUpdateModal = ({ id, currentUser, statusId, onClose, data, serviceD
   if (status === 4) {
     const d = JSON.parse(serviceData?.tracking_details?.[3]?.details || "{}");
     const _vSchema = Yup.object().shape({
-      tag_number: Yup.string().required('Enter tag number'),
+      tag_number: Yup.string().required('Enter tag number').nullable('Enter tag number'),
     });
 
     return (

@@ -193,11 +193,11 @@ const AddNewTransportsOwnerForm = ({
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       // id: Yup.number().required('Please enter transporter code'),
-      first_name: Yup.string().required('Please enter transporter name'),
-      last_name: Yup.string().required('Please enter transporter name'),
-      email: Yup.string().email('Enter valid mail id '),
-      mobile: Yup.number().required("Enter mobile number").test("maxDigits", "Mobile Number mush have 10 digits", (number) => String(number).length === 10),
-      address: Yup.string().required('Please enter address'),
+      first_name: Yup.string().required('Please enter transporter name').nullable('Please enter transporter name'),
+      last_name: Yup.string().required('Please enter transporter name').nullable('Please enter transporter name'),
+      email: Yup.string().email('Enter valid mail id').nullable('Enter valid mail id'),
+      mobile: Yup.number().required('Enter mobile number').nullable('Enter mobile number').test("maxDigits", "Mobile Number mush have 10 digits", (number) => String(number).length === 10),
+      address: Yup.string().required('Please enter address').nullable('Please enter address'),
     }),
     onSubmit: (values) => {
       values.first_name = values.first_name.toUpperCase();

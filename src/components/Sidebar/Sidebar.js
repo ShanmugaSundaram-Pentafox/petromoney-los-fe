@@ -155,6 +155,11 @@ const Sidebar = props => {
         href: '/transports',
         icon: <LocalShippingIcon />
       },
+      {
+        title: 'Loan Report',
+        href: '/reports',
+        icon: <LocalShippingIcon />
+      },
     )
   }
 

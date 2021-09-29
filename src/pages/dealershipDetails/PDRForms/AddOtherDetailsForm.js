@@ -213,7 +213,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                           <TextInput
                             {...inputProps}
                             labelText="Dealership ID"
-                            name="dealership_id"
+                            name="other_dealership_id"
                             value={values.dealership_id}
                             error={errors.dealership_id}
                             helperText={errors.dealership_id}
@@ -250,6 +250,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                             error={errors.omc}
                             helperText={errors.omc}
                           >
+                            <option value=" ">Choose OMC</option>
                             {
                               omcs?.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))
                             }

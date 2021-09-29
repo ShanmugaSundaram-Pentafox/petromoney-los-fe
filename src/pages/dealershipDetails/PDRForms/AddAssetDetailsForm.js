@@ -159,10 +159,10 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
       // type: Yup.string().nullable('Please choose type').required('Please choose type'),
       asset_value: Yup.number().nullable('Please enter value').required('Please enter value'),
       market_value: Yup.number().nullable('Please enter value').required('Please enter value'),
-      address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
-      yom: Yup.number().nullable('Please enter year of manufacture').required('Please enter year of manufacture').test('year', 'Invalid Manufacture Year', value => value >= 1900 && value <= format(new Date(), 'yyyy') ),
-      quantity: Yup.number().nullable('Please enter quantity').required('Please enter quantity'),
-      model: Yup.number().nullable('Please enter model').required('Please enter model'),
+      // address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
+      // yom: Yup.number().nullable('Please enter year of manufacture').required('Please enter year of manufacture').test('year', 'Invalid Manufacture Year', value => value >= 1900 && value <= format(new Date(), 'yyyy') ),
+      // quantity: Yup.number().nullable('Please enter quantity').required('Please enter quantity'),
+      // model: Yup.number().nullable('Please enter model').required('Please enter model'),
     }),
     onSubmit: values => {
       const { asset_value, market_value, ownership, ownership_proof, relationship } = values

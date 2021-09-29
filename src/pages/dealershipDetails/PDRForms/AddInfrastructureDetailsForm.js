@@ -12,6 +12,7 @@ import { makeStyles } from "@material-ui/styles";
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
@@ -94,7 +95,24 @@ const useStyles = makeStyles((theme) => ({
       "-webkit-appearance": "none",
       margin: 0,
     }
-  }
+  },
+  actionFoot: {
+    marginBottom: 16,
+    marginTop: 12,
+  },
+  btn: {
+    margin: 8
+  },
+  editButton: {
+    marginRight: '8px',
+    '&.MuiButton-contained': {
+      backgroundColor: theme.palette.success.main,
+      color: theme.palette.white
+    },
+    '&.MuiButton-contained:hover': {
+      backgroundColor: theme.palette.success.dark
+    }
+  },
 
 }))
 
@@ -165,7 +183,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
           <Box>
-            <form onSubmit={handleSubmit}>
+            {/* <form onSubmit={handleSubmit}> */}
               <Grid container spacing={2}>
                 <Grid item md={6}>
                   <TextInput
@@ -256,15 +274,40 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                     </RadioGroup>
                   </FormControl>
                 </Grid>
+
+              </Grid>
+                <div className={classes.actionFoot}>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <div>
+                      <Button
+                        variant="outlined"
+                        className={classes.btn}
+                        onClick={handleClose}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                    <div>
+                      <Button
+                        variant="contained"
+                        type="submit"
+                        className={clsx(classes.btn, classes.editButton)}
+                        startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
+                        onClick={readOnly ? handleEdit : handleSubmit}
+                      >
+                        {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` :
+                          'Save'}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
                 <Grid item md={12}>
                   <Fragment className={classes.table}>
                     <Typography className={classes.subTitle} variant="h4">Tanker Details</Typography>
                     <AddTankerDetails dealer_id={dealer_id} length={values.no_of_tanker} tankerAdd={tankerAdd} setTankerAdd={setTankerAdd}/>
                   </Fragment>
                 </Grid>
-
-              </Grid>
-            </form>
+            {/* </form> */}
           </Box >
         </div>
       </div>
@@ -289,16 +332,6 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
               style={{marginRight: 10}}
             >
               Add Tanker
-            </Button>
-            <Button
-              variant="contained"
-              type="submit"
-              className={clsx(classes.btn, classes.editButton)}
-              startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-              onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
-            >
-              {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` :
-                'Save'}
             </Button>
           </div>
         </div>

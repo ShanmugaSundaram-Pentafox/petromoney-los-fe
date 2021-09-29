@@ -16,16 +16,29 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import Button from '../../../components/CommonComponents/Button/Button';
-import UploadIcon from '@material-ui/icons/Backup';
-import DeleteIcon from '@material-ui/icons/Delete';
+import CloudUploadOutlinedIcon from '@material-ui/icons/CloudUploadOutlined';
+import DeleteIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import { getBusinessTypes, getRegionById, getStates, getActiveStates } from '../../../services/common.service';
 import { useSnackbar } from 'notistack';
 import { AvatarCard, ViewData } from '../../../components/CommonComponents/FilePreview';
 import { Typography } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import FileUpload from '../../../components/FileUpload';
-import { format, parse } from 'date-fns';
+import { grey } from '@material-ui/core/colors';
 import { deleteDealershipDocument } from '../../../services/dealerships.service';
+
+
+const checkChanges = (originalData, editedData) => {
+  let object = { id: originalData.id };
+  for (const [originalDatakey, originalDatavalue] of Object.entries(originalData)) {
+    for (const [editedDatakey, editedDatavalue] of Object.entries(editedData)) {
+      if (originalDatakey == editedDatakey && originalDatavalue != editedDatavalue) {
+        object[editedDatakey] = editedDatavalue;
+      }
+    }
+  }
+  return object;
+}
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -40,11 +53,6 @@ const useStyles = makeStyles(theme => ({
     margin: '8px 4px',
     maxWidth: '100%',
   },
-  fileAttachement: {
-    display: 'flex',
-    // justifyContent:'center',
-    marginTop: 8,
-  },
   icon: {
     marginRight: 4,
     marginTop: 12,
@@ -55,7 +63,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: 24,
   },
   icons: {
-    marginRight: 16
+    marginRight: 16,
   },
   number: {
     "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
@@ -84,7 +92,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
   const [regionList, setRegionList] = useState([]);
 
   const { enqueueSnackbar } = useSnackbar();
-
 
   const { values, errors, handleChange: onChange, handleSubmit, setFieldValue } = useFormik({
     initialValues: { ...data },
@@ -121,14 +128,18 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         gst: values.gst?.toUpperCase(),
         pan: values.pan?.toUpperCase()
       };
-      const data = new FormData();
-      Object.keys(date_values).forEach(key => {
-        data.append(key, date_values[key]);
+      let obj = {};
+      if (date_values.id) {
+        obj = checkChanges(data, date_values)
+      }
+      const formData = new FormData();
+      Object.keys(obj).forEach(key => {
+        formData.append(key, obj[key]);
       })
       setLoading(true);
       fetch(`${URL.base}${URL.dealership}/${values.id}`, {
         method: 'POST',
-        body: data,
+        body: formData,
         headers: {
           'Authorization': `Bearer ${currentUser.token} `
         }
@@ -273,15 +284,20 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
     return (
       <div className={classes.fileStyle}>
         <Tooltip title={'Click to edit'}>
-          <UploadIcon
-            fontSize='small'
+          <CloudUploadOutlinedIcon
             padding={2}
+            style={{ color: grey[800] }}
             className={classes.icons}
             onClick={() => docUpload('GST')}
           />
         </Tooltip>
         <Tooltip title={'Click to delete'}>
-          <DeleteIcon onClick={() => onDocDelete({ gst_file_url: "" })} fontSize="small" padding={2} />
+          <DeleteIcon
+            onClick={() => onDocDelete({ gst_file_url: "" })}
+            style={{ color: grey[800] }}
+            padding={2}
+            className={classes.icons}
+          />
         </Tooltip>
       </div>
     );
@@ -290,15 +306,18 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
     return (
       <div className={classes.fileStyle}>
         <Tooltip title={'Click to edit'}>
-          <UploadIcon
-            fontSize='small'
+          <CloudUploadOutlinedIcon
             padding={2}
             className={classes.icons}
             onClick={() => docUpload('PAN')}
           />
         </Tooltip>
         <Tooltip title={'Click to delete'}>
-          <DeleteIcon onClick={() => onDocDelete({ pan_file_url: "" })} fontSize="small" padding={2} />
+          <DeleteIcon
+            onClick={() => onDocDelete({ pan_file_url: "" })}
+            style={{ color: grey[800] }}
+            padding={2}
+          />
         </Tooltip>
       </div>
     );
@@ -433,13 +452,14 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                           gstAttachment()
                         ) : (
                           <div
-                            className={classes.fileAttachement}
+                            className={classes.fileStyle}
                             onClick={() => docUpload('GST')}
                           >
                             <Tooltip title={'Click and attach'}>
                               <>
-                                <UploadIcon
-                                  className={classes.icon}
+                                <CloudUploadOutlinedIcon
+                                  padding={2}
+                                  className={classes.icons}
                                   disabled={readOnly}
                                 />
                                 {/* <Typography className={classes.typography}>Attach GST</Typography> */}
@@ -474,13 +494,15 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                             panAttachment()
                           ) : (
                             <div
-                              className={classes.fileAttachement}
+                              className={classes.fileStyle}
                               onClick={() => docUpload('PAN')}
                             >
                               <Tooltip title={'Click and attach'}>
                                 <>
-                                  <UploadIcon
-                                    className={classes.icon}
+                                  <CloudUploadOutlinedIcon
+                                    padding={2}
+                                    style={{ color: grey[800] }}
+                                    className={classes.icons}
                                     disabled={readOnly}
                                   />
                                 </>

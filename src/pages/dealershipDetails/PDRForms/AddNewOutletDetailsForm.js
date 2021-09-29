@@ -127,13 +127,13 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
-            outlet_category: Yup.string().nullable().required('Choose outlet category'),
-            distance_from_headquarters: Yup.string().nullable().required('Please enter fuel transported from area'),
-            terminal_name: Yup.string().nullable().required('Please enter terminal name'),
-            size_of_outlet: Yup.number().nullable().required('Please enter outlet size'),
-            land_type: Yup.string().nullable().required('Enter land type'),
-            outlet_operated_by: Yup.string().nullable().required('Enter operator name'),
-            land_owner_name: Yup.string().nullable().required('Enter land owner name')
+            outlet_category: Yup.string().nullable('Choose outlet category').required('Choose outlet category'),
+            distance_from_headquarters: Yup.string().nullable('Please enter fuel transported from area').required('Please enter fuel transported from area'),
+            terminal_name: Yup.string().nullable('Please enter terminal name').required('Please enter terminal name'),
+            size_of_outlet: Yup.number().nullable('Please enter outlet size').required('Please enter outlet size'),
+            land_type: Yup.string().nullable('Enter land type').required('Enter land type'),
+            outlet_operated_by: Yup.string().nullable('Enter operator name').required('Enter operator name'),
+            land_owner_name: Yup.string().nullable('Enter land owner name').required('Enter land owner name')
 
         }),
         onSubmit: values => {

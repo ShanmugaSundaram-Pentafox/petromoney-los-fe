@@ -28,6 +28,9 @@ import { getAllWithheldLoans } from '../../../services/withheld.services';
 
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    flex: 1,
+  },
   block1: {
     display: 'flex',
     width: '100%',

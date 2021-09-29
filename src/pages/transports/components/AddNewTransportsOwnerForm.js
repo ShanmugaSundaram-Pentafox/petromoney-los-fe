@@ -159,10 +159,9 @@ const AddNewTransportsOwnerForm = ({
     checkedA: true,
     checkedB: true,
   });
-  const [selectedDate, setSelectedDate] = useState(rowData?.dob ? rowData.dob : format(new Date(), 'dd-MM-yyyy'));
+  const [selectedDate, setSelectedDate] = useState(rowData?.dob && parse(rowData?.dob, 'dd-MM-yyyy', new Date()));
   const handleDateChange = (e) => {
-    const d = format(e, 'dd-MM-yyyy')
-    setSelectedDate(d);
+    setSelectedDate(e);
   };
   const handleStateChange = (event) => {
     setState({ ...state, [event.target.name]: event.target.checked });
@@ -194,19 +193,19 @@ const AddNewTransportsOwnerForm = ({
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       // id: Yup.number().required('Please enter transporter code'),
-      first_name: Yup.string().required('Please enter transporter name'),
-      last_name: Yup.string().required('Please enter transporter name'),
-      email: Yup.string().email('Enter valid mail id '),
-      mobile: Yup.number().required("Enter mobile number").test("maxDigits", "Mobile Number mush have 10 digits", (number) => String(number).length === 10),
-      address: Yup.string().required('Please enter address'),
+      first_name: Yup.string().required('Please enter transporter name').nullable('Please enter transporter name'),
+      last_name: Yup.string().required('Please enter transporter name').nullable('Please enter transporter name'),
+      email: Yup.string().email('Enter valid mail id').nullable('Enter valid mail id'),
+      mobile: Yup.number().required('Enter mobile number').nullable('Enter mobile number').test("maxDigits", "Mobile Number mush have 10 digits", (number) => String(number).length === 10),
+      address: Yup.string().required('Please enter address').nullable('Please enter address'),
     }),
     onSubmit: (values) => {
       values.first_name = values.first_name.toUpperCase();
       values.last_name = values.last_name.toUpperCase();
-      const date = format(parse(selectedDate, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd');
+      const dob = selectedDate ? format(new Date(selectedDate), "dd-MM-yyyy") : values?.dob
       const date_values = {
         ...values,
-        dob: date,
+        dob: dob,
         is_whatsapp: state.checkedA === true ? 1 : 0,
         is_aadhar_linked: state.checkedB === true ? 1 : 0,
       };
@@ -560,19 +559,17 @@ const AddNewTransportsOwnerForm = ({
                         variant='inline'
                         inputVariant='outlined'
                         label='Date of Birth'
-                        format='dd/MM/yyyy'
-                        defaultValue={format(new Date(), 'dd/MM/yyyy')}
-                        // views={["date", "month", "year"]}
+                        format='dd-MM-yyyy'
                         animateYearScrolling={true}
                         invalidDateMessage='Invalid Date Format'
-                        error={errors.dob}  
+                        error={errors.dob}
                         helperText={errors.dob}
                         readOnly={readOnly}
                         disabled={readOnly}
                         margin='normal'
                         id='date-picker'
                         autoOk={true}
-                        value={parse(selectedDate, 'dd-MM-yyyy', new Date())}
+                        value={selectedDate}
                         onChange={handleDateChange}
                         InputLabelProps={{ shrink: true }}
                         keyboardButtonProps={{

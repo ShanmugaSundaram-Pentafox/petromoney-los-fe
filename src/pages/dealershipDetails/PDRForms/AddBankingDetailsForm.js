@@ -147,9 +147,9 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      ifsc: Yup.string().required("Enter IFSC code").matches(/^[A-Za-z]{4}0[A-Z0-9]{6}$/, 'Enter valid IFSC'),
+      ifsc: Yup.string().required("Enter IFSC code").nullable('Enter IFSC code').matches(/^[A-Za-z]{4}0[A-Z0-9]{6}$/, 'Enter valid IFSC'),
       account_name: Yup.string('Enter valid name').nullable('Enter Account Holder name').required('Enter Account holder name'),
-      bank_name: Yup.string('Enter valid name').nullable('').required('Enter name'),
+      bank_name: Yup.string('Enter valid name').nullable('Enter bank name').required('Enter name'),
       account_no: Yup.number().nullable('Enter account number').required('Enter account number'),
       bank_branch: Yup.string('Enter valid branch name').nullable('Enter branch name').required('Enter branch name'),
       account_type: Yup.string('Enter valid type').nullable('Enter account type').required('Enter account type'),

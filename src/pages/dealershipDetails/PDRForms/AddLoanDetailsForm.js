@@ -259,7 +259,6 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
         )
       })
   }
-
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">

@@ -89,6 +89,7 @@ const AssetsEditForm = ({ dealer_id, assetData = {}, data, handleClose }) => {
       {
         ({ values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues }) => (
           <>
+            <label style={{ marginBottom: '20px' }}><strong>Asset type : </strong> {data.name}</label>
             <Grid container spacing={2}>
               {
                 fields.length ? fields.map(item => (

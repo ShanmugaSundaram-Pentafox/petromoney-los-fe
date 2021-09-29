@@ -120,9 +120,9 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
       ms_count: Yup.number().nullable('Enter MSD count').required('Enter count'),
       electricity_units_month: Yup.number().nullable('Enter Electricity details').required('Enter Electricity details'),
       credit_sales_month: Yup.number().nullable('Enter sales details').required('Enter sales details'),
-      // monthly_avg_sale_msd: Yup.number().nullable().required('Enter monthly average sale'),
-      // monthly_avg_sale_hsd: Yup.number().nullable().required('Enter monthly average sale'),
-      // monthly_avg_sale_lpg: Yup.number().nullable().required('Enter monthly average sale'),
+      monthly_avg_sale_ms: Yup.number().nullable().required('Enter monthly average sale'),
+      monthly_avg_sale_hs: Yup.number().nullable().required('Enter monthly average sale'),
+      monthly_avg_sale_lpg: Yup.number().nullable().required('Enter monthly average sale'),
     }),
     onSubmit: values => {
       let data = { ...values, has_atm: values.has_atm === "Yes" ? 1 : 0, is_pep: values.is_pep === "Yes" ? 1 : 0 }
@@ -270,39 +270,39 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                   helperText={errors.insurance_all}
                 />
               </Grid>
-              {/* <Grid item md={6}>
+              <Grid item md={6}>
                 <TextInput
                   {...inputProps}
-                  labelText="Monthly average HSD sale"
-                  name="monthly_avg_sale_hsd"
-                  value={values.monthly_avg_sale_hsd}
+                  labelText="Monthly average HS sale(in KL)"
+                  name="monthly_avg_sale_hs"
+                  value={values.monthly_avg_sale_hs}
                   readOnly={readOnly}
-                  error={errors.monthly_avg_sale_hsd}
-                  helperText={errors.monthly_avg_sale_hsd}
+                  error={errors.monthly_avg_sale_hs}
+                  helperText={errors.monthly_avg_sale_hs}
                 />
               </Grid>
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
-                  labelText="Monthly average MSD sale"
-                  name="monthly_avg_sale_msd"
-                  value={values.monthly_avg_sale_msd}
+                  labelText="Monthly average MS sale(in KL)"
+                  name="monthly_avg_sale_ms"
+                  value={values.monthly_avg_sale_ms}
                   readOnly={readOnly}
-                  error={errors.monthly_avg_sale_msd}
-                  helperText={errors.monthly_avg_sale_msd}
+                  error={errors.monthly_avg_sale_ms}
+                  helperText={errors.monthly_avg_sale_ms}
                 />
               </Grid>
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
-                  labelText="Monthly average LPG sale"
+                  labelText="Monthly average LPG sale(in KL)"
                   name="monthly_avg_sale_lpg"
                   value={values.monthly_avg_sale_lpg}
                   readOnly={readOnly}
                   error={errors.monthly_avg_sale_lpg}
                   helperText={errors.monthly_avg_sale_lpg}
                 />
-              </Grid> */}
+              </Grid>
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}

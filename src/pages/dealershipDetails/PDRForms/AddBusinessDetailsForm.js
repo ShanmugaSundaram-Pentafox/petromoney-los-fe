@@ -121,7 +121,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
       electricity_units_month: Yup.number().nullable('Enter Electricity details').required('Enter Electricity details'),
       credit_sales_month: Yup.number().nullable('Enter sales details').required('Enter sales details'),
       monthly_avg_sale_ms: Yup.number().nullable('Enter monthly average sale').required('Enter monthly average sale'),
-      monthly_avg_sale_hs: Yup.number().nullable('Enter monthly average sale').required('Enter monthly average sale'),
+      monthly_avg_sale_hsd: Yup.number().nullable('Enter monthly average sale').required('Enter monthly average sale'),
       monthly_avg_sale_lpg: Yup.number().nullable('Enter monthly average sale').required('Enter monthly average sale'),
     }),
     onSubmit: values => {
@@ -273,12 +273,12 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
-                  labelText="Monthly average HS sale(in KL)"
-                  name="monthly_avg_sale_hs"
-                  value={values.monthly_avg_sale_hs}
+                  labelText="Monthly average HSD sale(in KL)"
+                  name="monthly_avg_sale_hsd"
+                  value={values.monthly_avg_sale_hsd}
                   readOnly={readOnly}
-                  error={errors.monthly_avg_sale_hs}
-                  helperText={errors.monthly_avg_sale_hs}
+                  error={errors.monthly_avg_sale_hsd}
+                  helperText={errors.monthly_avg_sale_hsd}
                 />
               </Grid>
               <Grid item md={6}>

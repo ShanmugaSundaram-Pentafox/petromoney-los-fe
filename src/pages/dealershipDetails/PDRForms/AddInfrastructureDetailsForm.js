@@ -119,7 +119,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       no_of_employee: Yup.number().nullable('Enter count').required('Enter valid count'),
-      no_of_nozzle: Yup.number().nullable('Enter count').required('Enter valid count'),
+      // no_of_nozzle: Yup.number().nullable('Enter count').required('Enter valid count'),
       no_of_hoarding: Yup.number().nullable('Enter count').required('Enter valid count'),
       no_of_tank: Yup.number().nullable('Enter count').required('Enter valid count'),
       tank_capacity: Yup.number().nullable('Enter tank capacity').required('Enter tank capacity'),

@@ -285,7 +285,7 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
                       error={errors.loan_type}
                       helperText={errors.loan_type}
                     >
-                      {loanTypes.map((type, i) => (<option key={i} value={type.id}>{type.name}</option>))}
+                      {loanTypes.map((type, i) => (<option key={i} value={type.loan_id}>{type.name}</option>))}
                     </TextInput>
                   </Grid>
                   <Grid item md={6}>
@@ -351,7 +351,7 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
                           <Grid item md={6}>
                             <ViewData title="Bank name" value={item.bank_name} />
                             <ViewData title="Loan type" value={(loanTypes.find(function (type, index) {
-                              if (type.name == item?.loan_type)
+                              if (type.loan_id == item?.loan_type)
                                 return true;
                             }))?.name} />
                             <ViewData title="Amount" value={item.loan_amount} />

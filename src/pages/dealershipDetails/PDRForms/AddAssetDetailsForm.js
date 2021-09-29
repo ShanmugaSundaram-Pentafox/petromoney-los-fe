@@ -4,6 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextInput from '../../../components/TextInput/TextInput';
 import Button from '../../../components/CommonComponents/Button/Button';
+import { format } from 'date-fns'
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import clsx from 'clsx';
@@ -80,6 +81,19 @@ const useStyles = makeStyles((theme) => ({
   typography: {
     marginTop: 12,
     textAlign: 'center'
+  },
+  number: {
+    backgroundColor: 'white',
+    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0
+    }
+  },
+  input: {
+    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0,
+    }
   }
 }))
 
@@ -143,6 +157,12 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       // type: Yup.string().nullable('Please choose type').required('Please choose type'),
+      asset_value: Yup.number().nullable('Please enter value').required('Please enter value'),
+      market_value: Yup.number().nullable('Please enter value').required('Please enter value'),
+      address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
+      yom: Yup.number().nullable('Please enter year of manufacture').required('Please enter year of manufacture').test('year', 'Invalid Manufacture Year', value => value >= 1900 && value <= format(new Date(), 'yyyy') ),
+      quantity: Yup.number().nullable('Please enter quantity').required('Please enter quantity'),
+      model: Yup.number().nullable('Please enter model').required('Please enter model'),
     }),
     onSubmit: values => {
       const { asset_value, market_value, ownership, ownership_proof, relationship } = values
@@ -249,11 +269,14 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                                         <Grid item md={6}>
                                           <TextInput
                                             {...inputProps}
+                                            className={classes.number}
+                                            inputProps={{className: classes.input}}
                                             labelText={item.label}
                                             name={item.key}
-                                            // value={item.key}
-                                            error={errors.key}
-                                            helperText={errors.key}
+                                            // value={values.key}
+                                            error={errors[item.key]}
+                                            helperText={errors[item.key]}
+                                            type={item.type}
                                           >
                                           </TextInput>
                                         </Grid>
@@ -263,21 +286,27 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                                   <Grid item md={6}>
                                     <TextInput
                                       {...inputProps}
+                                      className={classes.number}
+                                      inputProps={{className: classes.input}}
                                       labelText="Asset Value"
                                       name="asset_value"
                                       value={values.asset_value}
                                       error={errors.asset_value}
                                       helperText={errors.asset_value}
+                                      type='number'
                                     />
                                   </Grid>
                                   <Grid item md={6}>
                                     <TextInput
                                       {...inputProps}
+                                      className={classes.number}
+                                      inputProps={{className: classes.input}}
                                       labelText="Market value"
                                       name="market_value"
                                       value={values.market_value}
                                       error={errors.market_value}
                                       helperText={errors.market_value}
+                                      type='number'
                                     />
                                   </Grid>
                                   <Grid item md={6}>

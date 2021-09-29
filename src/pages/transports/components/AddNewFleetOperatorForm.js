@@ -114,10 +114,16 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
+      transport_name: Yup.string().required('Please enter Transport Name'),
+      vehicle_no: Yup.string().required('Please Enter Vehicle Number'),
       mobile: Yup.number().required("Enter mobile number").test("maxDigits", "Mobile Number mush have 10 digits", (number) => String(number).length === 10),
       name_on_card: Yup.string().required('Please Enter your name'),
       dtplus_card_number: Yup.string().max(16, 'Enter valid card number').required('Please enter your card number'),
-
+      validity: Yup.number().required('Please enter Validity'),
+      client_name: Yup.string().required('Please enter Client Name'),
+      monthly_billing: Yup.number().required('Please enter monthly billing'),
+      credit_period: Yup.number().required('Please enter credit period'),
+      total_credit_os: Yup.number().required('Please enter outstanding credit'),
     }),
     onSubmit: values => {
       if (data) {
@@ -238,8 +244,9 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
                         name="vehicle_no"
                         readOnly={readOnly}
                         error={errors.vehicle_no}
-                        // helperText={errors.vehicle_no}
+                        helperText={errors.vehicle_no}
                         defaultValue={values.vehicle_no}
+                        value={values.vehicle_no?.toUpperCase()}
                         InputLabelProps={{ shrink: true }}
                         onChange={handleChange}
                       />
@@ -278,6 +285,7 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
                         error={errors.amount_limit}
                         InputLabelProps={{ shrink: true }}
                         onChange={handleChange}
+                        money
                       >
                       </TextInput>
                     </Grid>
@@ -321,6 +329,7 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
                         helperText={errors.validity}
                         InputLabelProps={{ shrink: true }}
                         onChange={handleChange}
+                        type='number'
                       >
                       </TextInput>
                     </Grid>
@@ -350,6 +359,7 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
                         helperText={errors.monthly_billing}
                         InputLabelProps={{ shrink: true }}
                         onChange={handleChange}
+                        money
                       >
                       </TextInput>
                     </Grid>
@@ -392,6 +402,7 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
                         helperText={errors.total_credit_os}
                         InputLabelProps={{ shrink: true }}
                         onChange={handleChange}
+                        money
                       >
                       </TextInput>
                     </Grid>

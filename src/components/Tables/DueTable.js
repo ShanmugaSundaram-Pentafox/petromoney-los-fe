@@ -42,6 +42,17 @@ const DueTable = ({ id, onRowClick }) => {
         }
       },
       {
+        name: 'disb_amt',
+        label: 'disburse Amt',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: value => {
+            return <Currency value={value} />
+          }
+        }
+      },
+      {
         name: 'tot_due',
         label: 'Total Due',
         options: {

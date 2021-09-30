@@ -67,6 +67,17 @@ const OverDueTable = ({ id, onRowClick }) => {
         }
       },
       {
+        name: 'penal_overdue',
+        label: 'Penal Overdue',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: value => {
+            return <Currency value={value} />
+          }
+        }
+      },
+      {
         name: 'tot_due',
         label: 'Total Due',
         options: {
@@ -86,8 +97,8 @@ const OverDueTable = ({ id, onRowClick }) => {
     onRowClick: (rowData, { dataIndex }) => {
       onRowClick(loans[dataIndex].dealership_id, loans[dataIndex])
     },
-    rowsPerPage: 15,
-    rowsPerPageOptions: [15, 20, 30],
+    rowsPerPage: 10,
+    rowsPerPageOptions: [10, 15, 20, 25,   30],
   };
   return (
     <div className={classes.root}>

@@ -20,19 +20,8 @@ import DealerEditForm from './DealerEditForm';
 import { useSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
 import { format, parse } from 'date-fns';
+import { compareObject } from '../../../utils/compareObject.util';
 
-
-const checkChanges = (originalData, editedData) => {
-  let object = {};
-  for (const [originalDatakey, originalDatavalue] of Object.entries(originalData)) {
-    for (const [editedDatakey, editedDatavalue] of Object.entries(editedData)) {
-      if (originalDatakey == editedDatakey && originalDatavalue != editedDatavalue) {
-        object[editedDatakey] = editedDatavalue;
-      }
-    }
-  }
-  return object;
-}
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -213,7 +202,7 @@ const DealerEditSideWrapper = ({
       const date_values = { ...values, dob: dob, pan: values.pan.toUpperCase(), is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0 };
       let obj = {};
       if (values.id) {
-        obj = checkChanges(data, date_values)
+        obj = compareObject(data, date_values)
       }
       const formData = new FormData();
       Object.keys(obj).forEach((key) => {

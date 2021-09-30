@@ -26,19 +26,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import FileUpload from '../../../components/FileUpload';
 import { grey } from '@material-ui/core/colors';
 import { deleteDealershipDocument } from '../../../services/dealerships.service';
+import { compareObject } from '../../../utils/compareObject.util';
 
-
-const checkChanges = (originalData, editedData) => {
-  let object = { id: originalData.id };
-  for (const [originalDatakey, originalDatavalue] of Object.entries(originalData)) {
-    for (const [editedDatakey, editedDatavalue] of Object.entries(editedData)) {
-      if (originalDatakey == editedDatakey && originalDatavalue != editedDatavalue) {
-        object[editedDatakey] = editedDatavalue;
-      }
-    }
-  }
-  return object;
-}
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -130,7 +119,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
       };
       let obj = {};
       if (date_values.id) {
-        obj = checkChanges(data, date_values)
+        let commonObj = { id: data.id }
+        obj = compareObject(data, date_values, commonObj)
       }
       const formData = new FormData();
       Object.keys(obj).forEach(key => {

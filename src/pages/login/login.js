@@ -12,6 +12,7 @@ import { URL } from '../../config/serverUrls';
 import { logger } from '../../config/logger';
 import apiCall from "../../utils/api.util";
 import Alert from "@material-ui/lab/Alert";
+import { getOTP } from "../../services/login.service";
 
 const useStyles = makeStyles(() => ({
   textFieldStyle: {
@@ -56,6 +57,9 @@ const useStyles = makeStyles(() => ({
       "-webkit-appearance": "none",
       margin: 0
     }
+  },
+  form: {
+    textAlign: 'center',
   }
 }));
 
@@ -68,8 +72,10 @@ const Login = ({ setCurrentUser }) => {
     initialValues: {},
     validateOnChange: false,
     validationSchema: Yup.object().shape({
-      mobile: Yup.number().nullable('Enter mobile number').required("Enter mobile number").test("maxDigits", "Mobile Number mush have 10 digits", (number) => String(number).length === 10),
-      password: Yup.string().nullable('Enter password').required("Enter password"),
+      mobile: Yup.number().nullable('Enter mobile number').required("Enter mobile number").test("maxDigits", "Mobile Number must have 10 digits", (number) => String(number).length === 10),
+      // password: Yup.string().nullable('Enter password').required("Enter password"),
+      // otp: Yup.number().required('Please enter OTP').nullable('Enter OTP').test("maxDigits", "OTP must be 4 digits", (number) => String(number).length === 4)
+      otp: Yup.string().nullable().required('Enter OTP')
     }),
     onSubmit: values => {
       apiCall(URL.login, {
@@ -89,6 +95,21 @@ const Login = ({ setCurrentUser }) => {
         });
     }
   });
+
+  const sendOTP = () => {
+    getOTP(values.mobile)
+      .then((status, message) => {
+        if (status === 'SUCCESS') {
+          setShowOTPState(st => !st)
+        }
+        else {
+          console.log("Unable to send OTP")
+        }
+      })
+      .catch((error) => {
+        console.log("error", error)
+      })
+  }
 
   return (
     <LoginWrapper>
@@ -113,10 +134,10 @@ const Login = ({ setCurrentUser }) => {
           Please login to your account
         </p>
 
-        <form onSubmit={handleSubmit}>
+        <form className={classes.form} onSubmit={handleSubmit}>
           <TextField
             className={classes.number}
-            inputProps={{ className: classes.input }}
+            // inputProps={{ className: classes.input }}
             name="mobile"
             label="Mobile Number"
             type='number'
@@ -127,8 +148,49 @@ const Login = ({ setCurrentUser }) => {
             error={errors.mobile}
             helperText={errors.mobile}
           />
-
+          {!isShowOTP && <label>Resend OTP</label>}
           {
+            isShowOTP ? (
+              <>
+                <TextField
+                  className={classes.number}
+                  name="otp"
+                  label="OTP"
+                  inputProps={{ className: classes.input }}
+                  type="number"
+                  onChange={handleChange}
+                  fullWidth
+                  value={values.otp}
+                  error={errors.otp}
+                  helperText={errors.otp}
+                  className={classes.textFieldStyle}
+                />
+                <Button
+                  variant="contained"
+                  size="medium"
+                  color="primary"
+                  className={classes.buttonStyle}
+                  // onClick={sendOTP}
+                  type="submit"
+                >
+                  Login
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="contained"
+                  size="medium"
+                  color="primary"
+                  className={classes.buttonStyle}
+                  onClick={sendOTP}
+                >
+                  Send OTP
+                </Button>
+              </>
+            )
+          }
+          {/* {
             isShowOTP ? (
               <>
                 <TextField
@@ -162,18 +224,10 @@ const Login = ({ setCurrentUser }) => {
                   error={errors.password}
                   helperText={errors.password}
                 />
-                <Button
-                  variant="contained"
-                  size="medium"
-                  color="primary"
-                  className={classes.buttonStyle}
-                  type="submit"
-                >
-                  Login
-                </Button>
+
               </>
             )
-          }
+          } */}
         </form>
 
         <Box pt={2}>
@@ -190,7 +244,7 @@ const Login = ({ setCurrentUser }) => {
           </Button> */}
         </Box>
       </div>
-    </LoginWrapper>
+    </LoginWrapper >
   );
 };
 

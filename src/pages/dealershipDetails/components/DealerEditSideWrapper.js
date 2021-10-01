@@ -204,6 +204,9 @@ const DealerEditSideWrapper = ({
       if (values.id) {
         obj = compareObject(data, date_values)
       }
+      else {
+        obj = { ...values }
+      }
       const formData = new FormData();
       Object.keys(obj).forEach((key) => {
         formData.append(key, obj[key]);
@@ -234,7 +237,7 @@ const DealerEditSideWrapper = ({
         .then((res) => {
           setLoading(false);
           setApicallStatus('success');
-          enqueueSnackbar(res.profile_status, {
+          enqueueSnackbar(res.message, {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',
@@ -254,7 +257,7 @@ const DealerEditSideWrapper = ({
         .catch((err) => {
           setReadOnly(false);
           setLoading(false);
-          enqueueSnackbar(err.profile_status, {
+          enqueueSnackbar(err.message, {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',

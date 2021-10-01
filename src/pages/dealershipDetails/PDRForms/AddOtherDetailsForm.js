@@ -308,7 +308,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                           <Grid item md={6}>
                             <ViewData title="Dealership ID" value={item.dealership_id} />
                             <ViewData title="OMC" value={(omcs.find(function (omc, index) {
-                              if (omc.name == item?.omc)
+                              if (omc.id === item?.omc)
                                 return true;
                             }))?.name} />
                           </Grid>

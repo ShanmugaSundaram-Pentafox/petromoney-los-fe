@@ -10,12 +10,11 @@ import Select from 'react-select';
 import { Button } from '@material-ui/core';
 import { Divider } from '@material-ui/core';
 import clsx from 'clsx';
-import { TextField } from '@material-ui/core';
 import apiCall from '../../utils/api.util';
 import { useSnackbar } from 'notistack';
-import { InputAdornment } from '@material-ui/core';
 import AsyncSelect from 'react-select/async';
 import { getDealershipForSearch } from '../../services/common.service';
+import TextInput from '../../components/TextInput/TextInput';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelFormWrapper: {
@@ -42,6 +41,14 @@ const useStyles = makeStyles((theme) => ({
     padding: 16,
     paddingTop: 8
   },
+  inputFile: {
+    width: '0.1px',
+    height: '0.1px',
+    opacity: 0,
+    overflow: 'hidden',
+    position: 'absolute',
+    zIndex: -1,
+  },
   actionButtonsWrapper: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -62,7 +69,18 @@ const useStyles = makeStyles((theme) => ({
     '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.success.dark
     }
-  }
+  },
+  image: {
+    borderRadius: 6,
+    padding: 1
+  },
+  number: {
+    backgroundColor: 'white',
+    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0
+    }
+  },
 }));
 
 const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
@@ -75,31 +93,27 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
   const [optionsLoading, setOptionsLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
-  const {
-    values,
-    errors,
-    handleChange,
-    handleSubmit,
-    isSubmitting,
-    setSubmitting,
-  } = useFormik({
+  const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setFieldValue } = useFormik({
     initialValues: {
-      mobile: mobile,
       amount: amount,
     },
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      mobile: Yup.number().nullable('Enter mobile number').required("Enter mobile number").test("maxDigits", "Mobile Number mush have 10 digits", (number) => String(number).length === 10),
+      // mobile: Yup.number().nullable('Enter mobile number').required("Enter mobile number").test("maxDigits", "Mobile Number mush have 10 digits", (number) => String(number).length === 10),
       amount: Yup.number().nullable('Enter Amount').required('Enter Amount').moreThan(0, 'Invalid Amount').test("maxDigits", "Request Amount Invalid", (value) => String(value) >= 50000 && String(value) <= 3000000)
     }),
     onSubmit: (data) => {
-      const submitData = { 'request_source': 'MDM', 'amount': data.amount, 'mobile': data.mobile, 'account_id': accountId?.id }
+      const d = { ...values, request_source: 'MDM', amount: data?.amount, account_id: accountId?.id }
+      const formData = new FormData();
+      Object.keys(d).forEach((key) => {
+        formData.append(key, d[key]);
+      });
 
       if (selectedValue && accountId) {
         apiCall(`credit/reload/${selectedValue}`, {
           method: 'POST',
-          body: submitData,
+          body: formData,
           headers: {
             Authorization: `Bearer ${currentUser.token} `
           }
@@ -158,7 +172,14 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
   const onChangeOption = (newValue) => {
     setSelectedValue(newValue.id)
   }
-
+  const onChangeHandler = (e, type) => {
+    console.log("type >>>", type)
+    type == 'proof1' ?
+      setFieldValue('proof_1_file', e.target.files[0]) :
+      type == 'proof2' ?
+        setFieldValue('proof_2_file', e.target.files[0]) :
+        setFieldValue('proof_3_file', e.target.files[0])
+  }
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant='h4'>
@@ -193,40 +214,89 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                   </Grid>
                 </Grid>
                 <Grid container spacing={2}>
-                  <Grid item md={8} style={{ marginBottom: 10 }}>
-                    <label style={{ marginBottom: 8 }}>Mobile Number</label>
-                    <TextField
-                      name="mobile"
+                  <Grid item md={8}>
+                    <label style={{ marginBottom: 8 }}>Amount</label>
+                    <TextInput
+                      money
+                      name="amount"
                       type="number"
-                      value={values.mobile}
-                      error={errors.mobile}
-                      helperText={errors.mobile ? errors.mobile : "Mobile Number for Whatsapp Notifications."}
-                      variant='outlined'
+                      className={classes.number}
+                      value={values.amount}
+                      error={errors.amount}
+                      helperText={errors.amount}
                       onChange={handleChange}
-                      fullWidth
                     />
                   </Grid>
                 </Grid>
                 <Grid container spacing={2}>
-                  <Grid item md={8}>
-                    <label style={{ marginBottom: 8 }}>Amount</label>
-                    <TextField
-                      name="amount"
-                      type="number"
-                      value={values.amount}
-                      error={errors.amount}
-                      helperText={errors.amount}
-                      variant='outlined'
-                      onChange={handleChange}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position='start'>
-                            ₹
-                          </InputAdornment>
-                        ),
-                      }}
-                      fullWidth
-                    />
+                  <Grid item md={12}>
+                    <label style={{ marginBottom: 8 }}>Payment Reference</label>
+                  </Grid>
+                  <Grid item md={3}>
+                    <div>
+                      <input
+                        type='file'
+                        name='file'
+                        id='proof1'
+                        className={classes.inputFile}
+                        onChange={(e) => { onChangeHandler(e, 'proof1') }}
+                      />
+                      <label for='proof1'>
+                        <div style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                          {
+                            values?.proof_1_file ? (
+                              <img src={URL.createObjectURL(values?.proof_1_file)} height="100%" width="100%" className={classes.image} />
+                            ) : (
+                              <label style={{ fontSize: 32, color: 'grey' }}>+</label>
+                            )
+                          }
+                        </div>
+                      </label>
+                    </div>
+                  </Grid>
+                  <Grid item md={3}>
+                    <div>
+                      <input
+                        type='file'
+                        name='file'
+                        id='proof2'
+                        className={classes.inputFile}
+                        onChange={(e) => { onChangeHandler(e, 'proof2') }}
+                      />
+                      <label for='proof2'>
+                        <div style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                          {
+                            values?.proof_2_file ? (
+                              <img src={URL.createObjectURL(values?.proof_2_file)} height="100%" width="100%" className={classes.image} />
+                            ) : (
+                              <label style={{ fontSize: 32, color: 'grey' }}>+</label>
+                            )
+                          }
+                        </div>
+                      </label>
+                    </div>
+                  </Grid>
+                  <Grid item md={3}>
+                    <div>
+                      <input
+                        type='file'
+                        name='file'
+                        id='proof3'
+                        className={classes.inputFile}
+                        onChange={(e) => { onChangeHandler(e, 'proof3') }}
+                      />
+                      <label for='proof3'>
+                        <div style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                          {
+                            values?.proof_3_file ? (
+                              <img src={URL.createObjectURL(values?.proof_3_file)} height="100%" width="100%" className={classes.image} />
+                            ) : (
+                              <label style={{ fontSize: 32, color: 'grey' }}>+</label>
+                            )
+                          }
+                        </div>
+                      </label>
+                    </div>
                   </Grid>
                 </Grid>
               </form>

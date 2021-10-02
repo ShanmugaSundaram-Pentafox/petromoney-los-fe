@@ -10,7 +10,6 @@ import Select from 'react-select';
 import { Button } from '@material-ui/core';
 import { Divider } from '@material-ui/core';
 import clsx from 'clsx';
-import apiCall from '../../utils/api.util';
 import { useSnackbar } from 'notistack';
 import AsyncSelect from 'react-select/async';
 import { getDealershipForSearch } from '../../services/common.service';
@@ -103,20 +102,19 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
       // mobile: Yup.number().nullable('Enter mobile number').required("Enter mobile number").test("maxDigits", "Mobile Number mush have 10 digits", (number) => String(number).length === 10),
       amount: Yup.number().nullable('Enter Amount').required('Enter Amount').moreThan(0, 'Invalid Amount').test("maxDigits", "Request Amount Invalid", (value) => String(value) >= 50000 && String(value) <= 3000000)
     }),
-    onSubmit: (data) => {
-      const d = { ...values, request_source: 'MDM', amount: data?.amount, account_id: accountId?.id }
+    onSubmit: (values) => {
+      const d = { ...values, request_source: 'mdm', account_id: accountId?.id }
       const formData = new FormData();
       Object.keys(d).forEach((key) => {
         formData.append(key, d[key]);
       });
-
       if (selectedValue && accountId) {
-        apiCall(`credit/reload/${selectedValue}`, {
-          method: 'POST',
+        fetch(`https://api-uat.petromoney.in/api/credit/reload/${selectedValue}`, {
+          method: "POST",
           body: formData,
           headers: {
-            Authorization: `Bearer ${currentUser.token} `
-          }
+            Authorization: `Bearer ${currentUser.token}`,
+          },
         })
           .then(res => {
             if (res.status === "SUCCESS") {
@@ -154,7 +152,6 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
       }
     }
   })
-
   const getOptions = (inputValue, callback) => {
     if (inputValue.toString().length > 2) {
       setOptionsLoading(true)
@@ -170,10 +167,9 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
     }
   }
   const onChangeOption = (newValue) => {
-    setSelectedValue(newValue.id)
+    setSelectedValue(newValue.dealership_id)
   }
   const onChangeHandler = (e, type) => {
-    console.log("type >>>", type)
     type == 'proof1' ?
       setFieldValue('proof_1_file', e.target.files[0]) :
       type == 'proof2' ?
@@ -206,7 +202,6 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                     />
                   </Grid>
                 </Grid>
-
                 <Grid container spacing={2}>
                   <Grid item md={8} style={{ marginBottom: 10 }}>
                     <label style={{ marginBottom: 8 }}>Account Type</label>

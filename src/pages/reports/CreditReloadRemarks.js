@@ -11,8 +11,9 @@ import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import apiCall from '../../utils/api.util';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import { creditReloadById } from '../../services/creditreport.service';
-import { ViewData } from '../../components/CommonComponents/FilePreview';
+import { addCreditReport, creditReloadById } from '../../services/creditreport.service';
+import FilePreview, { ViewData } from '../../components/CommonComponents/FilePreview';
+import FormDialog from '../../components/CommonComponents/FormDialog/FormDialog';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -31,7 +32,10 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333',
   },
-
+  image: {
+    borderRadius: 6,
+    padding: 1
+  },
   sidePanelFormContentWrapper: {
     flex: 1,
     overflow: 'auto',
@@ -79,15 +83,17 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
   const [status, setStatus] = useState('');
   const [remarks, setRemarks] = useState();
   const [newRemarks, setNewRemarks] = useState()
-  const [value, setValue] = useState()
+  const [imageModal, setImageModal] = useState({})
   const { enqueueSnackbar } = useSnackbar();
 
   const postApiCall = (submitData) => {
-
-    creditReloadById(rowData?.dealership_id, submitData)
+    const formData = new FormData();
+    Object.keys(submitData).forEach((key) => {
+      formData.append(key, submitData[key]);
+    });
+    addCreditReport(formData, currentUser, rowData?.dealership_id)
       .then((res) => {
-        console.log(res);
-        enqueueSnackbar(res, {
+        enqueueSnackbar(res.message, {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',
@@ -99,8 +105,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
         }, 1000);
       })
       .catch((e) => {
-        console.log(e);
-        enqueueSnackbar(e, {
+        enqueueSnackbar(e.message, {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',
@@ -114,21 +119,21 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: () => {
-      if (value) {
-        if (typeof (value) === 'number') {
+      if (newRemarks) {
+        if (typeof (newRemarks) === 'number') {
           if (status === 'decline') {
-            const submitData = { 'remarks_id': value, 'is_status': 0 }
+            const submitData = { 'remarks_id': newRemarks, 'is_status': 0 }
             postApiCall(submitData)
           } else {
-            const submitData = { 'remarks_id': value, 'is_status': 1 }
+            const submitData = { 'is_status': 1 }
             postApiCall(submitData)
           }
         } else {
           if (status === 'decline') {
-            const submitData = { 'remarks': value, 'is_status': 0 }
+            const submitData = { 'remarks': newRemarks, 'is_status': 0 }
             postApiCall(submitData)
           } else {
-            const submitData = { 'remarks': value, 'is_status': 1 }
+            const submitData = { 'is_status': 1 }
             postApiCall(submitData)
           }
         }
@@ -155,15 +160,14 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
       })
   })
 
-  const handleRemarkChange = (newValue, actionMeta) => {
+  const handleRemarkChange = (newValue) => {
     if (remarks?.includes(newValue?.label)) {
       setNewRemarks(newValue?.label)
     }
     else {
-      setValue(newValue?.value)
+      setNewRemarks(newValue?.value)
     }
   };
-
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant='h4'>
@@ -174,7 +178,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
         <div className={classes.stepperRoot}>
           <Box>
             {
-              rowData.status === 'Disbursed' || rowData.status === 'Declined' ? (
+              rowData.status == 'Disbursed' || rowData.status == 'Declined' ? (
                 <>
                   <Grid container spacing={3}>
                     <Grid item md={6}>
@@ -192,8 +196,35 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
                     </Grid>
                   </Grid>
                   <Grid container spacing={3}>
-                    <Typography variant="h6" style={{ margin: 12 }}>Payment Reference</Typography>
+                    <Grid item md={12}>
+                      <Typography variant="h6">Payment Reference</Typography>
+                    </Grid>
                     <Grid item md={4}>
+                      {
+                        rowData?.payment_proof_attachment?.proof_1_url && (
+                          <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_1_url, type: rowData?.payment_proof_attachment.proof_1_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <img src={`${rowData?.payment_proof_attachment.proof_1_url}`} height="100%" width="100%" className={classes.image} />
+                          </div>
+                        )
+                      }
+                    </Grid>
+                    <Grid item md={4}>
+                      {
+                        rowData?.payment_proof_attachment?.proof_2_url && (
+                          <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_2_url, type: rowData?.payment_proof_attachment.proof_2_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <img src={`${rowData?.payment_proof_attachment.proof_2_url}`} height="100%" width="100%" className={classes.image} />
+                          </div>
+                        )
+                      }
+                    </Grid>
+                    <Grid item md={4}>
+                      {
+                        rowData?.payment_proof_attachment?.proof_3_url && (
+                          <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_3_url, type: rowData?.payment_proof_attachment.proof_3_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <img src={`${rowData?.payment_proof_attachment.proof_3_url}`} height="100%" width="100%" className={classes.image} />
+                          </div>
+                        )
+                      }
                     </Grid>
                   </Grid>
                 </>
@@ -208,7 +239,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
                         onChange={handleRemarkChange}
                         options={remarks}
                       />
-                      <FormHelperText style={{ color: '#FF5C58', marginLeft: 5 }}>{!value ? 'Need a Remark to Proceed!' : null}</FormHelperText>
+                      <FormHelperText style={{ color: '#FF5C58', marginLeft: 5 }}>{status === 'decline' ? 'Need a Remark to Proceed!' : null}</FormHelperText>
                     </Grid>
                   </Grid>
                 </>
@@ -253,7 +284,11 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
               </div>
             )
           }
-
+          {
+            <FormDialog className={classes.dialogBox} title='Payment Reference' onDownload={imageModal.image} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
+              <FilePreview data={imageModal} />
+            </FormDialog>
+          }
         </div>
       </div>
     </div >

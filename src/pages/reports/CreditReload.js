@@ -26,22 +26,19 @@ const useStyes = makeStyles((theme) => ({
 }));
 
 const CreditReload = ({ currentUser }) => {
-  const [loans, setLoans] = useState([]);
   const [tableData, setTableData] = useState();
   const [accountType, setAccountType] = useState();
   const [rowData, setRowData] = useState();
   const [loading, setLoading] = useState(false);
-  const [reloadDialog, setReloadDialog] = useState(false);
-  const [submitLoading, setSubmitLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [statusModal, setStatusModal] = useState(false);
   const [dealershipData, setDealershipData] = useState();
-
 
   useMount(async () => {
     setLoading(true)
     getCreditReport()
       .then((data) => {
+
         setTableData(data);
         setLoading(false);
       })
@@ -63,49 +60,52 @@ const CreditReload = ({ currentUser }) => {
         setLoading(false);
         console.log(e);
       });
-
   });
-
-
   usePageTitle('Credit Report');
   const columns = useMemo(() => {
     return [
-      { name: 'dealership_id', label: 'Dealership ID', options: {filter: false}},
-      { name: 'request_id', label: 'Request ID' , options: {filter: false}},
-      { name: 'mobile', label: 'Mobile' , options: {filter: false}},
-      { name: 'amount', label: 'Amount', options: {
-        filter: false,
-        customBodyRender: (value) => {
-          return <Currency value={value} />
-        }
-      }},
-      { name: 'type_of_account', label: 'Account Type' },
-      { name: 'name', label: 'Submitted or Modified by', options: {
-        customBodyRender: (value, tableMeta) => {
-          return <div>{`${value} (${tableMeta?.rowData[8]})`}</div>
-        }
-      }},
-      { name: 'status', label: 'Status', options: {
-        customBodyRender: (value, tableMeta) => {
-          if (value === 'Declined'){
-            return (
-              <Tooltip title={tableMeta.rowData[7]}>
-                <div style={{color: '#FF5C58'}}>{value}</div>
-              </Tooltip>
-            )
-          } else if (value === 'Disbursed') {
-            return (
-              <Tooltip title={tableMeta.rowData[7]}>
-                <div>{value}</div>
-              </Tooltip>
-            )
-          } else {
-            return value
+      { name: 'dealership_id', label: 'Dealership ID', options: { filter: false } },
+      { name: 'request_id', label: 'Request ID', options: { filter: false } },
+      { name: 'mobile', label: 'Mobile', options: { filter: false } },
+      {
+        name: 'amount', label: 'Amount', options: {
+          filter: false,
+          customBodyRender: (value) => {
+            return <Currency value={value} />
           }
         }
-      }},
-      { name: 'remarks', options: {display: 'excluded', filter: false}},
-      { name: 'role_name', options: {display: 'excluded', filter: false}}
+      },
+      { name: 'type_of_account', label: 'Account Type' },
+      {
+        name: 'name', label: 'Submitted or Modified by', options: {
+          customBodyRender: (value, tableMeta) => {
+            return <div>{`${value} (${tableMeta?.rowData[8]})`}</div>
+          }
+        }
+      },
+      {
+        name: 'status', label: 'Status', options: {
+          customBodyRender: (value, tableMeta) => {
+            if (value === 'Declined') {
+              return (
+                <Tooltip title={tableMeta.rowData[7]}>
+                  <div style={{ color: '#FF5C58' }}>{value}</div>
+                </Tooltip>
+              )
+            } else if (value === 'Disbursed') {
+              return (
+                <Tooltip title={tableMeta.rowData[7]}>
+                  <div>{value}</div>
+                </Tooltip>
+              )
+            } else {
+              return value
+            }
+          }
+        }
+      },
+      { name: 'remarks', options: { display: 'excluded', filter: false } },
+      { name: 'role_name', options: { display: 'excluded', filter: false } }
     ];
   }, []);
 
@@ -127,9 +127,16 @@ const CreditReload = ({ currentUser }) => {
       );
     },
     onRowClick: (rowData) => {
-        getCreditReportById(rowData[0])
+      getCreditReportById(rowData[0])
         .then((data) => {
-          setRowData(data[0])
+          let d = [];
+          data.forEach((item, i) => {
+            d.push({
+              ...item,
+              payment_proof_attachment: typeof (item.payment_proof_attachment) === "string" ? JSON.parse(item.payment_proof_attachment) : (item.payment_proof_attachment || [])
+            })
+          })
+          setRowData(d[0])
           setStatusModal(true)
         })
         .catch((e) => {
@@ -161,7 +168,7 @@ const CreditReload = ({ currentUser }) => {
         variant='temporary'
       >
         {
-          <CreditReloadRemarks callback={() => setStatusModal(false)} rowData={rowData} currentUser={currentUser}/>
+          <CreditReloadRemarks callback={() => setStatusModal(false)} rowData={rowData} currentUser={currentUser} />
         }
       </Drawer>
 

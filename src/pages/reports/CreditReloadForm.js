@@ -14,6 +14,7 @@ import { useSnackbar } from 'notistack';
 import AsyncSelect from 'react-select/async';
 import { getDealershipForSearch } from '../../services/common.service';
 import TextInput from '../../components/TextInput/TextInput';
+import { addCreditReport } from '../../services/creditreport.service';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelFormWrapper: {
@@ -84,8 +85,6 @@ const useStyles = makeStyles((theme) => ({
 
 const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
   const [accountId, setAccountId] = useState();
-  const [dealershipId, setDealershipId] = useState();
-  const [mobile, setMobile] = useState();
   const [amount, setAmount] = useState();
   const [selectedValue, setSelectedValue] = useState();
   const classes = useStyles();
@@ -109,16 +108,9 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
         formData.append(key, d[key]);
       });
       if (selectedValue && accountId) {
-        fetch(`https://api-uat.petromoney.in/api/credit/reload/${selectedValue}`, {
-          method: "POST",
-          body: formData,
-          headers: {
-            Authorization: `Bearer ${currentUser.token}`,
-          },
-        })
+        addCreditReport(formData, currentUser, selectedValue)
           .then(res => {
-            if (res.status === "SUCCESS") {
-              callback()
+            if (res.status === 'SUCCESS') {
               enqueueSnackbar(res.message, {
                 anchorOrigin: {
                   vertical: 'top',
@@ -129,7 +121,8 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
               setTimeout(() => {
                 window.location.reload(false)
               }, 1000);
-            } else {
+            }
+            else {
               enqueueSnackbar(res.message, {
                 anchorOrigin: {
                   vertical: 'top',
@@ -137,11 +130,11 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                 },
                 variant: 'error',
               });
+
             }
           })
           .catch(e => {
-            console.log(e);
-            enqueueSnackbar(e, {
+            enqueueSnackbar(e.message, {
               anchorOrigin: {
                 vertical: 'top',
                 horizontal: 'right',

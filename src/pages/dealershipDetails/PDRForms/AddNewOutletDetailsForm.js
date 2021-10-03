@@ -200,6 +200,7 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
+                                        className={classes.number}
                                         labelText="Distance from headquarters"
                                         name="distance_from_headquarters"
                                         value={values.distance_from_headquarters}
@@ -222,6 +223,7 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
+                                        className={classes.number}
                                         labelText="Distance from Terminal (in Km)"
                                         name="distance_from_terminal"
                                         value={values.distance_from_terminal}
@@ -233,6 +235,7 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
+                                        className={classes.number}
                                         labelText="Size of the Outlet (in Sq. ft)"
                                         name="size_of_outlet"
                                         value={values.size_of_outlet}
@@ -275,6 +278,7 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                     <TextInput
                                         {...inputProps}
                                         money
+                                        inputProps={{ className: classes.input }}
                                         labelText="Lease Amount"
                                         name="lease_amount"
                                         value={values.lease_amount}
@@ -325,8 +329,10 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
+                                        inputProps={{ className: classes.input }}
                                         labelText="Operator Mobile number"
                                         name="operator_mobile"
+                                        type="number"
                                         value={values.operator_mobile}
                                         readOnly={readOnly}
                                         error={errors.operator_mobile}

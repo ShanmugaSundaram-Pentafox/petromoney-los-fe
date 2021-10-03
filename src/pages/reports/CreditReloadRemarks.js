@@ -10,7 +10,9 @@ import { addNewRemarks, getAllWithheldRemarks, updateRemarks } from '../../servi
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import apiCall from '../../utils/api.util';
+import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { creditReloadById } from '../../services/creditreport.service';
+import { ViewData } from '../../components/CommonComponents/FilePreview';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -83,92 +85,84 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
   const postApiCall = (submitData) => {
 
     creditReloadById(rowData?.dealership_id, submitData)
-    .then((res) => {
-      console.log(res);
-      enqueueSnackbar(res, {
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-        variant: 'success',
-      });
-      setTimeout(() => {
-        window.location.reload(false)
-    }, 1000);
-    })
-    .catch((e) => {
-      console.log(e);
-      enqueueSnackbar(e, {
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-        variant: 'error',
-      });
-    })
+      .then((res) => {
+        console.log(res);
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        });
+        setTimeout(() => {
+          window.location.reload(false)
+        }, 1000);
+      })
+      .catch((e) => {
+        console.log(e);
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      })
   }
-
-  const {
-    values,
-    errors,
-    handleChange,
-    handleSubmit,
-    isSubmitting,
-    setSubmitting,
-  } = useFormik({
+  const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, } = useFormik({
     initialValues: {},
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: () => {
-        if(value){
-            if(typeof(value) === 'number'){
-                if(status === 'decline'){
-                    const submitData = {'remarks_id': value, 'is_status':0}
-                    postApiCall(submitData)
-                } else {
-                    const submitData = {'remarks_id': value, 'is_status':1}
-                    postApiCall(submitData)
-                }
-            } else {
-                if(status === 'decline'){
-                    const submitData = {'remarks': value, 'is_status':0}
-                    postApiCall(submitData)
-                } else {
-                    const submitData = {'remarks': value, 'is_status':1}
-                    postApiCall(submitData)
-                }
-            }
+      if (value) {
+        if (typeof (value) === 'number') {
+          if (status === 'decline') {
+            const submitData = { 'remarks_id': value, 'is_status': 0 }
+            postApiCall(submitData)
+          } else {
+            const submitData = { 'remarks_id': value, 'is_status': 1 }
+            postApiCall(submitData)
+          }
+        } else {
+          if (status === 'decline') {
+            const submitData = { 'remarks': value, 'is_status': 0 }
+            postApiCall(submitData)
+          } else {
+            const submitData = { 'remarks': value, 'is_status': 1 }
+            postApiCall(submitData)
+          }
         }
+      }
     }
   });
 
   const declineSubmit = () => {
-      setStatus('decline')
-      handleSubmit()
+    setStatus('decline')
+    handleSubmit()
   }
   const disburseSubmit = () => {
-      setStatus('disburse')
-      handleSubmit()
+    setStatus('disburse')
+    handleSubmit()
   }
 
   useMount(() => {
     getAllWithheldRemarks()
-        .then((data) => {
-            setRemarks(data)
-        })
-        .catch((e) => {
-            console.log(e);
-        })
-    })
+      .then((data) => {
+        setRemarks(data)
+      })
+      .catch((e) => {
+        console.log(e);
+      })
+  })
 
-    const handleRemarkChange = (newValue, actionMeta) => {
-        if (remarks?.includes(newValue?.label)) {
-            setNewRemarks(newValue?.label)
-        }
-        else {
-            setValue(newValue?.value)
-        }
-    };
+  const handleRemarkChange = (newValue, actionMeta) => {
+    if (remarks?.includes(newValue?.label)) {
+      setNewRemarks(newValue?.label)
+    }
+    else {
+      setValue(newValue?.value)
+    }
+  };
 
   return (
     <div className={classes.sidePanelFormWrapper}>
@@ -179,18 +173,48 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
           <Box>
-            <Grid container spacing={2}>
-              <Grid item md={8} style={{display: 'flex', flexDirection: 'column'}}>
-                <label style={{ marginBottom: 8 }}>Remarks</label>
-                <CreatableSelect
-                name='remarks'
-                isClearable
-                onChange={handleRemarkChange}
-                options={remarks}
-                />
-                <FormHelperText style={{color: '#FF5C58', marginLeft: 5}}>{!value? 'Need a Remark to Proceed!' : null}</FormHelperText>
-              </Grid>
-            </Grid>
+            {
+              rowData.status === 'Disbursed' || rowData.status === 'Declined' ? (
+                <>
+                  <Grid container spacing={3}>
+                    <Grid item md={6}>
+                      <Box>
+                        <ViewData title="Dealership ID" value={rowData?.dealership_id} />
+                        <ViewData title='Amount' value={rowData?.amount} />
+                        <ViewData title='Remarks' value={rowData?.remarks} />
+                      </Box>
+                    </Grid>
+                    <Grid item md={6}>
+                      <Box>
+                        <ViewData title="Request ID" value={rowData?.request_id} />
+                        <ViewData title="Status" value={rowData?.status} />
+                      </Box>
+                    </Grid>
+                  </Grid>
+                  <Grid container spacing={3}>
+                    <Typography variant="h6" style={{ margin: 12 }}>Payment Reference</Typography>
+                    <Grid item md={4}>
+                    </Grid>
+                  </Grid>
+                </>
+              ) : (
+                <>
+                  <Grid container spacing={2}>
+                    <Grid item md={8} style={{ display: 'flex', flexDirection: 'column' }}>
+                      <label style={{ marginBottom: 8 }}>Remarks</label>
+                      <CreatableSelect
+                        name='remarks'
+                        isClearable
+                        onChange={handleRemarkChange}
+                        options={remarks}
+                      />
+                      <FormHelperText style={{ color: '#FF5C58', marginLeft: 5 }}>{!value ? 'Need a Remark to Proceed!' : null}</FormHelperText>
+                    </Grid>
+                  </Grid>
+                </>
+              )
+            }
+
           </Box>
         </div>
       </div>
@@ -198,32 +222,41 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
         <Divider />
         <div className={classes.actionButtonsWrapper}>
           <div>
-            <Button variant='outlined' onClick={callback}>
+            <Button
+              variant='outlined'
+              onClick={callback}
+              startIcon={<NavigateBeforeRoundedIcon />}
+            >
               Back
             </Button>
           </div>
-          <div>
-            <Button
-              variant='contained'
-              type='submit'
-                onClick={declineSubmit}
-              className={clsx(classes.btn, classes.declineButton)}
-            >
-              Decline
-            </Button>
-            <Button
-              variant='contained'
-              type='submit'
-              color='primary'
-                onClick={disburseSubmit}
-              className={clsx(classes.btn, classes.editButton)}
-            >
-              Disburse
-            </Button>
-          </div>
+          {
+            rowData.status == '-' && (
+              <div>
+                <Button
+                  variant='contained'
+                  type='submit'
+                  onClick={declineSubmit}
+                  className={clsx(classes.btn, classes.declineButton)}
+                >
+                  Decline
+                </Button>
+                <Button
+                  variant='contained'
+                  type='submit'
+                  color='primary'
+                  onClick={disburseSubmit}
+                  className={clsx(classes.btn, classes.editButton)}
+                >
+                  Disburse
+                </Button>
+              </div>
+            )
+          }
+
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

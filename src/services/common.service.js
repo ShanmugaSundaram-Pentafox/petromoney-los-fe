@@ -488,7 +488,7 @@ export const deleteState = (data, id) => {
 
 export const getDealershipForSearch = (id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`dealership/search?dealership=${id}`)
+    apiCall(`dealership/search?status=disbursed&dealership=${id}`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data);

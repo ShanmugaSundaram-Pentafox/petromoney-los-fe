@@ -212,6 +212,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
+                  className={classes.number}
                   labelText="Area of fuel station (in Sq. ft)"
                   name="fuel_station_area"
                   value={values.fuel_station_area}
@@ -223,7 +224,6 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               <Grid item md={6}>
                 <TextInput
                   className={classes.number}
-                  inputProps={{ className: classes.input }}
                   type='number'
                   {...inputProps}
                   labelText="Electricity units (per month)"
@@ -238,6 +238,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                 <TextInput
                   {...inputProps}
                   money
+                  className={classes.number}
                   labelText="Electricity bill per month"
                   name="electricity_bill_month"
                   value={values.electricity_bill_month}
@@ -250,6 +251,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                 <TextInput
                   {...inputProps}
                   money
+                  className={classes.number}
                   labelText="Insurance premium for pump"
                   name="insurance_pump"
                   value={values.insurance_pump}
@@ -262,6 +264,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                 <TextInput
                   {...inputProps}
                   money
+                  className={classes.number}
                   labelText="Total Insurance premium"
                   name="insurance_all"
                   value={values.insurance_all}
@@ -273,6 +276,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
+                  className={classes.number}
                   labelText="Monthly average HSD sale(in KL)"
                   name="monthly_avg_sale_hsd"
                   value={values.monthly_avg_sale_hsd}
@@ -284,6 +288,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
+                  className={classes.number}
                   labelText="Monthly average MS sale(in KL)"
                   name="monthly_avg_sale_ms"
                   value={values.monthly_avg_sale_ms}
@@ -295,6 +300,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
+                  className={classes.number}
                   labelText="Monthly average LPG sale(in KL)"
                   name="monthly_avg_sale_lpg"
                   value={values.monthly_avg_sale_lpg}
@@ -306,6 +312,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
+                  className={classes.number}
                   labelText="LPG count"
                   name="lpg_count"
                   value={values.lpg_count}
@@ -332,6 +339,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
+                  className={classes.number}
                   money
                   labelText="Credit sales per month"
                   name="credit_sales_month"
@@ -344,6 +352,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
+                  className={classes.number}
                   labelText="Average realization period"
                   name="avg_realization_period"
                   value={values.avg_realization_period}
@@ -355,6 +364,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
+                  className={classes.number}
                   money
                   labelText="Outstanding any given time"
                   name="credit_outstanding"

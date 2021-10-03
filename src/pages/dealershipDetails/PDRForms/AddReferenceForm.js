@@ -101,6 +101,12 @@ const useStyles = makeStyles((theme) => ({
   typography: {
     marginTop: 12,
     textAlign: 'center'
+  },
+  input: {
+    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0,
+    }
   }
 }))
 
@@ -122,7 +128,7 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
       mobile: Yup.string().nullable('Please enter dealership mobile number').required('Please enter dealership mobile number'),
     }),
     onSubmit: values => {
-      const data = { ...values, user_id: 1, name: values.name.toUpperCase() }
+      const data = { ...values, name: values.name.toUpperCase() }
       if (editRow) {
         updateReferenceById(data, dealer_id)
           .then(res => {
@@ -244,9 +250,11 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
                       {...inputProps}
                       labelText="Dealer mobile"
                       name="mobile"
+                      type='number'
                       value={values.mobile}
                       error={errors.mobile}
                       helperText={errors.mobile}
+                      inputProps={{ className: classes.input }}
                     />
                   </Grid>
                   <Grid item md={6}>

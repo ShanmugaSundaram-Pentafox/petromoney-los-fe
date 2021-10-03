@@ -162,7 +162,7 @@ const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
                     name="business_type"
                     defaultValue={values.business_type}
                     error={errors.business_type}
-                    helperText={errors.business_typeF}
+                    helperText={errors.business_type}
                   >
                     <option value="">Choose type</option>
                     {
@@ -190,7 +190,7 @@ const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
                     error={errors.business_age}
                     helperText={errors.business_age}
                     className={classes.number}
-                    inputProps={{className: classes.input}}
+                    inputProps={{ className: classes.input }}
                     type='number'
                   />
                 </Grid>
@@ -204,7 +204,7 @@ const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
                     error={errors.cur_fy_income}
                     helperText={errors.cur_fy_income}
                     className={classes.number}
-                    inputProps={{className: classes.input}}
+                    inputProps={{ className: classes.input }}
                     type='number'
                   />
                 </Grid>
@@ -212,11 +212,13 @@ const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
                   <TextInput
                     {...inputProps}
                     money
+                    type='number'
                     labelText="FY Turnover"
                     name="cur_fy_turnover"
                     value={values.cur_fy_turnover}
                     error={errors.cur_fy_turnover}
                     helperText={errors.cur_fy_turnover}
+                    inputProps={{ className: classes.input }}
                   />
                 </Grid>
                 <Grid item md={6}>
@@ -225,9 +227,11 @@ const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
                     money
                     labelText="FY Profit"
                     name="cur_fy_profit_loss"
+                    type='number'
                     value={values.cur_fy_profit_loss}
                     error={errors.cur_fy_profit_loss}
                     helperText={errors.cur_fy_profit_loss}
+                    inputProps={{className: classes.input}}
                   />
                 </Grid>
               </Grid>

@@ -126,23 +126,15 @@ const CreditReload = ({ currentUser }) => {
         </Button>
       );
     },
-    onRowClick: (rowData) => {
-      getCreditReportById(rowData[0])
-        .then((data) => {
-          let d = [];
-          data.forEach((item, i) => {
-            d.push({
-              ...item,
-              payment_proof_attachment: typeof (item.payment_proof_attachment) === "string" ? JSON.parse(item.payment_proof_attachment) : (item.payment_proof_attachment || [])
-            })
-          })
-          setRowData(d[0])
-          setStatusModal(true)
-        })
-        .catch((e) => {
-          console.log(e);
-        })
-    }
+    onRowClick: (rowData, { dataIndex }) => {
+      let d = [];
+      d.push({
+        ...tableData[dataIndex],
+        payment_proof_attachment: typeof (tableData[dataIndex].payment_proof_attachment) === "string" ? JSON.parse(tableData[dataIndex].payment_proof_attachment) : (tableData[dataIndex].payment_proof_attachment || [])
+      })
+      setRowData(d[0])
+      setStatusModal(true)
+    },
   };
 
   return (

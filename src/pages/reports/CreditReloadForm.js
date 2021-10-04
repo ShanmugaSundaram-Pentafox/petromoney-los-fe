@@ -235,7 +235,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                             values?.proof_1_file ? (
                               <img src={URL.createObjectURL(values?.proof_1_file)} height="100%" width="100%" className={classes.image} />
                             ) : (
-                              <label style={{ fontSize: 32, color: 'grey' }}>+</label>
+                              <label for='proof1' style={{ fontSize: 32, color: 'grey' }}>+</label>
                             )
                           }
                         </div>
@@ -257,7 +257,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                             values?.proof_2_file ? (
                               <img src={URL.createObjectURL(values?.proof_2_file)} height="100%" width="100%" className={classes.image} />
                             ) : (
-                              <label style={{ fontSize: 32, color: 'grey' }}>+</label>
+                              <label for='proof2' style={{ fontSize: 32, color: 'grey' }}>+</label>
                             )
                           }
                         </div>
@@ -279,7 +279,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                             values?.proof_3_file ? (
                               <img src={URL.createObjectURL(values?.proof_3_file)} height="100%" width="100%" className={classes.image} />
                             ) : (
-                              <label style={{ fontSize: 32, color: 'grey' }}>+</label>
+                              <label for='proof3' style={{ fontSize: 32, color: 'grey' }}>+</label>
                             )
                           }
                         </div>

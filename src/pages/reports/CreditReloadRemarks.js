@@ -119,7 +119,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: () => {
-      if (newRemarks) {
+      if (newRemarks || status === 'disburse') {
         if (typeof (newRemarks) === 'number') {
           if (status === 'decline') {
             const submitData = { 'remarks_id': newRemarks, 'is_status': 0 }
@@ -177,58 +177,57 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
           <Box>
+            <>
+              <Grid container spacing={3}>
+                <Grid item md={6}>
+                  <Box>
+                    <ViewData title="Dealership ID" value={rowData?.dealership_id} />
+                    <ViewData title='Amount' value={rowData?.amount} />
+                    <ViewData title='Remarks' value={rowData?.remarks} />
+                  </Box>
+                </Grid>
+                <Grid item md={6}>
+                  <Box>
+                    <ViewData title="Request ID" value={rowData?.request_id} />
+                    <ViewData title="Status" value={rowData?.status} />
+                  </Box>
+                </Grid>
+              </Grid>
+              <Grid container spacing={3}>
+                <Grid item md={12}>
+                  <Typography variant="h6">Payment Reference</Typography>
+                </Grid>
+                <Grid item md={4}>
+                  {
+                    rowData?.payment_proof_attachment?.proof_1_url && (
+                      <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_1_url, type: rowData?.payment_proof_attachment.proof_1_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <img src={`${rowData?.payment_proof_attachment.proof_1_url}`} height="100%" width="100%" className={classes.image} />
+                      </div>
+                    )
+                  }
+                </Grid>
+                <Grid item md={4}>
+                  {
+                    rowData?.payment_proof_attachment?.proof_2_url && (
+                      <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_2_url, type: rowData?.payment_proof_attachment.proof_2_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <img src={`${rowData?.payment_proof_attachment.proof_2_url}`} height="100%" width="100%" className={classes.image} />
+                      </div>
+                    )
+                  }
+                </Grid>
+                <Grid item md={4}>
+                  {
+                    rowData?.payment_proof_attachment?.proof_3_url && (
+                      <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_3_url, type: rowData?.payment_proof_attachment.proof_3_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <img src={`${rowData?.payment_proof_attachment.proof_3_url}`} height="100%" width="100%" className={classes.image} />
+                      </div>
+                    )
+                  }
+                </Grid>
+              </Grid>
+            </>
             {
-              rowData.status == 'Disbursed' || rowData.status == 'Declined' ? (
-                <>
-                  <Grid container spacing={3}>
-                    <Grid item md={6}>
-                      <Box>
-                        <ViewData title="Dealership ID" value={rowData?.dealership_id} />
-                        <ViewData title='Amount' value={rowData?.amount} />
-                        <ViewData title='Remarks' value={rowData?.remarks} />
-                      </Box>
-                    </Grid>
-                    <Grid item md={6}>
-                      <Box>
-                        <ViewData title="Request ID" value={rowData?.request_id} />
-                        <ViewData title="Status" value={rowData?.status} />
-                      </Box>
-                    </Grid>
-                  </Grid>
-                  <Grid container spacing={3}>
-                    <Grid item md={12}>
-                      <Typography variant="h6">Payment Reference</Typography>
-                    </Grid>
-                    <Grid item md={4}>
-                      {
-                        rowData?.payment_proof_attachment?.proof_1_url && (
-                          <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_1_url, type: rowData?.payment_proof_attachment.proof_1_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                            <img src={`${rowData?.payment_proof_attachment.proof_1_url}`} height="100%" width="100%" className={classes.image} />
-                          </div>
-                        )
-                      }
-                    </Grid>
-                    <Grid item md={4}>
-                      {
-                        rowData?.payment_proof_attachment?.proof_2_url && (
-                          <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_2_url, type: rowData?.payment_proof_attachment.proof_2_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                            <img src={`${rowData?.payment_proof_attachment.proof_2_url}`} height="100%" width="100%" className={classes.image} />
-                          </div>
-                        )
-                      }
-                    </Grid>
-                    <Grid item md={4}>
-                      {
-                        rowData?.payment_proof_attachment?.proof_3_url && (
-                          <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_3_url, type: rowData?.payment_proof_attachment.proof_3_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                            <img src={`${rowData?.payment_proof_attachment.proof_3_url}`} height="100%" width="100%" className={classes.image} />
-                          </div>
-                        )
-                      }
-                    </Grid>
-                  </Grid>
-                </>
-              ) : (
+              rowData.status == 'Disbursed' || rowData.status == 'Declined' ? null : (
                 <>
                   <Grid container spacing={2}>
                     <Grid item md={8} style={{ display: 'flex', flexDirection: 'column' }}>
@@ -245,10 +244,9 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
                 </>
               )
             }
-
           </Box>
-        </div>
-      </div>
+        </div >
+      </div >
       <div className={classes.actionFooter}>
         <Divider />
         <div className={classes.actionButtonsWrapper}>

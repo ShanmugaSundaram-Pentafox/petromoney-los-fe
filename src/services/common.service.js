@@ -8,7 +8,7 @@ export const getBusinessTypes = () => {
     apiCall("business/types")
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data);
+          resolve(data || []);
         } else {
           reject(message);
         }
@@ -24,7 +24,7 @@ export const getOmcList = () => {
     apiCall(`omcs`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data);
+          resolve(data || []);
         } else {
           reject(message);
         }
@@ -109,7 +109,7 @@ export const getAllRegion = () => {
     apiCall(URL.region)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data);
+          resolve(data || []);
 
         } else {
           reject(message);
@@ -257,7 +257,7 @@ export const getStates = () => {
     apiCall("master/states")
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data);
+          resolve(data || []);
         } else {
           reject(message);
         }
@@ -273,7 +273,7 @@ export const getAssetType = () => {
     apiCall("asset")
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data);
+          resolve(data || []);
         } else {
           reject(message);
         }
@@ -289,7 +289,7 @@ export const getActiveStates = () => {
     apiCall("states")
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data);
+          resolve(data || []);
         } else {
           reject(message);
         }
@@ -321,7 +321,7 @@ export const getRegionById = (res) => {
     apiCall(`states/regions/${res}`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data);
+          resolve(data || []);
         } else {
           reject(message);
         }
@@ -603,6 +603,60 @@ export const deleteState = (data, id) => {
     apiCall(`master/states/${id}`, {
       method: 'DELETE',
       body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+export const deleteAsset = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`asset/${id}`, {
+      method: 'DELETE',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+export const deleteBusiness = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`business/types/${id}`, {
+      method: 'DELETE',
+      // body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+export const deleteLoan = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`loan/types/${id}`, {
+      method: 'DELETE',
+      // body: data
     })
       .then(({ status, message }) => {
         if (status === "SUCCESS") {

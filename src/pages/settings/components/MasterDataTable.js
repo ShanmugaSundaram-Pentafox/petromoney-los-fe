@@ -26,6 +26,9 @@ import {
   addOmcs,
   addRegion,
   addState,
+  deleteAsset,
+  deleteBusiness,
+  deleteLoan,
   deleteOmcs,
   deleteRegion,
   deleteState,
@@ -132,8 +135,8 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
     setOpenRegionForm(false);
   };
 
-  const filteredData = data.filter((item) =>
-    item.name.toUpperCase().includes(value?.toUpperCase())
+  const filteredData = data?.filter((item) =>
+    item.name?.toUpperCase().includes(value?.toUpperCase())
   );
   const editItem = (item, title) => {
     setRowData(item);
@@ -544,6 +547,84 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
     }
     if(status === 'State'){
       deleteState(rowData, rowData.id)
+      .then((res) => {
+        handleClose()
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
+        setTimeout(() => {
+          window.location.reload(false);
+        }, 1500);
+      })
+      .catch((err) => {
+        console.log(err);
+        enqueueSnackbar('Something went wrong, Please try Again!', {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+      });
+    }
+    if(status === 'Asset Type'){
+      deleteAsset(rowData, rowData.asset_id)
+      .then((res) => {
+        handleClose()
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
+        setTimeout(() => {
+          window.location.reload(false);
+        }, 1500);
+      })
+      .catch((err) => {
+        console.log(err);
+        enqueueSnackbar('Something went wrong, Please try Again!', {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+      });
+    }
+    if(status === 'Loan Type'){
+      deleteLoan(rowData, rowData.id)
+      .then((res) => {
+        handleClose()
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
+        setTimeout(() => {
+          window.location.reload(false);
+        }, 1500);
+      })
+      .catch((err) => {
+        console.log(err);
+        enqueueSnackbar('Something went wrong, Please try Again!', {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+      });
+    }
+    if(status === 'Business Type'){
+      deleteBusiness(rowData, rowData.id)
       .then((res) => {
         handleClose()
         enqueueSnackbar(res, {

@@ -135,7 +135,8 @@ const Login = ({ setCurrentUser }) => {
               variant: 'success',
             });
             setShowOTPState(st => !st)
-            setOtpLogin(false)        
+            setOtpLogin(false)
+            setApiStatus({})      
           } else {
             enqueueSnackbar('Unable to send OTP', {
               anchorOrigin: {
@@ -149,6 +150,7 @@ const Login = ({ setCurrentUser }) => {
         })
         .catch((error) => {
           console.log("error", error)
+          setApiStatus({ type: "ERROR", message: error })
         })
     } else {
       setHelperText(true)

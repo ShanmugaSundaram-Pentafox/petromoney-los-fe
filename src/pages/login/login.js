@@ -62,6 +62,15 @@ const useStyles = makeStyles(() => ({
   },
   form: {
     textAlign: 'center',
+  },
+  resend: {
+    color: '#787A91',
+    cursor: 'pointer',
+    marginTop: 23,
+    '&:hover': {
+      textDecoration: 'underline',
+      color: '#1E88E5'
+    }
   }
 }));
 
@@ -118,7 +127,7 @@ const Login = ({ setCurrentUser }) => {
       getOTP(toString(values.mobile))
         .then((status, message) => {
           if (status === 'SUCCESS') {
-            enqueueSnackbar('OTP Sent Successfully', {
+            enqueueSnackbar(`OTP Sent to ${values.mobile}`, {
               anchorOrigin: {
                 vertical: 'top',
                 horizontal: 'right',
@@ -150,7 +159,7 @@ const Login = ({ setCurrentUser }) => {
     resendOTP(toString(values.mobile))
       .then((status, message) => {
         if (status === 'SUCCESS') {
-          enqueueSnackbar('OTP Sent Successfully', {
+          enqueueSnackbar(`OTP Sent to ${values.mobile}`, {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',
@@ -245,7 +254,7 @@ const Login = ({ setCurrentUser }) => {
                       setFieldValue('otp', undefined)
                       }}>Login with password</label>
                     </div>
-                    {isShowOTP && <label style={{color: '#787A91', cursor: 'pointer', marginTop: 23}} onClick={sendOTP}>Resend OTP</label>}
+                    {isShowOTP && <label className={classes.resend} onClick={sendOTP}>Resend OTP</label>}
                   </div>
                 </>
               ) : (

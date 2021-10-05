@@ -242,50 +242,60 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                       </label>
                     </div>
                   </Grid>
-                  <Grid item md={3}>
-                    <div>
-                      <input
-                        type='file'
-                        name='file'
-                        id='proof2'
-                        className={classes.inputFile}
-                        onChange={(e) => { onChangeHandler(e, 'proof2') }}
-                      />
-                      <label for='proof2'>
-                        <div style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                          {
-                            values?.proof_2_file ? (
-                              <img src={URL.createObjectURL(values?.proof_2_file)} height="100%" width="100%" className={classes.image} />
-                            ) : (
-                              <label for='proof2' style={{ fontSize: 32, color: 'grey' }}>+</label>
-                            )
-                          }
-                        </div>
-                      </label>
-                    </div>
-                  </Grid>
-                  <Grid item md={3}>
-                    <div>
-                      <input
-                        type='file'
-                        name='file'
-                        id='proof3'
-                        className={classes.inputFile}
-                        onChange={(e) => { onChangeHandler(e, 'proof3') }}
-                      />
-                      <label for='proof3'>
-                        <div style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                          {
-                            values?.proof_3_file ? (
-                              <img src={URL.createObjectURL(values?.proof_3_file)} height="100%" width="100%" className={classes.image} />
-                            ) : (
-                              <label for='proof3' style={{ fontSize: 32, color: 'grey' }}>+</label>
-                            )
-                          }
-                        </div>
-                      </label>
-                    </div>
-                  </Grid>
+                  {
+                    values.proof_1_file && (
+                      <>
+                        <Grid item md={3}>
+                          <div>
+                            <input
+                              type='file'
+                              name='file'
+                              id='proof2'
+                              className={classes.inputFile}
+                              onChange={(e) => { onChangeHandler(e, 'proof2') }}
+                            />
+                            <label for='proof2'>
+                              <div style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                {
+                                  values?.proof_2_file ? (
+                                    <img src={URL.createObjectURL(values?.proof_2_file)} height="100%" width="100%" className={classes.image} />
+                                  ) : (
+                                    <label for='proof2' style={{ fontSize: 32, color: 'grey' }}>+</label>
+                                  )
+                                }
+                              </div>
+                            </label>
+                          </div>
+                        </Grid>
+                        {
+                          values.proof_2_file && (
+                            <Grid item md={3}>
+                              <div>
+                                <input
+                                  type='file'
+                                  name='file'
+                                  id='proof3'
+                                  className={classes.inputFile}
+                                  onChange={(e) => { onChangeHandler(e, 'proof3') }}
+                                />
+                                <label for='proof3'>
+                                  <div style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    {
+                                      values?.proof_3_file ? (
+                                        <img src={URL.createObjectURL(values?.proof_3_file)} height="100%" width="100%" className={classes.image} />
+                                      ) : (
+                                        <label for='proof3' style={{ fontSize: 32, color: 'grey' }}>+</label>
+                                      )
+                                    }
+                                  </div>
+                                </label>
+                              </div>
+                            </Grid>
+                          )
+                        }
+                      </>
+                    )
+                  }
                 </Grid>
               </form>
             </Box>

@@ -12,7 +12,9 @@ import { URL } from '../../config/serverUrls';
 import { logger } from '../../config/logger';
 import apiCall from "../../utils/api.util";
 import Alert from "@material-ui/lab/Alert";
-import { getOTP } from "../../services/login.service";
+import { useSnackbar } from 'notistack';
+import { getOTP, resendOTP } from "../../services/login.service";
+import { toString } from "lodash-es";
 
 const useStyles = makeStyles(() => ({
   textFieldStyle: {
@@ -38,7 +40,7 @@ const useStyles = makeStyles(() => ({
     backgroundColor: '#2CAE66',
     borderColor: '#2CAE66',
     boxShadow: 'none',
-    marginTop: '12px',
+    width: '170px',
 
     '&:hover': {
       backgroundColor: '#2CAE66',
@@ -65,44 +67,105 @@ const useStyles = makeStyles(() => ({
 
 const Login = ({ setCurrentUser }) => {
   const classes = useStyles();
+  const [otpLogin, setOtpLogin] = useState(true);
+  const [loginWithOTP, setLoginWithOTP] = useState(true);
   const [isShowOTP, setShowOTPState] = useState(false);
   const [apiStatus, setApiStatus] = useState({});
+  const [helperText, setHelperText] = useState(false)
+  const { enqueueSnackbar } = useSnackbar();
 
-  const { values, errors, handleChange, handleSubmit } = useFormik({
+
+  let validFields = {}
+  if(loginWithOTP){
+    validFields = {
+      otp: Yup.string().nullable().required('Enter OTP')
+    }
+  } else {
+    validFields = {
+      password: Yup.string().nullable().required("Enter password")
+    }
+  }
+
+  const { values, errors, handleChange, handleSubmit, handleReset, setFieldValue } = useFormik({
     initialValues: {},
     validateOnChange: false,
     validationSchema: Yup.object().shape({
       mobile: Yup.number().nullable('Enter mobile number').required("Enter mobile number").test("maxDigits", "Mobile Number must have 10 digits", (number) => String(number).length === 10),
-      // password: Yup.string().nullable('Enter password').required("Enter password"),
-      // otp: Yup.number().required('Please enter OTP').nullable('Enter OTP').test("maxDigits", "OTP must be 4 digits", (number) => String(number).length === 4)
-      otp: Yup.string().nullable().required('Enter OTP')
+      ...validFields
     }),
     onSubmit: values => {
-      apiCall(URL.login, {
-        method: 'POST',
-        body: values
-      })
-        .then(({ status, data, message }) => {
-          // logger(status, data);
-          if (status == 'SUCCESS') {
-            setCurrentUser(data);
-          }
-          setApiStatus({ type: status, message })
+        apiCall(URL.login, {
+          method: 'POST',
+          body: values
         })
-        .catch(e => {
-          logger(e);
-          setApiStatus({ type: "ERROR", message: e?.message })
-        });
+          .then(({ status, data, message }) => {
+            // logger(status, data);
+            if (status == 'SUCCESS') {
+              setCurrentUser(data);
+            }
+            setApiStatus({ type: status, message })
+          })
+          .catch(e => {
+            logger(e);
+            setApiStatus({ type: "ERROR", message: e?.message })
+          });
     }
   });
 
+  const generateOTP = () => {
+    if(values?.mobile){
+      setHelperText(false)
+      getOTP(toString(values.mobile))
+        .then((status, message) => {
+          if (status === 'SUCCESS') {
+            enqueueSnackbar('OTP Sent Successfully', {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'success',
+            });
+            setShowOTPState(st => !st)
+            setOtpLogin(false)        
+          } else {
+            enqueueSnackbar('Unable to send OTP', {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            });
+            console.log("Unable to send OTP")
+          }
+        })
+        .catch((error) => {
+          console.log("error", error)
+        })
+    } else {
+      setHelperText(true)
+    }
+  }
+
   const sendOTP = () => {
-    getOTP(values.mobile)
+    resendOTP(toString(values.mobile))
       .then((status, message) => {
         if (status === 'SUCCESS') {
-          setShowOTPState(st => !st)
+          enqueueSnackbar('OTP Sent Successfully', {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          });
         }
         else {
+          enqueueSnackbar('unable to send OTP', {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          });
           console.log("Unable to send OTP")
         }
       })
@@ -137,7 +200,7 @@ const Login = ({ setCurrentUser }) => {
         <form className={classes.form} onSubmit={handleSubmit}>
           <TextField
             className={classes.number}
-            // inputProps={{ className: classes.input }}
+            inputProps={{ className: classes.input }}
             name="mobile"
             label="Mobile Number"
             type='number'
@@ -145,48 +208,93 @@ const Login = ({ setCurrentUser }) => {
             className={classes.textFieldStyle}
             onChange={handleChange}
             value={values.mobile}
-            error={errors.mobile}
-            helperText={errors.mobile}
+            error={helperText ? 'Enter mobile number' : errors.mobile}
+            helperText={helperText ? 'Enter mobile number' : errors.mobile}
           />
-          {!isShowOTP && <label>Resend OTP</label>}
           {
-            isShowOTP ? (
-              <>
-                <TextField
-                  className={classes.number}
-                  name="otp"
-                  label="OTP"
-                  inputProps={{ className: classes.input }}
-                  type="number"
-                  onChange={handleChange}
-                  fullWidth
-                  value={values.otp}
-                  error={errors.otp}
-                  helperText={errors.otp}
-                  className={classes.textFieldStyle}
-                />
-                <Button
-                  variant="contained"
-                  size="medium"
-                  color="primary"
-                  className={classes.buttonStyle}
-                  // onClick={sendOTP}
-                  type="submit"
-                >
-                  Login
-                </Button>
-              </>
+            loginWithOTP ? (
+              isShowOTP ? (
+                <>
+                  <TextField
+                    className={classes.number}
+                    name="otp"
+                    label="OTP"
+                    inputProps={{ className: classes.input }}
+                    type="number"
+                    onChange={handleChange}
+                    fullWidth
+                    value={values.otp}
+                    error={errors.otp}
+                    helperText={errors.otp}
+                    className={classes.textFieldStyle}
+                  />
+                  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', alignItems: 'flex-start'}}>
+                    <div style={{display: 'flex', flexDirection: 'column',}}>
+                      <Button
+                        variant="contained"
+                        size="medium"
+                        color="primary"
+                        className={classes.buttonStyle}
+                        type="submit"
+                      >
+                        Login
+                      </Button>
+                      <label style={{color: '#1E88E5', cursor: 'pointer', marginTop: 25, fontSize: '1rem'}} onClick={() => {
+                      setLoginWithOTP(false)
+                      setOtpLogin(false)
+                      setFieldValue('otp', undefined)
+                      }}>Login with password</label>
+                    </div>
+                    {isShowOTP && <label style={{color: '#787A91', cursor: 'pointer', marginTop: 23}} onClick={sendOTP}>Resend OTP</label>}
+                  </div>
+                </>
+              ) : (
+                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
+                  <Button
+                    variant="contained"
+                    size="medium"
+                    color="primary"
+                    className={classes.buttonStyle}
+                    onClick={generateOTP}
+                  >
+                    Send OTP
+                  </Button>
+                  <label style={{color: '#1E88E5', cursor: 'pointer', marginTop: 25, fontSize: '1rem'}} onClick={() => {
+                    setLoginWithOTP(false)
+                    setOtpLogin(false)
+                    setFieldValue('otp', undefined)
+                    }}>Login with password</label>
+                </div>
+              )
             ) : (
               <>
-                <Button
-                  variant="contained"
-                  size="medium"
-                  color="primary"
-                  className={classes.buttonStyle}
-                  onClick={sendOTP}
-                >
-                  Send OTP
-                </Button>
+                <TextField
+                  name="password"
+                  label="Password"
+                  type="password"
+                  fullWidth
+                  className={classes.textFieldStyle}
+                  onChange={handleChange}
+                  value={values.password}
+                  error={errors.password}
+                  helperText={errors.password}
+                />
+                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
+                  <Button
+                    variant="contained"
+                    size="medium"
+                    color="primary"
+                    className={classes.buttonStyle}
+                    type="submit"
+                  >
+                    Login
+                  </Button>
+                  <label style={{color: '#1E88E5', cursor: 'pointer', marginTop: 25, fontSize: '1rem'}} onClick={() => {
+                    setLoginWithOTP(true)
+                    setOtpLogin(true)
+                    setFieldValue('password', undefined)
+                    }}>Login with OTP</label>
+                </div>
               </>
             )
           }

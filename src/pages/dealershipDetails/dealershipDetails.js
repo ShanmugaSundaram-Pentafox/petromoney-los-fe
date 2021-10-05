@@ -32,6 +32,15 @@ import DealershipTransport from "./components/DealershipTransport";
 import FleetOperatorsDetails from "./components/FleetOperatorsDetails";
 import styled from 'styled-components';
 import PersonalDiscussionReport from "./components/PDReport";
+import { useHistory } from "react-router-dom";
+import { toInteger } from "lodash-es";
+import {
+  BrowserRouter as Router,
+  Link,
+  Route,
+  useRouteMatch,
+  useParams,
+} from 'react-router-dom'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -84,6 +93,7 @@ const DealershipDetails = ({ currentUser, match }) => {
   const [showSolarForm, setShowSolarForm] = useState();
   const [leegalityModalVisible, setLeegalityModalVisible] = useState(false);
   const [dealerLoanData, setDealerLoanData] = useState();
+  const history = useHistory();
   const {
     url,
     params: { id },
@@ -91,6 +101,7 @@ const DealershipDetails = ({ currentUser, match }) => {
 
   const onChangeTab = (e, newTab) => {
     setActiveTab(newTab);
+    history.replace(`?t=${newTab}`)
   }
 
   const onChangeSolarTab = (e, newTab) => {
@@ -102,6 +113,9 @@ const DealershipDetails = ({ currentUser, match }) => {
   }
 
   useMount(() => {
+    const queryString = window.location.hash;
+    const test = queryString.split('='); 
+    setActiveTab(toInteger(test[1]))
     getDealershipById(id)
       .then((data) => setDealershipData(data))
       .catch((e) => null);
@@ -179,7 +193,7 @@ const DealershipDetails = ({ currentUser, match }) => {
               <Tab label={<InfoBox active={activeTab === 4} number={5} title="Documents" />} {...tabA11yProps(4)} />
               <Tab label={<InfoBox active={activeTab === 5} number={6} title="Transports" />} {...tabA11yProps(5)} />
               <Tab label={<InfoBox active={activeTab === 6} number={7} title="Fleet Operators" />} {...tabA11yProps(6)} />
-              {/* <Tab label={<InfoBox active={activeTab === 7} number={8} title="Personal Discussion Report" />} {...tabA11yProps(7)} /> */}
+              <Tab label={<InfoBox active={activeTab === 7} number={8} title="Personal Discussion Report" />} {...tabA11yProps(7)} />
             </Tabs>
           </Collapse>
           {/* <div>
@@ -238,9 +252,9 @@ const DealershipDetails = ({ currentUser, match }) => {
         <TabPanel activeTab={activeTab} index={6}>
           <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
         </TabPanel>
-        {/* <TabPanel activeTab={activeTab} index={7}>
+        <TabPanel activeTab={activeTab} index={7}>
           <PersonalDiscussionReport id ={id} textAlign="left" currentUser={currentUser} />
-        </TabPanel> */}
+        </TabPanel>
         <SolarEnquiryForm
           dealershipId={id}
           mainApplicant={mainApplicant}

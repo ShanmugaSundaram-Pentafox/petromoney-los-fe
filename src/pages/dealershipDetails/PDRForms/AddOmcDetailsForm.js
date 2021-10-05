@@ -32,6 +32,9 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
+  date: {
+    backgroundColor: 'white',
+  },
   sidePanelFormWrapper: {
     position: 'relative',
     display: 'flex',
@@ -101,8 +104,8 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
     }),
     onSubmit: values => {
 
-      const executed_date = executedDate ? format(new Date(executedDate), 'yyyy-MM-dd') : values.agreement_executed_on;
-      const valid_date = validDate ? format(new Date(validDate), 'yyyy-MM-dd') : values.agreement_valid_till;
+      const executed_date = executedDate ? format(new Date(executedDate), 'dd-MM-yyyy') : values.agreement_executed_on;
+      const valid_date = validDate ? format(new Date(validDate), 'dd-MM-yyyy') : values.agreement_valid_till;
       const date = { ...values, agreement_executed_on: executed_date, agreement_valid_till: valid_date };
       const data = new FormData();
       Object.keys(date).forEach((key) => {
@@ -197,6 +200,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                   <label className="input-label">Dealership agreement executed on</label>
                   <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <KeyboardDatePicker
+                      className={classes.date}
                       variant='inline'
                       inputVariant='outlined'
                       format='dd-MM-yyyy'
@@ -227,6 +231,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                   <label className="input-label">Dealership agreement valid till</label>
                   <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <KeyboardDatePicker
+                      className={classes.date}
                       hideTabs={true}
                       variant='inline'
                       inputVariant='outlined'

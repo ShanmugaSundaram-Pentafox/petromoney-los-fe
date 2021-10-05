@@ -20,6 +20,8 @@ import DealerEditForm from './DealerEditForm';
 import { useSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
 import { format, parse } from 'date-fns';
+import { compareObject } from '../../../utils/compareObject.util';
+
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -198,9 +200,16 @@ const DealerEditSideWrapper = ({
       setLoading(true);
       const dob = selectedDate ? format(new Date(selectedDate), "dd-MM-yyyy") : values.dob
       const date_values = { ...values, dob: dob, pan: values.pan.toUpperCase(), is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0 };
-      const data = new FormData();
-      Object.keys(date_values).forEach((key) => {
-        data.append(key, date_values[key]);
+      let obj = {};
+      if (values.id) {
+        obj = compareObject(data, date_values)
+      }
+      else {
+        obj = { ...values }
+      }
+      const formData = new FormData();
+      Object.keys(obj).forEach((key) => {
+        formData.append(key, obj[key]);
       });
       const apiURL =
         modelType === 'DEALER'
@@ -212,13 +221,12 @@ const DealerEditSideWrapper = ({
       if (values.id) {
         url += `/${values.id}`;
       }
-
       if (modelType !== 'GUARANTOR') {
-        data.append('user_id', currentUser.id);
+        formData.append('user_id', currentUser.id);
       }
       fetch(`${URL.base}${url}`, {
         method: 'POST',
-        body: data,
+        body: formData,
         headers: {
           Authorization: `Bearer ${currentUser.token}`,
         },
@@ -229,14 +237,18 @@ const DealerEditSideWrapper = ({
         .then((res) => {
           setLoading(false);
           setApicallStatus('success');
-          enqueueSnackbar(res.profile_status, {
+          enqueueSnackbar(res.message, {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',
             },
             variant: 'success',
           });
-          setApiCallMessage(isAdd ? 'Dealer Added' : 'Dealer Updated');
+
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+          // setApiCallMessage(isAdd ? 'Dealer Added' : 'Dealer Updated');
           onClose();
           modelType === 'DEALER'
             ? getDealerApiCall(dealershipId)
@@ -245,15 +257,15 @@ const DealerEditSideWrapper = ({
         .catch((err) => {
           setReadOnly(false);
           setLoading(false);
-          enqueueSnackbar(err.profile_status, {
+          enqueueSnackbar(err.message, {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',
             },
             variant: 'error',
           });
-          setApicallStatus('error');
-          setApiCallMessage('Sorry! Unable to add or Update. Try again later.');
+          // setApicallStatus('error');
+          // setApiCallMessage('Sorry! Unable to add or Update. Try again later.');
           logger(err);
         });
     },

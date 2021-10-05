@@ -196,36 +196,39 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
 
   const onChangeIFSC = e => {
     if (/^[A-Za-z]{4}0[A-Za-z0-9]{6}$/.test(e.target.value)) {
-      fetch(`${URL.ifscApiUrl}${e.target.value}`)
-        .then(res => {
-          return res.json()
-        })
-        .then(data => {
-          if (data.BANK) {
-            setValues({
-              ...values,
-              ifsc: data.IFSC,
-              bank_name: data.BANK,
-              bank_branch: data.BRANCH,
-              bank_city: data.CITY
-            })
-          } else {
-            console.log(data)
-          }
-        })
-        .catch(err => {
-          console.log('GET IFSC DATA ERR >> ', err)
-        })
-    } else {
-      // console.log("value", values)
-      enqueueSnackbar("please enter valid IFSC code", {
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-        variant: 'warning',
-      })
-    }
+        fetch(`${URL.ifscApiUrl}${e.target.value}`)
+          .then(res => {
+            return res.json()
+          })
+          .then(data => {
+            if (data.BANK) {
+              setValues({
+                ...values,
+                ifsc: data.IFSC,
+                bank_name: data.BANK,
+                bank_branch: data.BRANCH,
+                bank_city: data.CITY
+              })
+            } else {
+              console.log(data)
+            }
+          })
+          .catch(err => {
+            console.log('GET IFSC DATA ERR >> ', err)
+          })
+    } 
+    // else 
+    // {
+    //   if (value.length >= 10){
+    //     enqueueSnackbar("please enter valid IFSC code", {
+    //       anchorOrigin: {
+    //         vertical: 'top',
+    //         horizontal: 'right',
+    //       },
+    //       variant: 'warning',
+    //     })
+    //   }
+    // }
   }
   return (
     <div className={classes.sidePanelFormWrapper}>

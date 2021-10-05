@@ -30,6 +30,7 @@ import TransportException from '../pages/transports/components/TransportExceptio
 import BlacklistTable from '../pages/loanspage/BlacklistTable';
 import CreditReload from '../pages/reports/CreditReload';
 import FastTagPassbook from '../pages/transports/components/TransportsPassbook';
+import DealersDueReport from '../pages/reports/DealersDueReport';
 
 const Routes = ({ currentUser }) => {
   return (<>
@@ -40,7 +41,7 @@ const Routes = ({ currentUser }) => {
         path="/"
         component={Dashboard}
         allow={permissionCheck(currentUser?.role_name, rulesList.dashboard)}
-        />
+      />
       <ProtectedRoute allow exact path="/solar" component={Solar} />
       <ProtectedRoute allow exact path="/solar/feasibility" component={Solar} />
       <ProtectedRoute allow exact path="/dealership" component={Dealership} />
@@ -60,6 +61,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/owners/:id?" component={OwnerDetails} />
       <ProtectedRoute allow exact path="/profile" component={Profile} />
       <ProtectedRoute allow exact path="/withheld" component={BlacklistTable} />
+      <ProtectedRoute allow exact path="/reports" component={DealersDueReport} />
 
       <ProtectedRoute
         exact

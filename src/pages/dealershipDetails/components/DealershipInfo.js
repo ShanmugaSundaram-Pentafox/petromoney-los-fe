@@ -18,7 +18,7 @@ import { rulesList } from '../../../config/userRules';
 import Button from '../../../components/CommonComponents/Button/Button';
 import CloudUploadOutlinedIcon from '@material-ui/icons/CloudUploadOutlined';
 import DeleteIcon from '@material-ui/icons/DeleteOutlineOutlined';
-import { getBusinessTypes, getRegionById, getStates, getActiveStates } from '../../../services/common.service';
+import { getBusinessTypes, getRegionById, getStates, getActiveStates, getAllRegion } from '../../../services/common.service';
 import { useSnackbar } from 'notistack';
 import { AvatarCard, ViewData } from '../../../components/CommonComponents/FilePreview';
 import { Typography } from '@material-ui/core';
@@ -26,19 +26,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import FileUpload from '../../../components/FileUpload';
 import { grey } from '@material-ui/core/colors';
 import { deleteDealershipDocument } from '../../../services/dealerships.service';
+import { compareObject } from '../../../utils/compareObject.util';
 
-
-const checkChanges = (originalData, editedData) => {
-  let object = { id: originalData.id };
-  for (const [originalDatakey, originalDatavalue] of Object.entries(originalData)) {
-    for (const [editedDatakey, editedDatavalue] of Object.entries(editedData)) {
-      if (originalDatakey == editedDatakey && originalDatavalue != editedDatavalue) {
-        object[editedDatakey] = editedDatavalue;
-      }
-    }
-  }
-  return object;
-}
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -130,7 +119,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
       };
       let obj = {};
       if (date_values.id) {
-        obj = checkChanges(data, date_values)
+        let commonObj = { id: data.id }
+        obj = compareObject(data, date_values, commonObj)
       }
       const formData = new FormData();
       Object.keys(obj).forEach(key => {
@@ -335,7 +325,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
               <Grid container spacing={2} className={classes.readOnlyWrapper}>
                 <Grid md={4}>
                   <ViewData title='Name' value={values.name} />
-                  <ViewData title='Address' value={values.address + ' - ' + (values.pincode ? values.pincode : '')} />
+                  <ViewData title='Address' value={values?.address ? values.address + '' : '' + (values.pincode ? values.pincode : '')} />
                   <ViewData title='PAN' value={values.pan} />
                 </Grid>
                 <Grid md={4}>
@@ -346,8 +336,11 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                   <ViewData title='GST' value={values.gst} />
                 </Grid>
                 <Grid md={4}>
-                  <ViewData title='Business type' value={businessTypes[values.business_type - 1]?.name} />
-                  <ViewData title='Region' value={regionList[values.region - 1]?.name} />
+                  <ViewData title='Business type' value={businessTypes.find(function (type, index) {
+                    if (type.id == values.business_type)
+                      return true;
+                  })?.name} />
+                  <ViewData title='Region' value={values.region_name} />
                 </Grid>
               </Grid>
               {
@@ -407,7 +400,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     name="address"
                     readOnly={readOnly}
                     disabled={readOnly}
-                    value={values.address}
+                    value={values?.address}
                     error={errors.address}
                     helperText={errors.address}
                     {...fieldProps}
@@ -420,7 +413,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     name="business_type"
                     readOnly={readOnly}
                     disabled={readOnly}
-                    defaultValue={values.business_type}
+                    defaultValue={values?.business_type}
                     error={errors.business_type}
                     helperText={errors.business_typeF}
                     {...fieldProps}
@@ -437,8 +430,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     name="gst"
                     readOnly={readOnly}
                     // disabled={readOnly}
-                    defaultValue={values.gst?.toUpperCase()}
-                    value={values.gst?.toUpperCase()}
+                    // defaultValue={values?.gst?.toUpperCase()}
+                    value={values?.gst?.toUpperCase()}
                     error={errors.gst}
                     helperText={errors.gst}
                     {...fieldProps}
@@ -478,8 +471,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     name="pan"
                     readOnly={readOnly}
                     // disabled={readOnly}
-                    defaultValue={values.pan.toUpperCase()}
-                    value={values.pan.toUpperCase()}
+                    // defaultValue={values.pan?.toUpperCase()}
+                    value={values?.pan?.toUpperCase()}
                     error={errors.pan}
                     helperText={errors.pan}
                     {...fieldProps}
@@ -522,7 +515,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     name="state"
                     readOnly={readOnly}
                     disabled={readOnly}
-                    value={values.state}
+                    value={values?.state}
                     error={errors.state}
                     helperText={errors.state}
                     {...fieldProps}
@@ -538,7 +531,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                       select
                       labelText="Region"
                       name="region"
-                      value={values.region}
+                      value={values?.region}
                       readOnly={readOnly}
                       disabled={readOnly}
                       error={errors.region}
@@ -557,7 +550,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     name="district"
                     labelText="District"
                     labelWidth={40}
-                    value={values.district}
+                    value={values?.district}
                     readOnly={readOnly}
                     disabled={readOnly}
                     error={errors.district}
@@ -578,7 +571,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     type='number'
                     name="pincode"
                     readOnly={readOnly}
-                    defaultValue={values.pincode}
+                    defaultValue={values?.pincode}
                     error={errors.pincode}
                     helperText={errors.pincode}
                     {...fieldProps}

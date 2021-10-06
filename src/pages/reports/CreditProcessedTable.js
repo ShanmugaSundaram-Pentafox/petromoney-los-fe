@@ -117,16 +117,24 @@ const CreditProcessedTable = ({ data, currentUser }) => {
           customBodyRender: (value, tableMeta) => {
             if (value === 'Declined') {
               return (
-                <Tooltip title={tableMeta.rowData[7]}>
-                  <div style={{ color: '#FF5C58' }}>{value}</div>
-                </Tooltip>
+                tableMeta?.rowData[9] ? (
+                  <Tooltip title={tableMeta.rowData[9]}>
+                    <div style={{ color: '#FF5C58' }}>{value}</div>
+                  </Tooltip>
+                ) : (
+                  <div style={{ color: '#FF5C58'}}>{value}</div>
+                )
               )
             }
             else if (value === 'Disbursed') {
               return (
-                <Tooltip title={tableMeta.rowData[7]}>
+                tableMeta?.rowData[9] ? (
+                  <Tooltip title={tableMeta.rowData[9]}>
+                    <div>{value}</div>
+                  </Tooltip>
+                ) : (
                   <div>{value}</div>
-                </Tooltip>
+                )
               )
             }
             else
@@ -159,8 +167,8 @@ const CreditProcessedTable = ({ data, currentUser }) => {
       if (cellMeta.colIndex === 0 || cellMeta.colIndex === 1) {
         let d = [];
         d.push({
-          ...tableData[cellMeta.dataIndex],
-          payment_proof_attachment: typeof (tableData[cellMeta.dataIndex].payment_proof_attachment) === "string" ? JSON.parse(tableData[cellMeta.dataIndex].payment_proof_attachment) : (tableData[cellMeta.dataIndex].payment_proof_attachment || [])
+          ...data[cellMeta.dataIndex],
+          payment_proof_attachment: typeof (data[cellMeta.dataIndex].payment_proof_attachment) === "string" ? JSON.parse(data[cellMeta.dataIndex].payment_proof_attachment) : (data[cellMeta.dataIndex].payment_proof_attachment || [])
         })
         setRowData(d[0])
         setStatusModal(true)

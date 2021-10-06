@@ -159,8 +159,8 @@ const CreditNewRequestTable = ({ data, currentUser }) => {
       if (cellMeta.colIndex === 0 || cellMeta.colIndex === 1) {
         let d = [];
         d.push({
-          ...tableData[cellMeta.dataIndex],
-          payment_proof_attachment: typeof (tableData[cellMeta.dataIndex].payment_proof_attachment) === "string" ? JSON.parse(tableData[cellMeta.dataIndex].payment_proof_attachment) : (tableData[cellMeta.dataIndex].payment_proof_attachment || [])
+          ...data[cellMeta.dataIndex],
+          payment_proof_attachment: typeof (data[cellMeta.dataIndex].payment_proof_attachment) === "string" ? JSON.parse(data[cellMeta.dataIndex].payment_proof_attachment) : (data[cellMeta.dataIndex].payment_proof_attachment || [])
         })
         setRowData(d[0])
         setStatusModal(true)

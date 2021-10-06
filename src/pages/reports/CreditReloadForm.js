@@ -16,6 +16,7 @@ import { getDealershipForSearch } from '../../services/common.service';
 import TextInput from '../../components/TextInput/TextInput';
 import { addCreditReport } from '../../services/creditreport.service';
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { green, grey } from '@material-ui/core/colors';
 const useStyles = makeStyles((theme) => ({
   sidePanelFormWrapper: {
@@ -94,6 +95,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
   const [selectedValue, setSelectedValue] = useState();
   const classes = useStyles();
   const [optionsLoading, setOptionsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setFieldValue } = useFormik({
@@ -113,9 +115,12 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
         formData.append(key, d[key]);
       });
       if (selectedValue && accountId) {
+        setLoading(true)
         addCreditReport(formData, currentUser, selectedValue)
           .then(res => {
             if (res.status === 'SUCCESS') {
+              setLoading(false)
+              callback()
               enqueueSnackbar(res.message, {
                 anchorOrigin: {
                   vertical: 'top',
@@ -128,6 +133,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
               }, 1000);
             }
             else {
+              setLoading(false)
               enqueueSnackbar(res.message, {
                 anchorOrigin: {
                   vertical: 'top',
@@ -139,6 +145,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
             }
           })
           .catch(e => {
+            setLoading(false)
             enqueueSnackbar(e.message, {
               anchorOrigin: {
                 vertical: 'top',
@@ -243,7 +250,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                               {
                                 values?.proof_1_file ? (
                                   <>
-                                    <CheckCircleTwoToneIcon style={{ color: green[300] }} />
+                                    <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
                                   </>
                                 ) : (
                                   <label for='proof1' style={{ fontSize: 32, color: 'grey' }}>+</label>
@@ -253,7 +260,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                           </label>
                           {
                             values?.proof_1_file && (
-                              <h6 style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden' }}>{values.proof_1_file?.name}</h6>
+                              <h5 style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden' }}>{values.proof_1_file?.name}</h5>
                             )
                           }
                         </div>
@@ -275,7 +282,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                                     {
                                       values?.proof_2_file ? (
                                         <>
-                                          <CheckCircleTwoToneIcon style={{ color: green[300] }} />
+                                          <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
                                         </>
                                       ) : (
                                         <label for='proof2' style={{ fontSize: 32, color: 'grey' }}>+</label>
@@ -285,7 +292,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                                 </label>
                                 {
                                   values?.proof_2_file && (
-                                    <h6 style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden' }}>{values.proof_2_file?.name}</h6>
+                                    <h5 style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden' }}>{values.proof_2_file?.name}</h5>
                                   )
                                 }
                               </div>
@@ -306,7 +313,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                                         {
                                           values?.proof_3_file ? (
                                             <>
-                                              <CheckCircleTwoToneIcon style={{ color: green[300] }} />
+                                              <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
                                             </>
                                           ) : (
                                             <label for='proof3' style={{ fontSize: 32, color: 'grey' }}>+</label>
@@ -316,7 +323,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                                     </label>
                                     {
                                       values?.proof_3_file && (
-                                        <h6 style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden' }}>{values.proof_3_file?.name}</h6>
+                                        <h5 style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden' }}>{values.proof_3_file?.name}</h5>
                                       )
                                     }
                                   </div>
@@ -343,14 +350,20 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
               </Button>
             </div>
             <div>
-              <Button
-                variant='contained'
-                type='submit'
-                onClick={handleSubmit}
-                className={clsx(classes.btn, classes.editButton)}
-              >
-                Submit
-              </Button>
+              {
+                !loading ? (
+                  <Button
+                    variant='contained'
+                    type='submit'
+                    onClick={handleSubmit}
+                    className={clsx(classes.btn, classes.editButton)}
+                  >
+                    Submit
+                  </Button>
+                ) : (
+                  <CircularProgress size={30} />
+                )
+              }
             </div>
           </div>
         </div>

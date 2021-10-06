@@ -93,6 +93,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
     });
     addCreditReport(formData, currentUser, rowData?.dealership_id)
       .then((res) => {
+        callback()
         enqueueSnackbar(res.message, {
           anchorOrigin: {
             vertical: 'top',
@@ -197,33 +198,43 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
                 <Grid item md={12}>
                   <Typography variant="h6">Payment Reference</Typography>
                 </Grid>
-                <Grid item md={4}>
-                  {
-                    rowData?.payment_proof_attachment?.proof_1_url && (
-                      <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_1_url, type: rowData?.payment_proof_attachment.proof_1_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <img src={`${rowData?.payment_proof_attachment.proof_1_url}`} height="100%" width="100%" className={classes.image} />
-                      </div>
-                    )
-                  }
-                </Grid>
-                <Grid item md={4}>
-                  {
-                    rowData?.payment_proof_attachment?.proof_2_url && (
-                      <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_2_url, type: rowData?.payment_proof_attachment.proof_2_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <img src={`${rowData?.payment_proof_attachment.proof_2_url}`} height="100%" width="100%" className={classes.image} />
-                      </div>
-                    )
-                  }
-                </Grid>
-                <Grid item md={4}>
-                  {
-                    rowData?.payment_proof_attachment?.proof_3_url && (
-                      <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_3_url, type: rowData?.payment_proof_attachment.proof_3_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <img src={`${rowData?.payment_proof_attachment.proof_3_url}`} height="100%" width="100%" className={classes.image} />
-                      </div>
-                    )
-                  }
-                </Grid>
+                {
+                  !rowData?.payment_proof_attachment?.proof_1_url ? (
+                    <div style={{display: 'flex', width: '100%', justifyContent: 'center', marginTop: 5}}>
+                      <Typography variant='h7'>No Attachments Found</Typography>
+                    </div>
+                  ) : (
+                    <>
+                    <Grid item md={4}>
+                      {
+                        rowData?.payment_proof_attachment?.proof_1_url && (
+                          <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_1_url, type: rowData?.payment_proof_attachment.proof_1_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <img src={`${rowData?.payment_proof_attachment.proof_1_url}`} height="100%" width="100%" className={classes.image} />
+                          </div>
+                        )
+                      }
+                    </Grid>
+                    <Grid item md={4}>
+                      {
+                        rowData?.payment_proof_attachment?.proof_2_url && (
+                          <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_2_url, type: rowData?.payment_proof_attachment.proof_2_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <img src={`${rowData?.payment_proof_attachment.proof_2_url}`} height="100%" width="100%" className={classes.image} />
+                          </div>
+                        )
+                      }
+                    </Grid>
+                    <Grid item md={4}>
+                      {
+                        rowData?.payment_proof_attachment?.proof_3_url && (
+                          <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_3_url, type: rowData?.payment_proof_attachment.proof_3_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <img src={`${rowData?.payment_proof_attachment.proof_3_url}`} height="100%" width="100%" className={classes.image} />
+                          </div>
+                        )
+                      }
+                    </Grid>
+                    </>
+                  )
+                }
               </Grid>
             </>
             {

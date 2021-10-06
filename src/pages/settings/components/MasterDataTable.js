@@ -35,15 +35,32 @@ import CheckCircleTwoTone from '@material-ui/icons/CheckCircleTwoTone';
 import { useMount } from 'react-use';
 
 const useStyles = makeStyles({
+  '@global': {
+    '*::-webkit-scrollbar': {
+      backgroundColor: '#fff',
+      width: '16px',
+    },
+    '*::-webkit-scrollbar-track': {
+      backgroundColor: '#fff'
+    },
+    '*::-webkit-scrollbar-thumb': {
+      backgroundColor: '#babac0',
+      borderRadius: '16px',
+      border: '4px solid #fff'
+    }
+  },
+
   root: {
-    width: '31%',
-    minWidth: 300,
+    // width: '99%',
+    minWidth: 400,
+    // width: '100%',
     display: 'flex',
     flexDirection: 'column',
     padding: 10,
     margin: 10,
-    maxHeight: 500,
+    maxHeight: '94%',
     borderRadius: 5,
+
   },
   rooting: {
     position: 'absolute',

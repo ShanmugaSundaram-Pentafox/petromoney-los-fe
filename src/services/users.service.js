@@ -236,9 +236,10 @@ export const passReset = (password, userId) => {
   });
 }
 
-export const getCreditReport = () => {
+export const getCreditReport = (tab) => {
+  const apiUrl = `credit/reload?processed=${tab}`
   return new Promise((resolve, reject) => {
-    apiCall(`credit/reload`)
+    apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data || [])

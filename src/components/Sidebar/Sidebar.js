@@ -20,6 +20,7 @@ import { permissionCheck } from '../UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import ListIcon from '@material-ui/icons/List';
 import SettingsIcon from '@material-ui/icons/Settings';
+import CachedIcon from '@material-ui/icons/Cached';
 // import { ExitToApp } from '@material-ui/icons';
 // import { connect } from 'formik';
 const packageJSON = require('../../../package.json');
@@ -105,6 +106,11 @@ const Sidebar = props => {
       title: 'Loans',
       href: '/loans',
       icon: <AccountBoxIcon />
+    },
+    {
+      title: 'Credit Report',
+      href: '/reports/credit/reload',
+      icon: <CachedIcon />
     },
     {
       title: 'Dealerships',

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
-import { Button, Drawer, Typography } from '@material-ui/core';
+import { Button, Drawer, TableCell, TableRow, Typography } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -61,7 +61,7 @@ const useStyles = makeStyles({
 
   root: {
     // width: '99%',
-    minWidth: 400,
+    minWidth: 500,
     // width: '100%',
     display: 'flex',
     flexDirection: 'column',
@@ -119,7 +119,7 @@ const useStyles = makeStyles({
   },
 });
 
-function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
+function Contain({ title, data, label, loading, setStateBtn, regionForm, assetForm }) {
   const classes = useStyles();
   const [value, setValue] = useState();
   const [openEditForm, setOpenEditForm] = useState(false);
@@ -132,6 +132,8 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
   const [openDeactiveForm, setOpenDeactiveForm] = useState(false);
   const [deactivateId, setDeactivateId] = useState();
   const [openRegionForm, setOpenRegionForm] = useState();
+  const [openAssetForm, setOpenAssetForm] = useState();
+  const [addNewRow, setAddNewRow] = useState();
   const [states, setStates] = useState();
   const {enqueueSnackbar} = useSnackbar();
 
@@ -150,6 +152,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
     setOpenActiveForm(false);
     setOpenDeactiveForm(false);
     setOpenRegionForm(false);
+    setOpenAssetForm(false);
   };
 
   const filteredData = data?.filter((item) =>
@@ -677,7 +680,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
           </Typography>
           <Tooltip title={'Add ' + title}>
             <Button variant='contained' color='primary' onClick={() => {
-              !regionForm? setOpenAddForm(true) : setOpenRegionForm(true)
+              !regionForm && !assetForm? setOpenAddForm(true) : !assetForm? setOpenRegionForm(true) : setOpenAssetForm(true)
               setStatus(title)
             }}>
               ADD
@@ -1024,6 +1027,60 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm }) {
             Save
           </Button>
         </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={openAssetForm}
+        onClose={handleClose}
+      >
+        <DialogTitle>New {title}</DialogTitle>
+        <DialogContent style={{width: 400}}>
+          <Grid container spacing={2}>
+            <Grid item md={12}>
+              <label>{title}</label>
+              <TextField 
+                id='add'
+                autoFocus
+                // style={{ marginTop: 8 }}
+                variant='outlined'
+                fullWidth
+              />
+            </Grid>
+            <Grid item md={5}>
+              <label>Label</label>
+              <TextField 
+                // id='add'
+                autoFocus
+                // style={{ marginTop: 8 }}
+                variant='outlined'
+              />
+            </Grid>
+            <Grid item md={5}>
+              <label>Type</label>
+              <TextInput
+                select
+                // id='add'
+                autoFocus
+                // style={{ marginTop: 8 }}
+                variant='outlined'
+              >
+                <option key={1} value='string'>String</option>
+                <option key={2} value='number'>Number</option>
+              </TextInput>
+            </Grid>
+            <Grid item md={2} style={{display: 'flex', alignItems: 'center'}}>
+              <Button variant='outlined' size='small' onClick={() => setAddNewRow(true)}>+</Button>
+            </Grid>
+            {
+              addNewRow && (
+                <TableRow key={"new-row"}>
+                  <TableCell scope="row" component="th">
+                  </TableCell>
+                </TableRow>
+              )
+            }
+          </Grid>
+        </DialogContent>
       </Dialog>
       
       <Dialog

@@ -48,6 +48,9 @@ function MasterData() {
   const [openOmcForm, setOpenOmcForm] = useState(false)
   const [openRegionForm, setOpenRegionForm] = useState(false)
   const [openStateForm, setOpenStateForm] = useState(false)
+  const [openBusinessForm, setOpenBusinessForm] = useState(false)
+  const [openLoanForm, setOpenLoanForm] = useState(false)
+  const [openAssetForm, setOpenAssetForm] = useState(false)
   const [omc, setOmc] = useState([]);
   const [region, setRegion] = useState([]);
   const [state, setState] = useState([]);
@@ -161,7 +164,7 @@ function MasterData() {
             </Grid>
             <Grid item md={2}>
               <Tooltip title="OMC details">
-                <div className={classes.content} onClick={() => setOpenStateForm(true)}>
+                <div className={classes.content} onClick={() => setOpenBusinessForm(true)}>
                   <BunkIcon width={40} className={classes.icons} />
                   <Typography variant="h5" align='center' className={classes.title} >Business</Typography>
                 </div>
@@ -169,7 +172,7 @@ function MasterData() {
             </Grid>
             <Grid item md={2}>
               <Tooltip title="OMC details">
-                <div className={classes.content} onClick={() => setOpenStateForm(true)}>
+                <div className={classes.content} onClick={() => setOpenLoanForm(true)}>
                   <BunkIcon width={40} className={classes.icons} />
                   <Typography variant="h5" align='center' className={classes.title} >Loan</Typography>
                 </div>
@@ -177,7 +180,7 @@ function MasterData() {
             </Grid>
             <Grid item md={2}>
               <Tooltip title="OMC details">
-                <div className={classes.content} onClick={() => setOpenStateForm(true)}>
+                <div className={classes.content} onClick={() => setOpenAssetForm(true)}>
                   <BunkIcon width={40} className={classes.icons} />
                   <Typography variant="h5" align='center' className={classes.title} >Asset</Typography>
                 </div>
@@ -208,6 +211,30 @@ function MasterData() {
           variant="temporary"
         >
           <Contain title={'State'} data={state} label={'name'} setStateBtn={true} regionForm={false}/>
+        </Drawer>
+        <Drawer
+          anchor="right"
+          open={openBusinessForm}
+          onClose={() => setOpenBusinessForm(false)}
+          variant="temporary"
+        >
+          <Contain title={'Business Type'} data={businessType} label={'id_name'} setStateBtn={false} regionForm={false}/>
+        </Drawer>
+        <Drawer
+          anchor="right"
+          open={openAssetForm}
+          onClose={() => setOpenAssetForm(false)}
+          variant="temporary"
+        >
+          <Contain title={'Asset Type'} data={assetType} label={'id_name'} setStateBtn={false} regionForm={false} assetForm={true}/>
+        </Drawer>
+        <Drawer
+          anchor="right"
+          open={openLoanForm}
+          onClose={() => setOpenLoanForm(false)}
+          variant="temporary"
+        >
+          <Contain title={'Loan Type'} data={loanType} label={'id_name'} setStateBtn={false} regionForm={false}/>
         </Drawer>
       </Paper>
 

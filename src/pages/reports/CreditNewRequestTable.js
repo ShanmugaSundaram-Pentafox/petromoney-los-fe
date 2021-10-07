@@ -131,7 +131,8 @@ const CreditNewRequestTable = ({ data, currentUser }) => {
             }
             else
               return value
-          }
+          },
+          filter: false
         }
       },
       { name: 'remarks', options: { display: 'excluded', filter: false } },

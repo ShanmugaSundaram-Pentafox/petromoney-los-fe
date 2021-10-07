@@ -241,6 +241,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                             name='file'
                             id='proof1'
                             className={classes.inputFile}
+                            accept="image/jpeg,image/png,application/pdf"
                             onChange={(e) => { onChangeHandler(e, 'proof1') }}
                           />
                           <label for='proof1'>
@@ -274,6 +275,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                                   type='file'
                                   name='file'
                                   id='proof2'
+                                  accept="image/jpeg,image/png,application/pdf"
                                   className={classes.inputFile}
                                   onChange={(e) => { onChangeHandler(e, 'proof2') }}
                                 />
@@ -305,6 +307,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                                       type='file'
                                       name='file'
                                       id='proof3'
+                                      accept="image/jpeg,image/png,application/pdf"
                                       className={classes.inputFile}
                                       onChange={(e) => { onChangeHandler(e, 'proof3') }}
                                     />

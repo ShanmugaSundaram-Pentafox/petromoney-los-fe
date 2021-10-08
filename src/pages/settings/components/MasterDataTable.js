@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
-import { Button, Drawer, TableCell, TableRow, Typography } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -8,17 +8,12 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import TextField from '@material-ui/core/TextField';
 import CloseIcon from '@material-ui/icons/Close';
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import TextInput from '../../../components/TextInput/TextInput';
 import SearchIcon from '@material-ui/icons/Search';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { Tooltip } from '@material-ui/core';
 import { Grid } from '@material-ui/core';
-import Dialog from '@material-ui/core/Dialog';
-import clsx from 'clsx';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import { useSnackbar } from 'notistack';
 
 import {
@@ -44,7 +39,6 @@ import {
 } from '../../../services/common.service';
 import CheckCircleTwoTone from '@material-ui/icons/CheckCircleTwoTone';
 import { useMount } from 'react-use';
-import { handleInputChange } from 'react-select/src/utils';
 
 const useStyles = makeStyles((theme) => ({
   '@global': {
@@ -69,14 +63,11 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: '0 1px 4px -3px #333',
   },
   root: {
-    // width: '99%',
     minWidth: 500,
-    // width: '100%',
     display: 'flex',
     flexDirection: 'column',
     padding: 10,
     margin: 10,
-    // maxHeight: '100%',
     height: '80%',
     borderRadius: 5,
     overflow: 'hidden'
@@ -156,9 +147,36 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 10
   },
   listBtn: {
-    border: '2px solid red',
-    // width: '10%'
-  }
+    marginTop: 18,
+  },
+
+  btns: {
+    width: 25,
+    marginLeft: 10,
+    backgroundColor: 'white',
+    border: '1px solid #C8C6C6',
+    borderRadius: 2,
+    cursor: 'pointer',
+    fontSize: '1rem',
+    '&:hover': {
+      border: '1px solid #212121'
+    }
+  },
+
+  deleteBtn: {
+    width: 25,
+    marginLeft: 10,
+    backgroundColor: 'white',
+    border: '1px solid #FF7878',
+    borderRadius: 2,
+    cursor: 'pointer',
+    color: '#FF5C58',
+    fontSize: '1rem',
+    '&:hover': {
+      border: '1px solid #FF5C58'
+    }
+  },
+
 }));
 
 function Contain({ title, data, label, loading, setStateBtn, regionForm, assetForm, callback }) {
@@ -176,8 +194,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
   const [openRegionForm, setOpenRegionForm] = useState(false);
   const [openAssetForm, setOpenAssetForm] = useState(false);
   const [addNewRow, setAddNewRow] = useState();
-  // const [assetValue, setAssetValue] = useState([{label: '', type: ''}]);
-  // console.log(assetValue);
+  const [assetValue, setAssetValue] = useState([{label: "", type: ""}]);
   const [states, setStates] = useState();
   const {enqueueSnackbar} = useSnackbar();
 
@@ -244,25 +261,24 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
     });
   };
 
-  // const handleAssetValue = (event) => {
-  //   console.log(event);
-  //   // setAssetValue(...assetValue, {})
-  // }
+  const handleInputChange = (e, index) => {
+    const {id, value} = e.target;
+    // console.log(e.target);
+    const list = [...assetValue];
+    list[index][id] = value;
+    setAssetValue(list)
+  }
 
-  // const handleInputChange = (e, index) => {
-  //   const {name, value} = e.target;
-  //   const list = [...assetValue];
-  //   list[index][name] = value;
-  //   setAssetValue(list)
-  // }
+  const handleRemoveClick = index => {
+    console.log(index);
+    const list = [...assetValue]
+    list.splice(index, 1)
+    setAssetValue(list)
+  }
 
-  // const handleRemoveClick = (i) => {
-  //   console.log('remove click');
-  // }
-
-  // const handleAddClick = () => {
-  //   console.log('add click');
-  // }
+  const handleAddClick = () => {
+    setAssetValue([...assetValue, { label: "", type: "" }]);
+  }
 
   const handleAdd = (event) => {
     setAddData({...AddData, name: event.target.value.toUpperCase()})
@@ -569,7 +585,8 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
       }
       
       if(status === 'Asset Type'){
-        addAssetType(AddData)
+        const assetData = {name: AddData.name, value: assetValue}
+        addAssetType(assetData)
         .then((res) => {
           handleClose()
           enqueueSnackbar(res, {
@@ -763,19 +780,6 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
         <CloseIcon onClick={callback} />
       </Typography>
       <Paper className={classes.root}>
-        {/* <div className={classes.title}>
-          <Typography variant='h5' style={{ marginLeft: 5 }}>
-            {title}
-          </Typography>
-          <Tooltip title={'Add ' + title}>
-            <Button variant='contained' color='primary' onClick={() => {
-              !regionForm && !assetForm? setOpenAddForm(true) : !assetForm? setOpenRegionForm(true) : setOpenAssetForm(true)
-              setStatus(title)
-            }}>
-              ADD
-            </Button>
-          </Tooltip>
-        </div> */}
         <form className={classes.search} noValidate autoComplete='off'>
           <TextField
             id='search'
@@ -810,6 +814,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
                             className={classes.btn}
                             size='small'
                             onClick={() => {
+                              handleClose()
                               setOpenEditForm(true);
                               editItem(item, title);
                             }}
@@ -823,6 +828,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
                             <>
                             <Tooltip title='Delete'>
                           <IconButton className={classes.btn} size='small' onClick={() => {
+                            handleClose()
                             setOpenDeleteForm(true);
                             deleteItem(item, title);
                           }}>
@@ -834,6 +840,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
                                 className={classes.btn}
                                 size='small'
                                 onClick={() => {
+                                  handleClose()
                                   setOpenDeactiveForm(true);
                                   DeactivateItem(item.id)
                                 }}
@@ -846,6 +853,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
                             <>
                             <Tooltip title='Delete'>
                           <IconButton className={classes.btn} size='small' onClick={() => {
+                            handleClose()
                             setOpenDeleteForm(true);
                             deleteItem(item, title);
                           }}>
@@ -887,6 +895,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
                           className={classes.btn}
                           size='small'
                           onClick={() => {
+                            handleClose()
                             setOpenDeleteForm(true);
                             deleteItem(item, title);
                           }}
@@ -917,9 +926,11 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
                       style={{ marginTop: 15 }}
                       onClick={() => {
                         if(title === 'Region'){
+                          handleClose()
                           setOpenRegionForm(true)
                           setStatus(title)
                         } else {
+                          handleClose()
                           setOpenAddForm(true);
                           setStatus(title)
                         }
@@ -949,6 +960,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
                           className={classes.btn}
                           size='small'
                           onClick={() => {
+                            handleClose()
                             setOpenEditForm(true);
                             editItem(item, title);
                           }}
@@ -962,6 +974,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
                             <>
                             <Tooltip title='Delete'>
                           <IconButton className={classes.btn} size='small' onClick={() => {
+                            handleClose()
                             setOpenDeleteForm(true);
                             deleteItem(item, title);
                           }}>
@@ -973,6 +986,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
                                 className={classes.btn}
                                 size='small'
                                 onClick={() => {
+                                  handleClose()
                                   setOpenDeactiveForm(true);
                                   DeactivateItem(item.id)
                                 }}
@@ -985,6 +999,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
                             <>
                             <Tooltip title='Delete'>
                           <IconButton className={classes.btn} size='small' onClick={() => {
+                            handleClose()
                             setOpenDeleteForm(true);
                             deleteItem(item, title);
                           }}>
@@ -1026,6 +1041,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
                           className={classes.btn}
                           size='small'
                           onClick={() => {
+                            handleClose()
                             setOpenDeleteForm(true);
                             deleteItem(item, title);
                           }}
@@ -1050,8 +1066,9 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
       {
         openAddForm && (
           <div className={classes.addForm}>
-            <Grid item md={12}>
-              <label>Add New {title}</label>
+            <Typography variant='h5'>Add {title}</Typography>
+            <Grid item md={12} style={{marginTop: 15}}>
+              <label>{title}</label>
               <TextField 
                 id='add'
                 autoFocus
@@ -1214,7 +1231,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
           </div>
         )
       }
-      {/* {
+      {
         openAssetForm && (
           <div className={classes.addForm}>
             <Typography variant='h5'>Add New {title}</Typography>
@@ -1227,7 +1244,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
                   fullWidth
                   variant='outlined'
                   value={AddData?.name}
-                  onChange={handleChange}
+                  onChange={handleAdd}
                 />
               </Grid>
             </Grid>
@@ -1241,7 +1258,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
                         id='label'
                         fullWidth
                         variant='outlined'
-                        value={x?.label}
+                        // value={x?.label}
                         onChange={e => handleInputChange(e, i)}
                       />
                     </Grid>
@@ -1253,20 +1270,18 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
                         fullWidth
                         variant='outlined'
                         style={{margin: 0}}
-                        value={x?.type}
+                        // value={x?.type}
                         onChange={e => handleInputChange(e, i)}
                       >
+                        <option key={0} value=''>Choose Type...</option>
                         <option key={1} value='string'>String</option>
                         <option key={2} value='number'>Number</option>
                       </TextInput>
                     </Grid>
                     <div className={classes.listBtn}>
-                      {assetValue.length !== 1 && <Button variant='outlined' size='small' >-</Button>}
-                      {assetValue.length - 1 === i && <Button variant='outlined' size='small' >+</Button>}
+                      {assetValue.length !== 1 && <button className={classes.deleteBtn} variant='outlined' size='small' onClick={() => handleRemoveClick(i)}><DeleteOutlineIcon style={{fontSize: 'small', marginTop: 5}} /></button>}
+                      {assetValue.length - 1 === i && <button className={classes.btns} variant='outlined' size='small' onClick={handleAddClick}>+</button>}
                     </div>
-                    <Grid item md={1}>
-                      <Button variant='outlined' size='small' color='primary' style={{marginTop: 14}}><span style={{margin: 0}}>+</span></Button>
-                    </Grid>
                   </Grid>
                 )
               })
@@ -1290,7 +1305,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
             </div>
           </div>
         )
-      } */}
+      }
       <div className={classes.actionFooter}>
           <Divider />
           <div className={classes.actionButtonsWrapper}>
@@ -1304,6 +1319,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
                 variant='contained'
                 type='submit'
                 onClick={() => {
+                  handleClose()
                   !regionForm && !assetForm? setOpenAddForm(true) : !assetForm? setOpenRegionForm(true) : setOpenAssetForm(true)
                   setStatus(title)
                 }}
@@ -1314,242 +1330,6 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
             </div>
           </div>
         </div>
-      {/* <Dialog open={openEditForm} onClose={handleClose} aria-labelledby='edit'>
-        <DialogTitle>Edit {title} Form</DialogTitle>
-        <DialogContent style={{width: 400}}>
-          <TextField
-            id='edit'
-            autoFocus
-            fullWidth
-            variant='outlined'
-            label={title}
-            value={rowData.name}
-            onChange={handleChange}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleSubmit}>Edit</Button>
-        </DialogActions>
-      </Dialog> */}
-
-      {/* <Dialog
-        open={openDeleteForm}
-        onClose={handleClose}
-        aria-labelledby='delete'
-      >
-        <DialogTitle>Delete Form</DialogTitle>
-        <DialogContent style={{width: 400}}>
-          <Typography variant='h7'>
-            Are you sure want to delete <strong>{rowData.name}</strong>?
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button
-            onClick={handleDelete}
-            style={{ color: '#FF4848' }}
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog> */}
-
-      {/* <Dialog
-      open={openAddForm}
-      onClose={handleClose}
-      aria-labelledby='add'
-      >
-        <DialogTitle>Add {title}</DialogTitle>
-        <DialogContent style={{width: 400}}>
-          <Grid item md={12}>
-            <label>{title}</label>
-            <TextField 
-            id='add'
-            autoFocus
-            style={{ marginTop: 8 }}
-            variant='outlined'
-            fullWidth
-            value={AddData?.name}
-            onChange={handleAdd}
-            />
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
-          <Button
-            onClick={submitAdd}
-          >
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog> */}
-
-      {/* <Dialog
-        open={openAssetForm}
-        onClose={handleClose}
-      >
-        <DialogTitle>New {title}</DialogTitle>
-        <DialogContent style={{width: 400}}>
-          <Grid container spacing={2}>
-            <Grid item md={12}>
-              <label>{title}</label>
-              <TextField 
-                id='add'
-                autoFocus
-                // style={{ marginTop: 8 }}
-                variant='outlined'
-                fullWidth
-              />
-            </Grid>
-            <Grid item md={5}>
-              <label>Label</label>
-              <TextField 
-                // id='add'
-                autoFocus
-                // style={{ marginTop: 8 }}
-                variant='outlined'
-              />
-            </Grid>
-            <Grid item md={5}>
-              <label>Type</label>
-              <TextInput
-                select
-                // id='add'
-                autoFocus
-                // style={{ marginTop: 8 }}
-                variant='outlined'
-              >
-                <option key={1} value='string'>String</option>
-                <option key={2} value='number'>Number</option>
-              </TextInput>
-            </Grid>
-            <Grid item md={2} style={{display: 'flex', alignItems: 'center'}}>
-              <Button variant='outlined' size='small' onClick={() => setAddNewRow(true)}>+</Button>
-            </Grid>
-          </Grid>
-            {
-              addNewRow && (
-                <TableRow key={"new-row"}>
-                  <TableCell scope="row" component="th">
-                    <Grid container spacing={2}>
-                      <Grid item md={5}>
-                        <label>Label</label>
-                        <TextField 
-                          // id='add'
-                          autoFocus
-                          // style={{ marginTop: 8 }}
-                          variant='outlined'
-                        />
-                      </Grid>
-                      <Grid item md={5}>
-                        <label>Type</label>
-                        <TextInput
-                          select
-                          // id='add'
-                          autoFocus
-                          // style={{ marginTop: 8 }}
-                          variant='outlined'
-                        >
-                          <option key={1} value='string'>String</option>
-                          <option key={2} value='number'>Number</option>
-                        </TextInput>
-                      </Grid>
-                      <Grid item md={2} style={{display: 'flex', alignItems: 'center'}}>
-                        <Button variant='outlined' size='small' onClick={() => setAddNewRow(true)}>+</Button>
-                      </Grid>
-                    </Grid>
-                  </TableCell>
-                </TableRow>
-              )
-            }
-        </DialogContent>
-      </Dialog> */}
-      
-      {/* <Dialog
-      open={openRegionForm}
-      onClose={handleClose}
-      aria-labelledby='add'
-      >
-        <DialogTitle>Add {title}</DialogTitle>
-        <DialogContent style={{width: 400, display: 'flex', alignItems: 'center' ,justifyContent: 'space-around'}}>
-          <Grid container spacing={2}>
-            <Grid item md={6}>
-            <label style={{ marginBottom: 8 }}>States</label>
-          <TextInput
-          select
-          name='states'
-          variant='outlined'
-          onChange={handleStateAdd}
-          >
-            {
-              states?.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
-            }
-          </TextInput>
-          </Grid>
-          <Grid item md={6}>
-          <label style={{ marginBottom: 8 }}>{title}</label>
-          <TextField 
-          id='add'
-          style={{width: '100%', marginTop: 4}}
-          autoFocus
-          variant='outlined'
-          onChange={handleAdd}
-          />
-          </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
-          <Button
-            onClick={submitAdd}
-          >
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog> */}
-      
-      {/* <Dialog
-      open={openDeactiveForm}
-      onClose={handleClose}
-      aria-labelledby='activate'
-      >
-        <DialogTitle>Deactivate {title}</DialogTitle>
-        <DialogContent style={{width: 400}}>
-          <Typography variant='h7'>
-            Do you want to disable this state
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
-          <Button
-            onClick={() => {
-            const test = {is_active: 0}
-            updateStateById(test, deactivateId)
-              .then((res) => {
-                enqueueSnackbar(res, {
-                  anchorOrigin: {
-                    vertical: 'top',
-                    horizontal: 'right',
-                  },
-                  variant: 'success',
-                })
-                setTimeout(() => {
-                  window.location.reload(false);
-                }, 1500);
-                handleClose();
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-
-            }}
-            style={{ color: '#FF4848' }}
-          >
-            Deactivate
-          </Button>
-        </DialogActions>
-      </Dialog> */}
     </>
   );
 }

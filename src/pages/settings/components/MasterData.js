@@ -8,8 +8,6 @@ import { ReactComponent as BunkIcon } from '../../../icons/bunk.svg';
 import { ReactComponent as AssetIcon } from '../../../icons/assets.svg';
 import { ReactComponent as LoanIcon } from '../../../icons/loan.svg';
 import { ReactComponent as BusinessIcon } from '../../../icons/business.svg';
-// import { ReactComponent as StateIcon } from '../../../icons/map.svg';
-// import { ReactComponent as RegionIcon } from '../../../icons/globe.svg';
 import { ReactComponent as OtherIcon } from '../../../icons/other_icons.svg';
 import { ReactComponent as InfrastructureIcon } from '../../../icons/infrastructure.svg';
 import PublicIcon from '@material-ui/icons/Public';
@@ -30,6 +28,7 @@ const useStyles = makeStyles({
     },
     content: {
       textAlign: 'center',
+      marginBottom: 10,
       borderRadius: 6,
       paddingTop: 16,
       paddingBottom: 12,
@@ -129,20 +128,6 @@ function MasterData() {
 
   return (
     <div>
-      {/* {
-        loading ? (
-          <Skeleton variant="rect" width="100%" height={500}/>
-        ) : (
-          <>
-          <Contain title={'OMCs'} data={omc} label={'name'} setStateBtn={false} regionForm={false}/>
-          <Contain title={'Region'} data={region} label={'region'} setStateBtn={false} regionForm={true}/>
-          <Contain title={'State'} data={state} label={'name'} setStateBtn={true} regionForm={false}/>
-          <Contain title={'Business Type'} data={businessType} label={'id_name'} setStateBtn={false} regionForm={false}/>
-          <Contain title={'Asset Type'} data={assetType} label={'id_name'} setStateBtn={false} regionForm={false}/>
-          <Contain title={'Loan Type'} data={loanType} label={'id_name'} setStateBtn={false} regionForm={false}/>
-          </>
-        )
-      } */}
       <Paper style={{padding: 10}}>
         <div className={classes.header}>
           <Typography variant="h4" className={classes.WrapperTitle} >Table Settings</Typography>

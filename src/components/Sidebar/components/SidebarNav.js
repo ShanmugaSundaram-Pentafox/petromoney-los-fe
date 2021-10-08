@@ -369,22 +369,6 @@ const SidebarNav = props => {
                   {'Loan Overdue'}
                 </Button>
               </ListItem>
-              <ListItem
-                className={classes.itemSub}
-                disableGutters
-                key={'CreditReload'}
-              >
-                <Button
-                  className={classes.button}
-                  activeClassName={classes.active}
-                  component={CustomRouterLink}
-                  to={'/reports/credit/reload'}
-                  exact
-                >
-                  <div className={classes.icon}><CachedIcon /></div>
-                  {'Credit Reload'}
-                </Button>
-              </ListItem>
             </Collapse>
 
           </Fragment>

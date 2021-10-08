@@ -5,6 +5,15 @@ import { getOmcList, getStates, getAllRegion, getBusinessTypes, getLoanTypes, ge
 import { useMount } from 'react-use';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { ReactComponent as BunkIcon } from '../../../icons/bunk.svg';
+import { ReactComponent as AssetIcon } from '../../../icons/assets.svg';
+import { ReactComponent as LoanIcon } from '../../../icons/loan.svg';
+import { ReactComponent as BusinessIcon } from '../../../icons/business.svg';
+// import { ReactComponent as StateIcon } from '../../../icons/map.svg';
+// import { ReactComponent as RegionIcon } from '../../../icons/globe.svg';
+import { ReactComponent as OtherIcon } from '../../../icons/other_icons.svg';
+import { ReactComponent as InfrastructureIcon } from '../../../icons/infrastructure.svg';
+import PublicIcon from '@material-ui/icons/Public';
+import MapIcon from '@material-ui/icons/Map';
 import { Drawer, Grid, Paper, Tooltip, Typography } from '@material-ui/core';
 
 const useStyles = makeStyles({
@@ -16,7 +25,7 @@ const useStyles = makeStyles({
     },
     title: {
       fontSize: 12,
-      paddingLeft: 8,
+      // paddingLeft: 8,
       marginBottom: 8
     },
     content: {
@@ -31,11 +40,13 @@ const useStyles = makeStyles({
       },
     },
     icons: {
-      textAlign: 'center',
+      // textAlign: 'center',
     },
     header: {
       display: 'flex',
-      marginBottom: 20
+      marginBottom: 10,
+      marginLeft: 20,
+      marginTop: 15
     },
     WrapperTitle: {
       fontSize: 18,
@@ -134,14 +145,14 @@ function MasterData() {
       } */}
       <Paper style={{padding: 10}}>
         <div className={classes.header}>
-          <Typography style={{ width: '70%' }} variant="h4" className={classes.WrapperTitle} >Table Settings</Typography>
+          <Typography variant="h4" className={classes.WrapperTitle} >Table Settings</Typography>
         </div>
         <div style={{marginLeft: 20, width: '95%'}}>
           <Grid container spacing={1} className={classes.root}>
             <Grid item md={2}>
               <Tooltip title="OMC details">
                 <div className={classes.content} onClick={() => setOpenOmcForm(true)}>
-                  <BunkIcon width={40} className={classes.icons} />
+                  <BunkIcon width={35} className={classes.icons} />
                   <Typography variant="h5" align='center' className={classes.title} >OMCs</Typography>
                 </div>
               </Tooltip>
@@ -149,23 +160,23 @@ function MasterData() {
             <Grid item md={2}>
               <Tooltip title="OMC details">
                 <div className={classes.content} onClick={() => setOpenRegionForm(true)}>
-                  <BunkIcon width={40} className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title} >Regions</Typography>
+                  <OtherIcon width={35} className={classes.icons} />
+                  <Typography variant="h5" align='center' className={classes.title}>Regions</Typography>
                 </div>
               </Tooltip>
             </Grid>
             <Grid item md={2}>
               <Tooltip title="OMC details">
                 <div className={classes.content} onClick={() => setOpenStateForm(true)}>
-                  <BunkIcon width={40} className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title} >States</Typography>
+                  <InfrastructureIcon width={35} className={classes.icons} />
+                  <Typography variant="h5" align='center' className={classes.title}>States</Typography>
                 </div>
               </Tooltip>
             </Grid>
             <Grid item md={2}>
               <Tooltip title="OMC details">
                 <div className={classes.content} onClick={() => setOpenBusinessForm(true)}>
-                  <BunkIcon width={40} className={classes.icons} />
+                  <BusinessIcon width={35} className={classes.icons} />
                   <Typography variant="h5" align='center' className={classes.title} >Business</Typography>
                 </div>
               </Tooltip>
@@ -173,7 +184,7 @@ function MasterData() {
             <Grid item md={2}>
               <Tooltip title="OMC details">
                 <div className={classes.content} onClick={() => setOpenLoanForm(true)}>
-                  <BunkIcon width={40} className={classes.icons} />
+                  <LoanIcon width={35} className={classes.icons} />
                   <Typography variant="h5" align='center' className={classes.title} >Loan</Typography>
                 </div>
               </Tooltip>
@@ -181,7 +192,7 @@ function MasterData() {
             <Grid item md={2}>
               <Tooltip title="OMC details">
                 <div className={classes.content} onClick={() => setOpenAssetForm(true)}>
-                  <BunkIcon width={40} className={classes.icons} />
+                  <AssetIcon width={35} className={classes.icons} />
                   <Typography variant="h5" align='center' className={classes.title} >Asset</Typography>
                 </div>
               </Tooltip>
@@ -194,7 +205,7 @@ function MasterData() {
           onClose={() => setOpenOmcForm(false)}
           variant="temporary"
         >
-          <Contain title={'OMCs'} data={omc} label={'name'} setStateBtn={false} regionForm={false}/>
+          <Contain title={'OMCs'} data={omc} label={'name'} setStateBtn={false} regionForm={false} callback={() => setOpenOmcForm(false)}/>
         </Drawer>
         <Drawer
           anchor="right"
@@ -202,7 +213,7 @@ function MasterData() {
           onClose={() => setOpenRegionForm(false)}
           variant="temporary"
         >
-          <Contain title={'Region'} data={region} label={'region'} setStateBtn={false} regionForm={true}/>
+          <Contain title={'Region'} data={region} label={'region'} setStateBtn={false} regionForm={true} callback={() => setOpenRegionForm(false)}/>
         </Drawer>
         <Drawer
           anchor="right"
@@ -210,7 +221,7 @@ function MasterData() {
           onClose={() => setOpenStateForm(false)}
           variant="temporary"
         >
-          <Contain title={'State'} data={state} label={'name'} setStateBtn={true} regionForm={false}/>
+          <Contain title={'State'} data={state} label={'name'} setStateBtn={true} regionForm={false} callback={() => setOpenStateForm(false)}/>
         </Drawer>
         <Drawer
           anchor="right"
@@ -218,7 +229,7 @@ function MasterData() {
           onClose={() => setOpenBusinessForm(false)}
           variant="temporary"
         >
-          <Contain title={'Business Type'} data={businessType} label={'id_name'} setStateBtn={false} regionForm={false}/>
+          <Contain title={'Business Type'} data={businessType} label={'id_name'} setStateBtn={false} regionForm={false} callback={() => setOpenBusinessForm(false)}/>
         </Drawer>
         <Drawer
           anchor="right"
@@ -226,7 +237,7 @@ function MasterData() {
           onClose={() => setOpenAssetForm(false)}
           variant="temporary"
         >
-          <Contain title={'Asset Type'} data={assetType} label={'id_name'} setStateBtn={false} regionForm={false} assetForm={true}/>
+          <Contain title={'Asset Type'} data={assetType} label={'id_name'} setStateBtn={false} regionForm={false} assetForm={true} callback={() => setOpenAssetForm(false)}/>
         </Drawer>
         <Drawer
           anchor="right"
@@ -234,7 +245,7 @@ function MasterData() {
           onClose={() => setOpenLoanForm(false)}
           variant="temporary"
         >
-          <Contain title={'Loan Type'} data={loanType} label={'id_name'} setStateBtn={false} regionForm={false}/>
+          <Contain title={'Loan Type'} data={loanType} label={'id_name'} setStateBtn={false} regionForm={false} callback={() => setOpenLoanForm(false)}/>
         </Drawer>
       </Paper>
 

@@ -7,12 +7,14 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import TextField from '@material-ui/core/TextField';
+import CloseIcon from '@material-ui/icons/Close';
 import TextInput from '../../../components/TextInput/TextInput';
 import SearchIcon from '@material-ui/icons/Search';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { Tooltip } from '@material-ui/core';
 import { Grid } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
+import clsx from 'clsx';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
@@ -42,8 +44,9 @@ import {
 } from '../../../services/common.service';
 import CheckCircleTwoTone from '@material-ui/icons/CheckCircleTwoTone';
 import { useMount } from 'react-use';
+import { handleInputChange } from 'react-select/src/utils';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   '@global': {
     '*::-webkit-scrollbar': {
       backgroundColor: '#fff',
@@ -58,7 +61,13 @@ const useStyles = makeStyles({
       border: '4px solid #fff'
     }
   },
-
+  sidePanelTitle: {
+    padding: '24px 16px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    zIndex: 0,
+    boxShadow: '0 1px 4px -3px #333',
+  },
   root: {
     // width: '99%',
     minWidth: 500,
@@ -67,8 +76,10 @@ const useStyles = makeStyles({
     flexDirection: 'column',
     padding: 10,
     margin: 10,
-    maxHeight: '94%',
+    // maxHeight: '100%',
+    height: '80%',
     borderRadius: 5,
+    overflow: 'hidden'
 
   },
   rooting: {
@@ -117,9 +128,40 @@ const useStyles = makeStyles({
     height: 380,
     alignItems: 'center',
   },
-});
+  editButton: {
+    marginRight: '8px',
+    '&.MuiButton-contained': {
+      backgroundColor: theme.palette.success.main,
+      color: theme.palette.white
+    },
+    '&.MuiButton-contained:hover': {
+      backgroundColor: theme.palette.success.dark
+    }
+  },
+  actionButtonsWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '12px 16px'
+  },
+  addForm: {
+    margin: 10,
+    padding: 25,
+    borderRadius: 6,
+    boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px',
+  },
+  formFooter :{
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginTop: 10
+  },
+  listBtn: {
+    border: '2px solid red',
+    // width: '10%'
+  }
+}));
 
-function Contain({ title, data, label, loading, setStateBtn, regionForm, assetForm }) {
+function Contain({ title, data, label, loading, setStateBtn, regionForm, assetForm, callback }) {
   const classes = useStyles();
   const [value, setValue] = useState();
   const [openEditForm, setOpenEditForm] = useState(false);
@@ -131,9 +173,11 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
   const [openActiveForm, setOpenActiveForm] = useState(false);
   const [openDeactiveForm, setOpenDeactiveForm] = useState(false);
   const [deactivateId, setDeactivateId] = useState();
-  const [openRegionForm, setOpenRegionForm] = useState();
-  const [openAssetForm, setOpenAssetForm] = useState();
+  const [openRegionForm, setOpenRegionForm] = useState(false);
+  const [openAssetForm, setOpenAssetForm] = useState(false);
   const [addNewRow, setAddNewRow] = useState();
+  // const [assetValue, setAssetValue] = useState([{label: '', type: ''}]);
+  // console.log(assetValue);
   const [states, setStates] = useState();
   const {enqueueSnackbar} = useSnackbar();
 
@@ -154,6 +198,27 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
     setOpenRegionForm(false);
     setOpenAssetForm(false);
   };
+
+  const handleStateDeactivate = () => {
+    const test = {is_active: 0}
+    updateStateById(test, deactivateId)
+      .then((res) => {
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
+        setTimeout(() => {
+          window.location.reload(false);
+        }, 1500);
+        handleClose();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }
 
   const filteredData = data?.filter((item) =>
     item.name?.toUpperCase().includes(value?.toUpperCase())
@@ -178,6 +243,26 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
       name: event.target.value.toUpperCase(),
     });
   };
+
+  // const handleAssetValue = (event) => {
+  //   console.log(event);
+  //   // setAssetValue(...assetValue, {})
+  // }
+
+  // const handleInputChange = (e, index) => {
+  //   const {name, value} = e.target;
+  //   const list = [...assetValue];
+  //   list[index][name] = value;
+  //   setAssetValue(list)
+  // }
+
+  // const handleRemoveClick = (i) => {
+  //   console.log('remove click');
+  // }
+
+  // const handleAddClick = () => {
+  //   console.log('add click');
+  // }
 
   const handleAdd = (event) => {
     setAddData({...AddData, name: event.target.value.toUpperCase()})
@@ -673,8 +758,12 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
 
   return (
     <>
+      <Typography className={classes.sidePanelTitle} variant='h4'>
+        <div>{title}</div>
+        <CloseIcon onClick={callback} />
+      </Typography>
       <Paper className={classes.root}>
-        <div className={classes.title}>
+        {/* <div className={classes.title}>
           <Typography variant='h5' style={{ marginLeft: 5 }}>
             {title}
           </Typography>
@@ -686,7 +775,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
               ADD
             </Button>
           </Tooltip>
-        </div>
+        </div> */}
         <form className={classes.search} noValidate autoComplete='off'>
           <TextField
             id='search'
@@ -958,7 +1047,274 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
           )}
         </div>
       </Paper>
-      <Dialog open={openEditForm} onClose={handleClose} aria-labelledby='edit'>
+      {
+        openAddForm && (
+          <div className={classes.addForm}>
+            <Grid item md={12}>
+              <label>Add New {title}</label>
+              <TextField 
+                id='add'
+                autoFocus
+                style={{ marginTop: 8 }}
+                variant='outlined'
+                fullWidth
+                value={AddData?.name}
+                onChange={handleAdd}
+              />
+            </Grid>
+            <div className={classes.formFooter}>
+              <Button
+                onClick={handleClose}
+                // style={{marginTop: 10}}
+                size='small'
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={submitAdd}
+                style={{ color: '#1EAE98', borderColor: '#1EAE98'}}
+                variant='outlined'
+                size='small'
+              >
+                Save
+              </Button>
+            </div>
+          </div>
+        )
+      }
+      {
+        openEditForm && (
+          <div className={classes.addForm}>
+            <Typography variant='h5'>Edit {title}</Typography>
+            <Grid item md={12} style={{marginTop: 15}}>
+              <label style={{marginBottom: 8}}>{title}</label>
+              <TextField
+                id='edit'
+                autoFocus
+                fullWidth
+                variant='outlined'
+                value={rowData.name}
+                onChange={handleChange}
+              />
+            </Grid>
+            <div className={classes.formFooter}>
+              <Button
+                onClick={handleClose}
+                // style={{marginTop: 15}}
+                size='small'
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSubmit}
+                style={{ color: '#1EAE98', borderColor: '#1EAE98'}}
+                variant='outlined'
+                size='small'
+              >
+                Save
+              </Button>
+            </div>
+          </div>
+        )
+      }
+      {
+        openDeleteForm && (
+          <div className={classes.addForm}>
+            <Typography variant='h7'>Are you sure want to delete <strong>{rowData?.name}</strong> ?</Typography>
+            <div className={classes.formFooter}>
+              <Button
+                onClick={handleClose}
+                // style={{marginTop: 15}}
+                size='small'
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleDelete}
+                style={{ color: '#FF4848', borderColor: '#FF4848'}}
+                variant='outlined'
+                size='small'
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+        )
+      }
+      {
+        openDeactiveForm && (
+          <div className={classes.addForm}>
+            <Typography variant='h7'>Do you want to disable this state ?</Typography>            
+          <div className={classes.formFooter}>
+              <Button
+                onClick={handleClose}
+                // style={{marginTop: 15}}
+                size='small'
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleStateDeactivate}
+                style={{ color: '#FF4848', borderColor: '#FF4848'}}
+                variant='outlined'
+                size='small'
+              >
+                Deactivate
+              </Button>
+            </div>
+          </div>
+        )
+      }
+      {
+        openRegionForm && (
+          <div className={classes.addForm}>
+            <Typography variant='h5'>Add New {title}</Typography>
+            <Grid container spacing={2} style={{marginTop: 15}}>
+              <Grid item md={6}>
+                <label style={{ marginBottom: 8 }}>State</label>
+                <TextInput
+                select
+                name='states'
+                variant='outlined'
+                onChange={handleStateAdd}
+                >
+                  {
+                    states?.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
+                  }
+                </TextInput>
+              </Grid>
+              <Grid item md={6}>
+                <label style={{ marginBottom: 8 }}>{title}</label>
+                <TextField 
+                id='add'
+                style={{width: '100%', marginTop: 4}}
+                autoFocus
+                variant='outlined'
+                onChange={handleAdd}
+                />
+              </Grid>
+            </Grid>
+            <div className={classes.formFooter}>
+              <Button
+                onClick={handleClose}
+                // style={{marginTop: 15}}
+                size='small'
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={submitAdd}
+                style={{ color: '#1EAE98', borderColor: '#1EAE98'}}
+                variant='outlined'
+                size='small'
+              >
+                Save
+              </Button>
+            </div>
+          </div>
+        )
+      }
+      {/* {
+        openAssetForm && (
+          <div className={classes.addForm}>
+            <Typography variant='h5'>Add New {title}</Typography>
+            <Grid container spacing={2} style={{marginTop: 15}}>
+              <Grid item md={6}>
+                <label style={{ marginBottom: 8 }}>Asset Type</label>
+                <TextField
+                  id='edit'
+                  autoFocus
+                  fullWidth
+                  variant='outlined'
+                  value={AddData?.name}
+                  onChange={handleChange}
+                />
+              </Grid>
+            </Grid>
+            {
+              assetValue.map((x, i) => {
+                return(
+                  <Grid container spacing={2} style={{marginTop: 15, display: 'flex', alignItems: 'center'}}>
+                    <Grid item md={5}>
+                      <label style={{ marginBottom: 8 }}>Label</label>
+                      <TextField
+                        id='label'
+                        fullWidth
+                        variant='outlined'
+                        value={x?.label}
+                        onChange={e => handleInputChange(e, i)}
+                      />
+                    </Grid>
+                    <Grid item md={5}>
+                      <label style={{ marginBottom: 8 }}>Type</label>
+                      <TextInput
+                        select
+                        id='type'
+                        fullWidth
+                        variant='outlined'
+                        style={{margin: 0}}
+                        value={x?.type}
+                        onChange={e => handleInputChange(e, i)}
+                      >
+                        <option key={1} value='string'>String</option>
+                        <option key={2} value='number'>Number</option>
+                      </TextInput>
+                    </Grid>
+                    <div className={classes.listBtn}>
+                      {assetValue.length !== 1 && <Button variant='outlined' size='small' >-</Button>}
+                      {assetValue.length - 1 === i && <Button variant='outlined' size='small' >+</Button>}
+                    </div>
+                    <Grid item md={1}>
+                      <Button variant='outlined' size='small' color='primary' style={{marginTop: 14}}><span style={{margin: 0}}>+</span></Button>
+                    </Grid>
+                  </Grid>
+                )
+              })
+            }
+            <div className={classes.formFooter}>
+              <Button
+                onClick={handleClose}
+                // style={{marginTop: 15}}
+                size='small'
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={submitAdd}
+                style={{ color: '#1EAE98', borderColor: '#1EAE98'}}
+                variant='outlined'
+                size='small'
+              >
+                Save
+              </Button>
+            </div>
+          </div>
+        )
+      } */}
+      <div className={classes.actionFooter}>
+          <Divider />
+          <div className={classes.actionButtonsWrapper}>
+            <div>
+              <Button variant='outlined' onClick={callback}>
+                Back
+              </Button>
+            </div>
+            <div>
+              <Button
+                variant='contained'
+                type='submit'
+                onClick={() => {
+                  !regionForm && !assetForm? setOpenAddForm(true) : !assetForm? setOpenRegionForm(true) : setOpenAssetForm(true)
+                  setStatus(title)
+                }}
+                color='primary'
+              >
+                Add
+              </Button>
+            </div>
+          </div>
+        </div>
+      {/* <Dialog open={openEditForm} onClose={handleClose} aria-labelledby='edit'>
         <DialogTitle>Edit {title} Form</DialogTitle>
         <DialogContent style={{width: 400}}>
           <TextField
@@ -975,9 +1331,9 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
           <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={handleSubmit}>Edit</Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
 
-      <Dialog
+      {/* <Dialog
         open={openDeleteForm}
         onClose={handleClose}
         aria-labelledby='delete'
@@ -997,9 +1353,9 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
             Delete
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
 
-      <Dialog
+      {/* <Dialog
       open={openAddForm}
       onClose={handleClose}
       aria-labelledby='add'
@@ -1007,16 +1363,16 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
         <DialogTitle>Add {title}</DialogTitle>
         <DialogContent style={{width: 400}}>
           <Grid item md={12}>
-          <label>{title}</label>
-          <TextField 
-          id='add'
-          autoFocus
-          style={{ marginTop: 8 }}
-          variant='outlined'
-          fullWidth
-          value={AddData?.name}
-          onChange={handleAdd}
-          />
+            <label>{title}</label>
+            <TextField 
+            id='add'
+            autoFocus
+            style={{ marginTop: 8 }}
+            variant='outlined'
+            fullWidth
+            value={AddData?.name}
+            onChange={handleAdd}
+            />
           </Grid>
         </DialogContent>
         <DialogActions>
@@ -1027,9 +1383,9 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
             Save
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
 
-      <Dialog
+      {/* <Dialog
         open={openAssetForm}
         onClose={handleClose}
       >
@@ -1071,19 +1427,46 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
             <Grid item md={2} style={{display: 'flex', alignItems: 'center'}}>
               <Button variant='outlined' size='small' onClick={() => setAddNewRow(true)}>+</Button>
             </Grid>
+          </Grid>
             {
               addNewRow && (
                 <TableRow key={"new-row"}>
                   <TableCell scope="row" component="th">
+                    <Grid container spacing={2}>
+                      <Grid item md={5}>
+                        <label>Label</label>
+                        <TextField 
+                          // id='add'
+                          autoFocus
+                          // style={{ marginTop: 8 }}
+                          variant='outlined'
+                        />
+                      </Grid>
+                      <Grid item md={5}>
+                        <label>Type</label>
+                        <TextInput
+                          select
+                          // id='add'
+                          autoFocus
+                          // style={{ marginTop: 8 }}
+                          variant='outlined'
+                        >
+                          <option key={1} value='string'>String</option>
+                          <option key={2} value='number'>Number</option>
+                        </TextInput>
+                      </Grid>
+                      <Grid item md={2} style={{display: 'flex', alignItems: 'center'}}>
+                        <Button variant='outlined' size='small' onClick={() => setAddNewRow(true)}>+</Button>
+                      </Grid>
+                    </Grid>
                   </TableCell>
                 </TableRow>
               )
             }
-          </Grid>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
       
-      <Dialog
+      {/* <Dialog
       open={openRegionForm}
       onClose={handleClose}
       aria-labelledby='add'
@@ -1124,9 +1507,9 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
             Save
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
       
-      <Dialog
+      {/* <Dialog
       open={openDeactiveForm}
       onClose={handleClose}
       aria-labelledby='activate'
@@ -1166,7 +1549,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
             Deactivate
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
     </>
   );
 }

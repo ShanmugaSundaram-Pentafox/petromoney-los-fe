@@ -250,11 +250,15 @@ const Login = ({ setCurrentUser }) => {
                       >
                         Login
                       </Button>
-                      <label style={{color: '#1E88E5', cursor: 'pointer', marginTop: 25, fontSize: '1rem'}} onClick={() => {
-                      setLoginWithOTP(false)
-                      setOtpLogin(false)
-                      setFieldValue('otp', undefined)
-                      }}>Login with password</label>
+                      {
+                        window.location.href.split('/')[2] === 'portal.petromoney.in' ? null : (
+                          <label style={{color: '#1E88E5', cursor: 'pointer', marginTop: 25, fontSize: '1rem'}} onClick={() => {
+                            setLoginWithOTP(false)
+                            setOtpLogin(false)
+                            setFieldValue('otp', undefined)
+                            }}>Login with password</label>
+                        )
+                      }
                     </div>
                     {isShowOTP && <label className={classes.resend} onClick={sendOTP}>Resend OTP</label>}
                   </div>
@@ -270,11 +274,15 @@ const Login = ({ setCurrentUser }) => {
                   >
                     Send OTP
                   </Button>
-                  <label style={{color: '#1E88E5', cursor: 'pointer', marginTop: 25, fontSize: '1rem'}} onClick={() => {
-                    setLoginWithOTP(false)
-                    setOtpLogin(false)
-                    setFieldValue('otp', undefined)
-                    }}>Login with password</label>
+                  {
+                    window.location.href.split('/')[2] === 'portal.petromoney.in' ? null : (
+                      <label style={{color: '#1E88E5', cursor: 'pointer', marginTop: 25, fontSize: '1rem'}} onClick={() => {
+                        setLoginWithOTP(false)
+                        setOtpLogin(false)
+                        setFieldValue('otp', undefined)
+                        }}>Login with password</label>
+                    )
+                  }
                 </div>
               )
             ) : (

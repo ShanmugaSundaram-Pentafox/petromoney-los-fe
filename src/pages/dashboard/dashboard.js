@@ -22,6 +22,8 @@ import { Typography } from '@material-ui/core';
 import { getDealerDetails } from '../../services/dealers.service';
 import Currency from '../../../src/components/Number/Currency';
 import LoanStats from './components/LoanStats';
+import Chart from "react-google-charts";
+
 
 const useStyles = makeStyles(theme =>({
   card :{
@@ -198,6 +200,40 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                         <BarChartData daysChartData={daysChartData} />
                       </DataCharts>
                     </Grid>
+                    {/* <Grid item md={6}>
+                      <DataCharts>
+                        
+                      </DataCharts>
+                    </Grid> */}
+                    {/* <Grid item md={6}>
+                      <DataCharts>
+                        <Chart
+                          width={'700px'}
+                          height={'300px'}
+                          chartType="Bar"
+                          loader={<div>Loading Chart</div>}
+                          data={[
+                            ['Region', '1-3 days', '4-14 days', '15-30 days', '31-60 days', '61-90 days', 'greater than 90 days'],
+                            ["MADURAI Retail RO", 5797900, 4756229.49, 400000, 2000000, 1516339.2, 1204475.72],
+                            ["KOZHICODE (CALICUT) Retail RO", 5797900, 4756229.49, 400000, 2000000, 1516339.2, 1204475.72],
+                            ["TRICHY Retail RO", 5797900, 4756229.49, 400000, 2000000, 1516339.2, 1204475.72],
+                            ["COCHIN Retail RO", 5797900, 4756229.49, 400000, 2000000, 1516339.2, 1204475.72],
+                            ["VISAKH Retail RO", 5797900, 4756229.49, 400000, 2000000, 1516339.2, 1204475.72],
+                            ["SALEM Retail RO", 5797900, 4756229.49, 400000, 2000000, 1516339.2, 1204475.72],
+                            ["NAGPUR Retail RO", 5797900, 4756229.49, 400000, 2000000, 1516339.2, 1204475.72],
+                          ]}
+                          options={{
+                            // Material design options
+                            chart: {
+                              title: 'Regions',
+                              // subtitle: 'Sales, Expenses, and Profit: 2014-2017',
+                            },
+                          }}
+                          // For tests
+                          rootProps={{ 'data-testid': '2' }}
+                        />
+                      </DataCharts>
+                    </Grid> */}
                     <Grid item xs={12}>
                       <LoanBookTable title={"Loan Book"} currentUser={currentUser} />
                     </Grid>

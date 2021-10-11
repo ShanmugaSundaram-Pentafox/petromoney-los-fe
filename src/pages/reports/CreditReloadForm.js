@@ -15,7 +15,9 @@ import AsyncSelect from 'react-select/async';
 import { getDealershipForSearch } from '../../services/common.service';
 import TextInput from '../../components/TextInput/TextInput';
 import { addCreditReport } from '../../services/creditreport.service';
-
+import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { green, grey } from '@material-ui/core/colors';
 const useStyles = makeStyles((theme) => ({
   sidePanelFormWrapper: {
     position: 'relative',
@@ -81,14 +83,19 @@ const useStyles = makeStyles((theme) => ({
       margin: 0
     }
   },
+  grid: {
+    marginLeft: 4,
+    marginRight: 4,
+    marginTop: 2
+  }
 }));
-
 const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
   const [accountId, setAccountId] = useState();
   const [amount, setAmount] = useState();
   const [selectedValue, setSelectedValue] = useState();
   const classes = useStyles();
   const [optionsLoading, setOptionsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setFieldValue } = useFormik({
@@ -108,9 +115,12 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
         formData.append(key, d[key]);
       });
       if (selectedValue && accountId) {
+        setLoading(true)
         addCreditReport(formData, currentUser, selectedValue)
           .then(res => {
             if (res.status === 'SUCCESS') {
+              setLoading(false)
+              callback()
               enqueueSnackbar(res.message, {
                 anchorOrigin: {
                   vertical: 'top',
@@ -123,6 +133,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
               }, 1000);
             }
             else {
+              setLoading(false)
               enqueueSnackbar(res.message, {
                 anchorOrigin: {
                   vertical: 'top',
@@ -134,6 +145,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
             }
           })
           .catch(e => {
+            setLoading(false)
             enqueueSnackbar(e.message, {
               anchorOrigin: {
                 vertical: 'top',
@@ -203,7 +215,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                 </Grid>
                 <Grid container spacing={2}>
                   <Grid item md={8}>
-                    <label style={{ marginBottom: 8 }}>Amount</label>
+                    <label>Amount</label>
                     <TextInput
                       money
                       name="amount"
@@ -216,76 +228,117 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                     />
                   </Grid>
                 </Grid>
-                <Grid container spacing={2}>
+                <Grid container spacing={2} style={{ marginTop: 11 }}>
                   <Grid item md={12}>
-                    <label style={{ marginBottom: 8 }}>Payment Reference</label>
-                  </Grid>
-                  <Grid item md={3}>
-                    <div>
-                      <input
-                        type='file'
-                        name='file'
-                        id='proof1'
-                        className={classes.inputFile}
-                        onChange={(e) => { onChangeHandler(e, 'proof1') }}
-                      />
-                      <label for='proof1'>
-                        <div style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <Grid container spacing={1}>
+                      <Grid style={{ marginLeft: 4 }} md={12}>
+                        <label>Payment Reference</label>
+                      </Grid>
+                      <Grid md={3}>
+                        <div className={classes.grid}>
+                          <input
+                            type='file'
+                            name='file'
+                            id='proof1'
+                            className={classes.inputFile}
+                            accept="image/jpeg,image/png,application/pdf"
+                            onChange={(e) => { onChangeHandler(e, 'proof1') }}
+                          />
+                          <label for='proof1'>
+                            <div style={{
+                              border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center'
+                            }}>
+                              {
+                                values?.proof_1_file ? (
+                                  <>
+                                    <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
+                                  </>
+                                ) : (
+                                  <label for='proof1' style={{ fontSize: 32, color: 'grey' }}>+</label>
+                                )
+                              }
+                            </div>
+                          </label>
                           {
-                            values?.proof_1_file ? (
-                              <img src={URL.createObjectURL(values?.proof_1_file)} height="100%" width="100%" className={classes.image} />
-                            ) : (
-                              <label for='proof1' style={{ fontSize: 32, color: 'grey' }}>+</label>
+                            values?.proof_1_file && (
+                              <h5 style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden' }}>{values.proof_1_file?.name}</h5>
                             )
                           }
                         </div>
-                      </label>
-                    </div>
+                      </Grid>
+                      {
+                        values.proof_1_file && (
+                          <>
+                            <Grid md={3}>
+                              <div className={classes.grid}>
+                                <input
+                                  type='file'
+                                  name='file'
+                                  id='proof2'
+                                  accept="image/jpeg,image/png,application/pdf"
+                                  className={classes.inputFile}
+                                  onChange={(e) => { onChangeHandler(e, 'proof2') }}
+                                />
+                                <label for='proof2'>
+                                  <div style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    {
+                                      values?.proof_2_file ? (
+                                        <>
+                                          <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
+                                        </>
+                                      ) : (
+                                        <label for='proof2' style={{ fontSize: 32, color: 'grey' }}>+</label>
+                                      )
+                                    }
+                                  </div>
+                                </label>
+                                {
+                                  values?.proof_2_file && (
+                                    <h5 style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden' }}>{values.proof_2_file?.name}</h5>
+                                  )
+                                }
+                              </div>
+                            </Grid>
+                            {
+                              values.proof_2_file && (
+                                <Grid md={3}>
+                                  <div className={classes.grid}>
+                                    <input
+                                      type='file'
+                                      name='file'
+                                      id='proof3'
+                                      accept="image/jpeg,image/png,application/pdf"
+                                      className={classes.inputFile}
+                                      onChange={(e) => { onChangeHandler(e, 'proof3') }}
+                                    />
+                                    <label for='proof3'>
+                                      <div style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                        {
+                                          values?.proof_3_file ? (
+                                            <>
+                                              <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
+                                            </>
+                                          ) : (
+                                            <label for='proof3' style={{ fontSize: 32, color: 'grey' }}>+</label>
+                                          )
+                                        }
+                                      </div>
+                                    </label>
+                                    {
+                                      values?.proof_3_file && (
+                                        <h5 style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden' }}>{values.proof_3_file?.name}</h5>
+                                      )
+                                    }
+                                  </div>
+                                </Grid>
+                              )
+                            }
+                          </>
+                        )
+                      }
+                    </Grid>
                   </Grid>
-                  <Grid item md={3}>
-                    <div>
-                      <input
-                        type='file'
-                        name='file'
-                        id='proof2'
-                        className={classes.inputFile}
-                        onChange={(e) => { onChangeHandler(e, 'proof2') }}
-                      />
-                      <label for='proof2'>
-                        <div style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                          {
-                            values?.proof_2_file ? (
-                              <img src={URL.createObjectURL(values?.proof_2_file)} height="100%" width="100%" className={classes.image} />
-                            ) : (
-                              <label for='proof2' style={{ fontSize: 32, color: 'grey' }}>+</label>
-                            )
-                          }
-                        </div>
-                      </label>
-                    </div>
-                  </Grid>
-                  <Grid item md={3}>
-                    <div>
-                      <input
-                        type='file'
-                        name='file'
-                        id='proof3'
-                        className={classes.inputFile}
-                        onChange={(e) => { onChangeHandler(e, 'proof3') }}
-                      />
-                      <label for='proof3'>
-                        <div style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                          {
-                            values?.proof_3_file ? (
-                              <img src={URL.createObjectURL(values?.proof_3_file)} height="100%" width="100%" className={classes.image} />
-                            ) : (
-                              <label for='proof3' style={{ fontSize: 32, color: 'grey' }}>+</label>
-                            )
-                          }
-                        </div>
-                      </label>
-                    </div>
-                  </Grid>
+
                 </Grid>
               </form>
             </Box>
@@ -300,19 +353,25 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
               </Button>
             </div>
             <div>
-              <Button
-                variant='contained'
-                type='submit'
-                onClick={handleSubmit}
-                className={clsx(classes.btn, classes.editButton)}
-              >
-                Submit
-              </Button>
+              {
+                !loading ? (
+                  <Button
+                    variant='contained'
+                    type='submit'
+                    onClick={handleSubmit}
+                    className={clsx(classes.btn, classes.editButton)}
+                  >
+                    Submit
+                  </Button>
+                ) : (
+                  <CircularProgress size={30} />
+                )
+              }
             </div>
           </div>
         </div>
       </>
-    </div>
+    </div >
   );
 };
 

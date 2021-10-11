@@ -118,7 +118,7 @@ const apiCall = async (route, options = {}) => {
           alert('Oops! Session Expired... Please Login again!');
         }
         // logOut();
-        store.dispatch(resetCurrentUser());
+        store.dispatch(resetCurrentUser({ timeout: true }));
 
         return { status: "EXPIRED" };
       } else {

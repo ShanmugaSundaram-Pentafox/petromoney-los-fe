@@ -14,8 +14,8 @@ import moment from 'moment';
 import Skeleton from '@material-ui/lab/Skeleton';
 // import { Tooltip, LabelList,Legend, BarChart, CartesianGrid, XAxis, YAxis, Bar, Text } from 'recharts';
 import LoanBookTable from '../../components/Tables/LoanBookTable';
-import { getLoanStats, getAll_ls1_Metrices, getAll_ls2_Metrices } from '../../services/loans.service';
-import { SummaryTile, PieChartData, BarChartData } from './components/MetricsComponents';
+import { getLoanStats, getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd } from '../../services/loans.service';
+import { SummaryTile, PieChartData, BarChartData, GroupChartData } from './components/MetricsComponents';
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import { Typography } from '@material-ui/core';
 // import { yellow } from '@material-ui/core/colors';
@@ -57,11 +57,44 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   const [selectedReportStatsCard, setSelectedReportStatsCard] = useState("Due");
   const [dealerDetail, setDealerDetail] = useState({});
   const [dealerChartData, setDealerChartData] = useState([]);
+  const [sampleData, setSampleData] = useState([]);
+  console.log(sampleData);
   const handleClick = (name) => {
     setSelectedStatsCard(name)
     setSelectedReportStatsCard(name)
   }
+
+  const sampleOmcData = [
+    ['OMCs', '1-3 days', '4-14 days', '15-30 days', '31-60 days', '61-90 days', '> 90 days'],
+    ['HPCL', 9426940, 24239205.33, 6170475, 20040674.52, 3788663.2, 4648722.4],
+    ['IOCL', 500000, 3947900, null, 6200392, 987917, 1159627.12],
+    ['BPCL', 1200000, 3900000, 13197.05, 1000000, null, 900000],
+  ]
+
+  const sampleRegionData = [
+    ['OMCs', '1-3 days', '4-14 days', '15-30 days', '31-60 days', '61-90 days', '> 90 days'],
+    ['MADURAI Retail RO', 9426940, 24239205.33, 6170475, 20040674.52, 3788663.2, 4648722.4],
+    ['KOZHICODE (CALICUT) Retail RO', 500000, 3947900, null, 6200392, 987917, 1159627.12],
+    ['TRICHY Retail RO', 1200000, 3900000, 13197.05, 1000000, null, 900000],
+    ['KOZHICODE (CALICUT) Retail RO', 500000, 3947900, null, 6200392, 9807917, 11509627.12],
+    ['COCHIN Retail RO', 5003000, 3947900, 3947900, 6200392, 9879017, 1159627.12],
+    ['VISAKH Retail RO', 5000500, 3947900, null, 6200392, 987917, 1159627.12],
+    ['SALEM Retail RO', 500000, 3947900, 500000, 6203902, 987917, 1159627.12],
+    ['NAGPUR Retail RO', 500000, 3947790, null, 6200392, 987917, 1159627.12],
+    ['CHENNAI Retail RO', 5000100, 3947900, 987917, 6200392, 987917, 11596207.12],
+    ['COIMBATORE Retail RO', 500000, 3949080, 1159627.12, 6200392, 987917, 1159627.12],
+    ['AHMEDABAD Retail RO', 500000, 3947900, null, 6200392, 987917, 1159627.12],
+]
+
   useMount(() => {
+
+    getAllOmcDpd()
+    .then((res) => {
+      // console.log(res);
+      res.map((data, index) => {
+        setSampleData(...sampleData, [data])
+      })
+    })
     // getLoanStats()
     //   .then(data => {
     //     // const data = _countBy(res, item => {
@@ -85,6 +118,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
 
     setTimeout(() => {
       getAll_ls1_Metrices().then(res => {
+        // console.log(res);
         const result = res[0] || {};
         setLs1Metrices(result);
         let overallData = [
@@ -200,40 +234,20 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                         <BarChartData daysChartData={daysChartData} />
                       </DataCharts>
                     </Grid>
-                    {/* <Grid item md={6}>
+                    <Grid item md={6}>
                       <DataCharts>
-                        
+                        <Paper style={{padding: 20, borderRadius: 5, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                          <GroupChartData chartData={sampleOmcData} title={'OMC'} subtitle={'Day wise Omc data'}/>
+                        </Paper>
                       </DataCharts>
-                    </Grid> */}
-                    {/* <Grid item md={6}>
+                    </Grid>
+                    <Grid item xs={12}>
                       <DataCharts>
-                        <Chart
-                          width={'700px'}
-                          height={'300px'}
-                          chartType="Bar"
-                          loader={<div>Loading Chart</div>}
-                          data={[
-                            ['Region', '1-3 days', '4-14 days', '15-30 days', '31-60 days', '61-90 days', 'greater than 90 days'],
-                            ["MADURAI Retail RO", 5797900, 4756229.49, 400000, 2000000, 1516339.2, 1204475.72],
-                            ["KOZHICODE (CALICUT) Retail RO", 5797900, 4756229.49, 400000, 2000000, 1516339.2, 1204475.72],
-                            ["TRICHY Retail RO", 5797900, 4756229.49, 400000, 2000000, 1516339.2, 1204475.72],
-                            ["COCHIN Retail RO", 5797900, 4756229.49, 400000, 2000000, 1516339.2, 1204475.72],
-                            ["VISAKH Retail RO", 5797900, 4756229.49, 400000, 2000000, 1516339.2, 1204475.72],
-                            ["SALEM Retail RO", 5797900, 4756229.49, 400000, 2000000, 1516339.2, 1204475.72],
-                            ["NAGPUR Retail RO", 5797900, 4756229.49, 400000, 2000000, 1516339.2, 1204475.72],
-                          ]}
-                          options={{
-                            // Material design options
-                            chart: {
-                              title: 'Regions',
-                              // subtitle: 'Sales, Expenses, and Profit: 2014-2017',
-                            },
-                          }}
-                          // For tests
-                          rootProps={{ 'data-testid': '2' }}
-                        />
+                        <Paper style={{padding: 20, borderRadius: 5, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                          <GroupChartData chartData={sampleRegionData} title={'Region'} subtitle={'Day wise Region data'}/>
+                        </Paper>
                       </DataCharts>
-                    </Grid> */}
+                    </Grid>
                     <Grid item xs={12}>
                       <LoanBookTable title={"Loan Book"} currentUser={currentUser} />
                     </Grid>
@@ -247,8 +261,6 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                 )
               }
             </>
-
-
           )
       }
     </div>

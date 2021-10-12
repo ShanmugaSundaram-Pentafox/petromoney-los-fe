@@ -122,27 +122,20 @@ export const BarChartData = ({
     )
 }
 
-export const GroupChartData = ({chartData}) => {
+export const GroupChartData = ({chartData, title, subtitle}) => {
     return(
         <Chart
-            width={'500px'}
+            width={'100%'}
             height={'300px'}
             chartType="Bar"
             loader={<div>Loading Chart</div>}
-            data={[
-                ['OMCs', '1-3 days', '4-14 days', '15-30 days', '31-60 days', '61-90 days', 'greater than 90 days'],
-                ['HPCL', 9426940, 24239205.33, 6170475, 20040674.52, 3788663.2, 4648722.4],
-                ['IOCL', 500000, 3947900, null, 6200392, 987917, 1159627.12],
-                ['BPCL', 1200000, 3900000, 13197.05, 1000000, null, 900000],
-            ]}
+            data={chartData}
             options={{
-                // Material design options
                 chart: {
-                title: 'OMC',
-                // subtitle: 'Sales, Expenses, and Profit: 2014-2017',
+                title: title,
+                subtitle: subtitle,
                 },
             }}
-            rootProps={{ 'data-testid': '2' }}
         />
     )
 }

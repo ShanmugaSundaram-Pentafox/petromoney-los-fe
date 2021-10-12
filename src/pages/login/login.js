@@ -121,6 +121,14 @@ const Login = ({ setCurrentUser }) => {
     }
   });
 
+  const OtpLogin = () => {
+    if (window.location.href.split('/')[2] === process.env.REACT_APP_OTP_LOGIN){
+      return true
+    } else {
+      return false
+    }
+  }
+
   const generateOTP = () => {
     if(values?.mobile){
       setHelperText(false)
@@ -251,7 +259,7 @@ const Login = ({ setCurrentUser }) => {
                         Login
                       </Button>
                       {
-                        window.location.href.split('/')[2] === 'portal.petromoney.in' ? null : (
+                        OtpLogin() ? null : (
                           <label style={{color: '#1E88E5', cursor: 'pointer', marginTop: 25, fontSize: '1rem'}} onClick={() => {
                             setLoginWithOTP(false)
                             setOtpLogin(false)
@@ -275,12 +283,12 @@ const Login = ({ setCurrentUser }) => {
                     Send OTP
                   </Button>
                   {
-                    window.location.href.split('/')[2] === 'portal.petromoney.in' ? null : (
+                    OtpLogin() ? null : (
                       <label style={{color: '#1E88E5', cursor: 'pointer', marginTop: 25, fontSize: '1rem'}} onClick={() => {
                         setLoginWithOTP(false)
                         setOtpLogin(false)
                         setFieldValue('otp', undefined)
-                        }}>Login with password</label>
+                        }}>Login with password</label>                      
                     )
                   }
                 </div>

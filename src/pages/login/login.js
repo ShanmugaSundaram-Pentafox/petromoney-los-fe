@@ -83,6 +83,7 @@ const Login = ({ setCurrentUser }) => {
   const [helperText, setHelperText] = useState(false)
   const { enqueueSnackbar } = useSnackbar();
 
+  const domain = process.env?.REACT_APP_OTP_ONLY_DOMAINS?.split(',')
 
   let validFields = {}
   if(loginWithOTP){
@@ -122,8 +123,12 @@ const Login = ({ setCurrentUser }) => {
   });
 
   const OtpLogin = () => {
-    if (window.location.href.split('/')[2] === process.env.REACT_APP_OTP_LOGIN){
-      return true
+    if(domain){
+      if(domain.map((data) => data.split('/')[2]).includes(window.location.href.split('/')[2])){
+        return true
+      } else {
+        return false
+      }
     } else {
       return false
     }

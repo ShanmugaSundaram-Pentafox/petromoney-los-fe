@@ -16,6 +16,9 @@ import { useSnackbar } from 'notistack';
 import { getOTP, resendOTP } from "../../services/login.service";
 import { toString } from "lodash-es";
 
+const domain = process.env?.REACT_APP_OTP_ONLY_DOMAINS?.split(/[ ,]+/)
+const url = window.location.href.split('/')[2]
+
 const useStyles = makeStyles(() => ({
   textFieldStyle: {
     marginBottom: '32px',
@@ -83,8 +86,6 @@ const Login = ({ setCurrentUser }) => {
   const [helperText, setHelperText] = useState(false)
   const { enqueueSnackbar } = useSnackbar();
 
-  const domain = process.env?.REACT_APP_OTP_ONLY_DOMAINS?.split(',')
-
   let validFields = {}
   if(loginWithOTP){
     validFields = {
@@ -124,7 +125,7 @@ const Login = ({ setCurrentUser }) => {
 
   const OtpLogin = () => {
     if(domain){
-      if(domain.map((data) => data.split('/')[2]).includes(window.location.href.split('/')[2])){
+      if(domain.includes(url)){
         return true
       } else {
         return false

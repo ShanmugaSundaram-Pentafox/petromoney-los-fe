@@ -39,7 +39,6 @@ const CreditReload = ({ currentUser }) => {
     setLoading(true)
     getCreditReport(0)
       .then((data) => {
-        console.log('data >>>>', data)
         setTableData(data);
         setLoading(false);
       })

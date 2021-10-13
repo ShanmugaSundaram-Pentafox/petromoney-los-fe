@@ -19,6 +19,18 @@ import { toString } from "lodash-es";
 const domain = process.env?.REACT_APP_OTP_ONLY_DOMAINS?.split(/[ ,]+/)
 const url = window.location.href.split('/')[2]
 
+const showOtpLogin = () => {
+  if(domain){
+    if(domain.includes(url)){
+      return true
+    } else {
+      return false
+    }
+  } else {
+    return false
+  }
+}
+
 const useStyles = makeStyles(() => ({
   textFieldStyle: {
     marginBottom: '32px',
@@ -122,18 +134,6 @@ const Login = ({ setCurrentUser }) => {
           });
     }
   });
-
-  const OtpLogin = () => {
-    if(domain){
-      if(domain.includes(url)){
-        return true
-      } else {
-        return false
-      }
-    } else {
-      return false
-    }
-  }
 
   const generateOTP = () => {
     if(values?.mobile){
@@ -265,7 +265,7 @@ const Login = ({ setCurrentUser }) => {
                         Login
                       </Button>
                       {
-                        OtpLogin() ? null : (
+                        showOtpLogin() ? null : (
                           <label style={{color: '#1E88E5', cursor: 'pointer', marginTop: 25, fontSize: '1rem'}} onClick={() => {
                             setLoginWithOTP(false)
                             setOtpLogin(false)
@@ -289,7 +289,7 @@ const Login = ({ setCurrentUser }) => {
                     Send OTP
                   </Button>
                   {
-                    OtpLogin() ? null : (
+                    showOtpLogin() ? null : (
                       <label style={{color: '#1E88E5', cursor: 'pointer', marginTop: 25, fontSize: '1rem'}} onClick={() => {
                         setLoginWithOTP(false)
                         setOtpLogin(false)

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import _countBy from 'lodash/countBy';
 import { useMount } from 'react-use';
 import { connect } from 'react-redux';
@@ -14,7 +14,7 @@ import moment from 'moment';
 import Skeleton from '@material-ui/lab/Skeleton';
 // import { Tooltip, LabelList,Legend, BarChart, CartesianGrid, XAxis, YAxis, Bar, Text } from 'recharts';
 import LoanBookTable from '../../components/Tables/LoanBookTable';
-import { getLoanStats, getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd } from '../../services/loans.service';
+import { getLoanStats, getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd } from '../../services/loans.service';
 import { SummaryTile, PieChartData, BarChartData, GroupChartData } from './components/MetricsComponents';
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import { Typography } from '@material-ui/core';
@@ -23,6 +23,191 @@ import { getDealerDetails } from '../../services/dealers.service';
 import Currency from '../../../src/components/Number/Currency';
 import LoanStats from './components/LoanStats';
 import Chart from "react-google-charts";
+import MUIDataTable from 'mui-datatables';
+import Datatable from './components/Datatable';
+
+const testOMCData = {
+  data: [
+      {
+          label: 'HPCL',
+          data: 
+          [
+              {
+                  label: '1-3 days',
+                  value: 325600
+              },
+              {
+                  label: '4-20 days',
+                  value: 521000
+              },
+              {
+                  label: '21-45 days',
+                  value: 124555
+              }
+          ]
+      },
+      {
+          label: 'BPCL',
+          data: 
+          [
+              {
+                  label: '1-3 days',
+                  value: 325600
+              },
+              {
+                  label: '4-20 days',
+                  value: 521000
+              },
+              {
+                  label: '21-45 days',
+                  value: 124555
+              }
+          ]
+      },
+      {
+          label: 'INPL',
+          data: 
+          [
+              {
+                  label: '1-3 days',
+                  value: 325600
+              },
+              {
+                  label: '4-20 days',
+                  value: 521000
+              },
+              {
+                  label: '21-45 days',
+                  value: 124555
+              }
+          ]
+      },
+
+  ]
+}
+
+const testRegionData = {
+  data: [
+      {
+          label: 'Madurai',
+          data: 
+          [
+              {
+                  label: '1-3 days',
+                  value: 325600
+              },
+              {
+                  label: '4-20 days',
+                  value: 521000
+              },
+              {
+                  label: '21-45 days',
+                  value: 124555
+              }
+          ]
+      },
+      {
+          label: 'coimbatore',
+          data: 
+          [
+              {
+                  label: '1-3 days',
+                  value: 325600
+              },
+              {
+                  label: '4-20 days',
+                  value: 521000
+              },
+              {
+                  label: '21-45 days',
+                  value: 124555
+              }
+          ]
+      },
+      {
+          label: 'Salem',
+          data: 
+          [
+              {
+                  label: '1-3 days',
+                  value: 325600
+              },
+              {
+                  label: '4-20 days',
+                  value: 521000
+              },
+              {
+                  label: '21-45 days',
+                  value: 124555
+              }
+          ]
+      },
+      {
+          label: 'Chennai',
+          data: 
+          [
+              {
+                  label: '1-3 days',
+                  value: 325600
+              },
+              {
+                  label: '4-20 days',
+                  value: 521000
+              },
+              {
+                  label: '21-45 days',
+                  value: 124555
+              }
+          ]
+      },
+      {
+          label: 'Erode',
+          data: 
+          [
+              {
+                  label: '1-3 days',
+                  value: 325600
+              },
+              {
+                  label: '4-20 days',
+                  value: 521000
+              },
+              {
+                  label: '21-45 days',
+                  value: 124555
+              }
+          ]
+      },
+  ]
+}
+
+const finalOmcData = []
+const omcColumns = []
+const finalRegionData = []
+const regionColumns = []
+
+testOMCData.data.map((data, i) => {
+    let buffer = [data.label]
+    let columnBuffer = [' ']
+    data.data.map((data, i)=> {
+        buffer.push(data.value)
+        columnBuffer.push(data.label)
+    })
+    finalOmcData.push(buffer)
+    omcColumns.push(columnBuffer)
+})
+
+testRegionData.data.map((data, i) => {
+    let buffer = [data.label]
+    let columnBuffer = [' ']
+    data.data.map((data, i)=> {
+        buffer.push(data.value)
+        columnBuffer.push(data.label)
+    })
+    finalRegionData.push(buffer)
+    regionColumns.push(columnBuffer)
+})
+
 
 
 const useStyles = makeStyles(theme =>({
@@ -58,42 +243,41 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   const [dealerDetail, setDealerDetail] = useState({});
   const [dealerChartData, setDealerChartData] = useState([]);
   const [sampleData, setSampleData] = useState([]);
-  console.log(sampleData);
+  const [sampleRegionData, setSampleRegionData] = useState([]);
+
   const handleClick = (name) => {
     setSelectedStatsCard(name)
     setSelectedReportStatsCard(name)
   }
 
-  const sampleOmcData = [
-    ['OMCs', '1-3 days', '4-14 days', '15-30 days', '31-60 days', '61-90 days', '> 90 days'],
-    ['HPCL', 9426940, 24239205.33, 6170475, 20040674.52, 3788663.2, 4648722.4],
-    ['IOCL', 500000, 3947900, null, 6200392, 987917, 1159627.12],
-    ['BPCL', 1200000, 3900000, 13197.05, 1000000, null, 900000],
-  ]
-
-  const sampleRegionData = [
-    ['OMCs', '1-3 days', '4-14 days', '15-30 days', '31-60 days', '61-90 days', '> 90 days'],
-    ['MADURAI Retail RO', 9426940, 24239205.33, 6170475, 20040674.52, 3788663.2, 4648722.4],
-    ['KOZHICODE (CALICUT) Retail RO', 500000, 3947900, null, 6200392, 987917, 1159627.12],
-    ['TRICHY Retail RO', 1200000, 3900000, 13197.05, 1000000, null, 900000],
-    ['KOZHICODE (CALICUT) Retail RO', 500000, 3947900, null, 6200392, 9807917, 11509627.12],
-    ['COCHIN Retail RO', 5003000, 3947900, 3947900, 6200392, 9879017, 1159627.12],
-    ['VISAKH Retail RO', 5000500, 3947900, null, 6200392, 987917, 1159627.12],
-    ['SALEM Retail RO', 500000, 3947900, 500000, 6203902, 987917, 1159627.12],
-    ['NAGPUR Retail RO', 500000, 3947790, null, 6200392, 987917, 1159627.12],
-    ['CHENNAI Retail RO', 5000100, 3947900, 987917, 6200392, 987917, 11596207.12],
-    ['COIMBATORE Retail RO', 500000, 3949080, 1159627.12, 6200392, 987917, 1159627.12],
-    ['AHMEDABAD Retail RO', 500000, 3947900, null, 6200392, 987917, 1159627.12],
-]
-
   useMount(() => {
 
     getAllOmcDpd()
     .then((res) => {
-      // console.log(res);
+      let test = [['OMCs', '1-3 days', '4-14 days', '15-30 days', '31-60 days', '61-90 days', '> 90 days']]
       res.map((data, index) => {
-        setSampleData(...sampleData, [data])
+        let buffer = Object.values(data)
+        buffer.unshift(buffer.pop())
+        test.push(buffer)
       })
+      setSampleData(test)
+    })
+    .catch(e => {
+      console.log(e);
+    })
+    
+    getAllRegionDpd()
+    .then((res) => {
+      let test = [['Region', '1-3 days', '4-14 days', '15-30 days', '31-60 days', '61-90 days', '> 90 days']]
+      res.map((data, index) => {
+        let buffer = Object.values(data)
+        buffer.unshift(buffer.splice(buffer.indexOf(data.cust_region), 1)[0])
+        test.push(buffer)
+      })
+      setSampleRegionData(test)
+    })
+    .catch(e => {
+      console.log(e);
     })
     // getLoanStats()
     //   .then(data => {
@@ -235,9 +419,15 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                       </DataCharts>
                     </Grid>
                     <Grid item md={6}>
+                      <Datatable title='OMC' data={finalOmcData} columns={omcColumns[0]}/>
+                    </Grid>
+                    <Grid item md={6}>
+                      <Datatable title='Region' data={finalRegionData} columns={regionColumns[0]}/>
+                    </Grid>
+                    {/* <Grid item md={6}>
                       <DataCharts>
                         <Paper style={{padding: 20, borderRadius: 5, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                          <GroupChartData chartData={sampleOmcData} title={'OMC'} subtitle={'Day wise Omc data'}/>
+                          <GroupChartData chartData={sampleData} title={'OMC'} subtitle={'Day wise Omc data'}/>
                         </Paper>
                       </DataCharts>
                     </Grid>
@@ -247,7 +437,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                           <GroupChartData chartData={sampleRegionData} title={'Region'} subtitle={'Day wise Region data'}/>
                         </Paper>
                       </DataCharts>
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12}>
                       <LoanBookTable title={"Loan Book"} currentUser={currentUser} />
                     </Grid>

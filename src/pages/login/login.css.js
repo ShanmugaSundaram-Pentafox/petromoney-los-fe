@@ -6,7 +6,7 @@ export const LoginWrapper = styled.div`
     display: flex;
 
     aside {
-        width: 50%;
+        width: 60%;
         padding: 56px;
         background-repeat: no-repeat;
         background-position: center;
@@ -71,7 +71,7 @@ export const LoginWrapper = styled.div`
         overflow: hidden scroll;
         
         ${sm} {
-            width: 50%;
+            width: 40%;
             padding: 128px 32px;
             margin-left: auto;
         }

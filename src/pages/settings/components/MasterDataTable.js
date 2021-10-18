@@ -184,6 +184,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
   const [value, setValue] = useState();
   const [openEditForm, setOpenEditForm] = useState(false);
   const [rowData, setRowData] = useState({});
+  const [assetRow, setAssetRow] = useState({});
   const [openDeleteForm, setOpenDeleteForm] = useState(false);
   const [status, setStatus] = useState();
   const [openAddForm, setOpenAddForm] = useState(false);
@@ -241,9 +242,19 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
     item.name?.toUpperCase().includes(value?.toUpperCase())
   );
   const editItem = (item, title) => {
-    setRowData(item);
-    setStatus(title);
+    // if (title === 'Asset Type'){
+    //   setAssetRow(item)
+    //   setStatus(title)
+    // } else {
+      setRowData(item);
+      setStatus(title);
+    // }
   };
+
+  // const assetEditItem = (item, title) => {
+  //   setRowData({name: item.name, details: JSON.parse(item.details)})
+  //   setStatus(title)
+  // }
 
   const deleteItem = (item, title) => {
     setRowData(item);
@@ -262,6 +273,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
   };
 
   const handleInputChange = (e, index) => {
+
     const {id, value} = e.target;
     // console.log(e.target);
     const list = [...assetValue];
@@ -585,7 +597,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
       }
       
       if(status === 'Asset Type'){
-        const assetData = {name: AddData.name, value: assetValue}
+        const assetData = {name: AddData.name, details: assetValue}
         addAssetType(assetData)
         .then((res) => {
           handleClose()
@@ -720,7 +732,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
       });
     }
     if(status === 'Loan Type'){
-      deleteLoan(rowData, rowData.id)
+      deleteLoan(rowData, rowData.loan_id)
       .then((res) => {
         handleClose()
         enqueueSnackbar(res, {
@@ -1258,7 +1270,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
                         id='label'
                         fullWidth
                         variant='outlined'
-                        // value={x?.label}
+                        value={x?.label}
                         onChange={e => handleInputChange(e, i)}
                       />
                     </Grid>
@@ -1270,7 +1282,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
                         fullWidth
                         variant='outlined'
                         style={{margin: 0}}
-                        // value={x?.type}
+                        value={x?.type}
                         onChange={e => handleInputChange(e, i)}
                       >
                         <option key={0} value=''>Choose Type...</option>

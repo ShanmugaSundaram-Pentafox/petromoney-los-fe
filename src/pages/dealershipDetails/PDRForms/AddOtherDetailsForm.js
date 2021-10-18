@@ -69,7 +69,20 @@ const useStyles = makeStyles((theme) => ({
   typography: {
     marginTop: 12,
     textAlign: 'center'
-  }
+  },
+  number: {
+    backgroundColor: 'white',
+    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+        "-webkit-appearance": "none",
+        margin: 0,
+    }
+},
+input: {
+    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+        "-webkit-appearance": "none",
+        margin: 0,
+    }
+}
 
 }))
 
@@ -100,7 +113,8 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
     validationSchema: Yup.object().shape({
       name: Yup.string().nullable('Enter dealership name').required('Enter dealership name'),
       omc: Yup.string().nullable('Choose OMC').required('Choose OMC'),
-      details: Yup.string().nullable('Enter details').required('Enter details')
+      details: Yup.string().nullable('Enter details').required('Enter details'),
+      mobile: Yup.string().nullable('Enter sales officer name').matches(/^\d{10}$/, 'Invalid mobile number').required('Enter valid mobile number'),
     }),
     onSubmit: values => {
       if (editRow) {
@@ -212,11 +226,14 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                         <Grid item md={6}>
                           <TextInput
                             {...inputProps}
+                            className={classes.number}
+                            inputProps={{ className: classes.input }}
                             labelText="Dealership ID"
                             name="other_dealership_id"
                             value={values.dealership_id}
                             error={errors.dealership_id}
                             helperText={errors.dealership_id}
+                            type='number'
                           />
                         </Grid>
                         <Grid item md={6}>
@@ -232,8 +249,11 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                         <Grid item md={6}>
                           <TextInput
                             {...inputProps}
+                            className={classes.number}
+                            inputProps={{ className: classes.input }}
                             labelText="Dealer mobile"
                             name="mobile"
+                            type='number'
                             value={values.mobile}
                             error={errors.mobile}
                             helperText={errors.mobile}

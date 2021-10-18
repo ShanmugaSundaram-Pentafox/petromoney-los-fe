@@ -65,6 +65,19 @@ const useStyles = makeStyles((theme) => ({
     '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.success.dark
     }
+  },
+  number: {
+    backgroundColor: 'white',
+    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0
+    }
+  },
+  input: {
+    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0
+    }
   }
 
 }))
@@ -175,11 +188,14 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                 <Grid item md={6}>
                   <TextInput
                     {...inputProps}
+                    className={classes.number}
+                    inputProps={{ className: classes.input }}
                     labelText="Sales officer mobile"
                     name="sales_officer_mobile"
                     value={values.sales_officer_mobile}
                     disabled={readOnly}
                     readOnly={readOnly}
+                    type='number'
                     error={errors.sales_officer_mobile}
                     helperText={errors.sales_officer_mobile}
                   />

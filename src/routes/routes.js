@@ -31,6 +31,7 @@ import BlacklistTable from '../pages/loanspage/BlacklistTable';
 import CreditReload from '../pages/reports/CreditReload';
 import FastTagPassbook from '../pages/transports/components/TransportsPassbook';
 import DealersDueReport from '../pages/reports/DealersDueReport';
+import TransportsPortal from '../pages/transports/TransportsPortal';
 
 const Routes = ({ currentUser }) => {
   return (<>
@@ -49,6 +50,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/loans/exceptions" component={LmsLos} />
       <ProtectedRoute allow exact path="/dealership/:id?" component={DealershipDetails} />
       <ProtectedRoute allow exact path='/transports' component={Transport} />
+      <ProtectedRoute allow exact path='/transports-field' component={TransportsPortal} />
       <ProtectedRoute allow exact path="/transports/:id?" component={TransportsDetails} />
       <ProtectedRoute allow exact path='/transport/exceptions' component={TransportException} />
       <ProtectedRoute allow exact path="/dealership/:id/credit-form" component={CreditForm} />

@@ -30,6 +30,12 @@ import {
   deleteRegion,
   deleteState,
   getActiveStates,
+  getAllRegion,
+  getAssetType,
+  getBusinessTypes,
+  getLoanTypes,
+  getOmcList,
+  getStates,
   updateAssetById,
   updateBusinessById,
   updateLoanById,
@@ -179,39 +185,78 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-function Contain({ title, data, label, loading, setStateBtn, regionForm, assetForm, callback }) {
+function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
   const classes = useStyles();
+  const [data, setData] = useState([]);
   const [value, setValue] = useState();
   const [openEditForm, setOpenEditForm] = useState(false);
-  const [rowData, setRowData] = useState({});
-  const [assetRow, setAssetRow] = useState({});
+  const [rowData, setRowData] = useState();
   const [openDeleteForm, setOpenDeleteForm] = useState(false);
   const [status, setStatus] = useState();
   const [openAddForm, setOpenAddForm] = useState(false);
   const [AddData, setAddData] = useState();
-  const [openActiveForm, setOpenActiveForm] = useState(false);
   const [openDeactiveForm, setOpenDeactiveForm] = useState(false);
   const [deactivateId, setDeactivateId] = useState();
   const [openRegionForm, setOpenRegionForm] = useState(false);
   const [openAssetForm, setOpenAssetForm] = useState(false);
-  const [addNewRow, setAddNewRow] = useState();
   const [assetValue, setAssetValue] = useState([{label: "", type: ""}]);
   const [states, setStates] = useState();
   const {enqueueSnackbar} = useSnackbar();
 
-  useMount(() => {
-    getActiveStates()
-      .then(setStates)
-      .catch((e) => {
-        console.log(e)
-      })
+  useMount(() => {  
+    if(title === 'OMCs'){
+        getOmcList()
+        .then(setData)
+        .catch((e) => {
+          console.log(e)
+        });
+      } else if(title === 'Region'){
+        getAllRegion()
+        .then(setData)
+        .catch((e) => {
+          console.log(e)
+        });
+        getActiveStates()
+        .then(setStates)
+        .catch((e) => {
+          console.log(e)
+        })
+      } else if(title === 'State'){
+        getStates()
+        .then(setData)
+        .catch((e) => {
+          console.log(e)
+          // setLoading(false)
+        });
+      } else if(title === 'Business Type'){
+        getBusinessTypes()
+        .then(setData) 
+        .catch((e) => {
+          console.log(e)
+          // setLoading(false)
+        });
+      } else if(title === 'Loan Type'){
+        getLoanTypes()
+        .then(setData) 
+        .catch((e) => {
+          console.log(e)
+          // setLoading(false)
+        });
+      } else if(title === 'Asset Type'){
+        getAssetType()
+        .then(setData) 
+        .catch((e) => {
+          console.log(e)
+          // setLoading(false)
+        });
+      }
   })
+
 
   const handleClose = () => {
     setOpenEditForm(false);
     setOpenDeleteForm(false);
     setOpenAddForm(false);
-    setOpenActiveForm(false);
     setOpenDeactiveForm(false);
     setOpenRegionForm(false);
     setOpenAssetForm(false);
@@ -242,19 +287,10 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
     item.name?.toUpperCase().includes(value?.toUpperCase())
   );
   const editItem = (item, title) => {
-    // if (title === 'Asset Type'){
-    //   setAssetRow(item)
-    //   setStatus(title)
-    // } else {
       setRowData(item);
       setStatus(title);
-    // }
+      title === 'Asset Type' && setAssetValue(JSON.parse(item.details))
   };
-
-  // const assetEditItem = (item, title) => {
-  //   setRowData({name: item.name, details: JSON.parse(item.details)})
-  //   setStatus(title)
-  // }
 
   const deleteItem = (item, title) => {
     setRowData(item);
@@ -273,9 +309,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
   };
 
   const handleInputChange = (e, index) => {
-
     const {id, value} = e.target;
-    // console.log(e.target);
     const list = [...assetValue];
     list[index][id] = value;
     setAssetValue(list)
@@ -301,6 +335,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
   }
 
   const handleSubmit = () => {
+    console.log('updating...');
     if (status === 'OMCs') {
       updateOmcsById(rowData, rowData.id)
         .then((res) => {
@@ -408,7 +443,8 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
     }
 
     if (status === 'Asset Type') {
-      updateAssetById(rowData, rowData.asset_id)
+      const AssetUpdateData = {name: rowData?.name , details: assetValue}
+      updateAssetById(AssetUpdateData, rowData.asset_id)
         .then((res) => {
           handleClose()
           enqueueSnackbar(res, {
@@ -463,6 +499,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
   };
 
   const submitAdd = () => {
+    console.log('adding...');
     if(AddData){
       if(status === 'OMCs'){
         addOmcs(AddData)
@@ -821,19 +858,6 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
                         {item.name}
                       </Typography>
                       <div>
-                        <Tooltip title='Edit'>
-                          <IconButton
-                            className={classes.btn}
-                            size='small'
-                            onClick={() => {
-                              handleClose()
-                              setOpenEditForm(true);
-                              editItem(item, title);
-                            }}
-                          >
-                            <EditIcon fontSize='small' />
-                          </IconButton>
-                        </Tooltip>
                         {
                         setStateBtn ? (
                           item.is_active ? (
@@ -973,7 +997,9 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
                           size='small'
                           onClick={() => {
                             handleClose()
-                            setOpenEditForm(true);
+                            {
+                              title === 'Asset Type' ? setOpenAssetForm(true) : setOpenEditForm(true)
+                            }
                             editItem(item, title);
                           }}
                         >
@@ -1255,8 +1281,8 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
                   autoFocus
                   fullWidth
                   variant='outlined'
-                  value={AddData?.name}
-                  onChange={handleAdd}
+                  value={rowData ? rowData?.name : AddData?.name}
+                  onChange={rowData ? handleChange : handleAdd}
                 />
               </Grid>
             </Grid>
@@ -1307,7 +1333,7 @@ function Contain({ title, data, label, loading, setStateBtn, regionForm, assetFo
                 Cancel
               </Button>
               <Button
-                onClick={submitAdd}
+                onClick={rowData ? handleSubmit : submitAdd}
                 style={{ color: '#1EAE98', borderColor: '#1EAE98'}}
                 variant='outlined'
                 size='small'

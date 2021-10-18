@@ -1,17 +1,12 @@
 import { makeStyles } from '@material-ui/styles';
 import React, {useState} from 'react';
 import Contain from './MasterDataTable';
-import { getOmcList, getStates, getAllRegion, getBusinessTypes, getLoanTypes, getAssetType } from '../../../services/common.service';
-import { useMount } from 'react-use';
-import Skeleton from '@material-ui/lab/Skeleton';
 import { ReactComponent as BunkIcon } from '../../../icons/bunk.svg';
 import { ReactComponent as AssetIcon } from '../../../icons/assets.svg';
 import { ReactComponent as LoanIcon } from '../../../icons/loan.svg';
 import { ReactComponent as BusinessIcon } from '../../../icons/business.svg';
 import { ReactComponent as OtherIcon } from '../../../icons/other_icons.svg';
 import { ReactComponent as InfrastructureIcon } from '../../../icons/infrastructure.svg';
-import PublicIcon from '@material-ui/icons/Public';
-import MapIcon from '@material-ui/icons/Map';
 import { Drawer, Grid, Paper, Tooltip, Typography } from '@material-ui/core';
 
 const useStyles = makeStyles({
@@ -55,76 +50,7 @@ const useStyles = makeStyles({
 
 function MasterData() {
   const classes = useStyles();
-  const [openOmcForm, setOpenOmcForm] = useState(false)
-  const [openRegionForm, setOpenRegionForm] = useState(false)
-  const [openStateForm, setOpenStateForm] = useState(false)
-  const [openBusinessForm, setOpenBusinessForm] = useState(false)
-  const [openLoanForm, setOpenLoanForm] = useState(false)
-  const [openAssetForm, setOpenAssetForm] = useState(false)
-  const [omc, setOmc] = useState([]);
-  const [region, setRegion] = useState([]);
-  const [state, setState] = useState([]);
-  const [businessType, setBusinessType] = useState([]);
-  const [loanType, setLoanType] = useState([]);
-  const [assetType, setAssetType] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  useMount(() => {
-    setLoading(true);
-    getOmcList()
-      .then(setOmc)
-      .catch((e) => {
-        console.log(e)
-        setLoading(false)
-      });
-    
-    getAllRegion()
-      .then(setRegion)
-      .catch((e) => {
-        console.log(e)
-        setLoading(false)
-      });
-      
-    getStates()
-      .then((data) => {
-        setState(data)
-          setLoading(false)
-      }) 
-      .catch((e) => {
-        console.log(e)
-        setLoading(false)
-      });
-
-    getBusinessTypes()
-      .then((data) => {
-        setBusinessType(data)
-          setLoading(false)
-      }) 
-      .catch((e) => {
-        console.log(e)
-        setLoading(false)
-      });
-    
-    getLoanTypes()
-      .then((data) => {
-        setLoanType(data)
-          setLoading(false)
-      }) 
-      .catch((e) => {
-        console.log(e)
-        setLoading(false)
-      });
-    
-    getAssetType()
-      .then((data) => {
-        setAssetType(data)
-          setLoading(false)
-      }) 
-      .catch((e) => {
-        console.log(e)
-        setLoading(false)
-      });
-  });
+  const [openForm, setOpenForm] = useState()
 
   return (
     <div>
@@ -136,47 +62,47 @@ function MasterData() {
           <Grid container spacing={1} className={classes.root}>
             <Grid item md={2}>
               <Tooltip title="OMC details">
-                <div className={classes.content} onClick={() => setOpenOmcForm(true)}>
+                <div className={classes.content} onClick={() => setOpenForm('OMCs')}>
                   <BunkIcon width={35} className={classes.icons} />
                   <Typography variant="h5" align='center' className={classes.title} >OMCs</Typography>
                 </div>
               </Tooltip>
             </Grid>
             <Grid item md={2}>
-              <Tooltip title="OMC details">
-                <div className={classes.content} onClick={() => setOpenRegionForm(true)}>
+              <Tooltip title="Regions">
+                <div className={classes.content} onClick={() => setOpenForm('Region')}>
                   <OtherIcon width={35} className={classes.icons} />
                   <Typography variant="h5" align='center' className={classes.title}>Regions</Typography>
                 </div>
               </Tooltip>
             </Grid>
             <Grid item md={2}>
-              <Tooltip title="OMC details">
-                <div className={classes.content} onClick={() => setOpenStateForm(true)}>
+              <Tooltip title="States">
+                <div className={classes.content} onClick={() => setOpenForm('State')}>
                   <InfrastructureIcon width={35} className={classes.icons} />
                   <Typography variant="h5" align='center' className={classes.title}>States</Typography>
                 </div>
               </Tooltip>
             </Grid>
             <Grid item md={2}>
-              <Tooltip title="OMC details">
-                <div className={classes.content} onClick={() => setOpenBusinessForm(true)}>
+              <Tooltip title="Business Type">
+                <div className={classes.content} onClick={() => setOpenForm('Business Type')}>
                   <BusinessIcon width={35} className={classes.icons} />
                   <Typography variant="h5" align='center' className={classes.title} >Business</Typography>
                 </div>
               </Tooltip>
             </Grid>
             <Grid item md={2}>
-              <Tooltip title="OMC details">
-                <div className={classes.content} onClick={() => setOpenLoanForm(true)}>
+              <Tooltip title="Loan Type">
+                <div className={classes.content} onClick={() => setOpenForm('Loan Type')}>
                   <LoanIcon width={35} className={classes.icons} />
                   <Typography variant="h5" align='center' className={classes.title} >Loan</Typography>
                 </div>
               </Tooltip>
             </Grid>
             <Grid item md={2}>
-              <Tooltip title="OMC details">
-                <div className={classes.content} onClick={() => setOpenAssetForm(true)}>
+              <Tooltip title="Asset Type">
+                <div className={classes.content} onClick={() => setOpenForm('Asset Type')}>
                   <AssetIcon width={35} className={classes.icons} />
                   <Typography variant="h5" align='center' className={classes.title} >Asset</Typography>
                 </div>
@@ -184,53 +110,14 @@ function MasterData() {
             </Grid>
           </Grid>
         </div>
+        
         <Drawer
           anchor="right"
-          open={openOmcForm}
-          onClose={() => setOpenOmcForm(false)}
+          open={openForm}
+          onClose={() => setOpenForm()}
           variant="temporary"
         >
-          <Contain title={'OMCs'} data={omc} label={'name'} setStateBtn={false} regionForm={false} callback={() => setOpenOmcForm(false)}/>
-        </Drawer>
-        <Drawer
-          anchor="right"
-          open={openRegionForm}
-          onClose={() => setOpenRegionForm(false)}
-          variant="temporary"
-        >
-          <Contain title={'Region'} data={region} label={'region'} setStateBtn={false} regionForm={true} callback={() => setOpenRegionForm(false)}/>
-        </Drawer>
-        <Drawer
-          anchor="right"
-          open={openStateForm}
-          onClose={() => setOpenStateForm(false)}
-          variant="temporary"
-        >
-          <Contain title={'State'} data={state} label={'name'} setStateBtn={true} regionForm={false} callback={() => setOpenStateForm(false)}/>
-        </Drawer>
-        <Drawer
-          anchor="right"
-          open={openBusinessForm}
-          onClose={() => setOpenBusinessForm(false)}
-          variant="temporary"
-        >
-          <Contain title={'Business Type'} data={businessType} label={'id_name'} setStateBtn={false} regionForm={false} callback={() => setOpenBusinessForm(false)}/>
-        </Drawer>
-        <Drawer
-          anchor="right"
-          open={openAssetForm}
-          onClose={() => setOpenAssetForm(false)}
-          variant="temporary"
-        >
-          <Contain title={'Asset Type'} data={assetType} label={'id_name'} setStateBtn={false} regionForm={false} assetForm={true} callback={() => setOpenAssetForm(false)}/>
-        </Drawer>
-        <Drawer
-          anchor="right"
-          open={openLoanForm}
-          onClose={() => setOpenLoanForm(false)}
-          variant="temporary"
-        >
-          <Contain title={'Loan Type'} data={loanType} label={'id_name'} setStateBtn={false} regionForm={false} callback={() => setOpenLoanForm(false)}/>
+          <Contain title={openForm} label={'name'} setStateBtn={openForm === 'State' ? true : false} regionForm={openForm === 'Region' ? true : false} assetForm={openForm === 'Asset Type' ? true : false} callback={() => setOpenForm()}/>
         </Drawer>
       </Paper>
 

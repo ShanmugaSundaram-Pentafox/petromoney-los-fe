@@ -220,7 +220,7 @@ const AddNewTransportsForm = ({
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       // id: Yup.number().required('Please enter transporter code'),
-      name: Yup.string().required('Please enter transporter name').nullable('Enter transporter name'),
+      name: Yup.string().required('Please enter transporter name').nullable('Enter transporter name').matches(/^[aA-zZ.,&/-\s]+$/, "Only alphabets are allowed for this field "),
       mobile: Yup.number()
         .nullable('Enter your mobile number')
         .min(10, 'Enter valid mobile number')
@@ -598,7 +598,7 @@ const AddNewTransportsForm = ({
                     <TextInput
                       {...inputProps}
                       name='name'
-                      label='Transport Name'
+                      labelText='Transport Name'
                       value={values.name?.toUpperCase()}
                       readOnly={readOnly}
                       error={errors.name}
@@ -609,7 +609,7 @@ const AddNewTransportsForm = ({
                     <TextInput
                       {...inputProps}
                       name='mobile'
-                      label='Mobile'
+                      labelText='Mobile'
                       value={values?.mobile}
                       readOnly={readOnly}
                       error={errors.mobile}
@@ -621,7 +621,7 @@ const AddNewTransportsForm = ({
                       <TextInput
                         {...inputProps}
                         select
-                        label="OMC"
+                        labelText="OMC"
                         name="omc"
                         value={values.omc}
                         readOnly={readOnly}
@@ -640,7 +640,7 @@ const AddNewTransportsForm = ({
                       {...inputProps}
                       select
                       name='business_type'
-                      label='Business Type'
+                      labelText='Business Type'
                       readOnly={readOnly}
                       value={values?.business_type}
                       disabled={readOnly}
@@ -651,12 +651,12 @@ const AddNewTransportsForm = ({
                   </Grid>
                   <Grid item md={6}>
                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                      <label>Date of Birth</label>
                       <KeyboardDatePicker
                         // disableToolbar
                         // hideTabs={true}
                         variant='inline'
                         inputVariant='outlined'
-                        label='Date of Birth'
                         format='dd-MM-yyyy'
                         animateYearScrolling={true}
                         invalidDateMessage='Invalid Date Format'
@@ -687,7 +687,7 @@ const AddNewTransportsForm = ({
                       {...inputProps}
                       select
                       name='state'
-                      label='State'
+                      labelText='State'
                       readOnly={readOnly}
                       disabled={readOnly}
                       value={values?.state}
@@ -701,7 +701,7 @@ const AddNewTransportsForm = ({
                       {...inputProps}
                       select
                       name='region'
-                      label='Region'
+                      labelText='Region'
                       readOnly={readOnly}
                       disabled={readOnly}
                       value={values?.region}
@@ -714,7 +714,7 @@ const AddNewTransportsForm = ({
                     <TextInput
                       {...inputProps}
                       name='address'
-                      label='Address'
+                      labelText='Address'
                       value={values?.address}
                       readOnly={readOnly}
                       disabled={readOnly}
@@ -728,7 +728,7 @@ const AddNewTransportsForm = ({
                       {...inputProps}
                       // select
                       name='district'
-                      label='District'
+                      labelText='District'
                       readOnly={readOnly}
                       disabled={readOnly}
                       value={values.district}
@@ -741,7 +741,7 @@ const AddNewTransportsForm = ({
                     <TextInput
                       {...inputProps}
                       name='pincode'
-                      label='Pincode'
+                      labelText='Pincode'
                       value={values?.pincode}
                       disabled={readOnly}
                       readOnly={readOnly}

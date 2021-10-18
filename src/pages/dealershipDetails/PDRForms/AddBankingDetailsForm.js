@@ -320,7 +320,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
-                      labelText="Branch"
+                      labelText="City"
                       name="bank_city"
                       value={values.bank_city}
                       error={errors.bank_city}

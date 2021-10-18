@@ -45,6 +45,8 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -884,21 +886,23 @@ const AddNewTransportsForm = ({
               </div>
             )
           ) : (
-            <div>
-              <Button
-                variant='contained'
-                type='submit'
-                onClick={handleSubmit}
-                className={clsx(classes.btn, classes.editButton)}
-                startIcon={
-                  !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
-                }
-                // disabled={loading}
-                onClick={loading ? () => null : handleEdit}
-              >
-                Edit
-              </Button>
-            </div>
+            !permissionCheck(currentUser.role_name, rulesList.transporter_view) ? (
+              <div>
+                <Button
+                  variant='contained'
+                  type='submit'
+                  onClick={handleSubmit}
+                  className={clsx(classes.btn, classes.editButton)}
+                  startIcon={
+                    !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
+                  }
+                  // disabled={loading}
+                  onClick={loading ? () => null : handleEdit}
+                >
+                  Edit
+                </Button>
+              </div>
+            ) : null
           )}
         </div>
       </div>

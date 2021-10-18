@@ -173,7 +173,7 @@ const Sidebar = props => {
     pages = [
       {
         title: 'Profile',
-        href: `/transports/${currentUser.id}`,
+        href: `/transports-field`,
         icon: <PersonOutlineIcon />
       },
       {

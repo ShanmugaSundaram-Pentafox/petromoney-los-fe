@@ -84,11 +84,12 @@ const useStyles = makeStyles((theme) => ({
   button: {
     margin: 0,
     float: "right",
-  }
+  },
 }));
 
 
 const Docs = ({ data }) => {
+  const classes = useStyles();
   const [imageModal, setImageModal] = useState({})
   let temp = 0;
   return (
@@ -117,7 +118,6 @@ const Docs = ({ data }) => {
 const DocList = ({ id }) => {
   const classes = useStyles();
   const [checkListData, setCheckListData] = useState();
-  console.log(checkListData);
   const [showUpload, setShowUpload] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [modalData, setModalData] = useState([]);
@@ -236,7 +236,7 @@ const DocList = ({ id }) => {
         </TableHead>
         <TableBody>
           {Array.isArray(checkListData) && checkListData.map((row, i) => row.doc_type !== 'dealer' && (
-            <DocListPreview DocName={row.description}/>
+            <DocListPreview DocName={row.description} upload={() => onDocUpload(row)} deleteDocs={() => handleModal(row.file_data, row.description)} file={row.file_data} id={i+1}/>
             // <TableRow key={row.doc_id}>
             //   {/* <TableCell align="center">{row.doc_id}</TableCell> */}
             //   <TableCell>{row.description}</TableCell>

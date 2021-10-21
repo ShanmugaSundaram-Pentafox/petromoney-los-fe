@@ -132,7 +132,6 @@ const Dashboard = ({ currentUser, dashboardView }) => {
 
     setTimeout(() => {
       getAll_ls1_Metrices().then(res => {
-        // console.log(res);
         const result = res[0] || {};
         setLs1Metrices(result);
         let overallData = [

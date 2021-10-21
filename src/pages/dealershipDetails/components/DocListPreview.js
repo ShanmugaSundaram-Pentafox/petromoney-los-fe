@@ -10,6 +10,8 @@ import AddIcon from '@material-ui/icons/Add';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import FilePreview from '../../../components/CommonComponents/FilePreview';
 
+const imgFileTypes = ['jfif', 'pjpeg', 'jpeg', 'pjp', 'jpg', 'png'];
+const csvFileTypes = ['csv', 'xls', 'xlsx'];
 const useStyles = makeStyles((theme) => ({
     root: {
         // margin: 10,
@@ -39,7 +41,15 @@ const DocPreview = ({fileType, url}) => {
             cursor: 'pointer',
             '&:hover': {
                 backgroundColor: '#fcfcfc'
-            }
+            },
+            border: '1px dashed grey',
+            width: 100,
+            height: 75,
+            borderRadius: 6,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center', 
+            margin: '8px 0px 8px 15px'
         }
     }))
 
@@ -53,11 +63,10 @@ const DocPreview = ({fileType, url}) => {
                         <Tooltip title={fileName}>
                             <span>
                                 <div className={classes.container}
-                                    onClick={() => fileType === 'csv' || fileType === 'xls' || fileType === 'xlsx' ? window.open(url) : setImageModal({ open: true, image: url, type: fileType})} 
-                                    style={{ border: '1px dashed grey', width: 100, height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center', marginLeft: 15 }}
+                                    onClick={() => csvFileTypes.includes(fileType) ? window.open(url) : setImageModal({ open: true, image: url, type: fileType})} 
                                 >
                                     {
-                                        fileType === 'png' ? 
+                                        imgFileTypes.includes(fileType) ? 
                                             <img src={url} height="100%" width="100%" style={{borderRadius: 6, padding: 1, objectFit: 'cover'}} />
                                             : fileType === 'pdf' ?
                                                 <PictureAsPdfIcon style={{color: '#63686E'}}/>
@@ -103,7 +112,7 @@ const DocListPreview = ({DocName, upload, deleteDocs, file, id}) => {
                 </div>
             </div>
             <div 
-                style={{display: 'flex', margin: 10, flexWrap: 'wrap'}}
+                style={{display: 'flex', flexWrap: 'wrap'}}
             >
                 {
                     file.map((data, i) => {

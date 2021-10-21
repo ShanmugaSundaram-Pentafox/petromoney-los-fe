@@ -46,7 +46,6 @@ const DocPreview = ({fileType, url}) => {
     const [imageModal, setImageModal] = useState({});
     const classes = useStyles();
     const fileName = url?.split('/')[5]
-    console.log(imageModal);
     return(
         <>
         {
@@ -54,7 +53,7 @@ const DocPreview = ({fileType, url}) => {
                         <Tooltip title={fileName}>
                             <span>
                                 <div className={classes.container}
-                                    onClick={() => setImageModal({ open: true, image: url, type: fileType})} 
+                                    onClick={() => fileType === 'csv' || fileType === 'xls' || fileType === 'xlsx' ? window.open(url) : setImageModal({ open: true, image: url, type: fileType})} 
                                     style={{ border: '1px dashed grey', width: 100, height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center', marginLeft: 15 }}
                                 >
                                     {
@@ -104,7 +103,7 @@ const DocListPreview = ({DocName, upload, deleteDocs, file, id}) => {
                 </div>
             </div>
             <div 
-                style={{display: 'flex', margin: 10}}
+                style={{display: 'flex', margin: 10, flexWrap: 'wrap'}}
             >
                 {
                     file.map((data, i) => {

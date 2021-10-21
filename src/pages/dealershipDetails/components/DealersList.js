@@ -74,7 +74,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   const [formType, setFormType] = useState('');
   const [modelType, setModelType] = useState('');
   const [rowData, setRowData] = useState({});
-  const [dealerData, setDealersData] = useState();
+  const [dealerData, setDealersData] = useState([]);
   const [coApplicantsData, setCoApplicantsData] = useState([]);
   const [guarantorsData, setGuarantorsData] = useState([]);
   const [dealerCoApplicantData, setDealerCoApplicantData] = useState([]);

@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 
-const DocPreview = ({fileType, url}) => {
+const DocPreview = ({fileType, url, DocName}) => {
     const useStyles = makeStyles((theme) => ({
         container: {
             transition: 'all .2s ease-in-out',
@@ -81,7 +81,7 @@ const DocPreview = ({fileType, url}) => {
                 <Typography variant='h7' style={{color: '#b5b5b5', marginLeft: 15 }}>No Documents!</Typography>
             )
         }
-            <FormDialog title='Document' onDownload={imageModal?.image} open={imageModal?.open} onClose={() => setImageModal({ open: false })}>
+            <FormDialog title={DocName} onDownload={imageModal?.image} open={imageModal?.open} onClose={() => setImageModal({ open: false })}>
                 <FilePreview data={imageModal}/>
             </FormDialog>
         </>
@@ -118,7 +118,7 @@ const DocListPreview = ({DocName, upload, deleteDocs, file, id}) => {
                     file.map((data, i) => {
                         return(
                                 !collapse? (
-                                    <DocPreview fileType={data.file_type} url={data.file_url} />
+                                    <DocPreview fileType={data.file_type} url={data.file_url} DocName={DocName}/>
                                 ) : (
                                     null
                                 )

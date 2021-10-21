@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import _countBy from 'lodash/countBy';
 import { useMount } from 'react-use';
 import { connect } from 'react-redux';
@@ -22,193 +22,8 @@ import { Typography } from '@material-ui/core';
 import { getDealerDetails } from '../../services/dealers.service';
 import Currency from '../../../src/components/Number/Currency';
 import LoanStats from './components/LoanStats';
-import Chart from "react-google-charts";
-import MUIDataTable from 'mui-datatables';
+// import Chart from "react-google-charts";
 import Datatable from './components/Datatable';
-
-const testOMCData = {
-  data: [
-      {
-          label: 'HPCL',
-          data: 
-          [
-              {
-                  label: '1-3 days',
-                  value: 325600
-              },
-              {
-                  label: '4-20 days',
-                  value: 521000
-              },
-              {
-                  label: '21-45 days',
-                  value: 124555
-              }
-          ]
-      },
-      {
-          label: 'BPCL',
-          data: 
-          [
-              {
-                  label: '1-3 days',
-                  value: 325600
-              },
-              {
-                  label: '4-20 days',
-                  value: 521000
-              },
-              {
-                  label: '21-45 days',
-                  value: 124555
-              }
-          ]
-      },
-      {
-          label: 'INPL',
-          data: 
-          [
-              {
-                  label: '1-3 days',
-                  value: 325600
-              },
-              {
-                  label: '4-20 days',
-                  value: 521000
-              },
-              {
-                  label: '21-45 days',
-                  value: 124555
-              }
-          ]
-      },
-
-  ]
-}
-
-const testRegionData = {
-  data: [
-      {
-          label: 'Madurai',
-          data: 
-          [
-              {
-                  label: '1-3 days',
-                  value: 325600
-              },
-              {
-                  label: '4-20 days',
-                  value: 521000
-              },
-              {
-                  label: '21-45 days',
-                  value: 124555
-              }
-          ]
-      },
-      {
-          label: 'coimbatore',
-          data: 
-          [
-              {
-                  label: '1-3 days',
-                  value: 325600
-              },
-              {
-                  label: '4-20 days',
-                  value: 521000
-              },
-              {
-                  label: '21-45 days',
-                  value: 124555
-              }
-          ]
-      },
-      {
-          label: 'Salem',
-          data: 
-          [
-              {
-                  label: '1-3 days',
-                  value: 325600
-              },
-              {
-                  label: '4-20 days',
-                  value: 521000
-              },
-              {
-                  label: '21-45 days',
-                  value: 124555
-              }
-          ]
-      },
-      {
-          label: 'Chennai',
-          data: 
-          [
-              {
-                  label: '1-3 days',
-                  value: 325600
-              },
-              {
-                  label: '4-20 days',
-                  value: 521000
-              },
-              {
-                  label: '21-45 days',
-                  value: 124555
-              }
-          ]
-      },
-      {
-          label: 'Erode',
-          data: 
-          [
-              {
-                  label: '1-3 days',
-                  value: 325600
-              },
-              {
-                  label: '4-20 days',
-                  value: 521000
-              },
-              {
-                  label: '21-45 days',
-                  value: 124555
-              }
-          ]
-      },
-  ]
-}
-
-const finalOmcData = []
-const omcColumns = []
-const finalRegionData = []
-const regionColumns = []
-
-testOMCData.data.map((data, i) => {
-    let buffer = [data.label]
-    let columnBuffer = [' ']
-    data.data.map((data, i)=> {
-        buffer.push(data.value)
-        columnBuffer.push(data.label)
-    })
-    finalOmcData.push(buffer)
-    omcColumns.push(columnBuffer)
-})
-
-testRegionData.data.map((data, i) => {
-    let buffer = [data.label]
-    let columnBuffer = [' ']
-    data.data.map((data, i)=> {
-        buffer.push(data.value)
-        columnBuffer.push(data.label)
-    })
-    finalRegionData.push(buffer)
-    regionColumns.push(columnBuffer)
-})
-
-
 
 const useStyles = makeStyles(theme =>({
   card :{
@@ -242,8 +57,10 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   const [selectedReportStatsCard, setSelectedReportStatsCard] = useState("Due");
   const [dealerDetail, setDealerDetail] = useState({});
   const [dealerChartData, setDealerChartData] = useState([]);
-  const [sampleData, setSampleData] = useState([]);
-  const [sampleRegionData, setSampleRegionData] = useState([]);
+  const [omcData, setOmcData] = useState([]);
+  const [OmcColumnData, setOmcColumnData] = useState([]);
+  const [RegionData, setRegionData] = useState([]);
+  const [RegionColumn, setRegionColumn] = useState([]);
 
   const handleClick = (name) => {
     setSelectedStatsCard(name)
@@ -251,16 +68,22 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   }
 
   useMount(() => {
-
     getAllOmcDpd()
     .then((res) => {
-      let test = [['OMCs', '1-3 days', '4-14 days', '15-30 days', '31-60 days', '61-90 days', '> 90 days']]
-      res.map((data, index) => {
-        let buffer = Object.values(data)
-        buffer.unshift(buffer.pop())
-        test.push(buffer)
+      let dataRow = []
+      let dataColumn = []
+      res.map((data) => {
+        let buffer = [data.label]
+        let columnBuffer = [' ']
+        data.data.map((data) => {
+          buffer.push(data.value? data.value : '-')
+          columnBuffer.push(data.label)
+        })
+        dataRow.push(buffer)
+        dataColumn.push(columnBuffer)
       })
-      setSampleData(test)
+      setOmcData(dataRow)
+      setOmcColumnData(dataColumn)
     })
     .catch(e => {
       console.log(e);
@@ -268,13 +91,20 @@ const Dashboard = ({ currentUser, dashboardView }) => {
     
     getAllRegionDpd()
     .then((res) => {
-      let test = [['Region', '1-3 days', '4-14 days', '15-30 days', '31-60 days', '61-90 days', '> 90 days']]
-      res.map((data, index) => {
-        let buffer = Object.values(data)
-        buffer.unshift(buffer.splice(buffer.indexOf(data.cust_region), 1)[0])
-        test.push(buffer)
+      let dataRow = []
+      let dataColumn = []
+      res.map((data) => {
+        let buffer = [data.label]
+        let columnBuffer = [' ']
+        data.data.map((data) => {
+          buffer.push(data.value? data.value : '-')
+          columnBuffer.push(data.label)
+        })
+        dataRow.push(buffer)
+        dataColumn.push(columnBuffer)
       })
-      setSampleRegionData(test)
+      setRegionData(dataRow)
+      setRegionColumn(dataColumn)
     })
     .catch(e => {
       console.log(e);
@@ -419,10 +249,10 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                       </DataCharts>
                     </Grid>
                     <Grid item md={6}>
-                      <Datatable title='OMC' data={finalOmcData} columns={omcColumns[0]}/>
+                      <Datatable title='OMC' data={omcData} columns={OmcColumnData[0]}/>
                     </Grid>
                     <Grid item md={6}>
-                      <Datatable title='Region' data={finalRegionData} columns={regionColumns[0]}/>
+                      <Datatable title='Region' data={RegionData} columns={RegionColumn[0]}/>
                     </Grid>
                     {/* <Grid item md={6}>
                       <DataCharts>

@@ -317,6 +317,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                   <KeyboardDatePicker
                     variant='inline'
+                    name='dob'
                     inputVariant='outlined'
                     label="Date of Birth"
                     format='dd-MM-yyyy'
@@ -329,7 +330,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                     margin='normal'
                     id='date-picker'
                     autoOk={true}
-                    value={selectedDate}
+                    value={selectedDate ? selectedDate : null}
                     onChange={handleDateChange}
                     keyboardButtonProps={{
                       'aria-label': 'change date'

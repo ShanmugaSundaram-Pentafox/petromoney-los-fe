@@ -10,6 +10,8 @@ import AddIcon from '@material-ui/icons/Add';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import FilePreview from '../../../components/CommonComponents/FilePreview';
 
+const imgFileTypes = ['jfif', 'pjpeg', 'jpeg', 'pjp', 'jpg', 'png'];
+const csvFileTypes = ['csv', 'xls', 'xlsx'];
 const useStyles = makeStyles((theme) => ({
     root: {
         // margin: 10,
@@ -32,21 +34,28 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 
-const DocPreview = ({fileType, url}) => {
+const DocPreview = ({fileType, url, DocName}) => {
     const useStyles = makeStyles((theme) => ({
         container: {
             transition: 'all .2s ease-in-out',
             cursor: 'pointer',
             '&:hover': {
                 backgroundColor: '#fcfcfc'
-            }
+            },
+            border: '1px dashed grey',
+            width: 100,
+            height: 75,
+            borderRadius: 6,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center', 
+            margin: '8px 0px 8px 15px'
         }
     }))
 
     const [imageModal, setImageModal] = useState({});
     const classes = useStyles();
     const fileName = url?.split('/')[5]
-    console.log(imageModal);
     return(
         <>
         {
@@ -54,11 +63,10 @@ const DocPreview = ({fileType, url}) => {
                         <Tooltip title={fileName}>
                             <span>
                                 <div className={classes.container}
-                                    onClick={() => setImageModal({ open: true, image: url, type: fileType})} 
-                                    style={{ border: '1px dashed grey', width: 100, height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center', marginLeft: 15 }}
+                                    onClick={() => csvFileTypes.includes(fileType) ? window.open(url) : setImageModal({ open: true, image: url, type: fileType})} 
                                 >
                                     {
-                                        fileType === 'png' ? 
+                                        imgFileTypes.includes(fileType) ? 
                                             <img src={url} height="100%" width="100%" style={{borderRadius: 6, padding: 1, objectFit: 'cover'}} />
                                             : fileType === 'pdf' ?
                                                 <PictureAsPdfIcon style={{color: '#63686E'}}/>
@@ -73,7 +81,7 @@ const DocPreview = ({fileType, url}) => {
                 <Typography variant='h7' style={{color: '#b5b5b5', marginLeft: 15 }}>No Documents!</Typography>
             )
         }
-            <FormDialog title='Document' onDownload={imageModal?.image} open={imageModal?.open} onClose={() => setImageModal({ open: false })}>
+            <FormDialog title={DocName} onDownload={imageModal?.image} open={imageModal?.open} onClose={() => setImageModal({ open: false })}>
                 <FilePreview data={imageModal}/>
             </FormDialog>
         </>
@@ -104,13 +112,13 @@ const DocListPreview = ({DocName, upload, deleteDocs, file, id}) => {
                 </div>
             </div>
             <div 
-                style={{display: 'flex', margin: 10}}
+                style={{display: 'flex', flexWrap: 'wrap'}}
             >
                 {
                     file.map((data, i) => {
                         return(
                                 !collapse? (
-                                    <DocPreview fileType={data.file_type} url={data.file_url} />
+                                    <DocPreview fileType={data.file_type} url={data.file_url} DocName={DocName}/>
                                 ) : (
                                     null
                                 )

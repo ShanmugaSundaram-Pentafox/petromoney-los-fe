@@ -593,14 +593,14 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
           />
         )}
         <CardActions className={classes.actionFooter}>
-          <Button
+          {/* <Button
             color="primary"
             size="small"
             variant="contained"
             onClick={toggleCreditReport}
           >
             View/Edit Financial Report
-          </Button>
+          </Button> */}
           {!readOnly ? (
             !loading ? (
               <>

@@ -55,9 +55,6 @@ function MasterData() {
   return (
     <div>
       <Paper style={{padding: 10}}>
-        <div className={classes.header}>
-          <Typography variant="h4" className={classes.WrapperTitle} >Table Settings</Typography>
-        </div>
         <div style={{marginLeft: 20, width: '95%'}}>
           <Grid container spacing={1} className={classes.root}>
             <Grid item md={2}>

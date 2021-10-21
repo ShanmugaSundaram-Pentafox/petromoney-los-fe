@@ -14,14 +14,16 @@ import moment from 'moment';
 import Skeleton from '@material-ui/lab/Skeleton';
 // import { Tooltip, LabelList,Legend, BarChart, CartesianGrid, XAxis, YAxis, Bar, Text } from 'recharts';
 import LoanBookTable from '../../components/Tables/LoanBookTable';
-import { getLoanStats, getAll_ls1_Metrices, getAll_ls2_Metrices } from '../../services/loans.service';
-import { SummaryTile, PieChartData, BarChartData } from './components/MetricsComponents';
+import { getLoanStats, getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd } from '../../services/loans.service';
+import { SummaryTile, PieChartData, BarChartData, GroupChartData } from './components/MetricsComponents';
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import { Typography } from '@material-ui/core';
 // import { yellow } from '@material-ui/core/colors';
 import { getDealerDetails } from '../../services/dealers.service';
 import Currency from '../../../src/components/Number/Currency';
 import LoanStats from './components/LoanStats';
+// import Chart from "react-google-charts";
+import Datatable from './components/Datatable';
 
 const useStyles = makeStyles(theme =>({
   card :{
@@ -55,11 +57,58 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   const [selectedReportStatsCard, setSelectedReportStatsCard] = useState("Due");
   const [dealerDetail, setDealerDetail] = useState({});
   const [dealerChartData, setDealerChartData] = useState([]);
+  const [omcData, setOmcData] = useState([]);
+  const [OmcColumnData, setOmcColumnData] = useState([]);
+  const [RegionData, setRegionData] = useState([]);
+  const [RegionColumn, setRegionColumn] = useState([]);
+
   const handleClick = (name) => {
     setSelectedStatsCard(name)
     setSelectedReportStatsCard(name)
   }
+
   useMount(() => {
+    getAllOmcDpd()
+    .then((res) => {
+      let dataRow = []
+      let dataColumn = []
+      res.map((data) => {
+        let buffer = [data.label]
+        let columnBuffer = [' ']
+        data.data.map((data) => {
+          buffer.push(data.value? data.value : '-')
+          columnBuffer.push(data.label)
+        })
+        dataRow.push(buffer)
+        dataColumn.push(columnBuffer)
+      })
+      setOmcData(dataRow)
+      setOmcColumnData(dataColumn)
+    })
+    .catch(e => {
+      console.log(e);
+    })
+    
+    getAllRegionDpd()
+    .then((res) => {
+      let dataRow = []
+      let dataColumn = []
+      res.map((data) => {
+        let buffer = [data.label]
+        let columnBuffer = [' ']
+        data.data.map((data) => {
+          buffer.push(data.value? data.value : '-')
+          columnBuffer.push(data.label)
+        })
+        dataRow.push(buffer)
+        dataColumn.push(columnBuffer)
+      })
+      setRegionData(dataRow)
+      setRegionColumn(dataColumn)
+    })
+    .catch(e => {
+      console.log(e);
+    })
     // getLoanStats()
     //   .then(data => {
     //     // const data = _countBy(res, item => {
@@ -198,6 +247,26 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                         <BarChartData daysChartData={daysChartData} />
                       </DataCharts>
                     </Grid>
+                    <Grid item md={6}>
+                      <Datatable title='OMC' data={omcData} columns={OmcColumnData[0]}/>
+                    </Grid>
+                    <Grid item md={6}>
+                      <Datatable title='Region' data={RegionData} columns={RegionColumn[0]}/>
+                    </Grid>
+                    {/* <Grid item md={6}>
+                      <DataCharts>
+                        <Paper style={{padding: 20, borderRadius: 5, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                          <GroupChartData chartData={sampleData} title={'OMC'} subtitle={'Day wise Omc data'}/>
+                        </Paper>
+                      </DataCharts>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <DataCharts>
+                        <Paper style={{padding: 20, borderRadius: 5, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                          <GroupChartData chartData={sampleRegionData} title={'Region'} subtitle={'Day wise Region data'}/>
+                        </Paper>
+                      </DataCharts>
+                    </Grid> */}
                     <Grid item xs={12}>
                       <LoanBookTable title={"Loan Book"} currentUser={currentUser} />
                     </Grid>
@@ -211,8 +280,6 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                 )
               }
             </>
-
-
           )
       }
     </div>

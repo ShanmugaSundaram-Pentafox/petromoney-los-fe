@@ -33,7 +33,14 @@ const useStyles = makeStyles(theme =>({
       flexWrap:"nowrap",
      }
     }
-    
+  },
+
+  dataChart: {
+    padding: 20, 
+    borderRadius: 5, 
+    display: 'flex', 
+    justifyContent: 'center', 
+    alignItems: 'center'
   }
 }))
 const DataCharts = styled.div`
@@ -58,9 +65,9 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   const [dealerDetail, setDealerDetail] = useState({});
   const [dealerChartData, setDealerChartData] = useState([]);
   const [omcData, setOmcData] = useState([]);
-  const [OmcColumnData, setOmcColumnData] = useState([]);
+  // const [OmcColumnData, setOmcColumnData] = useState([]);
   const [RegionData, setRegionData] = useState([]);
-  const [RegionColumn, setRegionColumn] = useState([]);
+  // const [RegionColumn, setRegionColumn] = useState([]);
 
   const handleClick = (name) => {
     setSelectedStatsCard(name)
@@ -76,18 +83,60 @@ const Dashboard = ({ currentUser, dashboardView }) => {
         let buffer = [data.label]
         let columnBuffer = [' ']
         data.data.map((data) => {
-          buffer.push(data.value? data.value : '-')
+          buffer.push(data.value)
           columnBuffer.push(data.label)
         })
         dataRow.push(buffer)
         dataColumn.push(columnBuffer)
       })
+      dataRow.unshift(dataColumn[0])
       setOmcData(dataRow)
-      setOmcColumnData(dataColumn)
     })
     .catch(e => {
       console.log(e);
     })
+
+    // getAllOmcDpd()
+    // .then((res) => {
+    //   let dataRow = []
+    //   let dataColumn = []
+    //   res.map((data) => {
+    //     let buffer = [data.label]
+    //     let columnBuffer = [' ']
+    //     data.data.map((data) => {
+    //       buffer.push(data.value? data.value : '-')
+    //       columnBuffer.push(data.label)
+    //     })
+    //     dataRow.push(buffer)
+    //     dataColumn.push(columnBuffer)
+    //   })
+    //   setOmcData(dataRow)
+    //   setOmcColumnData(dataColumn)
+    // })
+    // .catch(e => {
+    //   console.log(e);
+    // })
+    
+    // getAllRegionDpd()
+    // .then((res) => {
+    //   let dataRow = []
+    //   let dataColumn = []
+    //   res.map((data) => {
+    //     let buffer = [data.label]
+    //     let columnBuffer = [' ']
+    //     data.data.map((data) => {
+    //       buffer.push(data.value? data.value : '-')
+    //       columnBuffer.push(data.label)
+    //     })
+    //     dataRow.push(buffer)
+    //     dataColumn.push(columnBuffer)
+    //   })
+    //   setRegionData(dataRow)
+    //   setRegionColumn(dataColumn)
+    // })
+    // .catch(e => {
+    //   console.log(e);
+    // })
     
     getAllRegionDpd()
     .then((res) => {
@@ -97,18 +146,19 @@ const Dashboard = ({ currentUser, dashboardView }) => {
         let buffer = [data.label]
         let columnBuffer = [' ']
         data.data.map((data) => {
-          buffer.push(data.value? data.value : '-')
+          buffer.push(data.value)
           columnBuffer.push(data.label)
         })
         dataRow.push(buffer)
         dataColumn.push(columnBuffer)
       })
+      dataRow.unshift(dataColumn[0])
       setRegionData(dataRow)
-      setRegionColumn(dataColumn)
     })
     .catch(e => {
       console.log(e);
     })
+
     // getLoanStats()
     //   .then(data => {
     //     // const data = _countBy(res, item => {
@@ -247,26 +297,38 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                         <BarChartData daysChartData={daysChartData} />
                       </DataCharts>
                     </Grid>
-                    <Grid item md={6}>
+                    {/* <Grid item md={6}>
                       <Datatable title='OMC' data={omcData} columns={OmcColumnData[0]}/>
                     </Grid>
                     <Grid item md={6}>
                       <Datatable title='Region' data={RegionData} columns={RegionColumn[0]}/>
-                    </Grid>
-                    {/* <Grid item md={6}>
-                      <DataCharts>
-                        <Paper style={{padding: 20, borderRadius: 5, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                          <GroupChartData chartData={sampleData} title={'OMC'} subtitle={'Day wise Omc data'}/>
-                        </Paper>
-                      </DataCharts>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <DataCharts>
-                        <Paper style={{padding: 20, borderRadius: 5, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                          <GroupChartData chartData={sampleRegionData} title={'Region'} subtitle={'Day wise Region data'}/>
-                        </Paper>
-                      </DataCharts>
                     </Grid> */}
+                    <Grid item md={5}>
+                      <DataCharts>
+                        <Paper className={classes.dataChart}>
+                          {
+                            omcData ? (
+                              <GroupChartData chartData={omcData} title={'OMC'} subtitle={'Day wise Omc data'}/>
+                            ) : (
+                              <Typography variant='h7'>No Data Found. Check if EOD has been completed</Typography>
+                            )
+                          }
+                        </Paper>
+                      </DataCharts>
+                    </Grid>
+                    <Grid item xs={7}>
+                      <DataCharts>
+                        <Paper className={classes.dataChart}>
+                          {
+                            RegionData ? (
+                              <GroupChartData chartData={RegionData} title={'Region'} subtitle={'Day wise Region data'}/>
+                            ) : (
+                              <Typography variant='h7'>No Data Found. Check if EOD has been completed</Typography>
+                            )
+                          }
+                        </Paper>
+                      </DataCharts>
+                    </Grid>
                     <Grid item xs={12}>
                       <LoanBookTable title={"Loan Book"} currentUser={currentUser} />
                     </Grid>

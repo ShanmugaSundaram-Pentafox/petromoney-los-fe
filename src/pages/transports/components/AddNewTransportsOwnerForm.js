@@ -552,6 +552,26 @@ const AddNewTransportsOwnerForm = ({
                     />
                   </Grid>
                   <Grid item md={6}>
+                    <TextInput
+                      select
+                      label='Gender'
+                      name='gender'
+                      error={errors.gender}
+                      helperText={errors.gender}
+                      value={values.gender}
+                      readOnly={readOnly}
+                      disabled={readOnly}
+                      onChange={handleChange}
+                      SelectProps={{
+                        native: true,
+                      }}
+                    >
+                      <option value='null'>Select Gender</option>
+                      <option value={'MALE'}>Male</option>
+                      <option value={'FEMALE'}>Female</option>
+                    </TextInput>
+                  </Grid>
+                  <Grid item md={6}>
                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                       <KeyboardDatePicker
                         // disableToolbar
@@ -584,26 +604,6 @@ const AddNewTransportsOwnerForm = ({
                         }}
                       />
                     </MuiPickersUtilsProvider>
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      select
-                      label='Gender'
-                      name='gender'
-                      error={errors.gender}
-                      helperText={errors.gender}
-                      value={values.gender}
-                      readOnly={readOnly}
-                      disabled={readOnly}
-                      onChange={handleChange}
-                      SelectProps={{
-                        native: true,
-                      }}
-                    >
-                      <option value='null'>Select Gender</option>
-                      <option value={'MALE'}>Male</option>
-                      <option value={'FEMALE'}>Female</option>
-                    </TextInput>
                   </Grid>
                   <Grid item md={12}>
                     <TextInput

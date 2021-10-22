@@ -303,12 +303,12 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                     <Grid item md={6}>
                       <Datatable title='Region' data={RegionData} columns={RegionColumn[0]}/>
                     </Grid> */}
-                    <Grid item md={5}>
+                    <Grid item xs={7}>
                       <DataCharts>
                         <Paper className={classes.dataChart}>
                           {
-                            omcData ? (
-                              <GroupChartData chartData={omcData} title={'OMC'} subtitle={'Day wise Omc data'}/>
+                            RegionData ? (
+                              <GroupChartData chartData={RegionData} title={'Region'} subtitle={'Day wise Region data'}/>
                             ) : (
                               <Typography variant='h7'>No Data Found. Check if EOD has been completed</Typography>
                             )
@@ -316,12 +316,12 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                         </Paper>
                       </DataCharts>
                     </Grid>
-                    <Grid item xs={7}>
+                    <Grid item md={5}>
                       <DataCharts>
                         <Paper className={classes.dataChart}>
                           {
-                            RegionData ? (
-                              <GroupChartData chartData={RegionData} title={'Region'} subtitle={'Day wise Region data'}/>
+                            omcData ? (
+                              <GroupChartData chartData={omcData} title={'OMC'} subtitle={'Day wise Omc data'}/>
                             ) : (
                               <Typography variant='h7'>No Data Found. Check if EOD has been completed</Typography>
                             )

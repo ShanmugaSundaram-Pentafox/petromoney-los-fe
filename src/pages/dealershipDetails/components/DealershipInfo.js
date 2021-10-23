@@ -587,7 +587,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
           <FileUpload
             handleSave={(value) => handleSave(value)}
             id={values.id}
-            title='Upload Transport Documents'
+            title='Upload Dealership Documents'
             open={showUpload}
             onCloseUploader={onCloseUploader}
           />

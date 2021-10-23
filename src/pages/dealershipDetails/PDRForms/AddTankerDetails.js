@@ -129,7 +129,7 @@ const AddTankerDetails = ({ dealer_id, tankerAdd, setTankerAdd }) => {
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      vehicle_no: Yup.number().nullable('Enter Tanker No').required('Enter Tanker No'),
+      vehicle_no: Yup.string().nullable('Enter Tanker No').required('Enter Tanker No'),
       tanker_type: Yup.string().nullable('Choose Tanker Type').required('Choose Tanker Type'),
       tanker_capacity: Yup.number().nullable('Enter Tanker Capacity').required('Enter Tanker Capacity'),
       operation_hours: Yup.number().nullable('Choose Operational hours').required('Choose Operational hours'),

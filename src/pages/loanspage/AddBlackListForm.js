@@ -97,7 +97,7 @@ const AddBlackListForm = ({ data, callback }) => {
   })
 
   const onChangeOption = (newValue) => {
-    setDealerID(newValue.id)
+    setDealerID(newValue.dealership_id)
   }
 
   const getOptions = (inputValue, callback) => {

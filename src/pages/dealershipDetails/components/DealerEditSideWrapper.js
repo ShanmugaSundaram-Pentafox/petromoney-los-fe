@@ -205,7 +205,7 @@ const DealerEditSideWrapper = ({
         obj = compareObject(data, date_values)
       }
       else {
-        obj = { ...values }
+        obj = { ...date_values }
       }
       const formData = new FormData();
       Object.keys(obj).forEach((key) => {
@@ -245,9 +245,9 @@ const DealerEditSideWrapper = ({
             variant: 'success',
           });
 
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
+          // setTimeout(() => {
+          //   window.location.reload();
+          // }, 1000);
           // setApiCallMessage(isAdd ? 'Dealer Added' : 'Dealer Updated');
           onClose();
           modelType === 'DEALER'
@@ -268,7 +268,7 @@ const DealerEditSideWrapper = ({
           // setApiCallMessage('Sorry! Unable to add or Update. Try again later.');
           logger(err);
         });
-    },
+    }, 
   });
   const handleDateChange = (date) => {
     setSelectedDate(date);

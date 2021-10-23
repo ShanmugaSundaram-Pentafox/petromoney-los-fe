@@ -230,9 +230,9 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                             inputProps={{ className: classes.input }}
                             labelText="Dealership ID"
                             name="other_dealership_id"
-                            value={values.dealership_id}
-                            error={errors.dealership_id}
-                            helperText={errors.dealership_id}
+                            value={values.other_dealership_id}
+                            error={errors.other_dealership_id}
+                            helperText={errors.other_dealership_id}
                             type='number'
                           />
                         </Grid>
@@ -326,7 +326,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                       >
                         <Grid container spacing={2}>
                           <Grid item md={6}>
-                            <ViewData title="Dealership ID" value={item.dealership_id} />
+                            <ViewData title="Dealership ID" value={item.other_dealership_id} />
                             <ViewData title="OMC" value={(omcs.find(function (omc, index) {
                               if (omc?.id == item?.omc)
                                 return true;

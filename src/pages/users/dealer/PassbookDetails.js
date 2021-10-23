@@ -14,7 +14,7 @@ import DisbursementApprovedTable from '../../../components/Tables/DisbursementAp
 import CallMadeIcon from '@material-ui/icons/CallMade';
 import CallReceivedIcon from '@material-ui/icons/CallReceived';
 const useStyles = makeStyles(theme => ({
- 
+
   credit: {
     color: '#FA8072'
   },
@@ -28,21 +28,24 @@ const useStyles = makeStyles(theme => ({
 const PassbookDetails = ({ CurrentUser }) => {
   const classes = useStyles();
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false)
   useMount(() => {
+    setLoading(true)
     getDealerDetails()
       .then((data) => {
         const id = data.cust_details[0].cust_code
         getPassbookDetails(id)
           .then((data) => {
             setData(data)
+            setLoading(false)
           })
-
           .catch((e) => {
+            setLoading(false)
             console.log(e);
           });
-
       })
       .catch((e) => {
+        setLoading(false)
         console.log(e);
       });
   });
@@ -56,7 +59,7 @@ const PassbookDetails = ({ CurrentUser }) => {
         options: {
           filter: false,
           customBodyRender: value => {
-            return <div style={{width:80}}>
+            return <div style={{ width: 80 }}>
               {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
             </div>
           }
@@ -104,11 +107,12 @@ const PassbookDetails = ({ CurrentUser }) => {
   return (
     <>
       <div className={classes.root} >
-        {(data.length === 0) ? (
-          <Grid item xs={12}>
-            <Skeleton variant="rect" width="100%" height={400} />
-          </Grid>
-        ) : (
+        {
+          loading ? (
+            <Grid item xs={12}>
+              <Skeleton variant="rect" width="100%" height={400} />
+            </Grid>
+          ) : (
             Array.isArray(data) && data.length ? (
               <MUIDataTable
                 title={"Transaction Details"}
@@ -116,8 +120,9 @@ const PassbookDetails = ({ CurrentUser }) => {
                 columns={columns}
                 options={options}
               />
-            ) : <Paper style={{ padding: 10 }}>No Details</Paper>
-          )}
+            ) : <Paper style={{ padding: 10 }}>No details found</Paper>
+          )
+        }
       </div>
     </>
 

@@ -147,6 +147,11 @@ const Sidebar = props => {
     pages.splice(1, pages.length + 1)
     pages.push(
       {
+        title: 'Loan Report',
+        href: '/reports',
+        icon: <LocalShippingIcon />
+      },
+      {
         title: 'Profile',
         href: `/dealership/${currentUser.dealership_id}`,
         icon: <PersonOutlineIcon />
@@ -156,16 +161,16 @@ const Sidebar = props => {
         href: '/passbook',
         icon: <ListIcon />
       },
-      {
-        title: 'Transports',
-        href: '/transports',
-        icon: <LocalShippingIcon />
-      },
-      {
-        title: 'Loan Report',
-        href: '/reports',
-        icon: <LocalShippingIcon />
-      },
+      // {
+      //   title: 'Transports',
+      //   href: '/transports',
+      //   icon: <LocalShippingIcon />
+      // },
+      // {
+      //   title: 'Loan Report',
+      //   href: '/reports',
+      //   icon: <LocalShippingIcon />
+      // },
     )
   }
 

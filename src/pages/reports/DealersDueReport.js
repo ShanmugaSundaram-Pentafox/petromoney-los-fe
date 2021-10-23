@@ -10,6 +10,9 @@ import Moment from 'moment';
 import Currency from '../../components/Number/Currency';
 import DueTable from '../../components/Tables/DueTable';
 import OverDueTable from '../../components/Tables/OverDueTable';
+import { useMount } from 'react-use';
+import { getDealerDetails } from '../../services/dealers.service';
+import DashCard from '../../components/CommonComponents/Cards/DashCard';
 
 const useStyles = makeStyles(theme => ({
   modal: {
@@ -51,7 +54,29 @@ const DealersDueReport = ({ currentUser }) => {
   const classes = useStyles();
   const [modalData, setModalData] = useState({});
   const [reportDetails, setReportDetails] = useState({});
+  const [dealerDetail, setDealerDetail] = useState({});
+  const [dealerChartData, setDealerChartData] = useState([]);
 
+
+  useMount(() => {
+    getDealerDetails()
+      .then((data) => {
+        setDealerDetail(data);
+        let tot_count = 0;
+        data.due.map(tot => {
+          tot_count += tot.tot_due
+        })
+        let dData = [
+          { name: "Active Loans", count: data.due.length + data.overdue.length },
+          { name: "Total Due Amount", count: tot_count }
+        ]
+        setDealerChartData(dData)
+      })
+
+      .catch((e) => {
+        console.log(e);
+      });
+  });
 
   const showReportsInfo = (id, selectedLoanData, status) => {
     setReportDetails(selectedLoanData)
@@ -62,14 +87,30 @@ const DealersDueReport = ({ currentUser }) => {
     <>
       {
         currentUser.role_name === "DEALER" && (
-          <Grid container spacing={2}>
-            <Grid item md={6}>
-              <OverDueTable id={currentUser.dealership_id} onRowClick={showReportsInfo} />
+          <>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <Box mb={2} p={2} borderRadius={4} bgcolor="background.paper">
+                  <Typography variant="h5">Sanctioned Loan : {dealerDetail.sanctioned_loan_amount ? <Currency value={dealerDetail.sanctioned_loan_amount[0]} /> : 0} </Typography>
+                  <Box className={classes.card} borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="nowrap">
+                    {
+                      dealerChartData.map((item, i) => (
+                        <DashCard key={i} noBorder={i === dealerChartData.length - 1} value={item.name != "Active Loans" ? (<Currency value={item.count} />) : item.count} text={item.name} />
+                      ))
+                    }
+                  </Box>
+                </Box>
+              </Grid>
             </Grid>
-            <Grid item md={6}>
-              <DueTable id={currentUser.dealership_id} onRowClick={showReportsInfo} />
+            <Grid container spacing={2}>
+              <Grid item md={6}>
+                <OverDueTable id={currentUser.dealership_id} onRowClick={showReportsInfo} />
+              </Grid>
+              <Grid item md={6}>
+                <DueTable id={currentUser.dealership_id} onRowClick={showReportsInfo} />
+              </Grid>
             </Grid>
-          </Grid>
+          </>
         )
       }
       <Modal

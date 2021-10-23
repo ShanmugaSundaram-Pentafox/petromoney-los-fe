@@ -126,14 +126,14 @@ export const GroupChartData = ({chartData, title, subtitle}) => {
     return(
         <Chart
             width={'100%'}
-            height={'300px'}
+            height={'400px'}
             chartType="Bar"
             loader={<div>Loading Chart</div>}
             data={chartData}
             options={{
                 chart: {
-                title: title,
-                subtitle: subtitle,
+                    title: title,
+                    subtitle: subtitle,
                 },
             }}
         />

@@ -12,7 +12,7 @@ const ProtectedRoute = ({ component: Component, currentUser, allow, ...rest }) =
     <Route
       {...rest}
       render={props => {
-        if(currentUser) {
+        if (currentUser) {
           if (allow) {
             return (
               <MainLayout currentUser={currentUser}>
@@ -24,7 +24,8 @@ const ProtectedRoute = ({ component: Component, currentUser, allow, ...rest }) =
               return <Redirect to={`/transports/${currentUser.id}`} />
             }
             if (permissionCheck(currentUser.role_name, rulesList.dealer_view)) {
-              return <Redirect to={`/dealership/${currentUser.dealership_id}`} />
+              // return <Redirect to={`/dealership/${currentUser.dealership_id}`} />
+              return <Redirect to={`/reports`} />
             }
             return <Redirect to="/" />
           }

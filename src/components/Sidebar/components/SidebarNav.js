@@ -148,7 +148,7 @@ const SidebarNav = props => {
       className={clsx(classes.root, className)}
     >
       {pages.map(page => (
-        page.title !== "Loans" && page.title !== "Transports" && page.title !== "Report" && page.title !== "Exception" ? (
+        page.title !== "Loans" && page.title !== "Transports" && page.title !== "Report" && page.title !== "Exception" && page.title !== "Passbook" ? (
           <ListItem
             className={classes.item}
             disableGutters
@@ -180,15 +180,15 @@ const SidebarNav = props => {
                 exact
               >
                 <div className={classes.block1}>
-                <div className={classes.block2}>
-                <div className={classes.icon}>{page.icon}</div>
-                {page.title}
-                </div>
-                {(check) ?
-                  <div className={classes.iconArrow}><ExpandLessIcon /></div>
-                  :
-                  <div className={classes.iconArrow}><ExpandMoreIcon /></div>
-                }
+                  <div className={classes.block2}>
+                    <div className={classes.icon}>{page.icon}</div>
+                    {page.title}
+                  </div>
+                  {(check) ?
+                    <div className={classes.iconArrow}><ExpandLessIcon /></div>
+                    :
+                    <div className={classes.iconArrow}><ExpandMoreIcon /></div>
+                  }
                 </div>
               </Button>
             </ListItem>
@@ -305,140 +305,204 @@ const SidebarNav = props => {
                   {'Passbook'}
                 </Button>
               </ListItem>
-            </Collapse> 
+            </Collapse>
           </Fragment>
 
         ) :
-        page.title === "Report" ? (
-          <Fragment key={page.title}>
-            <ListItem
-              className={classes.item}
-              disableGutters
-              key={'Reports'}
-            >
-              <Button
-                activeClassName={classes.active}
-                className={classes.button}
-                onClick={handleChange}
-                exact
+          page.title === "Report" ? (
+            <Fragment key={page.title}>
+              <ListItem
+                className={classes.item}
+                disableGutters
+                key={'Reports'}
               >
-                <div className={classes.block1}>
-                  <div className={classes.block2}>
-                    <div className={classes.icon}><AssessmentIcon /></div>
-                    {'Report'}
+                <Button
+                  activeClassName={classes.active}
+                  className={classes.button}
+                  onClick={handleChange}
+                  exact
+                >
+                  <div className={classes.block1}>
+                    <div className={classes.block2}>
+                      <div className={classes.icon}><AssessmentIcon /></div>
+                      {'Report'}
+                    </div>
+                    {(checked) ?
+                      <div className={classes.iconArrow}><ExpandLessIcon /></div>
+                      :
+                      <div className={classes.iconArrow}><ExpandMoreIcon /></div>
+                    }
+
                   </div>
-                  {(checked) ?
-                    <div className={classes.iconArrow}><ExpandLessIcon /></div>
-                    :
-                    <div className={classes.iconArrow}><ExpandMoreIcon /></div>
-                  }
+                </Button>
+              </ListItem>
+              <Collapse in={checked} >
+                <ListItem
+                  className={classes.itemSub}
+                  disableGutters
+                  key={'Due'}
+                >
+                  <Button
+                    activeClassName={classes.active}
+                    className={classes.button}
+                    component={CustomRouterLink}
+                    to={'/reports/due'}
+                    exact
+                  >
+                    <div className={classes.icon}><ReportIcon /></div>
+                    {'Loan Due'}
+                  </Button>
+                </ListItem>
+                <ListItem
+                  className={classes.itemSub}
+                  disableGutters
+                  key={'Overdue'}
+                >
+                  <Button
+                    className={classes.button}
+                    activeClassName={classes.active}
+                    component={CustomRouterLink}
+                    to={'/reports/overdue'}
+                    exact
+                  >
+                    <div className={classes.icon}><ReportProblemIcon /></div>
+                    {'Loan Overdue'}
+                  </Button>
+                </ListItem>
+              </Collapse>
 
-                </div>
-              </Button>
-            </ListItem>
-            <Collapse in={checked} >
+            </Fragment>
+
+          ) : page.title === "Exception" ? (
+            <Fragment>
               <ListItem
-                className={classes.itemSub}
+                className={classes.item}
                 disableGutters
-                key={'Due'}
+                key={page.title}
               >
                 <Button
                   activeClassName={classes.active}
                   className={classes.button}
-                  component={CustomRouterLink}
-                  to={'/reports/due'}
+                  onClick={handleOpen}
                   exact
                 >
-                  <div className={classes.icon}><ReportIcon /></div>
-                  {'Loan Due'}
-                </Button>
-              </ListItem>
-              <ListItem
-                className={classes.itemSub}
-                disableGutters
-                key={'Overdue'}
-              >
-                <Button
-                  className={classes.button}
-                  activeClassName={classes.active}
-                  component={CustomRouterLink}
-                  to={'/reports/overdue'}
-                  exact
-                >
-                  <div className={classes.icon}><ReportProblemIcon /></div>
-                  {'Loan Overdue'}
-                </Button>
-              </ListItem>
-            </Collapse>
-
-          </Fragment>
-
-        ) : page.title === "Exception" ? (
-          <Fragment>
-            <ListItem
-              className={classes.item}
-              disableGutters
-              key={page.title}
-            >
-              <Button
-                activeClassName={classes.active}
-                className={classes.button}
-                onClick={handleOpen}
-                exact
-              >
-                <div className={classes.block1}>
-                  <div className={classes.block2}>
-                  <div className={classes.icon}>{page.icon}</div>
-                  {page.title}
+                  <div className={classes.block1}>
+                    <div className={classes.block2}>
+                      <div className={classes.icon}>{page.icon}</div>
+                      {page.title}
+                    </div>
+                    {(checkStatus) ?
+                      <div className={classes.iconArrow}><ExpandLessIcon /></div>
+                      :
+                      <div className={classes.iconArrow}><ExpandMoreIcon /></div>
+                    }
                   </div>
-                  {(checkStatus) ?
-                  <div className={classes.iconArrow}><ExpandLessIcon /></div>
-                  :
-                  <div className={classes.iconArrow}><ExpandMoreIcon /></div>
-                }
-                </div>
-              </Button>
-            </ListItem>
-            <Collapse in={checkStatus}>
-              <ListItem
-                className={classes.itemSub}
-                disableGutters
-                key={'LosLms'}
-              >
-                <Button
-                  className={classes.button}
-                  activeClassName={classes.active}
-                  component={CustomRouterLink}
-                  to={'/loans/exceptions'}
-                  exact
-                >
-                  <Badge badgeContent={exceptions.length} max={999} color="primary">
-                    <div className={classes.icon}><AssessmentOutlinedIcon /></div>
-                    Loans &nbsp;
-                  </Badge>
                 </Button>
               </ListItem>
+              <Collapse in={checkStatus}>
+                <ListItem
+                  className={classes.itemSub}
+                  disableGutters
+                  key={'LosLms'}
+                >
+                  <Button
+                    className={classes.button}
+                    activeClassName={classes.active}
+                    component={CustomRouterLink}
+                    to={'/loans/exceptions'}
+                    exact
+                  >
+                    <Badge badgeContent={exceptions.length} max={999} color="primary">
+                      <div className={classes.icon}><AssessmentOutlinedIcon /></div>
+                      Loans &nbsp;
+                    </Badge>
+                  </Button>
+                </ListItem>
+                <ListItem
+                  className={classes.itemSub}
+                  disableGutters
+                  key={'LosLms'}
+                >
+                  <Button
+                    className={classes.button}
+                    activeClassName={classes.active}
+                    component={CustomRouterLink}
+                    to={'/transport/exceptions'}
+                    exact
+                  >
+                    <Badge badgeContent={transException.length} max={999} color="primary">
+                      <div className={classes.icon}><AssessmentOutlinedIcon /></div>
+                      Transports &nbsp;
+                    </Badge>
+                  </Button>
+                </ListItem>
+              </Collapse>
+            </Fragment>
+          ) : page.title === "Passbook" ? (
+            <Fragment>
               <ListItem
-                className={classes.itemSub}
+                className={classes.item}
                 disableGutters
-                key={'LosLms'}
+                key={page.title}
               >
                 <Button
-                  className={classes.button}
                   activeClassName={classes.active}
-                  component={CustomRouterLink}
-                  to={'/transport/exceptions'}
+                  className={classes.button}
+                  onClick={handleOpen}
                   exact
                 >
-                  <Badge badgeContent={transException.length} max={999} color="primary">
-                    <div className={classes.icon}><AssessmentOutlinedIcon /></div>
-                    Transports &nbsp;
-                  </Badge>
+                  <div className={classes.block1}>
+                    <div className={classes.block2}>
+                      <div className={classes.icon}>{page.icon}</div>
+                      {page.title}
+                    </div>
+                    {(checkStatus) ?
+                      <div className={classes.iconArrow}><ExpandLessIcon /></div>
+                      :
+                      <div className={classes.iconArrow}><ExpandMoreIcon /></div>
+                    }
+                  </div>
                 </Button>
               </ListItem>
-            </Collapse>
-          </Fragment>
-        ) : null
+              <Collapse in={checkStatus}>
+                <ListItem
+                  className={classes.itemSub}
+                  disableGutters
+                  key={'LosLms'}
+                >
+                  <Button
+                    className={classes.button}
+                    activeClassName={classes.active}
+                    component={CustomRouterLink}
+                    to={'/passbook'}
+                    exact
+                  >
+                    <Badge badgeContent={exceptions.length} max={999} color="primary">
+                      <div className={classes.icon}><AssessmentOutlinedIcon /></div>
+                      Dealer Passbook &nbsp;
+                    </Badge>
+                  </Button>
+                </ListItem>
+                <ListItem
+                  className={classes.itemSub}
+                  disableGutters
+                  key={'LosLms'}
+                >
+                  <Button
+                    className={classes.button}
+                    activeClassName={classes.active}
+                    component={CustomRouterLink}
+                    to={'/transport/fastag/details'}
+                    exact
+                  >
+                    <Badge badgeContent={transException.length} max={999} color="primary">
+                      <div className={classes.icon}><AssessmentOutlinedIcon /></div>
+                      Transport Passbook &nbsp;
+                    </Badge>
+                  </Button>
+                </ListItem>
+              </Collapse>
+            </Fragment>) : null
       ))}
       <Hidden lgUp>
         <ListItem

@@ -25,6 +25,12 @@ import LoanStats from './components/LoanStats';
 // import Chart from "react-google-charts";
 import Datatable from './components/Datatable';
 
+const currencyFormat = (value) => {
+  return(
+    new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR'}).format(value)
+  )
+}
+
 const useStyles = makeStyles(theme =>({
   card :{
     [theme.breakpoints.up('sm')]: {
@@ -36,11 +42,11 @@ const useStyles = makeStyles(theme =>({
   },
 
   dataChart: {
-    padding: 20, 
+    padding: 10, 
     borderRadius: 5, 
-    display: 'flex', 
-    justifyContent: 'center', 
-    alignItems: 'center'
+  },
+  noData: {
+    padding: 10
   }
 }))
 const DataCharts = styled.div`
@@ -140,20 +146,38 @@ const Dashboard = ({ currentUser, dashboardView }) => {
     
     getAllRegionDpd()
     .then((res) => {
-      let dataRow = []
-      let dataColumn = []
-      res.map((data) => {
-        let buffer = [data.label]
-        let columnBuffer = [' ']
-        data.data.map((data) => {
-          buffer.push(data.value)
-          columnBuffer.push(data.label)
-        })
-        dataRow.push(buffer)
-        dataColumn.push(columnBuffer)
-      })
-      dataRow.unshift(dataColumn[0])
-      setRegionData(dataRow)
+      // let dataRow = []
+      // let dataColumn = []
+      /**
+       * [
+       *  ['', 'x-label 1', 'x-label 2'],
+       *  ['y-label-1', 'x-label-1-value', 'x-label-2-value'],
+       *  ['y-label-2', 'x-label-1-value', 'x-label-2-value']
+       * ]
+       */
+      const result = res.reduce((temp, item, i) => {
+        if (i === 0) {
+          const firstRow = item.data?.map(r => r.label);
+          temp[i] = ['', ...firstRow, { role: "tooltip", type: "string", p: { html: true } }];
+        }
+        const dataRow = item.data.map(r => r.value);
+        temp[i+1] = [item.label, ...dataRow, currencyFormat(...dataRow)];
+        console.log(currencyFormat(...dataRow));
+        return temp;
+      }, [])
+      // res.map((data) => {
+      //   let buffer = [data.label]
+      //   let columnBuffer = [' ']
+      //   data.data.map((data) => {
+      //     buffer.push(data.value)
+      //     columnBuffer.push(data.label)
+      //   })
+      //   dataRow.push(buffer)
+      //   dataColumn.push(columnBuffer)
+      // })
+      // dataRow.unshift(dataColumn[0])
+      setRegionData(result)
+      console.log(result);
     })
     .catch(e => {
       console.log(e);
@@ -185,13 +209,13 @@ const Dashboard = ({ currentUser, dashboardView }) => {
         const result = res[0] || {};
         setLs1Metrices(result);
         let overallData = [
-          ['Days', 'Amount'],
-          ['>=90 Days', result.gt90_days],
-          ['60-90 Days', result.gt60lt90_days],
-          ['30-60 Days', result.gt30lt60_days],
-          ['15-30 Days', result.gt15lt30_days],
-          ['4-15 Days', result.gt4lt15_days],
-          ['<=3 Days', result.lt3_days]
+          ['Days', 'Amount', { role: "tooltip", type: "string", p: { html: true } }],
+          ['>=90 Days', result.gt90_days, currencyFormat(result.gt90_days)],
+          ['60-90 Days', result.gt60lt90_days, currencyFormat(result.gt60lt90_days)],
+          ['30-60 Days', result.gt30lt60_days, currencyFormat(result.gt30lt60_days)],
+          ['15-30 Days', result.gt15lt30_days, currencyFormat(result.gt15lt30_days)],
+          ['4-15 Days', result.gt4lt15_days, currencyFormat(result.gt4lt15_days)],
+          ['<=3 Days', result.lt3_days, currencyFormat(result.lt3_days)]
         ]
         setdaysChartData(overallData);
       }).catch(err => {
@@ -287,46 +311,48 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                 </Grid>
                 {
                   dashboardView === "LMS" && (<>
-                    <Grid item md={6}>
-                      <DataCharts>
-                        {ls2_metrices.length ? <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion} /> : <Paper style={{ padding: 10 }}>No Data Found. Check if EOD has been completed</Paper>}
-                      </DataCharts>
-                    </Grid>
-                    <Grid item md={6}>
-                      <DataCharts>
-                        <BarChartData daysChartData={daysChartData} />
-                      </DataCharts>
-                    </Grid>
                     {/* <Grid item md={6}>
                       <Datatable title='OMC' data={omcData} columns={OmcColumnData[0]}/>
                     </Grid>
                     <Grid item md={6}>
                       <Datatable title='Region' data={RegionData} columns={RegionColumn[0]}/>
                     </Grid> */}
-                    <Grid item xs={7}>
+                    <Grid item md={12}>
                       <DataCharts>
-                        <Paper className={classes.dataChart}>
-                          {
-                            RegionData ? (
-                              <GroupChartData chartData={RegionData} title={'Region'} subtitle={'Day wise Region data'}/>
-                            ) : (
-                              <Typography variant='h7'>No Data Found. Check if EOD has been completed</Typography>
-                            )
-                          }
-                        </Paper>
+                        {ls2_metrices.length ? <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion} /> : <Paper className={classes.noData}>No Data Found. Check if EOD has been completed</Paper>}
                       </DataCharts>
                     </Grid>
-                    <Grid item md={5}>
+                    <div style={{width: '50%'}}>
+                      <Grid item md={12} style={{margin: '10px'}}>
+                        <DataCharts>
+                          <BarChartData daysChartData={daysChartData} />
+                        </DataCharts>
+                      </Grid>
+                      <Grid item md={12} style={{margin: '10px'}}>
+                        <DataCharts>
+                            {
+                              omcData.length ? (
+                                <GroupChartData chartData={omcData} title={'OMC - DPD Wise'} height='300px' xAxis='Amount' yAxis='OMCs'/>
+                              ) : (
+                                <Paper className={classes.noData}>
+                                  <Typography variant='h7'>No Data Found. Check if EOD has been completed</Typography>
+                                </Paper>
+                              )
+                            }
+                        </DataCharts>
+                      </Grid>
+                    </div>
+                    <Grid item xs={6}>
                       <DataCharts>
-                        <Paper className={classes.dataChart}>
                           {
-                            omcData ? (
-                              <GroupChartData chartData={omcData} title={'OMC'} subtitle={'Day wise Omc data'}/>
+                            RegionData.length ? (
+                              <GroupChartData chartData={RegionData} title={'Region - DPD Wise'} height='650px' xAxis='Amount' yAxis='Region'/>
                             ) : (
-                              <Typography variant='h7'>No Data Found. Check if EOD has been completed</Typography>
+                              <Paper className={classes.noData}>
+                                <Typography variant='h7'>No Data Found. Check if EOD has been completed</Typography>
+                              </Paper>
                             )
                           }
-                        </Paper>
                       </DataCharts>
                     </Grid>
                     <Grid item xs={12}>

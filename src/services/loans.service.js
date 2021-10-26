@@ -281,3 +281,19 @@ export const getApplicationStatusById = () => {
   });
 };
 
+export const getLoanRejectReason = () => {
+  return new Promise((resolve, reject) => {
+    apiCall(`loans/reason`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
+

@@ -25,16 +25,18 @@ import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { selectCurrentUser } from '../../../store/user/user.selector';
 import { createStructuredSelector } from 'reselect';
-import { getLoanById, getLoansByStatus, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
+import { getLoanById, getLoanRejectReason, getLoansByStatus, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
 import Alert from '@material-ui/lab/Alert';
 import DispApprovedDataTable from './DispApprovedDataTable';
 import apiCall from '../../../utils/api.util';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import { useSnackbar } from 'notistack';
+import ReactSelect from 'react-select';
 // import CloseIcon from '@material-ui/icons/Close';
 import CloseIcon from '@material-ui/icons/CloseRounded';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress, Dialog, DialogContent, DialogTitle } from '@material-ui/core';
 import { getAllRegion } from '../../../services/common.service';
+import { useMount } from 'react-use';
 
 // import Button from '../../../components/CommonComponents/Button/Button'
 
@@ -128,6 +130,10 @@ const useStyles = makeStyles(theme => ({
     '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.error.dark
     }
+  },
+  rejectModal: {
+    width: 400,
+    // height: '2vh'
   }
 }));
 const fieldProps = {
@@ -362,6 +368,12 @@ const DealershipDetails = ({
   const [readOnly, setReadOnly] = useState(true);
   const [showRemarksModal, setShowRemarksModal] = useState(false);
   const [newLoanInfo, setNewLoanInfo] = useState({});
+  const [selectedCategory, setSelectedCategory] = useState()
+  const [dataOptions, setDataOptions] = useState()
+  // console.log(selectedCategory);
+  const [rejectModal, setRejectModal] = useState(false);
+  const [tempData, setTempData] = useState([])
+  const [reasonData, setReasonData] = useState()
   const { enqueueSnackbar } = useSnackbar();
 
 
@@ -394,6 +406,32 @@ const DealershipDetails = ({
   useEffect(() => {
     if (data) setValues(data);
   }, [data]);
+
+  useMount(() => {
+    getLoanRejectReason()
+    .then(data => {
+      const optionsBuffer = []
+      const dataBuffer = []
+
+      data.map((data, index) => {
+        optionsBuffer.push({value: index, label: data.reason})
+        dataBuffer.push([data.list.map((d) => { return({value: d.id, label: `${d.code} - ${d.description}`})})])
+        // console.log(data.list);
+      })
+      setTempData(optionsBuffer)
+      setReasonData(dataBuffer)
+      // console.log(dataBuffer);
+    })
+    .catch(e => {
+      console.log(e);
+    })
+  })
+
+  // selectedCategory && (
+  //   // setDataOptions(reasonData[selectedCategory.value])
+  //   console.log(reasonData[selectedCategory.value][0])
+  // )
+
 
   // useEffect(() => {
   //   if(loanData) {
@@ -859,7 +897,10 @@ const DealershipDetails = ({
                               disabled={apiStatus.loading}
                               className={clsx(classes.btn, classes.btnError)}
                               startIcon={<ThumbDownAltIcon />}
-                              onClick={() => updateLoanStatus('rejected')}>Reject</Button>
+                              onClick={() => 
+                              // updateLoanStatus('rejected')
+                              setRejectModal(true)
+                              }>Reject</Button>
                           </div>
                         ) : (
                           <div style={{ marginLeft: '16px' }}>
@@ -901,6 +942,33 @@ const DealershipDetails = ({
           style={{ width: '40vw', minWidth: 400 }}
         />
       </FormDialog>
+      <Dialog
+        open={rejectModal}
+        onClose={() => setRejectModal(false)}
+      >
+        <DialogTitle>Reject Loan</DialogTitle>
+        <DialogContent className={classes.rejectModal}>
+          <Typography variant='h7'>Category</Typography>
+          <ReactSelect
+            // isClearable
+            name='category'
+            options={tempData}
+            onChange={setSelectedCategory}
+          />
+          <div style={{marginTop: 15}}>
+            <Typography variant='h7'>Reason</Typography>
+            <ReactSelect
+              isClearable
+              options={selectedCategory && (reasonData[selectedCategory.value][0])}
+              name='reason'
+            />
+          </div>
+          <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: 15, marginBottom: 10}}>
+            <Button size='small' onClick={() => setRejectModal(false)}>Cancel</Button>
+            <Button style={{ color: '#1EAE98', borderColor: '#1EAE98'}} variant='outlined' size='small'>Confirm</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

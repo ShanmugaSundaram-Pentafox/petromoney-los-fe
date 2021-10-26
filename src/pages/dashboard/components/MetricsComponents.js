@@ -87,15 +87,16 @@ export const PieChartData = ({
     const classes = useStyles();
     const options = {
         is3D: true,
-        // title: `Regions Retails RO - Total: ${totalForRegion.toFixed(2)}`
+        tooltip: {isHtml: true},
+        focusTarget: 'category',
     };
     return (
         <Paper>
-            <Typography variant="h5" className={classes.title}>Regions Retails RO - Total: {totalForRegion.toFixed(2)}</Typography>
+            <Typography variant="h5" className={classes.title}>Regions Retails RO - Total: {totalForRegion}</Typography>
             <Chart
                 chartType="PieChart"
                 width="100%"
-                loader={<div>Loading Chart</div>}
+                // loader={<div>Loading Chart</div>}
                 height="335px"
                 // toolbarItems={[
                 //     {
@@ -113,7 +114,6 @@ export const PieChartData = ({
 export const BarChartData = ({
     daysChartData
 }) => {
-    console.log(daysChartData);
     const classes = useStyles();
     return (
         <Paper>
@@ -121,7 +121,7 @@ export const BarChartData = ({
             <Chart
                 height={'300px'}
                 chartType="BarChart"
-                loader={<div>Loading Chart</div>}
+                // loader={<div>Loading Chart</div>}
                 data={daysChartData}
                 // toolbarItems={[
                 //     {
@@ -130,7 +130,6 @@ export const BarChartData = ({
                 //     },
                 //   ]}
                 options={{
-                    // title: 'DPD Wise',
                     colors: ['rgb(66, 133, 244)'],
                     tooltip: {isHtml: true},
                     focusTarget: 'category',
@@ -153,7 +152,7 @@ export const GroupChartData = ({chartData, title, height, xAxis, yAxis}) => {
             <Chart
                 height={height}
                 chartType="BarChart"
-                loader={<div>Loading Chart</div>}
+                // loader={<div>Loading Chart</div>}
                 data={chartData}
                 // toolbarItems={[
                 //     {
@@ -162,13 +161,11 @@ export const GroupChartData = ({chartData, title, height, xAxis, yAxis}) => {
                 //     },
                 //   ]}
                 options={{
-                    // title: title,
                     chartArea: { width: '50%', height: '70%' },
                     tooltip: {isHtml: true},
                     focusTarget: 'category',
                     fontSize: 11,
                     colors: ['#81B214', '#5C7AEA', '#8236CB', '#FF9300', '#FF6767', '#E02401' ],
-                    // legend: { position: 'right' },
                     bar: { groupWidth: '90%' },
                     hAxis: {
                         title: xAxis,

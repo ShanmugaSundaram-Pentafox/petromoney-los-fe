@@ -30,6 +30,10 @@ const useStyles = makeStyles(() => ({
         fontSize: "30px",
         color: 'rgb(0, 96, 100)'
     },
+    title: {
+        paddingTop: 20,
+        paddingLeft: 20
+    }
 }));
 
 export const SummaryTile = (props) => {
@@ -83,59 +87,91 @@ export const PieChartData = ({
     const classes = useStyles();
     const options = {
         is3D: true,
-        title: `Regions Retails RO - Total: ${totalForRegion.toFixed(2)}`
+        tooltip: {isHtml: true},
+        focusTarget: 'category',
     };
     return (
-        <Chart
-            chartType="PieChart"
-            width="100%"
-            loader={<div>Loading Chart</div>}
-            height="300px"
-            data={ls2Data}
-            options={options}
-        />
+        <Paper>
+            <Typography variant="h5" className={classes.title}>Regions Retails RO - Total: {totalForRegion}</Typography>
+            <Chart
+                chartType="PieChart"
+                width="100%"
+                // loader={<div>Loading Chart</div>}
+                height="335px"
+                // toolbarItems={[
+                //     {
+                //       type: 'csv',
+                //       datasource: 'https://spreadsheets.google.com/tq?key=1jN0iw0usssnsG1_oi-NXtuKfsUsGme09GsFidbqxFYA',
+                //     },
+                //   ]}
+                data={ls2Data}
+                options={options}
+            />
+        </Paper>
     )
 }
 
 export const BarChartData = ({
     daysChartData
 }) => {
+    const classes = useStyles();
     return (
-        <Chart
-            height={'300px'}
-            chartType="BarChart"
-            loader={<div>Loading Chart</div>}
-            data={daysChartData}
-            options={{
-                title: 'DPD Wise',
-                colors: ['rgb(66, 133, 244)'],
-                chartArea: { width: '50%' },
-                hAxis: {
-                    title: `Amount`,
-                    minValue: 0,
-                },
-                vAxis: {
-                    title: 'Days',
-                },
-            }}
-        />
+        <Paper>
+            <Typography variant="h5" className={classes.title}>DPD Wise</Typography>
+            <Chart
+                height={'300px'}
+                chartType="BarChart"
+                // loader={<div>Loading Chart</div>}
+                data={daysChartData}
+                // toolbarItems={[
+                //     {
+                //       type: 'csv',
+                //       datasource: 'https://spreadsheets.google.com/tq?key=1jN0iw0usssnsG1_oi-NXtuKfsUsGme09GsFidbqxFYA',
+                //     },
+                //   ]}
+                options={{
+                    colors: ['rgb(66, 133, 244)'],
+                    tooltip: {isHtml: true},
+                    focusTarget: 'category',
+                    chartArea: { width: '50%' },
+                    hAxis: {
+                        title: `Amount`,
+                        minValue: 0,
+                    },
+                }}
+            />
+        </Paper>
     )
 }
 
-export const GroupChartData = ({chartData, title, subtitle}) => {
+export const GroupChartData = ({chartData, title, height, xAxis, yAxis}) => {
+    const classes = useStyles();
     return(
-        <Chart
-            width={'100%'}
-            height={'400px'}
-            chartType="Bar"
-            loader={<div>Loading Chart</div>}
-            data={chartData}
-            options={{
-                chart: {
-                    title: title,
-                    subtitle: subtitle,
-                },
-            }}
-        />
+        <Paper>
+            <Typography variant="h5" className={classes.title}>{title}</Typography>
+            <Chart
+                height={height}
+                chartType="BarChart"
+                // loader={<div>Loading Chart</div>}
+                data={chartData}
+                // toolbarItems={[
+                //     {
+                //       type: 'csv',
+                //       datasource: 'https://spreadsheets.google.com/tq?key=1jN0iw0usssnsG1_oi-NXtuKfsUsGme09GsFidbqxFYA',
+                //     },
+                //   ]}
+                options={{
+                    chartArea: { width: '50%', height: '70%' },
+                    tooltip: {isHtml: true},
+                    focusTarget: 'category',
+                    fontSize: 11,
+                    colors: ['#81B214', '#5C7AEA', '#8236CB', '#FF9300', '#FF6767', '#E02401' ],
+                    bar: { groupWidth: '90%' },
+                    hAxis: {
+                        title: xAxis,
+                    },
+                }}
+            />
+        </Paper>
     )
 }

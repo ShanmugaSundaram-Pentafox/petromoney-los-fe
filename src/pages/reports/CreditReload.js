@@ -1,44 +1,44 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/styles';
-import usePageTitle from '../../hooks/usePageTitle';
-import { useMemo } from 'react';
-import { classes } from 'istanbul-lib-coverage';
-import MUIDataTable from 'mui-datatables';
 import { useState } from 'react';
 import { useMount } from 'react-use';
 import {
-  getCreditReport,
-  getCreditReportById,
-  getReport,
-  getTypeOfAccount,
+  getCreditReport
 } from '../../services/users.service';
-import Currency from '../../components/Number/Currency';
-import { Button } from '@material-ui/core';
 import { Grid } from '@material-ui/core';
-import Skeleton from '@material-ui/lab/Skeleton';
-import { Tooltip } from '@material-ui/core';
-import { Drawer } from '@material-ui/core';
-import CreditReloadForm from './CreditReloadForm';
-import CreditReloadRemarks from './CreditReloadRemarks';
+import { Badge } from '@material-ui/core';
+import styled from 'styled-components';
+import { Box } from '@material-ui/core';
+import CreditProcessedTable from './CreditProcessedTable';
+import CreditNewRequestTable from './CreditNewRequestTable';
+
+const PaperWrapper = styled.div`
+margin-bottom:10px;
+font-size:16px;
+background-color: #f1f1f1;
+
+.active {
+    background-color: #f1f1f1;
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
+  }
+`;
 
 const useStyes = makeStyles((theme) => ({
   root: {},
 }));
 
 const CreditReload = ({ currentUser }) => {
-  const [tableData, setTableData] = useState();
-  const [accountType, setAccountType] = useState();
-  const [rowData, setRowData] = useState();
+  const [tableData, setTableData] = useState([]);
+  const [processedData, setProcessedData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [openModal, setOpenModal] = useState(false);
-  const [statusModal, setStatusModal] = useState(false);
-  const [dealershipData, setDealershipData] = useState();
+  const [selectedTab, setSelectedTab] = useState("new");
 
   useMount(async () => {
     setLoading(true)
-    getCreditReport()
+    getCreditReport(0)
       .then((data) => {
-
         setTableData(data);
         setLoading(false);
       })
@@ -46,148 +46,38 @@ const CreditReload = ({ currentUser }) => {
         setLoading(false);
         console.log(e);
       });
-    getTypeOfAccount()
+    getCreditReport(1)
       .then((data) => {
+        setProcessedData(data);
         setLoading(false);
-        setAccountType(
-          data.map(({ id, type_of_account }) => ({
-            label: type_of_account,
-            id: id,
-          }))
-        );
       })
       .catch((e) => {
         setLoading(false);
         console.log(e);
       });
   });
-  usePageTitle('Credit Report');
-  const columns = useMemo(() => {
-    return [
-      { name: 'dealership_id', label: 'Dealership ID', options: { filter: false } },
-      { name: 'request_id', label: 'Request ID', options: { filter: false } },
-      { name: 'mobile', label: 'Mobile', options: { filter: false } },
-      {
-        name: 'amount', label: 'Amount', options: {
-          filter: false,
-          customBodyRender: (value) => {
-            return <Currency value={value} />
-          }
-        }
-      },
-      { name: 'type_of_account', label: 'Account Type' },
-      {
-        name: 'name', label: 'Submitted or Modified by', options: {
-          customBodyRender: (value, tableMeta) => {
-            return <div>{`${value} (${tableMeta?.rowData[8]})`}</div>
-          }
-        }
-      },
-      {
-        name: 'status', label: 'Status', options: {
-          customBodyRender: (value, tableMeta) => {
-            if (value === 'Declined') {
-              return (
-                <Tooltip title={tableMeta.rowData[7]}>
-                  <div style={{ color: '#FF5C58' }}>{value}</div>
-                </Tooltip>
-              )
-            } else if (value === 'Disbursed') {
-              return (
-                <Tooltip title={tableMeta.rowData[7]}>
-                  <div>{value}</div>
-                </Tooltip>
-              )
-            } else {
-              return value
-            }
-          }
-        }
-      },
-      { name: 'remarks', options: { display: 'excluded', filter: false } },
-      { name: 'role_name', options: { display: 'excluded', filter: false } }
-    ];
-  }, []);
-
-  const options = {
-    print: false,
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    rowsPerPage: 15,
-    rowsPerPageOptions: [15, 20, 30],
-    customToolbar: () => {
-      return (
-        <Button
-          color='primary'
-          variant='contained'
-          onClick={() => setOpenModal(true)}
-        >
-          Add
-        </Button>
-      );
-    },
-    onRowClick: (rowData) => {
-      getCreditReportById(rowData[0])
-        .then((data) => {
-          let d = [];
-          data.forEach((item, i) => {
-            d.push({
-              ...item,
-              payment_proof_attachment: typeof (item.payment_proof_attachment) === "string" ? JSON.parse(item.payment_proof_attachment) : (item.payment_proof_attachment || [])
-            })
-          })
-          setRowData(d[0])
-          setStatusModal(true)
-        })
-        .catch((e) => {
-          console.log(e);
-        })
-    }
-  };
-
   return (
-    <div className={classes.root}>
-      {loading ? (
-        <Grid item xs={12}>
-          <Skeleton variant='rect' width='100%' height={400} />
-        </Grid>
-      ) : (
-        <MUIDataTable
-          title={'Credit Reload Moderation'}
-          columns={columns}
-          options={options}
-          data={tableData}
-        />
-      )}
-
-
-      <Drawer
-        anchor='right'
-        open={statusModal}
-        onClose={() => setStatusModal(false)}
-        variant='temporary'
-      >
-        {
-          <CreditReloadRemarks callback={() => setStatusModal(false)} rowData={rowData} currentUser={currentUser} />
-        }
-      </Drawer>
-
-      <Drawer
-        anchor='right'
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        variant='temporary'
-      >
-        {
-          <CreditReloadForm
-            callback={() => setOpenModal(false)}
-            data={accountType}
-            dealershipData={dealershipData}
-            currentUser={currentUser}
-          />
-        }
-      </Drawer>
-    </div>
+    <>
+      <PaperWrapper>
+        <Box borderRadius={4} bgcolor="background.paper">
+          <Grid container>
+            <Grid onClick={() => { setSelectedTab("new") }} className={selectedTab === "new" ? 'active' : ' '} style={{ textAlign: 'center', padding: 16 }} item md={6}>
+              <Badge badgeContent={tableData?.length || 0} style={{ paddingTop: 4, paddingRight: 8 }} color="primary">
+                <div>New Requests</div>
+              </Badge>
+            </Grid>
+            <Grid onClick={() => { setSelectedTab("processed") }} style={{ textAlign: 'center', padding: 16, borderRight: '1px dashed gray' }} className={selectedTab === "processed" ? 'active' : ' '} item md={6}>
+              <Badge badgeContent={processedData?.length || 0} style={{ paddingTop: 4, paddingRight: 8 }} color="primary">
+                <div>Processed</div>
+              </Badge>
+            </Grid>
+          </Grid>
+        </Box>
+      </PaperWrapper>
+      {
+        selectedTab === 'processed' ? <CreditProcessedTable data={processedData} currentUser={currentUser} /> : <CreditNewRequestTable data={tableData} currentUser={currentUser} />
+      }
+    </>
   );
 };
 

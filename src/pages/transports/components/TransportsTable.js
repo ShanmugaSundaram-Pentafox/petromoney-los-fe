@@ -4,7 +4,7 @@ import { makeStyles } from "@material-ui/styles"
 import MUIDataTable from "mui-datatables"
 import Typography from "@material-ui/core/Typography"
 import { useMount } from "react-use"
-import { getAllTransport } from "../../../services/transports.service"
+import { getAllTransport, getTransportersOwnerById } from "../../../services/transports.service"
 import { selectAllTransports } from "../../../store/transports/transports.selector"
 import { createStructuredSelector } from "reselect"
 import { connect } from "react-redux"
@@ -34,7 +34,7 @@ function getSteps() {
 
 
 
-const TransportsTable = ({ transports, setAllTransports, onRowClick }) => {
+const TransportsTable = ({ transports, setAllTransports, onRowClick, portal, transporterId }) => {
 
 
   const [loading, setLoading] = useState(false);
@@ -89,6 +89,18 @@ const TransportsTable = ({ transports, setAllTransports, onRowClick }) => {
   }, [transports])
 
   useMount(() => {
+    if (portal) {
+      setLoading(true)
+      getTransportersOwnerById(transporterId)
+        .then((data) => {
+          setLoading(false)
+          setAllTransports(data)
+        })
+        .catch((e) => {
+          console.log(e);
+          setLoading(false)
+        })
+    } else
     if (!transports.length) {
       setLoading(true)
       getAllTransport()

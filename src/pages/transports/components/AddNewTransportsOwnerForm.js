@@ -552,39 +552,6 @@ const AddNewTransportsOwnerForm = ({
                     />
                   </Grid>
                   <Grid item md={6}>
-                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                      <KeyboardDatePicker
-                        // disableToolbar
-                        // hideTabs={true}
-                        variant='inline'
-                        inputVariant='outlined'
-                        label='Date of Birth'
-                        format='dd-MM-yyyy'
-                        animateYearScrolling={true}
-                        invalidDateMessage='Invalid Date Format'
-                        error={errors.dob}
-                        helperText={errors.dob}
-                        readOnly={readOnly}
-                        disabled={readOnly}
-                        margin='normal'
-                        id='date-picker'
-                        autoOk={true}
-                        value={selectedDate}
-                        onChange={handleDateChange}
-                        InputLabelProps={{ shrink: true }}
-                        keyboardButtonProps={{
-                          'aria-label': 'change date',
-                        }}
-                        PopoverProps={{
-                          anchorOrigin: {
-                            vertical: 'bottom',
-                            horizontal: 'center',
-                          },
-                        }}
-                      />
-                    </MuiPickersUtilsProvider>
-                  </Grid>
-                  <Grid item md={6}>
                     <TextInput
                       select
                       label='Gender'
@@ -603,6 +570,40 @@ const AddNewTransportsOwnerForm = ({
                       <option value={'MALE'}>Male</option>
                       <option value={'FEMALE'}>Female</option>
                     </TextInput>
+                  </Grid>
+                  <Grid item md={6}>
+                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                      <KeyboardDatePicker
+                        // disableToolbar
+                        // hideTabs={true}
+                        variant='inline'
+                        inputVariant='outlined'
+                        name='dob'
+                        label='Date of Birth'
+                        format='dd-MM-yyyy'
+                        animateYearScrolling={true}
+                        invalidDateMessage='Invalid Date Format'
+                        error={errors.dob}
+                        helperText={errors.dob}
+                        readOnly={readOnly}
+                        disabled={readOnly}
+                        margin='normal'
+                        id='date-picker'
+                        autoOk={true}
+                        value={selectedDate? selectedDate : null}
+                        onChange={handleDateChange}
+                        InputLabelProps={{ shrink: true }}
+                        keyboardButtonProps={{
+                          'aria-label': 'change date',
+                        }}
+                        PopoverProps={{
+                          anchorOrigin: {
+                            vertical: 'bottom',
+                            horizontal: 'center',
+                          },
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
                   </Grid>
                   <Grid item md={12}>
                     <TextInput

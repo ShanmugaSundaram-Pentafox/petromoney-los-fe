@@ -67,6 +67,19 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.success.dark
     }
   },
+  number: {
+    backgroundColor: 'white',
+    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+        "-webkit-appearance": "none",
+        margin: 0,
+    }
+},
+input: {
+    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+        "-webkit-appearance": "none",
+        margin: 0,
+    }
+}
 }))
 
 
@@ -219,10 +232,13 @@ const AddTankerDetails = ({ dealer_id, tankerAdd, setTankerAdd }) => {
                   <label><strong>Tanker capacity in liters</strong></label>
                   <TextInput
                     className={classes.field}
+                    className={classes.number}
+                    inputProps={{ className: classes.input }}
                     name="tanker_capacity"
                     error={errors.tanker_capacity}
                     helperText={errors.tanker_capacity}
                     value={editRow.tanker_capacity}
+                    type='number'
                     onChange={!edit ? handleChange : onEditTextChange}
                   />
                 </Grid>

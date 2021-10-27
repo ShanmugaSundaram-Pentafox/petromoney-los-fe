@@ -5,6 +5,7 @@ export const setCurrentUser = user => ({
   payload: user
 });
 
-export const resetCurrentUser = () => ({
-  type: UserActionTypes.REMOVE_CURRENT_USER
+export const resetCurrentUser = (obj={}) => ({
+  type: UserActionTypes.REMOVE_CURRENT_USER,
+  payload: obj
 });

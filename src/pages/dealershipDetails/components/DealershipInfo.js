@@ -87,7 +87,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      name: Yup.string().nullable('Please enter dealership name').required('Please enter Dealership name').matches(/^[aA-zZ & - .\s]+$/, "Only alphabets are allowed for this field ").max(50),
+      name: Yup.string().nullable('Please enter dealership name').required('Please enter Dealership name').matches(/^[aA-zZ.,&/-\s]+$/, "Only alphabets are allowed for this field ").max(50),
       address: Yup.string().nullable('Please enter address').required('Please enter address'),
       state: Yup.string().nullable('Please choose state').required('Please choose state'),
       district: Yup.string().nullable('Please enter district').required('Please enter district'),
@@ -587,20 +587,20 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
           <FileUpload
             handleSave={(value) => handleSave(value)}
             id={values.id}
-            title='Upload Transport Documents'
+            title='Upload Dealership Documents'
             open={showUpload}
             onCloseUploader={onCloseUploader}
           />
         )}
         <CardActions className={classes.actionFooter}>
-          <Button
+          {/* <Button
             color="primary"
             size="small"
             variant="contained"
             onClick={toggleCreditReport}
           >
             View/Edit Financial Report
-          </Button>
+          </Button> */}
           {!readOnly ? (
             !loading ? (
               <>

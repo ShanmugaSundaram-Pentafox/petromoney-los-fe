@@ -151,6 +151,31 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
     callback();
   };
 
+  let CustomValidation = {};
+  if (type.label === 'Car'){
+    CustomValidation={
+      address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
+      yom: Yup.number().nullable('Please enter year of manufacture').required('Please enter year of manufacture').test('year', 'Invalid Manufacture Year', value => value >= 1900 && value <= format(new Date(), 'yyyy') ),
+    };
+  } else if(type.label === 'Gold'){
+    CustomValidation={
+      quantity: Yup.number().nullable('Please enter quantity').required('Please enter quantity'),
+    } 
+  } else if(type.label === 'CV'){
+    CustomValidation={
+      model: Yup.number().nullable('Please enter model').required('Please enter model'),
+      yom: Yup.number().nullable('Please enter year of manufacture').required('Please enter year of manufacture').test('year', 'Invalid Manufacture Year', value => value >= 1900 && value <= format(new Date(), 'yyyy') ),
+    }
+  } else if(type.label === 'Land'){
+    CustomValidation={
+      address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
+    }
+  } else if(type.label === 'Building'){
+    CustomValidation={
+      address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
+    }
+  }
+
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
     initialValues: {},
     validateOnChange: false,
@@ -159,10 +184,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
       // type: Yup.string().nullable('Please choose type').required('Please choose type'),
       asset_value: Yup.number().nullable('Please enter value').required('Please enter value'),
       market_value: Yup.number().nullable('Please enter value').required('Please enter value'),
-      // address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
-      // yom: Yup.number().nullable('Please enter year of manufacture').required('Please enter year of manufacture').test('year', 'Invalid Manufacture Year', value => value >= 1900 && value <= format(new Date(), 'yyyy') ),
-      // quantity: Yup.number().nullable('Please enter quantity').required('Please enter quantity'),
-      // model: Yup.number().nullable('Please enter model').required('Please enter model'),
+      ...CustomValidation
     }),
     onSubmit: values => {
       const { asset_value, market_value, ownership, ownership_proof, relationship } = values

@@ -78,6 +78,38 @@ export const getAll_ls2_Metrices = () => {
   });
 }
 
+export const getAllOmcDpd = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('app/dpd/omc')
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const getAllRegionDpd = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('app/dpd/region')
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
 export const getLoanBookData = () => {
   return new Promise((resolve, reject) => {
     // reject("");

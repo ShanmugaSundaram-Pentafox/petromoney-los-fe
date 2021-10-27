@@ -1,8 +1,8 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
+import TextInput from '../../../components/TextInput/TextInput';
 import Button from '../../../components/CommonComponents/Button/Button';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
@@ -16,16 +16,9 @@ import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
 import { addOutletDetails } from '../../../services/PDReport.services';
-import { FormControl } from '@material-ui/core';
-import { FormLabel } from '@material-ui/core';
-import { RadioGroup } from '@material-ui/core';
-import { FormControlLabel } from '@material-ui/core';
-import { Radio } from '@material-ui/core';
-import { FormGroup } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
-        // textAlign: 'center',
         padding: '24px 16px',
         display: 'flex',
         justifyContent: 'space-between',
@@ -37,10 +30,11 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         flexDirection: 'column',
         height: '100vh',
-        width: '40vw'
+        width: '55vw'
     },
     sidePanelFormContentWrapper: {
         flex: 1,
+        backgroundColor: '#f6f6f6',
         overflow: 'auto'
     },
     actionButtonsWrapper: {
@@ -61,6 +55,19 @@ const useStyles = makeStyles((theme) => ({
         '&.MuiButton-contained:hover': {
             backgroundColor: theme.palette.success.dark
         }
+    },
+    number: {
+        backgroundColor: 'white',
+        "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+            "-webkit-appearance": "none",
+            margin: 0,
+        }
+    },
+    input: {
+        "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+            "-webkit-appearance": "none",
+            margin: 0,
+        }
     }
 
 }))
@@ -78,7 +85,8 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
     };
     const handleClose = () => {
         callback();
-    }; const relationShipOptions = [
+    };
+    const relationShipOptions = [
         { label: "Choose Relationship", value: "" },
         { label: "Father", value: "FATHER" },
         { label: "Mother", value: "MOTHER" },
@@ -119,7 +127,13 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
-            // transport_name: Yup.string().required('Please enter transporter name'),
+            outlet_category: Yup.string().nullable('Choose outlet category').required('Choose outlet category'),
+            distance_from_headquarters: Yup.string().nullable('Please enter fuel transported from area').required('Please enter fuel transported from area'),
+            terminal_name: Yup.string().nullable('Please enter terminal name').required('Please enter terminal name'),
+            size_of_outlet: Yup.number().nullable('Please enter outlet size').required('Please enter outlet size'),
+            land_type: Yup.string().nullable('Enter land type').required('Enter land type'),
+            outlet_operated_by: Yup.string().nullable('Enter operator name').required('Enter operator name'),
+            land_owner_name: Yup.string().nullable('Enter land owner name').required('Enter land owner name')
 
         }),
         onSubmit: values => {
@@ -134,12 +148,18 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                         },
                         variant: 'success',
                     });
-                    // setTimeout(() => {
-                    //     window.location.reload()
-                    // }, 1500);
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1500);
                 })
                 .catch(e => {
-                    console.log(e);
+                    enqueueSnackbar(e, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'error',
+                    });
                 })
         }
     });
@@ -168,8 +188,8 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         value={values.outlet_category}
                                         readOnly={readOnly}
                                         disabled={readOnly}
-                                        error={errors.id}
-                                        helperText={errors.id}
+                                        error={errors.outlet_category}
+                                        helperText={errors.outlet_category}
                                     >
                                         <option value="">Choose category</option>
                                         <option value="A">A</option>
@@ -177,38 +197,18 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         <option value="C">C</option>
                                     </TextInput>
                                 </Grid>
-                                {/* <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        multiline={true}
-                                        labelText="Outlet Address"
-                                        name="outlet_address"
-                                        value={values.outlet_address}
-                                        readOnly={readOnly}
-                                        error={errors.outlet_address}
-                                        helperText={errors.outlet_address}
-                                    />
-                                </Grid> */}
-                                {/* <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        labelText="Outlet Landmark"
-                                        name="outlet_landmark"
-                                        value={values.outlet_landmark}
-                                        readOnly={readOnly}
-                                        error={errors.outlet_landmark}
-                                        helperText={errors.outlet_landmark}
-                                    />
-                                </Grid> */}
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
-                                        labelText="Fuel Transported from"
-                                        name="fuel_transported_from"
-                                        value={values.fuel_transported_from}
+                                        className={classes.number}
+                                        inputProps={{ className: classes.input }}
+                                        type='number'
+                                        labelText="Distance from headquarters"
+                                        name="distance_from_headquarters"
+                                        value={values.distance_from_headquarters}
                                         readOnly={readOnly}
-                                        error={errors.fuel_transported_from}
-                                        helperText={errors.fuel_transported_from}
+                                        error={errors.distance_from_headquarters}
+                                        helperText={errors.distance_from_headquarters}
                                     />
                                 </Grid>
                                 <Grid item md={6}>
@@ -225,21 +225,11 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
-                                        labelText="Distance from Terminal"
-                                        name="distance_from_headquarters"
-                                        placeholder="in Km"
-                                        value={values.distance_from_headquarters}
-                                        readOnly={readOnly}
-                                        error={errors.distance_from_headquarters}
-                                        helperText={errors.distance_from_headquarters}
-                                    />
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        labelText="Distance from Terminal"
+                                        className={classes.number}
+                                        inputProps={{ className: classes.input }}
+                                        type='number'
+                                        labelText="Distance from Terminal (in Km)"
                                         name="distance_from_terminal"
-                                        placeholder="in Km"
                                         value={values.distance_from_terminal}
                                         readOnly={readOnly}
                                         error={errors.distance_from_terminal}
@@ -249,13 +239,17 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
-                                        labelText="Size of the Outlet"
-                                        placeholder="in Sq. ft"
+                                        className={classes.number}
+                                        inputProps={{ className: classes.input }}
+                                        labelText="Size of the Outlet (in Sq. ft)"
                                         name="size_of_outlet"
                                         value={values.size_of_outlet}
                                         readOnly={readOnly}
                                         error={errors.size_of_outlet}
                                         helperText={errors.size_of_outlet}
+                                        className={classes.number}
+                                        inputProps={{ className: classes.input }}
+                                        type='number'
                                     />
                                 </Grid><Grid item md={6}>
                                     <TextInput
@@ -269,6 +263,7 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         error={errors.land_type}
                                         helperText={errors.land_type}
                                     >
+                                        <option value=""></option>
                                         <option value="Owned">Owned</option>
                                         <option value="leased">Leased</option>
                                     </TextInput>
@@ -288,12 +283,15 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                     <TextInput
                                         {...inputProps}
                                         money
+                                        className={classes.number}
+                                        inputProps={{ className: classes.input }}
                                         labelText="Lease Amount"
                                         name="lease_amount"
                                         value={values.lease_amount}
                                         readOnly={readOnly}
                                         error={errors.lease_amount}
                                         helperText={errors.lease_amount}
+                                        type='number'
                                     />
                                 </Grid>
                                 <Grid item md={6}>
@@ -308,9 +306,10 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         error={errors.outlet_operated_by}
                                         helperText={errors.outlet_operated_by}
                                     >
-                                        <option>Proprietor</option>
-                                        <option>Managing Partner</option>
-                                        <option>Third Party</option>
+                                        <option value=""></option>
+                                        <option value="Proprietor">Proprietor</option>
+                                        <option value="Managing partner">Managing Partner</option>
+                                        <option value="Third party">Third Party</option>
                                     </TextInput>
                                 </Grid>
                                 <Grid item md={6}>
@@ -337,79 +336,16 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
+                                        inputProps={{ className: classes.input }}
                                         labelText="Operator Mobile number"
                                         name="operator_mobile"
+                                        type="number"
                                         value={values.operator_mobile}
                                         readOnly={readOnly}
                                         error={errors.operator_mobile}
                                         helperText={errors.operator_mobile}
                                     />
                                 </Grid>
-                                {/* <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        money
-                                        labelText="Salary expenses per month"
-                                        name="salary_expense_per_month"
-                                        value={values.salary_expense_per_month}
-                                        readOnly={readOnly}
-                                        error={errors.salary_expense_per_month}
-                                        helperText={errors.salary_expense_per_month}
-                                    />
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        money
-                                        labelText="EB expenses per month"
-                                        name="eb_charge_per_month"
-                                        value={values.eb_charge_per_month}
-                                        readOnly={readOnly}
-                                        error={errors.eb_charge_per_month}
-                                        helperText={errors.eb_charge_per_month}
-                                    />
-                                </Grid> */}
-                                {/* <Grid item md={7}>
-                                    <div style={{ paddingTop: 12 }}>
-                                        <label>Is the customer a PEP (Politically Exposed Person) or closely associated to PEP</label>
-                                    </div>
-                                </Grid>
-                                <Grid item md={4}>
-                                    <FormControl>
-                                        <RadioGroup name="is_pep" value={values.is_pep} defaultValue={values.is_pep} onChange={handleChange}>
-                                            <FormGroup row>
-                                                <FormControlLabel value="yes" control={<Radio color="secondary" />} label="Yes" />
-                                                <FormControlLabel value="no" control={<Radio color="secondary" />} label="No" />
-                                            </FormGroup>
-                                        </RadioGroup>
-                                    </FormControl>
-                                </Grid> */}
-                                {/* {
-                                    values.is_pep === "yes" ? (
-                                        <>
-                                            <Grid item md={6}>
-                                                <TextInput
-                                                    {...inputProps}
-                                                    labelText="Relationship with Politician"
-                                                    name="relationship"
-                                                    value={values.relationship}
-                                                    error={errors.relationship}
-                                                    helperText={errors.relationship}
-                                                />
-                                            </Grid>
-                                            <Grid item md={6}>
-                                                <TextInput
-                                                    {...inputProps}
-                                                    labelText="Politician's position"
-                                                    name="position"
-                                                    value={values.position}
-                                                    error={errors.position}
-                                                    helperText={errors.position}
-                                                />
-                                            </Grid>
-                                        </>
-                                    ) : null
-                                } */}
                             </Grid>
                         </form>
                     </Box >

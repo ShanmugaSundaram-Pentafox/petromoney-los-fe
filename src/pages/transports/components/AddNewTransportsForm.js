@@ -38,6 +38,16 @@ import {
   ViewData,
 } from '../../../components/CommonComponents/FilePreview';
 import { deleteTransportProfileDoc } from '../../../services/transports.service';
+import { format, parse } from 'date-fns';
+import 'date-fns';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
+import { cryptoEncrypt } from '../../../services/crypto.service';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -148,7 +158,7 @@ const AddNewTransportsForm = ({
   const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
   const [loading, setLoading] = useState(false);
   const [omcs, setOmcs] = useState([]);
-  const [bussinessType, setBussinessType] = useState([]);
+  const [businessType, setBusinessType] = useState([]);
   const [states, setStates] = useState([]);
   const [showUpload, setShowUpload] = useState(false);
   const [regionList, setRegionList] = useState([]);
@@ -156,6 +166,7 @@ const AddNewTransportsForm = ({
   const [regions, setRegions] = useState([]);
   const [checked, setChecked] = useState(false);
   const [imageModal, setImageModal] = useState({});
+  const [selectedDate, setSelectedDate] = useState(data?.doi && parse(data?.doi, 'dd-MM-yyyy', new Date()));
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -167,6 +178,9 @@ const AddNewTransportsForm = ({
   };
   const handleClose = () => {
     callback();
+  };
+  const handleDateChange = (e) => {
+    setSelectedDate(e);
   };
   const onDocDelete = (data) => {
     deleteTransportProfileDoc(data, values.transporter_id)
@@ -207,32 +221,41 @@ const AddNewTransportsForm = ({
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       // id: Yup.number().required('Please enter transporter code'),
-      name: Yup.string().required('Please enter transporter name'),
+      name: Yup.string().required('Please enter transporter name').nullable('Enter transporter name').matches(/^[aA-zZ.,&/-\s]+$/, "Only alphabets are allowed for this field "),
       mobile: Yup.number()
+        .nullable('Enter your mobile number')
         .min(10, 'Enter valid mobile number')
         .required('please Enter your mobile number'),
-      omc: Yup.string().required('Please Choose OMC'),
-      business_type: Yup.string().required('Please choose bussiness type'),
-      // region: Yup.string().required('Please choose region'),
-      address: Yup.string().required('Please enter address'),
-      state: Yup.string().required('Please choose state'),
-      district: Yup.string().required('Please choose district'),
+      omc: Yup.string().required('Please Choose OMC').nullable('Choose OMC'),
+      business_type: Yup.string().required('Please choose bussiness type').nullable('Choose business type'),
+      region: Yup.string().required('Please choose region').nullable('Choose region'),
+      address: Yup.string().required('Please enter address').nullable('Enter address'),
+      state: Yup.string().required('Please choose state').nullable('Choose state'),
+      district: Yup.string().required('Please enter district').nullable('Enter district'),
       pincode: Yup.number()
+        .nullable('Enter pincode')
         .min(6, 'Pincode must be 6 digits')
         .required('Enter pincode'),
       pan: Yup.string()
+        .nullable('Enter PAN')
         .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
         .required('Enter PAN')
         .uppercase(),
-      gst: Yup.number().min(15, 'Enter valid GST'),
+      gst: Yup.string().nullable('Enter GST').matches(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/, "Invalid GST").required("Enter GST").uppercase(),
     }),
     onSubmit: (values) => {
       setLoading(true);
       values.name = values.name.toUpperCase();
-      const data = { ...values, t_owner_id: id };
+      const doi = selectedDate ? format(selectedDate, 'dd-MM-yyyy') : values?.doi
+      const data = { ...values, doi: doi, t_owner_id: id, pan: values.pan?.toUpperCase(), gst: values.gst?.toUpperCase() };
       // let apiURL = isAdd === 'Add' ? `transporters` : `tranporters/${data.transporter_id}`
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
+        // console.log(data);
+        if(key === 'pan'){
+          let pan = values?.pan ? cryptoEncrypt(values.pan) : values?.pan;
+          formData.append(key, pan)
+        }
         formData.append(key, data[key]);
       });
       if (isAdd === 'Add') {
@@ -262,7 +285,7 @@ const AddNewTransportsForm = ({
           })
           .catch((error) => {
             setLoading(false);
-            enqueueSnackbar(error, {
+            enqueueSnackbar(error.message, {
               anchorOrigin: {
                 vertical: 'top',
                 horizontal: 'right',
@@ -281,7 +304,6 @@ const AddNewTransportsForm = ({
           .then((res) => {
             return res.json();
           })
-
           .then((res) => {
             enqueueSnackbar(res.message, {
               anchorOrigin: {
@@ -317,7 +339,7 @@ const AddNewTransportsForm = ({
       });
     getBusinessTypes()
       .then((data) => {
-        setBussinessType(data);
+        setBusinessType(data);
       })
       .catch((e) => {
         console.log(e);
@@ -327,10 +349,10 @@ const AddNewTransportsForm = ({
         setStates([{ id: '', name: 'Choose State' }, ...d]);
         return d;
       })
-      // .then(d => {
-      //     let res = d.find(({ id }) => id === parseInt(values?.state));
-      //     fetchRegions(parseInt(res.id));
-      // })
+      .then(d => {
+        let res = d.find(({ id }) => id === parseInt(values?.state));
+        fetchRegions(parseInt(res.id));
+      })
       .catch((e) => {
         console.log(e);
       });
@@ -352,15 +374,6 @@ const AddNewTransportsForm = ({
       : setFieldValue('gst_file_url', value[0]);
     handleSubmit(values);
     onCloseUploader();
-    // enqueueSnackbar('File added successfully', {
-    //     anchorOrigin: {
-    //         vertical: 'top',
-    //         horizontal: 'right',
-    //     },
-    //     autoHideDuration: 1000,
-    //     variant: 'success',
-    // }
-    // )
   };
   const docUpload = (val) => {
     setShowUpload(true);
@@ -473,8 +486,15 @@ const AddNewTransportsForm = ({
                       value={values.transporter_id}
                     />
                     <ViewData title='Mobile' value={values.mobile} />
-                    <ViewData title='OMC' value={values.omc} />
-                    <ViewData title='Region' value={values.region} />
+                    <ViewData title='OMC' value={(omcs.find(function (omc, index) {
+                      if (omc.id == values.omc)
+                        return true;
+                    }))?.name} />
+                    <ViewData title='Date of Incoporation' value={values?.doi} />
+                    <ViewData title='Region' value={(regionList.find(function (region, index) {
+                      if (region.id == values.region)
+                        return true;
+                    }))?.name} />
                     <ViewData title='District' value={values.district} />
                     <ViewData title='GST' value={values.gst} />
                   </Box>
@@ -483,11 +503,14 @@ const AddNewTransportsForm = ({
                   <Box className={classes.box}>
                     <ViewData title='Transport Name' value={values.name} />
                     <ViewData title='Address' value={values.address} />
-                    <ViewData
-                      title='Business Type'
-                      value={values.business_type}
-                    />
-                    <ViewData title='State' value={values.state} />
+                    <ViewData title='Business Type' value={(businessType.find(function (business, index) {
+                      if (business.id == values.business_type)
+                        return true;
+                    }))?.name} />
+                    <ViewData title='State' value={(states.find(function (state, index) {
+                      if (state.id == values.state)
+                        return true;
+                    }))?.name} />
                     <ViewData title='Pincode' value={values.pincode} />
                     <ViewData title='PAN' value={values.pan} />
                   </Box>
@@ -600,23 +623,23 @@ const AddNewTransportsForm = ({
                     />
                   </Grid>
                   <Grid item md={6}>
-                    <TextInput
-                      {...inputProps}
-                      select
-                      name='omc'
-                      labelText='OMC'
-                      value={values?.omc}
-                      readOnly={readOnly}
-                      disabled={readOnly}
-                      error={errors.omc}
-                    >
-                      <option value=''>Choose OMC</option>
-                      {omcs.map((omc) => (
-                        <option key={omcs.id} value={omcs.id}>
-                          {omc.name}
-                        </option>
-                      ))}
-                    </TextInput>
+                    {
+                      <TextInput
+                        {...inputProps}
+                        select
+                        labelText="OMC"
+                        name="omc"
+                        value={values.omc}
+                        readOnly={readOnly}
+                        disabled={readOnly}
+                        error={errors.omc}
+                        helperText={errors.omc}
+                      >
+                        {
+                          omcs?.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))
+                        }
+                      </TextInput>
+                    }
                   </Grid>
                   <Grid item md={6}>
                     <TextInput
@@ -629,13 +652,41 @@ const AddNewTransportsForm = ({
                       disabled={readOnly}
                       error={errors.business_type}
                     >
-                      <option value=''>Choose bussiness type</option>
-                      {bussinessType.map((type) => (
-                        <option key={type.id} value={type.name}>
-                          {type.name}
-                        </option>
-                      ))}
+                      {businessType.map((type) => (<option key={type.id} value={type.name}>{type.name}</option>))}
                     </TextInput>
+                  </Grid>
+                  <Grid item md={6}>
+                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                      <label>Date of Birth</label>
+                      <KeyboardDatePicker
+                        // disableToolbar
+                        // hideTabs={true}
+                        variant='inline'
+                        inputVariant='outlined'
+                        format='dd-MM-yyyy'
+                        animateYearScrolling={true}
+                        invalidDateMessage='Invalid Date Format'
+                        error={errors.dob}
+                        helperText={errors.dob}
+                        readOnly={readOnly}
+                        disabled={readOnly}
+                        margin='normal'
+                        id='date-picker'
+                        autoOk={true}
+                        value={selectedDate}
+                        onChange={handleDateChange}
+                        InputLabelProps={{ shrink: true }}
+                        keyboardButtonProps={{
+                          'aria-label': 'change date',
+                        }}
+                        PopoverProps={{
+                          anchorOrigin: {
+                            vertical: 'bottom',
+                            horizontal: 'center',
+                          },
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
                   </Grid>
                   <Grid item md={6}>
                     <TextInput
@@ -648,11 +699,7 @@ const AddNewTransportsForm = ({
                       value={values?.state}
                       error={errors.state}
                     >
-                      {states.map((item, i) => (
-                        <option key={i} value={item.id}>
-                          {item.name}
-                        </option>
-                      ))}
+                      {states.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))}
                     </TextInput>
                   </Grid>
                   <Grid item md={6}>
@@ -666,11 +713,7 @@ const AddNewTransportsForm = ({
                       value={values?.region}
                       error={errors.region}
                     >
-                      {regionList.map((item, i) => (
-                        <option key={i} value={item.id}>
-                          {item.name}
-                        </option>
-                      ))}
+                      {regionList.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))}
                     </TextInput>
                   </Grid>
                   <Grid item md={6}>
@@ -697,11 +740,7 @@ const AddNewTransportsForm = ({
                       value={values.district}
                       error={errors.district}
                     >
-                      {getDistricts(values.state).map((item) => (
-                        <option key={item} value={item}>
-                          {item}
-                        </option>
-                      ))}
+                      {getDistricts(values.state).map((item) => (<option key={item} value={item}>{item}</option>))}
                     </TextInput>
                   </Grid>
                   <Grid item md={6}>
@@ -726,7 +765,7 @@ const AddNewTransportsForm = ({
                       {...inputProps}
                       name='pan'
                       labelText='PAN'
-                      value={values.pan}
+                      value={values.pan?.toUpperCase()}
                       readOnly={readOnly}
                       disabled={readOnly}
                       error={errors.pan}
@@ -755,26 +794,6 @@ const AddNewTransportsForm = ({
                               </Tooltip>
                             </div>
                           )
-                          // <>
-
-                          //     <Typography variant="subtitle2" component="subtitle2">
-                          //         <Tooltip title={'Click Edit and attach'}>
-                          //             <AttachmentOutlinedIcon onClick={() => docUpload('PAN')} />
-                          //         </Tooltip> Attach PAN
-                          //     </Typography>
-                          //     <TextInput
-                          //                 type="file"
-                          //                 accept="image/*"
-                          //                 name="pan_file_url"
-                          //                 readOnly={readOnly}
-                          //                 disabled={readOnly}
-                          //                 value={data.pan_file_url}
-                          //                 onChange={(event) => {
-                          //                     values[event.target.name] = event.currentTarget.files[0];
-                          //                 }}
-                          //                 InputLabelProps={{ shrink: true }}
-                          //             ></TextInput>
-                          // </>
                         }
                       </>
                     </Grid>
@@ -784,7 +803,7 @@ const AddNewTransportsForm = ({
                       {...inputProps}
                       name='gst'
                       labelText='GST'
-                      value={values.gst}
+                      value={values.gst?.toUpperCase()}
                       readOnly={readOnly}
                       disabled={readOnly}
                       error={errors.gst}
@@ -810,18 +829,6 @@ const AddNewTransportsForm = ({
                                 {/* <Typography className={classes.typography}>Attach GST</Typography> */}
                               </>
                             </Tooltip>
-                            {/* <TextInput
-                                                                            type="file"
-                                                                            accept="image/*"
-                                                                            name="gst_file_url"
-                                                                            value={data.aadhar_f_file_url}
-                                                                            readOnly={readOnly}
-                                                                            disabled={readOnly}
-                                                                            onChange={(event) => {
-                                                                                values[event.target.name] = event.currentTarget.files[0];
-                                                                            }}
-                                                                            InputLabelProps={{ shrink: true }}
-                                                                        ></TextInput> */}
                           </div>
                         )}
                       </>
@@ -862,7 +869,6 @@ const AddNewTransportsForm = ({
                 <Button
                   variant='contained'
                   type='submit'
-                  onClick={handleSubmit}
                   className={clsx(classes.btn, classes.editButton)}
                   startIcon={
                     !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
@@ -886,21 +892,23 @@ const AddNewTransportsForm = ({
               </div>
             )
           ) : (
-            <div>
-              <Button
-                variant='contained'
-                type='submit'
-                onClick={handleSubmit}
-                className={clsx(classes.btn, classes.editButton)}
-                startIcon={
-                  !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
-                }
-                // disabled={loading}
-                onClick={loading ? () => null : handleEdit}
-              >
-                Edit
-              </Button>
-            </div>
+            !permissionCheck(currentUser.role_name, rulesList.transporter_view) ? (
+              <div>
+                <Button
+                  variant='contained'
+                  type='submit'
+                  onClick={handleSubmit}
+                  className={clsx(classes.btn, classes.editButton)}
+                  startIcon={
+                    !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
+                  }
+                  // disabled={loading}
+                  onClick={loading ? () => null : handleEdit}
+                >
+                  Edit
+                </Button>
+              </div>
+            ) : null
           )}
         </div>
       </div>

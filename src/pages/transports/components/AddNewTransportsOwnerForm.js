@@ -24,7 +24,6 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
-import moment from 'moment';
 import FileUpload from '../../../components/FileUpload';
 import UploadIcon from '@material-ui/icons/Backup';
 import { grey } from '@material-ui/core/colors';
@@ -35,6 +34,7 @@ import {
 import DeleteIcon from '@material-ui/icons/Delete';
 import { deleteTransportOwnerProfileDoc } from '../../../services/transports.service';
 import { cryptoEncrypt } from '../../../services/crypto.service';
+import { format, parse } from 'date-fns';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -160,7 +160,7 @@ const AddNewTransportsOwnerForm = ({
     checkedA: true,
     checkedB: true,
   });
-  const [selectedDate, setSelectedDate] = useState(rowData && rowData.dob);
+  const [selectedDate, setSelectedDate] = useState(rowData?.dob && parse(rowData?.dob, 'dd-MM-yyyy', new Date()));
   const handleDateChange = (e) => {
     setSelectedDate(e);
   };
@@ -194,21 +194,19 @@ const AddNewTransportsOwnerForm = ({
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       // id: Yup.number().required('Please enter transporter code'),
-      first_name: Yup.string().required('Please enter transporter name'),
-      last_name: Yup.string().required('Please enter transporter name'),
-      email: Yup.string().email('Enter valid mail id '),
-      mobile: Yup.number()
-        .min(10, 'Enter valid mobile number')
-        .required('please Enter your mobile number'),
-      address: Yup.string().required('Please enter address'),
+      first_name: Yup.string().required('Please enter transporter name').nullable('Please enter transporter name'),
+      last_name: Yup.string().required('Please enter transporter name').nullable('Please enter transporter name'),
+      email: Yup.string().email('Enter valid mail id').nullable('Enter valid mail id'),
+      mobile: Yup.number().required('Enter mobile number').nullable('Enter mobile number').test("maxDigits", "Mobile Number mush have 10 digits", (number) => String(number).length === 10),
+      address: Yup.string().required('Please enter address').nullable('Please enter address'),
     }),
     onSubmit: (values) => {
       values.first_name = values.first_name.toUpperCase();
       values.last_name = values.last_name.toUpperCase();
-      const date = moment(selectedDate).format('DD-MMM-YYYY');
+      const dob = selectedDate ? format(new Date(selectedDate), "dd-MM-yyyy") : values?.dob
       const date_values = {
         ...values,
-        dob: date,
+        dob: dob,
         is_whatsapp: state.checkedA === true ? 1 : 0,
         is_aadhar_linked: state.checkedB === true ? 1 : 0,
       };
@@ -264,7 +262,7 @@ const AddNewTransportsOwnerForm = ({
           .catch((error) => {
             setLoading(false);
             console.log(error);
-            enqueueSnackbar(error.profile_status, {
+            enqueueSnackbar('Something went wrong, Please try Again!', {
               anchorOrigin: {
                 vertical: 'top',
                 horizontal: 'right',
@@ -311,7 +309,7 @@ const AddNewTransportsOwnerForm = ({
           .catch((error) => {
             setLoading(false);
             console.log(error);
-            enqueueSnackbar(error.message, {
+            enqueueSnackbar('Something went wrong, Please try Again!', {
               anchorOrigin: {
                 vertical: 'top',
                 horizontal: 'right',
@@ -355,7 +353,7 @@ const AddNewTransportsOwnerForm = ({
         });
       })
       .catch(err => {
-        enqueueSnackbar(err, {
+        enqueueSnackbar('Something went wrong, Please try Again!', {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',
@@ -563,42 +561,6 @@ const AddNewTransportsOwnerForm = ({
                     />
                   </Grid>
                   <Grid item md={6}>
-                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                      <KeyboardDatePicker
-                        // disableToolbar
-                        // hideTabs={true}
-                        variant='inline'
-                        inputVariant='outlined'
-                        label='Date of Birth'
-                        format='dd/MM/yyy'
-                        // views={["date", "month", "year"]}
-                        animateYearScrolling={true}
-                        invalidDateMessage='Invalid Date Format'
-                        error={errors.dob}
-                        helperText={errors.dob}
-                        readOnly={readOnly}
-                        disabled={readOnly}
-                        margin='normal'
-                        id='date-picker'
-                        autoOk={true}
-                        value={
-                          selectedDate !== null ? selectedDate : values.dob
-                        }
-                        onChange={handleDateChange}
-                        InputLabelProps={{ shrink: true }}
-                        keyboardButtonProps={{
-                          'aria-label': 'change date',
-                        }}
-                        PopoverProps={{
-                          anchorOrigin: {
-                            vertical: 'bottom',
-                            horizontal: 'center',
-                          },
-                        }}
-                      />
-                    </MuiPickersUtilsProvider>
-                  </Grid>
-                  <Grid item md={6}>
                     <TextInput
                       select
                       label='Gender'
@@ -617,6 +579,40 @@ const AddNewTransportsOwnerForm = ({
                       <option value={'MALE'}>Male</option>
                       <option value={'FEMALE'}>Female</option>
                     </TextInput>
+                  </Grid>
+                  <Grid item md={6}>
+                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                      <KeyboardDatePicker
+                        // disableToolbar
+                        // hideTabs={true}
+                        variant='inline'
+                        inputVariant='outlined'
+                        name='dob'
+                        label='Date of Birth'
+                        format='dd-MM-yyyy'
+                        animateYearScrolling={true}
+                        invalidDateMessage='Invalid Date Format'
+                        error={errors.dob}
+                        helperText={errors.dob}
+                        readOnly={readOnly}
+                        disabled={readOnly}
+                        margin='normal'
+                        id='date-picker'
+                        autoOk={true}
+                        value={selectedDate? selectedDate : null}
+                        onChange={handleDateChange}
+                        InputLabelProps={{ shrink: true }}
+                        keyboardButtonProps={{
+                          'aria-label': 'change date',
+                        }}
+                        PopoverProps={{
+                          anchorOrigin: {
+                            vertical: 'bottom',
+                            horizontal: 'center',
+                          },
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
                   </Grid>
                   <Grid item md={12}>
                     <TextInput

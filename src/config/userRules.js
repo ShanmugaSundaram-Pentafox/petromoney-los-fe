@@ -9,7 +9,9 @@
   "dealer_credit_view": "dealer:credit:view",
   "dealership_credit_view": "dealership:credit:view",
   "dealer_view":"dealer:view",
+  "transporter_view":"transporter:view",
   "region_map": "region:map",
+  "settings_view": "settings:view",
 }
 
 export const rulesForUserRoles = {
@@ -57,6 +59,7 @@ export const rulesForUserRoles = {
       rulesList.dealership_credit_edit,
       rulesList.users_view,
       rulesList.region_map,
+      rulesList.settings_view,
     ]
   },
   CREDIT_EXEC: {
@@ -116,6 +119,11 @@ export const rulesForUserRoles = {
   DEALER: {
     static:[
       rulesList.dealer_view,
+    ]
+  },
+  TRANSPORTER: {
+    static: [
+      rulesList.transporter_view,
     ]
   }
 }

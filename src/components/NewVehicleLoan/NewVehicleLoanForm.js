@@ -24,29 +24,27 @@ const NewVehicleLoanForm = ({ vehicleId, callback, currentUser }) => {
         console.log(e)
       })
   })
-  
+
   const { values, errors, handleChange, handleSubmit, setErrors, isSubmitting, setSubmitting } = useFormik({
     initialValues: {},
     validateOnChange: false,
     validationSchema: Yup.object().shape({
-      credit_head: Yup.number().required('Choose Loan Type'),
-      loan_amount: Yup.number(),
-      remarks: Yup.string(),
+      credit_head: Yup.number().nullable('Choose Loan Type').required('Choose Loan Type'),
     }),
     onSubmit: formData => {
       const d = loanOptions.find(d => d.id == formData?.credit_head);
-      if(Number(formData.credit_head) === 5 && !formData.remarks) {
+      if (Number(formData.credit_head) === 5 && !formData.remarks) {
         setErrors({ remarks: "Please enter remarks" });
         setSubmitting(false)
         return;
       }
-      if(!d.is_service && !formData.loan_amount) {
+      if (!d.is_service && !formData.loan_amount) {
         setErrors({ loan_amount: "Please enter loan amount" });
         setSubmitting(false)
         return;
       }
       let remarks = formData.remarks;
-      if(!remarks) {
+      if (!remarks) {
         remarks = d.desc;
       }
       apiCall(`vehicle/${vehicleId}/loan`, {
@@ -59,21 +57,21 @@ const NewVehicleLoanForm = ({ vehicleId, callback, currentUser }) => {
           // user_id: currentUser.id,
         }
       })
-      .then(res => {
-        console.log(res);
-        if(res.status == 'SUCCESS') {
-          callback();
-        } else {
-          setApiStatus({
-            type: 'ERROR',
-            message: res.message || 'Unable to send credit request. Please try again later.'
-          })
-        }
-      })
-      .catch(err => {
-        console.log(err);
-        setApiStatus({ type: 'ERROR', message: 'Unable to raise loan/service request. Please contact Admin' })
-      })
+        .then(res => {
+          console.log(res);
+          if (res.status == 'SUCCESS') {
+            callback();
+          } else {
+            setApiStatus({
+              type: 'ERROR',
+              message: res.message || 'Unable to send credit request. Please try again later.'
+            })
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          setApiStatus({ type: 'ERROR', message: 'Unable to raise loan/service request. Please contact Admin' })
+        })
       // callback();
       setTimeout(() => {
         setSubmitting(false)
@@ -146,7 +144,7 @@ const NewVehicleLoanForm = ({ vehicleId, callback, currentUser }) => {
               variant="contained"
               disabled={isSubmitting}
             >
-              {isSubmitting ? `Please wait...` : (Number(values.credit_head) === 4 ? `Raise request` :  `Submit Loan Request`)}
+              {isSubmitting ? `Please wait...` : (Number(values.credit_head) === 4 ? `Raise request` : `Submit Loan Request`)}
             </Button>
           </Grid>
         </Grid>

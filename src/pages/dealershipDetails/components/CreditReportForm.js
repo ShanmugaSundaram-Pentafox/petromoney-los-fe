@@ -111,10 +111,10 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 </TableRow>
               </TableHead>
               <TableBody>
-                <TableRow>
+                {/* <TableRow>
                   <TableCell>2018 - 2019</TableCell>
                   <TableCell>2019 - 2020</TableCell>
-                </TableRow>
+                </TableRow> */}
                 <TableRow>
                   <TableCell>
                     <FinanceFormData

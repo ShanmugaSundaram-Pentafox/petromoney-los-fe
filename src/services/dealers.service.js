@@ -13,7 +13,7 @@ export const getDealersByDealershipId = id => {
             aadhar: item?.aadhar ? cryptoDecrypt(item.aadhar) : item.aadhar,
           }));
 
-          resolve(result);
+          resolve(result || []);
         } else {
           reject(message);
         }
@@ -34,7 +34,7 @@ export const getCoApplicantByDealershipId = id => {
             pan: item?.pan ? cryptoDecrypt(item.pan) : item.pan,
             aadhar: item?.aadhar ? cryptoDecrypt(item.aadhar) : item.aadhar,
           }));
-          resolve(result);
+          resolve(result || []);
         } else {
           reject(message);
         }

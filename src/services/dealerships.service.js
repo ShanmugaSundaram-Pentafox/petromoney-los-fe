@@ -13,7 +13,7 @@ export const getAllDealership = () => {
             if(pan) {
               pan = cryptoDecrypt(pan)
             }
-            if(gst) {
+            if (gst) {
               gst = decrypt(gst)
             }
             return {
@@ -42,7 +42,7 @@ export const getDealershipById = (id) => {
           if(result?.pan) {
             result.pan = cryptoDecrypt(result.pan);
           }
-          if(result?.gst) {
+          if (result?.gst) {
             result.gst = decrypt(result.gst);
           }
           resolve(result);
@@ -75,7 +75,7 @@ export const getDealershipLoansById = (id) => {
 export const getDealershipIncomeById = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.dealership}/${id}/income/details`)
-      .then(({ status,data,message }) => {
+      .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data);
         } else {
@@ -92,8 +92,8 @@ export const postDealershipIncomeById = (id, body) => {
   return new Promise((resolve, reject) => {
     // API.post(`${URL.dealership}/${id}/income/details`, body)
     apiCall(`${URL.dealership}/${id}/income/details`, {
-      method : 'POST',
-      body:body
+      method: 'POST',
+      body: body
     })
       .then(async ({ status, data, message }) => {
         if (status === "SUCCESS") {
@@ -112,9 +112,9 @@ export const postDealershipIncomeById = (id, body) => {
 export const updateDealershipIncomeById = (id, body) => {
   return new Promise((resolve, reject) => {
     // API.post(`${URL.dealership}/income/details/${body.id}`, body)
-    apiCall(`${URL.dealership}/income/details/${body.id}`,{
-      method : 'POST',
-      body :body
+    apiCall(`${URL.dealership}/income/details/${body.id}`, {
+      method: 'POST',
+      body: body
     })
       .then(async ({ status, data, message }) => {
         if (status === "SUCCESS") {
@@ -134,7 +134,7 @@ export const getDealershipExpensesById = (id) => {
   return new Promise((resolve, reject) => {
     // API.get(`${URL.dealership}/${id}/expense/details`)
     apiCall(`${URL.dealership}/${id}/expense/details`)
-      .then(({ status,data,message }) => {
+      .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data);
         } else {
@@ -151,8 +151,8 @@ export const postDealershipExpensesById = (id, body) => {
   return new Promise((resolve, reject) => {
     // API.post(`${URL.dealership}/${id}/expense/details`, body)
     apiCall(`${URL.dealership}/${id}/expense/details`, {
-      method : 'POST',
-      body :body
+      method: 'POST',
+      body: body
     })
       .then(async ({ status, data, message }) => {
         if (status === "SUCCESS") {
@@ -172,8 +172,8 @@ export const updateDealershipExpenseById = (id, body) => {
   return new Promise((resolve, reject) => {
     // API.post(`${URL.dealership}/expense/details/${body.id}`, body)
     apiCall(`${URL.dealership}/expense/details/${body.id}`, {
-      method :'POST',
-      body :body
+      method: 'POST',
+      body: body
     })
       .then(async ({ status, data, message }) => {
         if (status === "SUCCESS") {
@@ -194,7 +194,7 @@ export const getDealershipSalesById = (id) => {
     // API.get(`${URL.salesInfo}/${id}`)
     // API.get(`${URL.dealership}/${id}/salesdata`)
     apiCall(`${URL.dealership}/${id}/salesdata`)
-      .then(({ status,data,message }) => {
+      .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data);
         } else {
@@ -211,8 +211,8 @@ export const postDealershipSalesById = (id, body) => {
   return new Promise((resolve, reject) => {
     // API.post(`${URL.dealership}/${id}/salesdata`, body)
     apiCall(`${URL.dealership}/${id}/salesdata`, {
-      method :'POST',
-      body:body
+      method: 'POST',
+      body: body
     })
       .then(async ({ status, data, message }) => {
         if (status === "SUCCESS") {
@@ -232,8 +232,8 @@ export const deleteDealershipSalesById = (id, body) => {
   return new Promise((resolve, reject) => {
     // API.post(`${URL.dealership}/${id}/salesdata`, body)
     apiCall(`${URL.dealership}/${id}/salesdata`, {
-      method :'DELETE',
-      body:body
+      method: 'DELETE',
+      body: body
     })
       .then(async ({ status, data, message }) => {
         if (status === "SUCCESS") {
@@ -270,11 +270,26 @@ export const uploadDocument = (dealershipID, docID, files) => {
   return new Promise((resolve, reject) => {
     // API.post(`${URL.checklist}/${dealershipID}/doc/${docID}`, files)
     apiCall(`${URL.checklist}/${dealershipID}/doc/${docID}`, {
-      method : 'POST',
-      body :files
+      method: 'POST',
+      body: files
     })
       .then(({ data }) => {
-          resolve(data);
+        resolve(data);
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
+export const deleteDealershipDocument = (data, id) => {
+  return new Promise((resolve, reject) => {
+    // API.post(`${URL.checklist}/${dealershipID}/doc/${docID}`, files)
+    apiCall(`dealership/${id}`, {
+      method: 'DELETE',
+      body: data
+    })
+      .then(({ message }) => {
+        resolve(message);
       })
       .catch((e) => {
         reject(e.message);
@@ -282,11 +297,13 @@ export const uploadDocument = (dealershipID, docID, files) => {
   });
 };
 
+
+
 export const getDealershipFinancialsById = (id) => {
   return new Promise((resolve, reject) => {
     // API.get(`${URL.dealership}/${id}/financials`)
     apiCall(`${URL.dealership}/${id}/financials`)
-      .then(({ data,status,message }) => {
+      .then(({ data, status, message }) => {
         if (status === "SUCCESS") {
           resolve(data);
         } else {
@@ -303,7 +320,7 @@ export const postDealershipFinancialsById = (id, body) => {
   return new Promise((resolve, reject) => {
     // API.post(`${URL.dealership}/${id}/financials`, body)
     apiCall(`${URL.dealership}/${id}/financials`, {
-      method : 'POST',
+      method: 'POST',
       body: body
     })
       .then(async ({ status, data, message }) => {

@@ -25,15 +25,18 @@ import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { selectCurrentUser } from '../../../store/user/user.selector';
 import { createStructuredSelector } from 'reselect';
-import { getLoanById, getLoansByStatus, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
+import { getLoanById, getLoanRejectReason, getLoansByStatus, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
 import Alert from '@material-ui/lab/Alert';
 import DispApprovedDataTable from './DispApprovedDataTable';
 import apiCall from '../../../utils/api.util';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import { useSnackbar } from 'notistack';
+import ReactSelect from 'react-select';
 // import CloseIcon from '@material-ui/icons/Close';
 import CloseIcon from '@material-ui/icons/CloseRounded';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress, Dialog, DialogContent, DialogTitle } from '@material-ui/core';
+import { getAllRegion } from '../../../services/common.service';
+import { useMount } from 'react-use';
 
 // import Button from '../../../components/CommonComponents/Button/Button'
 
@@ -127,6 +130,19 @@ const useStyles = makeStyles(theme => ({
     '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.error.dark
     }
+  },
+  rejectModal: {
+    width: 600,
+  },
+  errorText: {
+    color: '#D83A56',
+    fontSize: '.7rem'
+  },
+  btns: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    marginTop: 35,
+    marginBottom: 10
   }
 }));
 const fieldProps = {
@@ -355,11 +371,18 @@ const DealershipDetails = ({
   const [loanInfo, setLoanInfo] = useState({});
   const [reLoader, setReloader] = useState(false);
   const [rejectLoader, setRejectLoader] = useState(false);
+  const [regions, setRegions] = useState([]);
   const [approveLoader, setApproveLoader] = useState(false);
   const [apiStatus, setApiStatus] = useState({});
   const [readOnly, setReadOnly] = useState(true);
   const [showRemarksModal, setShowRemarksModal] = useState(false);
   const [newLoanInfo, setNewLoanInfo] = useState({});
+  const [selectedCategory, setSelectedCategory] = useState()
+  const [rejectModal, setRejectModal] = useState(false);
+  const [tempData, setTempData] = useState([])
+  const [reasonData, setReasonData] = useState()
+  const [rejectReason, setRejectReason] = useState()
+  const [errorText, setErrorText] = useState({})
   const { enqueueSnackbar } = useSnackbar();
 
 
@@ -380,11 +403,44 @@ const DealershipDetails = ({
           console.log(err)
         })
     }
+    getAllRegion()
+      .then(data => {
+        setRegions(data);
+      })
+      .catch(err => {
+        console.log(err)
+      });
   }, [data, loanData]);
 
   useEffect(() => {
     if (data) setValues(data);
   }, [data]);
+
+  useMount(() => {
+    getLoanRejectReason()
+    .then(data => {
+      const optionsBuffer = []
+      const dataBuffer = []
+
+      data.map((data, index) => {
+        optionsBuffer.push({value: index, label: data.reason})
+        dataBuffer.push([data.list.map((d) => { return({value: d.id, label: `${d.code} - ${d.description}`})})])
+        // console.log(data.list);
+      })
+      setTempData(optionsBuffer)
+      setReasonData(dataBuffer)
+      // console.log(dataBuffer);
+    })
+    .catch(e => {
+      console.log(e);
+    })
+  })
+
+  // selectedCategory && (
+  //   // setDataOptions(reasonData[selectedCategory.value])
+  //   console.log(reasonData[selectedCategory.value][0])
+  // )
+
 
   // useEffect(() => {
   //   if(loanData) {
@@ -437,6 +493,8 @@ const DealershipDetails = ({
 
     if (submitStatus === 'rejected') {
       setRejectLoader(true);
+      setRejectModal(false);
+      reqBody.reason_id = rejectReason?.value;
       resMsg = 'Request got rejected successfully';
     }
     // if(submitStatus === "disbursed") {
@@ -446,6 +504,7 @@ const DealershipDetails = ({
     // }
 
     // }
+
     updateLoanApprovalStatusById(values.id, loanData.id, reqBody)
       .then(res => {
         setApproveLoader(false);
@@ -458,11 +517,15 @@ const DealershipDetails = ({
           },
           variant: 'success',
         })
+        setTimeout(() => {
+          setReloader(false);
+          window.location.reload();
+        }, 1500)
       })
       .catch(err => {
         setApproveLoader(false);
         setRejectLoader(false);
-        enqueueSnackbar(err, {
+        enqueueSnackbar('Something went wrong, Please try Again!', {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',
@@ -485,6 +548,16 @@ const DealershipDetails = ({
       [event.target.name]: event.target.value
     });
   };
+
+  const handleReject = () => {
+    if(!rejectReason && !selectedCategory){
+      setErrorText({category: 'Select a Category', reason: 'Select a reason to reject'})
+    } else if (!rejectReason){
+      setErrorText({reason: 'Select a reason to reject'})
+    } else {
+      updateLoanStatus('rejected')
+    }
+  }
 
   const updateNewLoanInfo = (d) => {
     setNewLoanInfo({
@@ -596,7 +669,10 @@ const DealershipDetails = ({
               <Grid {...gridProps} md={6}>
                 <TextInput
                   labelText="Region"
-                  value={values.region}
+                  value={(regions.find(function (region, index) {
+                    if (region.region == values.region)
+                      return true;
+                  }))?.name}
                   readOnly={readOnly}
                   onChange={handleChange}
                   {...fieldProps}
@@ -843,7 +919,7 @@ const DealershipDetails = ({
                               disabled={apiStatus.loading}
                               className={clsx(classes.btn, classes.btnError)}
                               startIcon={<ThumbDownAltIcon />}
-                              onClick={() => updateLoanStatus('rejected')}>Reject</Button>
+                              onClick={() =>setRejectModal(true)}>Reject</Button>
                           </div>
                         ) : (
                           <div style={{ marginLeft: '16px' }}>
@@ -885,6 +961,45 @@ const DealershipDetails = ({
           style={{ width: '40vw', minWidth: 400 }}
         />
       </FormDialog>
+      <Dialog
+        open={rejectModal}
+        onClose={() => setRejectModal(false)}
+      >
+        <DialogTitle>Reason for Loan Rejection</DialogTitle>
+        <DialogContent className={classes.rejectModal}>
+          <div style={{marginTop: 10}}>
+            <Typography variant='h7'>Category</Typography>
+            <ReactSelect
+              name='category'
+              options={tempData}
+              onChange={(e) => {
+                setSelectedCategory(e)
+                setRejectReason(null)
+                setErrorText()
+              }}
+            />
+            <p className={classes.errorText}>{errorText?.category}</p>
+          </div>
+          <div style={{marginTop: 15}}>
+            <Typography variant='h7'>Reason</Typography>
+            <ReactSelect
+              isClearable
+              name='reason'
+              value={rejectReason}
+              options={selectedCategory && (reasonData[selectedCategory.value][0])}
+              onChange={(e) => {
+                setRejectReason(e)
+                setErrorText()
+              }}
+            />
+            <p className={classes.errorText}>{errorText?.reason}</p>
+          </div>
+          <div className={classes.btns}>
+            <Button size='small' onClick={() => setRejectModal(false)}>Cancel</Button>
+            <Button color='primary' variant='outlined' size='small' onClick={handleReject} disabled={!rejectReason}>Confirm</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

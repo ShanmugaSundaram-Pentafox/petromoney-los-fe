@@ -5,10 +5,7 @@ import apiCall from "../utils/api.util";
 export const getLoanStats = (qryStr={}) => {
   return new Promise((resolve, reject) => {
     const { region, from, to } = qryStr;
-    let apiUrl = `metrics/loan/stats`;
-    if (region) {
-      apiUrl = `metrics/loan/stats?region=${region}`
-    }
+    let apiUrl = `metrics/loan/stats?region=${region}`;
     if (from && to) {
       apiUrl = `metrics/loan/stats?region=${region}&from=${from}&to=${to}`;
     }
@@ -65,6 +62,38 @@ export const getAll_ls2_Metrices = () => {
     // resolve([]);
     // return;
     apiCall(URL.ls2_metrices)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const getAllOmcDpd = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('app/dpd/omc')
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const getAllRegionDpd = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('app/dpd/region')
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data);
@@ -249,3 +278,18 @@ export const getApplicationStatusById = () => {
   });
 };
 
+export const getLoanRejectReason = () => {
+  return new Promise((resolve, reject) => {
+    apiCall(`loans/reason`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};

@@ -1,62 +1,29 @@
 import React, { useMemo, useState } from 'react';
-import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from "mui-datatables";
 import { useMount } from 'react-use';
 import Paper from '@material-ui/core/Paper';
 import Currency from '../../components/Number/Currency';
-import { getReport } from '../../services/users.service';
+import { getTestReport } from '../../services/users.service';
 import usePageTitle from '../../hooks/usePageTitle';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { Grid } from '@material-ui/core';
-import Modal from '@material-ui/core/Modal';
-import Backdrop from '@material-ui/core/Backdrop';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { SendReports } from '../../services/common.service';
-import Button from '../../components/CommonComponents/Button/Button';
-import { getDealerDetails } from '../../services/dealers.service';
 
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    paddingBottom: 20
-    // padding: theme.spacing(3),
-    // paddingTop: 0,
-  },
-  title: {
-    fontWeight: 500
-  },
-  pill: {
-    display: 'inline-block',
-    borderRadius: '29px',
-    padding: '3px 8px',
-    fontSize: '13px',
-    fontWeight: '600',
-    minWidth: '30px',
-    textAlign: 'center',
-  },
-  pills_FUEL: {
-    color: '#d35178',
-    backgroundColor: '#f7eae8'
-  },
-  pills_SOLAR: {
-    color: '#51b37f',
-    backgroundColor: '#e1f8e5',
-  },
-
-}));
-
-const DueTable = ({ onRowClick }) => {
-  const classes = useStyles();
+const DueTable = ({ id, onRowClick }) => {
   const [loans, setLoans] = useState({})
-  const [modalData, setModalData] = useState({});
   const [loading, setLoading] = useState(false);
-  const [title, setTitle] = useState("Yes")
+  let cardData = [
+    { label: 'Applicant code', value: loans[0]?.applicant_code },
+    { label: 'Applicant name', value: loans[0]?.applicant_name },
+    { label: 'Dealership ID', value: loans[0]?.cust_code },
+    { label: 'Customer Region', value: loans[0]?.cust_region },
+  ]
+  usePageTitle(`${id} - ${loans[0] && (loans[0].name || '')} `, true, cardData)
 
   useMount(async () => {
     setLoading(true)
-    getReport()
+    getTestReport(id)
       .then((data) => {
-        setLoans(data.overdue)
+        setLoans(data.due)
         setLoading(false);
       })
       .catch((e) => {
@@ -67,15 +34,22 @@ const DueTable = ({ onRowClick }) => {
   const columns = useMemo(() => {
     return [
       { name: 'prospectcode', label: 'Loan ID' },
-      { name: 'applicant_code', label: 'Applicant Code' },
-      { name: 'applicant_name', label: 'Applicant Name' },
-      { name: 'cust_code', label: 'Dealership ID' },
-      { name: 'cust_region', label: 'Customer Region' },
       {
         name: 'duedate',
         label: 'Due Date',
         options: {
           filter: false,
+        }
+      },
+      {
+        name: 'disb_amt',
+        label: 'disburse Amt',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: value => {
+            return <Currency value={value} />
+          }
         }
       },
       {
@@ -99,30 +73,28 @@ const DueTable = ({ onRowClick }) => {
     onRowClick: (rowData, { dataIndex }) => {
       onRowClick(loans[dataIndex].dealership_id, loans[dataIndex])
     },
-    rowsPerPage: 15,
-    rowsPerPageOptions: [15, 20, 30],
+    rowsPerPage: 10,
+    rowsPerPageOptions: [10, 15, 20, 25, 30],
   };
   return (
     <>
-      <div className={classes.root} >
+      <div>
         {
           loading ? (
             <Grid item xs={12}>
               <Skeleton variant="rect" width="100%" height={400} />
             </Grid>
-          ) : Array.isArray(loans) && loans.length ? (
+          ) : Array.isArray(loans) ? (
             <MUIDataTable
               title={"Due Reports"}
               data={loans}
               columns={columns}
               options={options}
             />
-          ) : <Paper style={{ padding: 10 }}>No due Reports found</Paper>
+          ) : <Paper style={{ marginTop: 10, padding: 10 }}>No due Reports found</Paper>
         }
       </div>
     </>
   )
 }
-// }
-
 export default DueTable;

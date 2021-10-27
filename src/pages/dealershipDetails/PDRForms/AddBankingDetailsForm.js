@@ -1,377 +1,444 @@
-import React, { Fragment, useState } from 'react';
-import Box from '@material-ui/core/Box';
+import React, { useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
+import TextInput from '../../../components/TextInput/TextInput';
 import Button from '../../../components/CommonComponents/Button/Button';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import clsx from 'clsx';
 import Divider from '@material-ui/core/Divider';
 import { makeStyles } from "@material-ui/styles";
 import CloseIcon from '@material-ui/icons/Close';
-import EditIcon from '@material-ui/icons/Edit';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
+import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import { useSnackbar } from 'notistack';
-import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
-import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
 import { useMount } from 'react-use';
+import { useSnackbar } from 'notistack';
 import { getBankDetailsbyID, updateBankDetailsByID } from '../../../services/PDReport.services';
+import BankDetailsCard from './Components/BankDetailsCard';
+import { URL } from '../../../config/serverUrls';
 
 const useStyles = makeStyles((theme) => ({
-    sidePanelTitle: {
-        // textAlign: 'center',
-        padding: '24px 16px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        zIndex: 0,
-        boxShadow: '0 1px 4px -3px #333'
-    },
-    sidePanelFormWrapper: {
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-        width: '55vw'
-    },
-    sidePanelFormContentWrapper: {
-        flex: 1,
-        overflow: 'auto'
-    },
-    sidePanelWrapper: {
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-        width: '40vw',
-        padding: 14,
-    },
-    actionButtons: {
-        // paddingTop: 8
-    },
-    tableRow: {
-        cursor: 'pointer'
-    },
-    document: {
-        display: 'inline-block',
-        borderRadius: 2,
-        lineHeight: 1,
-    },
-    table: {
-        padding: 8,
-        marginTop: 8
-    },
-    btnSuccess: {
-        '&.MuiButton-contained': {
-            backgroundColor: theme.palette.success.main,
-            color: theme.palette.white
-        },
-        '&.MuiButton-contained:hover': {
-            backgroundColor: theme.palette.success.dark
-        }
-    },
-    stepperRoot: {
-        padding: 16,
-        paddingTop: 8
-    },
-    actionButtonsWrapper: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        padding: '12px 16px'
-    },
-    subTitle: {
-        marginTop: 8,
-        marginBottom: 8
+  sidePanelTitle: {
+    // textAlign: 'center',
+    padding: '24px 16px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    zIndex: 0,
+    boxShadow: '0 1px 4px -3px #333'
+  },
+  sidePanelFormWrapper: {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    width: '55vw'
+  },
+  sidePanelFormContentWrapper: {
+    flex: 1,
+    backgroundColor: '#f6f6f6',
+    overflow: 'auto'
+  },
+  sidePanelWrapper: {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    width: '40vw',
+    padding: 14,
+  },
+  actionFoot: {
+    marginBottom: 16,
+    marginTop: 12,
 
+  },
+  tableRow: {
+    cursor: 'pointer'
+  },
+  document: {
+    display: 'inline-block',
+    borderRadius: 2,
+    lineHeight: 1,
+  },
+  table: {
+    padding: 8,
+    marginTop: 8
+  },
+  btn: {
+    margin: 8
+  },
+  btnSuccess: {
+    '&.MuiButton-contained': {
+      backgroundColor: theme.palette.success.main,
+      color: theme.palette.white
     },
-    editButton: {
-        marginRight: '8px',
-        '&.MuiButton-contained': {
-            backgroundColor: theme.palette.success.main,
-            color: theme.palette.white
-        },
-        '&.MuiButton-contained:hover': {
-            backgroundColor: theme.palette.success.dark
-        }
+    '&.MuiButton-contained:hover': {
+      backgroundColor: theme.palette.success.dark
     }
-
+  },
+  stepperRoot: {
+    padding: 16,
+    paddingTop: 8
+  },
+  actionButtonsWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '12px 16px'
+  },
+  subTitle: {
+    marginTop: 8,
+    marginBottom: 8
+  },
+  editButton: {
+    marginRight: '8px',
+    '&.MuiButton-contained': {
+      backgroundColor: theme.palette.success.main,
+      color: theme.palette.white
+    },
+    '&.MuiButton-contained:hover': {
+      backgroundColor: theme.palette.success.dark
+    }
+  },
+  typography: {
+    marginTop: 12,
+    textAlign: 'center'
+  },
+  number: {
+    backgroundColor: 'white',
+    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0,
+    }
+  },
+  input: {
+    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0,
+    }
+  }
 }))
 
-const AddBankingDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) => {
+const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => {
+  const { enqueueSnackbar } = useSnackbar();
+  const classes = useStyles()
+  const [bankData, setBankData] = useState([])
+  const [addNewRow, setAddNewRow] = useState(false);
+  const [editRow, setEditRow] = useState(false);
 
-    const { enqueueSnackbar } = useSnackbar();
-    const classes = useStyles()
-    const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
-    const [loading, setLoading] = useState(false)
-    const [bankData, setBankData] = useState([])
-    const [addNew, setAddNew] = useState(bankData ? false : true)
-    const [tankerData, setTankerData] = useState([])
-    const [editable, setEditable] = useState(true)
-    const [addNewRow, setAddNewRow] = useState();
-    const [apiData, setApiData] = useState({});
-    const [editRow, setEditRow] = useState({});
+  useMount(() => {
+    getBankDetailsbyID(dealer_id)
+      .then(data => {
+        setBankData(data)
+      })
+      .catch((e) => {
+        console.log(e);
+      })
+  })
+  const editBankRow = (rowData, rowIndex) => {
+    // setEditRow({ ...rowData, rowIndex });
+    setEditRow(true)
+    setValues(rowData)
+  }
+  const handleClose = () => {
+    callback();
+  };
 
-    useMount(() => {
-        getBankDetailsbyID(dealer_id)
-            .then(data => {
-                setBankData(data)
-            })
-            .catch((e) => {
-                console.log(e);
-            })
-    })
+  const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues, setFieldValue } = useFormik({
+    initialValues: {},
+    validateOnChange: false,
+    validateOnBlur: true,
+    validationSchema: Yup.object().shape({
+      ifsc: Yup.string().required("Enter IFSC code").nullable('Enter IFSC code').matches(/^[A-Za-z]{4}0[A-Z0-9]{6}$/, 'Enter valid IFSC'),
+      account_name: Yup.string('Enter valid name').nullable('Enter Account Holder name').required('Enter Account holder name'),
+      bank_name: Yup.string('Enter valid name').nullable('Enter bank name').required('Enter name'),
+      account_no: Yup.number().nullable('Enter account number').required('Enter account number'),
+      bank_branch: Yup.string('Enter valid branch name').nullable('Enter branch name').required('Enter branch name'),
+      account_type: Yup.string('Enter valid type').nullable('Enter account type').required('Enter account type'),
+      transaction_limit: Yup.number('Enter valid amount').nullable('Enter transaction limit').required('Enter transaction limit')
+    }),
+    onSubmit: values => {
+      updateBankDetailsByID(values, dealer_id)
+        .then(res => {
+          console.log(res)
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          }
+          )
+          setTimeout(() => {
+            window.location.reload()
+          }, 1500);
 
-
-    const handleEdit = () => {
-        setReadOnly(!readOnly)
-    };
-    const handleClose = () => {
-        callback();
-    };
-
-    const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
-        initialValues: {},
-        validateOnChange: false,
-        validateOnBlur: true,
-        validationSchema: Yup.object().shape({
-            // transport_name: Yup.string().required('Please enter transporter name'),
-
-        }),
-        onSubmit: values => {
-            updateBankDetailsByID(values, dealer_id)
-                .then(res => {
-                    console.log(res)
-                    enqueueSnackbar(res, {
-                        anchorOrigin: {
-                            vertical: 'top',
-                            horizontal: 'right',
-                        },
-                        variant: 'success',
-                    }
-                    )
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 1500);
-
-                })
-                .catch(e => {
-                    enqueueSnackbar(e, {
-                        anchorOrigin: {
-                            vertical: 'top',
-                            horizontal: 'right',
-                        },
-                        variant: 'error',
-                    }
-                    )
-                })
-        }
-    });
-    const date = new Date();
-    const currentYear = date.getFullYear();
-    const currentYearDiff = date.getFullYear() - 1970;
-    const inputProps = {
-        direction: "column",
-        alignTop: true,
-        onChange: handleChange,
+        })
+        .catch(e => {
+          enqueueSnackbar(e, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          }
+          )
+        })
     }
-    return (
-        <div className={classes.sidePanelFormWrapper}>
-            <Typography className={classes.sidePanelTitle} variant="h4">
-                <div>Add Banking &amp; Loan Details</div>
-                <CloseIcon onClick={handleClose} />
-            </Typography>
-            <div className={classes.sidePanelFormContentWrapper}>
-                <div className={classes.stepperRoot}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => { setAddNew(!addNew) }}
-                        style={{ marginBottom: 12 }}
+  });
+  const date = new Date();
+  const currentYear = date.getFullYear();
+  const currentYearDiff = date.getFullYear() - 1970;
+
+  const inputProps = {
+    direction: "column",
+    alignTop: true,
+    onChange: handleChange,
+  }
+
+  const onChangeIFSC = e => {
+    if (/^[A-Za-z]{4}0[A-Za-z0-9]{6}$/.test(e.target.value)) {
+        fetch(`${URL.ifscApiUrl}${e.target.value}`)
+          .then(res => {
+            return res.json()
+          })
+          .then(data => {
+            if (data.BANK) {
+              setValues({
+                ...values,
+                ifsc: data.IFSC,
+                bank_name: data.BANK,
+                bank_branch: data.BRANCH,
+                bank_city: data.CITY
+              })
+            } else {
+              console.log(data)
+            }
+          })
+          .catch(err => {
+            console.log('GET IFSC DATA ERR >> ', err)
+          })
+    } 
+    // else 
+    // {
+    //   if (value.length >= 10){
+    //     enqueueSnackbar("please enter valid IFSC code", {
+    //       anchorOrigin: {
+    //         vertical: 'top',
+    //         horizontal: 'right',
+    //       },
+    //       variant: 'warning',
+    //     })
+    //   }
+    // }
+  }
+  return (
+    <div className={classes.sidePanelFormWrapper}>
+      <Typography className={classes.sidePanelTitle} variant="h4">
+        <div>Add Banking Details</div>
+        <CloseIcon onClick={handleClose} />
+      </Typography>
+      <div className={classes.sidePanelFormContentWrapper}>
+        <div className={classes.stepperRoot}>
+          {
+            bankData.length || addNewRow ? null :
+              <Typography className={classes.typography}>No bank found,Click 'Add Bank' to add new bank.</Typography>
+          }
+          {
+            addNewRow || editRow ? (
+              <>
+                <Grid container spacing={2}>
+                  <Grid item md={6}>
+                    <TextInput
+                      select
+                      {...inputProps}
+                      labelText="Account Type"
+                      name="account_type"
+                      value={values.account_type}
+                      error={errors.account_type}
+                      helperText={errors.account_type}
                     >
-                        Add Bank
-                    </Button>
-                    {
-                        addNew && (
-                            <Box>
-                                <Grid container spacing={2}>
-                                    <Grid item md={6}>
-                                        <TextInput
-                                            {...inputProps}
-                                            labelText="Name of the Bank"
-                                            name="bank_name"
-                                            value={values.bank_name}
-                                            error={errors.bank_name}
-                                            helperText={errors.bank_name}
-                                        />
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        <TextInput
-                                            {...inputProps}
-                                            labelText="Account Holder name"
-                                            name="account_name"
-                                            value={values.account_name}
-                                            error={errors.account_name}
-                                            helperText={errors.account_name}
-                                        />
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        <TextInput
-                                            {...inputProps}
-                                            labelText="Account Number"
-                                            name="account_no"
-                                            value={values.account_no}
-                                            error={errors.account_no}
-                                            helperText={errors.account_no}
-                                        />
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        <TextInput
-                                            {...inputProps}
-                                            labelText="Account Type"
-                                            name="account_type"
-                                            value={values.account_type}
-                                            error={errors.account_type}
-                                            helperText={errors.account_type}
-                                        />
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        <TextInput
-                                            {...inputProps}
-                                            labelText="IFSC"
-                                            name="ifsc"
-                                            value={values.ifsc}
-                                            error={errors.ifsc}
-                                            helperText={errors.ifsc}
-                                        />
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        <TextInput
-                                            select
-                                            {...inputProps}
-                                            labelText="Account since"
-                                            name="account_since"
-                                            value={values.account_since}
-                                            error={errors.account_since}
-                                            helperText={errors.account_since}
-                                        >
-                                            {
-                                                <>
-                                                    <option value="null">Vintage with banker</option>
-                                                    {[...Array(currentYearDiff)].map((_, i) => {
-                                                        return (
-                                                            <option value={currentYear - i}>{currentYear - i}</option>
-                                                        )
-                                                    })}
-                                                </>
-                                            }
-                                        </TextInput>
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        <TextInput
-                                            {...inputProps}
-                                            money
-                                            labelText="Transaction Limit"
-                                            name="transaction_limit"
-                                            value={values.transaction_limit}
-                                            error={errors.transaction_limit}
-                                            helperText={errors.transaction_limit}
-                                        />
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        <TextInput
-                                            select
-                                            {...inputProps}
-                                            labelText="Is Secured"
-                                            name="security"
-                                            value={values.security}
-                                            error={errors.security}
-                                            helperText={errors.security}
-                                        >
-                                            <option>Secured</option>
-                                            <option>Unsecured</option>
-                                        </TextInput>
-                                    </Grid>
-                                </Grid>
-                            </Box >
-                        )
-                    }
-                    {
-                        bankData && (
-                            <>
-                                <div className={classes.table}>
-                                    <Table size="small">
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell align="left">Bank name</TableCell>
-                                                <TableCell align="left">Account No.</TableCell>
-                                                <TableCell align="left">IFSC</TableCell>
-                                                <TableCell align="left">Account since</TableCell>
-                                                <TableCell align="left">Transaction limit</TableCell>
-                                                <TableCell align="left">Branch</TableCell>
-
-                                            </TableRow>
-                                        </TableHead>
-                                        {
-                                            bankData.map((row, i) => {
-                                                return (
-                                                    <TableBody>
-                                                        <TableRow>
-                                                            <TableCell align="left">{row.bank_name}</TableCell>
-                                                            <TableCell align="left">{row.account_no}</TableCell>
-                                                            <TableCell align="left">{row.ifsc}</TableCell>
-                                                            <TableCell align="left">{row.account_since}</TableCell>
-                                                            <TableCell align="left">{row.transaction_limit}</TableCell>
-                                                            <TableCell align="left">{row.bank_branch}</TableCell>
-                                                        </TableRow>
-                                                    </TableBody>
-                                                )
-                                            })
-                                        }
-                                    </Table>
-                                </div>
-                            </>
-                        )
-                    }
-
-                </div>
-            </div>
-            <div className={classes.actionFooter}>
-                <Divider />
-                <div className={classes.actionButtonsWrapper}>
+                      <option value="">Choose account type</option>
+                      <option value="Current">Current</option>
+                      <option value="Savings">Savings</option>
+                      <option value="SAP">SAP</option>
+                    </TextInput>
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      labelText="Account Holder name"
+                      name="account_name"
+                      value={values.account_name}
+                      error={errors.account_name}
+                      helperText={errors.account_name}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      labelText="Account Number"
+                      name="account_no"
+                      type="number"
+                      value={values.account_no}
+                      error={errors.account_no}
+                      helperText={errors.account_no}
+                      className={classes.number}
+                      inputProps={{ className: classes.input }}
+                      type='number'
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      labelText="IFSC"
+                      name="ifsc"
+                      value={values.ifsc?.toUpperCase()}
+                      error={errors.ifsc}
+                      helperText={errors.ifsc}
+                      onChange={(e) => { onChangeIFSC(e); handleChange(e) }}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      labelText="Name of the Bank"
+                      name="bank_name"
+                      value={values.bank_name}
+                      error={errors.bank_name}
+                      helperText={errors.bank_name}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      labelText="Branch"
+                      name="bank_branch"
+                      value={values.bank_branch}
+                      error={errors.bank_branch}
+                      helperText={errors.bank_branch}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      labelText="City"
+                      name="bank_city"
+                      value={values.bank_city}
+                      error={errors.bank_city}
+                      helperText={errors.bank_city}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      select
+                      labelText="Account since"
+                      name="account_since"
+                      value={values.account_since}
+                      error={errors.account_since}
+                      helperText={errors.account_since}
+                    >
+                      {
+                        <>
+                          <option value="null">Vintage with bank</option>
+                          {[...Array(currentYearDiff)].map((_, i) => {
+                            return (
+                              <option value={currentYear - i}>{currentYear - i}</option>
+                            )
+                          })}
+                        </>
+                      }
+                    </TextInput>
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      money
+                      labelText="Transaction Limit"
+                      name="transaction_limit"
+                      type="number"
+                      value={values.transaction_limit}
+                      error={errors.transaction_limit}
+                      helperText={errors.transaction_limit}
+                      className={classes.number}
+                      inputProps={{ className: classes.input }}
+                      type='number'
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      select
+                      labelText="Is Secured"
+                      name="security"
+                      value={values.security}
+                      error={errors.security}
+                      helperText={errors.security}
+                    >
+                      <option value="">Choose security type</option>
+                      <option values="Secured">Secured</option>
+                      <option values="Unsecured">Unsecured</option>
+                    </TextInput>
+                  </Grid>
+                </Grid>
+                <div className={classes.actionFoot}>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <div>
-                        <Button
-                            variant="outlined"
-                            startIcon={<NavigateBeforeRoundedIcon />}
-                            // disabled={loading}
-                            onClick={handleClose}
-                        >
-                            Back
-                        </Button>
+                      <Button
+                        variant="outlined"
+                        className={classes.btn}
+                        onClick={() => { setAddNewRow(false); setEditRow(false) }}
+                      >
+                        Cancel
+                      </Button>
                     </div>
                     <div>
-                        <Button
-                            variant="contained"
-                            type="submit"
-                            className={clsx(classes.btn, classes.editButton)}
-                            startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                            onClick={handleSubmit}
-                        >
-                            Save
-                        </Button>
+                      <Button
+                        variant="contained"
+                        type="submit"
+                        className={clsx(classes.btn, classes.editButton)}
+                        startIcon={<CheckOutlinedIcon />}
+                        onClick={handleSubmit}
+                      >
+                        Save
+                      </Button>
                     </div>
+                  </div>
                 </div>
-            </div>
-        </div >
+              </>
+            ) : (
+              <BankDetailsCard id={dealer_id} data={bankData} editBankDetails={editBankRow} />
+            )
+          }
+        </div>
+      </div >
+      <div className={classes.actionFooter}>
+        <Divider />
+        <div className={classes.actionButtonsWrapper}>
+          <div>
+            <Button
+              variant="outlined"
+              startIcon={<NavigateBeforeRoundedIcon />}
+              onClick={handleClose}
+            >
+              Back
+            </Button>
+          </div>
+          <div>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => { setAddNewRow(true); setValues({}) }}
+              style={{ marginBottom: 12 }}
+            >
+              Add Bank
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div >
 
 
-    )
+  )
 }
 
 export default AddBankingDetailsForm;

@@ -24,6 +24,22 @@ export const getAllTransport = () => {
   })
 }
 
+export const getTransportersOwnerById = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${URL.vehicleInfo}/owner/${id}`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
 export const getTransporterInfoFromID = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.vehicleInfo}/${id}`)

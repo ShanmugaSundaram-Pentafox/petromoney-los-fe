@@ -4,23 +4,31 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
 import Card from '@material-ui/core/Card';
 // import CardHeader from '@material-ui/core/CardHeader';
-import Paper from '@material-ui/core/Paper';
 import CardActions from '@material-ui/core/CardActions';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import TextInput from '../../../components/TextInput/TextInput';
 import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import { URL } from '../../../config/serverUrls';
 import { logger } from '../../../config/logger';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-// import apiCall from '../../../utils/api.util';
 import Button from '../../../components/CommonComponents/Button/Button';
 import { cryptoEncrypt, encrypt } from '../../../services/crypto.service';
-import { getBusinessTypes, getRegionById, getStates, getActiveStates } from '../../../services/common.service';
+import CloudUploadOutlinedIcon from '@material-ui/icons/CloudUploadOutlined';
+import DeleteIcon from '@material-ui/icons/DeleteOutlineOutlined';
+import { getBusinessTypes, getRegionById, getStates, getActiveStates, getAllRegion } from '../../../services/common.service';
 import { useSnackbar } from 'notistack';
-// import { Typography } from '@material-ui/core';
+import { AvatarCard, ViewData } from '../../../components/CommonComponents/FilePreview';
+import { Typography } from '@material-ui/core';
+import Tooltip from '@material-ui/core/Tooltip';
+import FileUpload from '../../../components/FileUpload';
+import { grey } from '@material-ui/core/colors';
+import { deleteDealershipDocument } from '../../../services/dealerships.service';
+import { compareObject } from '../../../utils/compareObject.util';
+
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -30,36 +38,106 @@ const useStyles = makeStyles(theme => ({
   },
   actionFooter: {
     justifyContent: 'flex-end'
+  },
+  readOnlyWrapper: {
+    margin: '8px 4px',
+    maxWidth: '100%',
+  },
+  icon: {
+    marginRight: 4,
+    marginTop: 12,
+  },
+  fileStyle: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginTop: 24,
+  },
+  icons: {
+    marginRight: 16,
+  },
+  number: {
+    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0
+    }
+  },
+  input: {
+    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0
+    }
   }
 }));
+
+
 
 
 const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) => {
   const [readOnly, setReadOnly] = useState(true);
   const [loading, setLoading] = useState();
-  const [apiStatus, setApiStatus] = useState({});
+  const [showUpload, setShowUpload] = useState(false);
+  const [fileType, setFileType] = useState('');
   const [businessTypes, setBusinessTypes] = useState([{}, {}, {}, {}, {}]);
   const [states, setStates] = useState([]);
   const [regionList, setRegionList] = useState([]);
+
   const { enqueueSnackbar } = useSnackbar();
-  const { values, handleChange: onChange, handleSubmit } = useFormik({
-    initialValues: data,
-    onSubmit: values => {
-      const data = new FormData();
-      Object.keys(values).forEach(key => {
-        if(key === 'pan'){
-          let pan = values?.pan ? cryptoEncrypt(values.pan) : values?.pan;
-          data.append(key, pan)          
-        }
-        data.append(key, values[key]);
-      })
+
+  const { values, errors, handleChange: onChange, handleSubmit, setFieldValue } = useFormik({
+    initialValues: { ...data },
+    validateOnChange: false,
+    validateOnBlur: true,
+    validationSchema: Yup.object().shape({
+      name: Yup.string().nullable('Please enter dealership name').required('Please enter Dealership name').matches(/^[aA-zZ.,&/-\s]+$/, "Only alphabets are allowed for this field ").max(50),
+      address: Yup.string().nullable('Please enter address').required('Please enter address'),
+      state: Yup.string().nullable('Please choose state').required('Please choose state'),
+      district: Yup.string().nullable('Please enter district').required('Please enter district'),
+      pincode: Yup.number()
+        .nullable('Enter pincode')
+        .test('pincode', 'Enter valid pincode', (val) => String(val).length === 6)
+        .required('Enter pincode'),
+      pan: Yup.string()
+        .nullable('Enter PAN')
+        .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
+        .required('Enter PAN')
+        .uppercase(),
+      gst: Yup.string().nullable('Enter GST').matches(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/, "Invalid GST").required("Enter GST").uppercase(),
+
+    }),
+    onSubmit: values => {      
       // console.log('Form Values >> ', values.id);
       // let gst = values?.gst ? encrypt(values.gst) : values?.gst;
+      values.name = values.name.toUpperCase();
+      values.gst = values.gst.toUpperCase();
+      values.pan = values.pan.toUpperCase();
+      // let eDate = values.agreement_executed_on ? format(parse(values.agreement_executed_on, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : null;
+      // let vDate = values.agreement_valid_till ? format(parse(values.agreement_valid_till, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : null;
+      const date_values = {
+        ...values,
+        name: values.name.toUpperCase(),
+        // agreement_valid_till: vDate,
+        // agreement_executed_on: eDate,
+        gst: values.gst?.toUpperCase(),
+        pan: values.pan?.toUpperCase()
+      };
+      let obj = {};
+      if (date_values.id) {
+        let commonObj = { id: data.id }
+        obj = compareObject(data, date_values, commonObj)
+      }
+      const formData = new FormData();
+      Object.keys(obj).forEach(key => {
+        if(key === 'pan'){
+          let pan = values?.pan ? cryptoEncrypt(values.pan) : values?.pan;
+          formData.append(key, pan)          
+        } else {
+          formData.append(key, obj[key]);
+        }
+      })
       setLoading(true);
-      // setApiStatus({});
       fetch(`${URL.base}${URL.dealership}/${values.id}`, {
         method: 'POST',
-        body: data,
+        body: formData,
         headers: {
           'Authorization': `Bearer ${currentUser.token} `
         }
@@ -77,9 +155,11 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
               variant: 'success',
             }
             )
-            // setApiStatus({ type: 'success', message: message || 'Details updated successfully' })
+            setTimeout(() => {
+              window.location.reload()
+            }, 1500);
             setLoading(false);
-            setReadOnly(true);
+            // setReadOnly(true);
           }
           else {
             enqueueSnackbar(message, {
@@ -90,14 +170,12 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
               variant: 'error',
             }
             )
-            // setApiStatus({ type: 'error', message: message || 'Unable to save the details. Please try again later' })
             setLoading(false);
             setReadOnly(true);
-
           }
         })
         .catch(e => {
-          enqueueSnackbar(e, {
+          enqueueSnackbar(e.message, {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',
@@ -105,7 +183,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
             variant: 'error',
           }
           )
-          // setApiStatus({ type: 'error', message: 'Unable to save the details. Please try again later' })
           setLoading(false);
           setReadOnly(true);
           logger(e);
@@ -126,7 +203,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
       .then(d => {
         let res = d.find(({ id }) => id === parseInt(values.state));
 
-        if(res) {
+        if (res) {
           fetchRegions(parseInt(res.id));
         }
       })
@@ -136,13 +213,49 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
 
   });
   useEffect(() => {
-    // console.log(values)
     if (values.state) {
-      // let res = states.find(({ name }) => name === values.state);
       fetchRegions(parseInt(values.state));
     }
   }, [values.state])
 
+  const docUpload = (val) => {
+    setShowUpload(true);
+    setFileType(val);
+  };
+  const onCloseUploader = () => {
+    setShowUpload(false);
+  };
+  const handleSave = (value) => {
+    fileType === 'PAN'
+      ? setFieldValue('pan_file_url', value[0])
+      : setFieldValue('gst_file_url', value[0]);
+    handleSubmit(values);
+    onCloseUploader();
+  };
+  const onDocDelete = (value) => {
+    deleteDealershipDocument(value, data.id)
+      .then(res => {
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        });
+        setTimeout(() => {
+          window.location.reload()
+        }, 1500);
+      })
+      .catch(err => {
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      })
+  }
   const fetchRegions = (res) => {
     getRegionById(res)
       .then(res => {
@@ -155,8 +268,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
   const classes = useStyles();
   const gridProps = {
     item: true,
-    xs: 12,
-    sm: 6,
     className: classes.gridItemStyle
   }
 
@@ -167,8 +278,48 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
     readOnly,
     onChange
   }
-
-
+  const gstAttachment = () => {
+    return (
+      <div className={classes.fileStyle}>
+        <Tooltip title={'Click to edit'}>
+          <CloudUploadOutlinedIcon
+            padding={2}
+            style={{ color: grey[800] }}
+            className={classes.icons}
+            onClick={() => docUpload('GST')}
+          />
+        </Tooltip>
+        <Tooltip title={'Click to delete'}>
+          <DeleteIcon
+            onClick={() => onDocDelete({ gst_file_url: "" })}
+            style={{ color: grey[800] }}
+            padding={2}
+            className={classes.icons}
+          />
+        </Tooltip>
+      </div>
+    );
+  };
+  const panAttachment = () => {
+    return (
+      <div className={classes.fileStyle}>
+        <Tooltip title={'Click to edit'}>
+          <CloudUploadOutlinedIcon
+            padding={2}
+            className={classes.icons}
+            onClick={() => docUpload('PAN')}
+          />
+        </Tooltip>
+        <Tooltip title={'Click to delete'}>
+          <DeleteIcon
+            onClick={() => onDocDelete({ pan_file_url: "" })}
+            style={{ color: grey[800] }}
+            padding={2}
+          />
+        </Tooltip>
+      </div>
+    );
+  };
   return (
     <Card className={clsx(classes.root, className)}>
       <form
@@ -176,152 +327,295 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         autoComplete="off"
         noValidate
       >
-        <Paper>
-          <Grid container spacing={2}>
-            <Grid {...gridProps} sm={12}>
-              <TextInput
-                labelText="Name"
-                name="name"
-                readOnly={readOnly}
-                value={values.name?.toUpperCase()}
-                {...fieldProps}
-              />
-            </Grid>
-            <Grid {...gridProps}>
-              <TextInput
-                multiline
-                labelText="Address"
-                name="address"
-                readOnly={readOnly}
-                disabled={readOnly}
-                value={values.address?.toUpperCase()}
-                {...fieldProps}
-              />
-            </Grid>
-            <Grid {...gridProps} sm={6}>
-              <TextInput
-                select
-                labelText="Business Type"
-                name="business_type"
-                readOnly={readOnly}
-                disabled={readOnly}
-                defaultValue={businessTypes[values.business_type - 1]?.name}
-                {...fieldProps}
-              >
-                <option value="">{businessTypes[values.business_type]?.name}</option>
-                {
-                  businessTypes?.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
-                }
-              </TextInput>
-            </Grid>
-
-            <Grid {...gridProps}>
-              <TextInput
-                labelText="GST"
-                name="gst"
-                readOnly={readOnly}
-                // disabled={readOnly}
-                defaultValue={values.gst}
-                {...fieldProps}
-              />
-            </Grid>
-            <Grid {...gridProps}>
-              <TextInput
-                labelText="PAN"
-                name="pan"
-                readOnly={readOnly}
-                // disabled={readOnly}
-                defaultValue={values.pan}
-                {...fieldProps}
-              />
-            </Grid>
-            <Divider />
-            <Grid {...gridProps} sm={6}>
-              <TextInput
-                select
-                labelText="State"
-                name="state"
-                readOnly={readOnly}
-                disabled={readOnly}
-                value={values.state}
-                {...fieldProps}
-              >
-                {
-                  states.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
-                }
-              </TextInput>
-            </Grid>
-            <Grid {...gridProps} xs={6}>
+        {
+          readOnly ? (
+            <>
+              <Grid container spacing={2} className={classes.readOnlyWrapper}>
+                <Grid md={4}>
+                  <ViewData title='Name' value={values.name} />
+                  <ViewData title='Address' value={values?.address ? values.address + '' : '' + (values.pincode ? values.pincode : '')} />
+                  <ViewData title='PAN' value={values.pan} />
+                </Grid>
+                <Grid md={4}>
+                  <ViewData title='State' value={(states.find(function (state, index) {
+                    if (state.id == values.state)
+                      return true;
+                  }))?.name} />
+                  <ViewData title='GST' value={values.gst} />
+                </Grid>
+                <Grid md={4}>
+                  <ViewData title='Business type' value={businessTypes.find(function (type, index) {
+                    if (type.id == values.business_type)
+                      return true;
+                  })?.name} />
+                  <ViewData title='Region' value={values.region_name} />
+                </Grid>
+              </Grid>
               {
+                values?.pan_file_url ||
+                  values?.gst_file_url ? (
+                  <div className={classes.readOnlyWrapper}>
+                    <Typography variant='h4'>Attachments</Typography>
+                    <div style={{ marginTop: 16, display: 'flex' }}>
+                      {values.pan_file_url && (
+                        <AvatarCard
+                          tooltip='View PAN'
+                          file={values?.pan_file_url}
+                          title='PAN'
+                        />
+                      )}
+                      {values.gst_file_url && (
+                        <AvatarCard
+                          tooltip='View GST'
+                          file={values?.gst_file_url}
+                          title='GST'
+                        />
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className={classes.readOnlyWrapper}>
+                    <Typography variant='h4'>Attachments</Typography>
+                    <div
+                      style={{
+                        marginTop: '20px',
+                      }}
+                    >
+                      <Typography variant='h7'>No Attachments Found</Typography>
+                    </div>
+                  </div>
+                )}
 
-                <TextInput
-                  select
-                  labelText="Region"
-                  name="region"
-                  value={values.region}
-                  readOnly={readOnly}
-                  disabled={readOnly}
-                  {...fieldProps}
-                >
+            </>
+          ) : (
+            <>
+              <Grid container spacing={2}>
+                <Grid {...gridProps} md={12}>
+                  <TextInput
+                    labelText="Name"
+                    name="name"
+                    readOnly={readOnly}
+                    value={values.name?.toUpperCase()}
+                    error={errors.name}
+                    helperText={errors.name}
+                    {...fieldProps}
+                  />
+                </Grid>
+                <Grid {...gridProps} md={6}>
+                  <TextInput
+                    multiline
+                    labelText="Address"
+                    name="address"
+                    readOnly={readOnly}
+                    disabled={readOnly}
+                    value={values?.address}
+                    error={errors.address}
+                    helperText={errors.address}
+                    {...fieldProps}
+                  />
+                </Grid>
+                <Grid {...gridProps} md={6}>
+                  <TextInput
+                    select
+                    labelText="Business Type"
+                    name="business_type"
+                    readOnly={readOnly}
+                    disabled={readOnly}
+                    defaultValue={values?.business_type}
+                    error={errors.business_type}
+                    helperText={errors.business_typeF}
+                    {...fieldProps}
+                  >
+                    {/* <option value="">{businessTypes[values.business_type]?.name}</option> */}
+                    {
+                      businessTypes?.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
+                    }
+                  </TextInput>
+                </Grid>
+                <Grid {...gridProps} md={4}>
+                  <TextInput
+                    labelText="GST"
+                    name="gst"
+                    readOnly={readOnly}
+                    // disabled={readOnly}
+                    // defaultValue={values?.gst?.toUpperCase()}
+                    value={values?.gst?.toUpperCase()}
+                    error={errors.gst}
+                    helperText={errors.gst}
+                    {...fieldProps}
+                  />
+                </Grid>
+                <Grid {...gridProps} md={2}>
+                  {values.gst ? (
+                    <Grid item md={6}>
+                      <>
+                        {data.gst_file_url ? (
+                          gstAttachment()
+                        ) : (
+                          <div
+                            className={classes.fileStyle}
+                            onClick={() => docUpload('GST')}
+                          >
+                            <Tooltip title={'Click and attach'}>
+                              <>
+                                <CloudUploadOutlinedIcon
+                                  padding={2}
+                                  className={classes.icons}
+                                  disabled={readOnly}
+                                />
+                                {/* <Typography className={classes.typography}>Attach GST</Typography> */}
+                              </>
+                            </Tooltip>
+                          </div>
+                        )}
+                      </>
+                    </Grid>
+                  ) : null}
+
+                </Grid>
+                <Grid {...gridProps} md={4}>
+                  <TextInput
+                    labelText="PAN"
+                    name="pan"
+                    readOnly={readOnly}
+                    // disabled={readOnly}
+                    // defaultValue={values.pan?.toUpperCase()}
+                    value={values?.pan?.toUpperCase()}
+                    error={errors.pan}
+                    helperText={errors.pan}
+                    {...fieldProps}
+                  />
+                </Grid>
+                <Grid {...gridProps} md={2}>
+                  {values.pan ? (
+                    <Grid item md={2}>
+                      <>
+                        {
+                          data.pan_file_url ? (
+                            panAttachment()
+                          ) : (
+                            <div
+                              className={classes.fileStyle}
+                              onClick={() => docUpload('PAN')}
+                            >
+                              <Tooltip title={'Click and attach'}>
+                                <>
+                                  <CloudUploadOutlinedIcon
+                                    padding={2}
+                                    style={{ color: grey[800] }}
+                                    className={classes.icons}
+                                    disabled={readOnly}
+                                  />
+                                </>
+                              </Tooltip>
+                            </div>
+                          )
+                        }
+                      </>
+                    </Grid>
+                  ) : null}
+                </Grid>
+                <Divider />
+                <Grid {...gridProps} sm={6} md={6}>
+                  <TextInput
+                    select
+                    labelText="State"
+                    name="state"
+                    readOnly={readOnly}
+                    disabled={readOnly}
+                    value={values?.state}
+                    error={errors.state}
+                    helperText={errors.state}
+                    {...fieldProps}
+                  >
+                    {
+                      states.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
+                    }
+                  </TextInput>
+                </Grid>
+                <Grid {...gridProps} md={6}>
                   {
-                    regionList?.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))
+                    <TextInput
+                      select
+                      labelText="Region"
+                      name="region"
+                      value={values?.region}
+                      readOnly={readOnly}
+                      disabled={readOnly}
+                      error={errors.region}
+                      helperText={errors.region}
+                      {...fieldProps}
+                    >
+                      {
+                        regionList?.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))
+                      }
+                    </TextInput>
                   }
-                </TextInput>
-              }
 
-            </Grid>
-            <Grid {...gridProps} xs={6}>
-              <TextInput
-                name="district"
-                labelText="District"
-                labelWidth={40}
-                value={values.district}
-                readOnly={readOnly}
-                disabled={readOnly}
-                // select
-                alignTop
-                direction="column"
-                {...fieldProps}
-              >
-                {/* {
-                  getDistricts().map(item => <option key={item} value={item}>{item}</option>)
-                } */}
-              </TextInput>
-            </Grid>
+                </Grid>
+                <Grid {...gridProps} xs={6}>
+                  <TextInput
+                    name="district"
+                    labelText="District"
+                    labelWidth={40}
+                    value={values?.district}
+                    readOnly={readOnly}
+                    disabled={readOnly}
+                    error={errors.district}
+                    helperText={errors.district}
+                    // select
+                    alignTop
+                    direction="column"
+                    {...fieldProps}
+                  >
 
-            <Grid {...gridProps}>
-              <TextInput
-                labelText="Pincode"
-                name="pincode"
-                readOnly={readOnly}
-                defaultValue={values.pincode}
-                {...fieldProps}
-              />
-            </Grid>
-          </Grid>
-        </Paper>
-        <Divider />
-        {/* {
-          apiStatus.type && (
-            <Alert severity={apiStatus.type}>{apiStatus.message}</Alert>
+                  </TextInput>
+                </Grid>
+                <Grid {...gridProps} md={6}>
+                  <TextInput
+                    className={classes.number}
+                    inputProps={{ className: classes.input }}
+                    labelText="Pincode"
+                    type='number'
+                    name="pincode"
+                    readOnly={readOnly}
+                    defaultValue={values?.pincode}
+                    error={errors.pincode}
+                    helperText={errors.pincode}
+                    {...fieldProps}
+                  />
+                </Grid>
+              </Grid>
+            </>
           )
-        } */}
+        }
+        <Divider />
+
+        {showUpload && (
+          <FileUpload
+            handleSave={(value) => handleSave(value)}
+            id={values.id}
+            title='Upload Dealership Documents'
+            open={showUpload}
+            onCloseUploader={onCloseUploader}
+          />
+        )}
         <CardActions className={classes.actionFooter}>
-          <Button
+          {/* <Button
             color="primary"
             size="small"
             variant="contained"
             onClick={toggleCreditReport}
           >
             View/Edit Financial Report
-          </Button>
+          </Button> */}
           {!readOnly ? (
             !loading ? (
               <>
                 <Button variant="contained" size="small" onClick={() => { setReadOnly(true); }}>Cancel</Button>
                 <Button type="submit" color="primary" variant="contained" size="small">Save</Button>
               </>
-            ) : <CircularProgress size={20}/>
+            ) : <CircularProgress size={20} />
           ) : (
             <Button
               disabled={!permissionCheck(currentUser.role_name, rulesList.dealership_edit)}
@@ -331,8 +625,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
               onClick={() => { setReadOnly(false); }}>Edit Details</Button>
           )}
         </CardActions>
-      </form>
-    </Card>
+      </form >
+    </Card >
   );
 };
 

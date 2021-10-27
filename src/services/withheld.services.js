@@ -18,7 +18,7 @@ export const getAllWithheldLoans = () => {
 }
 export const getAllWithheldRemarks = () => {
     return new Promise((resolve, reject) => {
-        apiCall(`withheld/loans/remarks`)
+        apiCall(`loans/remarks`)
             .then(({ status, data, message }) => {
                 if (status === "SUCCESS") {
                     const result = data.map(item => ({

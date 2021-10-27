@@ -5,10 +5,7 @@ import apiCall from "../utils/api.util";
 export const getLoanStats = (qryStr={}) => {
   return new Promise((resolve, reject) => {
     const { region, from, to } = qryStr;
-    let apiUrl = `metrics/loan/stats`;
-    if (region) {
-      apiUrl = `metrics/loan/stats?region=${region}`
-    }
+    let apiUrl = `metrics/loan/stats?region=${region}`;
     if (from && to) {
       apiUrl = `metrics/loan/stats?region=${region}&from=${from}&to=${to}`;
     }
@@ -281,3 +278,18 @@ export const getApplicationStatusById = () => {
   });
 };
 
+export const getLoanRejectReason = () => {
+  return new Promise((resolve, reject) => {
+    apiCall(`loans/reason`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};

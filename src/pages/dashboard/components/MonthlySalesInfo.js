@@ -8,7 +8,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import { makeStyles } from '@material-ui/core';
-import { getDealershipSalesById, postDealershipMonthlySalesById, updateDealershipMonthlySalesById } from '../../../services/dealerships.service';
+import { deleteDealershipMonthlySalesById, getDealershipSalesById, postDealershipMonthlySalesById, updateDealershipMonthlySalesById } from '../../../services/dealerships.service';
 import TextInput from '../../../components/TextInput/TextInput';
 import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
@@ -83,6 +83,27 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
     })
   }
 
+  const deleteSalesRow = (rowData, rowIndex) => {
+    deleteDealershipMonthlySalesById(id, rowData, rowIndex)
+      .then(res => {
+        enqueueSnackbar(res.message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        });
+      })
+      .catch(err => {
+        enqueueSnackbar(err.message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      })
+  }
 
   const saveNewSalesData = () => {
     if (Object.keys(apiData).length < 4) return null;
@@ -228,6 +249,18 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                             className={classes.btnSuccess}
                             onClick={() => editSalesRow(row, i)}>
                             Edit
+                          </Button>
+                        ) : null
+                      }
+                      {
+                        editable ? (
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            color="success"
+                            className={classes.btnSuccess}
+                            onClick={() => deleteSalesRow(row, i)}>
+                            Delete
                           </Button>
                         ) : null
                       }

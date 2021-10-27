@@ -229,7 +229,7 @@ const SalesInfo = ({
           )}
         />
       </div>
-      <SalesTableWrapper column={column}>
+      <SalesTableWrapper column='row'>
         <div className={classes.table}>
           <Table size="small">
             <TableHead>
@@ -395,7 +395,7 @@ const SalesInfo = ({
                         onClick={() => {
                           setAddNewRow(false);
                         }}>
-                          Cancel
+                        Cancel
                       </Button>
                       <Button
                         size="small"
@@ -403,7 +403,7 @@ const SalesInfo = ({
                         color="error"
                         // className={classes.btnSuccess}
                         onClick={saveNewSalesData}>
-                          Save
+                        Save
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -412,7 +412,6 @@ const SalesInfo = ({
               }
             </TableBody>
           </Table>
-          <MonthlySalesInfo currentUser={currentUser} id={id} titleAlign={titleAlign} column={column} />
 
           {/* <UserCan
             role={currentUser.role_name}
@@ -468,7 +467,7 @@ const SalesInfo = ({
           </Table>
         </div> */}
       </SalesTableWrapper>
-
+      <MonthlySalesInfo currentUser={currentUser} id={id} titleAlign={titleAlign} column='row' />
     </SalesInfoWrapper>
   )
 }

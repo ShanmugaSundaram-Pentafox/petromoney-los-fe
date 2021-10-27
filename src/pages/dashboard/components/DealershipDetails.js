@@ -132,8 +132,17 @@ const useStyles = makeStyles(theme => ({
     }
   },
   rejectModal: {
-    width: 400,
-    // height: '2vh'
+    width: 600,
+  },
+  errorText: {
+    color: '#D83A56',
+    fontSize: '.7rem'
+  },
+  btns: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    marginTop: 35,
+    marginBottom: 10
   }
 }));
 const fieldProps = {
@@ -369,11 +378,11 @@ const DealershipDetails = ({
   const [showRemarksModal, setShowRemarksModal] = useState(false);
   const [newLoanInfo, setNewLoanInfo] = useState({});
   const [selectedCategory, setSelectedCategory] = useState()
-  const [dataOptions, setDataOptions] = useState()
-  // console.log(selectedCategory);
   const [rejectModal, setRejectModal] = useState(false);
   const [tempData, setTempData] = useState([])
   const [reasonData, setReasonData] = useState()
+  const [rejectReason, setRejectReason] = useState()
+  const [errorText, setErrorText] = useState({})
   const { enqueueSnackbar } = useSnackbar();
 
 
@@ -484,6 +493,8 @@ const DealershipDetails = ({
 
     if (submitStatus === 'rejected') {
       setRejectLoader(true);
+      setRejectModal(false);
+      reqBody.reason_id = rejectReason?.value;
       resMsg = 'Request got rejected successfully';
     }
     // if(submitStatus === "disbursed") {
@@ -493,6 +504,7 @@ const DealershipDetails = ({
     // }
 
     // }
+
     updateLoanApprovalStatusById(values.id, loanData.id, reqBody)
       .then(res => {
         setApproveLoader(false);
@@ -536,6 +548,16 @@ const DealershipDetails = ({
       [event.target.name]: event.target.value
     });
   };
+
+  const handleReject = () => {
+    if(!rejectReason && !selectedCategory){
+      setErrorText({category: 'Select a Category', reason: 'Select a reason to reject'})
+    } else if (!rejectReason){
+      setErrorText({reason: 'Select a reason to reject'})
+    } else {
+      updateLoanStatus('rejected')
+    }
+  }
 
   const updateNewLoanInfo = (d) => {
     setNewLoanInfo({
@@ -897,10 +919,7 @@ const DealershipDetails = ({
                               disabled={apiStatus.loading}
                               className={clsx(classes.btn, classes.btnError)}
                               startIcon={<ThumbDownAltIcon />}
-                              onClick={() => 
-                              // updateLoanStatus('rejected')
-                              setRejectModal(true)
-                              }>Reject</Button>
+                              onClick={() =>setRejectModal(true)}>Reject</Button>
                           </div>
                         ) : (
                           <div style={{ marginLeft: '16px' }}>
@@ -946,26 +965,38 @@ const DealershipDetails = ({
         open={rejectModal}
         onClose={() => setRejectModal(false)}
       >
-        <DialogTitle>Reject Loan</DialogTitle>
+        <DialogTitle>Reason for Loan Rejection</DialogTitle>
         <DialogContent className={classes.rejectModal}>
-          <Typography variant='h7'>Category</Typography>
-          <ReactSelect
-            // isClearable
-            name='category'
-            options={tempData}
-            onChange={setSelectedCategory}
-          />
+          <div style={{marginTop: 10}}>
+            <Typography variant='h7'>Category</Typography>
+            <ReactSelect
+              name='category'
+              options={tempData}
+              onChange={(e) => {
+                setSelectedCategory(e)
+                setRejectReason(null)
+                setErrorText()
+              }}
+            />
+            <p className={classes.errorText}>{errorText?.category}</p>
+          </div>
           <div style={{marginTop: 15}}>
             <Typography variant='h7'>Reason</Typography>
             <ReactSelect
               isClearable
-              options={selectedCategory && (reasonData[selectedCategory.value][0])}
               name='reason'
+              value={rejectReason}
+              options={selectedCategory && (reasonData[selectedCategory.value][0])}
+              onChange={(e) => {
+                setRejectReason(e)
+                setErrorText()
+              }}
             />
+            <p className={classes.errorText}>{errorText?.reason}</p>
           </div>
-          <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: 15, marginBottom: 10}}>
+          <div className={classes.btns}>
             <Button size='small' onClick={() => setRejectModal(false)}>Cancel</Button>
-            <Button style={{ color: '#1EAE98', borderColor: '#1EAE98'}} variant='outlined' size='small'>Confirm</Button>
+            <Button color='primary' variant='outlined' size='small' onClick={handleReject} disabled={!rejectReason}>Confirm</Button>
           </div>
         </DialogContent>
       </Dialog>

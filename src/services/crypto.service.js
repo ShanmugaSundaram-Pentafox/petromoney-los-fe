@@ -2,8 +2,6 @@ import { AES } from "crypto-es/lib/aes.js";
 import { Utf8 } from "crypto-es/lib/core";
 import CryptoJS from "crypto-js";
 
-const key = "12ASFD52356QWE";
-
 export const encrypt = text => {
   return text;
   // try {

@@ -5,10 +5,7 @@ import apiCall from "../utils/api.util";
 export const getLoanStats = (qryStr={}) => {
   return new Promise((resolve, reject) => {
     const { region, from, to } = qryStr;
-    let apiUrl = `metrics/loan/stats`;
-    if (region) {
-      apiUrl = `metrics/loan/stats?region=${region}`
-    }
+    let apiUrl = `metrics/loan/stats?region=${region}`;
     if (from && to) {
       apiUrl = `metrics/loan/stats?region=${region}&from=${from}&to=${to}`;
     }

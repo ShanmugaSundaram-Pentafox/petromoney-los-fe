@@ -8,7 +8,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import { makeStyles } from '@material-ui/core';
-import { deleteDealershipMonthlySalesById, getDealershipSalesById, postDealershipMonthlySalesById, updateDealershipMonthlySalesById } from '../../../services/dealerships.service';
+import { deleteDealershipMonthlySalesById, getDealershipMonthlySalesById, postDealershipMonthlySalesById, updateDealershipMonthlySalesById } from '../../../services/dealerships.service';
 import TextInput from '../../../components/TextInput/TextInput';
 import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
@@ -69,7 +69,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
 
   useEffect(() => {
     if (id) {
-      getDealershipSalesById(id)
+      getDealershipMonthlySalesById(id)
         .then(data => setInfo(data))
         .catch(err => null)
     }

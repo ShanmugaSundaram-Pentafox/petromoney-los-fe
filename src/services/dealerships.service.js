@@ -380,7 +380,7 @@ export const postDealershipMonthlySalesById = (id, body) => {
     })
       .then(async ({ status, data, message }) => {
         if (status === "SUCCESS") {
-          const res = await getDealershipSalesById(id)
+          const res = await getDealershipMonthlySalesById(id)
           resolve(res);
         } else {
           reject(message);
@@ -399,7 +399,7 @@ export const updateDealershipMonthlySalesById = (id, body) => {
     })
       .then(async ({ status, data, message }) => {
         if (status === "SUCCESS") {
-          const res = await getDealershipSalesById(id)
+          const res = await getDealershipMonthlySalesById(id)
           resolve(res);
         } else {
           reject(message);
@@ -420,7 +420,7 @@ export const deleteDealershipMonthlySalesById = (dealershipId, body, id) => {
     })
       .then(async ({ status, data, message }) => {
         if (status === "SUCCESS") {
-          const res = await getDealershipSalesById(id)
+          const res = await getDealershipMonthlySalesById(id)
           resolve(res);
         } else {
           reject(message);

@@ -34,7 +34,7 @@ import { useSnackbar } from 'notistack';
 import ReactSelect from 'react-select';
 // import CloseIcon from '@material-ui/icons/Close';
 import CloseIcon from '@material-ui/icons/CloseRounded';
-import { CircularProgress, Dialog, DialogContent, DialogTitle } from '@material-ui/core';
+import { Checkbox, CircularProgress, Dialog, DialogContent, DialogTitle, FormControlLabel, FormGroup } from '@material-ui/core';
 import { getAllRegion } from '../../../services/common.service';
 import { useMount } from 'react-use';
 
@@ -133,6 +133,11 @@ const useStyles = makeStyles(theme => ({
   },
   rejectModal: {
     width: 600,
+    minHeight: '35vh',
+    maxHeight: '50vh',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between'
   },
   errorText: {
     color: '#D83A56',
@@ -141,7 +146,7 @@ const useStyles = makeStyles(theme => ({
   btns: {
     display: 'flex',
     justifyContent: 'flex-end',
-    marginTop: 35,
+    marginTop: 10,
     marginBottom: 10
   }
 }));
@@ -381,7 +386,7 @@ const DealershipDetails = ({
   const [rejectModal, setRejectModal] = useState(false);
   const [tempData, setTempData] = useState([])
   const [reasonData, setReasonData] = useState()
-  const [rejectReason, setRejectReason] = useState()
+  const [rejectReason, setRejectReason] = useState([])
   const [errorText, setErrorText] = useState({})
   const { enqueueSnackbar } = useSnackbar();
 
@@ -494,7 +499,7 @@ const DealershipDetails = ({
     if (submitStatus === 'rejected') {
       setRejectLoader(true);
       setRejectModal(false);
-      reqBody.reason_id = rejectReason?.value;
+      reqBody.reason_id = rejectReason;
       resMsg = 'Request got rejected successfully';
     }
     // if(submitStatus === "disbursed") {
@@ -549,16 +554,6 @@ const DealershipDetails = ({
     });
   };
 
-  const handleReject = () => {
-    if(!rejectReason && !selectedCategory){
-      setErrorText({category: 'Select a Category', reason: 'Select a reason to reject'})
-    } else if (!rejectReason){
-      setErrorText({reason: 'Select a reason to reject'})
-    } else {
-      updateLoanStatus('rejected')
-    }
-  }
-
   const updateNewLoanInfo = (d) => {
     setNewLoanInfo({
       ...newLoanInfo,
@@ -571,6 +566,21 @@ const DealershipDetails = ({
     readOnly,
     className: classes.fieldItemStyle
   }
+
+  const handleReasonChange = (event) => {
+    let arrayCheck = [...rejectReason, event.target.value];
+    if (rejectReason.includes(event.target.value)){
+      arrayCheck = arrayCheck.filter(value => value !== event.target.value)
+    }
+    setRejectReason(arrayCheck)
+  }
+
+  const handleClose = () => {
+    setRejectModal(false);
+    setRejectReason([])
+    setSelectedCategory();
+  }
+
   const handleResubmit = () => {
     setReloader(true);
     updateLoanStats(data.id, loanData.id)
@@ -974,29 +984,32 @@ const DealershipDetails = ({
               options={tempData}
               onChange={(e) => {
                 setSelectedCategory(e)
-                setRejectReason(null)
+                setRejectReason([])
                 setErrorText()
               }}
             />
             <p className={classes.errorText}>{errorText?.category}</p>
           </div>
-          <div style={{marginTop: 15}}>
-            <Typography variant='h7'>Reason</Typography>
-            <ReactSelect
-              isClearable
-              name='reason'
-              value={rejectReason}
-              options={selectedCategory && (reasonData[selectedCategory.value][0])}
-              onChange={(e) => {
-                setRejectReason(e)
-                setErrorText()
-              }}
-            />
-            <p className={classes.errorText}>{errorText?.reason}</p>
-          </div>
+              {
+                selectedCategory && (
+                  <div style={{marginTop: 15}}>
+                    <Typography variant='h7'>Reason</Typography>
+                    <FormGroup>
+                      {
+                        reasonData[selectedCategory.value][0].map((data, index) => {
+                          return(
+                            <FormControlLabel control={<Checkbox onChange={handleReasonChange} value={data.value} key={data.value}  />} label={data.label} />
+                          )
+                        })
+                      }
+                    </FormGroup>
+                    <p className={classes.errorText}>{errorText?.reason}</p>
+                  </div>
+                )
+          }
           <div className={classes.btns}>
-            <Button size='small' onClick={() => setRejectModal(false)}>Cancel</Button>
-            <Button color='primary' variant='outlined' size='small' onClick={handleReject} disabled={!rejectReason}>Confirm</Button>
+            <Button size='small' onClick={handleClose}>Cancel</Button>
+            <Button color='primary' variant='outlined' size='small' onClick={() => updateLoanStatus('rejected')} disabled={!rejectReason.length}>Confirm</Button>
           </div>
         </DialogContent>
       </Dialog>

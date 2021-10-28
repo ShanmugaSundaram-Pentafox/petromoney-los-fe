@@ -5,7 +5,8 @@ import MUIDataTable from "mui-datatables";
 import Typography from "@material-ui/core/Typography";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { Paper } from "@material-ui/core";
-
+import { useMount } from 'react-use';
+import { getAllWithheldLoans } from '../../services/withheld.services';
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -13,9 +14,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const ResolvedTable = ({ data }) => {
+const ResolvedTable = () => {
   const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([])
   const classes = useStyles()
+
+  useMount(() => {
+    getAllWithheldLoans(1)
+      .then((data) => {
+        setData(data)
+      })
+      .catch((e) => {
+        console.log(e);
+      })
+  })
 
   const columns = useMemo(() => {
     return [

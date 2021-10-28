@@ -11,7 +11,7 @@ import { Tooltip } from '@material-ui/core';
 import { Drawer } from "@material-ui/core";
 import { green } from '@material-ui/core/colors';
 import AddBlackListForm from './AddBlackListForm';
-import { deleteRemarks, resolveRemarks } from '../../services/withheld.services';
+import { deleteRemarks, getAllWithheldLoans, resolveRemarks } from '../../services/withheld.services';
 import { useSnackbar } from 'notistack';
 import { useMount } from 'react-use';
 import { getAllDealership } from '../../services/dealerships.service';
@@ -24,14 +24,23 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const UnresolvedTable = ({ data }) => {
+const UnresolvedTable = () => {
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([])
   const [dealershipData, setDealershipData] = useState([]);
   const classes = useStyles()
   const { enqueueSnackbar } = useSnackbar();
 
   useMount(() => {
+    getAllWithheldLoans(0)
+      .then((data) => {
+        setData(data)
+      })
+      .catch((e) => {
+        setLoading(false)
+        console.log(e);
+      })
     getAllDealership()
       .then((data) => {
         setDealershipData(data.map(({ id }) => ({
@@ -42,7 +51,6 @@ const UnresolvedTable = ({ data }) => {
       .catch((e) => {
         console.log(e);
       })
-
   })
 
   const handleResolve = (id) => {

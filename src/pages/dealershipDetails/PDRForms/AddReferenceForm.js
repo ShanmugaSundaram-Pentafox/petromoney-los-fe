@@ -324,12 +324,12 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
                       >
                         <Grid container spacing={2}>
                           <Grid item md={6}>
-                            {/* <ViewData title="Dealership ID" value={item.referred_by} /> */}
+                            <ViewData title="Reference Type" value={item.reference_type} />
                             <ViewData title="Mobile" value={item.mobile} />
                           </Grid>
                           <Grid item md={6}>
                             <ViewData title="Name" value={item.name} />
-                            <ViewData title="Remarks" value={item.remarks} />
+                            {/* <ViewData title="Remarks" value={item.remarks} /> */}
                           </Grid>
                         </Grid>
                       </PreviewCard>

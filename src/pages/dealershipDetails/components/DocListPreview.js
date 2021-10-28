@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import React, { useState } from 'react';
 import Tooltip from '@material-ui/core/Tooltip';
 import Divider from '@material-ui/core/Divider';
-import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdfTwoTone';
+import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import AddIcon from '@material-ui/icons/Add';
@@ -14,59 +14,23 @@ const imgFileTypes = ['jfif', 'pjpeg', 'jpeg', 'pjp', 'jpg', 'png'];
 const csvFileTypes = ['csv', 'xls', 'xlsx'];
 const useStyles = makeStyles((theme) => ({
   root: {
+    // margin: 10,
     padding: 10,
+    // border: '2px solid red',
+    // borderRadius: 5,
+    // boxShadow: 'rgba(0, 0, 0, 0.05) 0px 0px 0px 1px'
     borderBottom: '1px solid #CCC'
   },
-  container: {
-    maxWidth: 100,
-    margin: 8,
-    marginBottom: 2
-  },
-  card: {
-    transition: 'all .2s ease-in-out',
-    cursor: 'pointer',
-    border: '1px dashed grey',
-    '&:hover': {
-      backgroundColor: '#fcfcfc'
-    },
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    // margin: 15,
-    height: 80,
-    width: 100,
-    borderRadius: 6,
-  },
-  typography: {
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-    marginTop: 2,
-    fontSize: 10,
-    overflow: 'hidden',
-  },
-  alert: {
-    color: '#b5b5b5',
-    marginLeft: 15
-  },
   titleRow: {
+    // border: '2px solid red',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     margin: 5,
   },
-  fileSection: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    margin: 10
+  titleBtns: {
+
   },
-  button: {
-    marginLeft: 15
-  },
-  image: {
-    borderRadius: 6,
-    padding: 1,
-    objectFit: 'contain'
-  }
 }))
 
 
@@ -132,71 +96,37 @@ const DocListPreview = ({ docName, upload, deleteDocs, file, id }) => {
     setCollapse(!collapse)
   }
   return (
-    <>
-      <div className={classes.root}>
-        <div className={classes.titleRow}>
-          <div onClick={() => handleCollapse()} style={{ cursor: 'pointer' }}>
-            <Typography variant='h7' onClick={() => handleCollapse}><strong>{`${id}. ${DocName}`}</strong></Typography>
-            <Badge badgeContent={file[0].file_url && file?.length || 0} color="primary" style={{ marginLeft: 15 }} />
-          </div>
-          <div className={classes.titleBtns}>
-            {
-              file[0].file_url && file?.length >= 1 && (
-                <Button size='small' onClick={deleteDocs} style={{ color: '#FF5C58', borderColor: '#FF5C58' }} startIcon={<DeleteForeverIcon style={{ fontSize: 'small' }} />}>Delete</Button>
-              )
-            }
-            <Button size='small' style={{ marginLeft: 15 }} variant='outlined' onClick={upload} color='primary' startIcon={<AddIcon style={{ fontSize: 'small' }} />}>Upload</Button>
-          </div>
+    <div className={classes.root}>
+      <div className={classes.titleRow}>
+        <div onClick={() => handleCollapse()} style={{ cursor: 'pointer' }}>
+          <Typography variant='h7' onClick={() => handleCollapse}><strong>{`${id}. ${docName}`}</strong></Typography>
+          <Badge badgeContent={file[0].file_url && file?.length || 0} color="primary" style={{ marginLeft: 15 }} />
         </div>
-        <div
-          style={{ display: 'flex', flexWrap: 'wrap' }}
-        >
+        <div className={classes.titleBtns}>
           {
-            file.map((data, i) => {
-              return (
-                !collapse ? (
-                  <DocPreview fileType={data.file_type} url={data.file_url} DocName={DocName} />
-                ) : (
-                  null
-                )
-              )
-            })
+            file[0].file_url && file?.length >= 1 && (
+              <Button size='small' onClick={deleteDocs} style={{ color: '#FF5C58', borderColor: '#FF5C58' }} startIcon={<DeleteForeverIcon style={{ fontSize: 'small' }} />}>Delete</Button>
+            )
           }
+          <Button size='small' style={{ marginLeft: 15 }} variant='outlined' onClick={upload} color='primary' startIcon={<AddIcon style={{ fontSize: 'small' }} />}>Upload</Button>
         </div>
       </div>
-      <div className={classes.titleBtns}>
-        {
-          file[0].file_url && file?.length >= 1 && (
-            <Button
-              size='small'
-              onClick={deleteDocs}
-              style={{ color: '#FF5C58', border: '1px solid #FF5C58' }}
-              variant='outlined' startIcon={<DeleteForeverIcon fontSize="small" />} >
-              Delete
-            </Button>
-          )
-        }
-        <Button
-          size='small'
-          className={classes.button}
-          variant='outlined' onClick={upload}
-          color='primary'
-          startIcon={<AddIcon fontSize='small' />} >
-          Upload
-        </Button>
-      </div>
-      <div className={classes.fileSection}>
+      <div
+        style={{ display: 'flex', flexWrap: 'wrap' }}
+      >
         {
           file.map((data, i) => {
             return (
               !collapse ? (
-                <DocPreview fileType={data.file_type} url={data.file_url} />
-              ) : null
+                <DocPreview fileType={data.file_type} url={data.file_url} DocName={docName} />
+              ) : (
+                null
+              )
             )
           })
         }
       </div>
-    </>
+    </div>
   )
 }
 

@@ -222,9 +222,9 @@ const DocList = ({ id }) => {
   return (
     <div className={classes.wrapper}>
       {showUpload && <FileUpload handleSave={handleSave} id={id} data={rowData} title='Upload Dealership Document' open={showUpload} onCloseUploader={onCloseUploader} />}
-      {/* <Typography variant="h5" align={"center"} className={classes.title}>
+      <Typography variant="h5" align={"Left"} className={classes.title}>
         Dealership Documents
-      </Typography> */}
+      </Typography>
       <Table className={classes.table} size="small" aria-label="Dealers">
         <TableHead>
           <TableRow>

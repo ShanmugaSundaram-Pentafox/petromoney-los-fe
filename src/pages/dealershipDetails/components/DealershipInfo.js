@@ -16,6 +16,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import Button from '../../../components/CommonComponents/Button/Button';
+import { cryptoEncrypt, encrypt } from '../../../services/crypto.service';
 import CloudUploadOutlinedIcon from '@material-ui/icons/CloudUploadOutlined';
 import DeleteIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import { getBusinessTypes, getRegionById, getStates, getActiveStates, getAllRegion } from '../../../services/common.service';
@@ -103,7 +104,9 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
       gst: Yup.string().nullable('Enter GST').matches(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/, "Invalid GST").required("Enter GST").uppercase(),
 
     }),
-    onSubmit: values => {
+    onSubmit: values => {      
+      // console.log('Form Values >> ', values.id);
+      // let gst = values?.gst ? encrypt(values.gst) : values?.gst;
       values.name = values.name.toUpperCase();
       values.gst = values.gst.toUpperCase();
       values.pan = values.pan.toUpperCase();
@@ -124,7 +127,12 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
       }
       const formData = new FormData();
       Object.keys(obj).forEach(key => {
-        formData.append(key, obj[key]);
+        if(key === 'pan'){
+          let pan = values?.pan ? cryptoEncrypt(values.pan) : values?.pan;
+          formData.append(key, pan)          
+        } else {
+          formData.append(key, obj[key]);
+        }
       })
       setLoading(true);
       fetch(`${URL.base}${URL.dealership}/${values.id}`, {
@@ -587,20 +595,20 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
           <FileUpload
             handleSave={(value) => handleSave(value)}
             id={values.id}
-            title='Upload Transport Documents'
+            title='Upload Dealership Documents'
             open={showUpload}
             onCloseUploader={onCloseUploader}
           />
         )}
         <CardActions className={classes.actionFooter}>
-          <Button
+          {/* <Button
             color="primary"
             size="small"
             variant="contained"
             onClick={toggleCreditReport}
           >
             View/Edit Financial Report
-          </Button>
+          </Button> */}
           {!readOnly ? (
             !loading ? (
               <>

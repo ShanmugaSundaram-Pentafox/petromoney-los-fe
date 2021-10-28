@@ -10,6 +10,7 @@ import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded'
 import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
 import EditIcon from '@material-ui/icons/Edit';
 import { useFormik } from 'formik';
+import { cryptoEncrypt, encrypt } from '../../../services/crypto.service';
 import clsx from 'clsx';
 import Alert from '@material-ui/lab/Alert';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -209,7 +210,15 @@ const DealerEditSideWrapper = ({
       }
       const formData = new FormData();
       Object.keys(obj).forEach((key) => {
-        formData.append(key, obj[key]);
+        if(key === 'pan'){
+          let pan = values?.pan ? cryptoEncrypt(values.pan) : values?.pan;
+          formData.append(key, pan)          
+        } else if(key === 'aadhar'){
+          let aadhar = values?.aadhar ? cryptoEncrypt(values.aadhar) : values?.aadhar;
+          formData.append(key, aadhar)          
+        } else {
+          formData.append(key, obj[key]);
+        }
       });
       const apiURL =
         modelType === 'DEALER'
@@ -245,9 +254,9 @@ const DealerEditSideWrapper = ({
             variant: 'success',
           });
 
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
+          // setTimeout(() => {
+          //   window.location.reload();
+          // }, 1000);
           // setApiCallMessage(isAdd ? 'Dealer Added' : 'Dealer Updated');
           onClose();
           modelType === 'DEALER'
@@ -268,7 +277,7 @@ const DealerEditSideWrapper = ({
           // setApiCallMessage('Sorry! Unable to add or Update. Try again later.');
           logger(err);
         });
-    },
+    }, 
   });
   const handleDateChange = (date) => {
     setSelectedDate(date);

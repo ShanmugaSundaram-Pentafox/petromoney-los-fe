@@ -33,7 +33,7 @@ const CreditReload = ({ currentUser }) => {
   const [tableData, setTableData] = useState([]);
   const [processedData, setProcessedData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedTab, setSelectedTab] = useState("processed");
+  const [selectedTab, setSelectedTab] = useState("new");
 
   useMount(async () => {
     setLoading(true)

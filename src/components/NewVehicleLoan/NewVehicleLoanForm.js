@@ -30,8 +30,6 @@ const NewVehicleLoanForm = ({ vehicleId, callback, currentUser }) => {
     validateOnChange: false,
     validationSchema: Yup.object().shape({
       credit_head: Yup.number().nullable('Choose Loan Type').required('Choose Loan Type'),
-      loan_amount: Yup.number().nullable('Enter Loan Amount').required('Enter Loan Amount').moreThan(0, 'Invalid Amount').test("maxDigits", "Request Amount Invalid", (value) => String(value).length < 9),
-      remarks: Yup.string(),
     }),
     onSubmit: formData => {
       const d = loanOptions.find(d => d.id == formData?.credit_head);

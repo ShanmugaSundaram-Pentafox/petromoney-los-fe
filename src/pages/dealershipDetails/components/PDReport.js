@@ -46,7 +46,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     marginBottom: 20
-
   },
   WrapperTitle: {
     fontSize: 18,

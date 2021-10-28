@@ -14,14 +14,56 @@ import moment from 'moment';
 import Skeleton from '@material-ui/lab/Skeleton';
 // import { Tooltip, LabelList,Legend, BarChart, CartesianGrid, XAxis, YAxis, Bar, Text } from 'recharts';
 import LoanBookTable from '../../components/Tables/LoanBookTable';
-import { getLoanStats, getAll_ls1_Metrices, getAll_ls2_Metrices } from '../../services/loans.service';
-import { SummaryTile, PieChartData, BarChartData } from './components/MetricsComponents';
+import { getLoanStats, getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd } from '../../services/loans.service';
+import { SummaryTile, PieChartData, BarChartData, GroupChartData } from './components/MetricsComponents';
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import { Typography } from '@material-ui/core';
 // import { yellow } from '@material-ui/core/colors';
 import { getDealerDetails } from '../../services/dealers.service';
 import Currency from '../../../src/components/Number/Currency';
 import LoanStats from './components/LoanStats';
+import Datatable from './components/Datatable';
+
+const currencyFormat = (value) => {
+  return(
+    new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR'}).format(value)
+  )
+}
+
+function createCustomHTMLContent({ label, data }) {
+  return `
+    <div style='padding: 5px; width: 200px'>
+      <p style='font-size: 12px;'><strong>${label}</strong></p>
+      <table>
+        ${data.map(d => `<tr><td>${d.label}</td><td>: <strong> ${d.value === null ? '  -' :currencyFormat(d.value)}</strong></td></tr>`)}
+      </table>
+    </div>
+  `;
+}
+
+function createCustomHTMLContentforPie(data) {
+  return `
+    <div style='padding: 5px; width: 220px'>
+      <p style='font-size: 12px;'><strong>${data.cust_region}</strong></p>
+      <table>
+         <tr><td>Amount</td><td>: <strong> ${currencyFormat(data.od_amount)}</strong></td></tr>
+      </table>
+    </div>
+  `;
+}
+
+const arrangeData = (res) => {
+  const result = res.reduce((temp, item, i) => {
+    if (i === 0) {
+      const firstRow = item.data?.map(r => r.label);
+      temp[i] = ['',{ role: "tooltip", type: "string", p: { html: true }}, ...firstRow];
+    }
+    const dataRow = item.data.map(r => r.value);
+    temp[i+1] = [item.label,createCustomHTMLContent(item), ...dataRow];
+    return temp;
+  }, [])
+  return result;
+}
 
 const useStyles = makeStyles(theme =>({
   card :{
@@ -31,7 +73,14 @@ const useStyles = makeStyles(theme =>({
       flexWrap:"nowrap",
      }
     }
-    
+  },
+
+  dataChart: {
+    padding: 10, 
+    borderRadius: 5, 
+  },
+  noData: {
+    padding: 10
   }
 }))
 const DataCharts = styled.div`
@@ -55,11 +104,42 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   const [selectedReportStatsCard, setSelectedReportStatsCard] = useState("Due");
   const [dealerDetail, setDealerDetail] = useState({});
   const [dealerChartData, setDealerChartData] = useState([]);
+  const [omcData, setOmcData] = useState([]);
+  const [RegionData, setRegionData] = useState([]);
+
   const handleClick = (name) => {
     setSelectedStatsCard(name)
     setSelectedReportStatsCard(name)
   }
+
   useMount(() => {
+    getAllOmcDpd()
+    .then((res) => {
+      const result = arrangeData(res)
+      setOmcData(result)
+    })
+    .catch(e => {
+      console.log(e);
+    })
+    
+    getAllRegionDpd()
+    .then((res) => {
+      // let dataRow = []
+      // let dataColumn = []
+      /**
+       * [
+       *  ['', 'x-label 1', 'x-label 2'],
+       *  ['y-label-1', 'x-label-1-value', 'x-label-2-value'],
+       *  ['y-label-2', 'x-label-1-value', 'x-label-2-value']
+       * ]
+       */
+      const result = arrangeData(res)
+      setRegionData(result)
+    })
+    .catch(e => {
+      console.log(e);
+    })
+
     // getLoanStats()
     //   .then(data => {
     //     // const data = _countBy(res, item => {
@@ -86,13 +166,13 @@ const Dashboard = ({ currentUser, dashboardView }) => {
         const result = res[0] || {};
         setLs1Metrices(result);
         let overallData = [
-          ['Days', 'Amount'],
-          ['>=90 Days', result.gt90_days],
-          ['60-90 Days', result.gt60lt90_days],
-          ['30-60 Days', result.gt30lt60_days],
-          ['15-30 Days', result.gt15lt30_days],
-          ['4-15 Days', result.gt4lt15_days],
-          ['<=3 Days', result.lt3_days]
+          ['Days', 'Amount', { role: "tooltip", type: "string", p: { html: true } }],
+          ['>=90 Days', result.gt90_days, currencyFormat(result.gt90_days)],
+          ['60-90 Days', result.gt60lt90_days, currencyFormat(result.gt60lt90_days)],
+          ['30-60 Days', result.gt30lt60_days, currencyFormat(result.gt30lt60_days)],
+          ['15-30 Days', result.gt15lt30_days, currencyFormat(result.gt15lt30_days)],
+          ['4-15 Days', result.gt4lt15_days, currencyFormat(result.gt4lt15_days)],
+          ['<=3 Days', result.lt3_days, currencyFormat(result.lt3_days)]
         ]
         setdaysChartData(overallData);
       }).catch(err => {
@@ -104,10 +184,10 @@ const Dashboard = ({ currentUser, dashboardView }) => {
         let total = 0;
         const dataSource = result.map((item, index) => {
           total += item.od_amount;
-          return [item.cust_region, item.od_amount]
+          return [item.cust_region, item.od_amount, createCustomHTMLContentforPie(item)]
         });
-        dataSource.length && dataSource.unshift(['Region', 'Amount']);
-        setTotalForRegion(total);
+        dataSource.length && dataSource.unshift(['Region', 'Amount', { role: "tooltip", type: "string", p: { html: true } }]);
+        setTotalForRegion(currencyFormat(total));
         setLs2Metrices(dataSource);
       })
     }, 4000)
@@ -188,14 +268,42 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                 </Grid>
                 {
                   dashboardView === "LMS" && (<>
-                    <Grid item md={6}>
+                    <Grid item md={12}>
                       <DataCharts>
-                        {ls2_metrices.length ? <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion} /> : <Paper style={{ padding: 10 }}>No Data Found. Check if EOD has been completed</Paper>}
+                        {ls2_metrices.length ? <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion} /> : <Paper className={classes.noData}>No Data Found. Check if EOD has been completed</Paper>}
                       </DataCharts>
                     </Grid>
-                    <Grid item md={6}>
+                    <div style={{width: '50%'}}>
+                      <Grid item md={12} style={{margin: '10px'}}>
+                        <DataCharts>
+                          <BarChartData daysChartData={daysChartData} />
+                        </DataCharts>
+                      </Grid>
+                      <Grid item md={12} style={{margin: '10px'}}>
+                        <DataCharts>
+                            {
+                              omcData.length ? (
+                                <GroupChartData chartData={omcData} title={'OMC - DPD Wise'} height='300px' xAxis='Amount' yAxis='OMCs'/>
+                              ) : (
+                                <Paper className={classes.noData}>
+                                  <Typography variant='h7'>No Data Found. Check if EOD has been completed</Typography>
+                                </Paper>
+                              )
+                            }
+                        </DataCharts>
+                      </Grid>
+                    </div>
+                    <Grid item xs={6}>
                       <DataCharts>
-                        <BarChartData daysChartData={daysChartData} />
+                          {
+                            RegionData.length ? (
+                              <GroupChartData chartData={RegionData} title={'Region - DPD Wise'} height='650px' xAxis='Amount' yAxis='Region'/>
+                            ) : (
+                              <Paper className={classes.noData}>
+                                <Typography variant='h7'>No Data Found. Check if EOD has been completed</Typography>
+                              </Paper>
+                            )
+                          }
                       </DataCharts>
                     </Grid>
                     <Grid item xs={12}>
@@ -211,8 +319,6 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                 )
               }
             </>
-
-
           )
       }
     </div>

@@ -1,6 +1,6 @@
 import { URL } from "../config/serverUrls";
 import apiCall from "../utils/api.util";
-import { decrypt } from "./crypto.service";
+import { cryptoDecrypt, decrypt } from "./crypto.service";
 
 export const getAllGuarantor = (dealerId) => {
   return new Promise((resolve, reject) => {
@@ -9,8 +9,8 @@ export const getAllGuarantor = (dealerId) => {
         if (status === "SUCCESS") {
           const result = data.map(item => ({
             ...item,
-            pan: item?.pan ? decrypt(item.pan) : item.pan,
-            aadhar: item?.aadhar ? decrypt(item.aadhar) : item.aadhar,
+            pan: item?.pan ? cryptoDecrypt(item.pan) : item.pan,
+            aadhar: item?.aadhar ? cryptoDecrypt(item.aadhar) : item.aadhar,
           }));
 
           resolve(result);

@@ -47,6 +47,7 @@ import {
 } from '@material-ui/pickers';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
+import { cryptoEncrypt } from '../../../services/crypto.service';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -250,6 +251,11 @@ const AddNewTransportsForm = ({
       // let apiURL = isAdd === 'Add' ? `transporters` : `tranporters/${data.transporter_id}`
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
+        // console.log(data);
+        if(key === 'pan'){
+          let pan = values?.pan ? cryptoEncrypt(values.pan) : values?.pan;
+          formData.append(key, pan)
+        }
         formData.append(key, data[key]);
       });
       if (isAdd === 'Add') {

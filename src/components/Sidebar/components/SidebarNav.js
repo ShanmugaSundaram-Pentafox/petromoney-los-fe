@@ -24,7 +24,7 @@ import { useMount } from "react-use";
 import Badge from '@material-ui/core/Badge';
 import { connect } from 'react-redux';
 import { resetCurrentUser } from '../../../store/user/user.actions';
-import { getAllWithheldLoans } from '../../../services/withheld.services';
+// import { getAllWithheldLoans } from '../../../services/withheld.services';
 
 
 const useStyles = makeStyles(theme => ({
@@ -108,13 +108,13 @@ const SidebarNav = props => {
   const [check, setCheck] = React.useState(false);
   const [checkStatus, setCheckStatus] = useState(false);
   useMount(() => {
-    getAllWithheldLoans()
-      .then((data) => {
-        setWithheldCount(data?.resolved?.length + data?.unresolved?.length)
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    // getAllWithheldLoans()
+    //   .then((data) => {
+    //     setWithheldCount(data?.resolved?.length + data?.unresolved?.length)
+    //   })
+    //   .catch((e) => {
+    //     console.log(e);
+    //   });
     getAllExceptions()
       .then((data) => {
         setExceptions(data)

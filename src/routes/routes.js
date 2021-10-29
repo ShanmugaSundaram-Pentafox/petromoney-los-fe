@@ -32,6 +32,7 @@ import CreditReload from '../pages/reports/CreditReload';
 import FastTagPassbook from '../pages/transports/components/TransportsPassbook';
 import DealersDueReport from '../pages/reports/DealersDueReport';
 import TransportsPortal from '../pages/transports/TransportsPortal';
+import NotFound from '../pages/NotFound/NotFound';
 
 const Routes = ({ currentUser }) => {
   return (<>
@@ -64,6 +65,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/profile" component={Profile} />
       <ProtectedRoute allow exact path="/withheld" component={BlacklistTable} />
       <ProtectedRoute allow exact path="/reports" component={DealersDueReport} />
+      <Route component={NotFound} />
 
       <ProtectedRoute
         exact

@@ -216,11 +216,12 @@ const AddNewTransportsOwnerForm = ({
           let pan = date_values?.pan ? cryptoEncrypt(date_values.pan) : date_values?.pan;
           data.append(key, pan);
         }
-        if( key === 'aadhar' ){
+        else if( key === 'aadhar' ){
           let aadhar = date_values?.aadhar ? cryptoEncrypt(date_values.aadhar) : date_values?.aadhar;
           data.append(key, aadhar);
+        } else {
+          data.append(key, date_values[key]);
         }
-        data.append(key, date_values[key]);
       });
 
       if (isAdd === 'Edit') {

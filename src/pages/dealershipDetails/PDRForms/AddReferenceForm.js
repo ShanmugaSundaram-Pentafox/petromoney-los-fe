@@ -237,8 +237,24 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
                 <Grid container spacing={2}>
                   <Grid item md={6}>
                     <TextInput
+                      select
                       {...inputProps}
-                      labelText="Dealer name"
+                      labelText="Reference Type"
+                      name="reference_type"
+                      value={values.reference_type}
+                      error={errors.reference_type}
+                      helperText={errors.reference_type}
+                    >
+                      <option value="Dealer">Dealer</option>
+                      <option value="Transporter">Transporter</option>
+                      <option value="Client">Client</option>
+                      <option value="Friend">Friend</option>
+                    </TextInput>
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      labelText="Name"
                       name="name"
                       value={values.name?.toUpperCase()}
                       error={errors.name}
@@ -248,7 +264,7 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
-                      labelText="Dealer mobile"
+                      labelText="Mobile"
                       name="mobile"
                       type='number'
                       value={values.mobile}
@@ -257,7 +273,7 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
                       inputProps={{ className: classes.input }}
                     />
                   </Grid>
-                  <Grid item md={6}>
+                  {/* <Grid item md={6}>
                     <TextInput
                       select
                       {...inputProps}
@@ -270,7 +286,7 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
                       <option value="POSITIVE">Positive</option>
                       <option value="NEGATIVE">Negative</option>
                     </TextInput>
-                  </Grid>
+                  </Grid> */}
                 </Grid>
                 <div className={classes.actionFoot}>
                   <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -308,12 +324,12 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
                       >
                         <Grid container spacing={2}>
                           <Grid item md={6}>
-                            {/* <ViewData title="Dealership ID" value={item.referred_by} /> */}
+                            <ViewData title="Reference Type" value={item.reference_type} />
                             <ViewData title="Mobile" value={item.mobile} />
                           </Grid>
                           <Grid item md={6}>
                             <ViewData title="Name" value={item.name} />
-                            <ViewData title="Remarks" value={item.remarks} />
+                            {/* <ViewData title="Remarks" value={item.remarks} /> */}
                           </Grid>
                         </Grid>
                       </PreviewCard>

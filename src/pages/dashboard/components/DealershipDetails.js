@@ -75,8 +75,11 @@ const useStyles = makeStyles(theme => ({
     height: '100vh',
   },
   contentWrapper: {
+    padding: 12,
     flex: 1,
-    overflow: 'auto'
+    overflow: 'auto',
+    overflowX: 'hidden'
+
   },
   wrapperTitle: {
     display: 'flex',

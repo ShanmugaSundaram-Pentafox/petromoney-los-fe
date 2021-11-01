@@ -10,19 +10,14 @@ import FormDialog from './FormDialog/FormDialog';
 
 const useStyles = makeStyles((theme) => ({
     title: {
-        // marginBottom: 4,
         fontSize: 11,
         color: '#888',
     },
     details: {
         borderColor: 'grey',
         minWidth: 80,
-        // minHeight: 50,
         maxWidth: 250,
-        // display: 'flex',
         textAlign: 'left',
-        // alignItems: 'left',
-        // justifyContent: 'left',
         marginBottom: 8,
     },
     text: {

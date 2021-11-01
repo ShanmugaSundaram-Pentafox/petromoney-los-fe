@@ -29,7 +29,6 @@ const ResolvedTable = () => {
       })
   })
 
-
   const columns = useMemo(() => {
     return [
       {

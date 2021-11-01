@@ -32,6 +32,7 @@ import CreditReload from '../pages/reports/CreditReload';
 import FastTagPassbook from '../pages/transports/components/TransportsPassbook';
 import DealersDueReport from '../pages/reports/DealersDueReport';
 import TransportsPortal from '../pages/transports/TransportsPortal';
+import NotFound from '../pages/NotFound/NotFound';
 
 const Routes = ({ currentUser }) => {
   return (<>
@@ -88,6 +89,8 @@ const Routes = ({ currentUser }) => {
 
         return <Login {...props} />
       }} />
+
+      <Route component={NotFound} />
     </Switch>
   </>
   )

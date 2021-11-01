@@ -69,7 +69,7 @@ const useStyles = makeStyles(theme =>({
   },
 }))
 
-const LoanStats = ({ selectedStatsCard, handleClick }) => {
+const LoanStats = ({ selectedStatsCard, handleClick, filterQry }) => {
   const classes = useStyles();
   const [regions, setRegions] = useState([]);
   const [selectedRegion, setSelectedRegion] = useState({ label: 'ALL', value: 0 });
@@ -145,6 +145,7 @@ const LoanStats = ({ selectedStatsCard, handleClick }) => {
       qry.to = format(selectedPeriod?.to || new Date(), 'yyyy-MM-dd');
     }
     getStats(qry)
+    filterQry(qry)
   }, [selectedRegion, selectedPeriod])
 
   const getStats = (qry) => {

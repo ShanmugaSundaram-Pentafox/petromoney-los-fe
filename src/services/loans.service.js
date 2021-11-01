@@ -125,9 +125,14 @@ export const getLoanBookData = () => {
   });
 }
 
-export const getLoansByStatus = status => {
+export const getLoansByStatus = (status, filterQry) => {
   return new Promise((resolve, reject) => {
-    apiCall(`${URL.loans}?status=${status}`)
+    const { region, from, to } = filterQry;
+    let apiUrl = `${URL.loans}?status=${status}&region=${region}`;
+    if (from && to) {
+      apiUrl = `${URL.loans}?status=${status}&region=${region}&from=${from}&to=${to}`;
+    }
+    apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data);

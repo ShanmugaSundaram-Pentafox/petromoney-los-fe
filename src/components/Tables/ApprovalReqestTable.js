@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from "mui-datatables";
@@ -41,14 +41,13 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick }) => {
+const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry }) => {
   const [loading, setLoading] = useState(false);
   const classes = useStyles();
 
-  useMount(() => {
-    if (!loans || !loans.length) {
-      setLoading(true);
-      getLoansByStatus('loan_approval')
+  useEffect(() => {
+    setLoading(true);
+      getLoansByStatus('loan_approval', filterQry)
         .then(data => {
           setLoansData('loan_approval', data);
           setLoading(false);
@@ -56,8 +55,21 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick }) => {
         .catch(e => {
           setLoading(false);
         })
-    }
-  });
+  }, [filterQry])
+
+  // useMount(() => {
+  //   if (!loans || !loans.length) {
+  //     setLoading(true);
+  //     getLoansByStatus('loan_approval', filterQry)
+  //       .then(data => {
+  //         setLoansData('loan_approval', data);
+  //         setLoading(false);
+  //       })
+  //       .catch(e => {
+  //         setLoading(false);
+  //       })
+  //   }
+  // });
 
   const columns = useMemo(() => {
     return [

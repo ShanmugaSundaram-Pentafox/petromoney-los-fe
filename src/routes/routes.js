@@ -65,7 +65,6 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/profile" component={Profile} />
       <ProtectedRoute allow exact path="/withheld" component={BlacklistTable} />
       <ProtectedRoute allow exact path="/reports" component={DealersDueReport} />
-      <Route component={NotFound} />
 
       <ProtectedRoute
         exact
@@ -90,6 +89,8 @@ const Routes = ({ currentUser }) => {
 
         return <Login {...props} />
       }} />
+
+      <Route component={NotFound} />
     </Switch>
   </>
   )

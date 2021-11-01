@@ -235,8 +235,8 @@ const DocList = ({ id }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {Array.isArray(checkListData) && checkListData.map((row, i) => row.doc_type !== 'dealer' && (
-            <DocListPreview DocName={row.description} upload={() => onDocUpload(row)} deleteDocs={() => handleModal(row.file_data, row.description)} file={row.file_data} id={i+1}/>
+          {Array.isArray(checkListData) && checkListData.map((row, i) =>  row.doc_type !== 'dealer' && (
+            <DocListPreview docName={row.description} upload={() => onDocUpload(row)} deleteDocs={() => handleModal(row.file_data, row.description)} file={row.file_data} id={i+1}/>
             // <TableRow key={row.doc_id}>
             //   {/* <TableCell align="center">{row.doc_id}</TableCell> */}
             //   <TableCell>{row.description}</TableCell>

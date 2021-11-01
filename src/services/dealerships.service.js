@@ -1,6 +1,6 @@
 import { URL } from "../config/serverUrls";
 import apiCall from "../utils/api.util";
-import { cryptoDecrypt, decrypt } from "./crypto.service";
+import { cryptoDecrypt } from "./crypto.service";
 
 export const getAllDealership = () => {
   return new Promise((resolve, reject) => {
@@ -12,9 +12,6 @@ export const getAllDealership = () => {
             let gst = item.gst;
             if(pan) {
               pan = cryptoDecrypt(pan)
-            }
-            if (gst) {
-              gst = decrypt(gst)
             }
             return {
               ...item,
@@ -41,9 +38,6 @@ export const getDealershipById = (id) => {
           const result = data[0];
           if(result?.pan) {
             result.pan = cryptoDecrypt(result.pan);
-          }
-          if (result?.gst) {
-            result.gst = decrypt(result.gst);
           }
           resolve(result);
         } else {
@@ -356,3 +350,78 @@ export const deleteDocsImage = (data, id) => {
       })
   });
 }
+
+export const getDealershipMonthlySalesById = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${URL.dealership}/${id}/month/salesdata`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
+export const postDealershipMonthlySalesById = (id, body) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${URL.dealership}/${id}/month/salesdata`, {
+      method: 'POST',
+      body: body
+    })
+      .then(async ({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          const res = await getDealershipMonthlySalesById(id)
+          resolve(res);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
+export const updateDealershipMonthlySalesById = (id, body) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${URL.dealership}/${id}/month/salesdata`, {
+      method: 'PUT',
+      body: body
+    })
+      .then(async ({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          const res = await getDealershipMonthlySalesById(id)
+          resolve(res);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
+
+export const deleteDealershipMonthlySalesById = (dealershipId, body, id) => {
+  return new Promise((resolve, reject) => {
+    // API.post(`${URL.dealership}/${id}/salesdata`, body)
+    apiCall(`${URL.dealership}/${dealershipId}/month/salesdata/${id}`, {
+      method: 'DELETE',
+      body: body
+    })
+      .then(async ({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          const res = await getDealershipMonthlySalesById(id)
+          resolve(res);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};

@@ -100,10 +100,10 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
         </Grid>
       </Grid>
       <Grid {...gridItem}>
-        <Grid container>
+        <Grid container spacing={2}>
           <Grid {...gridItem}>
             <Typography className={classes.sidePanelTitle} variant="h4">Financials</Typography>
-            <Table className={classes.table} size="small" aria-label="Financials">
+            {/* <Table className={classes.table} size="small" aria-label="Financials">
               <TableHead>
                 <TableRow>
                   <TableCell>Previous Financial Year</TableCell>
@@ -111,10 +111,10 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 </TableRow>
               </TableHead>
               <TableBody>
-                {/* <TableRow>
+                <TableRow>
                   <TableCell>2018 - 2019</TableCell>
                   <TableCell>2019 - 2020</TableCell>
-                </TableRow> */}
+                </TableRow>
                 <TableRow>
                   <TableCell>
                     <FinanceFormData
@@ -141,15 +141,15 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                     />
                   </TableCell>
                 </TableRow>
-                {/* <TableRow>
+                <TableRow>
                   <TableCell colSpan={2}>
                     <Text>Change in net profit over sales % for last 2 years <strong>{`-%`}</strong></Text>
                   </TableCell>
-                </TableRow> */}
+                </TableRow>
               </TableBody>
-            </Table>
+            </Table> */}
           </Grid>
-          {/* <Grid {...gridItem} md={6}>
+          <Grid {...gridItem} md={12}>
             <Grid {...gridItem}>
               <TextInput
                 select
@@ -161,8 +161,11 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 SelectProps={{
                   native: true,
                 }}
-                >
-                  <option value="2020_2021">FY 2020-2021</option>
+              >
+                <option value=" ">Choose FY</option>
+                <option value="2021_2022">FY 2021-2022</option>
+                <option value="2020_2021">FY 2020-2021</option>
+                <option value="2019_2020">FY 2019-2020</option>
               </TextInput>
             </Grid>
             <FinanceFormData
@@ -170,9 +173,9 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
               values={values.latest_fy || {}}
               errors={errors}
               btnLabel={'Latest FY'}
-              onSave={v => saveFinanceData('latest_fy', v)}
+            // onSave={v => saveFinanceData('latest_fy', v)}
             />
-          </Grid> */}
+          </Grid>
           {/* <Grid {...gridItem} md={6}>
             <Grid {...gridItem}>
               <TextInput
@@ -452,7 +455,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values = {}, erro
   const [financeData, setFinanceData] = useState(values);
   const [financeErrors, setFinanceErrors] = useState({});
   const gridItem = {
-    md: 12,
+    md: 6,
     item: true,
     className: classes.row
   };
@@ -591,9 +594,9 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values = {}, erro
           onChange={onTextChange}
         />
       </Grid>
-      <Grid {...gridItem}>
+      {/* <Grid {...gridItem}>
         <Text>Change in net profit over sales % for last 2 years <strong>{financeData.change_in_profit_over_sales}%</strong></Text>
-      </Grid>
+      </Grid> */}
       {
         editable && (
           <Grid {...gridItem} className={classes.lastRow}>

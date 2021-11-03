@@ -34,7 +34,7 @@ import FormDialog from '../../../components/CommonComponents/FormDialog/FormDial
 import { useSnackbar } from 'notistack';
 // import CloseIcon from '@material-ui/icons/Close';
 import CloseIcon from '@material-ui/icons/CloseRounded';
-import { Checkbox, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, FormGroup } from '@material-ui/core';
+import { Checkbox, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, FormGroup, Tooltip } from '@material-ui/core';
 import { getAllRegion } from '../../../services/common.service';
 import { useMount } from 'react-use';
 
@@ -1082,9 +1082,11 @@ const DealershipDetails = ({
                         return (
                           <div className={classes.items}>
                             <p className={classes.eachItem}><span className={classes.itemNotation}>{i+1}.</span> {item.label}</p>
-                            <IconButton size='small'>
-                              <CloseIcon fontSize='small' onClick={() => removeItem(item)}/>
-                            </IconButton>
+                            <Tooltip title="Remove">
+                              <IconButton size='small'>
+                                <CloseIcon fontSize='small' onClick={() => removeItem(item)}/>
+                              </IconButton>
+                            </Tooltip>
                           </div>
                         )
                       })

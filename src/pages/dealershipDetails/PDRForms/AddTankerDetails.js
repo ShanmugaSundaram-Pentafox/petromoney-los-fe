@@ -67,6 +67,19 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.success.dark
     }
   },
+  number: {
+    backgroundColor: 'white',
+    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+        "-webkit-appearance": "none",
+        margin: 0,
+    }
+},
+input: {
+    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+        "-webkit-appearance": "none",
+        margin: 0,
+    }
+}
 }))
 
 
@@ -116,10 +129,10 @@ const AddTankerDetails = ({ dealer_id, tankerAdd, setTankerAdd }) => {
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      vehicle_no: Yup.string().required('Enter Tanker No'),
-      tanker_type: Yup.string().required('Choose Tanker Type'),
-      tanker_capacity: Yup.number().required('Enter Tanker Capacity'),
-      operation_hours: Yup.number().required('Choose Operational hours'),
+      vehicle_no: Yup.string().nullable('Enter Tanker No').required('Enter Tanker No'),
+      tanker_type: Yup.string().nullable('Choose Tanker Type').required('Choose Tanker Type'),
+      tanker_capacity: Yup.number().nullable('Enter Tanker Capacity').required('Enter Tanker Capacity'),
+      operation_hours: Yup.number().nullable('Choose Operational hours').required('Choose Operational hours'),
     }),
     onSubmit: values => {
       const data = { ...values, vehicle_no: values.vehicle_no?.toUpperCase() }
@@ -185,93 +198,96 @@ const AddTankerDetails = ({ dealer_id, tankerAdd, setTankerAdd }) => {
       {
         tankerAdd ? (
           <>
-          <Paper style={{padding: 25, borderRadius: 5 }} elevation={2}>
-          <Grid container spacing={2} style={{display: 'flex', justifyContent: 'center'}}>
-            <Grid item md={6}>
-              <label><strong>Tanker number</strong></label>
-              <TextInput
-                className={classes.field}
-                name="vehicle_no"
-                value={editRow.vehicle_no?.toUpperCase()}
-                onChange={handleChange}
-                disabled={edit}
-                error={errors.vehicle_no}
-                helperText={edit ? "Cannot edit vehicle number" : errors.vehicle_no}
-              />
-            </Grid>
-            <Grid item md={6}>
-              <label><strong>Tanker type</strong></label>
-              <TextInput
-                select
-                className={classes.field}
-                name="tanker_type"
-                error={errors.tanker_type}
-                helperText={errors.tanker_type}
-                value={editRow.tanker_type}
-                onChange={ !edit ? handleChange : onEditTextChange}
-              >
-                <option value=" ">Choose type</option>
-                <option value="Owned">Owned</option>
-                <option value="Rented">Rented</option>
-              </TextInput>
-            </Grid>
-            <Grid item md={6}>
-              <label><strong>Tanker capacity in liters</strong></label>
-              <TextInput
-                className={classes.field}
-                name="tanker_capacity"
-                error={errors.tanker_capacity}
-                helperText={errors.tanker_capacity}
-                value={editRow.tanker_capacity}
-                onChange={ !edit ? handleChange : onEditTextChange}
-              />
-            </Grid>
-            <Grid item md={6}>
-              <label><strong>Operational hours</strong></label>
-              <TextInput
-                select
-                className={classes.field}
-                name="operation_hours"
-                value={editRow.operation_hours}
-                error={errors.operation_hours}
-                helperText={errors.operation_hours}
-                onChange={ !edit ? handleChange : onEditTextChange}
-              >
-                <option value=" ">Choose time</option>
-                {opHours.map((op, i) => (<option key={i} value={op.id}>{op.name}</option>))}
-              </TextInput>
-            </Grid>
-          </Grid>
+            <Paper style={{ padding: 25, borderRadius: 5 }} elevation={2}>
+              <Grid container spacing={2} style={{ display: 'flex', justifyContent: 'center' }}>
+                <Grid item md={6}>
+                  <label><strong>Tanker number</strong></label>
+                  <TextInput
+                    className={classes.field}
+                    name="vehicle_no"
+                    value={editRow.vehicle_no?.toUpperCase()}
+                    onChange={handleChange}
+                    disabled={edit}
+                    error={errors.vehicle_no}
+                    helperText={edit ? "Cannot edit vehicle number" : errors.vehicle_no}
+                  />
+                </Grid>
+                <Grid item md={6}>
+                  <label><strong>Tanker type</strong></label>
+                  <TextInput
+                    select
+                    className={classes.field}
+                    name="tanker_type"
+                    error={errors.tanker_type}
+                    helperText={errors.tanker_type}
+                    value={editRow.tanker_type}
+                    onChange={!edit ? handleChange : onEditTextChange}
+                  >
+                    <option value=" ">Choose type</option>
+                    <option value="Owned">Owned</option>
+                    <option value="Rented">Rented</option>
+                  </TextInput>
+                </Grid>
+                <Grid item md={6}>
+                  <label><strong>Tanker capacity in liters</strong></label>
+                  <TextInput
+                    className={classes.field}
+                    className={classes.number}
+                    inputProps={{ className: classes.input }}
+                    name="tanker_capacity"
+                    error={errors.tanker_capacity}
+                    helperText={errors.tanker_capacity}
+                    value={editRow.tanker_capacity}
+                    type='number'
+                    onChange={!edit ? handleChange : onEditTextChange}
+                  />
+                </Grid>
+                <Grid item md={6}>
+                  <label><strong>Operational hours</strong></label>
+                  <TextInput
+                    select
+                    className={classes.field}
+                    name="operation_hours"
+                    value={editRow.operation_hours}
+                    error={errors.operation_hours}
+                    helperText={errors.operation_hours}
+                    onChange={!edit ? handleChange : onEditTextChange}
+                  >
+                    <option value=" ">Choose time</option>
+                    {opHours.map((op, i) => (<option key={i} value={op.id}>{op.name}</option>))}
+                  </TextInput>
+                </Grid>
+              </Grid>
 
-            <div className={classes.actionFoot}>
-              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <div>
-                  <Button
-                    variant="outlined"
-                    className={classes.btn}
-                    onClick={() => { 
-                      setTankerAdd(false) 
-                      setEditRow({})
-                      setEdit(false)
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                </div>
-                <div>
-                  <Button
-                    variant="contained"
-                    // type="submit"
-                    className={clsx(classes.btn, classes.editButton)}
-                    startIcon={<CheckOutlinedIcon />}
-                    onClick={!edit ? handleSubmit : () => saveEditRow(editRow)}
-                  >
-                    Save
-                  </Button>
+              <div className={classes.actionFoot}>
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <div>
+                    <Button
+                      variant="outlined"
+                      className={classes.btn}
+                      onClick={() => {
+                        setTankerAdd(false)
+                        setEditRow({})
+                        setEdit(false)
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                  <div>
+                    <Button
+                      variant="contained"
+                      // type="submit"
+                      className={clsx(classes.btn, classes.editButton)}
+                      startIcon={<CheckOutlinedIcon />}
+                      onClick={!edit ? handleSubmit : () => saveEditRow(editRow)}
+                    >
+                      Save
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Paper>
+            </Paper>
           </>
 
         ) : (
@@ -279,35 +295,35 @@ const AddTankerDetails = ({ dealer_id, tankerAdd, setTankerAdd }) => {
             {
               tankerData.length === 0 ? <Typography className={classes.typography}>No Tankers found, Click 'Add Tanker' to add new Tankers.</Typography> : null
             }
-          <Grid container spacing={2}>
-            {
-              tankerData && tankerData.map((item, i) => {
-                return (
-                  <Grid item md={6}>
-                  <PreviewCard
-                    onEdit = {() => {
-                      editTankerRow(item, i)
-                      setEdit(true)
-                      setTankerAdd(true)
-                    }}
-                    onDelete = {() => deleteTankerRow(item, i)}
-                  >
-                    <Grid container spacing={2} >
-                      <Grid item md={6}>
-                        <ViewData title="Tanker No" value={item.vehicle_no} />
-                        <ViewData title="Tanker Type" value={item.tanker_type} />
-                      </Grid>
-                      <Grid item md={6}>
-                        <ViewData title="Capacity" value={item.tanker_capacity} />
-                        <ViewData title="Operational Time" value={item.operation_hours} />
-                      </Grid>
+            <Grid container spacing={2}>
+              {
+                tankerData && tankerData.map((item, i) => {
+                  return (
+                    <Grid item md={6}>
+                      <PreviewCard
+                        onEdit={() => {
+                          editTankerRow(item, i)
+                          setEdit(true)
+                          setTankerAdd(true)
+                        }}
+                        onDelete={() => deleteTankerRow(item, i)}
+                      >
+                        <Grid container spacing={2} >
+                          <Grid item md={6}>
+                            <ViewData title="Tanker No" value={item.vehicle_no} />
+                            <ViewData title="Tanker Type" value={item.tanker_type} />
+                          </Grid>
+                          <Grid item md={6}>
+                            <ViewData title="Capacity" value={item.tanker_capacity} />
+                            <ViewData title="Operational Time" value={item.operation_hours} />
+                          </Grid>
+                        </Grid>
+                      </PreviewCard>
                     </Grid>
-                  </PreviewCard>
-                  </Grid>
-                )
-              })
-            }
-          </Grid>
+                  )
+                })
+              }
+            </Grid>
           </>
         )
       }

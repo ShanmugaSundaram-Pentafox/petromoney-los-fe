@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
 
 }));
 
-const Profile = ({ readOnly,currentUser }) => {
+const Profile = ({ readOnly, currentUser }) => {
     const classes = useStyles();
     readOnly = true;
 
@@ -64,11 +64,11 @@ const Profile = ({ readOnly,currentUser }) => {
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
-            role_id: Yup.number().required('Choose Proper User Role'),
-            first_name: Yup.string().required('Enter first name'),
-            last_name: Yup.string().min(1).required('Enter last name'),
-            mobile: Yup.number().min(10, 'Enter valid mobile number').required('Enter Mobile number'),
-            email: Yup.string().email("Enter valid email"),
+            role_id: Yup.number().nullable('Choose Proper User Role').required('Choose Proper User Role'),
+            first_name: Yup.string().nullable('Enter first name').required('Enter first name'),
+            last_name: Yup.string().nullable('Enter last name').min(1).required('Enter last name'),
+            mobile: Yup.number().nullable('Enter Mobile number').min(10, 'Enter valid mobile number').required('Enter Mobile number'),
+            email: Yup.string().nullable('Enter valid email').email('Enter valid email'),
             password: Yup.string(),
         }),
         onSubmit: formData => {

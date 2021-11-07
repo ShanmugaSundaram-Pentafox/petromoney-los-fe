@@ -20,6 +20,7 @@ import { permissionCheck } from '../UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import ListIcon from '@material-ui/icons/List';
 import SettingsIcon from '@material-ui/icons/Settings';
+import CachedIcon from '@material-ui/icons/Cached';
 // import { ExitToApp } from '@material-ui/icons';
 // import { connect } from 'formik';
 const packageJSON = require('../../../package.json');
@@ -107,6 +108,11 @@ const Sidebar = props => {
       icon: <AccountBoxIcon />
     },
     {
+      title: 'Credit Reload',
+      href: '/reports/credit/reload',
+      icon: <CachedIcon />
+    },
+    {
       title: 'Dealerships',
       href: '/dealership',
       icon: <PeopleIcon />
@@ -141,6 +147,11 @@ const Sidebar = props => {
     pages.splice(1, pages.length + 1)
     pages.push(
       {
+        title: 'Loan Report',
+        href: '/reports',
+        icon: <LocalShippingIcon />
+      },
+      {
         title: 'Profile',
         href: `/dealership/${currentUser.dealership_id}`,
         icon: <PersonOutlineIcon />
@@ -150,11 +161,16 @@ const Sidebar = props => {
         href: '/passbook',
         icon: <ListIcon />
       },
-      {
-        title: 'Transports',
-        href: '/transports',
-        icon: <LocalShippingIcon />
-      },
+      // {
+      //   title: 'Transports',
+      //   href: '/transports',
+      //   icon: <LocalShippingIcon />
+      // },
+      // {
+      //   title: 'Loan Report',
+      //   href: '/reports',
+      //   icon: <LocalShippingIcon />
+      // },
     )
   }
 
@@ -162,7 +178,7 @@ const Sidebar = props => {
     pages = [
       {
         title: 'Profile',
-        href: `/transports/${currentUser.id}`,
+        href: `/transports-field`,
         icon: <PersonOutlineIcon />
       },
       {

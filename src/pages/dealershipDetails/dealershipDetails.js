@@ -32,6 +32,15 @@ import DealershipTransport from "./components/DealershipTransport";
 import FleetOperatorsDetails from "./components/FleetOperatorsDetails";
 import styled from 'styled-components';
 import PersonalDiscussionReport from "./components/PDReport";
+import { useHistory } from "react-router-dom";
+import { toInteger } from "lodash-es";
+import {
+  BrowserRouter as Router,
+  Link,
+  Route,
+  useRouteMatch,
+  useParams,
+} from 'react-router-dom'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -84,6 +93,7 @@ const DealershipDetails = ({ currentUser, match }) => {
   const [showSolarForm, setShowSolarForm] = useState();
   const [leegalityModalVisible, setLeegalityModalVisible] = useState(false);
   const [dealerLoanData, setDealerLoanData] = useState();
+  const history = useHistory();
   const {
     url,
     params: { id },
@@ -91,6 +101,7 @@ const DealershipDetails = ({ currentUser, match }) => {
 
   const onChangeTab = (e, newTab) => {
     setActiveTab(newTab);
+    history.replace(`?t=${newTab}`)
   }
 
   const onChangeSolarTab = (e, newTab) => {
@@ -102,6 +113,9 @@ const DealershipDetails = ({ currentUser, match }) => {
   }
 
   useMount(() => {
+    const queryString = window.location.hash;
+    const test = queryString.split('='); 
+    setActiveTab(toInteger(test[1]))
     getDealershipById(id)
       .then((data) => setDealershipData(data))
       .catch((e) => null);
@@ -172,14 +186,15 @@ const DealershipDetails = ({ currentUser, match }) => {
               aria-label="Dealership Details Panel"
               className={classes.tabs}
             >
-              <Tab label={<InfoBox active={activeTab === 0} number={1} title="Dealership Info" />} {...tabA11yProps(0)} />
-              <Tab label={<InfoBox active={activeTab === 1} number={2} title="Dealers List" />} {...tabA11yProps(1)} />
-              <Tab label={<InfoBox active={activeTab === 2} number={3} title="Sales History" />} {...tabA11yProps(2)} />
-              <Tab label={<InfoBox active={activeTab === 3} number={4} title="Loans List" />} {...tabA11yProps(3)} />
-              <Tab label={<InfoBox active={activeTab === 4} number={5} title="Documents" />} {...tabA11yProps(4)} />
-              <Tab label={<InfoBox active={activeTab === 5} number={6} title="Transports" />} {...tabA11yProps(5)} />
-              <Tab label={<InfoBox active={activeTab === 6} number={7} title="Fleet Operators" />} {...tabA11yProps(6)} />
-              {/* <Tab label={<InfoBox active={activeTab === 7} number={8} title="Personal Discussion Report" />} {...tabA11yProps(7)} /> */}
+              <Tab label={<InfoBox active={activeTab === 0} number={1} title="Dealership" />} {...tabA11yProps(0)} />
+              <Tab label={<InfoBox active={activeTab === 1} number={2} title="Dealers" />} {...tabA11yProps(1)} />
+              <Tab label={<InfoBox active={activeTab === 2} number={3} title="Financial Report" />} {...tabA11yProps(2)} />
+              <Tab label={<InfoBox active={activeTab === 3} number={4} title="Sales History" />} {...tabA11yProps(3)} />
+              <Tab label={<InfoBox active={activeTab === 4} number={5} title="Loans List" />} {...tabA11yProps(4)} />
+              <Tab label={<InfoBox active={activeTab === 5} number={6} title="Personal Discussion" />} {...tabA11yProps(5)} />
+              <Tab label={<InfoBox active={activeTab === 6} number={7} title="Document Checklist" />} {...tabA11yProps(6)} />
+              <Tab label={<InfoBox active={activeTab === 7} number={8} title="Transporters" />} {...tabA11yProps(7)} />
+              <Tab label={<InfoBox active={activeTab === 8} number={9} title="Fleet Operators" />} {...tabA11yProps(8)} />
             </Tabs>
           </Collapse>
           {/* <div>
@@ -224,23 +239,26 @@ const DealershipDetails = ({ currentUser, match }) => {
           <DealersList id={id} titleAlign="left" currentUser={currentUser} />
         </TabPanel>
         <TabPanel activeTab={activeTab} index={2}>
-          <SalesInfo id={id} titleAlign="left" currentUser={currentUser} column />
+          <CreditReportSideWrapper dealershipId={id} data={{}} currentUser={currentUser} />
         </TabPanel>
         <TabPanel activeTab={activeTab} index={3}>
-          <LoansList id={id} titleAlign="left" currentUser={currentUser} dealerData={dealerLoanData} />
+          <SalesInfo id={id} titleAlign="left" currentUser={currentUser} column />
         </TabPanel>
         <TabPanel activeTab={activeTab} index={4}>
-          <DealershipDoc id={id} currentUser={currentUser} />
+          <LoansList id={id} titleAlign="left" currentUser={currentUser} dealerData={dealerLoanData} />
         </TabPanel>
         <TabPanel activeTab={activeTab} index={5}>
-          <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
+          <PersonalDiscussionReport id ={id} textAlign="left" currentUser={currentUser} />
         </TabPanel>
         <TabPanel activeTab={activeTab} index={6}>
+          <DealershipDoc id={id} currentUser={currentUser} />
+        </TabPanel>
+        <TabPanel activeTab={activeTab} index={7}>
+          <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
+        </TabPanel>
+        <TabPanel activeTab={activeTab} index={8}>
           <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
         </TabPanel>
-        {/* <TabPanel activeTab={activeTab} index={7}>
-          <PersonalDiscussionReport id ={id} textAlign="left" currentUser={currentUser} />
-        </TabPanel> */}
         <SolarEnquiryForm
           dealershipId={id}
           mainApplicant={mainApplicant}

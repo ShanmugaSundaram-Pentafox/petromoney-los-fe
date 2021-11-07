@@ -8,7 +8,7 @@ export const getBusinessTypes = () => {
     apiCall("business/types")
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data);
+          resolve(data || []);
         } else {
           reject(message);
         }
@@ -24,7 +24,7 @@ export const getOmcList = () => {
     apiCall(`omcs`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data);
+          resolve(data || []);
         } else {
           reject(message);
         }
@@ -109,7 +109,7 @@ export const getAllRegion = () => {
     apiCall(URL.region)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data);
+          resolve(data || []);
 
         } else {
           reject(message);
@@ -257,7 +257,7 @@ export const getStates = () => {
     apiCall("master/states")
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data);
+          resolve(data || []);
         } else {
           reject(message);
         }
@@ -267,12 +267,29 @@ export const getStates = () => {
       })
   })
 }
+
+export const getAssetType = () => {
+  return new Promise((resolve, reject) => {
+    apiCall("asset")
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data || []);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(err => {
+        reject(err.message);
+      })
+  })
+}
+
 export const getActiveStates = () => {
   return new Promise((resolve, reject) => {
     apiCall("states")
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data);
+          resolve(data || []);
         } else {
           reject(message);
         }
@@ -304,7 +321,7 @@ export const getRegionById = (res) => {
     apiCall(`states/regions/${res}`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data);
+          resolve(data || []);
         } else {
           reject(message);
         }
@@ -356,6 +373,63 @@ export const updateRegionById = (data, id) => {
 export const updateStateById = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`master/states/${id}`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const updateAssetById = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`asset/${id}`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const updateBusinessById = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`business/types/${id}`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const updateLoanById = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`loan/types/${id}`, {
       method: 'POST',
       body: data,
     })
@@ -429,6 +503,63 @@ export const addState = (data) => {
   })
 }
 
+export const addBusinessType = (data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`business/types`, {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const addLoanType = (data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`loan/types`, {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const addAssetType = (data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`asset`, {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
 export const deleteOmcs = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`omcs/${id}`, {
@@ -485,10 +616,64 @@ export const deleteState = (data, id) => {
       })
   })
 }
+export const deleteAsset = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`asset/${id}`, {
+      method: 'DELETE',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+export const deleteBusiness = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`business/types/${id}`, {
+      method: 'DELETE',
+      // body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+export const deleteLoan = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`loan/types/${id}`, {
+      method: 'DELETE',
+      // body: data
+    })
+      .then(({ status, message }) => {
+        if (status === "SUCCESS") {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
 
 export const getDealershipForSearch = (id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`dealership/search?dealership=${id}`)
+    apiCall(`dealership/search?status=disbursed&dealership=${id}`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data);

@@ -32,6 +32,9 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
+  date: {
+    backgroundColor: 'white',
+  },
   sidePanelFormWrapper: {
     position: 'relative',
     display: 'flex',
@@ -61,6 +64,19 @@ const useStyles = makeStyles((theme) => ({
     },
     '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.success.dark
+    }
+  },
+  number: {
+    backgroundColor: 'white',
+    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0
+    }
+  },
+  input: {
+    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0
     }
   }
 
@@ -101,8 +117,8 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
     }),
     onSubmit: values => {
 
-      const executed_date = executedDate ? format(new Date(executedDate), 'yyyy-MM-dd') : values.agreement_executed_on;
-      const valid_date = validDate ? format(new Date(validDate), 'yyyy-MM-dd') : values.agreement_valid_till;
+      const executed_date = executedDate ? format(new Date(executedDate), 'dd-MM-yyyy') : values.agreement_executed_on;
+      const valid_date = validDate ? format(new Date(validDate), 'dd-MM-yyyy') : values.agreement_valid_till;
       const date = { ...values, agreement_executed_on: executed_date, agreement_valid_till: valid_date };
       const data = new FormData();
       Object.keys(date).forEach((key) => {
@@ -172,11 +188,14 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                 <Grid item md={6}>
                   <TextInput
                     {...inputProps}
+                    className={classes.number}
+                    inputProps={{ className: classes.input }}
                     labelText="Sales officer mobile"
                     name="sales_officer_mobile"
                     value={values.sales_officer_mobile}
                     disabled={readOnly}
                     readOnly={readOnly}
+                    type='number'
                     error={errors.sales_officer_mobile}
                     helperText={errors.sales_officer_mobile}
                   />
@@ -197,6 +216,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                   <label className="input-label">Dealership agreement executed on</label>
                   <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <KeyboardDatePicker
+                      className={classes.date}
                       variant='inline'
                       inputVariant='outlined'
                       format='dd-MM-yyyy'
@@ -227,6 +247,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
                   <label className="input-label">Dealership agreement valid till</label>
                   <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <KeyboardDatePicker
+                      className={classes.date}
                       hideTabs={true}
                       variant='inline'
                       inputVariant='outlined'

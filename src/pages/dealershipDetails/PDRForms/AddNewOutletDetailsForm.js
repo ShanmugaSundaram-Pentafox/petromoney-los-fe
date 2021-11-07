@@ -127,13 +127,13 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
-            outlet_category: Yup.string().nullable().required('Choose outlet category'),
-            distance_from_headquarters: Yup.string().nullable().required('Please enter fuel transported from area'),
-            terminal_name: Yup.string().nullable().required('Please enter terminal name'),
-            size_of_outlet: Yup.number().nullable().required('Please enter outlet size'),
-            land_type: Yup.string().nullable().required('Enter land type'),
-            outlet_operated_by: Yup.string().nullable().required('Enter operator name'),
-            land_owner_name: Yup.string().nullable().required('Enter land owner name')
+            outlet_category: Yup.string().nullable('Choose outlet category').required('Choose outlet category'),
+            distance_from_headquarters: Yup.string().nullable('Please enter fuel transported from area').required('Please enter fuel transported from area'),
+            terminal_name: Yup.string().nullable('Please enter terminal name').required('Please enter terminal name'),
+            size_of_outlet: Yup.number().nullable('Please enter outlet size').required('Please enter outlet size'),
+            land_type: Yup.string().nullable('Enter land type').required('Enter land type'),
+            outlet_operated_by: Yup.string().nullable('Enter operator name').required('Enter operator name'),
+            land_owner_name: Yup.string().nullable('Enter land owner name').required('Enter land owner name')
 
         }),
         onSubmit: values => {
@@ -200,6 +200,9 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
+                                        className={classes.number}
+                                        inputProps={{ className: classes.input }}
+                                        type='number'
                                         labelText="Distance from headquarters"
                                         name="distance_from_headquarters"
                                         value={values.distance_from_headquarters}
@@ -222,6 +225,9 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
+                                        className={classes.number}
+                                        inputProps={{ className: classes.input }}
+                                        type='number'
                                         labelText="Distance from Terminal (in Km)"
                                         name="distance_from_terminal"
                                         value={values.distance_from_terminal}
@@ -233,6 +239,8 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
+                                        className={classes.number}
+                                        inputProps={{ className: classes.input }}
                                         labelText="Size of the Outlet (in Sq. ft)"
                                         name="size_of_outlet"
                                         value={values.size_of_outlet}
@@ -275,12 +283,15 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                     <TextInput
                                         {...inputProps}
                                         money
+                                        className={classes.number}
+                                        inputProps={{ className: classes.input }}
                                         labelText="Lease Amount"
                                         name="lease_amount"
                                         value={values.lease_amount}
                                         readOnly={readOnly}
                                         error={errors.lease_amount}
                                         helperText={errors.lease_amount}
+                                        type='number'
                                     />
                                 </Grid>
                                 <Grid item md={6}>
@@ -325,8 +336,10 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
+                                        inputProps={{ className: classes.input }}
                                         labelText="Operator Mobile number"
                                         name="operator_mobile"
+                                        type="number"
                                         value={values.operator_mobile}
                                         readOnly={readOnly}
                                         error={errors.operator_mobile}

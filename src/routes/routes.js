@@ -30,6 +30,9 @@ import TransportException from '../pages/transports/components/TransportExceptio
 import BlacklistTable from '../pages/loanspage/BlacklistTable';
 import CreditReload from '../pages/reports/CreditReload';
 import FastTagPassbook from '../pages/transports/components/TransportsPassbook';
+import DealersDueReport from '../pages/reports/DealersDueReport';
+import TransportsPortal from '../pages/transports/TransportsPortal';
+import NotFound from '../pages/NotFound/NotFound';
 
 const Routes = ({ currentUser }) => {
   return (<>
@@ -40,7 +43,7 @@ const Routes = ({ currentUser }) => {
         path="/"
         component={Dashboard}
         allow={permissionCheck(currentUser?.role_name, rulesList.dashboard)}
-        />
+      />
       <ProtectedRoute allow exact path="/solar" component={Solar} />
       <ProtectedRoute allow exact path="/solar/feasibility" component={Solar} />
       <ProtectedRoute allow exact path="/dealership" component={Dealership} />
@@ -48,6 +51,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/loans/exceptions" component={LmsLos} />
       <ProtectedRoute allow exact path="/dealership/:id?" component={DealershipDetails} />
       <ProtectedRoute allow exact path='/transports' component={Transport} />
+      <ProtectedRoute allow exact path='/transports-field' component={TransportsPortal} />
       <ProtectedRoute allow exact path="/transports/:id?" component={TransportsDetails} />
       <ProtectedRoute allow exact path='/transport/exceptions' component={TransportException} />
       <ProtectedRoute allow exact path="/dealership/:id/credit-form" component={CreditForm} />
@@ -60,6 +64,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/owners/:id?" component={OwnerDetails} />
       <ProtectedRoute allow exact path="/profile" component={Profile} />
       <ProtectedRoute allow exact path="/withheld" component={BlacklistTable} />
+      <ProtectedRoute allow exact path="/reports" component={DealersDueReport} />
 
       <ProtectedRoute
         exact
@@ -84,6 +89,8 @@ const Routes = ({ currentUser }) => {
 
         return <Login {...props} />
       }} />
+
+      <Route component={NotFound} />
     </Switch>
   </>
   )

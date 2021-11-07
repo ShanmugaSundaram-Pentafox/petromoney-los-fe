@@ -147,9 +147,9 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      ifsc: Yup.string().required("Enter IFSC code").matches(/^[A-Za-z]{4}0[A-Z0-9]{6}$/, 'Enter valid IFSC'),
+      ifsc: Yup.string().required("Enter IFSC code").nullable('Enter IFSC code').matches(/^[A-Za-z]{4}0[A-Z0-9]{6}$/, 'Enter valid IFSC'),
       account_name: Yup.string('Enter valid name').nullable('Enter Account Holder name').required('Enter Account holder name'),
-      bank_name: Yup.string('Enter valid name').nullable('').required('Enter name'),
+      bank_name: Yup.string('Enter valid name').nullable('Enter bank name').required('Enter name'),
       account_no: Yup.number().nullable('Enter account number').required('Enter account number'),
       bank_branch: Yup.string('Enter valid branch name').nullable('Enter branch name').required('Enter branch name'),
       account_type: Yup.string('Enter valid type').nullable('Enter account type').required('Enter account type'),
@@ -196,36 +196,39 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
 
   const onChangeIFSC = e => {
     if (/^[A-Za-z]{4}0[A-Za-z0-9]{6}$/.test(e.target.value)) {
-      fetch(`${URL.ifscApiUrl}${e.target.value}`)
-        .then(res => {
-          return res.json()
-        })
-        .then(data => {
-          if (data.BANK) {
-            setValues({
-              ...values,
-              ifsc: data.IFSC,
-              bank_name: data.BANK,
-              bank_branch: data.BRANCH,
-              bank_city: data.CITY
-            })
-          } else {
-            console.log(data)
-          }
-        })
-        .catch(err => {
-          console.log('GET IFSC DATA ERR >> ', err)
-        })
-    } else {
-      // console.log("value", values)
-      enqueueSnackbar("please enter valid IFSC code", {
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-        variant: 'warning',
-      })
-    }
+        fetch(`${URL.ifscApiUrl}${e.target.value}`)
+          .then(res => {
+            return res.json()
+          })
+          .then(data => {
+            if (data.BANK) {
+              setValues({
+                ...values,
+                ifsc: data.IFSC,
+                bank_name: data.BANK,
+                bank_branch: data.BRANCH,
+                bank_city: data.CITY
+              })
+            } else {
+              console.log(data)
+            }
+          })
+          .catch(err => {
+            console.log('GET IFSC DATA ERR >> ', err)
+          })
+    } 
+    // else 
+    // {
+    //   if (value.length >= 10){
+    //     enqueueSnackbar("please enter valid IFSC code", {
+    //       anchorOrigin: {
+    //         vertical: 'top',
+    //         horizontal: 'right',
+    //       },
+    //       variant: 'warning',
+    //     })
+    //   }
+    // }
   }
   return (
     <div className={classes.sidePanelFormWrapper}>
@@ -317,7 +320,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
-                      labelText="Branch"
+                      labelText="City"
                       name="bank_city"
                       value={values.bank_city}
                       error={errors.bank_city}

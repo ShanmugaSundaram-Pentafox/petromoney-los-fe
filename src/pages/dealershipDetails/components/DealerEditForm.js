@@ -8,9 +8,8 @@ import Typography from '@material-ui/core/Typography';
 import { useSnackbar } from 'notistack';
 import Switch from '@material-ui/core/Switch';
 import Box from '@material-ui/core/Box';
-// import AttachmentOutlinedIcon from '@material-ui/icons/AttachmentOutlined';
-import DeleteIcon from '@material-ui/icons/Delete';
-import UploadIcon from '@material-ui/icons/Backup';
+import DeleteIcon from '@material-ui/icons/DeleteOutlineOutlined';
+import UploadIcon from '@material-ui/icons/CloudUploadOutlined';
 import { grey } from '@material-ui/core/colors';
 import { format, parse } from 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
@@ -318,6 +317,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                   <KeyboardDatePicker
                     variant='inline'
+                    name='dob'
                     inputVariant='outlined'
                     label="Date of Birth"
                     format='dd-MM-yyyy'
@@ -330,7 +330,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                     margin='normal'
                     id='date-picker'
                     autoOk={true}
-                    value={selectedDate}
+                    value={selectedDate ? selectedDate : null}
                     onChange={handleDateChange}
                     keyboardButtonProps={{
                       'aria-label': 'change date'

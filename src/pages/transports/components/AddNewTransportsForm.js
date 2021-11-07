@@ -45,6 +45,9 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
+import { cryptoEncrypt } from '../../../services/crypto.service';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -218,24 +221,27 @@ const AddNewTransportsForm = ({
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       // id: Yup.number().required('Please enter transporter code'),
-      name: Yup.string().required('Please enter transporter name'),
+      name: Yup.string().required('Please enter transporter name').nullable('Enter transporter name').matches(/^[aA-zZ.,&/-\s]+$/, "Only alphabets are allowed for this field "),
       mobile: Yup.number()
+        .nullable('Enter your mobile number')
         .min(10, 'Enter valid mobile number')
         .required('please Enter your mobile number'),
-      omc: Yup.string().required('Please Choose OMC'),
-      business_type: Yup.string().required('Please choose bussiness type'),
-      region: Yup.string().required('Please choose region'),
-      address: Yup.string().required('Please enter address'),
-      state: Yup.string().required('Please choose state'),
-      district: Yup.string().required('Please choose district'),
+      omc: Yup.string().required('Please Choose OMC').nullable('Choose OMC'),
+      business_type: Yup.string().required('Please choose bussiness type').nullable('Choose business type'),
+      region: Yup.string().required('Please choose region').nullable('Choose region'),
+      address: Yup.string().required('Please enter address').nullable('Enter address'),
+      state: Yup.string().required('Please choose state').nullable('Choose state'),
+      district: Yup.string().required('Please enter district').nullable('Enter district'),
       pincode: Yup.number()
+        .nullable('Enter pincode')
         .min(6, 'Pincode must be 6 digits')
         .required('Enter pincode'),
       pan: Yup.string()
+        .nullable('Enter PAN')
         .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
         .required('Enter PAN')
         .uppercase(),
-      gst: Yup.string().matches(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/, "Invalid GST").required("Enter GST").uppercase(),
+      gst: Yup.string().nullable('Enter GST').matches(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/, "Invalid GST").required("Enter GST").uppercase(),
     }),
     onSubmit: (values) => {
       setLoading(true);
@@ -245,6 +251,11 @@ const AddNewTransportsForm = ({
       // let apiURL = isAdd === 'Add' ? `transporters` : `tranporters/${data.transporter_id}`
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
+        // console.log(data);
+        if(key === 'pan'){
+          let pan = values?.pan ? cryptoEncrypt(values.pan) : values?.pan;
+          formData.append(key, pan)
+        }
         formData.append(key, data[key]);
       });
       if (isAdd === 'Add') {
@@ -593,7 +604,7 @@ const AddNewTransportsForm = ({
                     <TextInput
                       {...inputProps}
                       name='name'
-                      label='Transport Name'
+                      labelText='Transport Name'
                       value={values.name?.toUpperCase()}
                       readOnly={readOnly}
                       error={errors.name}
@@ -604,7 +615,7 @@ const AddNewTransportsForm = ({
                     <TextInput
                       {...inputProps}
                       name='mobile'
-                      label='Mobile'
+                      labelText='Mobile'
                       value={values?.mobile}
                       readOnly={readOnly}
                       error={errors.mobile}
@@ -616,7 +627,7 @@ const AddNewTransportsForm = ({
                       <TextInput
                         {...inputProps}
                         select
-                        label="OMC"
+                        labelText="OMC"
                         name="omc"
                         value={values.omc}
                         readOnly={readOnly}
@@ -635,7 +646,7 @@ const AddNewTransportsForm = ({
                       {...inputProps}
                       select
                       name='business_type'
-                      label='Business Type'
+                      labelText='Business Type'
                       readOnly={readOnly}
                       value={values?.business_type}
                       disabled={readOnly}
@@ -646,12 +657,12 @@ const AddNewTransportsForm = ({
                   </Grid>
                   <Grid item md={6}>
                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                      <label>Date of Birth</label>
                       <KeyboardDatePicker
                         // disableToolbar
                         // hideTabs={true}
                         variant='inline'
                         inputVariant='outlined'
-                        label='Date of Birth'
                         format='dd-MM-yyyy'
                         animateYearScrolling={true}
                         invalidDateMessage='Invalid Date Format'
@@ -682,7 +693,7 @@ const AddNewTransportsForm = ({
                       {...inputProps}
                       select
                       name='state'
-                      label='State'
+                      labelText='State'
                       readOnly={readOnly}
                       disabled={readOnly}
                       value={values?.state}
@@ -696,7 +707,7 @@ const AddNewTransportsForm = ({
                       {...inputProps}
                       select
                       name='region'
-                      label='Region'
+                      labelText='Region'
                       readOnly={readOnly}
                       disabled={readOnly}
                       value={values?.region}
@@ -709,7 +720,7 @@ const AddNewTransportsForm = ({
                     <TextInput
                       {...inputProps}
                       name='address'
-                      label='Address'
+                      labelText='Address'
                       value={values?.address}
                       readOnly={readOnly}
                       disabled={readOnly}
@@ -723,7 +734,7 @@ const AddNewTransportsForm = ({
                       {...inputProps}
                       // select
                       name='district'
-                      label='District'
+                      labelText='District'
                       readOnly={readOnly}
                       disabled={readOnly}
                       value={values.district}
@@ -736,7 +747,7 @@ const AddNewTransportsForm = ({
                     <TextInput
                       {...inputProps}
                       name='pincode'
-                      label='Pincode'
+                      labelText='Pincode'
                       value={values?.pincode}
                       disabled={readOnly}
                       readOnly={readOnly}
@@ -881,21 +892,23 @@ const AddNewTransportsForm = ({
               </div>
             )
           ) : (
-            <div>
-              <Button
-                variant='contained'
-                type='submit'
-                onClick={handleSubmit}
-                className={clsx(classes.btn, classes.editButton)}
-                startIcon={
-                  !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
-                }
-                // disabled={loading}
-                onClick={loading ? () => null : handleEdit}
-              >
-                Edit
-              </Button>
-            </div>
+            !permissionCheck(currentUser.role_name, rulesList.transporter_view) ? (
+              <div>
+                <Button
+                  variant='contained'
+                  type='submit'
+                  onClick={handleSubmit}
+                  className={clsx(classes.btn, classes.editButton)}
+                  startIcon={
+                    !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
+                  }
+                  // disabled={loading}
+                  onClick={loading ? () => null : handleEdit}
+                >
+                  Edit
+                </Button>
+              </div>
+            ) : null
           )}
         </div>
       </div>

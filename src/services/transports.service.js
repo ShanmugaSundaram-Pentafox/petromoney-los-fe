@@ -1,7 +1,7 @@
 // import { API } from "../config/api"
 import { URL } from "../config/serverUrls"
 import apiCall from "../utils/api.util"
-import { decrypt } from "./crypto.service"
+import { cryptoDecrypt, decrypt } from "./crypto.service"
 
 export const getAllTransport = () => {
   return new Promise((resolve, reject) => {
@@ -10,12 +10,28 @@ export const getAllTransport = () => {
         if (status === "SUCCESS") {
           const result = data.map(item => ({
             ...item,
-            pan: item?.pan ? decrypt(item.pan) : item.pan,
-            aadhar: item?.aadhar ? decrypt(item.aadhar) : item.aadhar,
+            pan: item?.pan ? cryptoDecrypt(item.pan) : item.pan,
+            aadhar: item?.aadhar ? cryptoDecrypt(item.aadhar) : item.aadhar,
           }));
           resolve(result);
         } else {
           reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const getTransportersOwnerById = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${URL.vehicleInfo}/owner/${id}`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data)
+        } else {
+          reject(message)
         }
       })
       .catch((e) => {
@@ -48,10 +64,10 @@ export const getTransportOwnerInfo = (pm_user_id) => {
         if (status === "SUCCESS") {
           const result = data[0];
           if (result?.pan) {
-            result.pan = decrypt(result.pan);
+            result.pan = cryptoDecrypt(result.pan);
           }
           if (result?.aadhar) {
-            result.aadhar = decrypt(result.aadhar);
+            result.aadhar = cryptoDecrypt(result.aadhar);
           }
           resolve(result)
         } else {
@@ -293,8 +309,8 @@ export const getOwnersById = (id) => {
         if (status === "SUCCESS") {
           const result = data.map(item => ({
             ...item,
-            pan: item?.pan ? decrypt(item.pan) : item.pan,
-            aadhar: item?.aadhar ? decrypt(item.aadhar) : item.aadhar,
+            pan: item?.pan ? cryptoDecrypt(item.pan) : item.pan,
+            aadhar: item?.aadhar ? cryptoDecrypt(item.aadhar) : item.aadhar,
           }));
 
           resolve(result);
@@ -337,8 +353,8 @@ export const getTransportsByOwnersId = (id) => {
         if (status === "SUCCESS") {
           const result = data.map(item => ({
             ...item,
-            pan: item?.pan ? decrypt(item.pan) : item.pan,
-            aadhar: item?.aadhar ? decrypt(item.aadhar) : item.aadhar,
+            pan: item?.pan ? cryptoDecrypt(item.pan) : item.pan,
+            aadhar: item?.aadhar ? cryptoDecrypt(item.aadhar) : item.aadhar,
           }));
 
           resolve(result);
@@ -364,8 +380,8 @@ export const getOwnerDetailsById = (id) => {
         if (status === "SUCCESS") {
           const result = data.map(item => ({
             ...item,
-            pan: item?.pan ? decrypt(item.pan) : item.pan,
-            aadhar: item?.aadhar ? decrypt(item.aadhar) : item.aadhar,
+            pan: item?.pan ? cryptoDecrypt(item.pan) : item.pan,
+            aadhar: item?.aadhar ? cryptoDecrypt(item.aadhar) : item.aadhar,
           }));
 
           resolve(result);

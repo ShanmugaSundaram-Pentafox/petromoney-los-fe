@@ -33,6 +33,7 @@ build-uat:
     - export REACT_APP_ENV=$REACT_APP_ENV
     - export REACT_APP_CRYPT_KEY=$REACT_APP_CRYPT_KEY
     - export REACT_APP_API_BASE=$REACT_APP_API_BASE
+    - export REACT_APP_OTP_ONLY_DOMAINS=$REACT_APP_OTP_ONLY_DOMAINS
     - CI=''
     - yarn build
   artifacts:

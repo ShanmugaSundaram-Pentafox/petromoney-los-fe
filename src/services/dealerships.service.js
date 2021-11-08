@@ -40,7 +40,10 @@ export const getDealershipById = (id) => {
         if (status === "SUCCESS") {
           const result = data[0];
           if(result?.pan) {
-            result.pan = cryptoDecrypt(result.pan);
+            result.pan = decrypt(result.pan);
+          }
+          if(result?.gst) {
+            result.gst = decrypt(result.gst);
           }
           resolve(result);
         } else {

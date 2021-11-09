@@ -24,6 +24,7 @@ import { useMount } from "react-use";
 import Badge from '@material-ui/core/Badge';
 import { connect } from 'react-redux';
 import { resetCurrentUser } from '../../../store/user/user.actions';
+import { getMenuItemsCount } from '../../../services/common.service';
 // import { getAllWithheldLoans } from '../../../services/withheld.services';
 
 
@@ -102,33 +103,31 @@ const SidebarNav = props => {
   const classes = useStyles();
   const [checked, setChecked] = React.useState(false);
   const [tap, setTap] = React.useState(false);
-  const [withheldCount, setWithheldCount] = useState()
-  const [exceptions, setExceptions] = useState([]);
-  const [transException, setTransException] = useState([]);
+  const [count, setCount] = useState()
   const [check, setCheck] = React.useState(false);
   const [checkStatus, setCheckStatus] = useState(false);
   useMount(() => {
-    // getAllWithheldLoans()
-    //   .then((data) => {
-    //     setWithheldCount(data?.resolved?.length + data?.unresolved?.length)
-    //   })
-    //   .catch((e) => {
-    //     console.log(e);
-    //   });
-    getAllExceptions()
+    getMenuItemsCount()
       .then((data) => {
-        setExceptions(data)
+        setCount(data)
       })
       .catch((e) => {
         console.log(e);
       });
-    getTransportsExceptions()
-      .then((data) => {
-        setTransException(data)
-      })
-      .catch((e) => {
-        console.log(e)
-      })
+    // getAllExceptions()
+    //   .then((data) => {
+    //     setExceptions(data)
+    //   })
+    //   .catch((e) => {
+    //     console.log(e);
+    //   });
+    // getTransportsExceptions()
+    //   .then((data) => {
+    //     setTransException(data)
+    //   })
+    //   .catch((e) => {
+    //     console.log(e)
+    //   })
   });
   const handleChange = () => {
     setChecked((prev) => !prev);
@@ -237,7 +236,7 @@ const SidebarNav = props => {
                   to={'/withheld'}
                   exact
                 >
-                  <Badge badgeContent={withheldCount} style={{ paddingTop: 2, paddingRight: 8 }} max={999} color="primary">
+                  <Badge badgeContent={count?.withheld} style={{ paddingTop: 2, paddingRight: 8 }} max={999} color="primary">
                     <div className={classes.icon}><BookmarkBorderIcon /></div>
                     {'Withheld'}
                   </Badge>
@@ -365,8 +364,10 @@ const SidebarNav = props => {
                     to={'/reports/overdue'}
                     exact
                   >
-                    <div className={classes.icon}><ReportProblemIcon /></div>
-                    {'Loan Overdue'}
+                    <Badge badgeContent={count?.over_due} max={999} color="primary">
+                      <div className={classes.icon}><ReportProblemIcon /></div>
+                      {'Loan Overdue'}
+                    </Badge>
                   </Button>
                 </ListItem>
               </Collapse>
@@ -412,7 +413,7 @@ const SidebarNav = props => {
                     to={'/loans/exceptions'}
                     exact
                   >
-                    <Badge badgeContent={exceptions.length} max={999} color="primary">
+                    <Badge badgeContent={count?.loan_exception} max={999} color="primary">
                       <div className={classes.icon}><AssessmentOutlinedIcon /></div>
                       Loans &nbsp;
                     </Badge>
@@ -430,7 +431,7 @@ const SidebarNav = props => {
                     to={'/transport/exceptions'}
                     exact
                   >
-                    <Badge badgeContent={transException.length} max={999} color="primary">
+                    <Badge badgeContent={count?.transporter_exception} max={999} color="primary">
                       <div className={classes.icon}><AssessmentOutlinedIcon /></div>
                       Transports &nbsp;
                     </Badge>
@@ -477,7 +478,7 @@ const SidebarNav = props => {
                     to={'/passbook'}
                     exact
                   >
-                    <Badge badgeContent={exceptions.length} max={999} color="primary">
+                    <Badge badgeContent={count?.loan_exception} max={999} color="primary">
                       <div className={classes.icon}><AssessmentOutlinedIcon /></div>
                       Dealer Passbook &nbsp;
                     </Badge>
@@ -495,7 +496,7 @@ const SidebarNav = props => {
                     to={'/transport/fastag/details'}
                     exact
                   >
-                    <Badge badgeContent={transException.length} max={999} color="primary">
+                    <Badge badgeContent={count?.transporter_exception} max={999} color="primary">
                       <div className={classes.icon}><AssessmentOutlinedIcon /></div>
                       Transport Passbook &nbsp;
                     </Badge>

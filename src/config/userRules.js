@@ -14,6 +14,7 @@ export const rulesList = {
   "settings_view": "settings:view",
   "credit_view": "credit:view",
   "pdr_view": "sales:view",
+  "upload_statement": "upload:statement"
 }
 
 export const rulesForUserRoles = {
@@ -71,6 +72,7 @@ export const rulesForUserRoles = {
       rulesList.settings_view,
       rulesList.credit_view,
       rulesList.pdr_view,
+      rulesList.upload_statement,
     ]
   },
   CREDIT_EXEC: {

@@ -24,6 +24,7 @@ import TextInput from '../../../components/TextInput/TextInput';
 import { Select } from '@material-ui/core';
 import apiCall from '../../../utils/api.util';
 import { useSnackbar } from 'notistack';
+import { useQuery } from 'react-query';
 
 
 const useStyles = makeStyles({
@@ -40,7 +41,7 @@ const useStyles = makeStyles({
   },
 });
 
-const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
+const LoansList = ({ id, currentUser, titleAlign }) => {
   const classes = useStyles();
   const [data, setLoansData] = useState();
   const [loading, setLoading] = useState(false);
@@ -49,6 +50,8 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
   const [status, setStatus] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState();
   const { enqueueSnackbar } = useSnackbar();
+  const dealerData = useQuery(['dealership-info', id], () => getDealershipLoansById(id))
+
 
   useEffect(() => {
     getDealershipLoansById(id)
@@ -57,14 +60,14 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
     getApplicationStatusById(id)
       .then(data => {
         setStatus(data)
-        if (dealerData[0].application_state_id) {
-          const re = data.find(d => d.id == dealerData[0].application_state_id)
+        if (dealerData?.data[0].application_state_id) {
+          const re = data.find(d => d.id == dealerData?.data[0].application_state_id)
           setSelectedStatus({ ...re, disabled: status !== "loan_approval" } || {})
         }
       })
       .catch(e => null)
 
-  }, [dealerData]);
+  }, [dealerData?.data]);
 
   const processLoan = loan => {
     let status, remarksObj = {};

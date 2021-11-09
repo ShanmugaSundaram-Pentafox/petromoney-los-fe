@@ -82,7 +82,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
   const [regionList, setRegionList] = useState([]);
 
   const { enqueueSnackbar } = useSnackbar();
-
   const { values, errors, handleChange: onChange, handleSubmit, setFieldValue } = useFormik({
     initialValues: { ...data },
     validateOnChange: false,
@@ -104,7 +103,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
       gst: Yup.string().nullable('Enter GST').matches(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/, "Invalid GST").required("Enter GST").uppercase(),
 
     }),
-    onSubmit: values => {      
+    onSubmit: values => {
       // console.log('Form Values >> ', values.id);
       // let gst = values?.gst ? encrypt(values.gst) : values?.gst;
       values.name = values.name.toUpperCase();
@@ -127,9 +126,9 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
       }
       const formData = new FormData();
       Object.keys(obj).forEach(key => {
-        if(key === 'pan'){
+        if (key === 'pan') {
           let pan = values?.pan ? cryptoEncrypt(values.pan) : values?.pan;
-          formData.append(key, pan)          
+          formData.append(key, pan)
         } else {
           formData.append(key, obj[key]);
         }

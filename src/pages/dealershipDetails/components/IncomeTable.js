@@ -124,6 +124,8 @@ const IncomeTable = ({ id, editable, currentUser }) => {
     // const objBody = {
     //   user_id: currentUser.id, ...rowData
     // }
+    console.log("row data >>", rowData)
+    console.log("values >>", values)
     const data = { ...rowData, business_name: rowData?.business_name?.toUpperCase() }
     updateDealershipIncomeById(id, data)
       .then(res => {

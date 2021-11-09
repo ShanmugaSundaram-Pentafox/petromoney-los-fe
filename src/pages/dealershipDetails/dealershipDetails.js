@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/styles";
 // import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
@@ -41,6 +41,7 @@ import {
   useRouteMatch,
   useParams,
 } from 'react-router-dom'
+import { useQuery } from "react-query";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -86,27 +87,31 @@ const DealershipDetails = ({ currentUser, match }) => {
   const classes = useStyles();
   const [activeTab, setActiveTab] = useState(0);
   const [solarTab, setSolarTab] = useState(-1);
-  const [dealershipData, setDealershipData] = useState();
-  const [dealersData, setDealersData] = useState();
-  const [mainApplicant, setMainApplicant] = useState({})
   const [showCreditReport, setShowCreditReport] = useState();
   const [showSolarForm, setShowSolarForm] = useState();
   const [leegalityModalVisible, setLeegalityModalVisible] = useState(false);
-  const [dealerLoanData, setDealerLoanData] = useState();
   const history = useHistory();
   const {
     url,
     params: { id },
   } = match;
+  const dealershipData = useQuery(['dealership-info', id], () => getDealershipById(id))
+  const mainApplicant = useQuery(['main-applicant-data', id], () => getDealersByDealershipId(id), {
+    cacheTime: 500000,
+    select: (data) => {
+      const ap = data.find(item => item.is_main_applicant);
+      return ap;
 
+    }
+  })
   const onChangeTab = (e, newTab) => {
     setActiveTab(newTab);
     history.replace(`?t=${newTab}`)
   }
 
-  const onChangeSolarTab = (e, newTab) => {
-    setSolarTab(newTab);
-  }
+  // const onChangeSolarTab = (e, newTab) => {
+  //   setSolarTab(newTab);
+  // }
 
   const toggleCreditReport = () => {
     setShowCreditReport(!showCreditReport);
@@ -114,32 +119,34 @@ const DealershipDetails = ({ currentUser, match }) => {
 
   useMount(() => {
     const queryString = window.location.hash;
-    const test = queryString.split('='); 
+    const test = queryString.split('=');
     setActiveTab(toInteger(test[1]))
-    getDealershipById(id)
-      .then((data) => setDealershipData(data))
-      .catch((e) => null);
-    getDealershipLoansById(id)
-      .then(data => setDealerLoanData(data))
-      .catch(e => null)
-    getDealersByDealershipId(id)
-      .then((data) => {
-        setDealersData(data);
-        const ap = data.find(item => item.is_main_applicant);
-        setMainApplicant(ap);
-      })
-      .catch((e) => null);
+    // getDealershipLoansById(id)
+    //   .then(data => setDealerLoanData(data))
+    //   .catch(e => null)
+    // getDealersByDealershipId(id)
+    //   .then((data) => {
+    //     setDealersData(data);
+    //     const ap = data.find(item => item.is_main_applicant);
+    //     setMainApplicant(ap);
+    //   })
+    //   .catch((e) => null);
   });
   let cardData = [
-    { label: 'Dealership ID', value: dealershipData?.id },
-    { label: 'Business name', value: dealershipData?.name },
-    { label: 'Dealer name', value: mainApplicant?.first_name },
-    { label: 'Mobile', value: mainApplicant?.mobile },
-    { label: 'Email', value: mainApplicant?.email }
+    { label: 'Dealership ID', value: dealershipData?.data?.id },
+    { label: 'Business name', value: dealershipData?.data?.name },
+    { label: 'Dealer name', value: mainApplicant?.data?.first_name },
+    { label: 'Mobile', value: mainApplicant?.data?.mobile },
+    { label: 'Email', value: mainApplicant?.data?.email }
   ]
   usePageTitle(`${id} - ${dealershipData && (dealershipData.name || '')} `, true, cardData)
   return (
     <div>
+      {/* {
+        data?.data.map(item =>{
+          return <h2>{item}</h2>
+        })
+      } */}
       {/* <Grid container spacing={2}>
         <Grid item xs={6} sm={4}>
           <InfoCard
@@ -231,8 +238,8 @@ const DealershipDetails = ({ currentUser, match }) => {
           </div> */}
         </div>
         <TabPanel activeTab={activeTab} index={0}>
-          {dealershipData && (
-            <DealershipInfo data={dealershipData} currentUser={currentUser} toggleCreditReport={toggleCreditReport} />
+          {dealershipData.data && (
+            <DealershipInfo data={dealershipData.data} currentUser={currentUser} toggleCreditReport={toggleCreditReport} />
           )}
         </TabPanel>
         <TabPanel activeTab={activeTab} index={1}>
@@ -245,10 +252,10 @@ const DealershipDetails = ({ currentUser, match }) => {
           <SalesInfo id={id} titleAlign="left" currentUser={currentUser} column />
         </TabPanel>
         <TabPanel activeTab={activeTab} index={4}>
-          <LoansList id={id} titleAlign="left" currentUser={currentUser} dealerData={dealerLoanData} />
+          <LoansList id={id} titleAlign="left" currentUser={currentUser}  />
         </TabPanel>
         <TabPanel activeTab={activeTab} index={5}>
-          <PersonalDiscussionReport id ={id} textAlign="left" currentUser={currentUser} />
+          <PersonalDiscussionReport id={id} textAlign="left" currentUser={currentUser} />
         </TabPanel>
         <TabPanel activeTab={activeTab} index={6}>
           <DealershipDoc id={id} currentUser={currentUser} />

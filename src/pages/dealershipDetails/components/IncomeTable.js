@@ -126,8 +126,8 @@ const IncomeTable = ({ id, editable, currentUser }) => {
     //   user_id: currentUser.id, ...rowData
     // }
     const data = { ...rowData, business_name: rowData?.business_name?.toUpperCase() }
-    const test = compareObject(income[rowIndex], data)
-    const fields = {...test, id: rowData.id}
+    const obj = compareObject(income[rowIndex], data)
+    const fields = {...obj, id: rowData.id}
     updateDealershipIncomeById(id, fields)
       .then(res => {
         setIncome(res);

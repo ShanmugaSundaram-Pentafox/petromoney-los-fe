@@ -21,6 +21,7 @@ import { getDealershipIncomeById, postDealershipIncomeById, updateDealershipInco
 import { getDealersWithCoapplicants } from '../../../services/dealers.service';
 import { useFormik } from 'formik';
 import { getBusinessTypes } from '../../../services/common.service';
+import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -125,7 +126,9 @@ const IncomeTable = ({ id, editable, currentUser }) => {
     //   user_id: currentUser.id, ...rowData
     // }
     const data = { ...rowData, business_name: rowData?.business_name?.toUpperCase() }
-    updateDealershipIncomeById(id, data)
+    const test = compareObject(income[rowIndex], data)
+    const fields = {...test, id: rowData.id}
+    updateDealershipIncomeById(id, fields)
       .then(res => {
         setIncome(res);
         setLoading(false);

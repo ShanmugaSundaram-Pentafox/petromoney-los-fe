@@ -26,6 +26,7 @@ export const rulesForUserRoles = {
       rulesList.dealership_credit_view,
       rulesList.credit_view,
       rulesList.pdr_view,
+      rulesList.upload_statement,
     ]
   },
   CDO: {
@@ -36,6 +37,7 @@ export const rulesForUserRoles = {
       rulesList.dealership_credit_view,
       rulesList.credit_view,
       rulesList.pdr_view,
+      rulesList.upload_statement,
     ]
   },
   CFO: {
@@ -48,6 +50,7 @@ export const rulesForUserRoles = {
       rulesList.dealership_credit_edit,
       rulesList.credit_view,
       rulesList.pdr_view,
+      rulesList.upload_statement,
     ]
   },
   CREDIT_HEAD: {
@@ -57,6 +60,7 @@ export const rulesForUserRoles = {
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
       rulesList.credit_view,
+      rulesList.upload_statement,
     ]
   },
   ADMIN: {
@@ -84,6 +88,7 @@ export const rulesForUserRoles = {
       rulesList.dealer_credit_edit,
       rulesList.dealership_credit_edit,
       rulesList.credit_view,
+      rulesList.upload_statement,
     ]
   },
   OPS_EXEC: {
@@ -93,6 +98,7 @@ export const rulesForUserRoles = {
       rulesList.dealership_credit_view,
       rulesList.credit_view,
       rulesList.pdr_view,
+      rulesList.upload_statement,
     ]
   },
   OPS_MANAGER: {
@@ -102,6 +108,7 @@ export const rulesForUserRoles = {
       rulesList.dealership_credit_view,
       rulesList.credit_view,
       rulesList.pdr_view,
+      rulesList.upload_statement,
     ]
   },
   CREDIT: {
@@ -112,6 +119,7 @@ export const rulesForUserRoles = {
       rulesList.dealer_credit_edit,
       rulesList.dealership_credit_edit,
       rulesList.credit_view,
+      rulesList.upload_statement,
     ]
   },
   SALES_HEAD_STATE: {
@@ -120,6 +128,7 @@ export const rulesForUserRoles = {
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
       rulesList.pdr_view,
+      rulesList.upload_statement,
     ]
   },
   SALES_HEAD_REGIONAL: {
@@ -128,6 +137,7 @@ export const rulesForUserRoles = {
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
       rulesList.pdr_view,
+      rulesList.upload_statement,
     ]
   },
   FIELD_OFFICER: {
@@ -137,6 +147,7 @@ export const rulesForUserRoles = {
       rulesList.dealership_credit_view,
       rulesList.credit_view,
       rulesList.pdr_view,
+      rulesList.upload_statement,
     ]
   },
   DEALER: {

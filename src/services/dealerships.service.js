@@ -1,6 +1,6 @@
 import { URL } from "../config/serverUrls";
 import apiCall from "../utils/api.util";
-import { cryptoDecrypt } from "./crypto.service";
+import { cryptoDecrypt, decrypt } from "./crypto.service";
 
 export const getAllDealership = () => {
   return new Promise((resolve, reject) => {
@@ -11,7 +11,10 @@ export const getAllDealership = () => {
             let pan = item.pan;
             let gst = item.gst;
             if(pan) {
-              pan = cryptoDecrypt(pan)
+              pan = decrypt(pan)
+            }
+            if(gst) {
+              gst = decrypt(gst)
             }
             return {
               ...item,
@@ -37,7 +40,10 @@ export const getDealershipById = (id) => {
         if (status === "SUCCESS") {
           const result = data[0];
           if(result?.pan) {
-            result.pan = cryptoDecrypt(result.pan);
+            result.pan = decrypt(result.pan);
+          }
+          if(result?.gst) {
+            result.gst = decrypt(result.gst);
           }
           resolve(result);
         } else {

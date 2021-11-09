@@ -9,8 +9,8 @@ export const getDealersByDealershipId = id => {
         if (status === "SUCCESS") {
           const result = data.map(item => ({
             ...item,
-            pan: item?.pan ? cryptoDecrypt(item.pan) : item.pan,
-            aadhar: item?.aadhar ? cryptoDecrypt(item.aadhar) : item.aadhar,
+            pan: item?.pan ? decrypt(item.pan) : item.pan,
+            aadhar: item?.aadhar ? decrypt(item.aadhar) : item.aadhar,
           }));
 
           resolve(result || []);
@@ -31,8 +31,8 @@ export const getCoApplicantByDealershipId = id => {
         if (status === "SUCCESS") {
           const result = data.map(item => ({
             ...item,
-            pan: item?.pan ? cryptoDecrypt(item.pan) : item.pan,
-            aadhar: item?.aadhar ? cryptoDecrypt(item.aadhar) : item.aadhar,
+            pan: item?.pan ? decrypt(item.pan) : item.pan,
+            aadhar: item?.aadhar ? decrypt(item.aadhar) : item.aadhar,
           }));
           resolve(result || []);
         } else {

@@ -460,7 +460,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values = {}, erro
   useMount(() => {
     getDealershipFinancialsById(id)
       .then(res => {
-        setFinanceData(res);
+        // setFinanceData(res);
         const d = (res[0] || {}).to_year == 2020 && type == 'latest_fy' ? res[0] : res[1];
         setFinanceData(d || {});
       })
@@ -481,7 +481,9 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values = {}, erro
     // TODO: need to add validation
     postDealershipFinancialsById(id, { type, user_id: currentUser.id, ...financeData })
       .then(res => {
-        setFinanceData(res)
+        // setFinanceData(res)
+        const d = (res[0] || {}).to_year == 2020 && type == 'latest_fy' ? res[0] : res[1];
+        setFinanceData(d || {});
       })
       .catch(err => {
         console.log('Finance form save error - ', type, err)

@@ -2,12 +2,15 @@ import { URL } from "../config/serverUrls"
 import { getDealershipLoansById } from "./dealerships.service";
 import apiCall from "../utils/api.util";
 
-export const getLoanStats = (qryStr={}) => {
+export const getLoanStats = (qryStr = {}) => {
   return new Promise((resolve, reject) => {
     const { region, from, to } = qryStr;
-    let apiUrl = `metrics/loan/stats?region=${region}`;
+    let apiUrl = `metrics/loan/stats`;
     if (from && to) {
       apiUrl = `metrics/loan/stats?region=${region}&from=${from}&to=${to}`;
+    }
+    else if (region) {
+      apiUrl = `metrics/loan/stats?region=${region}`;
     }
     apiCall(apiUrl)
       .then(({ status, data, message }) => {

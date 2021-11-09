@@ -99,19 +99,19 @@ const LoanStats = ({ selectedStatsCard, handleClick }) => {
       case 'W':
         setSelectedPeriod({
           from: subDays(new Date(), 8),
-          to: subDays(new Date(), 1),
+          to: new Date(),
         })
         break;
       case 'M':
         setSelectedPeriod({
           from: new Date(new Date().getFullYear(), new Date().getMonth()),
-          to: subDays(new Date(), 1),
+          to: new Date(),
         })
         break;
       case 'Y':
         setSelectedPeriod({
           from: new Date(new Date().getFullYear(), 0),
-          to: subDays(new Date(), 1),
+          to: new Date(),
         })
         break;
       case 'UTD':

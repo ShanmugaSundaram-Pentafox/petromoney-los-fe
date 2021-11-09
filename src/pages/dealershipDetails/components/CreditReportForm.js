@@ -506,8 +506,7 @@ const FinanceFormData = ({ id, editable, btnLabel, data, values = {}, errors, cu
     // TODO: need to add validation
     postDealershipFinancialsById(id, { from_year: data[0], to_year: data[1], user_id: currentUser.id, ...financeData })
       .then(res => {
-        console.log(res)
-        // // setFinanceData(res)
+        setFinanceData(res)
         // const d = (res[0] || {}).to_year == 2020 && type == 'latest_fy' ? res[0] : res[1];
         // setFinanceData(d || {});
       })

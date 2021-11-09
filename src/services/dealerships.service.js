@@ -317,7 +317,6 @@ export const getDealershipFinancialsById = (id, from, to) => {
 };
 
 export const postDealershipFinancialsById = (id, body) => {
-  console.log("body >>>>>>>>>>>>>>>>", body)
   return new Promise((resolve, reject) => {
     // API.post(`${URL.dealership}/${id}/financials`, body)
     apiCall(`${URL.dealership}/${id}/financials`, {

@@ -10,10 +10,10 @@ export const getAllDealership = () => {
           const result = data.map((item, i) => {
             let pan = item.pan;
             let gst = item.gst;
-            if(pan) {
+            if (pan) {
               pan = decrypt(pan)
             }
-            if(gst) {
+            if (gst) {
               gst = decrypt(gst)
             }
             return {
@@ -39,10 +39,10 @@ export const getDealershipById = (id) => {
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           const result = data[0];
-          if(result?.pan) {
+          if (result?.pan) {
             result.pan = decrypt(result.pan);
           }
-          if(result?.gst) {
+          if (result?.gst) {
             result.gst = decrypt(result.gst);
           }
           resolve(result);
@@ -299,10 +299,10 @@ export const deleteDealershipDocument = (data, id) => {
 
 
 
-export const getDealershipFinancialsById = (id) => {
+export const getDealershipFinancialsById = (id, from, to) => {
   return new Promise((resolve, reject) => {
     // API.get(`${URL.dealership}/${id}/financials`)
-    apiCall(`${URL.dealership}/${id}/financials`)
+    apiCall(`${URL.dealership}/${id}/financials?from_year=${from}&to_year=${to}`)
       .then(({ data, status, message }) => {
         if (status === "SUCCESS") {
           resolve(data);
@@ -317,6 +317,7 @@ export const getDealershipFinancialsById = (id) => {
 };
 
 export const postDealershipFinancialsById = (id, body) => {
+  console.log("body >>>>>>>>>>>>>>>>", body)
   return new Promise((resolve, reject) => {
     // API.post(`${URL.dealership}/${id}/financials`, body)
     apiCall(`${URL.dealership}/${id}/financials`, {
@@ -325,7 +326,7 @@ export const postDealershipFinancialsById = (id, body) => {
     })
       .then(async ({ status, data, message }) => {
         if (status === "SUCCESS") {
-          const res = await getDealershipFinancialsById(id);
+          const res = await getDealershipFinancialsById(id, body.from_year, body.to_year);
           resolve(res);
         } else {
           reject(message);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
 import Grid from '@material-ui/core/Grid';
@@ -17,6 +17,7 @@ import ExpensesTable from './ExpensesTable';
 import IncomeTable from './IncomeTable';
 import { postDealershipFinancialsById, getDealershipFinancialsById } from '../../../services/dealerships.service';
 import { useMount } from 'react-use';
+import { split } from 'lodash-es';
 
 const useStyles = makeStyles(theme => ({
   row: {
@@ -78,13 +79,27 @@ const Row = ({ text, value, children }) => {
 }
 
 const CreditReportForm = ({ id, editable, data, values, errors, onChange, setValues, currentUser, loading, onSubmit }) => {
+  const [financeData, setFinanceData] = useState()
+  const [financialYear, setFinancialYear] = useState([])
   const classes = useStyles();
   const gridItem = {
     md: 12,
     item: true,
     className: classes.row
   };
-
+  useEffect(() => {
+    const fy = values.financial_year ? values.financial_year?.split('_') : ['2020', '2021']
+    setFinancialYear(fy)
+    if (fy) {
+      getDealershipFinancialsById(id, fy[0], fy[1])
+        .then(res => {
+          setFinanceData(res || {});
+        })
+        .catch(err => {
+          console.log('Finance data fetch error - ', err)
+        })
+    }
+  }, [values?.financial_year])
   return (
     <Grid container>
       <Grid {...gridItem}>
@@ -150,31 +165,47 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
             </Table> */}
           </Grid>
           <Grid {...gridItem} md={12}>
-            <Grid {...gridItem}>
+            <Grid {...gridItem} md={6}>
               <TextInput
                 select
-                readOnly
+                // readOnly
                 label="Latest Financial Year"
-                name="latest_fy"
-                value={`${values.from_year}_${values.to_year}`}
+                name="financial_year"
+                value={values.financial_year}
+                data={financialYear}
                 onChange={onChange}
                 SelectProps={{
                   native: true,
                 }}
               >
-                <option value=" ">Choose FY</option>
-                <option value="2021_2022">FY 2021-2022</option>
+                {/* <option value="2019_2020">Choose FY</option> */}
                 <option value="2020_2021">FY 2020-2021</option>
                 <option value="2019_2020">FY 2019-2020</option>
+                <option value="2018_2019">FY 2018-2019</option>
               </TextInput>
             </Grid>
-            <FinanceFormData
+            {
+              financeData && (
+                <FinanceFormData
+                  id={id}
+                  // type={'previous_fy'}
+                  data={financialYear}
+                  values={financeData || {}}
+                  errors={errors}
+                  editable={editable}
+                  btnLabel={'Financial data'}
+                  currentUser={currentUser}
+                />
+              )
+            }
+
+            {/* <FinanceFormData
               data={data.latest_fy}
               values={values.latest_fy || {}}
               errors={errors}
               btnLabel={'Latest FY'}
             // onSave={v => saveFinanceData('latest_fy', v)}
-            />
+            /> */}
           </Grid>
           {/* <Grid {...gridItem} md={6}>
             <Grid {...gridItem}>
@@ -450,27 +481,18 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
   )
 }
 
-const FinanceFormData = ({ id, editable, type, data, btnLabel, values = {}, errors, currentUser }) => {
+const FinanceFormData = ({ id, editable, btnLabel, data, values = {}, errors, currentUser }) => {
   const classes = useStyles();
-  const [financeData, setFinanceData] = useState(values);
+  const [financeData, setFinanceData] = useState();
   const [financeErrors, setFinanceErrors] = useState({});
   const gridItem = {
     md: 6,
     item: true,
     className: classes.row
   };
-
-  useMount(() => {
-    getDealershipFinancialsById(id)
-      .then(res => {
-        // setFinanceData(res);
-        const d = (res[0] || {}).to_year == 2020 && type == 'latest_fy' ? res[0] : res[1];
-        setFinanceData(d || {});
-      })
-      .catch(err => {
-        console.log('Finance data fetch error - ', type, err)
-      })
-  })
+  useEffect(() => {
+    setFinanceData(values[0])
+  }, [values])
 
   const onTextChange = e => {
     const { name, value } = e.target;
@@ -482,19 +504,20 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values = {}, erro
 
   const validateFinanceData = () => {
     // TODO: need to add validation
-    postDealershipFinancialsById(id, { type, user_id: currentUser.id, ...financeData })
+    postDealershipFinancialsById(id, { from_year: data[0], to_year: data[1], user_id: currentUser.id, ...financeData })
       .then(res => {
-        // setFinanceData(res)
-        const d = (res[0] || {}).to_year == 2020 && type == 'latest_fy' ? res[0] : res[1];
-        setFinanceData(d || {});
+        console.log(res)
+        // // setFinanceData(res)
+        // const d = (res[0] || {}).to_year == 2020 && type == 'latest_fy' ? res[0] : res[1];
+        // setFinanceData(d || {});
       })
       .catch(err => {
-        console.log('Finance form save error - ', type, err)
+        console.log('Finance form save error - ', err)
       })
   }
 
   return (
-    <Grid container>
+    <Grid container spacing={1}>
       <Grid {...gridItem}>
         <Grid item>
           <TextInput
@@ -503,7 +526,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values = {}, erro
             label="Turnover"
             name="turnover"
             type="number"
-            value={financeData.turnover || ""}
+            value={financeData?.turnover || ""}
             onChange={onTextChange}
           />
         </Grid>
@@ -515,7 +538,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values = {}, erro
           label="Net Profit before Tax"
           name="net_profit"
           type="number"
-          value={financeData.net_profit || ""}
+          value={financeData?.net_profit || ""}
           onChange={onTextChange}
         />
       </Grid>
@@ -526,7 +549,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values = {}, erro
           label="NP %"
           name="net_profit_percentage"
           type="number"
-          value={((financeData.net_profit_percentage || 0) * 100) || ""}
+          value={((financeData?.net_profit_percentage || 0) * 100) || ""}
           onChange={onTextChange}
         />
       </Grid>
@@ -537,7 +560,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values = {}, erro
           label="NP % Change"
           name="net_profit_change_percentage"
           type="number"
-          value={financeData.net_profit_change_percentage || ""}
+          value={financeData?.net_profit_change_percentage || ""}
           onChange={onTextChange}
         />
       </Grid>
@@ -548,7 +571,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values = {}, erro
           label="Income tax for the year"
           name="it_paid"
           type="number"
-          value={financeData.it_paid || ""}
+          value={financeData?.it_paid || ""}
           onChange={onTextChange}
         />
       </Grid>
@@ -559,7 +582,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values = {}, erro
           label="Net Worth (Equity + Reserves)"
           name="networth"
           type="number"
-          value={financeData.networth || ""}
+          value={financeData?.networth || ""}
           onChange={onTextChange}
         />
       </Grid>
@@ -570,7 +593,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values = {}, erro
           label="Value if assets owned by family members"
           name="assets_value"
           type="number"
-          value={financeData.assets_value || ""}
+          value={financeData?.assets_value || ""}
           onChange={onTextChange}
         />
       </Grid>
@@ -581,7 +604,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values = {}, erro
           label="Total loan amount outstanding"
           name="loan_os"
           type="number"
-          value={financeData.loan_os || ""}
+          value={financeData?.loan_os || ""}
           onChange={onTextChange}
         />
       </Grid>
@@ -592,7 +615,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values = {}, erro
           label="Leverage (No of Times)"
           name="leverage"
           type="number"
-          value={financeData.leverage || ""}
+          value={financeData?.leverage || ""}
           onChange={onTextChange}
         />
       </Grid>
@@ -601,7 +624,7 @@ const FinanceFormData = ({ id, editable, type, data, btnLabel, values = {}, erro
       </Grid> */}
       {
         editable && (
-          <Grid {...gridItem} className={classes.lastRow}>
+          <Grid {...gridItem} className={classes.lastRow} md={12}>
             <Button
               variant="contained"
               className={classes.btnSuccess}

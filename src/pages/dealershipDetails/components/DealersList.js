@@ -15,6 +15,8 @@ import { rulesList } from '../../../config/userRules';
 import GuarantorsTable from './GuarantorsTable';
 import { getAllGuarantor } from '../../../services/leegality.service';
 import { get } from 'lodash-es';
+import { useQuery } from 'react-query';
+import { de } from 'date-fns/locale';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -74,39 +76,38 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   const [formType, setFormType] = useState('');
   const [modelType, setModelType] = useState('');
   const [rowData, setRowData] = useState({});
-  const [dealerData, setDealersData] = useState([]);
-  const [coApplicantsData, setCoApplicantsData] = useState([]);
-  const [guarantorsData, setGuarantorsData] = useState([]);
-  const [dealerCoApplicantData, setDealerCoApplicantData] = useState([]);
+  const coApplicantsData = useQuery(['co-applicants', id], () => getCoApplicantByDealershipId(id))
+  const dealerData = useQuery(['dealers-coapplicant', id], () => getDealersByDealershipId(id))
+  const guarantorsData = useQuery(['guarantors', id], () => getAllGuarantor(id))
 
-  const getCoApplicantApiCall = (id) => {
-    getCoApplicantByDealershipId(id)
-      .then(data => {
-        setCoApplicantsData(data);
-        setDealerCoApplicantData(prevArray => [...prevArray, ...data]);
-      })
-      .catch(e => null)
-  }
 
+  // const getCoApplicantApiCall = (id) => {
+  //   getCoApplicantByDealershipId(id)
+  //     .then(data => {
+  //       setCoApplicantsData(data);
+  //       setDealerCoApplicantData(prevArray => [...prevArray]);
+  //     })
+  //     .catch(e => null)
+  // }
   const getDealerApiCall = (id) => {
     getDealersByDealershipId(id)
       .then(data => {
         setDealersData(data);
-        setDealerCoApplicantData(prevArray => [...prevArray, ...data]);
+        setDealerCoApplicantData(prevArray => [...prevArray]);
       })
       .catch(e => null)
   }
-  const getGuarantorApiCall = () => {
-    getAllGuarantor(id)
-      .then(data => {
-        setGuarantorsData(data);
-      })
-  }
+  // const getGuarantorApiCall = () => {
+  //   getAllGuarantor(id)
+  //     .then(data => {
+  //       setGuarantorsData(data);
+  //     })
+  // }
 
   useMount(() => {
     getDealerApiCall(id);
-    getCoApplicantApiCall(id);
-    getGuarantorApiCall(id);
+    // getCoApplicantApiCall(id);
+    // getGuarantorApiCall(id);
   });
 
   const openCloseCreditForm = () => {
@@ -159,7 +160,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
       <DealersTable
         id={id}
         editable={editable}
-        data={dealerData}
+        data={dealerData.data}
         formType={formType}
         rowData={rowData}
         titleAlign={titleAlign}
@@ -175,7 +176,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         id={id}
         editable={editable}
         titleAlign={titleAlign}
-        coApplicantsData={coApplicantsData}
+        coApplicantsData={coApplicantsData.data}
         formType={formType}
         rowData={rowData}
         titleAlign={titleAlign}
@@ -191,7 +192,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         id={id}
         editable={editable}
         titleAlign={titleAlign}
-        guarantorsData={guarantorsData}
+        guarantorsData={guarantorsData.data}
         formType={formType}
         rowData={rowData}
         titleAlign={titleAlign}
@@ -229,7 +230,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         <div className={classes.sidePanelWrapper}>
           <DealerEditSideWrapper
             getDealerApiCall={getDealerApiCall}
-            dealersList={dealerData}
+            dealersList={dealerData?.data}
             getCoApplicantApiCall={getCoApplicantApiCall}
             isAdd={formType}
             modelType={modelType}
@@ -241,7 +242,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
       </Drawer>
 
       {
-        editable && ((dealerData || []).length != 0 || (coApplicantsData || []).length != 0 || (guarantorsData || []).length != 0) && (
+        editable && ((dealerData?.data || []).length != 0 || (coApplicantsData?.data || []).length != 0 || (guarantorsData?.data || []).length != 0) && (
           <div className={classes.footer}>
             <div className={classes.actionButtons}>
               <Button color="primary" variant="contained" size="small" onClick={() => openCloseCreditForm()}>View/Edit Credit Information</Button>
@@ -252,7 +253,10 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
               variant="temporary"
             >
               <div className={classes.sidePanelWrapper}>
-                <CreditInfoSideWrapper dealershipId={id} data={dealerCoApplicantData} currentUser={currentUser} onClose={() => openCloseCreditForm()} />
+                {
+                  !dealerData?.isLoading && !coApplicantsData?.isLoading &&
+                  <CreditInfoSideWrapper dealershipId={id} data={[...dealerData.data, ...coApplicantsData.data]} currentUser={currentUser} onClose={() => openCloseCreditForm()} />
+                }
               </div>
             </Drawer>
           </div>

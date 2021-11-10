@@ -19,13 +19,14 @@ import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 import apiCall from '../../../utils/api.util';
+import { useQuery } from 'react-query';
 
 const useStyles = makeStyles(theme => ({
   sidePanelTitle: {
     textAlign: 'center',
     padding: '12px 16px',
-    display:'flex',
-    justifyContent:'space-between',
+    display: 'flex',
+    justifyContent: 'space-between',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
@@ -107,6 +108,7 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
   const [loading, setLoading] = useState(false);
   const [apiData, setApiData] = useState({});
   const [apiStatus, setApiStatus] = useState({});
+  // const apiData = useQuery(['credit-report', dealershipId,getCreditReport
 
   const getCreditReport = () => {
     apiCall(`${URL.dealership}/${dealershipId}/credit/report`)
@@ -131,7 +133,7 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
     initialValues: initObject,
     onSubmit: values => {
       // console.log('Form Values >> ', values);
-      if(isEqual(values, initObject)) {
+      if (isEqual(values, initObject)) {
         setApiStatus({ type: 'info', message: 'No changes made! Kindly make any change before submitting.' })
         setTimeout(() => {
           setApiStatus({})
@@ -177,7 +179,7 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
   return (
     <div className={classes.sidePanelFormWrapper}>
       <div className={classes.title}>
-        <Typography  variant="h4">Dealership credit report</Typography>
+        <Typography variant="h4">Dealership credit report</Typography>
         {/* <CloseRoundedIcon onClick={onClose} /> */}
       </div>
 

@@ -101,7 +101,6 @@ const DealershipDetails = ({ currentUser, match }) => {
     select: (data) => {
       const ap = data.find(item => item.is_main_applicant);
       return ap;
-
     }
   })
   const onChangeTab = (e, newTab) => {
@@ -238,33 +237,57 @@ const DealershipDetails = ({ currentUser, match }) => {
           </div> */}
         </div>
         <TabPanel activeTab={activeTab} index={0}>
-          {dealershipData.data && (
+          {!dealershipData.isLoading && activeTab == 0 && (
             <DealershipInfo data={dealershipData.data} currentUser={currentUser} toggleCreditReport={toggleCreditReport} />
           )}
         </TabPanel>
         <TabPanel activeTab={activeTab} index={1}>
-          <DealersList id={id} titleAlign="left" currentUser={currentUser} />
+          {
+            activeTab == 1 &&
+            < DealersList id={id} titleAlign="left" currentUser={currentUser} />
+          }
         </TabPanel>
         <TabPanel activeTab={activeTab} index={2}>
-          <CreditReportSideWrapper dealershipId={id} data={{}} currentUser={currentUser} />
+          {
+            activeTab == 2 &&
+            <CreditReportSideWrapper dealershipId={id} data={{}} currentUser={currentUser} />
+          }
         </TabPanel>
         <TabPanel activeTab={activeTab} index={3}>
-          <SalesInfo id={id} titleAlign="left" currentUser={currentUser} column />
+          {
+            activeTab == 3 &&
+            <SalesInfo id={id} titleAlign="left" currentUser={currentUser} column />
+          }
         </TabPanel>
         <TabPanel activeTab={activeTab} index={4}>
-          <LoansList id={id} titleAlign="left" currentUser={currentUser}  />
+          {
+            activeTab == 4 &&
+            <LoansList id={id} titleAlign="left" currentUser={currentUser} />
+          }
         </TabPanel>
         <TabPanel activeTab={activeTab} index={5}>
-          <PersonalDiscussionReport id={id} textAlign="left" currentUser={currentUser} />
+          {
+            activeTab == 5 &&
+            <PersonalDiscussionReport id={id} textAlign="left" currentUser={currentUser} />
+          }
         </TabPanel>
         <TabPanel activeTab={activeTab} index={6}>
-          <DealershipDoc id={id} currentUser={currentUser} />
+          {
+            activeTab == 6 &&
+            <DealershipDoc id={id} currentUser={currentUser} />
+          }
         </TabPanel>
         <TabPanel activeTab={activeTab} index={7}>
-          <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
+          {
+            activeTab == 7 &&
+            <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
+          }
         </TabPanel>
         <TabPanel activeTab={activeTab} index={8}>
-          <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
+          {
+            activeTab == 8 &&
+            <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
+          }
         </TabPanel>
         <SolarEnquiryForm
           dealershipId={id}

@@ -8,7 +8,7 @@ import CardActions from '@material-ui/core/CardActions';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import TextInput from '../../../components/TextInput/TextInput';
-import { useFormik } from 'formik';
+import { setNestedObjectValues, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { URL } from '../../../config/serverUrls';
 import { logger } from '../../../config/logger';
@@ -28,6 +28,7 @@ import FileUpload from '../../../components/FileUpload';
 import { grey } from '@material-ui/core/colors';
 import { deleteDealershipDocument } from '../../../services/dealerships.service';
 import { compareObject } from '../../../utils/compareObject.util';
+import { useMutation, useQuery } from 'react-query';
 
 
 const useStyles = makeStyles(theme => ({
@@ -77,12 +78,13 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
   const [loading, setLoading] = useState();
   const [showUpload, setShowUpload] = useState(false);
   const [fileType, setFileType] = useState('');
-  const [businessTypes, setBusinessTypes] = useState([{}, {}, {}, {}, {}]);
-  const [states, setStates] = useState([]);
-  const [regionList, setRegionList] = useState([]);
-
+  const businessTypes = useQuery('business-types', getBusinessTypes, { cacheTime: 300000 })
+  const states = useQuery('state', getActiveStates, { cacheTime: 300000 })
   const { enqueueSnackbar } = useSnackbar();
-  const { values, errors, handleChange: onChange, handleSubmit, setFieldValue } = useFormik({
+  useEffect(() => {
+    setValues(data)
+  }, [data])
+  const { values, errors, handleChange: onChange, handleSubmit, setFieldValue, setValues } = useFormik({
     initialValues: { ...data },
     validateOnChange: false,
     validateOnBlur: true,
@@ -101,21 +103,14 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         .required('Enter PAN')
         .uppercase(),
       gst: Yup.string().nullable('Enter GST').matches(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/, "Invalid GST").required("Enter GST").uppercase(),
-
     }),
     onSubmit: values => {
-      // console.log('Form Values >> ', values.id);
-      // let gst = values?.gst ? encrypt(values.gst) : values?.gst;
       values.name = values.name.toUpperCase();
       values.gst = values.gst.toUpperCase();
       values.pan = values.pan.toUpperCase();
-      // let eDate = values.agreement_executed_on ? format(parse(values.agreement_executed_on, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : null;
-      // let vDate = values.agreement_valid_till ? format(parse(values.agreement_valid_till, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : null;
       const date_values = {
         ...values,
         name: values.name.toUpperCase(),
-        // agreement_valid_till: vDate,
-        // agreement_executed_on: eDate,
         gst: values.gst?.toUpperCase(),
         pan: values.pan?.toUpperCase()
       };
@@ -188,34 +183,33 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         })
     }
   });
-  useMount(() => {
-    getBusinessTypes()
-      .then(setBusinessTypes)
-      .catch(err => {
-        console.log('BusinessTypes fetch error - ', err)
-      })
-    getActiveStates()
-      .then(d => {
-        setStates([{ id: '', name: 'Choose State' }, ...d])
-        return d;
-      })
-      .then(d => {
-        let res = d.find(({ id }) => id === parseInt(values.state));
-
-        if (res) {
-          fetchRegions(parseInt(res.id));
-        }
-      })
-      .catch(err => {
-        console.log('BusinessTypes fetch error - ', err)
-      })
-
-  });
-  useEffect(() => {
-    if (values.state) {
-      fetchRegions(parseInt(values.state));
-    }
-  }, [values.state])
+  const getRegion = useQuery(['region', values?.state], () => getRegionById(parseInt(values?.state || 1)))
+  // useEffect(() => {
+  //   if (values.state) {
+  //     fetchRegions(parseInt(values.state));
+  //   }
+  // }, [values.state])
+  // useMount(() => {
+  //   getBusinessTypes()
+  //     .then(setBusinessTypes)
+  //     .catch(err => {
+  //       console.log('BusinessTypes fetch error - ', err)
+  //     })
+  //   getActiveStates()
+  //     .then(d => {
+  //       setStates([{ id: '', name: 'Choose State' }, ...d])
+  //       return d;
+  //     })
+  //     .then(d => {
+  //       let res = d.find(({ id }) => id === parseInt(values.state));
+  //       if (res) {
+  //         fetchRegions(parseInt(res.id));
+  //       }
+  //     })
+  //     .catch(err => {
+  //       console.log('BusinessTypes fetch error - ', err)
+  //     })
+  // });
 
   const docUpload = (val) => {
     setShowUpload(true);
@@ -255,21 +249,20 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         });
       })
   }
-  const fetchRegions = (res) => {
-    getRegionById(res)
-      .then(res => {
-        setRegionList(res)
-      })
-      .catch(err => {
-        console.log(err)
-      })
-  }
+  // const fetchRegions = (res) => {
+  //   getRegionById(res)
+  //     .then(res => {
+  //       setRegionList(res)
+  //     })
+  //     .catch(err => {
+  //       console.log(err)
+  //     })
+  // }
   const classes = useStyles();
   const gridProps = {
     item: true,
     className: classes.gridItemStyle
   }
-
 
   const fieldProps = {
     direction: "column",
@@ -336,14 +329,14 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                   <ViewData title='PAN' value={values.pan} />
                 </Grid>
                 <Grid md={4}>
-                  <ViewData title='State' value={(states.find(function (state, index) {
+                  <ViewData title='State' value={(states.data?.find(function (state, index) {
                     if (state.id == values.state)
                       return true;
                   }))?.name} />
                   <ViewData title='GST' value={values.gst} />
                 </Grid>
                 <Grid md={4}>
-                  <ViewData title='Business type' value={businessTypes.find(function (type, index) {
+                  <ViewData title='Business type' value={businessTypes.data?.find(function (type, index) {
                     if (type.id == values.business_type)
                       return true;
                   })?.name} />
@@ -427,7 +420,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                   >
                     {/* <option value="">{businessTypes[values.business_type]?.name}</option> */}
                     {
-                      businessTypes?.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
+                      businessTypes.data?.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
                     }
                   </TextInput>
                 </Grid>
@@ -528,7 +521,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     {...fieldProps}
                   >
                     {
-                      states.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
+                      states.data?.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
                     }
                   </TextInput>
                 </Grid>
@@ -546,7 +539,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                       {...fieldProps}
                     >
                       {
-                        regionList?.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))
+                        getRegion?.data?.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))
                       }
                     </TextInput>
                   }

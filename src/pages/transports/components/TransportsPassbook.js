@@ -22,6 +22,8 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import AsyncSelect from 'react-select/async';
 import ShareIcon from '@material-ui/icons/Share';
 import usePageTitle from '../../../hooks/usePageTitle';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
 
 
 const useStyles = makeStyles({
@@ -148,6 +150,7 @@ function FastTagPassbook( {currentUser} ) {
     endDate: new Date(),
     key: 'range'
   });
+  const uploadPermission = permissionCheck(currentUser.role_name, rulesList.upload_statement)
 
   const fetchResult = (pageQry) => {
     if(searchValue){
@@ -641,20 +644,24 @@ function FastTagPassbook( {currentUser} ) {
               <ShareIcon fontSize='small' style={{margin: 1.2}}/>
             </Button>
           </div>
-          <div className={classes.icon}>
-            <input
-              type='file'
-              name='file'
-              id='file'
-              className={classes.inputFile}
-              onChange={onChangeHandler}
-              disabled={disable}
-              accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-            />
-            <label for='file' className={!file? classes.label : classes.disabled}>
-              {file ? loading? <><CircularProgress size={11} style={{marginRight: 7}}/> {file.name}</> : file.name : <><PublishIcon fontSize='small' style={{paddingRight: 4,}}/> Upload Statement</>}
-            </label>
-          </div>
+          {
+            uploadPermission && (
+              <div className={classes.icon}>
+                <input
+                  type='file'
+                  name='file'
+                  id='file'
+                  className={classes.inputFile}
+                  onChange={onChangeHandler}
+                  disabled={disable}
+                  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                />
+                <label for='file' className={!file? classes.label : classes.disabled}>
+                  {file ? loading? <><CircularProgress size={11} style={{marginRight: 7}}/> {file.name}</> : file.name : <><PublishIcon fontSize='small' style={{paddingRight: 4,}}/> Upload Statement</>}
+                </label>
+              </div>
+            )
+          }
         </div>
       </Paper>
       {

@@ -92,7 +92,7 @@ export const PieChartData = ({
   };
   return (
     <Paper>
-      <Typography variant="h5" className={classes.title}>Regions Retails RO - Total: {totalForRegion}</Typography>
+      <Typography variant="h5" className={classes.title}>Regionswise Overdue - Total: {totalForRegion}</Typography>
       <Chart
         chartType="ColumnChart"
         width="100%"

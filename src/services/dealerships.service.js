@@ -414,14 +414,14 @@ export const updateDealershipMonthlySalesById = (id, body) => {
 export const deleteDealershipMonthlySalesById = (dealershipId, body, id) => {
   return new Promise((resolve, reject) => {
     // API.post(`${URL.dealership}/${id}/salesdata`, body)
-    apiCall(`${URL.dealership}/${dealershipId}/month/salesdata/${id}`, {
+    apiCall(`${URL.dealership}/${dealershipId}/month/salesdata`, {
       method: 'DELETE',
       body: body
     })
       .then(async ({ status, data, message }) => {
         if (status === "SUCCESS") {
-          const res = await getDealershipMonthlySalesById(id)
-          resolve(res);
+          const res = await getDealershipMonthlySalesById(dealershipId)
+          resolve(res, message);
         } else {
           reject(message);
         }

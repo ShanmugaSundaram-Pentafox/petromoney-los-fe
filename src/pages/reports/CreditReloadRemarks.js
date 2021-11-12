@@ -323,7 +323,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
             </Button>
           </div>
           {
-            rowData.status == '-' && (
+            (rowData.status != 'Disbursed' && rowData.status != 'Declined') && (
               <div style={{ display: 'flex', justifyContent: 'center'}}>
                 <Button
                   variant='contained'

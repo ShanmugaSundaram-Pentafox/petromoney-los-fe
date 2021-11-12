@@ -109,7 +109,6 @@ const SidebarNav = props => {
   useMount(() => {
     getMenuItemCount()
       .then((data) => {
-        console.log("data count >>>>>>>>>", data.withheld)
         setCount(data)
       })
       .catch((e) => {

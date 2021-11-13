@@ -6,20 +6,20 @@ const gstRegex = new RegExp(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([
 const aadharRegx = new RegExp(/^(\d{12})$|^(\d{16})$/)
 
 export const encrypt = text => {
-  if(panRegx.test(text) || aadharRegx.test(text)){
-    try {
-      const ciphertext = AES.encrypt(text, process.env.REACT_APP_CRYPT_KEY);
-      // console.log('>> CIPHER TEXT -- ', text, ciphertext.toString());
-      const result = ciphertext.toString();
-      return result || text;
-    } catch(e) {
-      console.log(e)
-      return text;
-    }
-  } else {
-    return text;
-  }
-  // return text;
+  return text;
+  // if(panRegx.test(text) || aadharRegx.test(text)){
+  //   try {
+  //     const ciphertext = AES.encrypt(text, process.env.REACT_APP_CRYPT_KEY);
+  //     // console.log('>> CIPHER TEXT -- ', text, ciphertext.toString());
+  //     const result = ciphertext.toString();
+  //     return result || text;
+  //   } catch(e) {
+  //     console.log(e)
+  //     return text;
+  //   }
+  // } else {
+  //   return text;
+  // }
 }
 
 export const decrypt = cipher => {

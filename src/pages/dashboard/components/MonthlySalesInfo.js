@@ -67,6 +67,21 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
   const { enqueueSnackbar } = useSnackbar();
   const LastFiveYear = getPastFiveYears()
 
+  const month = [
+    { label: 'January', value: 1 },
+    { label: 'Feburary', value: 2 },
+    { label: 'March', value: 3 },
+    { label: 'Apirl', value: 4 },
+    { label: 'May', value: 5 },
+    { label: 'June', value: 6 },
+    { label: 'July', value: 7 },
+    { label: 'August', value: 8 },
+    { label: 'September', value: 9 },
+    { label: 'October', value: 10 },
+    { label: 'November', value: 11 },
+    { label: 'December', value: 12 },
+  ]
+
   useEffect(() => {
     if (id) {
       getDealershipMonthlySalesById(id)
@@ -85,17 +100,11 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
 
   const deleteSalesRow = (rowData, rowIndex) => {
     deleteDealershipMonthlySalesById(id, rowData, rowIndex)
-      .then(res => {
-        enqueueSnackbar(res.message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
-        });
+      .then((res) => {
+        setInfo(res);
       })
       .catch(err => {
-        enqueueSnackbar(err.message, {
+        enqueueSnackbar(err, {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',
@@ -113,20 +122,35 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
         setAddNewRow(false);
       })
       .catch(err => {
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
         console.log('Sales data save error - ', err);
       })
   }
 
   const saveEditRow = (data, i) => {
-    const objBody = {
-      user_id: currentUser.id, ...data
-    }
-    updateDealershipMonthlySalesById(id, objBody)
+    // const objBody = {
+    //   user_id: currentUser.id, ...data
+    // }
+    delete data.rowIndex
+    updateDealershipMonthlySalesById(id, data)
       .then(res => {
         setInfo(res);
         setEditRow({});
       })
       .catch(err => {
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
         console.log('Sales data save error - ', err);
       })
   }
@@ -152,7 +176,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
           perform={rulesList.dealership_edit}
           yes={() => (
             <div style={{ textAlign: 'right', marginTop: 8 }}>
-              <Button color="primary" variant="contained" size="small" onClick={() => setAddNewRow(true)}>Add</Button>
+              <Button color="primary" variant="contained" size="small" onClick={() => { setAddNewRow(true); setEditRow({}) }}>Add</Button>
             </div>
           )}
         />
@@ -178,9 +202,8 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                         fullWidth={true}
                         label="Month"
                         name="month"
-                        type="number"
                         disabled={true}
-                        value={editRow.year}
+                        value={month[editRow.month - 1].label}
                         onChange={onEditTextChange}
                       />
                       -
@@ -235,7 +258,10 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                   </TableRow>
                 ) : (
                   <TableRow key={i}>
-                    <TableCell scope="row" component="th">{row.month} - {row.year}</TableCell>
+                    <TableCell scope="row" component="th">{month.find(function (type, index) {
+                      if (type.value == row.month)
+                        return true;
+                    })?.label} - {row.year}</TableCell>
                     <TableCell align="right">{row.ms?.toFixed(2)}</TableCell>
                     <TableCell align="right">{row.hsd?.toFixed(2)}</TableCell>
                     <TableCell align="right">{(row.ms + row.hsd)?.toFixed(2)}</TableCell>
@@ -283,18 +309,13 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                         onChange={onTextChange}
                       >
                         <option value=" ">Choose month</option>
-                        <option value="1">January</option>
-                        <option value="2">Feburary</option>
-                        <option value="3">March</option>
-                        <option value="4">Apirl</option>
-                        <option value="5">May</option>
-                        <option value="6">June</option>
-                        <option value="7">July</option>
-                        <option value="8">August</option>
-                        <option value="9">September</option>
-                        <option value="10">October</option>
-                        <option value="11">November</option>
-                        <option value="12">December</option>
+                        {
+                          month.map((item, i) => {
+                            return (
+                              <option value={item.value}>{item.label}</option>
+                            )
+                          })
+                        }
                       </TextInput>
                       -
                       <TextInput
@@ -306,6 +327,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                         value={apiData.year}
                         onChange={onTextChange}
                       >
+                        <option value=" ">Choose year</option>
                         {
                           LastFiveYear.map(item => {
                             return <option value={item}>{item}</option>

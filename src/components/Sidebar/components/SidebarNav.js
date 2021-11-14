@@ -19,12 +19,12 @@ import ReportIcon from '@material-ui/icons/Report';
 import ReportProblemIcon from '@material-ui/icons/ReportProblem';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
-import { getAllExceptions, getTransportsExceptions } from '../../../services/loans.service';
+// import { getAllExceptions, getTransportsExceptions } from '../../../services/loans.service';
 import { useMount } from "react-use";
 import Badge from '@material-ui/core/Badge';
 import { connect } from 'react-redux';
 import { resetCurrentUser } from '../../../store/user/user.actions';
-import { getMenuItemsCount } from '../../../services/common.service';
+import { getMenuItemCount } from '../../../services/common.service';
 // import { getAllWithheldLoans } from '../../../services/withheld.services';
 
 
@@ -102,32 +102,18 @@ const SidebarNav = props => {
   const { pages, className, logout, ...rest } = props;
   const classes = useStyles();
   const [checked, setChecked] = React.useState(false);
+  const [count, setCount] = useState();
   const [tap, setTap] = React.useState(false);
-  const [count, setCount] = useState()
   const [check, setCheck] = React.useState(false);
   const [checkStatus, setCheckStatus] = useState(false);
   useMount(() => {
-    getMenuItemsCount()
+    getMenuItemCount()
       .then((data) => {
         setCount(data)
       })
       .catch((e) => {
         console.log(e);
       });
-    // getAllExceptions()
-    //   .then((data) => {
-    //     setExceptions(data)
-    //   })
-    //   .catch((e) => {
-    //     console.log(e);
-    //   });
-    // getTransportsExceptions()
-    //   .then((data) => {
-    //     setTransException(data)
-    //   })
-    //   .catch((e) => {
-    //     console.log(e)
-    //   })
   });
   const handleChange = () => {
     setChecked((prev) => !prev);
@@ -364,10 +350,11 @@ const SidebarNav = props => {
                     to={'/reports/overdue'}
                     exact
                   >
-                    <Badge badgeContent={count?.over_due} max={999} color="primary">
+                    <Badge badgeContent={count?.over_due} style={{ paddingTop: 2, paddingRight: 8 }} max={999} color="primary">
                       <div className={classes.icon}><ReportProblemIcon /></div>
                       {'Loan Overdue'}
                     </Badge>
+
                   </Button>
                 </ListItem>
               </Collapse>

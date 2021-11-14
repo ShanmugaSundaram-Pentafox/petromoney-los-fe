@@ -437,7 +437,7 @@ export const getCreditReport = (id) => {
     apiCall(`${URL.dealership}/${id}/credit/report`)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
-          resolve(data[0]);
+          resolve(data[0] || {});
         } else {
           reject(message);
         }

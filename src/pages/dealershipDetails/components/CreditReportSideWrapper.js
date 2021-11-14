@@ -109,13 +109,13 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
   const [loading, setLoading] = useState(false);
   // const [apiData, setApiData] = useState({});
   const [apiStatus, setApiStatus] = useState({});
-  const { data: apiData = {} } = useQuery(['credit-report', dealershipId], getCreditReport(dealershipId))
+  const { data: apiData, refetch: getReport } = useQuery(['credit-report', dealershipId], () => getCreditReport(dealershipId))
 
   // const getCreditReport = () => {
   //   apiCall(`${URL.dealership}/${dealershipId}/credit/report`)
   //     .then(({ status, data }) => {
   //       if (status === "SUCCESS") {
-  //         // setApiData(data[0] || {});
+  //         setApiData(data[0] || {});
   //         setValues(data[0] || {})
   //       } else {
   //         // reject(data.message);
@@ -131,10 +131,10 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
   // }, [])
 
   const { values, errors, handleChange, handleSubmit, handleReset, setValues } = useFormik({
-    initialValues: initObject,
+    initialValues: { ...apiData },
     onSubmit: values => {
       // console.log('Form Values >> ', values);
-      if (isEqual(values, initObject)) {
+      if (isEqual(values, apiData)) {
         setApiStatus({ type: 'info', message: 'No changes made! Kindly make any change before submitting.' })
         setTimeout(() => {
           setApiStatus({})
@@ -156,7 +156,8 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
       })
         .then(({ status, message }) => {
           if (status == 'SUCCESS') {
-            getCreditReport();
+            // getCreditReport();
+            getReport();
             setApiStatus({ type: 'success', message: message || 'Report details updated' })
             setLoading(false);
             // handleReset();

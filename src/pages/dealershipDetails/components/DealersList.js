@@ -76,40 +76,33 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   const [formType, setFormType] = useState('');
   const [modelType, setModelType] = useState('');
   const [rowData, setRowData] = useState({});
-  const coApplicantsData = useQuery(['co-applicants', id], () => getCoApplicantByDealershipId(id))
-  const dealerData = useQuery(['dealers-coapplicant', id], () => getDealersByDealershipId(id))
-  const guarantorsData = useQuery(['guarantors', id], () => getAllGuarantor(id))
+  const { data: coApplicantsData, refetch: getCoApplicantApiCall } = useQuery(['co-applicants', id], () => getCoApplicantByDealershipId(id))
+  const { data: dealerData, refetch: getDealerApiCall } = useQuery(['dealers-coapplicant', id], () => getDealersByDealershipId(id))
+  const { data: guarantorsData, refetch: getGuarantorApiCall } = useQuery(['guarantors', id], () => getAllGuarantor(id))
 
 
-  const getCoApplicantApiCall = (id) => {
-    // getCoApplicantByDealershipId(id)
-    //   .then(data => {
-    //     setCoApplicantsData(data);
-    //     setDealerCoApplicantData(prevArray => [...prevArray]);
-    //   })
-    //   .catch(e => null)
-  }
-  const getDealerApiCall = (id) => {
-    getDealersByDealershipId(id)
-    // .then(data => {
-    //   setDealersData(data);
-    //   setDealerCoApplicantData(prevArray => [...prevArray]);
-    // })
-    // .catch(e => null)
-  }
+  // const getCoApplicantApiCall = (id) => {
+  //   getCoApplicantByDealershipId(id)
+  //     .then(data => {
+  //       setCoApplicantsData(data);
+  //       setDealerCoApplicantData(prevArray => [...prevArray]);
+  //     })
+  //     .catch(e => null)
+  // }
+  // const getDealerApiCall = (id) => {
+  // getDealersByDealershipId(id)
+  // .then(data => {
+  //   setDealersData(data);
+  //   setDealerCoApplicantData(prevArray => [...prevArray]);
+  // })
+  // .catch(e => null)
+  // }
   // const getGuarantorApiCall = () => {
   //   getAllGuarantor(id)
   //     .then(data => {
   //       setGuarantorsData(data);
   //     })
   // }
-
-  useMount(() => {
-    getDealerApiCall(id);
-    // getCoApplicantApiCall(id);
-    // getGuarantorApiCall(id);
-  });
-
   const openCloseCreditForm = () => {
     setShowCreditForm(!showCreditForm);
   }

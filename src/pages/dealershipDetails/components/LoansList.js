@@ -43,31 +43,23 @@ const useStyles = makeStyles({
 
 const LoansList = ({ id, currentUser, titleAlign }) => {
   const classes = useStyles();
-  const [data, setLoansData] = useState();
+  // const [data, setLoansData] = useState();
   const [loading, setLoading] = useState(false);
   const [remarks, setRemarks] = useState();
   const [dialogState, setDialogState] = useState({});
-  const [status, setStatus] = useState([]);
+  // const [status, setStatus] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState();
   const { enqueueSnackbar } = useSnackbar();
-  const dealerData = useQuery(['dealership-info', id], () => getDealershipLoansById(id))
-
-
+  const { data: loanData, refetch: refetchData, isLoading } = useQuery(['dealership-loans', id], () => getDealershipLoansById(id))
+  const { data: status } = useQuery(['dealership-status', id], () => getApplicationStatusById(id))
   useEffect(() => {
-    getDealershipLoansById(id)
-      .then(data => setLoansData(data))
-      .catch(e => null)
-    getApplicationStatusById(id)
-      .then(data => {
-        setStatus(data)
-        if (dealerData?.data[0].application_state_id) {
-          const re = data.find(d => d.id == dealerData?.data[0].application_state_id)
-          setSelectedStatus({ ...re, disabled: status !== "loan_approval" } || {})
-        }
-      })
-      .catch(e => null)
-
-  }, [dealerData?.data]);
+    if (!isLoading) {
+      if (loanData[0]?.application_state_id) {
+        const re = status.find(d => d.id == loanData[0]?.application_state_id)
+        setSelectedStatus({ ...re, disabled: status !== "loan_approval" } || {})
+      }
+    }
+  }, [status])
 
   const processLoan = loan => {
     let status, remarksObj = {};
@@ -83,7 +75,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
 
     status && updateLoanApprovalStatusById(id, loan.id, { user_id: currentUser.id, status, ...remarksObj })
       .then(res => {
-        setLoansData(res.loans);
+        refetchData();
         setLoading(false);
         setDialogState({});
       })
@@ -104,7 +96,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
     processLoan({ ...dialogState.data });
   }
   const updateApplicationStatus = (state) => {
-    apiCall(`dealership/${id}/loans/${data[0].id}`, {
+    apiCall(`dealership/${id}/loans/${loanData[0].id}`, {
       method: "POST",
       body: state,
     })
@@ -124,7 +116,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
 
   }
 
-  if (!data || !data.length)
+  if (!loanData || !loanData.length)
     return (
       <div className={classes.wrapper}>
         <Typography variant="h5" align={titleAlign} className={classes.title}>No Loan details found</Typography>
@@ -146,7 +138,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map(row => (
+          {Array.isArray(loanData) && loanData?.map(row => (
             <TableRow key={row.id}>
               <TableCell>{row.type}</TableCell>
               <TableCell align="right"><Currency value={row.amount_requested} /></TableCell>
@@ -177,7 +169,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
                 >
                   <option>{row.application_state}</option>
                   {
-                    status.map(item => item.application_state !== row.application_state && <option value={item.id}>{item.application_state}</option>)
+                    status?.map(item => item.application_state !== row.application_state && <option value={item.id}>{item.application_state}</option>)
                   }
 
                 </Select>

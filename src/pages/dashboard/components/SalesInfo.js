@@ -7,11 +7,11 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
-import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
-import ClearRoundedIcon from '@material-ui/icons/ClearRounded';
-import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
-import Currency from '../../../components/Number/Currency';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+// import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
+// import ClearRoundedIcon from '@material-ui/icons/ClearRounded';
+// import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
+// import Currency from '../../../components/Number/Currency';
+// import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import Popover from '@material-ui/core/Popover';
 import { makeStyles } from '@material-ui/core';
 import { getDealershipSalesById, postDealershipSalesById } from '../../../services/dealerships.service';
@@ -20,6 +20,7 @@ import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { useSnackbar } from "notistack";
 import MonthlySalesInfo from './MonthlySalesInfo';
+import { useQuery } from 'react-query';
 
 
 /**
@@ -87,21 +88,23 @@ const SalesInfo = ({
   column,
   currentUser
 }) => {
-  const [info, setInfo] = useState([]);
+  // const [info, setInfo] = useState([]);
   const classes = useStyles();
   const [addNewRow, setAddNewRow] = useState();
   const [apiData, setApiData] = useState({});
   const [anchorEl, setAnchorEl] = useState(null);
   const [editRow, setEditRow] = useState({});
   const { enqueueSnackbar } = useSnackbar();
+  const { data: info = [] } = useQuery(['sales', id], () => getDealershipSalesById(id))
 
-  useEffect(() => {
-    if (id) {
-      getDealershipSalesById(id)
-        .then(data => setInfo(data))
-        .catch(err => null)
-    }
-  }, [id]);
+
+  // useEffect(() => {
+  //   if (id) {
+  //     getDealershipSalesById(id)
+  //       .then(data => setInfo(data))
+  //       .catch(err => null)
+  //   }
+  // }, [id]);
 
   const handlePopoverOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -138,7 +141,7 @@ const SalesInfo = ({
       }
       postDealershipSalesById(id, objBody)
         .then(res => {
-          setInfo(res);
+          // setInfo(res);
           setAddNewRow(false);
         })
         .catch(err => {
@@ -163,7 +166,7 @@ const SalesInfo = ({
       }
       postDealershipSalesById(id, objBody)
         .then(res => {
-          setInfo(res);
+          // setInfo(res);
           setEditRow({});
         })
         .catch(err => {
@@ -194,6 +197,7 @@ const SalesInfo = ({
   //     </SalesInfoWrapper>
   //   );
   const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit)
+
   return (
     <SalesInfoWrapper>
       <Popover
@@ -245,7 +249,7 @@ const SalesInfo = ({
             </TableHead>
             <TableBody>
               {
-                info?.map((row, i) => i === editRow?.rowIndex ? (
+                Array.isArray(info) && info?.map((row, i) => i === editRow?.rowIndex ? (
                   <TableRow key={`edit-row-${i}`}>
                     <TableCell scope="row" component="th">
                       <TextInput

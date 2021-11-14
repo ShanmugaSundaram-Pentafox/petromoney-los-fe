@@ -81,21 +81,21 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   const guarantorsData = useQuery(['guarantors', id], () => getAllGuarantor(id))
 
 
-  // const getCoApplicantApiCall = (id) => {
-  //   getCoApplicantByDealershipId(id)
-  //     .then(data => {
-  //       setCoApplicantsData(data);
-  //       setDealerCoApplicantData(prevArray => [...prevArray]);
-  //     })
-  //     .catch(e => null)
-  // }
+  const getCoApplicantApiCall = (id) => {
+    // getCoApplicantByDealershipId(id)
+    //   .then(data => {
+    //     setCoApplicantsData(data);
+    //     setDealerCoApplicantData(prevArray => [...prevArray]);
+    //   })
+    //   .catch(e => null)
+  }
   const getDealerApiCall = (id) => {
     getDealersByDealershipId(id)
-      .then(data => {
-        setDealersData(data);
-        setDealerCoApplicantData(prevArray => [...prevArray]);
-      })
-      .catch(e => null)
+    // .then(data => {
+    //   setDealersData(data);
+    //   setDealerCoApplicantData(prevArray => [...prevArray]);
+    // })
+    // .catch(e => null)
   }
   // const getGuarantorApiCall = () => {
   //   getAllGuarantor(id)

@@ -13,6 +13,7 @@ import TextInput from '../../../components/TextInput/TextInput';
 import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { useSnackbar } from "notistack";
+import { useQuery } from 'react-query';
 
 
 const useStyles = makeStyles(theme => ({
@@ -59,13 +60,15 @@ const getPastFiveYears = () => {
 
 
 const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
-  const [info, setInfo] = useState([]);
+  // const [info, setInfo] = useState([]);
   const classes = useStyles();
   const [addNewRow, setAddNewRow] = useState();
   const [apiData, setApiData] = useState({});
   const [editRow, setEditRow] = useState({});
   const { enqueueSnackbar } = useSnackbar();
   const LastFiveYear = getPastFiveYears()
+  const { data: info = [] } = useQuery(['monthly-sales', id], () => getDealershipMonthlySalesById(id))
+
 
   const month = [
     { label: 'January', value: 1 },
@@ -82,13 +85,13 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
     { label: 'December', value: 12 },
   ]
 
-  useEffect(() => {
-    if (id) {
-      getDealershipMonthlySalesById(id)
-        .then(data => setInfo(data))
-        .catch(err => null)
-    }
-  }, [id]);
+  // useEffect(() => {
+  //   if (id) {
+  //     getDealershipMonthlySalesById(id)
+  //       .then(data => setInfo(data))
+  //       .catch(err => null)
+  //   }
+  // }, [id]);
 
   const onTextChange = e => {
     const { name, value } = e.target;
@@ -101,7 +104,8 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
   const deleteSalesRow = (rowData, rowIndex) => {
     deleteDealershipMonthlySalesById(id, rowData, rowIndex)
       .then((res) => {
-        setInfo(res);
+        // setInfo(res);
+        console.log(res)
       })
       .catch(err => {
         enqueueSnackbar(err, {
@@ -118,7 +122,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
     if (Object.keys(apiData).length < 4) return null;
     postDealershipMonthlySalesById(id, apiData)
       .then(res => {
-        setInfo(res);
+        // setInfo(res);
         setAddNewRow(false);
       })
       .catch(err => {
@@ -140,7 +144,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
     delete data.rowIndex
     updateDealershipMonthlySalesById(id, data)
       .then(res => {
-        setInfo(res);
+        // setInfo(res);
         setEditRow({});
       })
       .catch(err => {

@@ -19,6 +19,7 @@ import AddNewTransportsOwnerForm from '../../transports/components/AddNewTranspo
 import usePageTitle from '../../../hooks/usePageTitle';
 import { getTransportsByOwnersId, getOwnerDetailsById } from '../../../services/transports.service';
 import { useMount } from 'react-use';
+import { useQuery } from 'react-query';
 
 
 const Card = styled.div`
@@ -107,18 +108,19 @@ export const OwnerInfoCard = ({ id, ownerData, currentUser }) => {
   )
 }
 
-const OwnerDetails = ({ currentUser, match, loading }) => {
+const OwnerDetails = ({ currentUser, match }) => {
   const classes = useStyles()
   const [openModal, setOpenModal] = useState(false)
-  const [transportsData, setTransportsData] = useState()
-  const [ownerData, setOwnerData] = useState([]);
   const [rowData, setRowData] = useState({})
   const [formType, setFormType] = useState('');
-
   const {
     url,
     params: { id },
   } = match
+  const { data: transportsData, isLoading } = useQuery(['transport-data', id], () => getTransportsByOwnersId(id))
+  const { data: ownerData } = useQuery(['owner-data', id], () => getOwnerDetailsById(id))
+
+
   const onRowClick = (id, rowData) => {
     setOpenModal(true)
     setRowData(rowData)
@@ -127,25 +129,25 @@ const OwnerDetails = ({ currentUser, match, loading }) => {
   }
 
 
-  useMount(() => {
-    getTransportsByOwnersId(id)
-      .then(data => {
-        setTransportsData(data);
-      })
-      .catch(e => {
-        console.log(e)
-      })
-    getOwnerDetailsById(id)
-      .then(data => {
-        setOwnerData(data[0])
-      })
-      .catch(error => {
-        console.log(error)
-      })
-  })
+  // useMount(() => {
+  //   getTransportsByOwnersId(id)
+  //     .then(data => {
+  //       setTransportsData(data);
+  //     })
+  //     .catch(e => {
+  //       console.log(e)
+  //     })
+  //   getOwnerDetailsById(id)
+  //     .then(data => {
+  //       setOwnerData(data[0])
+  //     })
+  //     .catch(error => {
+  //       console.log(error)
+  //     })
+  // })
   let cardData = [
     { label: 'Owner ID', value: ownerData?.t_owner_id },
-    { label: 'Owner name', value: ownerData.first_name + ' ' + ownerData.last_name },
+    { label: 'Owner name', value: ownerData?.first_name + ' ' + ownerData?.last_name },
     { label: 'Mobile', value: ownerData?.mobile },
     // { label: 'Email', value: ownerData?.email }
   ]
@@ -250,11 +252,11 @@ const OwnerDetails = ({ currentUser, match, loading }) => {
                   options={options}
                 />
               ) : (
-                !loading && <Paper style={{ padding: 10 }}>No transports found</Paper>
+                !isLoading && <Paper style={{ padding: 10 }}>No transports found</Paper>
               )
             }
             {
-              loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
+              isLoading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
             }
           </div>
         </Grid>

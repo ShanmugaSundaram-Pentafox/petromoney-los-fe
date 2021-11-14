@@ -431,3 +431,19 @@ export const deleteDealershipMonthlySalesById = (dealershipId, body, id) => {
       });
   });
 };
+
+export const getCreditReport = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${URL.dealership}/${id}/credit/report`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data[0]);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};

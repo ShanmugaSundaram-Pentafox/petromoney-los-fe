@@ -126,11 +126,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 const DealershipTransport = ({ id, currentUser, titleAlign }) => {
     const [openModal, setOpenModal] = useState(false);
-    const [ownerInfo, setOwnerInfo] = useState()
-    const [transportsData, setTransportsData] = useState()
-    const [vehicleData, setVehicleData] = useState()
     const [formType, setFormType] = useState('');
-    const [data, setData] = useState([])
     const [rowData, setRowData] = useState({})
     const classes = useStyles()
 
@@ -140,7 +136,6 @@ const DealershipTransport = ({ id, currentUser, titleAlign }) => {
         setOpenModal(!openModal)
     }
     const showOwnerEditForm = (id, data) => {
-        // console.log("Owner edit form", data)
         setFormType('Edit')
         setRowData(data)
         setOpenModal(!openModal)

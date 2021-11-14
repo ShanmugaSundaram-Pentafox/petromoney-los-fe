@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { useMount } from "react-use";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Button from "@material-ui/core/Button";
-import ButtonGroup from "@material-ui/core/ButtonGroup";
+// import ButtonGroup from "@material-ui/core/ButtonGroup";
 // import Typography from "@material-ui/core/Typography";
 import { useSnackbar } from 'notistack';
 // import Chip from '@material-ui/core/Chip';
@@ -15,14 +14,15 @@ import FileUpload from "../../../components/FileUpload";
 import { deleteDocsImage, getDealershipCheckList } from "../../../services/dealerships.service";
 import { getFileNameFromUrl } from "../../../utils/strings.util";
 import { URL } from '../../../config/serverUrls';
-import Modal from '@material-ui/core/Modal';
+// import Modal from '@material-ui/core/Modal';
 import { Box, Checkbox, FormControlLabel, FormGroup, IconButton, Paper, Typography } from "@material-ui/core";
-import CloseIcon from '@material-ui/icons/Close';
+// import CloseIcon from '@material-ui/icons/Close';
 import ButtonComp from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import FormDialog from "../../../components/CommonComponents/FormDialog/FormDialog";
 import FilePreview from "../../../components/CommonComponents/FilePreview";
 import DocListPreview from "./DocListPreview";
+import { useQuery } from "react-query";
 
 const DeleteButton = withStyles(theme => ({
   root: {
@@ -117,15 +117,16 @@ const Docs = ({ data }) => {
 
 const DocList = ({ id }) => {
   const classes = useStyles();
-  const [checkListData, setCheckListData] = useState();
+  // const [checkListData, setCheckListData] = useState();
   const [showUpload, setShowUpload] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [modalData, setModalData] = useState([]);
   const [rowData, setRowData] = useState();
   const [value, setValue] = useState();
-  const [imageModal, setImageModal] = useState({})
+  // const [imageModal, setImageModal] = useState({})
   const [array, setArray] = useState([]);
   const [description, setDescription] = useState();
+  const { data: checkListData = [] } = useQuery(['doc-checklist', id], () => getDealershipCheckList(id))
 
   const getValue = (e) => {
     const val = e?.target?.value;
@@ -162,20 +163,20 @@ const DocList = ({ id }) => {
     setRowData(row);
   };
 
-  useMount(() => {
-    getDealershipCheckList(id)
-      .then((data) => setCheckListData(data))
-      .catch((e) => null);
-  });
+  // useMount(() => {
+  //   getDealershipCheckList(id)
+  //     .then((data) => setCheckListData(data))
+  //     .catch((e) => null);
+  // });
   const DeleteDocs = () => {
     deleteDocsImage(array, id)
       .then((res) => {
         setOpenModal(false)
         setModalData([])
         setArray([])
-        getDealershipCheckList(id)
-          .then((data) => setCheckListData(data))
-          .catch((e) => null);
+        // getDealershipCheckList(id)
+        //   .then((data) => setCheckListData(data))
+        //   .catch((e) => null);
       })
       .catch((err) => {
         alert(err?.message)
@@ -235,8 +236,8 @@ const DocList = ({ id }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {Array.isArray(checkListData) && checkListData.map((row, i) =>  row.doc_type !== 'dealer' && (
-            <DocListPreview docName={row.description} upload={() => onDocUpload(row)} deleteDocs={() => handleModal(row.file_data, row.description)} file={row.file_data} id={i+1}/>
+          {Array.isArray(checkListData) && checkListData.map((row, i) => row.doc_type !== 'dealer' && (
+            <DocListPreview docName={row.description} upload={() => onDocUpload(row)} deleteDocs={() => handleModal(row.file_data, row.description)} file={row.file_data} id={i + 1} />
             // <TableRow key={row.doc_id}>
             //   {/* <TableCell align="center">{row.doc_id}</TableCell> */}
             //   <TableCell>{row.description}</TableCell>
@@ -272,7 +273,7 @@ const DocList = ({ id }) => {
               {
                 modalData.map(item => {
                   return (
-                    <Paper key={item.file_id} style={{minWidth: '350px'}}>
+                    <Paper key={item.file_id} style={{ minWidth: '350px' }}>
                       <FormGroup>
                         <FormControlLabel
                           key={item.file_id}
@@ -288,8 +289,8 @@ const DocList = ({ id }) => {
               }
             </div>
           </div>
-      </div>
-      </FormDialog> 
+        </div>
+      </FormDialog>
 
       {/* <Modal
         className={classes.modal}

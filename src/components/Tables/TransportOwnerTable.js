@@ -6,6 +6,7 @@ import MUIDataTable from "mui-datatables";
 import Paper from '@material-ui/core/Paper';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { getOwnersById } from '../../services/transports.service';
+import { useQuery } from 'react-query';
 
 
 const useStyles = makeStyles(theme => ({
@@ -27,21 +28,20 @@ const useStyles = makeStyles(theme => ({
 
 const TransportOwnerTable = ({ id, onRowClick }) => {
     const classes = useStyles();
-    const [loading, setLoading] = useState(false);
-    const [ownerData, setOwnerData] = useState([])
-    useMount(() => {
-        if (!ownerData || !ownerData.length) {
-            setLoading(true);
-            getOwnersById(id)
-                .then(data => {
-                    setOwnerData(data);
-                    setLoading(false);
-                })
-                .catch(e => {
-                    setLoading(false);
-                })
-        }
-    });
+    const { data: ownerData = [], isLoading } = useQuery(['owner-info', id], () => getOwnersById(id))
+    // useMount(() => {
+    //     if (!ownerData || !ownerData.length) {
+    //         setLoading(true);
+    //         getOwnersById(id)
+    //             .then(data => {
+    //                 setOwnerData(data);
+    //                 setLoading(false);
+    //             })
+    //             .catch(e => {
+    //                 setLoading(false);
+    //             })
+    //     }
+    // });
     const columns = useMemo(() => {
         return [
             {
@@ -114,11 +114,11 @@ const TransportOwnerTable = ({ id, onRowClick }) => {
                         options={options}
                     />
                 ) : (
-                    !loading && <Paper style={{ padding: 10 }}>No Owners found</Paper>
+                    !isLoading && <Paper style={{ padding: 10 }}>No Owners found</Paper>
                 )
             }
             {
-                loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
+                isLoading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
             }
         </div>
     )

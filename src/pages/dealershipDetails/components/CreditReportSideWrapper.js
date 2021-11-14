@@ -10,16 +10,17 @@ import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded'
 import { useFormik } from 'formik';
 import clsx from 'clsx';
 import Alert from '@material-ui/lab/Alert';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { API } from '../../../config/api';
+// import CircularProgress from '@material-ui/core/CircularProgress';
+// import { API } from '../../../config/api';
 import { URL } from '../../../config/serverUrls';
 import { logger } from '../../../config/logger';
 import CreditReportForm from './CreditReportForm';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
+// import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 import apiCall from '../../../utils/api.util';
 import { useQuery } from 'react-query';
+import { getCreditReport } from '../../../services/dealerships.service';
 
 const useStyles = makeStyles(theme => ({
   sidePanelTitle: {
@@ -106,28 +107,28 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
   const classes = useStyles();
   const [readOnly, setReadOnly] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [apiData, setApiData] = useState({});
+  // const [apiData, setApiData] = useState({});
   const [apiStatus, setApiStatus] = useState({});
-  // const apiData = useQuery(['credit-report', dealershipId,getCreditReport
+  const { data: apiData = {} } = useQuery(['credit-report', dealershipId], getCreditReport(dealershipId))
 
-  const getCreditReport = () => {
-    apiCall(`${URL.dealership}/${dealershipId}/credit/report`)
-      .then(({ status, data }) => {
-        if (status === "SUCCESS") {
-          setApiData(data[0] || {});
-          setValues(data[0] || {})
-        } else {
-          // reject(data.message);
-        }
-      })
-      .catch(e => {
-        // reject(e.message);
-      })
-  }
+  // const getCreditReport = () => {
+  //   apiCall(`${URL.dealership}/${dealershipId}/credit/report`)
+  //     .then(({ status, data }) => {
+  //       if (status === "SUCCESS") {
+  //         // setApiData(data[0] || {});
+  //         setValues(data[0] || {})
+  //       } else {
+  //         // reject(data.message);
+  //       }
+  //     })
+  //     .catch(e => {
+  //       // reject(e.message);
+  //     })
+  // }
 
-  useEffect(() => {
-    getCreditReport();
-  }, [])
+  // useEffect(() => {
+  //   getCreditReport();
+  // }, [])
 
   const { values, errors, handleChange, handleSubmit, handleReset, setValues } = useFormik({
     initialValues: initObject,

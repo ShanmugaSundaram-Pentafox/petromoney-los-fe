@@ -7,6 +7,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import { useQuery } from 'react-query';
 
 
 
@@ -29,22 +30,7 @@ const useStyles = makeStyles(theme => ({
 
 const FleetOperatorsTable = ({ id, editable, titleAlign, dealersClickRow }) => {
     const classes = useStyles();
-    const [loading, setLoading] = useState(false);
-    const [operatorsData, setOperatorsData] = useState([])
-    const [data, setData] = useState([])
-    useMount(() => {
-        if (!operatorsData || !operatorsData.length) {
-            setLoading(true);
-            getFleetOperatorsById(id)
-                .then(data => {
-                    setOperatorsData(data);
-                    setLoading(false);
-                })
-                .catch(e => {
-                    setLoading(false);
-                })
-        }
-    });
+    const { data: operatorsData = [], isLoading } = useQuery(['fleet-operator', id], () => getFleetOperatorsById(id))
 
     return (
         <div className={classes.wrapper}>

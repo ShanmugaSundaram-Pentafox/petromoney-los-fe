@@ -310,11 +310,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                       >
                         <option value=" ">Choose month</option>
                         {
-                          month.map((item, i) => {
-                            return (
-                              <option value={item.value}>{item.label}</option>
-                            )
-                          })
+                          month.map((item, i) => <option value={item.value}>{item.label}</option>)
                         }
                       </TextInput>
                       -
@@ -361,6 +357,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                         color="error"
                         onClick={() => {
                           setAddNewRow(false);
+                          setApiData({})
                         }}>
                         Cancel
                       </Button>

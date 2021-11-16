@@ -13,6 +13,8 @@ import TextInput from '../../../components/TextInput/TextInput';
 import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { useSnackbar } from "notistack";
+import clsx from 'clsx';
+
 
 
 const useStyles = makeStyles(theme => ({
@@ -31,7 +33,17 @@ const useStyles = makeStyles(theme => ({
   },
   table: {
     marginBottom: 20,
-  }
+  },
+  btnDelete: {
+    '&.MuiButton-root': { color: "#ef5350" },
+    border: "1px #ef5350 solid",
+    marginLeft: 2
+  },
+  btnEdit: {
+    '&.MuiButton-root': { color: "#2196f3" },
+    border: "1px #2196f3 solid",
+    marginLeft: 2
+  },
 }));
 
 const SalesInfoWrapper = styled.div`
@@ -272,7 +284,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                             size="small"
                             variant="outlined"
                             color="success"
-                            className={classes.btnSuccess}
+                            className={clsx(classes.btnSuccess, classes.btnEdit)}
                             onClick={() => editSalesRow(row, i)}>
                             Edit
                           </Button>
@@ -284,7 +296,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                             size="small"
                             variant="outlined"
                             color="success"
-                            className={classes.btnSuccess}
+                            className={clsx(classes.btnSuccess, classes.btnDelete)}
                             onClick={() => deleteSalesRow(row, i)}>
                             Delete
                           </Button>
@@ -310,11 +322,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                       >
                         <option value=" ">Choose month</option>
                         {
-                          month.map((item, i) => {
-                            return (
-                              <option value={item.value}>{item.label}</option>
-                            )
-                          })
+                          month.map((item, i) => <option value={item.value}>{item.label}</option>)
                         }
                       </TextInput>
                       -
@@ -361,6 +369,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                         color="error"
                         onClick={() => {
                           setAddNewRow(false);
+                          setApiData({})
                         }}>
                         Cancel
                       </Button>

@@ -43,6 +43,11 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: theme.palette.success.dark
     }
   },
+  btnEdit: {
+    '&.MuiButton-root': { color: "#2196f3" },
+    border: "1px #2196f3 solid",
+    marginLeft: 2
+  },
 }));
 
 const IncomeTable = ({ id, editable, currentUser }) => {
@@ -129,7 +134,7 @@ const IncomeTable = ({ id, editable, currentUser }) => {
     console.log("values >>", values)
     const data = { ...rowData, business_name: rowData?.business_name?.toUpperCase() }
     const obj = compareObject(income[rowIndex], data)
-    const fields = {...obj, id: rowData.id}
+    const fields = { ...obj, id: rowData.id }
     updateDealershipIncomeById(id, fields)
       .then(res => {
         setIncome(res);
@@ -229,7 +234,7 @@ const IncomeTable = ({ id, editable, currentUser }) => {
                     size="small"
                     variant="outlined"
                     color="success"
-                    className={classes.btnSuccess}
+                    className={clsx(classes.btnSuccess, classes.btnEdit)}
                     onClick={() => editIncomeRow(item, i)}>
                     Edit
                   </Button>

@@ -11,7 +11,7 @@ export const getAllTransport = () => {
           const result = data.map(item => ({
             ...item,
             pan: item?.pan ? cryptoDecrypt(item.pan) : item.pan,
-            aadhar: item?.aadhar ? cryptoDecrypt(item.aadhar) : item.aadhar,
+            // aadhar: item?.aadhar ? cryptoDecrypt(item.aadhar) : item.aadhar,
           }));
           resolve(result);
         } else {

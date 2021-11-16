@@ -21,6 +21,7 @@ import { rulesList } from '../../../config/userRules';
 import { useSnackbar } from "notistack";
 import MonthlySalesInfo from './MonthlySalesInfo';
 import { useQuery } from 'react-query';
+import clsx from 'clsx';
 
 
 /**
@@ -56,7 +57,12 @@ const useStyles = makeStyles(theme => ({
   },
   table: {
     marginBottom: 20,
-  }
+  },
+  btnEdit: {
+    '&.MuiButton-root': { color: "#2196f3" },
+    border: "1px #2196f3 solid",
+    marginLeft: 2
+  },
 }));
 
 const SalesInfoWrapper = styled.div`
@@ -339,7 +345,7 @@ const SalesInfo = ({
                             size="small"
                             variant="outlined"
                             color="success"
-                            className={classes.btnSuccess}
+                            className={clsx(classes.btnSuccess, classes.btnEdit)}
                             onClick={() => editSalesRow(row, i)}>
                             Edit
                           </Button>

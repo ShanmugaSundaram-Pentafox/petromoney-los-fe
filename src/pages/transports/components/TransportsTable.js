@@ -76,12 +76,12 @@ const TransportsTable = ({ transports, setAllTransports, onRowClick, portal, tra
       },
       {
         label: "OMC",
-        name: "omc",
+        name: "omc_value",
         options: {
           filter: true,
           sort: true,
           customBodyRender: (value) => {
-            return <>{value.length < 2 ? omcs[value - 1]?.name : value}</>
+            return <>{value || '-'}</>
           },
         },
       },
@@ -101,19 +101,19 @@ const TransportsTable = ({ transports, setAllTransports, onRowClick, portal, tra
           setLoading(false)
         })
     } else
-    if (!transports.length) {
-      setLoading(true)
-      getAllTransport()
-        .then((data) => {
-          setAllTransports(data)
-          setLoading(false)
-          // setData(data)
-        })
-        .catch((e) => {
-          console.log(e);
-          setLoading(false);
-        })
-    }
+      if (!transports.length) {
+        setLoading(true)
+        getAllTransport()
+          .then((data) => {
+            setAllTransports(data)
+            setLoading(false)
+            // setData(data)
+          })
+          .catch((e) => {
+            console.log(e);
+            setLoading(false);
+          })
+      }
     getOmcList()
       .then((data) => {
         setOmcs(data);

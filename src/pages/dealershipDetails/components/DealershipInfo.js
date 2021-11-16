@@ -55,18 +55,6 @@ const useStyles = makeStyles(theme => ({
   icons: {
     marginRight: 16,
   },
-  number: {
-    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0
-    }
-  },
-  input: {
-    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0
-    }
-  }
 }));
 
 
@@ -92,10 +80,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
       address: Yup.string().nullable('Please enter address').required('Please enter address'),
       state: Yup.string().nullable('Please choose state').required('Please choose state'),
       district: Yup.string().nullable('Please enter district').required('Please enter district'),
-      pincode: Yup.number()
-        .nullable('Enter pincode')
-        .test('pincode', 'Enter valid pincode', (val) => String(val).length === 6)
-        .required('Enter pincode'),
+      pincode: Yup.string().nullable('Enter pincode').matches(/^[1-9][0-9]{5}$/, 'Invalid pincode').required('Enter pincode'),
       pan: Yup.string()
         .nullable('Enter PAN')
         .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
@@ -573,13 +558,11 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 </Grid>
                 <Grid {...gridProps} md={6}>
                   <TextInput
-                    className={classes.number}
-                    inputProps={{ className: classes.input }}
+                    number
                     labelText="Pincode"
-                    type='number'
                     name="pincode"
                     readOnly={readOnly}
-                    defaultValue={values?.pincode}
+                    value={values?.pincode}
                     error={errors.pincode}
                     helperText={errors.pincode}
                     {...fieldProps}

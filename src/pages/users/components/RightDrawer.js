@@ -254,12 +254,11 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      role_id: Yup.number().required('Choose Proper User Role'),
-      first_name: Yup.string().required('Enter first name'),
-      last_name: Yup.string().required('Enter last name'),
-      mobile: Yup.number().min(10, 'Enter valid mobile number').required('Enter Mobile number'),
-      email: Yup.string().email("Enter valid email"),
-
+      role_id: Yup.number().required('Choose Proper User Role').nullable('Choose user role'),
+      first_name: Yup.string().required('Enter first name').nullable('Enter first name'),
+      last_name: Yup.string().required('Enter last name').nullable('Enter last name'),
+      mobile: Yup.string().matches(/^\d{10}$/, "Enter valid mobile number").required("Enter mobile number").nullable('Enter mobile number'),
+      email: Yup.string().email("Enter valid email").nullable('Enter mail ID').required('Enter mail ID'),
     }),
     onSubmit: values => {
       const { status, ...d } = values;
@@ -475,7 +474,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                   </div>
                 </>
               ) : (
-                editPassword && <PasswordForm data={data} callback={() => { setEditPassword(false) }} loading={passLoading} setLoading={setpassLoading}/>
+                editPassword && <PasswordForm data={data} callback={() => { setEditPassword(false) }} loading={passLoading} setLoading={setpassLoading} />
               )
             }
           </>

@@ -69,8 +69,16 @@ const useStyles = makeStyles(theme => ({
     width: '50%',
     padding: 10,
   },
-  picker: {
-  }
+  btnDelete: {
+    '&.MuiButton-root': { color: "#ef5350" },
+    border: "1px #ef5350 solid",
+    marginLeft: 2
+  },
+  btnEdit: {
+    '&.MuiButton-root': { color: "#2196f3" },
+    border: "1px #2196f3 solid",
+    marginLeft: 2
+  },
 }));
 
 const DispApprovedDataTable = ({ id, loanData, editable }) => {
@@ -101,9 +109,9 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
     },
     validationSchema: Yup.object().shape({
       // applicant_code: Yup.string().required("Enter valid Applicant code").matches(/^CN0000[0-9]+$/, "Enter Valid Applicant code"),
-      prospect_code: Yup.string().required("Enter Prospect code"),
+      prospect_code: Yup.string().nullable('Enter Prospect code').required("Enter Prospect code"),
       // disbursement_date: Yup.date().required("Enter Disbursement date"),
-      amount: Yup.string().required("Enter Amount"),
+      amount: Yup.string().nullable('Enter Amount').required("Enter Amount"),
     }),
     onSubmit: values => {
       const date = moment(selectedDate).format('YYYY/MM/DD')
@@ -182,8 +190,8 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                 <TableCell align="center">{row.disbursement_date}</TableCell>
                 <TableCell align="right"><Currency value={row.amount} /></TableCell>
                 <TableCell align="right">
-                  <Button variant="outlined" size="small" onClick={() => onRowEdit(row)}>Edit</Button>
-                  <Button variant="outlined" size="small" onClick={() => onRowDelete(row)}>Delete</Button>
+                  <Button variant="outlined" className={classes.btnEdit} size="small" onClick={() => onRowEdit(row)}>Edit</Button>
+                  <Button variant="outlined" className={classes.btnDelete} size="small" onClick={() => onRowDelete(row)}>Delete</Button>
                 </TableCell>
               </TableRow>
             ))
@@ -265,7 +273,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                           hideTabs={true}
                           variant='inline'
                           inputVariant='outlined'
-                          format='MM/dd/yyy'
+                          format='MM/dd/yyyy'
                           animateYearScrolling={true}
                           invalidDateMessage='Invalid Date Format'
                           margin='normal'
@@ -317,10 +325,10 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                       />
                   </Grid> */}
                   <Grid item xs={12} className={classes.actionFooter}>
-                    <Button disabled={loading} variant="outlined" size="medium" color="default" onClick={() => setModalData({})}>Cancel</Button>
-                    <Button disabled={loading} className={classes.actionButton} type="submit" variant="outlined" size="medium" color="primary">
+                    <Button disabled={loading} variant="outlined" color="default" onClick={() => setModalData({})}>Cancel</Button>
+                    <Button disabled={loading} className={classes.actionButton} type="submit" variant="outlined" color="primary">
                       {
-                        loading ? <CircularProgress /> : 'Save'
+                        loading ? <CircularProgress size={23} /> : 'Save'
                       }
                     </Button>
                   </Grid>

@@ -1,16 +1,11 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
+import TextInput from '../../../components/TextInput/TextInput';
 import Button from '../../../components/CommonComponents/Button/Button';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import clsx from 'clsx';
 import Divider from '@material-ui/core/Divider';
 import { makeStyles } from "@material-ui/styles";
@@ -20,398 +15,427 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
-import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
-import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
+import { updateBusinessDetailsByID } from '../../../services/PDReport.services';
+import { FormControl } from '@material-ui/core';
+import { RadioGroup } from '@material-ui/core';
+import { FormControlLabel } from '@material-ui/core';
+import { Radio } from '@material-ui/core';
+import { FormGroup } from '@material-ui/core';
 
 
 const useStyles = makeStyles((theme) => ({
-    sidePanelTitle: {
-        // textAlign: 'center',
-        padding: '24px 16px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        zIndex: 0,
-        boxShadow: '0 1px 4px -3px #333'
+  sidePanelTitle: {
+    padding: '24px 16px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    zIndex: 0,
+    boxShadow: '0 1px 4px -3px #333'
+  },
+  actionButtonsWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '12px 16px'
+  },
+  sidePanelFormWrapper: {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    width: '55vw'
+  },
+  sidePanelFormContentWrapper: {
+    flex: 1,
+    backgroundColor: '#f6f6f6',
+    overflow: 'auto'
+  },
+  table: {
+    padding: 8,
+    marginTop: 8
+  },
+  btnSuccess: {
+    '&.MuiButton-contained': {
+      backgroundColor: theme.palette.success.main,
+      color: theme.palette.white
     },
-    sidePanelFormWrapper: {
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-        width: '55vw'
-    },
-    sidePanelFormContentWrapper: {
-        flex: 1,
-        overflow: 'auto'
-    },
-    table: {
-        padding: 8,
-        marginTop:8
-    },
-    btnSuccess: {
-        '&.MuiButton-contained': {
-            backgroundColor: theme.palette.success.main,
-            color: theme.palette.white
-        },
-        '&.MuiButton-contained:hover': {
-            backgroundColor: theme.palette.success.dark
-        }
-    },
-    stepperRoot: {
-        padding: 16,
-        paddingTop: 8
-    },
-    subTitle: {
-        marginTop: 8,
-        marginBottom: 8
-
-    },
-    editButton: {
-        marginRight: '8px',
-        '&.MuiButton-contained': {
-            backgroundColor: theme.palette.success.main,
-            color: theme.palette.white
-        },
-        '&.MuiButton-contained:hover': {
-            backgroundColor: theme.palette.success.dark
-        }
+    '&.MuiButton-contained:hover': {
+      backgroundColor: theme.palette.success.dark
     }
+  },
+  stepperRoot: {
+    padding: 16,
+    paddingTop: 8
+  },
+  subTitle: {
+    marginTop: 8,
+    marginBottom: 8
+
+  },
+  editButton: {
+    marginRight: '8px',
+    '&.MuiButton-contained': {
+      backgroundColor: theme.palette.success.main,
+      color: theme.palette.white
+    },
+    '&.MuiButton-contained:hover': {
+      backgroundColor: theme.palette.success.dark
+    }
+  },
+  number: {
+    backgroundColor: 'white',
+    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0,
+    }
+  },
+  input: {
+    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0,
+    }
+  }
 
 }))
 
 const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) => {
+  const { enqueueSnackbar } = useSnackbar();
+  const classes = useStyles()
+  const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
+  const [loading, setLoading] = useState(false)
+  const handleEdit = () => {
+    setReadOnly(!readOnly)
+  };
+  const handleClose = () => {
+    callback();
+  };
 
-    const { enqueueSnackbar } = useSnackbar();
-    const classes = useStyles()
-    const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
-    const [loading, setLoading] = useState(false)
-    const [selectedDate, setSelectedDate] = useState()
-    const [businessType, setBusinessType] = useState('proprietorship')
-    const [partnerData, setPartnerData] = useState([])
-    const [editable, setEditable] = useState(true)
-    const [applicantsList, setApplicantsList] = useState([]);
-    const [addNewRow, setAddNewRow] = useState();
-    const [apiData, setApiData] = useState({});
-    const [editRow, setEditRow] = useState({});
-
-
-    const handleEdit = () => {
-        setReadOnly(!readOnly)
-    };
-    const handleClose = () => {
-        callback();
-    };
-    const handleDateChange = (date) => {
-        setSelectedDate(date)
-        // handleDate(date)
-    }
-    const onTextChange = e => {
-        const { name, value } = e.target;
-        setApiData({
-            ...apiData,
-            [name]: value
+  const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
+    initialValues: {
+      ...data
+    },
+    validateOnChange: false,
+    validateOnBlur: true,
+    validationSchema: Yup.object().shape({
+      business_age: Yup.number().nullable('Enter valid experience').required('Enter valid experience'),
+      hsd_count: Yup.number().nullable('Enter HSD count').required('Enter count'),
+      ms_count: Yup.number().nullable('Enter MSD count').required('Enter count'),
+      electricity_units_month: Yup.number().nullable('Enter Electricity details').required('Enter Electricity details'),
+      credit_sales_month: Yup.number().nullable('Enter sales details').required('Enter sales details'),
+      monthly_avg_sale_ms: Yup.number().nullable('Enter monthly average sale').required('Enter monthly average sale'),
+      monthly_avg_sale_hsd: Yup.number().nullable('Enter monthly average sale').required('Enter monthly average sale'),
+      monthly_avg_sale_lpg: Yup.number().nullable('Enter monthly average sale').required('Enter monthly average sale'),
+    }),
+    onSubmit: values => {
+      let data = { ...values, has_atm: values.has_atm === "Yes" ? 1 : 0, is_pep: values.is_pep === "Yes" ? 1 : 0 }
+      updateBusinessDetailsByID(data, dealer_id)
+        .then(res => {
+          console.log(res)
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
+          setTimeout(() => {
+            window.location.reload()
+          }, 1500);
+        })
+        .catch(e => {
+          enqueueSnackbar(e, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
         })
     }
-    const onEditTextChange = e => {
-        const { name, value } = e.target;
-        setEditRow({
-            ...editRow,
-            [name]: value
-        })
-    }
-    const editPartnerRow = (rowData, rowIndex) => {
-        setEditRow({ ...rowData, rowIndex });
-    }
-    const saveIncomeRow = (rowData, rowIndex) => {
-        const objBody = {
-            user_id: currentUser.id, ...rowData
-        }
-    }
-    const saveNewPartner = () => {
-        console.log('Income api body - ', apiData)
-        if (Object.keys(apiData).length < 3) return null;
-        const objBody = {
-            user_id: currentUser.id, ...apiData
-        }
-        // postDealershipIncomeById(id, objBody)
-        //     .then(res => {
-        //         setIncome(res);
-        //         setLoading(false);
-        //         setAddNewRow(false);
-        //         setApiData({});
-        //     })
-        //     .catch(err => {
-        //         console.log('Income data save error - ', err);
-        //         setLoading(false);
-        //     })
-    }
+  });
+  const inputProps = {
+    direction: "column",
+    alignTop: true,
+    onChange: handleChange,
+  }
+  return (
+    <div className={classes.sidePanelFormWrapper}>
+      <Typography className={classes.sidePanelTitle} variant="h4">
+        <div>Add Business Details</div>
+        <CloseIcon onClick={handleClose} />
+      </Typography>
+      <div className={classes.sidePanelFormContentWrapper}>
+        <div className={classes.stepperRoot}>
+          <Box>
+            <Grid container spacing={2}>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  labelText="No. of years in fuel business"
+                  name="business_age"
+                  value={values.business_age}
+                  readOnly={readOnly}
+                  error={errors.business_age}
+                  helperText={errors.business_age}
+                  className={classes.number}
+                  inputProps={{ className: classes.input }}
+                  type='number'
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  className={classes.number}
+                  inputProps={{ className: classes.input }}
+                  type='number'
+                  {...inputProps}
+                  labelText="No. of HSD Dispensers"
+                  name="hsd_count"
+                  value={values.hsd_count}
+                  readOnly={readOnly}
+                  error={errors.hsd_count}
+                  helperText={errors.hsd_count}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  className={classes.number}
+                  inputProps={{ className: classes.input }}
+                  type='number'
+                  {...inputProps}
+                  labelText="No. of MS Dispensers"
+                  name="ms_count"
+                  value={values.ms_count}
+                  readOnly={readOnly}
+                  error={errors.ms_count}
+                  helperText={errors.ms_count}
+                />
+              </Grid>
 
-    const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
-        initialValues: {
-            ...data,
-        },
-        validateOnChange: false,
-        validateOnBlur: true,
-        validationSchema: Yup.object().shape({
-            transport_name: Yup.string().required('Please enter transporter name'),
-
-        }),
-        // onSubmit: values => {
-        //     updateFleetOperator(values, dealer_id, data.id)
-        //         .then(res => {
-        //             console.log(res)
-        //             enqueueSnackbar(res, {
-        //                 anchorOrigin: {
-        //                     vertical: 'top',
-        //                     horizontal: 'right',
-        //                 },
-        //                 variant: 'success',
-        //             }
-        //             )
-        //             setTimeout(() => {
-        //                 window.location.reload()
-        //             }, 1500);
-
-        //         })
-        //         .catch(e => {
-        //             enqueueSnackbar(e, {
-        //                 anchorOrigin: {
-        //                     vertical: 'top',
-        //                     horizontal: 'right',
-        //                 },
-        //                 variant: 'error',
-        //             }
-        //             )
-        //         })
-
-
-        // }
-    });
-    const inputProps = {
-        direction: "column",
-        alignTop: true,
-        onChange: handleChange,
-    }
-    return (
-        <div className={classes.sidePanelFormWrapper}>
-            <Typography className={classes.sidePanelTitle} variant="h4">
-                <div>Add Business Details</div>
-                <CloseIcon onClick={handleClose} />
-            </Typography>
-            <div className={classes.sidePanelFormContentWrapper}>
-                <div className={classes.stepperRoot}>
-                    <Box>
-                        <form onSubmit={handleSubmit}>
-                            <Grid container spacing={2}>
-                                {
-                                    businessType === 'proprietorship' && (
-                                        <>
-                                            <Grid item md={6}>
-                                                <TextInput
-                                                    select
-                                                    {...inputProps}
-                                                    labelText="Proprietor name"
-                                                    name="proprietor_name"
-                                                    value={values.proprietor_name}
-                                                    readOnly={readOnly}
-                                                    error={errors.proprietor_name}
-                                                    helperText={errors.proprietor_name}
-                                                />
-                                            </Grid>
-                                            <Grid item md={6}>
-                                                <TextInput
-                                                    {...inputProps}
-                                                    labelText="ProPrietor mobile"
-                                                    name="proprietor_mobile"
-                                                    value={values.proprietor_mobile}
-                                                    readOnly={readOnly}
-                                                    error={errors.proprietor_mobile}
-                                                    helperText={errors.proprietor_mobile}
-                                                />
-                                            </Grid>
-                                            <Grid item md={12}>
-                                                <Fragment className={classes.table}>
-                                                    <Typography className={classes.subTitle} variant="h4">Partner Details</Typography>
-                                                    <Grid  md={6}>
-                                                        <TextInput
-                                                            {...inputProps}
-                                                            labelText="Number of Partner"
-                                                            name="no_of_partner"
-                                                            type="number"
-                                                            value={values.no_of_partner}
-                                                            readOnly={readOnly}
-                                                            error={errors.no_of_partner}
-                                                            helperText={errors.no_of_partner}
-                                                        />
-                                                    </Grid>
-                                                    <Table className={classes.table} size="small" aria-label="Income">
-                                                        <TableHead>
-                                                            <TableRow>
-                                                                <TableCell>Partner name</TableCell>
-                                                                <TableCell>Partner mobile</TableCell>
-                                                                <TableCell align="right">Managing partner name</TableCell>
-                                                            </TableRow>
-                                                        </TableHead>
-                                                        <TableBody>
-                                                            {
-                                                                Array.isArray(partnerData) && partnerData.map((item, i) => editRow.rowIndex === i ? (
-                                                                    <TableRow key={i}>
-                                                                        <TableCell>
-                                                                            <TextInput
-                                                                                label="Partner Name"
-                                                                                name="partner_name"
-                                                                                value={editRow.business_name?.toUpperCase()}
-                                                                                onChange={onEditTextChange}
-                                                                            />
-                                                                        </TableCell>
-                                                                        <TableCell>
-                                                                            <TextInput
-                                                                                label="Partner Mobile"
-                                                                                name="partner_mobile"
-                                                                                type="number"
-                                                                                value={editRow.business_age}
-                                                                                onChange={onEditTextChange}
-                                                                            />
-                                                                        </TableCell>
-                                                                        <TableCell align={"right"}>
-                                                                            <Button
-                                                                                size="small"
-                                                                                variant="outlined"
-                                                                                color="success"
-                                                                                className={classes.btnSuccess}
-                                                                                onClick={() => saveIncomeRow(editRow, i)}>
-                                                                                Save
-                                                                            </Button>
-                                                                        </TableCell>
-                                                                    </TableRow>
-                                                                ) : (
-                                                                    <TableRow key={i}>
-                                                                        <TableCell>{item.partner_name}</TableCell>
-                                                                        <TableCell>{item.partner_mobile}</TableCell>
-                                                                        <TableCell align={"right"}>{item.managig_partner_name}</TableCell>
-                                                                        <TableCell align={"right"}>
-                                                                            <Button
-                                                                                size="small"
-                                                                                variant="outlined"
-                                                                                color="success"
-                                                                                className={classes.btnSuccess}
-                                                                                onClick={() => editPartnerRow(item, i)}>
-                                                                                Edit
-                                                                            </Button>
-                                                                        </TableCell>
-                                                                    </TableRow>
-                                                                ))
-                                                            }
-                                                            {
-                                                                addNewRow && (
-                                                                    <TableRow key={"new-row"}>
-                                                                        <TableCell>
-                                                                            <TextInput
-                                                                                label="Partner Name"
-                                                                                name="partner_name"
-                                                                                value={apiData.business_name?.toUpperCase()}
-                                                                                onChange={onTextChange}
-                                                                            />
-                                                                        </TableCell>
-                                                                        <TableCell align={"right"}>
-                                                                            <TextInput
-                                                                                label="Partner Mobile"
-                                                                                name="partner_mobile"
-                                                                                type="number"
-                                                                                value={apiData.business_age}
-                                                                                onChange={onTextChange}
-                                                                            />
-                                                                        </TableCell>
-                                                                        <TableCell >
-                                                                            <TextInput
-                                                                                label="Managining partner name"
-                                                                                name="managing_partner_name"
-                                                                                value={apiData.managing_partner_name}
-                                                                                onChange={onTextChange}
-                                                                            />
-                                                                        </TableCell>
-                                                                        <TableCell align={"right"}></TableCell>
-                                                                    </TableRow>
-                                                                )
-                                                            }
-                                                            <TableRow key={"add-row"}>
-                                                                <TableCell align="right" colSpan={4}>
-                                                                    {
-                                                                        addNewRow ? (
-                                                                            <Fragment>
-                                                                                <Button
-                                                                                    size="small"
-                                                                                    variant="outlined"
-                                                                                    color="error"
-                                                                                    onClick={() => {
-                                                                                        setAddNewRow(false);
-                                                                                    }}>
-                                                                                    <DeleteForeverRoundedIcon fontSize="small" />
-                                                                                </Button>
-                                                                                &nbsp;&nbsp;
-                                                                                <Button
-                                                                                    size="small"
-                                                                                    variant="outlined"
-                                                                                    color="success"
-                                                                                    className={classes.btnSuccess}
-                                                                                    onClick={saveNewPartner}>
-                                                                                    <DoneRoundedIcon fontSize="small" />
-                                                                                </Button>
-                                                                            </Fragment>
-                                                                        ) : (editable && (
-
-                                                                            <Button
-                                                                                variant="contained"
-                                                                                className={clsx(classes.btn, classes.btnSuccess)}
-                                                                                onClick={() => setAddNewRow(true)}>Add Partner</Button>
-                                                                        ))
-                                                                    }
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        </TableBody>
-                                                    </Table>
-                                                </Fragment>
-                                                {/* <IncomeTa id={id} editable={editable} currentUser={currentUser} /> */}
-                                            </Grid>
-                                        </>
-                                    )
-                                }
-                            </Grid>
-                        </form>
-                    </Box >
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  className={classes.number}
+                  labelText="Area of fuel station (in Sq. ft)"
+                  name="fuel_station_area"
+                  value={values.fuel_station_area}
+                  readOnly={readOnly}
+                  error={errors.fuel_station_area}
+                  helperText={errors.fuel_station_area}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  className={classes.number}
+                  type='number'
+                  {...inputProps}
+                  labelText="Electricity units (per month)"
+                  name="electricity_units_month"
+                  value={values.electricity_units_month}
+                  readOnly={readOnly}
+                  error={errors.electricity_units_month}
+                  helperText={errors.electricity_units_month}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  money
+                  className={classes.number}
+                  labelText="Electricity bill per month"
+                  name="electricity_bill_month"
+                  value={values.electricity_bill_month}
+                  readOnly={readOnly}
+                  error={errors.electricity_bill_month}
+                  helperText={errors.electricity_bill_month}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  money
+                  className={classes.number}
+                  labelText="Insurance premium for pump"
+                  name="insurance_pump"
+                  value={values.insurance_pump}
+                  readOnly={readOnly}
+                  error={errors.insurance_pump}
+                  helperText={errors.insurance_pump}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  money
+                  className={classes.number}
+                  labelText="Total Insurance premium"
+                  name="insurance_all"
+                  value={values.insurance_all}
+                  readOnly={readOnly}
+                  error={errors.insurance_all}
+                  helperText={errors.insurance_all}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  className={classes.number}
+                  labelText="Monthly average HSD sale(in KL)"
+                  name="monthly_avg_sale_hsd"
+                  value={values.monthly_avg_sale_hsd}
+                  readOnly={readOnly}
+                  error={errors.monthly_avg_sale_hsd}
+                  helperText={errors.monthly_avg_sale_hsd}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  className={classes.number}
+                  labelText="Monthly average MS sale(in KL)"
+                  name="monthly_avg_sale_ms"
+                  value={values.monthly_avg_sale_ms}
+                  readOnly={readOnly}
+                  error={errors.monthly_avg_sale_ms}
+                  helperText={errors.monthly_avg_sale_ms}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  className={classes.number}
+                  labelText="Monthly average LPG sale(in KL)"
+                  name="monthly_avg_sale_lpg"
+                  value={values.monthly_avg_sale_lpg}
+                  readOnly={readOnly}
+                  error={errors.monthly_avg_sale_lpg}
+                  helperText={errors.monthly_avg_sale_lpg}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  className={classes.number}
+                  labelText="LPG count"
+                  name="lpg_count"
+                  value={values.lpg_count}
+                  readOnly={readOnly}
+                  error={errors.lpg_count}
+                  helperText={errors.lpg_count}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  className={classes.number}
+                  inputProps={{ className: classes.input }}
+                  type='number'
+                  {...inputProps}
+                  money
+                  labelText="Credit sales per day"
+                  name="credit_sales_day"
+                  value={values.credit_sales_day}
+                  readOnly={readOnly}
+                  error={errors.credit_sales_day}
+                  helperText={errors.credit_sales_day}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  className={classes.number}
+                  money
+                  labelText="Credit sales per month"
+                  name="credit_sales_month"
+                  value={values.credit_sales_month}
+                  readOnly={readOnly}
+                  error={errors.credit_sales_month}
+                  helperText={errors.credit_sales_month}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  className={classes.number}
+                  labelText="Average realization period"
+                  name="avg_realization_period"
+                  value={values.avg_realization_period}
+                  readOnly={readOnly}
+                  error={errors.avg_realization_period}
+                  helperText={errors.avg_realization_period}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextInput
+                  {...inputProps}
+                  className={classes.number}
+                  money
+                  labelText="Outstanding any given time"
+                  name="credit_outstanding"
+                  value={values.credit_outstanding}
+                  readOnly={readOnly}
+                  error={errors.credit_outstanding}
+                  helperText={errors.credit_outstanding}
+                />
+              </Grid>
+              <Grid item md={7}>
+                <div style={{ paddingTop: 12 }}>
+                  <label>Is ATM available in outlet</label>
                 </div>
-            </div>
-            <div className={classes.actionFooter}>
-                <Divider />
-                <div className={classes.actionButtonsWrapper}>
-                    <div>
-                        <Button
-                            variant="outlined"
-                            startIcon={<NavigateBeforeRoundedIcon />}
-                            // disabled={loading}
-                            onClick={handleClose}
-                        >
-                            Back
-                        </Button>
-                    </div>
-                    <div>
-                        <Button
-                            variant="contained"
-                            type="submit"
-                            className={clsx(classes.btn, classes.editButton)}
-                            startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                            onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
-                        >
-                            {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` :
-                                'Save'}
-                        </Button>
-                    </div>
+              </Grid>
+              <Grid item md={4}>
+                <FormControl>
+                  <RadioGroup name="has_atm" value={values.has_atm} onChange={handleChange}>
+                    <FormGroup row>
+                      <FormControlLabel value="Yes" control={<Radio color="secondary" />} label="Yes" />
+                      <FormControlLabel value="No" control={<Radio color="secondary" />} label="No" />
+                    </FormGroup>
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
+              <Grid item md={7}>
+                <div style={{ paddingTop: 12 }}>
+                  <label>Is the customer a PEP (Politically Exposed Person) or closely associated to PEP</label>
                 </div>
-            </div>
+              </Grid>
+              <Grid item md={4}>
+                <FormControl>
+                  <RadioGroup name="is_pep" value={values.is_pep} onChange={handleChange}>
+                    <FormGroup row>
+                      <FormControlLabel value="Yes" control={<Radio color="secondary" />} label="Yes" />
+                      <FormControlLabel value="No" control={<Radio color="secondary" />} label="No" />
+                    </FormGroup>
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
+            </Grid>
+          </Box >
         </div>
-
-
-    )
+      </div>
+      <div className={classes.actionFooter}>
+        <Divider />
+        <div className={classes.actionButtonsWrapper}>
+          <div>
+            <Button
+              variant="outlined"
+              startIcon={<NavigateBeforeRoundedIcon />}
+              onClick={handleClose}
+            >
+              Back
+            </Button>
+          </div>
+          <div>
+            <Button
+              variant="contained"
+              type="submit"
+              className={clsx(classes.btn, classes.editButton)}
+              startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
+              onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
+            >
+              {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` :
+                'Save'}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div >
+  )
 }
 
 export default AddBusinessDetailsForm;

@@ -1,9 +1,9 @@
 import { URL } from "../config/serverUrls"
 import apiCall from "../utils/api.util";
 
-export const getAllWithheldLoans = () => {
+export const getAllWithheldLoans = (id) => {
     return new Promise((resolve, reject) => {
-        apiCall(`withheld/loans`)
+        apiCall(`withheld/loans?is_resolved=${id}`)
             .then(({ status, data, message }) => {
                 if (status === "SUCCESS") {
                     resolve(data)
@@ -18,7 +18,7 @@ export const getAllWithheldLoans = () => {
 }
 export const getAllWithheldRemarks = () => {
     return new Promise((resolve, reject) => {
-        apiCall(`withheld/loans/remarks`)
+        apiCall(`loans/remarks`)
             .then(({ status, data, message }) => {
                 if (status === "SUCCESS") {
                     const result = data.map(item => ({

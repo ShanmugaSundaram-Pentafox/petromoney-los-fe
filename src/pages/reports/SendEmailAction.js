@@ -73,7 +73,8 @@ const SendEmailAction = () => {
       })
       .catch((err) => {
         setModalData({})
-        enqueueSnackbar(err, {
+        console.log(err);
+        enqueueSnackbar('Something went wrong, Please try Again!', {
           anchorOrigin: {
             vertical: "top",
             horizontal: "right",

@@ -35,6 +35,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import { Drawer } from "@material-ui/core";
 import FilePreview from "../../../components/CommonComponents/FilePreview";
+import { permissionCheck } from "../../../components/UserCan/UserCan";
+import { rulesList } from "../../../config/userRules";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -429,16 +431,22 @@ export default function VehicleInfo({ id, data, currentUser }) {
                   Credit Limit: <Currency value={vehicleInfo.credit_limit} />
                 </Typography>
                 <div style={{ display: "flex" }}>
-                  <Tooltip title="Edit vehicle">
-                    <Typography style={{ marginRight: '7px', color: "#4770C1" }} onClick={() => { modalOpen(vehicleInfo.tt_no, vehicleInfo.vehicle_id) }}>
-                      <EditOutlinedIcon fontSize="medium" />
-                    </Typography>
-                  </Tooltip>
-                  <Tooltip title="Delete vehicle">
-                    <Typography style={{ color: '#ff6666' }}>
-                      <DeleteOutlineOutlinedIcon fontSize="medium" onClick={() => handleClickOpen(vehicleInfo.tt_no, vehicleInfo.vehicle_id)} />
-                    </Typography>
-                  </Tooltip>
+                  {
+                    !permissionCheck(currentUser.role_name, rulesList.transporter_view) ? (
+                      <>
+                        <Tooltip title="Edit vehicle">
+                          <Typography style={{ marginRight: '7px', color: "#4770C1" }} onClick={() => { modalOpen(vehicleInfo.tt_no, vehicleInfo.vehicle_id) }}>
+                            <EditOutlinedIcon fontSize="medium" />
+                          </Typography>
+                        </Tooltip>
+                        <Tooltip title="Delete vehicle">
+                          <Typography style={{ color: '#ff6666' }}>
+                            <DeleteOutlineOutlinedIcon fontSize="medium" onClick={() => handleClickOpen(vehicleInfo.tt_no, vehicleInfo.vehicle_id)} />
+                          </Typography>
+                        </Tooltip>
+                      </>
+                    ) : null
+                  }
                 </div>
               </AccordionSummary>
               <AccordionDetails>
@@ -514,7 +522,11 @@ export default function VehicleInfo({ id, data, currentUser }) {
                   </Table>
                 </Box>
                 <Box mb={2}>
-                  <Typography variant="h6" component="h4">Services</Typography>
+                  {
+                    services[expanded] ? (
+                      <Typography variant="h6" component="h4">Services</Typography>
+                    ) : null
+                  }
 
                   {
                     Array.isArray(services[expanded]) && services[expanded].map(row => (

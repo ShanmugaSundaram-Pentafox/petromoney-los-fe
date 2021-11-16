@@ -19,6 +19,8 @@ import TextInput from '../../../components/TextInput/TextInput';
 import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { useSnackbar } from "notistack";
+import MonthlySalesInfo from './MonthlySalesInfo';
+import clsx from 'clsx';
 
 
 /**
@@ -54,7 +56,12 @@ const useStyles = makeStyles(theme => ({
   },
   table: {
     marginBottom: 20,
-  }
+  },
+  btnEdit: {
+    '&.MuiButton-root': { color: "#2196f3" },
+    border: "1px #2196f3 solid",
+    marginLeft: 2
+  },
 }));
 
 const SalesInfoWrapper = styled.div`
@@ -121,7 +128,7 @@ const SalesInfo = ({
   const open = Boolean(anchorEl);
 
   const saveNewSalesData = () => {
-    if (parseInt(apiData.from_year) >= parseInt(apiData.to_year)){
+    if (parseInt(apiData.from_year) < 1900 || parseInt(apiData.from_year) >= parseInt(apiData.to_year)) {
       enqueueSnackbar("Year error, Please check...", {
         anchorOrigin: {
           vertical: "top",
@@ -130,7 +137,7 @@ const SalesInfo = ({
         variant: "error",
       });
     }
-    else{
+    else {
       if (Object.keys(apiData).length < 4) return null;
       const objBody = {
         user_id: currentUser.id, ...apiData
@@ -143,12 +150,12 @@ const SalesInfo = ({
         .catch(err => {
           console.log('Sales data save error - ', err);
         })
-      
+
     }
   }
 
   const saveEditRow = (data, i) => {
-    if(parseInt(data.from_year) >= parseInt(data.to_year)){
+    if (parseInt(data.from_year) < 1900 || parseInt(data.from_year) >= parseInt(data.to_year)) {
       enqueueSnackbar("Year error, Please check...", {
         anchorOrigin: {
           vertical: "top",
@@ -223,12 +230,12 @@ const SalesInfo = ({
           perform={rulesList.dealership_edit}
           yes={() => (
             <div style={{ textAlign: 'right', marginTop: 8 }}>
-              <Button color="primary" variant="contained" size="small" onClick={() => setAddNewRow(true)}>Add Sales Data</Button>
+              <Button color="primary" variant="contained" size="small" onClick={() => setAddNewRow(true)}>Add</Button>
             </div>
           )}
         />
       </div>
-      <SalesTableWrapper column={column}>
+      <SalesTableWrapper column='row'>
         <div className={classes.table}>
           <Table size="small">
             <TableHead>
@@ -244,7 +251,7 @@ const SalesInfo = ({
             </TableHead>
             <TableBody>
               {
-                info.map((row, i) => i === editRow.rowIndex ? (
+                info?.map((row, i) => i === editRow?.rowIndex ? (
                   <TableRow key={`edit-row-${i}`}>
                     <TableCell scope="row" component="th">
                       <TextInput
@@ -252,6 +259,7 @@ const SalesInfo = ({
                         label="From Year"
                         name="from_year"
                         type="number"
+                        disabled={true}
                         value={editRow.from_year}
                         onChange={onEditTextChange}
                       />
@@ -261,6 +269,7 @@ const SalesInfo = ({
                         label="To Year"
                         name="to_year"
                         type="number"
+                        disabled={true}
                         value={editRow.to_year}
                         onChange={onEditTextChange}
                       />
@@ -332,7 +341,7 @@ const SalesInfo = ({
                             size="small"
                             variant="outlined"
                             color="success"
-                            className={classes.btnSuccess}
+                            className={clsx(classes.btnSuccess, classes.btnEdit)}
                             onClick={() => editSalesRow(row, i)}>
                             Edit
                           </Button>
@@ -392,15 +401,15 @@ const SalesInfo = ({
                         onClick={() => {
                           setAddNewRow(false);
                         }}>
-                        <ClearRoundedIcon fontSize="small" />
+                        Cancel
                       </Button>
                       <Button
                         size="small"
                         variant="outlined"
-                        color="primary"
+                        color="error"
                         // className={classes.btnSuccess}
                         onClick={saveNewSalesData}>
-                        <DoneRoundedIcon fontSize="small" />
+                        Save
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -420,7 +429,7 @@ const SalesInfo = ({
             )}
           /> */}
         </div>
-        <div className={classes.table}>
+        {/* <div className={classes.table}>
           <Table size="small">
             <TableHead>
               <TableRow>
@@ -437,32 +446,34 @@ const SalesInfo = ({
                 info.map((row, i) => (
                   <TableRow key={i}>
                     <TableCell scope="row" component="th">{row.from_year} - {row.to_year}
-                      {/* {row.to_year >= 2020 ? <InfoOutlinedIcon
-                        className={classes.infoIcon}
-                        color='primary'
-                        aria-haspopup="true"
-                        aria-owns={open ? 'mouse-over-popover' : undefined}
-                        onMouseEnter={handlePopoverOpen}
-                        onMouseLeave={handlePopoverClose} />
-                        : null} */}
+                      {
+                        // row.to_year >= 2020 ? <InfoOutlinedIcon
+                        // className={classes.infoIcon}
+                        // color='primary'
+                        // aria-haspopup="true"
+                        // aria-owns={open ? 'mouse-over-popover' : undefined}
+                        // onMouseEnter={handlePopoverOpen}
+                        // onMouseLeave={handlePopoverClose} />
+                        // : null
+                      }
                     </TableCell>
-                    {/* {row.to_year >= 2020 ?
+                    {row.to_year >= 2020 ?
                       <TableCell align="center" colSpan={2}><Currency value={row.ms_rs?.toFixed(2)} /></TableCell>
-                      : <> */}
-                    <TableCell align="right"><Currency value={row.ms_rs?.toFixed(2)} /></TableCell>
-                    <TableCell align="right"><Currency value={row.ms_gross?.toFixed(2)} /></TableCell>
-                    <TableCell align="right"><Currency value={row.hsd_rs?.toFixed(2)} /></TableCell>
-                    <TableCell align="right"><Currency value={row.hsd_gross?.toFixed(2)} /></TableCell>
-                    {/* </>} */}
+                      : <>
+                        <TableCell align="right"><Currency value={row.ms_rs?.toFixed(2)} /></TableCell>
+                        <TableCell align="right"><Currency value={row.ms_gross?.toFixed(2)} /></TableCell>
+                        <TableCell align="right"><Currency value={row.hsd_rs?.toFixed(2)} /></TableCell>
+                        <TableCell align="right"><Currency value={row.hsd_gross?.toFixed(2)} /></TableCell>
+                      </>}
                     <TableCell align="right"><Currency value={(row.ms_rs + row.hsd_rs)?.toFixed(2)} /></TableCell>
                   </TableRow>
                 ))
               }
             </TableBody>
           </Table>
-        </div>
+        </div> */}
       </SalesTableWrapper>
-
+      <MonthlySalesInfo currentUser={currentUser} id={id} titleAlign={titleAlign} column='row' />
     </SalesInfoWrapper>
   )
 }

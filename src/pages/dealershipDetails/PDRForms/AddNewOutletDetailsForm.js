@@ -1,11 +1,11 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
+import TextInput from '../../../components/TextInput/TextInput';
 import Button from '../../../components/CommonComponents/Button/Button';
 import * as Yup from 'yup';
-import { useFormik } from 'formik'; 
+import { useFormik } from 'formik';
 import clsx from 'clsx';
 import Divider from '@material-ui/core/Divider';
 import { makeStyles } from "@material-ui/styles";
@@ -15,10 +15,10 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { useSnackbar } from 'notistack';
+import { addOutletDetails } from '../../../services/PDReport.services';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelTitle: {
-        // textAlign: 'center',
         padding: '24px 16px',
         display: 'flex',
         justifyContent: 'space-between',
@@ -30,10 +30,11 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         flexDirection: 'column',
         height: '100vh',
-        width: '40vw'
+        width: '55vw'
     },
     sidePanelFormContentWrapper: {
         flex: 1,
+        backgroundColor: '#f6f6f6',
         overflow: 'auto'
     },
     actionButtonsWrapper: {
@@ -54,6 +55,19 @@ const useStyles = makeStyles((theme) => ({
         '&.MuiButton-contained:hover': {
             backgroundColor: theme.palette.success.dark
         }
+    },
+    number: {
+        backgroundColor: 'white',
+        "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+            "-webkit-appearance": "none",
+            margin: 0,
+        }
+    },
+    input: {
+        "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+            "-webkit-appearance": "none",
+            margin: 0,
+        }
     }
 
 }))
@@ -64,8 +78,6 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
     const classes = useStyles()
     const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
     const [loading, setLoading] = useState(false)
-    const [apiData, setApiData] = useState({});
-    const [editRow, setEditRow] = useState({});
 
 
     const handleEdit = () => {
@@ -74,6 +86,38 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
     const handleClose = () => {
         callback();
     };
+    const relationShipOptions = [
+        { label: "Choose Relationship", value: "" },
+        { label: "Father", value: "FATHER" },
+        { label: "Mother", value: "MOTHER" },
+        { label: "Uncle", value: "UNCLE" },
+        { label: "Aunt", value: "AUNT" },
+        { label: "Son", value: "SON" },
+        { label: "Daughter", value: "DAUGHTER" },
+        { label: "Grandfather", value: "GRANDFATHER" },
+        { label: "Grandmother", value: "GRANDMOTHER" },
+        { label: "Mother-in-law", value: "MOTHER-IN-LAW" },
+        { label: "Father-in-law", value: "FATHER-IN-LAW" },
+        { label: "Sister-in-law", value: "SISTER-IN-LAW" },
+        { label: "Brother-in-law", value: "BROTHER-IN-LAW" },
+        { label: "Brother", value: "BROTHER" },
+        { label: "Newphew", value: "NEPHEW" },
+        { label: "Partner", value: "PARTNER" },
+        { label: "Friend", value: "FRIEND" },
+        { label: "Shareholder", value: "SHAREHOLDER" },
+        { label: "Buyer", value: "BUYER" },
+        { label: "Supplier", value: "SUPPLIER" },
+        { label: "Business Neighbour", value: "BUSINESS NEIGHBOUR" },
+        { label: "Home Neighbour", value: "HOME NEIGHBOUR" },
+        { label: "Director", value: "DIRECTOR" },
+        { label: "Proprietor", value: "PROPRIETOR" },
+        { label: "Debtors", value: "DEBTORS" },
+        { label: "Creditors", value: "CREDITORS" },
+        { label: "Principal", value: "PRINCIPAL" },
+        { label: "Others", value: "OTHERS" }
+    ]
+
+
 
 
     const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
@@ -83,39 +127,41 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
-            transport_name: Yup.string().required('Please enter transporter name'),
+            outlet_category: Yup.string().nullable('Choose outlet category').required('Choose outlet category'),
+            distance_from_headquarters: Yup.string().nullable('Please enter fuel transported from area').required('Please enter fuel transported from area'),
+            terminal_name: Yup.string().nullable('Please enter terminal name').required('Please enter terminal name'),
+            size_of_outlet: Yup.number().nullable('Please enter outlet size').required('Please enter outlet size'),
+            land_type: Yup.string().nullable('Enter land type').required('Enter land type'),
+            outlet_operated_by: Yup.string().nullable('Enter operator name').required('Enter operator name'),
+            land_owner_name: Yup.string().nullable('Enter land owner name').required('Enter land owner name')
 
         }),
-        // onSubmit: values => {
-        //     updateFleetOperator(values, dealer_id, data.id)
-        //         .then(res => {
-        //             console.log(res)
-        //             enqueueSnackbar(res, {
-        //                 anchorOrigin: {
-        //                     vertical: 'top',
-        //                     horizontal: 'right',
-        //                 },
-        //                 variant: 'success',
-        //             }
-        //             )
-        //             setTimeout(() => {
-        //                 window.location.reload()
-        //             }, 1500);
+        onSubmit: values => {
+            const data = { ...values }
 
-        //         })
-        //         .catch(e => {
-        //             enqueueSnackbar(e, {
-        //                 anchorOrigin: {
-        //                     vertical: 'top',
-        //                     horizontal: 'right',
-        //                 },
-        //                 variant: 'error',
-        //             }
-        //             )
-        //         })
-
-
-        // }
+            addOutletDetails(data, dealer_id)
+                .then(res => {
+                    enqueueSnackbar(res, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'success',
+                    });
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1500);
+                })
+                .catch(e => {
+                    enqueueSnackbar(e, {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'right',
+                        },
+                        variant: 'error',
+                    });
+                })
+        }
     });
     const inputProps = {
         direction: "column",
@@ -135,46 +181,34 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                             <Grid container spacing={2}>
                                 <Grid item md={6}>
                                     <TextInput
+                                        select
                                         {...inputProps}
-                                        labelText="Outlet Address"
-                                        name="outlet_address"
-                                        value={values.outlet_address}
+                                        labelText="Outlet category"
+                                        name="outlet_category"
+                                        value={values.outlet_category}
                                         readOnly={readOnly}
-                                        error={errors.outlet_address}
-                                        helperText={errors.outlet_address}
-                                    />
+                                        disabled={readOnly}
+                                        error={errors.outlet_category}
+                                        helperText={errors.outlet_category}
+                                    >
+                                        <option value="">Choose category</option>
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C">C</option>
+                                    </TextInput>
                                 </Grid>
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
-                                        labelText="Outlet Landmark"
-                                        name="outlet_landmark"
-                                        value={values.outlet_landmark}
+                                        className={classes.number}
+                                        inputProps={{ className: classes.input }}
+                                        type='number'
+                                        labelText="Distance from headquarters"
+                                        name="distance_from_headquarters"
+                                        value={values.distance_from_headquarters}
                                         readOnly={readOnly}
-                                        error={errors.outlet_landmark}
-                                        helperText={errors.outlet_landmark}
-                                    />
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        labelText="Distance from Headquaters"
-                                        name="distance_from_headquater"
-                                        value={values.distance_from_headquater}
-                                        readOnly={readOnly}
-                                        error={errors.distance_from_headquater}
-                                        helperText={errors.distance_from_headquater}
-                                    />
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        labelText="Fuel Transported from"
-                                        name="fuel_transported_from"
-                                        value={values.fuel_transported_from}
-                                        readOnly={readOnly}
-                                        error={errors.fuel_transported_from}
-                                        helperText={errors.fuel_transported_from}
+                                        error={errors.distance_from_headquarters}
+                                        helperText={errors.distance_from_headquarters}
                                     />
                                 </Grid>
                                 <Grid item md={6}>
@@ -191,7 +225,10 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
-                                        labelText="Distance from Terminal"
+                                        className={classes.number}
+                                        inputProps={{ className: classes.input }}
+                                        type='number'
+                                        labelText="Distance from Terminal (in Km)"
                                         name="distance_from_terminal"
                                         value={values.distance_from_terminal}
                                         readOnly={readOnly}
@@ -202,13 +239,17 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
-                                        labelText="Size of the Outlet"
-                                        placeholder="in Sq. ft"
+                                        className={classes.number}
+                                        inputProps={{ className: classes.input }}
+                                        labelText="Size of the Outlet (in Sq. ft)"
                                         name="size_of_outlet"
                                         value={values.size_of_outlet}
                                         readOnly={readOnly}
                                         error={errors.size_of_outlet}
                                         helperText={errors.size_of_outlet}
+                                        className={classes.number}
+                                        inputProps={{ className: classes.input }}
+                                        type='number'
                                     />
                                 </Grid><Grid item md={6}>
                                     <TextInput
@@ -218,13 +259,16 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         name="land_type"
                                         value={values.land_type}
                                         readOnly={readOnly}
+                                        disabled={readOnly}
                                         error={errors.land_type}
                                         helperText={errors.land_type}
                                     >
+                                        <option value=""></option>
                                         <option value="Owned">Owned</option>
                                         <option value="leased">Leased</option>
                                     </TextInput>
-                                </Grid><Grid item md={6}>
+                                </Grid>
+                                <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
                                         labelText="Land Owner Name"
@@ -239,12 +283,15 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                     <TextInput
                                         {...inputProps}
                                         money
+                                        className={classes.number}
+                                        inputProps={{ className: classes.input }}
                                         labelText="Lease Amount"
                                         name="lease_amount"
                                         value={values.lease_amount}
                                         readOnly={readOnly}
                                         error={errors.lease_amount}
                                         helperText={errors.lease_amount}
+                                        type='number'
                                     />
                                 </Grid>
                                 <Grid item md={6}>
@@ -255,12 +302,14 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         name="outlet_operated_by"
                                         value={values.outlet_operated_by}
                                         readOnly={readOnly}
+                                        disabled={readOnly}
                                         error={errors.outlet_operated_by}
                                         helperText={errors.outlet_operated_by}
                                     >
-                                        <option>Proprietor</option>
-                                        <option>Managing Partner</option>
-                                        <option>Third Party</option>
+                                        <option value=""></option>
+                                        <option value="Proprietor">Proprietor</option>
+                                        <option value="Managing partner">Managing Partner</option>
+                                        <option value="Third party">Third Party</option>
                                     </TextInput>
                                 </Grid>
                                 <Grid item md={6}>
@@ -268,46 +317,33 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                                         {...inputProps}
                                         select
                                         labelText="Relationship with owner"
-                                        name="relation_type"
-                                        value={values.relation_type}
+                                        name="relation_type_with_owner"
+                                        error={errors.relation_type_with_owner}
+                                        helperText={errors.relation_type_with_owner}
                                         readOnly={readOnly}
-                                        error={errors.relation_type}
-                                        helperText={errors.relation_type}
-                                    />
+                                        value={values.relation_type_with_owner}
+                                        disabled={readOnly}
+                                    >
+                                        {
+                                            relationShipOptions.map((item, i) => {
+                                                return (
+                                                    <option value={item.value}>{item.label}</option>
+                                                )
+                                            })
+                                        }
+                                    </TextInput>
                                 </Grid>
                                 <Grid item md={6}>
                                     <TextInput
                                         {...inputProps}
+                                        inputProps={{ className: classes.input }}
                                         labelText="Operator Mobile number"
                                         name="operator_mobile"
+                                        type="number"
                                         value={values.operator_mobile}
                                         readOnly={readOnly}
                                         error={errors.operator_mobile}
                                         helperText={errors.operator_mobile}
-                                    />
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        money
-                                        labelText="Salary expenses per month"
-                                        name="salary_expense_per_month"
-                                        value={values.salary_expense_per_month}
-                                        readOnly={readOnly}
-                                        error={errors.salary_expense_per_month}
-                                        helperText={errors.salary_expense_per_month}
-                                    />
-                                </Grid>
-                                <Grid item md={6}>
-                                    <TextInput
-                                        {...inputProps}
-                                        money
-                                        labelText="EB expenses per month"
-                                        name="eb_charge_per_month"
-                                        value={values.eb_charge_per_month}
-                                        readOnly={readOnly}
-                                        error={errors.eb_charge_per_month}
-                                        helperText={errors.eb_charge_per_month}
                                     />
                                 </Grid>
                             </Grid>

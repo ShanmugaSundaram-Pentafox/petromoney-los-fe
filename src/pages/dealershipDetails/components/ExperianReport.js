@@ -74,7 +74,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const Text = ({ show=true, label, value }) => {
+const Text = ({ show = true, label, value }) => {
   const classes = useStyles();
   const gridItem = {
     md: 6,
@@ -108,7 +108,7 @@ const ExperianReport = ({ id, type, onClose }) => {
   });
 
   const getReport = refresh => {
-    if(refresh) {
+    if (refresh) {
       setLoading(true);
       refreshExperianReportById(id, type)
         .then(res => {
@@ -133,7 +133,7 @@ const ExperianReport = ({ id, type, onClose }) => {
       })
   }
 
-  if(loading) {
+  if (loading) {
     return (
       <div className={classes.sidePanelFormWrapper}>
         <Typography className={classes.panelTitle} variant="h4">Experian Report</Typography>
@@ -155,14 +155,14 @@ const ExperianReport = ({ id, type, onClose }) => {
           <Text show={data.telephone} label={"Telephone"} value={data.telephone} />
           <Text show={data.mobile} label={"Mobile"} value={data.mobile} />
           <Text show={data.email} label={"Email"} value={data.email} />
-          
+
           <Grid {...gridItem}>
             <Typography className={classes.sidePanelTitle} variant="h4">Score</Typography>
           </Grid>
           <Text label={"Bureau Score"} value={data.bureau_score} />
           <Text label={"Bureau Score Confidence"} value={data.bureau_score_confidence} />
           <Text show={data.credit_rating} label={"Credit Rating"} value={data.credit_rating} />
-          
+
           <Grid {...gridItem}>
             <Typography className={classes.sidePanelTitle} variant="h4">Credit Account</Typography>
           </Grid>
@@ -171,7 +171,7 @@ const ExperianReport = ({ id, type, onClose }) => {
           <Text label={"Default"} value={data.ca_default} />
           <Text label={"Closed"} value={data.ca_closed} />
           <Text label={"CAD Suit Filed Current Balance"} value={data.ca_suit_file_current_balance} />
-          
+
           <Grid {...gridItem}>
             <Typography className={classes.sidePanelTitle} variant="h4">Total Outstanding Balance</Typography>
           </Grid>
@@ -180,7 +180,7 @@ const ExperianReport = ({ id, type, onClose }) => {
           <Text label={"Balance Unsecured"} value={<Currency value={data.os_balance_unsecured} />} />
           <Text label={"Balance Unsecured Percentage"} value={data.os_balance_unsecured_percentage} />
           <Text label={"Balance All"} value={<Currency value={data.os_balance_all} />} />
-          
+
           <Grid {...gridItem}>
             <Typography className={classes.sidePanelTitle} variant="h4">CAIS Account Details</Typography>
           </Grid>
@@ -188,7 +188,7 @@ const ExperianReport = ({ id, type, onClose }) => {
           <Text label={"Open Date"} value={data.open_date} />
           <Text label={"Credit Limit Amount"} value={<Currency value={data.credit_limit} />} />
           <Text label={"Highest Credit or Original Loan Amount"} value={<Currency value={data.highest_credit} />} />
-          
+
         </Grid>
       </div>
       <div className={classes.actionFooter}>
@@ -202,11 +202,11 @@ const ExperianReport = ({ id, type, onClose }) => {
               onClick={onClose}>Close</Button>
           </div>
           <div>
-          <Button
-            variant="contained"
-            className={classes.btnSuccess}
-            startIcon={<RefreshIcon />}
-            onClick={() => setOpenDialog(true)}>Refresh</Button>
+            <Button
+              variant="contained"
+              className={classes.btnSuccess}
+              startIcon={<RefreshIcon />}
+              onClick={() => setOpenDialog(true)}>Refresh</Button>
           </div>
         </div>
       </div>

@@ -20,8 +20,10 @@ import { permissionCheck } from '../UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import ListIcon from '@material-ui/icons/List';
 import SettingsIcon from '@material-ui/icons/Settings';
+import CachedIcon from '@material-ui/icons/Cached';
 // import { ExitToApp } from '@material-ui/icons';
 // import { connect } from 'formik';
+const packageJSON = require('../../../package.json');
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -78,12 +80,18 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     marginRight: theme.spacing(1)
   },
+  version: {
+    textAlign: 'center',
+    color: "rgba(34, 36, 68, .75)",
+    fontSize: 12,
+    display: 'block',
+  },
 }));
 
 const Sidebar = props => {
   const { open, variant, onClose, className, user, logout, currentUser, ...rest } = props;
   const classes = useStyles();
-  const pages = [
+  let pages = [
     {
       title: 'Dashboard',
       href: '/',
@@ -98,6 +106,11 @@ const Sidebar = props => {
       title: 'Loans',
       href: '/loans',
       icon: <AccountBoxIcon />
+    },
+    {
+      title: 'Credit Reload',
+      href: '/reports/credit/reload',
+      icon: <CachedIcon />
     },
     {
       title: 'Dealerships',
@@ -134,6 +147,11 @@ const Sidebar = props => {
     pages.splice(1, pages.length + 1)
     pages.push(
       {
+        title: 'Loan Report',
+        href: '/reports',
+        icon: <LocalShippingIcon />
+      },
+      {
         title: 'Profile',
         href: `/dealership/${currentUser.dealership_id}`,
         icon: <PersonOutlineIcon />
@@ -143,12 +161,32 @@ const Sidebar = props => {
         href: '/passbook',
         icon: <ListIcon />
       },
-      {
-        title: 'Transports',
-        href: '/transports',
-        icon: <LocalShippingIcon />
-      },
+      // {
+      //   title: 'Transports',
+      //   href: '/transports',
+      //   icon: <LocalShippingIcon />
+      // },
+      // {
+      //   title: 'Loan Report',
+      //   href: '/reports',
+      //   icon: <LocalShippingIcon />
+      // },
     )
+  }
+
+  if (permissionCheck(currentUser.role_name, rulesList.transporter_view)) {
+    pages = [
+      {
+        title: 'Profile',
+        href: `/transports-field`,
+        icon: <PersonOutlineIcon />
+      },
+      {
+        title: 'FASTag Passbook',
+        href: '/transport/fastag/details',
+        icon: <ListIcon />
+      }
+    ]
   }
 
   if (permissionCheck(currentUser.role_name, rulesList.users_view)) {
@@ -159,7 +197,7 @@ const Sidebar = props => {
     })
   }
 
-  {
+  if (permissionCheck(currentUser.role_name, rulesList.settings_view)) {
     pages.push({
       title: 'Settings',
       href: '/settings',
@@ -210,26 +248,13 @@ const Sidebar = props => {
           className={classes.nav}
           pages={pages}
         />
-        {/* <div>
+        <div>
           <List>
-              <ListItem
-                className={classes.item}
-                disableGutters
-              >
-                <Button
-                  activeClassName={classes.active}
-                  className={classes.button}
-                  // component={CustomRouterLink}
-                  onClick={logout}
-                >
-                  <div className={classes.icon}>
-                    <ExitToAppIcon />
-                  </div>
-                  Logout
-                </Button>
-              </ListItem>
+            <ListItem className={classes.version}>
+              version {packageJSON.version}
+            </ListItem>
           </List>
-        </div> */}
+        </div>
       </div>
     </Drawer>
   );

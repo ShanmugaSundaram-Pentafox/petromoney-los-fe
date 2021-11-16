@@ -86,13 +86,11 @@ const AddNewUserForm = ({ callback, action }) => {
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      role_id: Yup.number().required('Choose Proper User Role'),
-      first_name: Yup.string().required('Enter first name'),
-      last_name: Yup.string().min(1).required('Enter last name'),
-      mobile: Yup.number()
-        .min(10, 'Enter valid mobile number')
-        .required('Enter Mobile number'),
-      email: Yup.string().email('Enter valid email'),
+      role_id: Yup.number().nullable('Choose Proper User Role').required('Choose Proper User Role'),
+      first_name: Yup.string().nullable('Enter first name').matches(/^[A-Za-z]+$/, "Enter valid name").required('Enter first name'),
+      last_name: Yup.string().nullable('Enter last name').min(1).matches(/^[A-Za-z]+$/, "Enter valid name").required('Enter last name'),
+      mobile: Yup.string().nullable('Enter mobile number').matches(/^\d{10}$/, "Enter valid mobile number").required("Enter mobile number"),
+      email: Yup.string().nullable('Enter email').email('Enter valid email').required('Enter email'),
       password: Yup.string(),
     }),
     onSubmit: (formData) => {
@@ -117,7 +115,7 @@ const AddNewUserForm = ({ callback, action }) => {
         })
         .catch((e) => {
           setLoading(false);
-          enqueueSnackbar(e, {
+          enqueueSnackbar('Something went wrong, Please try Again!', {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',

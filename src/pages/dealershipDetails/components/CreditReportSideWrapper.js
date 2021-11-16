@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
-    height: '100vh',
+    height: '80vh',
   },
   sidePanelFormContentWrapper: {
     flex: 1,
@@ -60,6 +60,10 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: theme.palette.success.dark
     }
   },
+  title: {
+    marginTop: 15,
+    marginBottom: 10
+  }
 }));
 
 const initObject = {
@@ -172,9 +176,9 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
 
   return (
     <div className={classes.sidePanelFormWrapper}>
-      <div className={classes.sidePanelTitle}>
-        <Typography  variant="h4">Credit Report: Dealership</Typography>
-        <CloseRoundedIcon onClick={onClose} />
+      <div className={classes.title}>
+        <Typography  variant="h4">Dealership credit report</Typography>
+        {/* <CloseRoundedIcon onClick={onClose} /> */}
       </div>
 
       <div className={classes.sidePanelFormContentWrapper}>

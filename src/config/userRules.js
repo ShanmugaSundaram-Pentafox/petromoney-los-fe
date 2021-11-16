@@ -1,4 +1,4 @@
- export const rulesList = {
+export const rulesList = {
   "dashboard": "dashboard",
   "users_view": "users:view",
   "loan_approval": "loan:approval",
@@ -8,8 +8,13 @@
   "dealership_credit_edit": "dealership:credit:edit",
   "dealer_credit_view": "dealer:credit:view",
   "dealership_credit_view": "dealership:credit:view",
-  "dealer_view":"dealer:view",
+  "dealer_view": "dealer:view",
+  "transporter_view": "transporter:view",
   "region_map": "region:map",
+  "settings_view": "settings:view",
+  "credit_view": "credit:view",
+  "pdr_view": "sales:view",
+  "upload_statement": "upload:statement"
 }
 
 export const rulesForUserRoles = {
@@ -19,6 +24,9 @@ export const rulesForUserRoles = {
       rulesList.loan_approval,
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
+      rulesList.credit_view,
+      rulesList.pdr_view,
+      rulesList.upload_statement,
     ]
   },
   CDO: {
@@ -27,6 +35,9 @@ export const rulesForUserRoles = {
       rulesList.loan_approval,
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
+      rulesList.credit_view,
+      rulesList.pdr_view,
+      rulesList.upload_statement,
     ]
   },
   CFO: {
@@ -37,6 +48,9 @@ export const rulesForUserRoles = {
       rulesList.dealer_edit,
       rulesList.dealer_credit_edit,
       rulesList.dealership_credit_edit,
+      rulesList.credit_view,
+      rulesList.pdr_view,
+      rulesList.upload_statement,
     ]
   },
   CREDIT_HEAD: {
@@ -45,6 +59,8 @@ export const rulesForUserRoles = {
       rulesList.loan_approval,
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
+      rulesList.credit_view,
+      rulesList.upload_statement,
     ]
   },
   ADMIN: {
@@ -57,6 +73,10 @@ export const rulesForUserRoles = {
       rulesList.dealership_credit_edit,
       rulesList.users_view,
       rulesList.region_map,
+      rulesList.settings_view,
+      rulesList.credit_view,
+      rulesList.pdr_view,
+      rulesList.upload_statement,
     ]
   },
   CREDIT_EXEC: {
@@ -67,6 +87,8 @@ export const rulesForUserRoles = {
       rulesList.dealer_edit,
       rulesList.dealer_credit_edit,
       rulesList.dealership_credit_edit,
+      rulesList.credit_view,
+      rulesList.upload_statement,
     ]
   },
   OPS_EXEC: {
@@ -74,6 +96,9 @@ export const rulesForUserRoles = {
       rulesList.dashboard,
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
+      rulesList.credit_view,
+      rulesList.pdr_view,
+      rulesList.upload_statement,
     ]
   },
   OPS_MANAGER: {
@@ -81,6 +106,9 @@ export const rulesForUserRoles = {
       rulesList.dashboard,
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
+      rulesList.credit_view,
+      rulesList.pdr_view,
+      rulesList.upload_statement,
     ]
   },
   CREDIT: {
@@ -90,6 +118,8 @@ export const rulesForUserRoles = {
       rulesList.dealer_edit,
       rulesList.dealer_credit_edit,
       rulesList.dealership_credit_edit,
+      rulesList.credit_view,
+      rulesList.upload_statement,
     ]
   },
   SALES_HEAD_STATE: {
@@ -97,6 +127,8 @@ export const rulesForUserRoles = {
       rulesList.dashboard,
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
+      rulesList.pdr_view,
+      rulesList.upload_statement,
     ]
   },
   SALES_HEAD_REGIONAL: {
@@ -104,6 +136,8 @@ export const rulesForUserRoles = {
       rulesList.dashboard,
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
+      rulesList.pdr_view,
+      rulesList.upload_statement,
     ]
   },
   FIELD_OFFICER: {
@@ -111,11 +145,19 @@ export const rulesForUserRoles = {
       rulesList.dashboard,
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
+      rulesList.credit_view,
+      rulesList.pdr_view,
+      rulesList.upload_statement,
     ]
   },
   DEALER: {
-    static:[
+    static: [
       rulesList.dealer_view,
+    ]
+  },
+  TRANSPORTER: {
+    static: [
+      rulesList.transporter_view,
     ]
   }
 }

@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const PasswordForm = ({ data, callback, loading ,setLoading}) => {
+const PasswordForm = ({ data, callback, loading, setLoading }) => {
     const { enqueueSnackbar } = useSnackbar();
     const classes = useStyles();
     const { values, errors, handleChange, handleSubmit, setValues, isSubmitting, setFieldValue } = useFormik({
@@ -48,8 +48,8 @@ const PasswordForm = ({ data, callback, loading ,setLoading}) => {
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: Yup.object().shape({
-            password: Yup.string().required('Enter the Password'),
-            confirm_password: Yup.string().required('Enter the Password'),
+            password: Yup.string().nullable('Enter password').required('Enter the Password').min(8, 'Password should have minimum of 8 characters'),
+            confirm_password: Yup.string().nullable('Enter password').required('Enter the Password'),
         }),
         onSubmit: (values, { setSubmitting }) => {
             const d = { ...values };

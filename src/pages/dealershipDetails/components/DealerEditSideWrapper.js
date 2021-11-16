@@ -2,18 +2,15 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
-import StepContent from '@material-ui/core/StepContent';
 import Typography from '@material-ui/core/Typography';
 import * as Yup from 'yup';
-import DealerCreditInfoForm from './DealerCreditInfoForm';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
-import ClearRoundedIcon from '@material-ui/icons/ClearRounded';
 import EditIcon from '@material-ui/icons/Edit';
 import { useFormik } from 'formik';
+import { cryptoEncrypt, encrypt } from '../../../services/crypto.service';
 import clsx from 'clsx';
 import Alert from '@material-ui/lab/Alert';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -21,10 +18,11 @@ import { API } from '../../../config/api';
 import { URL } from '../../../config/serverUrls';
 import { logger } from '../../../config/logger';
 import DealerEditForm from './DealerEditForm';
-import apiCall from '../../../utils/api.util';
 import { useSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
-import moment from 'moment';
+import { format, parse } from 'date-fns';
+import { compareObject } from '../../../utils/compareObject.util';
+
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -106,30 +104,34 @@ const DealerEditSideWrapper = ({
   let coApplicantFields = {};
   if (modelType === 'COAPPLICANT') {
     coApplicantFields = {
-      dealer_id: Yup.number().required('Enter Dealer ID'),
-      relationship: Yup.string().min(2).required('Enter Relationship Type'),
+      dealer_id: Yup.number().nullable('Enter Relation').required('Enter Relation'),
+      relationship: Yup.string().min(2).nullable('Enter Relationship type').required('Enter Relationship Type'),
     };
   }
 
   const validationSchema = Yup.object().shape({
-    first_name: Yup.string().required('Enter first name'),
-    last_name: Yup.string().required('Enter last name'),
-    gender: Yup.string().required('Enter gender'),
-    email: Yup.string().email('Invalid email').required('Enter email'),
+    first_name: Yup.string().nullable('Enter first name').required('Enter first name'),
+    last_name: Yup.string().nullable('Enter last name').required('Enter last name'),
+    gender: Yup.string().nullable('Choose gender').required('Enter gender'),
+    email: Yup.string().nullable('Enter email').email('Invalid email').required('Enter email'),
     address: Yup.string()
+      .nullable('Enter address')
       .min(6, 'address must be atleast 6 characters')
       .required('Enter address'),
     mobile: Yup.string()
+      .nullable('Enter mobile number')
       .matches(/^\d{10}$/, 'Invalid mobile number')
       .required('Enter valid mobile number'),
     // dob: Yup.number().required("Choose date of birth"),
-    residing_since: Yup.number().required('Enter the year'),
+    residing_since: Yup.number().nullable('Enter the year').required('Enter the year'),
     marital_status: Yup.string('Enter your Marital status'),
     pan: Yup.string()
+      .nullable('Enter PAN')
       .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
       .required('Enter PAN')
       .uppercase(),
     aadhar: Yup.string()
+      .nullable('Enter GST')
       .matches(/^(\d{12})$|^(\d{16})$/, 'Invalid aadhar')
       .required('Enter valid aadhar'),
     ...coApplicantFields,
@@ -197,30 +199,43 @@ const DealerEditSideWrapper = ({
       values.first_name = values.first_name.toUpperCase();
       values.last_name = values.last_name.toUpperCase();
       setLoading(true);
-      const date = moment(selectedDate).format('DD-MMM-YYYY');
-      const date_values = { ...values, dob: date, is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0 };
-      const data = new FormData();
-
-      Object.keys(date_values).forEach((key) => {
-        data.append(key, date_values[key]);
+      const dob = selectedDate ? format(new Date(selectedDate), "dd-MM-yyyy") : values.dob ? values.dob : null
+      const date_values = { ...values, dob: dob, pan: values.pan.toUpperCase(), is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0 };
+      let obj = {};
+      if (values.id) {
+        obj = compareObject(data, date_values)
+      }
+      else {
+        obj = { ...date_values }
+      }
+      const formData = new FormData();
+      Object.keys(obj).forEach((key) => {
+        if(key === 'pan'){
+          let pan = values?.pan ? cryptoEncrypt(values.pan) : values?.pan;
+          formData.append(key, pan)          
+        } else if(key === 'aadhar'){
+          let aadhar = values?.aadhar ? cryptoEncrypt(values.aadhar) : values?.aadhar;
+          formData.append(key, aadhar)          
+        } else {
+          formData.append(key, obj[key]);
+        }
       });
       const apiURL =
         modelType === 'DEALER'
           ? URL.dealers
           : modelType === 'GUARANTOR'
-          ? URL.guarantor
-          : URL.coApplicants;
+            ? URL.guarantor
+            : URL.coApplicants;
       let url = `${apiURL}/${dealershipId}`;
       if (values.id) {
         url += `/${values.id}`;
       }
-
       if (modelType !== 'GUARANTOR') {
-        data.append('user_id', currentUser.id);
+        formData.append('user_id', currentUser.id);
       }
       fetch(`${URL.base}${url}`, {
         method: 'POST',
-        body: data,
+        body: formData,
         headers: {
           Authorization: `Bearer ${currentUser.token}`,
         },
@@ -231,14 +246,18 @@ const DealerEditSideWrapper = ({
         .then((res) => {
           setLoading(false);
           setApicallStatus('success');
-          enqueueSnackbar(res.profile_status, {
+          enqueueSnackbar(res.message, {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',
             },
             variant: 'success',
           });
-          setApiCallMessage(isAdd ? 'Dealer Added' : 'Dealer Updated');
+
+          // setTimeout(() => {
+          //   window.location.reload();
+          // }, 1000);
+          // setApiCallMessage(isAdd ? 'Dealer Added' : 'Dealer Updated');
           onClose();
           modelType === 'DEALER'
             ? getDealerApiCall(dealershipId)
@@ -247,25 +266,25 @@ const DealerEditSideWrapper = ({
         .catch((err) => {
           setReadOnly(false);
           setLoading(false);
-          enqueueSnackbar(err.profile_status, {
+          enqueueSnackbar(err.message, {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',
             },
             variant: 'error',
           });
-          setApicallStatus('error');
-          setApiCallMessage('Sorry! Unable to add or Update. Try again later.');
+          // setApicallStatus('error');
+          // setApiCallMessage('Sorry! Unable to add or Update. Try again later.');
           logger(err);
         });
-    },
+    }, 
   });
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
   const handleStateChange = (state) => {
     setSelectedState(state);
-  }
+  };
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant='h4'>
@@ -273,8 +292,8 @@ const DealerEditSideWrapper = ({
           {modelType === 'DEALER'
             ? 'Dealer Edit Form'
             : modelType === 'GUARANTOR'
-            ? 'Guarantor Edit Form'
-            : 'CoApplicant Edit Form'}
+              ? 'Guarantor Edit Form'
+              : 'CoApplicant Edit Form'}
         </div>
         <CloseIcon onClick={onClose} />
       </Typography>

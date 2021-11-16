@@ -22,6 +22,7 @@ import ButtonComp from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import FormDialog from "../../../components/CommonComponents/FormDialog/FormDialog";
 import FilePreview from "../../../components/CommonComponents/FilePreview";
+import DocListPreview from "./DocListPreview";
 
 const DeleteButton = withStyles(theme => ({
   root: {
@@ -83,11 +84,12 @@ const useStyles = makeStyles((theme) => ({
   button: {
     margin: 0,
     float: "right",
-  }
+  },
 }));
 
 
 const Docs = ({ data }) => {
+  const classes = useStyles();
   const [imageModal, setImageModal] = useState({})
   let temp = 0;
   return (
@@ -220,36 +222,37 @@ const DocList = ({ id }) => {
   return (
     <div className={classes.wrapper}>
       {showUpload && <FileUpload handleSave={handleSave} id={id} data={rowData} title='Upload Dealership Document' open={showUpload} onCloseUploader={onCloseUploader} />}
-      {/* <Typography variant="h5" align={"center"} className={classes.title}>
+      <Typography variant="h5" align={"Left"} className={classes.title}>
         Dealership Documents
-      </Typography> */}
+      </Typography>
       <Table className={classes.table} size="small" aria-label="Dealers">
         <TableHead>
           <TableRow>
             {/* <TableCell align="center">ID</TableCell> */}
-            <TableCell style={{ minWidth: 300 }}>Document Name</TableCell>
+            {/* <TableCell style={{ minWidth: 300 }}>Document Name</TableCell> */}
             {/* <TableCell align="center">Document Type</TableCell> */}
-            <TableCell align="center">Files</TableCell>
+            {/* <TableCell align="center">Files</TableCell> */}
           </TableRow>
         </TableHead>
         <TableBody>
-          {Array.isArray(checkListData) && checkListData.map((row, i) => row.doc_type !== 'dealer' && (
-            <TableRow key={row.doc_id}>
-              {/* <TableCell align="center">{row.doc_id}</TableCell> */}
-              <TableCell>{row.description}</TableCell>
-              {/* <TableCell align="center">{row.doc_type}</TableCell> */}
-              <TableCell align="right">
-                <Docs data={Array.isArray(row.file_data) && row.file_data.length ? row.file_data : []} />
-                <ButtonGroup size="small" aria-label="dealer action buttons">
-                  {
-                    Array.isArray(row.file_data) && row.file_data.length && row.file_data[0].file_id ?
-                      <Button onClick={() => handleModal(row.file_data, row.description)}>Delete</Button>
-                      : null
-                  }
-                  <Button onClick={(e) => onDocUpload(row)}>Upload</Button>
-                </ButtonGroup>
-              </TableCell>
-            </TableRow>
+          {Array.isArray(checkListData) && checkListData.map((row, i) =>  row.doc_type !== 'dealer' && (
+            <DocListPreview docName={row.description} upload={() => onDocUpload(row)} deleteDocs={() => handleModal(row.file_data, row.description)} file={row.file_data} id={i+1}/>
+            // <TableRow key={row.doc_id}>
+            //   {/* <TableCell align="center">{row.doc_id}</TableCell> */}
+            //   <TableCell>{row.description}</TableCell>
+            //   {/* <TableCell align="center">{row.doc_type}</TableCell> */}
+            //   <TableCell align="right">
+            //     <Docs data={Array.isArray(row.file_data) && row.file_data.length ? row.file_data : []} />
+            //     <ButtonGroup size="small" aria-label="dealer action buttons">
+            //       {
+            //         Array.isArray(row.file_data) && row.file_data.length && row.file_data[0].file_id ?
+            //           <Button onClick={() => handleModal(row.file_data, row.description)}>Delete</Button>
+            //           : null
+            //       }
+            //       <Button onClick={(e) => onDocUpload(row)}>Upload</Button>
+            //     </ButtonGroup>
+            //   </TableCell>
+            // </TableRow>
           ))}
         </TableBody>
       </Table>

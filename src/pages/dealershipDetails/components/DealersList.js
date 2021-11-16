@@ -11,7 +11,7 @@ import DealersTable from './DealersTable';
 import CoApplicantsTable from './CoApplicantsTable';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-import ExperianReport from './ExperianReport';
+// import ExperianReport from './ExperianReport';
 import GuarantorsTable from './GuarantorsTable';
 import { getAllGuarantor } from '../../../services/leegality.service';
 import { get } from 'lodash-es';
@@ -46,10 +46,10 @@ const useStyles = makeStyles(theme => ({
     width: '40vw',
     minWidth: 300
   },
-  experianWrapper: {
-    width: '50vw',
-    minWidth: 300
-  },
+  // experianWrapper: {
+  //   width: '50vw',
+  //   minWidth: 300
+  // },
   actionButtons: {
     // paddingTop: 8
   },
@@ -74,7 +74,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   const [formType, setFormType] = useState('');
   const [modelType, setModelType] = useState('');
   const [rowData, setRowData] = useState({});
-  const [dealerData, setDealersData] = useState();
+  const [dealerData, setDealersData] = useState([]);
   const [coApplicantsData, setCoApplicantsData] = useState([]);
   const [guarantorsData, setGuarantorsData] = useState([]);
   const [dealerCoApplicantData, setDealerCoApplicantData] = useState([]);
@@ -141,11 +141,11 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
     setShowDealerEditForm(false)
   }
 
-  const getExperianData = type => (event, id) => {
-    event.preventDefault();
-    event.stopPropagation()
-    setExperianData({ show: true, id, type });
-  }
+  // const getExperianData = type => (event, id) => {
+  //   event.preventDefault();
+  //   event.stopPropagation()
+  //   setExperianData({ show: true, id, type });
+  // }
 
   const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit);
   return (
@@ -168,7 +168,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         editFormClose={editFormClose}
         dealersClickRow={dealersClickRow}
         onClickAddMenu={onClickAddMenu}
-        getExperianData={getExperianData("dealer")}
+        // getExperianData={getExperianData("dealer")}
         showDealerEditForm={showDealerEditForm} />
 
       <CoApplicantsTable
@@ -184,7 +184,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         editFormClose={editFormClose}
         dealersClickRow={dealersClickRow}
         onClickAddMenu={onClickAddMenu}
-        getExperianData={getExperianData("coapplicant")}
+        // getExperianData={getExperianData("coapplicant")}
         showDealerEditForm={showDealerEditForm} />
 
       <GuarantorsTable
@@ -200,9 +200,9 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         editFormClose={editFormClose}
         dealersClickRow={dealersClickRow}
         onClickAddMenu={onClickAddMenu}
-        getExperianData={getExperianData("guarantor")}
+        // getExperianData={getExperianData("guarantor")}
         showDealerEditForm={showDealerEditForm} />
-      <Drawer
+      {/* <Drawer
         anchor="right"
         open={experianData.show}
         onBackdropClick={() => setExperianData({ show: false })}
@@ -219,7 +219,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
             ) : null
           }
         </div>
-      </Drawer>
+      </Drawer> */}
       <Drawer
         anchor="right"
         open={showDealerEditForm}
@@ -241,7 +241,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
       </Drawer>
 
       {
-        editable && ((dealerData || []).length || (coApplicantsData || []).length || (guarantorsData || []).length) && (
+        editable && ((dealerData || []).length != 0 || (coApplicantsData || []).length != 0 || (guarantorsData || []).length != 0) && (
           <div className={classes.footer}>
             <div className={classes.actionButtons}>
               <Button color="primary" variant="contained" size="small" onClick={() => openCloseCreditForm()}>View/Edit Credit Information</Button>

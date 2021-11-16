@@ -9,13 +9,11 @@ import DealerCreditInfoForm from './DealerCreditInfoForm';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
 import { useFormik } from 'formik';
 import clsx from 'clsx';
 import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { API } from '../../../config/api';
 import { URL } from '../../../config/serverUrls';
 import { logger } from '../../../config/logger';
 import apiCall from '../../../utils/api.util';
@@ -136,13 +134,16 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
           dealer_id: data[activeStep].id
         },
       })
-        .then(({ status, data, message }) => {
+        .then(({ status, resData, message }) => {
           // console.log(data, data.status, data.status == 'SUCCESS')
           if (status == 'SUCCESS') {
             // setApiStatus({ type: 'success', message: message || `Credit Info updated for ${data[activeStep].id}` })
             setLoading(false);
             handleReset();
             setActiveStep(activeStep + 1);
+            if(activeStep + 1 === data.length){
+              onClose()
+            }
           }
           else {
             setApiStatus({ show: true, type: 'error', message: message || 'Unable to save the details. Please try again later' })

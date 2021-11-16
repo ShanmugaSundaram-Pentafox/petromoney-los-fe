@@ -10,19 +10,15 @@ import FormDialog from './FormDialog/FormDialog';
 
 const useStyles = makeStyles((theme) => ({
     title: {
-        marginBottom: 4,
         fontSize: 11,
+        color: '#888',
     },
     details: {
         borderColor: 'grey',
         minWidth: 80,
-        minHeight: 50,
         maxWidth: 250,
-        display: 'flex',
         textAlign: 'left',
-        alignItems: 'left',
-        justifyContent: 'left',
-        marginBottom: 4,
+        marginBottom: 8,
     },
     text: {
         fontSize: 12
@@ -54,10 +50,8 @@ export const ViewData = ({ title, value }) => {
     const classes = useStyles()
     return (
         <Box className={classes.details}>
-            <div>
-                <p className={classes.title}>{title}</p>
-                <strong className={classes.text}>{value ? value : '-'}</strong>
-            </div>
+            <p className={classes.title}>{title}</p>
+            <strong className={classes.text}>{value ? value : '-'}</strong>
         </Box >
     )
 }
@@ -66,7 +60,7 @@ export const AvatarCard = ({ file, title, tooltip }) => {
     const [imageModal, setImageModal] = useState({})
     return (
         <>
-            <div onClick={() => setImageModal({ open: true, image: file, type: file.endsWith('.pdf') })} >
+            <div onClick={() => setImageModal({ open: true, image: file, type: file?.endsWith('.pdf') })} style={{ margin: 10, paddingLeft: 10 }}>
                 <Tooltip title={tooltip}>
                     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                         <Avatar src={`${file}`} />
@@ -94,7 +88,7 @@ const FilePreview = ({ data }) => {
                     </div>
             } */}
             {
-                data.type ?
+                data.type == true || data.type == 'pdf' ?
                     <div className="iframe-container">
                         <iframe src={data.image} frameBorder="0" ></iframe>
                     </div> :

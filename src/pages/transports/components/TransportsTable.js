@@ -4,16 +4,15 @@ import { makeStyles } from "@material-ui/styles"
 import MUIDataTable from "mui-datatables"
 import Typography from "@material-ui/core/Typography"
 import { useMount } from "react-use"
-import { getAllTransport } from "../../../services/transports.service"
+import { getAllTransport, getTransportersOwnerById } from "../../../services/transports.service"
 import { selectAllTransports } from "../../../store/transports/transports.selector"
 import { createStructuredSelector } from "reselect"
 import { connect } from "react-redux"
 import { setAllTransports } from "../../../store/transports/transports.actions"
-import AddNewTransportsForm from "./AddNewTransportsForm"
-import AddNewTransportsOwnerForm from "./AddNewTransportsOwnerForm"
 import { Grid } from "@material-ui/core"
 import { Paper } from "@material-ui/core";
 import Skeleton from '@material-ui/lab/Skeleton';
+import { getOmcList } from "../../../services/common.service"
 
 
 
@@ -35,13 +34,14 @@ function getSteps() {
 
 
 
-const TransportsTable = ({ transports, setAllTransports, onRowClick }) => {
-  
+const TransportsTable = ({ transports, setAllTransports, onRowClick, portal, transporterId }) => {
+
 
   const [loading, setLoading] = useState(false);
+  const [omcs, setOmcs] = useState([]);
 
   const classes = useStyles()
-  
+
   const columns = useMemo(() => {
     return [
       {
@@ -70,35 +70,57 @@ const TransportsTable = ({ transports, setAllTransports, onRowClick }) => {
         label: "Mobile Number",
         name: "mobile",
         options: {
-          filter: true,
+          filter: false,
           sort: true,
         },
       },
       {
         label: "OMC",
-        name: "omc",
+        name: "omc_value",
         options: {
           filter: true,
           sort: true,
+          customBodyRender: (value) => {
+            return <>{value || '-'}</>
+          },
         },
       },
     ]
-  }, [])
+  }, [transports])
 
   useMount(() => {
-    if (!transports.length) {
+    if (portal) {
       setLoading(true)
-      getAllTransport()
+      getTransportersOwnerById(transporterId)
         .then((data) => {
-          setAllTransports(data)
           setLoading(false)
-          // setData(data)
+          setAllTransports(data)
         })
         .catch((e) => {
           console.log(e);
-          setLoading(false);
+          setLoading(false)
         })
-    }
+    } else
+      if (!transports.length) {
+        setLoading(true)
+        getAllTransport()
+          .then((data) => {
+            setAllTransports(data)
+            setLoading(false)
+            // setData(data)
+          })
+          .catch((e) => {
+            console.log(e);
+            setLoading(false);
+          })
+      }
+    getOmcList()
+      .then((data) => {
+        setOmcs(data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   })
 
   const options = {

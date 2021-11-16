@@ -21,6 +21,7 @@ import { getDealershipIncomeById, postDealershipIncomeById, updateDealershipInco
 import { getDealersWithCoapplicants } from '../../../services/dealers.service';
 import { useFormik } from 'formik';
 import { getBusinessTypes } from '../../../services/common.service';
+import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -31,16 +32,21 @@ const useStyles = makeStyles(theme => ({
   },
   row: {
     paddingRight: 4,
-      paddingBottom: 14
+    paddingBottom: 14
   },
   btnSuccess: {
     '&.MuiButton-contained': {
       backgroundColor: theme.palette.success.main,
-        color: theme.palette.white
+      color: theme.palette.white
     },
     '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.success.dark
     }
+  },
+  btnEdit: {
+    '&.MuiButton-root': { color: "#2196f3" },
+    border: "1px #2196f3 solid",
+    marginLeft: 2
   },
 }));
 
@@ -63,6 +69,7 @@ const IncomeTable = ({ id, editable, currentUser }) => {
   const { values, errors, handleChange, handleSubmit, handleReset, setValues } = useFormik({
     initialValues: {},
     onSubmit: values => {
+      values.business_name = values.business_name.toUpperCase();
       setLoading(true);
       const objBody = {
         user_id: currentUser.id, ...values
@@ -120,10 +127,13 @@ const IncomeTable = ({ id, editable, currentUser }) => {
   }
 
   const saveIncomeRow = (rowData, rowIndex) => {
-    const objBody = {
-      user_id: currentUser.id, ...rowData
-    }
-    updateDealershipIncomeById(id, objBody)
+    // const objBody = {
+    //   user_id: currentUser.id, ...rowData
+    // }
+    const data = { ...rowData, business_name: rowData?.business_name?.toUpperCase() }
+    const obj = compareObject(income[rowIndex], data)
+    const fields = { ...obj, id: rowData.id }
+    updateDealershipIncomeById(id, fields)
       .then(res => {
         setIncome(res);
         setLoading(false);
@@ -139,10 +149,11 @@ const IncomeTable = ({ id, editable, currentUser }) => {
   const saveNewIncome = () => {
     console.log('Income api body - ', apiData)
     if (Object.keys(apiData).length < 3) return null;
-    const objBody = {
-      user_id: currentUser.id, ...apiData
-    }
-    postDealershipIncomeById(id, objBody)
+    // const objBody = {
+    //   user_id: currentUser.id, ...apiData
+    // }
+    const data = { ...apiData, business_name: apiData?.business_name?.toUpperCase() }
+    postDealershipIncomeById(id, data)
       .then(res => {
         setIncome(res);
         setLoading(false);
@@ -221,7 +232,7 @@ const IncomeTable = ({ id, editable, currentUser }) => {
                     size="small"
                     variant="outlined"
                     color="success"
-                    className={classes.btnSuccess}
+                    className={clsx(classes.btnSuccess, classes.btnEdit)}
                     onClick={() => editIncomeRow(item, i)}>
                     Edit
                   </Button>

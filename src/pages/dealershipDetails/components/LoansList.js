@@ -70,9 +70,14 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
     let status, remarksObj = {};
     if (loan?.status?.toLowerCase() === "submitted") {
       setLoading(true);
+      status = 'loan_review';
+      remarksObj.review_remarks = remarks;
+    } else if (loan?.status?.toLowerCase() === "loan_review") {
+      setLoading(true);
       status = 'loan_approval';
       remarksObj.recommendation_remarks = remarks;
-    } else if (loan?.status?.toLowerCase() === "approved") {
+    }
+    else if (loan?.status?.toLowerCase() === "approved") {
       setLoading(true);
       status = 'disbursement_approval';
       remarksObj.disbursement_recommendation_remarks = remarks;
@@ -127,6 +132,7 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
         <Typography variant="h5" align={titleAlign} className={classes.title}>No Loan details found</Typography>
       </div>
     );
+  console.log("data >>>>>>>>>>>>>>>>>>>>.", data)
   return (
     <div className={classes.wrapper}>
       <Typography variant="h5" align={titleAlign} className={classes.title}>Loans</Typography>
@@ -191,6 +197,22 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
                       className={classes.btnSuccess}
                       onClick={getRemarks(row)}>
                       {
+                        loading ? 'Pleaes wait...' : 'Send for review'
+                      }
+                    </Button>
+                  )
+                }
+                {
+                  row?.status?.toLowerCase() === "loan_review" && editable && (
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      // fontSize="small"
+                      size='small'
+                      disabled={loading}
+                      className={classes.btnSuccess}
+                      onClick={getRemarks(row)}>
+                      {
                         loading ? 'Pleaes wait...' : 'Send for Approval'
                       }
                     </Button>
@@ -229,13 +251,38 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
         aria-labelledby="approval-remarks"
         aria-describedby="approval-remarks-desc"
       >
-        <DialogTitle id="approval-remarks">Remarks: Send for {dialogState.data?.status?.toLowerCase() === 'submitted' ? `Approval` : 'Disbursement Approval'}</DialogTitle>
+        <DialogTitle id="approval-remarks">Remarks: Send for {dialogState.data?.status?.toLowerCase() === 'submitted' ? `review` : dialogState.data?.status?.toLowerCase() === `loan_review` ? `Approval` : 'Disbursement Approval'}</DialogTitle>
         <DialogContent>
+          {
+            dialogState.data?.status?.toLowerCase() === 'submitted' && (
+              <>
+                <DialogContentText id="approval-remarks-desc">
+                  Please choose whom did you want to sent for {dialogState.data?.status?.toLowerCase() === 'submitted' ? `review` : dialogState.data?.status?.toLowerCase() === `loan_review` ? `Approval` : 'Disbursement Approval'}.
+                </DialogContentText>
+                <TextInput
+                  select
+                  multiline
+                  rows={4}
+                  rowsMax={8}
+                  // labelText=""
+                  alignTop
+                  value={remarks}
+                  onChange={e => {
+                    setRemarks(e.target.value);
+                  }}
+                />
+              </>
+            )
+
+          }
+
           <DialogContentText id="approval-remarks-desc">
-            Please enter your remarks for sending this for {dialogState.data?.status?.toLowerCase() === 'approved' ? `approval` : 'disbursement approval'}.
+            Please enter your remarks for sending this for {dialogState.data?.status?.toLowerCase() === 'submitted' ? `review` : dialogState.data?.status?.toLowerCase() === `loan_review` ? `Approval` : 'Disbursement Approval'}.
           </DialogContentText>
           <TextInput
             multiline
+            direction='column'
+            alignTop={true}
             rows={4}
             rowsMax={8}
             labelText="Remarks*"

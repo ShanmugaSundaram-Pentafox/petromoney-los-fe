@@ -12,6 +12,7 @@ import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
 import TextInput from '../../../components/TextInput/TextInput';
 import Currency from '../../../components/Number/Currency';
 import { getDealershipExpensesById, postDealershipExpensesById, updateDealershipExpenseById } from '../../../services/dealerships.service';
+import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -25,6 +26,11 @@ const useStyles = makeStyles(theme => ({
     '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.success.dark
     }
+  },
+  btnEdit: {
+    '&.MuiButton-root': { color: "#2196f3" },
+    border: "1px #2196f3 solid",
+    marginLeft: 2
   },
 }));
 
@@ -153,7 +159,7 @@ const ExpensesTable = ({ id, editable, values = [], currentUser }) => {
                   size="small"
                   variant="outlined"
                   color="success"
-                  className={classes.btnSuccess}
+                  className={clsx(classes.btnSuccess, classes.btnEdit)}
                   onClick={() => editExpenseRow(item, i)}>
                   Edit
                 </Button>

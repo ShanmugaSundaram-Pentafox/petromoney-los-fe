@@ -76,19 +76,12 @@ const TransportsTable = ({ transports, setAllTransports, onRowClick, portal, tra
       },
       {
         label: "OMC",
-        name: "omc",
+        name: "omc_value",
         options: {
           filter: true,
           sort: true,
           customBodyRender: (value) => {
-            return <>
-              {
-                (omcs.find(function (omc, index) {
-                  if (omc.id == value)
-                    return true;
-                }))?.name || '-'
-              }
-            </>
+            return <>{value || '-'}</>
           },
         },
       },

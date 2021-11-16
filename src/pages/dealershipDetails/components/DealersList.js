@@ -153,7 +153,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
       <DealersTable
         id={id}
         editable={editable}
-        data={dealerData.data}
+        data={dealerData}
         formType={formType}
         rowData={rowData}
         titleAlign={titleAlign}
@@ -169,7 +169,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         id={id}
         editable={editable}
         titleAlign={titleAlign}
-        coApplicantsData={coApplicantsData.data}
+        coApplicantsData={coApplicantsData}
         formType={formType}
         rowData={rowData}
         titleAlign={titleAlign}
@@ -185,7 +185,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         id={id}
         editable={editable}
         titleAlign={titleAlign}
-        guarantorsData={guarantorsData.data}
+        guarantorsData={guarantorsData}
         formType={formType}
         rowData={rowData}
         titleAlign={titleAlign}

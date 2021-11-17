@@ -41,6 +41,7 @@ import {
   useRouteMatch,
   useParams,
 } from 'react-router-dom'
+import StatementAnalysis from "./components/StatementAnalysis";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -195,6 +196,7 @@ const DealershipDetails = ({ currentUser, match }) => {
               <Tab label={<InfoBox active={activeTab === 6} number={7} title="Document Checklist" />} {...tabA11yProps(6)} />
               <Tab label={<InfoBox active={activeTab === 7} number={8} title="Transporters" />} {...tabA11yProps(7)} />
               <Tab label={<InfoBox active={activeTab === 8} number={9} title="Fleet Operators" />} {...tabA11yProps(8)} />
+              <Tab label={<InfoBox active={activeTab === 9} number={10} title="Statement Analysis" />} {...tabA11yProps(9)} />
             </Tabs>
           </Collapse>
           {/* <div>
@@ -258,6 +260,9 @@ const DealershipDetails = ({ currentUser, match }) => {
         </TabPanel>
         <TabPanel activeTab={activeTab} index={8}>
           <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
+        </TabPanel>
+        <TabPanel activeTab={activeTab} index={9}>
+          <StatementAnalysis id={id} textAlign="left" currentUser={currentUser} />
         </TabPanel>
         <SolarEnquiryForm
           dealershipId={id}

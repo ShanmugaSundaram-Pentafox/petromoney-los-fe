@@ -95,8 +95,26 @@ const ResolvedTable = () => {
     download: true,
     filter: true,
     isRowSelectable: () => false,
-
+    onDownload: (buildHead, buildBody, columns, data) => {
+      let Data = () => {
+        let array = []
+        data.map((item, index) => {
+          let buffer = []
+          item.data.map((data, i) => {
+            if(typeof(data) !== 'object'){
+              buffer.push(data)
+            } else {
+              let est = data.map((obj, num) => Object.values(obj)[2])
+              buffer.push(est.toString())
+            }
+          })
+          array.push({index: index+1, data: buffer})
+        })
+        return array
+      }
+      return "\uFEFF" + buildHead(columns) + buildBody(Data())
   }
+}
 
   return (
     <>

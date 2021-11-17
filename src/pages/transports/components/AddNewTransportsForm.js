@@ -251,12 +251,12 @@ const AddNewTransportsForm = ({
       // let apiURL = isAdd === 'Add' ? `transporters` : `tranporters/${data.transporter_id}`
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
-        // console.log(data);
-        if(key === 'pan'){
+        if (key === 'pan') {
           let pan = values?.pan ? cryptoEncrypt(values.pan) : values?.pan;
           formData.append(key, pan)
         }
-        formData.append(key, data[key]);
+        else
+          formData.append(key, data[key]);
       });
       if (isAdd === 'Add') {
         fetch(`${URL.base}${URL.vehicleInfo}`, {

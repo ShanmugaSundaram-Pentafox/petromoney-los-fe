@@ -21,6 +21,7 @@ import { getDealershipIncomeById, postDealershipIncomeById, updateDealershipInco
 import { getDealersWithCoapplicants } from '../../../services/dealers.service';
 import { useFormik } from 'formik';
 import { getBusinessTypes } from '../../../services/common.service';
+import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -41,6 +42,11 @@ const useStyles = makeStyles(theme => ({
     '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.success.dark
     }
+  },
+  btnEdit: {
+    '&.MuiButton-root': { color: "#2196f3" },
+    border: "1px #2196f3 solid",
+    marginLeft: 2
   },
 }));
 
@@ -125,7 +131,9 @@ const IncomeTable = ({ id, editable, currentUser }) => {
     //   user_id: currentUser.id, ...rowData
     // }
     const data = { ...rowData, business_name: rowData?.business_name?.toUpperCase() }
-    updateDealershipIncomeById(id, data)
+    const obj = compareObject(income[rowIndex], data)
+    const fields = { ...obj, id: rowData.id }
+    updateDealershipIncomeById(id, fields)
       .then(res => {
         setIncome(res);
         setLoading(false);
@@ -224,7 +232,7 @@ const IncomeTable = ({ id, editable, currentUser }) => {
                     size="small"
                     variant="outlined"
                     color="success"
-                    className={classes.btnSuccess}
+                    className={clsx(classes.btnSuccess, classes.btnEdit)}
                     onClick={() => editIncomeRow(item, i)}>
                     Edit
                   </Button>

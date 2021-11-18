@@ -232,10 +232,7 @@ const AddNewTransportsForm = ({
       address: Yup.string().required('Please enter address').nullable('Enter address'),
       state: Yup.string().required('Please choose state').nullable('Choose state'),
       district: Yup.string().required('Please enter district').nullable('Enter district'),
-      pincode: Yup.number()
-        .nullable('Enter pincode')
-        .min(6, 'Pincode must be 6 digits')
-        .required('Enter pincode'),
+      pincode: Yup.string().nullable('Enter pincode').matches(/^[1-9][0-9]{5}$/, 'Invalid pincode').required('Enter pincode'),
       pan: Yup.string()
         .nullable('Enter PAN')
         .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
@@ -251,12 +248,12 @@ const AddNewTransportsForm = ({
       // let apiURL = isAdd === 'Add' ? `transporters` : `tranporters/${data.transporter_id}`
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
-        // console.log(data);
-        if(key === 'pan'){
+        if (key === 'pan') {
           let pan = values?.pan ? cryptoEncrypt(values.pan) : values?.pan;
           formData.append(key, pan)
         }
-        formData.append(key, data[key]);
+        else
+          formData.append(key, data[key]);
       });
       if (isAdd === 'Add') {
         fetch(`${URL.base}${URL.vehicleInfo}`, {
@@ -745,6 +742,7 @@ const AddNewTransportsForm = ({
                   </Grid>
                   <Grid item md={6}>
                     <TextInput
+                      number
                       {...inputProps}
                       name='pincode'
                       labelText='Pincode'

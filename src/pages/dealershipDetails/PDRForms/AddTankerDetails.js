@@ -85,9 +85,9 @@ input: {
 
 const AddTankerDetails = ({ dealer_id, tankerAdd, setTankerAdd }) => {
   const [tankerData, setTankerData] = useState([])
-  const [editable, setEditable] = useState(true)
+  // const [editable, setEditable] = useState(true)
   const [edit, setEdit] = useState(false)
-  const [addNewRow, setAddNewRow] = useState();
+  // const [addNewRow, setAddNewRow] = useState();
   const [editRow, setEditRow] = useState({});
   const { enqueueSnackbar } = useSnackbar();
   const [opHours, setOpHours] = useState([{ id: 12, name: "12 hours" }, { id: 24, name: "24 hours" }])

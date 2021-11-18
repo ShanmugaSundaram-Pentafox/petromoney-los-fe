@@ -88,7 +88,7 @@ const FilePreview = ({ data }) => {
                     </div>
             } */}
             {
-                data.type === 'pdf' ?
+                data.type == true || data.type == 'pdf' ?
                     <div className="iframe-container">
                         <iframe src={data.image} frameBorder="0" ></iframe>
                     </div> :

@@ -7,9 +7,8 @@ import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded'
 import { TextField } from '@material-ui/core';
 import SaveIcon from '@material-ui/icons/Save';
 import { TableCell } from '@material-ui/core';
-import { month } from '../../dashboard/components/MonthlySalesInfo';
 import Currency from '../../../components/Number/Currency';
-
+import { getPastYears, getMonth as month } from '../../../utils/commonFunctions.util';
 
 const useStyles = makeStyles((theme) => ({
     sidePanelFormWrapper: {
@@ -39,24 +38,24 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'space-between',
         padding: '12px 16px'
     },
+    btnDelete: {
+        '&.MuiButton-root': { color: "#ef5350" },
+        border: "1px #ef5350 solid",
+        margin: 2
+    },
+    btnEdit: {
+        '&.MuiButton-root': { color: "#2196f3" },
+        border: "1px #2196f3 solid",
+        margin: 2
+    },
 }))
-
-const getPastThreeYears = () => {
-    const LastThreeYear = []
-    const date = new Date();
-    const currentYear = date.getFullYear();
-    for (let i = 0; i < 3; i++) {
-      LastThreeYear.push(currentYear - i)
-    }
-    return LastThreeYear;
-}
 
 const StatementForm = ({callback, rowData, addStatement}) => {
     const classes = useStyles()
     const [disabled, setDisabled] = useState(addStatement?.action === 'view')
     const [editRow, setEditRow] = useState({})
     const [statementRow, setStatementRow] = useState([{month:"",year:"",i_w:"",o_w:"",credits:"",no_credits:"",debits:"",no_debits:"",omc_transaction:""}])
-    const LastThreeYear = getPastThreeYears()
+    const LastThreeYear = getPastYears(3)
     const sumOf = (array, key) => {
         let sumArray = []
         var sum = (r, a) => r.map((b, i) => a[i] + b);
@@ -120,6 +119,7 @@ const StatementForm = ({callback, rowData, addStatement}) => {
                         <Grid item md={6}>
                             <label>Account No</label>
                             <TextInput
+                                type="number"
                                 name="account_no"
                                 value={rowData?.account_no}
                                 disabled={disabled}
@@ -131,7 +131,7 @@ const StatementForm = ({callback, rowData, addStatement}) => {
                         <Grid item md={6}>
                             <label>Bank Name</label>
                             <TextInput
-                                name="account_holder_name"
+                                name="bank_name"
                                 value={rowData?.bank_name}
                                 disabled={disabled}
                                 // error={errors[item.key]}
@@ -142,14 +142,20 @@ const StatementForm = ({callback, rowData, addStatement}) => {
                         <Grid item md={6}>
                             <label>Account Type</label>
                             <TextInput
-                                // select
-                                name="account_holder_name"
+                                select
+                                name="account_type"
                                 value={rowData?.account_type}
                                 disabled={disabled}
                                 // error={errors[item.key]}
                                 // helperText={errors[item.key]}
                                 // type={item.type}
-                            />
+                            >
+                                <option value=" ">Choose Account Type</option>
+                                <option value=" ">Current</option>
+                                <option value=" ">Cash Credit</option>
+                                <option value=" ">Overdraft</option>
+                                <option value=" ">EDFS</option>
+                            </TextInput>
                         </Grid>
                     </Grid>
                     <div style={{marginTop: 20}}>
@@ -411,8 +417,8 @@ const StatementForm = ({callback, rowData, addStatement}) => {
                                                     />
                                                 </TableCell>
                                                 <TableCell align="right">
-                                                    {statementRow.length !== 1 && <Button size="small" variant="outlined" onClick={() => handleRemoveClick(i)}>Remove</Button>}
-                                                    {statementRow.length - 1 === i && <Button size="small" variant="outlined" onClick={handleAddClick}>Add</Button>}
+                                                    {statementRow.length !== 1 && <Button size="small" variant="outlined" className={classes.btnDelete} onClick={() => handleRemoveClick(i)}>Remove</Button>}
+                                                    {statementRow.length - 1 === i && <Button size="small" variant="outlined" className={classes.btnEdit} onClick={handleAddClick}>Add</Button>}
                                                 </TableCell>
                                             </TableRow>
                                             ))

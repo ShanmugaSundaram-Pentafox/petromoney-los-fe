@@ -13,23 +13,8 @@ import TextInput from '../../../components/TextInput/TextInput';
 import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { useSnackbar } from "notistack";
+import { getMonth as month } from '../../../utils/commonFunctions.util';
 import clsx from 'clsx';
-
-
-export const month = [
-  { label: 'January', value: 1 },
-  { label: 'Feburary', value: 2 },
-  { label: 'March', value: 3 },
-  { label: 'Apirl', value: 4 },
-  { label: 'May', value: 5 },
-  { label: 'June', value: 6 },
-  { label: 'July', value: 7 },
-  { label: 'August', value: 8 },
-  { label: 'September', value: 9 },
-  { label: 'October', value: 10 },
-  { label: 'November', value: 11 },
-  { label: 'December', value: 12 },
-]
 
 const useStyles = makeStyles(theme => ({
   paper: {

@@ -49,7 +49,7 @@ const BlacklistTable = () => {
       <PaperWrapper>
         <Box borderRadius={4} bgcolor="background.paper">
           <Grid container>
-            <Grid onClick={() => { setSelectedTab("unresolved") }} style={{ textAlign: 'center', padding: 16, borderRight: '1px dashed gray' }} className={selectedTab === "unresolved" ? ' ' : 'active'} item md={6}>
+            <Grid onClick={() => { setSelectedTab("unresolved")}} style={{ textAlign: 'center', padding: 16, borderRight: '1px dashed gray' }} className={selectedTab === "unresolved" ? ' ' : 'active'} item md={6}>
               <Badge badgeContent={unresolvedData?.length} style={{ paddingTop: 4, paddingRight: 8 }} color="primary">
                 <div>Unresolved</div>
               </Badge>

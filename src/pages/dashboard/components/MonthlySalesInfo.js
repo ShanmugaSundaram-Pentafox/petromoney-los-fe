@@ -204,10 +204,10 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                       />
                       -
                       <TextInput
+                        number
                         fullWidth={true}
                         label="Year"
                         name="year"
-                        type="number"
                         disabled={true}
                         value={editRow.year}
                         onChange={onEditTextChange}
@@ -215,18 +215,18 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                     </TableCell>
                     <TableCell align="right">
                       <TextInput
+                        number
                         label="MS (KL)"
                         name="ms"
-                        type="number"
                         value={editRow.ms}
                         onChange={onEditTextChange}
                       />
                     </TableCell>
                     <TableCell align="right">
                       <TextInput
+                        number
                         label="HSD (KL)"
                         name="hsd"
-                        type="number"
                         value={editRow.hsd}
                         onChange={onEditTextChange}
                       />
@@ -300,7 +300,6 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                         fullWidth={true}
                         label="Month"
                         name="month"
-                        type="number"
                         value={apiData.month}
                         onChange={onTextChange}
                       >
@@ -315,7 +314,6 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                         fullWidth={true}
                         label="Year"
                         name="year"
-                        type="number"
                         value={apiData.year}
                         onChange={onTextChange}
                       >
@@ -329,18 +327,18 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                     </TableCell>
                     <TableCell align="right">
                       <TextInput
+                        number
                         label="MS (KL)"
                         name="ms"
-                        type="number"
                         value={apiData.ms}
                         onChange={onTextChange}
                       />
                     </TableCell>
                     <TableCell align="right">
                       <TextInput
+                        number
                         label="HSD (KL)"
                         name="hsd"
-                        type="number"
                         value={apiData.hsd}
                         onChange={onTextChange}
                       />

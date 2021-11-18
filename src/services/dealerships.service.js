@@ -326,7 +326,7 @@ export const postDealershipFinancialsById = (id, body) => {
       .then(async ({ status, data, message }) => {
         if (status === "SUCCESS") {
           const res = await getDealershipFinancialsById(id, body.from_year, body.to_year);
-          resolve(res);
+          resolve(res[0]);
         } else {
           reject(message);
         }

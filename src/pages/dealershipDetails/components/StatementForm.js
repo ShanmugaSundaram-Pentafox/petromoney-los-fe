@@ -186,6 +186,7 @@ const StatementForm = ({callback, rowData, addStatement}) => {
                                                     <TextInput
                                                         select
                                                         fullWidth={true}
+                                                        disabled={true}
                                                         label="Month"
                                                         name="month"
                                                         type="number"
@@ -205,6 +206,7 @@ const StatementForm = ({callback, rowData, addStatement}) => {
                                                     <TextInput
                                                         select
                                                         fullWidth={true}
+                                                        disabled={true}
                                                         label="Year"
                                                         name="year"
                                                         type="number"
@@ -283,7 +285,7 @@ const StatementForm = ({callback, rowData, addStatement}) => {
                                                     />
                                                 </TableCell>
                                                 <TableCell align="right">
-                                                    <Button variant="outlined" size="small">Save</Button>
+                                                    <Button variant="outlined" size="small" >Save</Button>
                                                     <Button variant="outlined" size="small" onClick={() => setEditRow({})}>Cancel</Button>
                                                     {/* <IconButton color='primary' style={{color: '#1EAE98'}}><SaveIcon fontSize="small" /></IconButton> */}
                                                     {/* <IconButton style={{color: '#FF4848'}} onClick={()=>setEditRow({})}><CloseIcon fontSize="small" /></IconButton> */}
@@ -291,7 +293,7 @@ const StatementForm = ({callback, rowData, addStatement}) => {
                                             </TableRow>
                                         ) : (
                                                 <TableRow key={i}>
-                                                    <TableCell scope="row" component="th">{item.year}</TableCell>
+                                                    <TableCell scope="row" component="th">{month?.find(type => {return type.value === item.month})?.label} - {item.year}</TableCell>
                                                     <TableCell align="center">{item.i_w}</TableCell>
                                                     <TableCell align="center">{item.o_w}</TableCell>
                                                     <TableCell align="center"><Currency value={item.credits}/></TableCell>
@@ -302,7 +304,8 @@ const StatementForm = ({callback, rowData, addStatement}) => {
                                                     {
                                                         !disabled && (
                                                             <TableCell align="right">
-                                                                <Button size="small" variant="outlined" onClick={()=>setEditRow({...item, i})}>Edit</Button>
+                                                                <Button size="small" variant="outlined" className={classes.btnEdit} onClick={()=>setEditRow({...item, i})}>Edit</Button>
+                                                                <Button size="small" variant="outlined" className={classes.btnDelete}>Delete</Button>
                                                                 {/* <Tooltip title="Edit"><IconButton size="small" onClick={() => setEditRow({...item, i})}><EditIcon fontSize="small"/></IconButton></Tooltip> */}
                                                                 {/* <Tooltip title="Remove"><IconButton size="small"><CloseIcon fontSize="small"/></IconButton></Tooltip> */}
                                                             </TableCell>
@@ -418,7 +421,7 @@ const StatementForm = ({callback, rowData, addStatement}) => {
                                                 </TableCell>
                                                 <TableCell align="right">
                                                     {statementRow.length !== 1 && <Button size="small" variant="outlined" className={classes.btnDelete} onClick={() => handleRemoveClick(i)}>Remove</Button>}
-                                                    {statementRow.length - 1 === i && <Button size="small" variant="outlined" className={classes.btnEdit} onClick={handleAddClick}>Add</Button>}
+                                                    {statementRow.length - 1 === i && <Button size="small" variant="outlined" color="primary" style={{margin:2}} onClick={handleAddClick}>Add</Button>}
                                                 </TableCell>
                                             </TableRow>
                                             ))

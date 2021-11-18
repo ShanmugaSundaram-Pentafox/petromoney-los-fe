@@ -431,3 +431,18 @@ export const deleteDealershipMonthlySalesById = (dealershipId, body, id) => {
       });
   });
 };
+export const downloadAccountStatement = (id, from_date, to_date) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/soa?from_date=${from_date}&to_date=${to_date}`)
+      .then(res => {
+        if (res.status === "SUCCESS") {
+          resolve(res)
+        } else {
+          reject(res.message)
+        }
+      })
+      .catch(({ message }) => {
+        reject(message)
+      })
+  });
+}

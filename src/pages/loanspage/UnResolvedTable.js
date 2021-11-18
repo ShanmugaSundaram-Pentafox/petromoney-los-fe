@@ -199,7 +199,6 @@ const UnresolvedTable = () => {
       );
     },
     onDownload: (buildHead, buildBody, columns, data) => {
-
       let Data = () => {
         let array = []
         data.map((item, index) => {
@@ -216,8 +215,8 @@ const UnresolvedTable = () => {
         })
         return array
       }
-      return "\uFEFF" + buildBody(columns) + buildBody(Data())
-  }
+      return "\uFEFF" + buildHead(columns) + buildBody(Data())
+    }
   }
 
   return (

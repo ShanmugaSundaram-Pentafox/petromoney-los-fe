@@ -108,7 +108,7 @@ const ResolvedTable = () => {
               buffer.push(est.toString())
             }
           })
-          array.push({index: index+1, data: buffer})
+          array.push({index: index, data: buffer})
         })
         return array
       }

@@ -152,16 +152,16 @@ const useStyles = makeStyles(theme => ({
     marginTop: 10,
     marginBottom: 10
   },
-  actions:{
+  actions: {
     marginTop: 15,
   },
-  actions2:{
+  actions2: {
     marginTop: 15,
     backgroundColor: "#f5f5f5",
     padding: 10,
     borderRadius: 5,
   },
-  list:{
+  list: {
     marginTop: 5,
     marginLeft: 15,
     display: 'flex',
@@ -171,7 +171,7 @@ const useStyles = makeStyles(theme => ({
     borderBottom: '1px solid #c9c7c7',
     paddingTop: 5,
     paddingBottom: 5,
-    '&:hover':{
+    '&:hover': {
       backgroundColor: '#ffffff',
       borderRadius: 2
     },
@@ -301,7 +301,7 @@ const LoanInfo = ({
                       yes={() => (
                         <TextInput
                           money
-                          type="number"
+                          number
                           fullWidth={false}
                           value={newInfo.amount_approved}
                           onChange={e => {
@@ -327,7 +327,7 @@ const LoanInfo = ({
                       yes={() => (
                         <TextInput
                           money
-                          type="number"
+                          number
                           fullWidth={false}
                           value={newInfo.amount_disbursed}
                           onChange={e => {
@@ -441,10 +441,10 @@ const DealershipDetails = ({
   const { enqueueSnackbar } = useSnackbar();
 
   const sortByKey = (a, b, key) => {
-    if ( a[key]?.trim() < b[key]?.trim() ){
+    if (a[key]?.trim() < b[key]?.trim()) {
       return -1;
     }
-    if ( a[key]?.trim() > b[key]?.trim() ){
+    if (a[key]?.trim() > b[key]?.trim()) {
       return 1;
     }
     return 0;
@@ -482,22 +482,22 @@ const DealershipDetails = ({
 
   useMount(() => {
     getLoanRejectReason()
-    .then(data => {
-      const optionsBuffer = []
-      const dataBuffer = []
+      .then(data => {
+        const optionsBuffer = []
+        const dataBuffer = []
 
-      data.map((data, index) => {
-        optionsBuffer.push({value: index, label: data.reason})
-        dataBuffer.push([data.list.map((d) => { return({value: d.id, label: `${d.code} - ${d.description}`})})])
-        // console.log(data.list);
+        data.map((data, index) => {
+          optionsBuffer.push({ value: index, label: data.reason })
+          dataBuffer.push([data.list.map((d) => { return ({ value: d.id, label: `${d.code} - ${d.description}` }) })])
+          // console.log(data.list);
+        })
+        setOptionsData(optionsBuffer)
+        setReasonData(dataBuffer)
+        // console.log(dataBuffer);
       })
-      setOptionsData(optionsBuffer)
-      setReasonData(dataBuffer)
-      // console.log(dataBuffer);
-    })
-    .catch(e => {
-      console.log(e);
-    })
+      .catch(e => {
+        console.log(e);
+      })
   })
 
   // selectedCategory && (
@@ -632,9 +632,9 @@ const DealershipDetails = ({
   }
 
   const handleReasonChange = (event) => {
-    let reasonArray = [...displayReason, {label: event.target.name, value: event.target.value}];
+    let reasonArray = [...displayReason, { label: event.target.name, value: event.target.value }];
     let arrayCheck = [...rejectReason, event.target.value];
-    if (rejectReason.includes(event.target.value)){
+    if (rejectReason.includes(event.target.value)) {
       arrayCheck = arrayCheck.filter(value => value !== event.target.value)
       reasonArray = reasonArray.filter(name => name.label !== event.target.name)
     }
@@ -707,7 +707,7 @@ const DealershipDetails = ({
               <Grid item xs={12} md={6}>
                 <TextInput
                   labelText="Pincode"
-                  type="number"
+                  number
                   value={values.pincode}
                   readOnly={readOnly}
                   onChange={handleChange}
@@ -997,7 +997,7 @@ const DealershipDetails = ({
                               disabled={apiStatus.loading}
                               className={clsx(classes.btn, classes.btnError)}
                               startIcon={<ThumbDownAltIcon />}
-                              onClick={() =>setRejectModal(true)}>Reject</Button>
+                              onClick={() => setRejectModal(true)}>Reject</Button>
                           </div>
                         ) : (
                           <div style={{ marginLeft: '16px' }}>
@@ -1046,54 +1046,54 @@ const DealershipDetails = ({
         <DialogTitle className={classes.dialogTitle}><Typography variant='h6'>Are you Sure?</Typography></DialogTitle>
         <DialogContent className={classes.rejectModal}>
           <div>
-          <Typography style={{marginBottom: 20}} variant='body1'>Choose category and reasons for rejection.</Typography>
+            <Typography style={{ marginBottom: 20 }} variant='body1'>Choose category and reasons for rejection.</Typography>
             <Typography variant='body2'>Category</Typography>
-              {
-                optionsData.map((item, i) => {
-                  return <Chip label={item.label} className={classes.chip} variant={activeTab === i ? "default" : "outlined"} onClick={() => {
-                    setSelectedCategory({label: item?.label, value: item?.value})
-                    setActiveTab(item.value)
-                  }} clickable color={activeTab === i ? "primary" : ""} />
-                })
-              }
+            {
+              optionsData.map((item, i) => {
+                return <Chip label={item.label} className={classes.chip} variant={activeTab === i ? "default" : "outlined"} onClick={() => {
+                  setSelectedCategory({ label: item?.label, value: item?.value })
+                  setActiveTab(item.value)
+                }} clickable color={activeTab === i ? "primary" : ""} />
+              })
+            }
           </div>
-              {
-                selectedCategory && (
-                  <div className={classes.actions}>
-                    <Typography variant='body1'>Reason</Typography>
-                    <FormGroup>
-                      {
-                        reasonData[selectedCategory.value][0].map((data, index) => {
-                          return(
-                            <FormControlLabel control={<Checkbox className={classes.checkbox} onChange={handleReasonChange} value={data.value} key={data.value} checked={rejectReason.includes(data.value)} name={data.label} />} label={data.label} color={activeTab === data.label ? "primary" : ""} />
-                          )
-                        })
-                      }
-                    </FormGroup>
-                  </div>
-                )
-              }
-              {
-                displayReason.length !=0 && (
-                  <div className={classes.actions2}>
-                    <Typography variant='body1'><strong>Selected Reasons</strong></Typography>
-                    {
-                      displayReason.sort((a,b) => sortByKey(a,b,'label')).map((item, i) => {
-                        return (
-                          <div className={classes.items}>
-                            <p className={classes.eachItem}><span className={classes.itemNotation}>{i+1}.</span> {item.label}</p>
-                            <Tooltip title="Remove">
-                              <IconButton size='small'>
-                                <CloseIcon fontSize='small' onClick={() => removeItem(item)}/>
-                              </IconButton>
-                            </Tooltip>
-                          </div>
-                        )
-                      })
-                    }
-                  </div>
-                )
-              }
+          {
+            selectedCategory && (
+              <div className={classes.actions}>
+                <Typography variant='body1'>Reason</Typography>
+                <FormGroup>
+                  {
+                    reasonData[selectedCategory.value][0].map((data, index) => {
+                      return (
+                        <FormControlLabel control={<Checkbox className={classes.checkbox} onChange={handleReasonChange} value={data.value} key={data.value} checked={rejectReason.includes(data.value)} name={data.label} />} label={data.label} color={activeTab === data.label ? "primary" : ""} />
+                      )
+                    })
+                  }
+                </FormGroup>
+              </div>
+            )
+          }
+          {
+            displayReason.length != 0 && (
+              <div className={classes.actions2}>
+                <Typography variant='body1'><strong>Selected Reasons</strong></Typography>
+                {
+                  displayReason.sort((a, b) => sortByKey(a, b, 'label')).map((item, i) => {
+                    return (
+                      <div className={classes.items}>
+                        <p className={classes.eachItem}><span className={classes.itemNotation}>{i + 1}.</span> {item.label}</p>
+                        <Tooltip title="Remove">
+                          <IconButton size='small'>
+                            <CloseIcon fontSize='small' onClick={() => removeItem(item)} />
+                          </IconButton>
+                        </Tooltip>
+                      </div>
+                    )
+                  })
+                }
+              </div>
+            )
+          }
         </DialogContent>
         <DialogActions>
           <div>

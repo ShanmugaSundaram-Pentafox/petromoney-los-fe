@@ -97,7 +97,6 @@ const DealershipDetails = ({ currentUser, match }) => {
   } = match;
   const dealershipData = useQuery(['dealership-info', id], () => getDealershipById(id))
   const mainApplicant = useQuery(['main-applicant-data', id], () => getDealersByDealershipId(id), {
-    cacheTime: 500000,
     select: (data) => {
       const ap = data.find(item => item.is_main_applicant);
       return ap;

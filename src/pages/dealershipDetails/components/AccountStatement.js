@@ -11,6 +11,7 @@ import { downloadAccountStatement } from '../../../services/dealerships.service'
 import DialogContent from '@material-ui/core/DialogContent';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import DateFnsUtils from '@date-io/date-fns';
+import { format, parse } from 'date-fns';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker
@@ -70,23 +71,13 @@ const AccountStatement = ({ id, currentUser }) => {
   const classes = useStyles();
 
 
-  const handleDateChange = (date, type) => {
-    if (type == 'from')
-      setSelectedDate({ ...selectedDate, from_date: date })
-    // setValues({ ...values, from_date: date })
+  const handleDownload = values => {
+    const from_date = selectedDate && format(new Date(selectedDate?.from_date), 'dd-MM-yyyy');
+    const to_date = selectedDate && format(new Date(selectedDate?.to_date), 'dd-MM-yyyy');
 
-    else
-      setSelectedDate({ ...selectedDate, to_date: date })
-    // setValues({ ...values, from_date: date })
-
-  }
-  useEffect = () => {
-
-  }
-
-  const handleDownload = () => {
+    const data = { from_date, to_date }
     setLoading(true)
-    downloadAccountStatement(id)
+    downloadAccountStatement(id, from_date, to_date)
       .then(res => {
         setFileCode(res.base64)
         setOpenDialog(true)
@@ -104,14 +95,16 @@ const AccountStatement = ({ id, currentUser }) => {
   }
 
   const _vSchema = object({
-    date: date().required().min(new Date()).max(new Date("2100-10-10")),
+    from_date: date().required(),
+    to_date: date().required(),
+
   });
 
   return (
     <Formik
       validateOnBlur
       validateOnChange={false}
-      validationSchema={_vSchema}
+      // validationSchema={_vSchema}
       onSubmit={handleDownload}
     >
       {
@@ -135,7 +128,7 @@ const AccountStatement = ({ id, currentUser }) => {
                       id='date-picker'
                       autoOk={true}
                       value={values?.from_date}
-                      onChange={(date) => setValues('from_date', date, { shouldValidate: true, shouldDirty: true })}
+                      onChange={(date) => setSelectedDate({ ...selectedDate, from_date: date })}
                       keyboardButtonProps={{
                         'aria-label': 'change date'
                       }}
@@ -165,8 +158,7 @@ const AccountStatement = ({ id, currentUser }) => {
                       id='date-picker'
                       autoOk={true}
                       value={values?.to_date}
-                      onChange={(date) => setValues('to_date', date, { shouldValidate: true, shouldDirty: true })}
-                      // onChange={(e) => { handleDateChange(e, 'to') }}
+                      onChange={(date) => setSelectedDate({ ...selectedDate, to_date: date })}
                       keyboardButtonProps={{
                         'aria-label': 'change date'
                       }}
@@ -183,12 +175,13 @@ const AccountStatement = ({ id, currentUser }) => {
             </Grid>
             <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: 8 }}>
               <Button
-                disabled={!permissionCheck(currentUser.role_name, rulesList.dealership_edit)}
+                // disabled={!permissionCheck(currentUser.role_name, rulesList.dealership_edit)}
                 color="primary"
                 variant="contained"
                 size="small"
                 type="submit"
-                onClick={handleDownload}>
+                onClick={handleDownload}
+              >
                 Get statement
               </Button>
             </div>

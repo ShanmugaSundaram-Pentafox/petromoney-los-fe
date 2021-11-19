@@ -102,9 +102,10 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
     })
       .then(res => {
         if (res.status === 'SUCCESS') {
-          getDealershipLoansById(id)
-            .then(data => setLoansData(data))
-            .catch(e => null)
+          refetchData();
+          // getDealershipLoansById(id)
+          //   .then(data => setLoansData(data))
+          //   .catch(e => null)
           enqueueSnackbar(res.message, {
             anchorOrigin: {
               vertical: 'top',

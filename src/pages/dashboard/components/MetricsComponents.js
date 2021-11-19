@@ -92,7 +92,7 @@ export const PieChartData = ({
   };
   return (
     <Paper>
-      <Typography variant="h5" className={classes.title}>Regions Retails RO - Total: {totalForRegion}</Typography>
+      <Typography variant="h5" className={classes.title}>Regionswise Overdue - Total: {totalForRegion}</Typography>
       <Chart
         chartType="ColumnChart"
         width="100%"
@@ -120,7 +120,7 @@ export const BarChartData = ({
     <Paper>
       <Typography variant="h5" className={classes.title}>DPD Wise</Typography>
       <Chart
-        height={'100px'}
+        height={'290px'}
         chartType="BarChart"
         // loader={<div>Loading Chart</div>}
         data={daysChartData}
@@ -163,7 +163,7 @@ export const GroupChartData = ({ chartData, title, height, xAxis, yAxis }) => {
         //     },
         //   ]}
         options={{
-          chartArea: { width: '50%', height: '70%' },
+          chartArea: { width: '60%', height: '85%' },
           tooltip: { isHtml: true },
           focusTarget: 'category',
           fontSize: 11,

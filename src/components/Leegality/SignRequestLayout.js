@@ -223,7 +223,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
   return (
     <Dialog
       fullWidth
-      maxWidth={"lg"}
+      maxWidth={"md"}
       open={open}
       onClose={() => {
         setLoansData({});
@@ -271,6 +271,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
                           pdfUrl ?
                             <PdfViewer
                               isBase64
+                              height="70vh"
                               file={pdfUrl}
                             />
                             : null

@@ -76,6 +76,7 @@ const LoanStats = ({ selectedStatsCard, handleClick, filterQry }) => {
   const [selectedPeriodType, setSelectedPeriodType] = useState('UTD');
   const [selectedPeriod, setSelectedPeriod] = useState({});
   const [showPicker, setShowPicker] = useState();
+  const [totalLoans, setTotalLoans] = useState();
   const [dateRange, setDateRange] = useState({
     startDate: subDays(new Date(), 8),
     endDate: new Date(),
@@ -99,19 +100,19 @@ const LoanStats = ({ selectedStatsCard, handleClick, filterQry }) => {
       case 'W':
         setSelectedPeriod({
           from: subDays(new Date(), 8),
-          to: subDays(new Date(), 1),
+          to: new Date(),
         })
         break;
       case 'M':
         setSelectedPeriod({
           from: new Date(new Date().getFullYear(), new Date().getMonth()),
-          to: subDays(new Date(), 1),
+          to: new Date(),
         })
         break;
       case 'Y':
         setSelectedPeriod({
           from: new Date(new Date().getFullYear(), 0),
-          to: subDays(new Date(), 1),
+          to: new Date(),
         })
         break;
       case 'UTD':
@@ -164,6 +165,11 @@ const LoanStats = ({ selectedStatsCard, handleClick, filterQry }) => {
           { name: 'Rejected', count: data.rejected_count },
         ];
         setChartData(cdata);
+        let s = 0;
+        for(let i=0; i<cdata.length; i++) {
+          s += cdata[i].count;
+        }
+        setTotalLoans(s)
       })
       .catch(err => {
         console.log(err);
@@ -181,7 +187,7 @@ const LoanStats = ({ selectedStatsCard, handleClick, filterQry }) => {
   return (
       <Box p={2} pt={1} borderRadius={4} bgcolor="background.paper">
         <Box pb={1} display='flex' flexDirection='row' justifyContent='space-between' alignItems='center'>
-          <Typography variant="h5">Loans' Statistics</Typography>
+          <Typography variant="h5">Loans' Statistics {totalLoans ? `(${totalLoans})` : null}</Typography>
           <Box display='flex' flexDirection='row'>
             <Box pr={1} display='flex' justifyContent='center' alignItems='center'>
               <div style={{ color: 'hsl(0,0%,75%)' }}>Region</div>

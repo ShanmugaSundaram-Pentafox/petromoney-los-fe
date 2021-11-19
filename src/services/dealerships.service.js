@@ -1,6 +1,6 @@
 import { URL } from "../config/serverUrls";
 import apiCall from "../utils/api.util";
-import { cryptoDecrypt } from "./crypto.service";
+import { cryptoDecrypt, decrypt } from "./crypto.service";
 
 export const getAllDealership = () => {
   return new Promise((resolve, reject) => {
@@ -10,8 +10,11 @@ export const getAllDealership = () => {
           const result = data.map((item, i) => {
             let pan = item.pan;
             let gst = item.gst;
-            if(pan) {
-              pan = cryptoDecrypt(pan)
+            if (pan) {
+              pan = decrypt(pan)
+            }
+            if (gst) {
+              gst = decrypt(gst)
             }
             return {
               ...item,
@@ -36,8 +39,11 @@ export const getDealershipById = (id) => {
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           const result = data[0];
-          if(result?.pan) {
-            result.pan = cryptoDecrypt(result.pan);
+          if (result?.pan) {
+            result.pan = decrypt(result.pan);
+          }
+          if (result?.gst) {
+            result.gst = decrypt(result.gst);
           }
           resolve(result);
         } else {
@@ -293,10 +299,10 @@ export const deleteDealershipDocument = (data, id) => {
 
 
 
-export const getDealershipFinancialsById = (id) => {
+export const getDealershipFinancialsById = (id, from, to) => {
   return new Promise((resolve, reject) => {
     // API.get(`${URL.dealership}/${id}/financials`)
-    apiCall(`${URL.dealership}/${id}/financials`)
+    apiCall(`${URL.dealership}/${id}/financials?from_year=${from}&to_year=${to}`)
       .then(({ data, status, message }) => {
         if (status === "SUCCESS") {
           resolve(data);
@@ -319,8 +325,8 @@ export const postDealershipFinancialsById = (id, body) => {
     })
       .then(async ({ status, data, message }) => {
         if (status === "SUCCESS") {
-          const res = await getDealershipFinancialsById(id);
-          resolve(res);
+          const res = await getDealershipFinancialsById(id, body.from_year, body.to_year);
+          resolve(res[0]);
         } else {
           reject(message);
         }
@@ -408,14 +414,14 @@ export const updateDealershipMonthlySalesById = (id, body) => {
 export const deleteDealershipMonthlySalesById = (dealershipId, body, id) => {
   return new Promise((resolve, reject) => {
     // API.post(`${URL.dealership}/${id}/salesdata`, body)
-    apiCall(`${URL.dealership}/${dealershipId}/month/salesdata/${id}`, {
+    apiCall(`${URL.dealership}/${dealershipId}/month/salesdata`, {
       method: 'DELETE',
       body: body
     })
       .then(async ({ status, data, message }) => {
         if (status === "SUCCESS") {
-          const res = await getDealershipMonthlySalesById(id)
-          resolve(res);
+          const res = await getDealershipMonthlySalesById(dealershipId)
+          resolve(res, message);
         } else {
           reject(message);
         }

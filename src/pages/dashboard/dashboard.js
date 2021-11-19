@@ -294,7 +294,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                       <DataCharts>
                         {
                           omcData.length ? (
-                            <GroupChartData chartData={omcData} title={'OMC - DPD Wise'} height='300px' xAxis='Amount' yAxis='OMCs' />
+                            <GroupChartData chartData={omcData} title={'OMC Vs DPD Wise'} height='300px' xAxis='Amount' yAxis='OMCs' />
                           ) : (
                             <Paper className={classes.noData}>
                               <Typography variant='h7'>No Data Found. Check if EOD has been completed</Typography>
@@ -308,7 +308,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                     <DataCharts>
                       {
                         RegionData.length ? (
-                          <GroupChartData chartData={RegionData} title={'Region - DPD Wise'} height='650px' xAxis='Amount' yAxis='Region' />
+                          <GroupChartData chartData={RegionData} title={'Region Vs DPD Wise'} height='650px' xAxis='Amount' yAxis='Region' />
                         ) : (
                           <Paper className={classes.noData}>
                             <Typography variant='h7'>No Data Found. Check if EOD has been completed</Typography>

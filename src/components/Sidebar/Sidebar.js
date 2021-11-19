@@ -108,7 +108,7 @@ const Sidebar = props => {
       icon: <AccountBoxIcon />
     },
     {
-      title: 'Credit Report',
+      title: 'Credit Reload',
       href: '/reports/credit/reload',
       icon: <CachedIcon />
     },

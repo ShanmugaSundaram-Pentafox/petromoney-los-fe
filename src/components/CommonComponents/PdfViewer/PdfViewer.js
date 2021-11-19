@@ -34,7 +34,7 @@ const FooterActions = styled.div`
   align-items: center;
 `;
 
-const PdfViewer = ({ title, file, isBase64, height='100Vh', showDownload }) => {
+const PdfViewer = ({ title, file, isBase64, height, showDownload }) => {
   // const pdfWrapperRef = useRef()
   // const [width, setWidth] = useState(400);
   // const [numPages, setNumPages] = useState(null);
@@ -62,7 +62,7 @@ const PdfViewer = ({ title, file, isBase64, height='100Vh', showDownload }) => {
 
   return (
     <Wrapper>
-      <Box p={2} bgcolor="#f8f8f8" height={height} style={{flex:1}} >
+      <Box p={2} bgcolor="#f8f8f8" height={height ? height : '100vh'} style={{flex:1}} >
         <iframe src={isBase64 ? `data:application/pdf;base64,${file}` : file} width="100%" height="100%" frameBorder="0" ></iframe>
         {/* <Document
           renderMode="svg"

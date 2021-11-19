@@ -237,6 +237,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 <Box className={classes.box} >
                   <ViewData title='Name' value={`${values.first_name} ${values.last_name}`} />
                   <ViewData title='Gender' value={values.gender} />
+                  <ViewData title='Pincode' value={values.pincode} />
                   <ViewData title='Residing since' value={values.residing_since} />
                   <ViewData title='Email' value={values.email} />
                   <ViewData title='PAN' value={values.pan} />
@@ -416,6 +417,19 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
               </Grid>
               <Grid {...gridItem} md={6}>
                 <TextInput
+                  number
+                  label="Pincode"
+                  name="pincode"
+                  readOnly={readOnly}
+                  value={values.pincode}
+                  error={errors.pincode}
+                  helperText={errors.pincode}
+                  onChange={onChange}
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid>
+              <Grid {...gridItem} md={6}>
+                <TextInput
                   select
                   label="Residing Since"
                   name="residing_since"
@@ -488,42 +502,46 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   InputLabelProps={{ shrink: true }}
                 />
               </Grid>
-              <Grid {...gridItem} md={6}>
-                <Typography component="div">
-                  <Grid component="label" container alignItems="center" style={{ marginBottom: '10px', marginTop: '6px' }} spacing={2}>
-                    <Grid md={12} style={{ paddingLeft: '8px' }}>Mobile number on Whatsapp?</Grid>
-                    <Grid style={{ paddingLeft: '8px' }}>No</Grid>
-                    <Grid>
-                      <Switch
-                        checked={state.checkedA}
-                        onChange={handleChange}
-                        name="checkedA"
-                        color="primary"
-                        inputProps={{ 'aria-label': 'secondary checkbox' }}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid>Yes</Grid>
+              <Grid {...gridItem}>
+                <Grid container spacing={2}>
+                  <Grid {...gridItem} md={6}>
+                    <Typography component="div">
+                      <Grid component="label" container alignItems="center" style={{ marginBottom: '10px', marginTop: '6px' }} spacing={2}>
+                        <Grid md={12} style={{ paddingLeft: '8px' }}>Mobile number on Whatsapp?</Grid>
+                        <Grid style={{ paddingLeft: '8px' }}>No</Grid>
+                        <Grid>
+                          <Switch
+                            checked={state.checkedA}
+                            onChange={handleChange}
+                            name="checkedA"
+                            color="primary"
+                            inputProps={{ 'aria-label': 'secondary checkbox' }}
+                            InputLabelProps={{ shrink: true }}
+                          />
+                        </Grid>
+                        <Grid>Yes</Grid>
+                      </Grid>
+                    </Typography>
                   </Grid>
-                </Typography>
-              </Grid>
-              <Grid item md={6}>
-                <Typography component="div" >
-                  <Grid component="label" container style={{ marginBottom: '8px', marginTop: '6px' }} alignItems="center" spacing={2}>
-                    <Grid md={12} style={{ paddingLeft: 8, fontSize: 12 }}>Mobile number linked with AADHAR?</Grid>
-                    <Grid style={{ paddingLeft: '8px' }}>No</Grid>
-                    <Grid>
-                      <Switch
-                        checked={state.checkedB}
-                        onChange={handleChange}
-                        color="primary"
-                        name="checkedB"
-                        inputProps={{ 'aria-label': 'secondary checkbox' }}
-                      />
-                    </Grid>
-                    <Grid>Yes</Grid>
+                  <Grid {...gridItem} md={6}>
+                    <Typography component="div" >
+                      <Grid component="label" container style={{ marginBottom: '8px', marginTop: '6px' }} alignItems="center" spacing={2}>
+                        <Grid md={12} style={{ paddingLeft: 8, fontSize: 12 }}>Mobile number linked with AADHAR?</Grid>
+                        <Grid style={{ paddingLeft: '8px' }}>No</Grid>
+                        <Grid>
+                          <Switch
+                            checked={state.checkedB}
+                            onChange={handleChange}
+                            color="primary"
+                            name="checkedB"
+                            inputProps={{ 'aria-label': 'secondary checkbox' }}
+                          />
+                        </Grid>
+                        <Grid>Yes</Grid>
+                      </Grid>
+                    </Typography>
                   </Grid>
-                </Typography>
+                </Grid>
               </Grid>
               <Grid {...gridItem} md={12} >
                 <Typography variant="title">Documents </Typography>

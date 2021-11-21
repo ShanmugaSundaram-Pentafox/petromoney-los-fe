@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import Grid from '@material-ui/core/Grid';
 import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
-import { permissionCheck } from '../../../components/UserCan/UserCan';
-import { rulesList } from '../../../config/userRules';
 import Button from '../../../components/CommonComponents/Button/Button';
 import { useSnackbar } from 'notistack';
 import { Typography } from '@material-ui/core';
@@ -11,7 +9,7 @@ import { downloadAccountStatement } from '../../../services/dealerships.service'
 import DialogContent from '@material-ui/core/DialogContent';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import DateFnsUtils from '@date-io/date-fns';
-import { format, parse } from 'date-fns';
+import { format } from 'date-fns';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker
@@ -79,7 +77,7 @@ const AccountStatement = ({ id, currentUser }) => {
     setLoading(true)
     downloadAccountStatement(id, from_date, to_date)
       .then(res => {
-        setFileCode(res.base64)
+        setFileCode(res?.data)
         setOpenDialog(true)
         setLoading(false)
       })
@@ -123,7 +121,10 @@ const AccountStatement = ({ id, currentUser }) => {
                       inputVariant='outlined'
                       format='dd/MM/yyyy'
                       animateYearScrolling={true}
+                      initialFocusedDate={null}
                       invalidDateMessage='Invalid Date Format'
+                      error={errors?.from_date}
+                      helperText={errors?.from_date}
                       margin='normal'
                       id='date-picker'
                       autoOk={true}
@@ -153,7 +154,8 @@ const AccountStatement = ({ id, currentUser }) => {
                       inputVariant='outlined'
                       format='dd/MM/yyyy'
                       animateYearScrolling={true}
-                      invalidDateMessage='Invalid Date Format'
+                      error={errors.to_date}
+                      helperText={errors.to_date}
                       margin='normal'
                       id='date-picker'
                       autoOk={true}
@@ -187,7 +189,7 @@ const AccountStatement = ({ id, currentUser }) => {
             </div>
             <FormDialog
               open={openDialog}
-              title={'Personal Discussion Report'}
+              title={'Account statement'}
               onClose={() => { setOpenDialog(false) }}
             >
               <div className={classes.dialogBox} >

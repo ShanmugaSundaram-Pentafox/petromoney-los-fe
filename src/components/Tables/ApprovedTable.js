@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from "mui-datatables";
@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
+const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) => {
   const classes = useStyles();
   const [dealershipId, setDealershipId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
@@ -64,11 +64,9 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const [loanId, setloanId] = useState();
   const [type, setType] = useState("");
 
-
-  useMount(() => {
-    if (!loans || !loans.length) {
-      setLoading(true);
-      getLoansByStatus('approved')
+  useEffect(() => {
+    setLoading(true);
+      getLoansByStatus('approved', filterQry)
         .then(data => {
           setLoansData('approved', data);
           setLoading(false);
@@ -76,8 +74,22 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
         .catch(e => {
           setLoading(false);
         })
-    }
-  });
+  }, [filterQry])
+
+
+  // useMount(() => {
+  //   if (!loans || !loans.length) {
+  //     setLoading(true);
+  //     getLoansByStatus('approved')
+  //       .then(data => {
+  //         setLoansData('approved', data);
+  //         setLoading(false);
+  //       })
+  //       .catch(e => {
+  //         setLoading(false);
+  //       })
+  //   }
+  // });
   const getLoansTable = () => {
     setLoading(true);
     getLoansByStatus('approved')

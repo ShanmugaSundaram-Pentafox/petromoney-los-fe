@@ -26,7 +26,7 @@ import { Typography } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import FileUpload from '../../../components/FileUpload';
 import { grey } from '@material-ui/core/colors';
-import { deleteDealershipDocument } from '../../../services/dealerships.service';
+import { deleteDealershipDocument, downloadAccountStatement } from '../../../services/dealerships.service';
 import { compareObject } from '../../../utils/compareObject.util';
 import { useMutation, useQuery } from 'react-query';
 
@@ -61,7 +61,7 @@ const useStyles = makeStyles(theme => ({
 
 
 
-const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) => {
+const DealershipInfo = ({ data, className, currentUser }) => {
   const [readOnly, setReadOnly] = useState(true);
   const [loading, setLoading] = useState();
   const [showUpload, setShowUpload] = useState(false);
@@ -195,6 +195,25 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
   //       console.log('BusinessTypes fetch error - ', err)
   //     })
   // });
+
+  const handleDownload = () => {
+    setLoading(true)
+    downloadAccountStatement(values.id)
+      .then(res => {
+        setFileCode(res.base64)
+        setOpenDialog(true)
+        setLoading(false)
+      })
+      .catch((e) => {
+        enqueueSnackbar('Something went wrong please try again.', {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      })
+  }
 
   const docUpload = (val) => {
     setShowUpload(true);
@@ -362,7 +381,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     </div>
                   </div>
                 )}
-
             </>
           ) : (
             <>
@@ -601,6 +619,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
           )}
         </CardActions>
       </form >
+      <Divider />
+      <AccountStatement id={values.id} currentUser={currentUser} />
     </Card >
   );
 };

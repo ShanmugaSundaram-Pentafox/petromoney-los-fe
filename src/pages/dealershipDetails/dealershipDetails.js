@@ -41,7 +41,8 @@ import {
   useRouteMatch,
   useParams,
 } from 'react-router-dom'
-
+import { rulesList } from "../../config/userRules";
+import { permissionCheck } from "../../components/UserCan/UserCan";
 
 const useStyles = makeStyles((theme) => ({
 
@@ -94,6 +95,23 @@ const DealershipDetails = ({ currentUser, match }) => {
   const [leegalityModalVisible, setLeegalityModalVisible] = useState(false);
   const [dealerLoanData, setDealerLoanData] = useState();
   const history = useHistory();
+  const financialReport_permission = permissionCheck(currentUser.role_name, rulesList.financial_view);
+
+  const tabs = [
+    'Dealership',
+    'Dealers',
+    'Sales History',
+    'Loans List',
+    'Personal Discussion',
+    'Document Checklist',
+    'Transporters',
+    'Fleet Operators'
+  ];
+  
+  if (financialReport_permission){
+    tabs.splice(2,0,'Financial Report')
+  }
+
   const {
     url,
     params: { id },
@@ -186,15 +204,24 @@ const DealershipDetails = ({ currentUser, match }) => {
               aria-label="Dealership Details Panel"
               className={classes.tabs}
             >
-              <Tab label={<InfoBox active={activeTab === 0} number={1} title="Dealership" />} {...tabA11yProps(0)} />
-              <Tab label={<InfoBox active={activeTab === 1} number={2} title="Dealers" />} {...tabA11yProps(1)} />
-              <Tab label={<InfoBox active={activeTab === 2} number={3} title="Financial Report" />} {...tabA11yProps(2)} />
-              <Tab label={<InfoBox active={activeTab === 3} number={4} title="Sales History" />} {...tabA11yProps(3)} />
-              <Tab label={<InfoBox active={activeTab === 4} number={5} title="Loans List" />} {...tabA11yProps(4)} />
-              <Tab label={<InfoBox active={activeTab === 5} number={6} title="Personal Discussion" />} {...tabA11yProps(5)} />
-              <Tab label={<InfoBox active={activeTab === 6} number={7} title="Document Checklist" />} {...tabA11yProps(6)} />
-              <Tab label={<InfoBox active={activeTab === 7} number={8} title="Transporters" />} {...tabA11yProps(7)} />
-              <Tab label={<InfoBox active={activeTab === 8} number={9} title="Fleet Operators" />} {...tabA11yProps(8)} />
+              {
+                tabs.map((title, i) => {
+                  return(<Tab label={<InfoBox active={activeTab === i} number={i+1} title={title} />} {...tabA11yProps(i)} />)
+                })
+              }
+              {/* <Tab label={<InfoBox active={activeTab === 0} title="Dealership" />} {...tabA11yProps(0)} />
+              <Tab label={<InfoBox active={activeTab === 1} title="Dealers" />} {...tabA11yProps(1)} />
+              {
+                financialReport_permission && (
+                  <Tab label={<InfoBox active={activeTab === 2} title="Financial Report" />} {...tabA11yProps(2)} />
+                )
+              }
+              <Tab label={<InfoBox active={activeTab === 3} title="Sales History" />} {...tabA11yProps(3)} />
+              <Tab label={<InfoBox active={activeTab === 4} title="Loans List" />} {...tabA11yProps(4)} />
+              <Tab label={<InfoBox active={activeTab === 5} title="Personal Discussion" />} {...tabA11yProps(5)} />
+              <Tab label={<InfoBox active={activeTab === 6} title="Document Checklist" />} {...tabA11yProps(6)} />
+              <Tab label={<InfoBox active={activeTab === 7} title="Transporters" />} {...tabA11yProps(7)} />
+              <Tab label={<InfoBox active={activeTab === 8} title="Fleet Operators" />} {...tabA11yProps(8)} /> */}
             </Tabs>
           </Collapse>
           {/* <div>
@@ -230,33 +257,37 @@ const DealershipDetails = ({ currentUser, match }) => {
             </Collapse>
           </div> */}
         </div>
-        <TabPanel activeTab={activeTab} index={0}>
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Dealership')}>
           {dealershipData && (
             <DealershipInfo data={dealershipData} currentUser={currentUser} toggleCreditReport={toggleCreditReport} />
           )}
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={1}>
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Dealers')}>
           <DealersList id={id} titleAlign="left" currentUser={currentUser} />
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={2}>
-          <CreditReportSideWrapper dealershipId={id} data={{}} currentUser={currentUser} />
-        </TabPanel>
-        <TabPanel activeTab={activeTab} index={3}>
+        {
+          financialReport_permission && (
+            <TabPanel activeTab={activeTab} index={tabs.indexOf('Financial Report')}>
+              <CreditReportSideWrapper dealershipId={id} data={{}} currentUser={currentUser} />
+            </TabPanel>
+          )
+        }
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Sales History')}>
           <SalesInfo id={id} titleAlign="left" currentUser={currentUser} column />
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={4}>
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Loans List')}>
           <LoansList id={id} titleAlign="left" currentUser={currentUser} dealerData={dealerLoanData} />
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={5}>
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Personal Discussion')}>
           <PersonalDiscussionReport id ={id} textAlign="left" currentUser={currentUser} />
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={6}>
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Document Checklist')}>
           <DealershipDoc id={id} currentUser={currentUser} />
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={7}>
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Transporters')}>
           <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={8}>
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Fleet Operators')}>
           <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
         </TabPanel>
         <SolarEnquiryForm

@@ -255,20 +255,20 @@ const SalesInfo = ({
                   <TableRow key={`edit-row-${i}`}>
                     <TableCell scope="row" component="th">
                       <TextInput
+                        number
                         fullWidth={false}
                         label="From Year"
                         name="from_year"
-                        type="number"
                         disabled={true}
                         value={editRow.from_year}
                         onChange={onEditTextChange}
                       />
                       -
                       <TextInput
+                        number
                         fullWidth={false}
                         label="To Year"
                         name="to_year"
-                        type="number"
                         disabled={true}
                         value={editRow.to_year}
                         onChange={onEditTextChange}
@@ -276,18 +276,18 @@ const SalesInfo = ({
                     </TableCell>
                     <TableCell align="right">
                       <TextInput
+                        number
                         label="MS (KL)"
                         name="ms"
-                        type="number"
                         value={editRow.ms}
                         onChange={onEditTextChange}
                       />
                     </TableCell>
                     <TableCell align="right">
                       <TextInput
+                        number
                         label="HSD (KL)"
                         name="hsd"
-                        type="number"
                         value={editRow.hsd}
                         onChange={onEditTextChange}
                       />
@@ -357,37 +357,37 @@ const SalesInfo = ({
                   <TableRow key={"new-row"}>
                     <TableCell scope="row" component="th">
                       <TextInput
+                        number
                         fullWidth={false}
                         label="From Year"
                         name="from_year"
-                        type="number"
                         value={apiData.from_year}
                         onChange={onTextChange}
                       />
                       -
                       <TextInput
+                        number
                         fullWidth={false}
                         label="To Year"
                         name="to_year"
-                        type="number"
                         value={apiData.to_year}
                         onChange={onTextChange}
                       />
                     </TableCell>
                     <TableCell align="right">
                       <TextInput
+                        number
                         label="MS (KL)"
                         name="ms"
-                        type="number"
                         value={apiData.ms}
                         onChange={onTextChange}
                       />
                     </TableCell>
                     <TableCell align="right">
                       <TextInput
+                        number
                         label="HSD (KL)"
                         name="hsd"
-                        type="number"
                         value={apiData.hsd}
                         onChange={onTextChange}
                       />

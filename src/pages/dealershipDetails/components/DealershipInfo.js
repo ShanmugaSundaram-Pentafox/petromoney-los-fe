@@ -7,7 +7,7 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
-import TextInput from '../../../components/TextInput/TextInput';
+import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { URL } from '../../../config/serverUrls';
@@ -26,8 +26,17 @@ import { Typography } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import FileUpload from '../../../components/FileUpload';
 import { grey } from '@material-ui/core/colors';
-import { deleteDealershipDocument } from '../../../services/dealerships.service';
+import { deleteDealershipDocument, downloadAccountStatement } from '../../../services/dealerships.service';
 import { compareObject } from '../../../utils/compareObject.util';
+import DialogContent from '@material-ui/core/DialogContent';
+import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
+import { format, parse } from 'date-fns';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker
+} from '@material-ui/pickers';
+import AccountStatement from './AccountStatement';
 
 
 const useStyles = makeStyles(theme => ({
@@ -55,24 +64,12 @@ const useStyles = makeStyles(theme => ({
   icons: {
     marginRight: 16,
   },
-  number: {
-    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0
-    }
-  },
-  input: {
-    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0
-    }
-  }
 }));
 
 
 
 
-const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) => {
+const DealershipInfo = ({ data, className, currentUser }) => {
   const [readOnly, setReadOnly] = useState(true);
   const [loading, setLoading] = useState();
   const [showUpload, setShowUpload] = useState(false);
@@ -80,8 +77,12 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
   const [businessTypes, setBusinessTypes] = useState([{}, {}, {}, {}, {}]);
   const [states, setStates] = useState([]);
   const [regionList, setRegionList] = useState([]);
-
+  const [selectedDate, setSelectedDate] = useState();
+  const [fileCode, setFileCode] = useState();
+  const [openDialog, setOpenDialog] = useState(false)
   const { enqueueSnackbar } = useSnackbar();
+  const classes = useStyles();
+
 
   const { values, errors, handleChange: onChange, handleSubmit, setFieldValue } = useFormik({
     initialValues: { ...data },
@@ -92,10 +93,7 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
       address: Yup.string().nullable('Please enter address').required('Please enter address'),
       state: Yup.string().nullable('Please choose state').required('Please choose state'),
       district: Yup.string().nullable('Please enter district').required('Please enter district'),
-      pincode: Yup.number()
-        .nullable('Enter pincode')
-        .test('pincode', 'Enter valid pincode', (val) => String(val).length === 6)
-        .required('Enter pincode'),
+      pincode: Yup.string().nullable('Enter pincode').matches(/^[1-9][0-9]{5}$/, 'Invalid pincode').required('Enter pincode'),
       pan: Yup.string()
         .nullable('Enter PAN')
         .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
@@ -189,6 +187,12 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         })
     }
   });
+  const handleDateChange = (date, type) => {
+    if (type == 'from')
+      setSelectedDate({ ...selectedDate, from_date: date })
+    else
+      setSelectedDate({ ...selectedDate, to_date: date })
+  }
   useMount(() => {
     getBusinessTypes()
       .then(setBusinessTypes)
@@ -217,6 +221,25 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
       fetchRegions(parseInt(values.state));
     }
   }, [values.state])
+
+  const handleDownload = () => {
+    setLoading(true)
+    downloadAccountStatement(values.id)
+      .then(res => {
+        setFileCode(res.base64)
+        setOpenDialog(true)
+        setLoading(false)
+      })
+      .catch((e) => {
+        enqueueSnackbar('Something went wrong please try again.', {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      })
+  }
 
   const docUpload = (val) => {
     setShowUpload(true);
@@ -265,7 +288,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         console.log(err)
       })
   }
-  const classes = useStyles();
   const gridProps = {
     item: true,
     className: classes.gridItemStyle
@@ -385,7 +407,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     </div>
                   </div>
                 )}
-
             </>
           ) : (
             <>
@@ -573,13 +594,11 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                 </Grid>
                 <Grid {...gridProps} md={6}>
                   <TextInput
-                    className={classes.number}
-                    inputProps={{ className: classes.input }}
+                    number
                     labelText="Pincode"
-                    type='number'
                     name="pincode"
                     readOnly={readOnly}
-                    defaultValue={values?.pincode}
+                    value={values?.pincode}
                     error={errors.pincode}
                     helperText={errors.pincode}
                     {...fieldProps}
@@ -626,6 +645,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
           )}
         </CardActions>
       </form >
+      <Divider />
+      <AccountStatement id={values.id} currentUser={currentUser} />
     </Card >
   );
 };

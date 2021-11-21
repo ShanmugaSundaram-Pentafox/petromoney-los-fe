@@ -58,6 +58,7 @@ const TextInput = ({
   money,
   date,
   select,
+  number,
   ...restProps
 }) => (
   <InputWrapper direction={direction} top={alignTop} labelWidth={labelWidth}>
@@ -73,7 +74,13 @@ const TextInput = ({
         ...inputProps
       }}
       back
-      onChange={onChange}
+      onChange={e => {
+        const v = e?.target?.value;
+        if (number && isNaN(parseFloat(Number(v)))) {
+          return;
+        }
+        onChange(e);
+      }}
       InputProps={{
         startAdornment: money && <InputAdornment position="start">₹</InputAdornment>,
       }}
@@ -82,7 +89,7 @@ const TextInput = ({
         native: true,
       }}
       {...restProps}
-      />
+    />
   </InputWrapper>
 );
 

@@ -111,14 +111,18 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
       body: state,
     })
       .then(res => {
-        enqueueSnackbar(res.profile_status, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
+        if (res.status === 'SUCCESS') {
+          getDealershipLoansById(id)
+            .then(data => setLoansData(data))
+            .catch(e => null)
+          enqueueSnackbar(res.message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
         }
-        )
       })
       .catch(err => {
         console.log(err)
@@ -178,11 +182,10 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
                     })
                   }}
                 >
-                  <option>{row.application_state}</option>
+                  <option value={selectedStatus}>{row.application_state}</option>
                   {
                     status.map(item => item.application_state !== row.application_state && <option value={item.id}>{item.application_state}</option>)
                   }
-
                 </Select>
               </TableCell>
               <TableCell align="center">

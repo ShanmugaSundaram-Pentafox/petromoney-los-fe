@@ -10,13 +10,13 @@ import DashCard from '../../../components/CommonComponents/Cards/DashCard';
 import { getAllRegions } from '../../../services/common.service';
 import { Button } from '@material-ui/core';
 
-const useStyles = makeStyles(theme =>({
-  card :{
+const useStyles = makeStyles(theme => ({
+  card: {
     [theme.breakpoints.up('sm')]: {
-     flexWrap:"wrap",
-     [theme.breakpoints.up('md')]: {
-      flexWrap:"nowrap",
-     }
+      flexWrap: "wrap",
+      [theme.breakpoints.up('md')]: {
+        flexWrap: "nowrap",
+      }
     }
   },
   filterWrapper: {
@@ -157,16 +157,17 @@ const LoanStats = ({ selectedStatsCard, handleClick, filterQry }) => {
         // });
         let cdata = [
           { name: 'Submitted', count: data.submitted_count },
+          { name: 'Pending Review', count: data.loan_review_count },
           { name: 'Pending Approval', count: data.loan_approval_count || 0, amount: data.amount_requested },
           { name: 'Approved', count: data.approved_count, amount: data.amount_approved },
           { name: 'Disb. Approval', count: data.disbursement_approval_count || 0, amount: data.amount_disbursement_approval },
-          { name: 'Disb. Approved',count:data.disbursement_approved_count || 0, amount: data.amount_disbursement_approved },
+          { name: 'Disb. Approved', count: data.disbursement_approved_count || 0, amount: data.amount_disbursement_approved },
           { name: 'Disbursed', count: data.disbursed_count, amount: data.amount_disbursed },
           { name: 'Rejected', count: data.rejected_count },
         ];
         setChartData(cdata);
         let s = 0;
-        for(let i=0; i<cdata.length; i++) {
+        for (let i = 0; i < cdata.length; i++) {
           s += cdata[i].count;
         }
         setTotalLoans(s)
@@ -185,99 +186,99 @@ const LoanStats = ({ selectedStatsCard, handleClick, filterQry }) => {
   }
 
   return (
-      <Box p={2} pt={1} borderRadius={4} bgcolor="background.paper">
-        <Box pb={1} display='flex' flexDirection='row' justifyContent='space-between' alignItems='center'>
-          <Typography variant="h5">Loans' Statistics {totalLoans ? `(${totalLoans})` : null}</Typography>
-          <Box display='flex' flexDirection='row'>
-            <Box pr={1} display='flex' justifyContent='center' alignItems='center'>
-              <div style={{ color: 'hsl(0,0%,75%)' }}>Region</div>
-            </Box>
-            <Box style={{ width: '200px' }}>
-              <Select
-                options={regions}
-                value={selectedRegion}
-                onChange={setSelectedRegion}
-                styles={{
-                  control: (provided) => ({
-                    ...provided,
-                    // borderWidth: 0,
-                    // borderRadius: 0,
-                    // borderBottomWidth: 1, 
-                    borderColor: 'hsl(0, 0%, 90%)',
+    <Box p={2} pt={1} borderRadius={4} bgcolor="background.paper">
+      <Box pb={1} display='flex' flexDirection='row' justifyContent='space-between' alignItems='center'>
+        <Typography variant="h5">Loans' Statistics {totalLoans ? `(${totalLoans})` : null}</Typography>
+        <Box display='flex' flexDirection='row'>
+          <Box pr={1} display='flex' justifyContent='center' alignItems='center'>
+            <div style={{ color: 'hsl(0,0%,75%)' }}>Region</div>
+          </Box>
+          <Box style={{ width: '200px' }}>
+            <Select
+              options={regions}
+              value={selectedRegion}
+              onChange={setSelectedRegion}
+              styles={{
+                control: (provided) => ({
+                  ...provided,
+                  // borderWidth: 0,
+                  // borderRadius: 0,
+                  // borderBottomWidth: 1, 
+                  borderColor: 'hsl(0, 0%, 90%)',
+                  minHeight: 29,
+                  '&:hover': {
+                    boxShadow: 'none',
                     minHeight: 29,
-                    '&:hover': {
-                      boxShadow: 'none',
-                      minHeight: 29,
-                    },
-                  }),
-                  menu: (provided) => ({
-                    ...provided,
-                    zIndex: 9999
-                  }),
-                  indicatorsContainer: (provided) => ({
-                    ...provided,
-                    '> div': {
-                      padding: 5
-                    }
-                  }),
-                  indicatorContainer: (provided) => ({
-                    ...provided,
-                  })
-                }}
+                  },
+                }),
+                menu: (provided) => ({
+                  ...provided,
+                  zIndex: 9999
+                }),
+                indicatorsContainer: (provided) => ({
+                  ...provided,
+                  '> div': {
+                    padding: 5
+                  }
+                }),
+                indicatorContainer: (provided) => ({
+                  ...provided,
+                })
+              }}
+            />
+          </Box>
+          <Box pl={2}>
+            {/* <small>Period</small> */}
+            <div className={classes.filterWrapper}>
+              <div className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')}>Today</div>
+              <div className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')}>1W</div>
+              <div className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')}>MTD</div>
+              <div className={`${classes.filterItem} ${selectedPeriodType === 'Y' && 'active'}`} onClick={onDateChange('Y')}>YTD</div>
+              <Tooltip title='Up to Date'>
+                <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')}>UTD</div>
+              </Tooltip>
+              <Tooltip title='Choose custom dates'>
+                <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')}>
+                  {
+                    selectedPeriodType === 'Custom' ? (
+                      `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`
+                    ) : 'Custom'
+                  }
+                </div>
+              </Tooltip>
+            </div>
+            <Popover
+              id={Boolean(showPicker) ? 'dp' : undefined}
+              open={Boolean(showPicker)}
+              anchorEl={showPicker}
+              onClose={onDateRangeClose}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'center',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'center',
+              }}
+            >
+              <DateRange
+                ranges={[dateRange]}
+                onChange={onDatePickerChange}
+                maxDate={new Date()}
+                months={2}
+                direction="horizontal"
+                // scroll={{ enabled: true }}
+                minDate={subDays(new Date(), 1095)}
               />
-            </Box>
-            <Box pl={2}>
-              {/* <small>Period</small> */}
-              <div className={classes.filterWrapper}>
-                <div className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')}>Today</div>
-                <div className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')}>1W</div>
-                <div className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')}>MTD</div>
-                <div className={`${classes.filterItem} ${selectedPeriodType === 'Y' && 'active'}`} onClick={onDateChange('Y')}>YTD</div>
-                <Tooltip title='Up to Date'>
-                  <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')}>UTD</div>
-                </Tooltip>
-                <Tooltip title='Choose custom dates'>
-                  <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')}>
-                    {
-                      selectedPeriodType === 'Custom' ? (
-                        `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`
-                      ) : 'Custom'
-                    }
-                  </div>
-                </Tooltip>
-              </div>
-              <Popover
-                id={Boolean(showPicker) ? 'dp' : undefined}
-                open={Boolean(showPicker)}
-                anchorEl={showPicker}
-                onClose={onDateRangeClose}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'center',
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'center',
-                }}
-              >
-                <DateRange
-                  ranges={[dateRange]}
-                  onChange={onDatePickerChange}
-                  maxDate={new Date()}
-                  months={2}
-                  direction="horizontal"
-                  // scroll={{ enabled: true }}
-                  minDate={subDays(new Date(), 1095)}
-                />
-                <Box p={1} textAlign='right'>
-                  <Button variant="contained" color="primary" onClick={onDateRangeClose}>
-                    Apply
-                  </Button>
-                  {/* <button className={`${classes.filterItem} active`} onClick={onDateRangeClose}>Apply</button> */}
-                </Box>
-              </Popover>
-            </Box>
-            {/* <Box pl={1}>
+              <Box p={1} textAlign='right'>
+                <Button variant="contained" color="primary" onClick={onDateRangeClose}>
+                  Apply
+                </Button>
+                {/* <button className={`${classes.filterItem} active`} onClick={onDateRangeClose}>Apply</button> */}
+              </Box>
+            </Popover>
+          </Box>
+          {/* <Box pl={1}>
               {
                 selectedPeriodType === 'Custom' && (
                   <div className={`${classes.filterItem} disabled`} onClick={(event) => setShowPicker(event?.currentTarget)}>
@@ -288,18 +289,18 @@ const LoanStats = ({ selectedStatsCard, handleClick, filterQry }) => {
                 )
               }
             </Box> */}
-          
-          </Box>
-        </Box>
 
-        <Box className={classes.card} borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="nowrap">
-          {
-            chartData.map((item, i) => (
-              <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name} amount={item.amount} selected={item.name === selectedStatsCard} action={() => handleClick(item.name)} />
-            ))
-          }
         </Box>
       </Box>
+
+      <Box className={classes.card} borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="nowrap">
+        {
+          chartData.map((item, i) => (
+            <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name} amount={item.amount} selected={item.name === selectedStatsCard} action={() => handleClick(item.name)} />
+          ))
+        }
+      </Box>
+    </Box>
   )
 }
 

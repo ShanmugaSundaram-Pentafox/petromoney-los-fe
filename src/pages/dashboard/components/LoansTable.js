@@ -22,7 +22,8 @@ import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import DisbursementApprovedTable from '../../../components/Tables/DisbursementApprovedTable';
 import ApprovedTable from '../../../components/Tables/ApprovedTable';
-import RejectedTable from '../../../components/Tables/RejectedTable'
+import RejectedTable from '../../../components/Tables/RejectedTable';
+import ReviewerTable from '../../../components/Tables/ReviewTable';
 import DisbursedTable from '../../../components/Tables/DisbursedTable';
 // import DueTable from '';
 import OverDueTable from '../../../components/Tables/OverDueTable';
@@ -176,7 +177,16 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value, filterQry }) =
               value === "Pending Approval" ? (
                 <Grid item md={12}>
                   <Paper className={classes.tableContainer}>
-                    <ApprovalReqestTable title={"Pending for Initial Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry}/>
+                    <ApprovalReqestTable title={"Pending for Initial Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                  </Paper>
+                </Grid>
+              ) : null
+            }
+            {
+              value === "Pending Review" ? (
+                <Grid item md={12}>
+                  <Paper className={classes.tableContainer}>
+                    <ReviewerTable title={"Pending for Review"} currentUser={currentUser} onRowClick={showDealershipInfo} />
                   </Paper>
                 </Grid>
               ) : null
@@ -185,7 +195,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value, filterQry }) =
               value === "Disb. Approval" ? (
                 <Grid item md={12}>
                   <Paper className={classes.tableContainer}>
-                    <DisbursementReqestTable title={"Pending for Disbursement Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry}/>
+                    <DisbursementReqestTable title={"Pending for Disbursement Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
               ) : null
@@ -194,7 +204,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value, filterQry }) =
               value === "Submitted" ? (
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
-                    <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry}/>
+                    <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
               ) : null
@@ -203,7 +213,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value, filterQry }) =
               value === "Approved" ? (
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
-                    <ApprovedTable title={"Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry}/>
+                    <ApprovedTable title={"Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
 
@@ -213,7 +223,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value, filterQry }) =
               value === "Rejected" ? (
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
-                    <RejectedTable title={"Rejected Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry}/>
+                    <RejectedTable title={"Rejected Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
               ) : null
@@ -222,7 +232,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value, filterQry }) =
               value === "Disbursed" ? (
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
-                    <DisbursedTable title={"Disbursed Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry}/>
+                    <DisbursedTable title={"Disbursed Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
               ) : null
@@ -231,7 +241,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value, filterQry }) =
               value === "Disb. Approved" ? (
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
-                    <DisbursementApprovedTable  title={"Disbursement Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry}/>
+                    <DisbursementApprovedTable title={"Disbursement Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
               ) : null
@@ -246,11 +256,11 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value, filterQry }) =
 
             </>
           ) : (
-              <>
-                <Paper className={classes.tableContainer}>
-                  <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
-                </Paper>
-              </>)
+            <>
+              <Paper className={classes.tableContainer}>
+                <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+              </Paper>
+            </>)
         )}
       />
       <Drawer

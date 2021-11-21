@@ -186,7 +186,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value, filterQry }) =
               value === "Pending Review" ? (
                 <Grid item md={12}>
                   <Paper className={classes.tableContainer}>
-                    <ReviewerTable title={"Pending for Review"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                    <ReviewerTable title={"Pending for Review"} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
               ) : null

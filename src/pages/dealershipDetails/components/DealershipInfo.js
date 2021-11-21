@@ -7,7 +7,7 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
-import TextInput from '../../../components/TextInput/TextInput';
+import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { URL } from '../../../config/serverUrls';
@@ -26,8 +26,17 @@ import { Typography } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import FileUpload from '../../../components/FileUpload';
 import { grey } from '@material-ui/core/colors';
-import { deleteDealershipDocument } from '../../../services/dealerships.service';
+import { deleteDealershipDocument, downloadAccountStatement } from '../../../services/dealerships.service';
 import { compareObject } from '../../../utils/compareObject.util';
+import DialogContent from '@material-ui/core/DialogContent';
+import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
+import { format, parse } from 'date-fns';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker
+} from '@material-ui/pickers';
+import AccountStatement from './AccountStatement';
 
 
 const useStyles = makeStyles(theme => ({
@@ -60,7 +69,7 @@ const useStyles = makeStyles(theme => ({
 
 
 
-const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) => {
+const DealershipInfo = ({ data, className, currentUser }) => {
   const [readOnly, setReadOnly] = useState(true);
   const [loading, setLoading] = useState();
   const [showUpload, setShowUpload] = useState(false);
@@ -68,8 +77,12 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
   const [businessTypes, setBusinessTypes] = useState([{}, {}, {}, {}, {}]);
   const [states, setStates] = useState([]);
   const [regionList, setRegionList] = useState([]);
-
+  const [selectedDate, setSelectedDate] = useState();
+  const [fileCode, setFileCode] = useState();
+  const [openDialog, setOpenDialog] = useState(false)
   const { enqueueSnackbar } = useSnackbar();
+  const classes = useStyles();
+
 
   const { values, errors, handleChange: onChange, handleSubmit, setFieldValue } = useFormik({
     initialValues: { ...data },
@@ -174,6 +187,12 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         })
     }
   });
+  const handleDateChange = (date, type) => {
+    if (type == 'from')
+      setSelectedDate({ ...selectedDate, from_date: date })
+    else
+      setSelectedDate({ ...selectedDate, to_date: date })
+  }
   useMount(() => {
     getBusinessTypes()
       .then(setBusinessTypes)
@@ -202,6 +221,25 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
       fetchRegions(parseInt(values.state));
     }
   }, [values.state])
+
+  const handleDownload = () => {
+    setLoading(true)
+    downloadAccountStatement(values.id)
+      .then(res => {
+        setFileCode(res.base64)
+        setOpenDialog(true)
+        setLoading(false)
+      })
+      .catch((e) => {
+        enqueueSnackbar('Something went wrong please try again.', {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      })
+  }
 
   const docUpload = (val) => {
     setShowUpload(true);
@@ -250,7 +288,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
         console.log(err)
       })
   }
-  const classes = useStyles();
   const gridProps = {
     item: true,
     className: classes.gridItemStyle
@@ -370,7 +407,6 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
                     </div>
                   </div>
                 )}
-
             </>
           ) : (
             <>
@@ -609,6 +645,8 @@ const DealershipInfo = ({ data, className, currentUser, toggleCreditReport }) =>
           )}
         </CardActions>
       </form >
+      <Divider />
+      <AccountStatement id={values.id} currentUser={currentUser} />
     </Card >
   );
 };

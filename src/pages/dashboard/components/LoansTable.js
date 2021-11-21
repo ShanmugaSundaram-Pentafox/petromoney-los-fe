@@ -22,7 +22,8 @@ import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import DisbursementApprovedTable from '../../../components/Tables/DisbursementApprovedTable';
 import ApprovedTable from '../../../components/Tables/ApprovedTable';
-import RejectedTable from '../../../components/Tables/RejectedTable'
+import RejectedTable from '../../../components/Tables/RejectedTable';
+import ReviewerTable from '../../../components/Tables/ReviewTable';
 import DisbursedTable from '../../../components/Tables/DisbursedTable';
 // import DueTable from '';
 import OverDueTable from '../../../components/Tables/OverDueTable';
@@ -182,6 +183,15 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
               ) : null
             }
             {
+              value === "Pending Review" ? (
+                <Grid item md={12}>
+                  <Paper className={classes.tableContainer}>
+                    <ReviewerTable title={"Pending for Review"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                  </Paper>
+                </Grid>
+              ) : null
+            }
+            {
               value === "Disb. Approval" ? (
                 <Grid item md={12}>
                   <Paper className={classes.tableContainer}>
@@ -231,7 +241,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
               value === "Disb. Approved" ? (
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
-                    <DisbursementApprovedTable  title={"Disbursement Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                    <DisbursementApprovedTable title={"Disbursement Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
                   </Paper>
                 </Grid>
               ) : null
@@ -246,11 +256,11 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
 
             </>
           ) : (
-              <>
-                <Paper className={classes.tableContainer}>
-                  <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
-                </Paper>
-              </>)
+            <>
+              <Paper className={classes.tableContainer}>
+                <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+              </Paper>
+            </>)
         )}
       />
       <Drawer

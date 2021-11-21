@@ -26,15 +26,16 @@ import CreditReportSideWrapper from "./components/CreditReportSideWrapper";
 import InfoBox from "../../components/CommonComponents/InfoBox";
 import SolarEnquiryForm from "./components/SolarEnquiryForm";
 import { tabA11yProps, TabPanel } from "../../components/CommonComponents/Tabs/TabPanel";
+import InfoCard from "../../components/CommonComponents/Cards/InfoCard";
 import LeegalityLayout from "../../components/Leegality/LeegalityLayout";
 import DealershipTransport from "./components/DealershipTransport";
 import FleetOperatorsDetails from "./components/FleetOperatorsDetails";
+import styled from 'styled-components';
 import PersonalDiscussionReport from "./components/PDReport";
 import { useHistory } from "react-router-dom";
 import { toInteger } from "lodash-es";
 import { useQuery } from "react-query";
-import { rulesList } from "../../config/userRules";
-import { permissionCheck } from "../../components/UserCan/UserCan";
+
 
 const useStyles = makeStyles((theme) => ({
 
@@ -253,38 +254,62 @@ const DealershipDetails = ({ currentUser, match }) => {
             </Collapse>
           </div> */}
         </div>
-        <TabPanel activeTab={activeTab} index={tabs.indexOf('Dealership')}>
-          {dealershipData && (
-            <DealershipInfo data={dealershipData} currentUser={currentUser} toggleCreditReport={toggleCreditReport} />
+        <TabPanel activeTab={activeTab} index={0}>
+          {!dealershipData.isLoading && activeTab == 0 && (
+            <DealershipInfo data={dealershipData.data} currentUser={currentUser} toggleCreditReport={toggleCreditReport} />
           )}
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={tabs.indexOf('Dealers')}>
-          <DealersList id={id} titleAlign="left" currentUser={currentUser} />
+        <TabPanel activeTab={activeTab} index={1}>
+          {
+            activeTab == 1 &&
+            < DealersList id={id} titleAlign="left" currentUser={currentUser} />
+          }
         </TabPanel>
         {
           financialReport_permission && (
             <TabPanel activeTab={activeTab} index={tabs.indexOf('Financial Report')}>
-              <CreditReportSideWrapper dealershipId={id} data={{}} currentUser={currentUser} />
+              {
+                activeTab == 2 &&
+                <CreditReportSideWrapper dealershipId={id} data={{}} currentUser={currentUser} />
+              }
             </TabPanel>
           )
         }
-        <TabPanel activeTab={activeTab} index={tabs.indexOf('Sales History')}>
-          <SalesInfo id={id} titleAlign="left" currentUser={currentUser} column />
+        <TabPanel activeTab={activeTab} index={3}>
+          {
+            activeTab == 3 &&
+            <SalesInfo id={id} titleAlign="left" currentUser={currentUser} column />
+          }
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={tabs.indexOf('Loans List')}>
-          <LoansList id={id} titleAlign="left" currentUser={currentUser} dealerData={dealerLoanData} />
+        <TabPanel activeTab={activeTab} index={4}>
+          {
+            activeTab == 4 &&
+            <LoansList id={id} titleAlign="left" currentUser={currentUser} />
+          }
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={tabs.indexOf('Personal Discussion')}>
-          <PersonalDiscussionReport id={id} textAlign="left" currentUser={currentUser} />
+        <TabPanel activeTab={activeTab} index={5}>
+          {
+            activeTab == 5 &&
+            <PersonalDiscussionReport id={id} textAlign="left" currentUser={currentUser} />
+          }
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={tabs.indexOf('Document Checklist')}>
-          <DealershipDoc id={id} currentUser={currentUser} />
+        <TabPanel activeTab={activeTab} index={6}>
+          {
+            activeTab == 6 &&
+            <DealershipDoc id={id} currentUser={currentUser} />
+          }
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={tabs.indexOf('Transporters')}>
-          <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
+        <TabPanel activeTab={activeTab} index={7}>
+          {
+            activeTab == 7 &&
+            <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
+          }
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={tabs.indexOf('Fleet Operators')}>
-          <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
+        <TabPanel activeTab={activeTab} index={8}>
+          {
+            activeTab == 8 &&
+            <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
+          }
         </TabPanel>
         <SolarEnquiryForm
           dealershipId={id}

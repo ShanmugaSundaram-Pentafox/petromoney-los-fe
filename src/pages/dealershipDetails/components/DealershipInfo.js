@@ -7,8 +7,8 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
-import TextInput from '../../../components/TextInput/TextInput';
-import { setNestedObjectValues, useFormik } from 'formik';
+import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
+import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { URL } from '../../../config/serverUrls';
 import { logger } from '../../../config/logger';
@@ -29,6 +29,7 @@ import { grey } from '@material-ui/core/colors';
 import { deleteDealershipDocument, downloadAccountStatement } from '../../../services/dealerships.service';
 import { compareObject } from '../../../utils/compareObject.util';
 import { useMutation, useQuery } from 'react-query';
+import AccountStatement from './AccountStatement';
 
 
 const useStyles = makeStyles(theme => ({
@@ -195,25 +196,6 @@ const DealershipInfo = ({ data, className, currentUser }) => {
   //       console.log('BusinessTypes fetch error - ', err)
   //     })
   // });
-
-  const handleDownload = () => {
-    setLoading(true)
-    downloadAccountStatement(values.id)
-      .then(res => {
-        setFileCode(res.base64)
-        setOpenDialog(true)
-        setLoading(false)
-      })
-      .catch((e) => {
-        enqueueSnackbar('Something went wrong please try again.', {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        });
-      })
-  }
 
   const docUpload = (val) => {
     setShowUpload(true);

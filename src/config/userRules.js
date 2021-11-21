@@ -14,6 +14,7 @@ export const rulesList = {
   "settings_view": "settings:view",
   "credit_view": "credit:view",
   "pdr_view": "sales:view",
+  "financial_view": "financial:view",
   "upload_statement": "upload:statement"
 }
 
@@ -26,6 +27,7 @@ export const rulesForUserRoles = {
       rulesList.dealership_credit_view,
       rulesList.credit_view,
       rulesList.pdr_view,
+      rulesList.financial_view,
       rulesList.upload_statement,
     ]
   },
@@ -37,6 +39,7 @@ export const rulesForUserRoles = {
       rulesList.dealership_credit_view,
       rulesList.credit_view,
       rulesList.pdr_view,
+      rulesList.financial_view,
       rulesList.upload_statement,
     ]
   },
@@ -50,6 +53,7 @@ export const rulesForUserRoles = {
       rulesList.dealership_credit_edit,
       rulesList.credit_view,
       rulesList.pdr_view,
+      rulesList.financial_view,
       rulesList.upload_statement,
     ]
   },
@@ -60,6 +64,7 @@ export const rulesForUserRoles = {
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
       rulesList.credit_view,
+      rulesList.financial_view,
       rulesList.upload_statement,
     ]
   },
@@ -76,6 +81,7 @@ export const rulesForUserRoles = {
       rulesList.settings_view,
       rulesList.credit_view,
       rulesList.pdr_view,
+      rulesList.financial_view,
       rulesList.upload_statement,
     ]
   },
@@ -88,6 +94,7 @@ export const rulesForUserRoles = {
       rulesList.dealer_credit_edit,
       rulesList.dealership_credit_edit,
       rulesList.credit_view,
+      rulesList.financial_view,
       rulesList.upload_statement,
     ]
   },
@@ -98,6 +105,7 @@ export const rulesForUserRoles = {
       rulesList.dealership_credit_view,
       rulesList.credit_view,
       rulesList.pdr_view,
+      rulesList.financial_view,
       rulesList.upload_statement,
     ]
   },
@@ -108,6 +116,7 @@ export const rulesForUserRoles = {
       rulesList.dealership_credit_view,
       rulesList.credit_view,
       rulesList.pdr_view,
+      rulesList.financial_view,
       rulesList.upload_statement,
     ]
   },
@@ -119,6 +128,7 @@ export const rulesForUserRoles = {
       rulesList.dealer_credit_edit,
       rulesList.dealership_credit_edit,
       rulesList.credit_view,
+      rulesList.financial_view,
       rulesList.upload_statement,
     ]
   },
@@ -128,6 +138,7 @@ export const rulesForUserRoles = {
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
       rulesList.pdr_view,
+      rulesList.financial_view,
       rulesList.upload_statement,
     ]
   },
@@ -137,6 +148,7 @@ export const rulesForUserRoles = {
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
       rulesList.pdr_view,
+      rulesList.financial_view,
       rulesList.upload_statement,
     ]
   },
@@ -147,6 +159,7 @@ export const rulesForUserRoles = {
       rulesList.dealership_credit_view,
       rulesList.credit_view,
       rulesList.pdr_view,
+      rulesList.financial_view,
       rulesList.upload_statement,
     ]
   },

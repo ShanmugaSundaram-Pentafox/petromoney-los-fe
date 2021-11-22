@@ -107,7 +107,8 @@ const DealershipDetails = ({ currentUser, match }) => {
     'Personal Discussion',
     'Document Checklist',
     'Transporters',
-    'Fleet Operators'
+    'Fleet Operators',
+    'Statement Analysis'
   ];
   
   if (financialReport_permission){
@@ -292,7 +293,7 @@ const DealershipDetails = ({ currentUser, match }) => {
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Fleet Operators')}>
           <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={9}>
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Statement Analysis')}>
           <StatementAnalysis id={id} textAlign="left" currentUser={currentUser} />
         </TabPanel>
         <SolarEnquiryForm

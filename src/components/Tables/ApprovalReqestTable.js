@@ -44,17 +44,16 @@ const useStyles = makeStyles(theme => ({
 const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry }) => {
   const [loading, setLoading] = useState(false);
   const classes = useStyles();
-
   useEffect(() => {
     setLoading(true);
-      getLoansByStatus('loan_approval', filterQry)
-        .then(data => {
-          setLoansData('loan_approval', data);
-          setLoading(false);
-        })
-        .catch(e => {
-          setLoading(false);
-        })
+    getLoansByStatus('loan_approval', filterQry)
+      .then(data => {
+        setLoansData('loan_approval', data);
+        setLoading(false);
+      })
+      .catch(e => {
+        setLoading(false);
+      })
   }, [filterQry])
 
   // useMount(() => {
@@ -70,7 +69,6 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
   //       })
   //   }
   // });
-
   const columns = useMemo(() => {
     return [
       {
@@ -94,7 +92,6 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
             return <>{value?.toUpperCase()}</>
           },
         }
-
       },
       {
         label: 'Type',
@@ -121,9 +118,9 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
         options: {
           filter: false,
           sort: true,
-          setCellProps: () => ({
-            align: 'right',
-          }),
+          // setCellProps: () => ({
+          //   align: 'right',
+          // }),
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }
       },
@@ -143,7 +140,18 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
             </div>
           }
         }
-      }
+      },
+      {
+        label: 'Approved by',
+        name: 'approver',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: (value) => {
+            return <>{value?.toUpperCase() || '-'}</>
+          },
+        }
+      },
     ]
   }, []);
 

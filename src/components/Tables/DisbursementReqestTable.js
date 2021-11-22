@@ -120,9 +120,9 @@ const DisbursementReqestTable = ({ title, loans, setLoansData, onRowClick, filte
         options: {
           filter: false,
           sort: true,
-          setCellProps: () => ({
-            align: 'right',
-          }),
+          // setCellProps: () => ({
+          //   align: 'right',
+          // }),
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }
       },

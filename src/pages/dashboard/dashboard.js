@@ -107,6 +107,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   const [dealerChartData, setDealerChartData] = useState([]);
   const [omcData, setOmcData] = useState([]);
   const [RegionData, setRegionData] = useState([]);
+  const [filterQry, setFilterQry] = useState();
 
   const handleClick = (name) => {
     setSelectedStatsCard(name)
@@ -257,6 +258,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                     <LoanStats
                       selectedStatsCard={selectedStatsCard}
                       handleClick={handleClick}
+                      filterQry={setFilterQry}
                     />
                   )
                 }
@@ -324,7 +326,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
             </Grid>
             {
               dashboardView === "LOS" && (
-                <LoansTable currentUser={currentUser} value={selectedStatsCard} />
+                <LoansTable currentUser={currentUser} value={selectedStatsCard} filterQry={filterQry}/>
               )
             }
           </>

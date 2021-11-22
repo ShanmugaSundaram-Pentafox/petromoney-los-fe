@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from "mui-datatables";
@@ -41,15 +41,13 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const DisbursedTable = ({ title, loans, setLoansData, onRowClick }) => {
+const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
 
-
-  useMount(() => {
-    if (!loans || !loans.length) {
-      setLoading(true);
-      getLoansByStatus('disbursed')
+  useEffect(() => {
+    setLoading(true);
+      getLoansByStatus('disbursed', filterQry)
         .then(data => {
           setLoansData('disbursed', data);
           setLoading(false);
@@ -57,8 +55,21 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick }) => {
         .catch(e => {
           setLoading(false);
         })
-    }
-  });
+  }, [filterQry])
+
+  // useMount(() => {
+  //   if (!loans || !loans.length) {
+  //     setLoading(true);
+  //     getLoansByStatus('disbursed')
+  //       .then(data => {
+  //         setLoansData('disbursed', data);
+  //         setLoading(false);
+  //       })
+  //       .catch(e => {
+  //         setLoading(false);
+  //       })
+  //   }
+  // });
   const columns = useMemo(() => {
     return [
       {

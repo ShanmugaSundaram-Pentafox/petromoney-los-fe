@@ -22,7 +22,8 @@ import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import DisbursementApprovedTable from '../../../components/Tables/DisbursementApprovedTable';
 import ApprovedTable from '../../../components/Tables/ApprovedTable';
-import RejectedTable from '../../../components/Tables/RejectedTable'
+import RejectedTable from '../../../components/Tables/RejectedTable';
+import ReviewerTable from '../../../components/Tables/ReviewTable';
 import DisbursedTable from '../../../components/Tables/DisbursedTable';
 // import DueTable from '';
 import OverDueTable from '../../../components/Tables/OverDueTable';
@@ -132,7 +133,7 @@ const useStyles = makeStyles(theme => ({
 
 // const convertToCurrency = value => <Currency value={value} />;
 
-const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
+const LoansTable = ({ currentUser, all_loans, setAllLoans, value, filterQry }) => {
   const classes = useStyles();
   const [showPanel, setShowPanel] = useState({
     status: false,
@@ -176,7 +177,16 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
               value === "Pending Approval" ? (
                 <Grid item md={12}>
                   <Paper className={classes.tableContainer}>
-                    <ApprovalReqestTable title={"Pending for Initial Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                    <ApprovalReqestTable title={"Pending for Initial Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                  </Paper>
+                </Grid>
+              ) : null
+            }
+            {
+              value === "Pending Review" ? (
+                <Grid item md={12}>
+                  <Paper className={classes.tableContainer}>
+                    <ReviewerTable title={"Pending for Review"} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
               ) : null
@@ -185,7 +195,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
               value === "Disb. Approval" ? (
                 <Grid item md={12}>
                   <Paper className={classes.tableContainer}>
-                    <DisbursementReqestTable title={"Pending for Disbursement Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                    <DisbursementReqestTable title={"Pending for Disbursement Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
               ) : null
@@ -194,7 +204,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
               value === "Submitted" ? (
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
-                    <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                    <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
               ) : null
@@ -203,7 +213,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
               value === "Approved" ? (
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
-                    <ApprovedTable title={"Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                    <ApprovedTable title={"Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
 
@@ -213,7 +223,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
               value === "Rejected" ? (
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
-                    <RejectedTable title={"Rejected Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                    <RejectedTable title={"Rejected Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
               ) : null
@@ -222,7 +232,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
               value === "Disbursed" ? (
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
-                    <DisbursedTable title={"Disbursed Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                    <DisbursedTable title={"Disbursed Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
               ) : null
@@ -231,7 +241,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
               value === "Disb. Approved" ? (
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
-                    <DisbursementApprovedTable  title={"Disbursement Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                    <DisbursementApprovedTable title={"Disbursement Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
               ) : null
@@ -246,11 +256,11 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value }) => {
 
             </>
           ) : (
-              <>
-                <Paper className={classes.tableContainer}>
-                  <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
-                </Paper>
-              </>)
+            <>
+              <Paper className={classes.tableContainer}>
+                <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+              </Paper>
+            </>)
         )}
       />
       <Drawer

@@ -542,7 +542,6 @@ const DealershipDetails = ({
   if (!data) return null;
 
   const updateLoanStatus = submitStatus => {
-    console.log(submitStatus);
     // if(!newLoanInfo.approval_remarks) {
     //   setApiStatus({ type: 'error', message: 'Please enter your remarks/comments.' });
     //   return null
@@ -596,7 +595,6 @@ const DealershipDetails = ({
       return null;
     }
     }
-    console.log(reqBody);
 
 
     updateLoanApprovalStatusById(values.id, loanData.id, reqBody)

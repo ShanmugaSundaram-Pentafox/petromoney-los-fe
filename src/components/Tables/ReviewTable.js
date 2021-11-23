@@ -46,7 +46,7 @@ const ReviewerTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
   const classes = useStyles();
 
   useEffect(() => {
-    if (!loans || !loans.length) {
+    // if (!loans || !loans.length) {
       setLoading(true);
       getLoansByStatus('loan_review', filterQry)
         .then(data => {
@@ -56,7 +56,7 @@ const ReviewerTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
         .catch(e => {
           setLoading(false);
         })
-    }
+    // }
   }, [filterQry]);
   const columns = useMemo(() => {
     return [

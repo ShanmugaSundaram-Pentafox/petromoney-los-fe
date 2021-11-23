@@ -66,7 +66,7 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
               let d = [];
               res.forEach((item, i) => {
                 d.push({
-                  label: <div>{item.first_name} {item.last_name} <small style={{ color: '#999' }}>({item.role_name})</small></div>,
+                  label: <div>{item.first_name} {item.last_name}</div>,
                   value: item.id
                 })
               })

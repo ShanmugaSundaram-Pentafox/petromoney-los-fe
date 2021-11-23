@@ -465,7 +465,7 @@ const DealershipDetails = ({
           let d = [];
           res.forEach((item, i) => {
             d.push({
-              label: `${item.role_name} - ${item.first_name} ${item.last_name}`,
+              label: `${item.first_name} ${item.last_name}`,
               value: item.id
             })
           })

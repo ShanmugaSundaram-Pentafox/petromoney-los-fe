@@ -142,6 +142,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
   const [loansData, setLoansData] = useState();
   const [dealersData, setDealersData] = useState();
   const [selectedStatsCard, setSelectedStatsCard] = useState("Approved");
+  const [filterQry, setFilterQry] = useState({ region: 0 })
 
   const handleClick = (name) => {
     setSelectedStatsCard(name)
@@ -229,7 +230,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
           selectedStatsCard === "Pending Approval" ? (
             <Grid item md={12}>
               <Paper className={classes.tableContainer}>
-                <ApprovalReqestTable title={"Pending for Initial Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                <ApprovalReqestTable title={"Pending for Initial Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
               </Paper>
             </Grid>
           ) : null
@@ -238,7 +239,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
           selectedStatsCard === "Pending Review" ? (
             <Grid item md={12}>
               <Paper className={classes.tableContainer}>
-                <ReviewerTable title={"Pending for Review"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                <ReviewerTable title={"Pending for Review"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
               </Paper>
             </Grid>
           ) : null
@@ -247,7 +248,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
           selectedStatsCard === "Disb. Approval" ? (
             <Grid item md={12}>
               <Paper className={classes.tableContainer}>
-                <DisbursementReqestTable title={"Pending for Disbursement Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                <DisbursementReqestTable title={"Pending for Disbursement Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
               </Paper>
             </Grid>
           ) : null
@@ -256,7 +257,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
           selectedStatsCard === "Submitted" ? (
             <Grid item xs={12}>
               <Paper className={classes.tableContainer}>
-                <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
               </Paper>
             </Grid>
           ) : null
@@ -265,7 +266,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
           selectedStatsCard === "Approved" ? (
             <Grid item xs={12}>
               <Paper className={classes.tableContainer}>
-                <ApprovedTable title={"Disbursement Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                <ApprovedTable title={"Disbursement Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
               </Paper>
             </Grid>
 
@@ -275,7 +276,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
           selectedStatsCard === "Rejected" ? (
             <Grid item xs={12}>
               <Paper className={classes.tableContainer}>
-                <RejectedTable title={"Rejected Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                <RejectedTable title={"Rejected Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
               </Paper>
             </Grid>
           ) : null
@@ -284,7 +285,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
           selectedStatsCard === "Disbursed" ? (
             <Grid item xs={12}>
               <Paper className={classes.tableContainer}>
-                <DisbursedTable title={"Disbursed Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                <DisbursedTable title={"Disbursed Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
               </Paper>
             </Grid>
           ) : null
@@ -293,7 +294,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
           selectedStatsCard === "Disb. Approved" ? (
             <Grid item xs={12}>
               <Paper className={classes.tableContainer}>
-                <DisbursementApprovedTable title={"Disbursement Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                <DisbursementApprovedTable title={"Disbursement Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
               </Paper>
             </Grid>
           ) : null

@@ -75,134 +75,128 @@ const AccountStatement = ({ id, currentUser }) => {
 
     const data = { from_date, to_date }
     setLoading(true)
-    downloadAccountStatement(id, from_date, to_date)
-      .then(res => {
-        setFileCode(res?.data)
-        setOpenDialog(true)
-        setLoading(false)
-      })
-      .catch((e) => {
-        enqueueSnackbar('Something went wrong please try again.', {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        });
-      })
+    if (from_date && to_date) {
+      downloadAccountStatement(id, from_date, to_date)
+        .then(res => {
+          setFileCode(res?.data)
+          setOpenDialog(true)
+          setLoading(false)
+        })
+        .catch((e) => {
+          enqueueSnackbar('Something went wrong please try again.', {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          });
+        })
+    }
+    else {
+      enqueueSnackbar('Please enter from date and to date.', {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'error',
+      });
+    }
   }
 
-  const _vSchema = object({
-    from_date: date().required(),
-    to_date: date().required(),
-
-  });
-
   return (
-    <Formik
-      validateOnBlur
-      validateOnChange={false}
-      // validationSchema={_vSchema}
-      onSubmit={handleDownload}
-    >
-      {
-        ({ values, errors, handleChange, handleSubmit, isSubmitting, setFieldValues, setSubmitting, setValues }) => (
-          <>
-            <Typography variant='h4' style={{ marginTop: 4, marginBottom: 12 }}>Account statement</Typography>
-            <Grid container spacing={2}>
-              <Grid item>
-                <InputWrapper direction top>
-                  <label className="input-label">From date</label>
-                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                    <KeyboardDatePicker
-                      name="from_date"
-                      hideTabs={true}
-                      variant='inline'
-                      inputVariant='outlined'
-                      format='dd/MM/yyyy'
-                      animateYearScrolling={true}
-                      initialFocusedDate={null}
-                      invalidDateMessage='Invalid Date Format'
-                      error={errors?.from_date}
-                      helperText={errors?.from_date}
-                      margin='normal'
-                      id='date-picker'
-                      autoOk={true}
-                      value={values?.from_date}
-                      onChange={(date) => setSelectedDate({ ...selectedDate, from_date: date })}
-                      keyboardButtonProps={{
-                        'aria-label': 'change date'
-                      }}
-                      PopoverProps={{
-                        anchorOrigin: {
-                          vertical: 'bottom',
-                          horizontal: 'center',
-                        }
-                      }}
-                    />
-                  </MuiPickersUtilsProvider>
-                </InputWrapper>
-              </Grid>
-              <Grid item>
-                <InputWrapper direction top>
-                  <label className="input-label">To date</label>
-                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                    <KeyboardDatePicker
-                      name="to_date"
-                      hideTabs={true}
-                      variant='inline'
-                      inputVariant='outlined'
-                      format='dd/MM/yyyy'
-                      animateYearScrolling={true}
-                      error={errors.to_date}
-                      helperText={errors.to_date}
-                      margin='normal'
-                      id='date-picker'
-                      autoOk={true}
-                      value={values?.to_date}
-                      onChange={(date) => setSelectedDate({ ...selectedDate, to_date: date })}
-                      keyboardButtonProps={{
-                        'aria-label': 'change date'
-                      }}
-                      PopoverProps={{
-                        anchorOrigin: {
-                          vertical: 'bottom',
-                          horizontal: 'center',
-                        }
-                      }}
-                    />
-                  </MuiPickersUtilsProvider>
-                </InputWrapper>
-              </Grid>
-            </Grid>
-            <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: 8 }}>
-              <Button
-                // disabled={!permissionCheck(currentUser.role_name, rulesList.dealership_edit)}
-                color="primary"
-                variant="contained"
-                size="small"
-                type="submit"
-                onClick={handleDownload}
-              >
-                Get statement
-              </Button>
-            </div>
-            <FormDialog
-              open={openDialog}
-              title={'Account statement'}
-              onClose={() => { setOpenDialog(false) }}
-            >
-              <div className={classes.dialogBox} >
-                <DialogContent className={classes.frame}>
-                  <iframe src={`data:application/pdf;base64,${fileCode}`} height="900" width="500" frameBorder="0"></iframe>
-                </DialogContent>
-              </div>
-            </FormDialog>
-          </>
-        )
-      }
-    </Formik>
-  );
-};
+    <>
+      <Typography variant='h4' style={{ marginTop: 4, marginBottom: 12 }}>Account statement</Typography>
+      <Grid container spacing={2}>
+        <Grid item>
+          <InputWrapper direction top>
+            <label className="input-label">From date</label>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <KeyboardDatePicker
+                clearable
+                name="from_date"
+                hideTabs={true}
+                variant='inline'
+                inputVariant='outlined'
+                format='dd/MM/yyyy'
+                animateYearScrolling={true}
+                initialFocusedDate={''}
+                invalidDateMessage='Invalid Date'
+                margin='normal'
+                id='date-picker'
+                autoOk={true}
+                value={selectedDate?.from_date}
+                onChange={(date) => setSelectedDate({ ...selectedDate, from_date: date })}
+                keyboardButtonProps={{
+                  'aria-label': 'change date'
+                }}
+                PopoverProps={{
+                  anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                  }
+                }}
+              />
+            </MuiPickersUtilsProvider>
+          </InputWrapper>
+        </Grid>
+        <Grid item>
+          <InputWrapper direction top>
+            <label className="input-label">To date</label>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <KeyboardDatePicker
+                name="to_date"
+                hideTabs={true}
+                variant='inline'
+                inputVariant='outlined'
+                format='dd/MM/yyyy'
+                animateYearScrolling={true}
+                disableFuture={true}
+                initialFocusedDate={null}
+                margin='normal'
+                id='date-picker'
+                invalidDateMessage='Invalid Date'
+                autoOk={true}
+                value={selectedDate?.to_date}
+                onChange={(date) => setSelectedDate({ ...selectedDate, to_date: date })}
+                keyboardButtonProps={{
+                  'aria-label': 'change date'
+                }}
+                PopoverProps={{
+                  anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                  }
+                }}
+              />
+            </MuiPickersUtilsProvider>
+          </InputWrapper>
+        </Grid>
+      </Grid>
+      <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: 8 }}>
+        <Button
+          // disabled={!permissionCheck(currentUser.role_name, rulesList.dealership_edit)}
+          color="primary"
+          variant="contained"
+          size="small"
+          type="submit"
+          onClick={handleDownload}
+        >
+          Get statement
+        </Button>
+      </div>
+      <FormDialog
+        open={openDialog}
+        title={'Account statement'}
+        onClose={() => { setOpenDialog(false) }}
+      >
+        <div className={classes.dialogBox} >
+          <DialogContent className={classes.frame}>
+            <iframe src={`data:application/pdf;base64,${fileCode}`} height="900" width="500" frameBorder="0"></iframe>
+          </DialogContent>
+        </div>
+      </FormDialog>
+    </>
+  )
+}
 
 export default AccountStatement;

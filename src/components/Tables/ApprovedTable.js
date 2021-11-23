@@ -66,14 +66,14 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
 
   useEffect(() => {
     setLoading(true);
-      getLoansByStatus('approved', filterQry)
-        .then(data => {
-          setLoansData('approved', data);
-          setLoading(false);
-        })
-        .catch(e => {
-          setLoading(false);
-        })
+    getLoansByStatus('approved', filterQry)
+      .then(data => {
+        setLoansData('approved', data);
+        setLoading(false);
+      })
+      .catch(e => {
+        setLoading(false);
+      })
   }, [filterQry])
 
 
@@ -90,6 +90,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
   //       })
   //   }
   // });
+
   const getLoansTable = () => {
     setLoading(true);
     getLoansByStatus('approved')
@@ -151,9 +152,9 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
         options: {
           filter: false,
           sort: true,
-          setCellProps: () => ({
-            align: 'right',
-          }),
+          // setCellProps: () => ({
+          //   align: 'right',
+          // }),
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }
       },
@@ -163,15 +164,26 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
         options: {
           filter: false,
           sort: true,
-          setCellProps: () => ({
-            align: 'center',
-          }),
+          // setCellProps: () => ({
+          //   align: 'center',
+          // }),
           customBodyRender: value => {
             return <div>
               {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
               {/* {value ? value : '-'} */}
             </div>
           }
+        }
+      },
+      {
+        label: 'Approved by',
+        name: 'approver',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: (value) => {
+            return <>{value?.toUpperCase() || '-'}</>
+          },
         }
       },
       {

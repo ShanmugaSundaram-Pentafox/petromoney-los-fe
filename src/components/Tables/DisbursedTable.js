@@ -119,9 +119,9 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
         options: {
           filter: false,
           sort: true,
-          setCellProps: () => ({
-            align: 'right',
-          }),
+          // setCellProps: () => ({
+          //   align: 'right',
+          // }),
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }
       },

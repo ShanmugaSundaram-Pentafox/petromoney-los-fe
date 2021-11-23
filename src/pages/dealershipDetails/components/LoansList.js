@@ -60,13 +60,13 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
       .then(data => {
         setLoansData(data)
         if (data) {
-          let val = data[0]?.status === "submitted" ? 'is_review=1' : 'is_approve'
+          let val = data[0]?.status === "submitted" ? 'is_review=1' : 'is_approve=1'
           getUserRoleForReview(val)
             .then(res => {
               let d = [];
               res.forEach((item, i) => {
                 d.push({
-                  label: `${item.role_name} - ${item.first_name} ${item.last_name}`,
+                  label: <div>{item.first_name} {item.last_name} <small style={{ color: '#999' }}>({item.role_name})</small></div>,
                   value: item.id
                 })
               })
@@ -292,6 +292,10 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
                   name='type'
                   onChange={setUser}
                   options={userRole}
+                  menuPlacement='bottom'
+                  menuPosition='fixed'
+                  maxMenuHeight='200px'
+
                 />
               </div>
             )
@@ -307,28 +311,32 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
                   name='review'
                   onChange={setUser}
                   options={userRole}
+                  menuPlacement='bottom'
+                  menuPosition='fixed'
+                  maxMenuHeight='250px'
                 />
               </div>
             )
           }
-
-          <DialogContentText id="approval-remarks-desc">
-            Please enter your remarks for sending this for {dialogState.data?.status?.toLowerCase() === 'submitted' ? `review` : dialogState.data?.status?.toLowerCase() === `loan_review` ? `Approval` : 'Disbursement Approval'}.
-          </DialogContentText>
-          <TextInput
-            multiline
-            direction='column'
-            alignTop={true}
-            rows={4}
-            rowsMax={8}
-            labelText="Remarks*"
-            alignTop
-            placeholder="Enter your remarks here."
-            value={remarks}
-            onChange={e => {
-              setRemarks(e.target.value);
-            }}
-          />
+          <div>
+            <DialogContentText id="approval-remarks-desc">
+              Please enter your remarks for sending this for {dialogState.data?.status?.toLowerCase() === 'submitted' ? `review` : dialogState.data?.status?.toLowerCase() === `loan_review` ? `Approval` : 'Disbursement Approval'}.
+            </DialogContentText>
+            <TextInput
+              multiline
+              direction='column'
+              alignTop={true}
+              rows={4}
+              rowsMax={8}
+              labelText="Remarks*"
+              alignTop
+              placeholder="Enter your remarks here."
+              value={remarks}
+              onChange={e => {
+                setRemarks(e.target.value);
+              }}
+            />
+          </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDialogState({})} color="primary">

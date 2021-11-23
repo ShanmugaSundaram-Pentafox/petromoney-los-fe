@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }))
 
-const StatementAnalysis = () => {
+const StatementAnalysis = ({currentUser, id}) => {
     const classes = useStyles()
     const [addStatement, setAddStatement] = useState({open: false})
 
@@ -22,7 +22,7 @@ const StatementAnalysis = () => {
                 <Typography variant="h5">Statement Analysis</Typography>
                 <Button variant='contained' size='small' color='primary' onClick={() => setAddStatement({open: true, action: "add"})}>Add Statement</Button>
             </div>
-            <StatementTable addStatement={addStatement} callback={setAddStatement} />
+            <StatementTable addStatement={addStatement} callback={setAddStatement} id={id}/>
         </>
     )
 }

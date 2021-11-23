@@ -1,12 +1,14 @@
 import React, {useState} from 'react'
 import { Button, Drawer, Grid, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core'
-import PreviewCard from '../CommonComponents/Cards/PreviewCard'
 import { ViewData } from '../CommonComponents/FilePreview'
-import EditIcon from '@material-ui/icons/Edit';
 import ListIcon from '@material-ui/icons/List';
 import StatementForm from '../../pages/dealershipDetails/components/StatementForm'
-import { useMount } from 'react-use'
+import { useQuery, useMutation } from 'react-query';
+import { deleteBankStatementById, getAllBankStatementByDealershipId, updateBankStatementById } from '../../services/dealerships.service'
+import { useSnackbar } from 'notistack';
+import { CircularProgress } from '@material-ui/core';
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -39,33 +41,64 @@ const useStyles = makeStyles((theme) => ({
     },
     btns: {
         marginLeft: 5
-    }
+    },
 }))
 
-const StatementTable = ({ addStatement, callback }) => {
+const StatementTable = ({ addStatement, callback, id }) => {
     const classes = useStyles()
     const [testData, setTestData] = useState([])
     const [testRowData, setTestRowData] = useState()
+    const { enqueueSnackbar } = useSnackbar();
 
-    // useMount(() => {
-    //     fetch("http://localhost:3333/data")
-    //     .then(res => {
-    //         return res.json()
-    //     })
-    //     .then(data => {
-    //         setTestData(data)
-    //     })
-    // });
+
+    const bankStatement = useQuery(`bank_statement-${id}`, () => {return getAllBankStatementByDealershipId(id)}, {
+        onError: (error) => {
+            console.log(error);
+        }
+    })
+    // console.log(bankStatement.data.length);
+
+    const { mutate: updateStatement } = useMutation(data => updateBankStatementById(id, data) , {
+        onSuccess: (message) => {
+            bankStatement.refetch()
+            enqueueSnackbar(message.message, {
+                anchorOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+                variant: 'success',
+            });
+        },
+        onError: (message) => {
+            console.log(message);
+        }
+    })
+
+    const { mutate: deleteStatement } = useMutation(data => deleteBankStatementById(id, data) , {
+        onSuccess: (message) => {
+            bankStatement.refetch()
+            enqueueSnackbar(message.message, {
+                anchorOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+                variant: 'success',
+            });
+        },
+        onError: (message) => {
+            console.log(message);
+        }
+    })
 
     return (
         <>
             <div className={classes.root}>
                 {
-                    testData?.map((item, i) => {
+                    bankStatement.data?.map((item, i) => {
                         return (
                             <div className={classes.card}>
                                 <div className={classes.content}>
-                                    <ViewData title="Account Holder Name" value={item.account_holder} />
+                                    <ViewData title="Account Holder Name" value={item.account_holder_name} />
                                     <ViewData title="Account No" value={item.account_no} />
                                     <ViewData title="Bank Name" value={item.bank_name} />
                                     <ViewData title="Type of Account" value={item.account_type} />
@@ -77,6 +110,7 @@ const StatementTable = ({ addStatement, callback }) => {
                         )
                     })
                 }
+                { bankStatement.isLoading && (<CircularProgress size={30}/>)}
             </div>
             <Drawer
             anchor="right"
@@ -84,7 +118,7 @@ const StatementTable = ({ addStatement, callback }) => {
             onClose={() => {callback({open: false}); setTestRowData()}}
             variant="temporary"
             >
-                <StatementForm callback={() => {callback(); setTestRowData()}} rowData={testRowData} addStatement={addStatement}/>
+                <StatementForm callback={() => {callback(); setTestRowData()}} rowData={testRowData} addStatement={addStatement} updateStatement={updateStatement} deleteStatement={deleteStatement} id={id} />
             </Drawer>   
       </>
     )

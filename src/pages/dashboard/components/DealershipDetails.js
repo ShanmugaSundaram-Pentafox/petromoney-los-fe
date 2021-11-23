@@ -542,6 +542,7 @@ const DealershipDetails = ({
   if (!data) return null;
 
   const updateLoanStatus = submitStatus => {
+    console.log(submitStatus);
     // if(!newLoanInfo.approval_remarks) {
     //   setApiStatus({ type: 'error', message: 'Please enter your remarks/comments.' });
     //   return null
@@ -558,10 +559,10 @@ const DealershipDetails = ({
         setApiStatus({ loading: false, type: 'error', message: 'Please choose loan type.' });
         return null
       }
-      reqBody.approval_remarks = newLoanInfo.approval_remarks;
+      // reqBody.approval_remarks = newLoanInfo.approval_remarks;
       reqBody.product_id = newLoanInfo.product_id;
     }
-    if (submitStatus === "approved") {
+    if (submitStatus === "approval") {
       setApproveLoader(true);
       if (status === "loan_approval") {
         resMsg = 'Successfully Approved Loan Request';
@@ -577,7 +578,7 @@ const DealershipDetails = ({
       reqBody.disbursement_approval_remarks = newLoanInfo.disbursement_approval_remarks;
     }
 
-    if (submitStatus === 'rejected') {
+    if (submitStatus === 'reject') {
       setRejectLoader(true);
       setRejectModal(false);
       reqBody.reason_id = rejectReason;
@@ -585,16 +586,18 @@ const DealershipDetails = ({
     }
     if (submitStatus === 'loan_review') {
       reqBody.approver_id = user.value;
+      reqBody.status = 'approval'
       reqBody.recommendation_remarks = remarks;
       resMsg = 'Request approved successfully';
     }
-    // if(submitStatus === "disbursed") {
-    // if (loanData.amount_disbursed === newLoanInfo.amount_disbursed) {
-    //   setApiStatus({ type: 'error', message: 'Please check Disburse amount. We see no change in Disburse amount!' })
-    //   return null;
-    // }
+    if(submitStatus === "disbursed") {
+    if (loanData.amount_disbursed === newLoanInfo.amount_disbursed) {
+      setApiStatus({ type: 'error', message: 'Please check Disburse amount. We see no change in Disburse amount!' })
+      return null;
+    }
+    }
+    console.log(reqBody);
 
-    // }
 
     updateLoanApprovalStatusById(values.id, loanData.id, reqBody)
       .then(res => {
@@ -1007,7 +1010,7 @@ const DealershipDetails = ({
                   perform={rulesList.loan_approval}
                   yes={() => (
                     <>
-                      {
+                    {
                         <div>
                           <Button
                             variant="contained"
@@ -1017,7 +1020,7 @@ const DealershipDetails = ({
                             onClick={() => setRejectModal(true)}> Send for Approval</Button>
                         </div>
                       }
-                    </>
+                      </>
                   )}
                 />
               )
@@ -1062,7 +1065,7 @@ const DealershipDetails = ({
                               disabled={apiStatus.loading}
                               className={clsx(classes.btn, classes.btnSuccess)}
                               startIcon={<ThumbUpAltIcon />}
-                              onClick={() => updateLoanStatus('approved')}>Approve</Button>
+                              onClick={() => updateLoanStatus('approval')}>Approve</Button>
                           </div>
                         ) : (
                           <div style={{ marginLeft: '16px' }}>
@@ -1189,32 +1192,31 @@ const DealershipDetails = ({
                   onChange={setUser}
                   options={userRole}
                 />
+                <DialogContentText id="approval-remarks-desc">
+                  Please enter your remarks for sending this for approval.
+                </DialogContentText>
+                <TextInput
+                  multiline
+                  direction='column'
+                  alignTop={true}
+                  rows={4}
+                  rowsMax={8}
+                  labelText="Remarks*"
+                  alignTop
+                  placeholder="Enter your remarks here."
+                  value={remarks}
+                  onChange={e => {
+                    setRemarks(e.target.value);
+                  }}
+                />
               </div>
             )
           }
-
-          <DialogContentText id="approval-remarks-desc">
-            Please enter your remarks for sending this for approval.
-          </DialogContentText>
-          <TextInput
-            multiline
-            direction='column'
-            alignTop={true}
-            rows={4}
-            rowsMax={8}
-            labelText="Remarks*"
-            alignTop
-            placeholder="Enter your remarks here."
-            value={remarks}
-            onChange={e => {
-              setRemarks(e.target.value);
-            }}
-          />
         </DialogContent>
         <DialogActions>
           <div>
             <Button onClick={handleClose}>Cancel</Button>
-            <Button color='primary' variant='outlined' onClick={() => { status === 'loan_review' ? updateLoanStatus('loan_review') : updateLoanStatus('rejected') }}>Confirm</Button>
+            <Button color='primary' variant='outlined' onClick={() => { status === 'loan_review' ? updateLoanStatus('loan_review') : updateLoanStatus('reject') }}>Confirm</Button>
           </div>
         </DialogActions>
       </Dialog>

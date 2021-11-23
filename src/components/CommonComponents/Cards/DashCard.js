@@ -30,6 +30,12 @@ const DashCardWrapper = styled.div`
     font-weight: 600;
     background-color: #388e3c;
     border-radius: 14px;
+    position: absolute;
+    bottom: -16px;
+    width: 80%;
+    left: 3%;
+    box-shadow: 0 2px 3px rgb(0 0 0 / 50%);
+    z-index: 3;
   }
 
   &::after {
@@ -54,7 +60,7 @@ const DashCardWrapper = styled.div`
   }
   /* width: 100%; */
   flex: 1;
-  min-width: 125px;
+  min-width: 110px;
   text-align: center;
   border-right: ${props => props.noBorder ? 'none' : '1px dashed #ccc'};
   .stat-number-block {

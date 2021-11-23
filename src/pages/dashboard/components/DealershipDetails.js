@@ -39,6 +39,7 @@ import { getAllRegion, getUserRoleForReview } from '../../../services/common.ser
 import { useMount } from 'react-use';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import Select from 'react-select';
+import { green } from '@material-ui/core/colors';
 
 // import Button from '../../../components/CommonComponents/Button/Button'
 
@@ -464,7 +465,7 @@ const DealershipDetails = ({
           let d = [];
           res.forEach((item, i) => {
             d.push({
-              label: `${item.role_name} - ${item.first_name} ${item.last_name}`,
+              label: `${item.first_name} ${item.last_name}`,
               value: item.id
             })
           })
@@ -972,7 +973,7 @@ const DealershipDetails = ({
                 onClick={onClose}>Back</Button>
             </div>
             {
-              editable && status && ["rejected", "approved", "disbursment_approval", "loan_approval"].includes(status.toLowerCase()) && (
+              editable && status && ["rejected", "approved", "disbursment_approval", "loan_approval", "loan_review"].includes(status.toLowerCase()) && (
                 <UserCan
                   role={currentUser.role_name}
                   perform={rulesList.loan_approval}
@@ -1013,7 +1014,7 @@ const DealershipDetails = ({
                             disabled={apiStatus.loading}
                             className={clsx(classes.btn, classes.btnSuccess)}
                             startIcon={<ThumbUpAltIcon />}
-                            onClick={() => setRejectModal(true)}> send for Approval</Button>
+                            onClick={() => setRejectModal(true)}> Send for Approval</Button>
                         </div>
                       }
                     </>
@@ -1158,6 +1159,33 @@ const DealershipDetails = ({
                 <Select
                   isClearable
                   name='user_approve'
+                  styles={{
+                    control: (provided) => ({
+                      ...provided,
+                      // borderWidth: 0,
+                      // borderRadius: 0,
+                      // borderBottomWidth: 1, 
+                      borderColor: 'hsl(0, 0%, 90%)',
+                      minHeight: 29,
+                      '&:hover': {
+                        boxShadow: 'none',
+                        minHeight: 29,
+                      },
+                    }),
+                    menu: (provided) => ({
+                      ...provided,
+                      zIndex: 9999
+                    }),
+                    indicatorsContainer: (provided) => ({
+                      ...provided,
+                      '> div': {
+                        padding: 5
+                      }
+                    }),
+                    indicatorContainer: (provided) => ({
+                      ...provided,
+                    })
+                  }}
                   onChange={setUser}
                   options={userRole}
                 />

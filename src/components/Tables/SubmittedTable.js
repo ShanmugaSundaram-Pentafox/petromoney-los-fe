@@ -71,17 +71,16 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
   const [modalVisible, setModalVisible] = useState(false);
   const [type, setType] = useState("");
   const [loading, setLoading] = useState(false);
-
   useEffect(() => {
     setLoading(true);
-      getLoansByStatus('submitted', filterQry)
-        .then(data => {
-          setLoansData('submitted', data);
-          setLoading(false);
-        })
-        .catch(e => {
-          setLoading(false);
-        })
+    getLoansByStatus('submitted', filterQry)
+      .then(data => {
+        setLoansData('submitted', data);
+        setLoading(false);
+      })
+      .catch(e => {
+        setLoading(false);
+      })
   }, [filterQry])
 
   // useMount(() => {
@@ -176,7 +175,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
         name: 'application_state',
         options: {
           filter: true,
-          filterWidth:"100%",
+          filterWidth: "100%",
           sort: true,
           setCellProps: () => ({
             align: 'center',

@@ -28,14 +28,6 @@ import FileUpload from '../../../components/FileUpload';
 import { grey } from '@material-ui/core/colors';
 import { deleteDealershipDocument, downloadAccountStatement } from '../../../services/dealerships.service';
 import { compareObject } from '../../../utils/compareObject.util';
-import DialogContent from '@material-ui/core/DialogContent';
-import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
-import { format, parse } from 'date-fns';
-import DateFnsUtils from '@date-io/date-fns';
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker
-} from '@material-ui/pickers';
 import AccountStatement from './AccountStatement';
 
 
@@ -46,7 +38,8 @@ const useStyles = makeStyles(theme => ({
     // paddingBottom: theme.spacing(1)
   },
   actionFooter: {
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-start',
+    padding: 0
   },
   readOnlyWrapper: {
     margin: '8px 4px',
@@ -187,12 +180,6 @@ const DealershipInfo = ({ data, className, currentUser }) => {
         })
     }
   });
-  const handleDateChange = (date, type) => {
-    if (type == 'from')
-      setSelectedDate({ ...selectedDate, from_date: date })
-    else
-      setSelectedDate({ ...selectedDate, to_date: date })
-  }
   useMount(() => {
     getBusinessTypes()
       .then(setBusinessTypes)
@@ -344,11 +331,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
   };
   return (
     <Card className={clsx(classes.root, className)}>
-      <form
-        onSubmit={handleSubmit}
-        autoComplete="off"
-        noValidate
-      >
+      <div style={{ marginBottom: 20 }}>
         {
           readOnly ? (
             <>
@@ -536,7 +519,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                     </Grid>
                   ) : null}
                 </Grid>
-                <Divider />
+                {/* <Divider /> */}
                 <Grid {...gridProps} sm={6} md={6}>
                   <TextInput
                     select
@@ -608,7 +591,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
             </>
           )
         }
-        <Divider />
+        {/* <Divider /> */}
 
         {showUpload && (
           <FileUpload
@@ -644,8 +627,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
               onClick={() => { setReadOnly(false); }}>Edit Details</Button>
           )}
         </CardActions>
-      </form >
-      <Divider />
+      </div >
       <AccountStatement id={values.id} currentUser={currentUser} />
     </Card >
   );

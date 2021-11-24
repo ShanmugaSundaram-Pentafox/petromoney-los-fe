@@ -1,10 +1,9 @@
 import React, {useState} from 'react'
-import { Button, Drawer, Grid, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core'
+import { Button, Drawer, makeStyles, Typography } from '@material-ui/core'
 import { ViewData } from '../CommonComponents/FilePreview'
 import ListIcon from '@material-ui/icons/List';
 import StatementForm from '../../pages/dealershipDetails/components/StatementForm'
-import { useQuery, useMutation } from 'react-query';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { deleteBankStatementById, getAllBankStatementByDealershipId, updateBankStatementById } from '../../services/dealerships.service'
 import { useSnackbar } from 'notistack';
 import { CircularProgress } from '@material-ui/core';
@@ -49,6 +48,7 @@ const StatementTable = ({ addStatement, callback, id }) => {
     const [testData, setTestData] = useState([])
     const [testRowData, setTestRowData] = useState()
     const { enqueueSnackbar } = useSnackbar();
+    const queryClient = useQueryClient()
 
 
     const bankStatement = useQuery(`bank_statement-${id}`, () => {return getAllBankStatementByDealershipId(id)}, {
@@ -56,11 +56,10 @@ const StatementTable = ({ addStatement, callback, id }) => {
             console.log(error);
         }
     })
-    // console.log(bankStatement.data.length);
 
     const { mutate: updateStatement } = useMutation(data => updateBankStatementById(id, data) , {
         onSuccess: (message) => {
-            bankStatement.refetch()
+            queryClient.invalidateQueries(`bank_statement-${id}`)
             enqueueSnackbar(message.message, {
                 anchorOrigin: {
                   vertical: 'top',
@@ -76,7 +75,7 @@ const StatementTable = ({ addStatement, callback, id }) => {
 
     const { mutate: deleteStatement } = useMutation(data => deleteBankStatementById(id, data) , {
         onSuccess: (message) => {
-            bankStatement.refetch()
+            queryClient.invalidateQueries(`bank_statement-${id}`)
             enqueueSnackbar(message.message, {
                 anchorOrigin: {
                   vertical: 'top',
@@ -94,23 +93,32 @@ const StatementTable = ({ addStatement, callback, id }) => {
         <>
             <div className={classes.root}>
                 {
-                    bankStatement.data?.map((item, i) => {
-                        return (
-                            <div className={classes.card}>
-                                <div className={classes.content}>
-                                    <ViewData title="Account Holder Name" value={item.account_holder_name} />
-                                    <ViewData title="Account No" value={item.account_no} />
-                                    <ViewData title="Bank Name" value={item.bank_name} />
-                                    <ViewData title="Type of Account" value={item.account_type} />
+                    bankStatement?.data?.length ? (
+                        bankStatement.data?.map((item, i) => {
+                            return (
+                                <div className={classes.card}>
+                                    <div className={classes.content}>
+                                        <ViewData title="Account Holder Name" value={item.account_holder_name} />
+                                        <ViewData title="Account No" value={item.account_no} />
+                                        <ViewData title="Bank Name" value={item.bank_name} />
+                                        <ViewData title="Type of Account" value={item.account_type} />
+                                    </div>
+                                    <div className={classes.action}>
+                                        <Button variant="outlined" size='small' className={classes.btns} onClick={() => {callback({open: true, action: 'view'}); setTestRowData(item);}} startIcon={<ListIcon color='primary' />}>View</Button>
+                                    </div>
                                 </div>
-                                <div className={classes.action}>
-                                    <Button variant="outlined" size='small' className={classes.btns} onClick={() => {callback({open: true, action: 'view'}); setTestRowData(item);}} startIcon={<ListIcon color='primary' />}>View</Button>
-                                </div>
+                            )
+                        })
+                    ) : (
+                        bankStatement.isLoading ? (
+                            <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
+                                <CircularProgress size={30}/>
                             </div>
+                        ) : (
+                            <Typography variant='h6' style={{marginLeft: 10, color: 'rgb(0,0,0,0.6)'}}>No Statement Found!</Typography>
                         )
-                    })
+                    )
                 }
-                { bankStatement.isLoading && (<CircularProgress size={30}/>)}
             </div>
             <Drawer
             anchor="right"

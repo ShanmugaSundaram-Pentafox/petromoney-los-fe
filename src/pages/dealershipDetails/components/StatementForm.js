@@ -1,7 +1,6 @@
 import React, {useState} from 'react'
 import { Box, Button, Divider, Drawer, Grid, IconButton, makeStyles, Table, TableBody, TableFooter, TableHead, TableRow, Tooltip, Typography } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
-import EditIcon from '@material-ui/icons/Edit';
 import TextInput from '../../../components/TextInput/TextInput';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { TableCell } from '@material-ui/core';
@@ -101,17 +100,13 @@ const StatementForm = ({callback, rowData, addStatement, updateStatement, delete
     }
 
     const handleSave = () => {
-        const testdata = {...addData, statement: statementRow}
+        const postData = {...addData, statement: statementRow}
         if(rowData){
-            let obj = compareObject(rowData, testdata)
-            // if(Object.keys(obj).length === 1){
-            //     updateStatement({id:rowData.id , ...obj})
-            // } else {
-                updateStatement({id:rowData.id, ...obj})
-            // }
+            let obj = compareObject(rowData, postData)
+            updateStatement({id:rowData.id, ...obj})
         } else {
             if(addData){
-                updateStatement(testdata)
+                updateStatement(postData)
             }
         }
         callback(false)

@@ -1,6 +1,5 @@
-import { Button, Table, TableCell, TableHead, TableRow, Typography } from '@material-ui/core'
+import { Button, Typography, makeStyles } from '@material-ui/core'
 import React, {useState} from 'react'
-import { makeStyles } from '@material-ui/core'
 import StatementTable from '../../../components/Tables/StatementTable'
 
 const useStyles = makeStyles((theme) => ({

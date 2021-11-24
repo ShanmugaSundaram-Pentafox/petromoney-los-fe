@@ -43,6 +43,7 @@ import {
 } from 'react-router-dom'
 import { rulesList } from "../../config/userRules";
 import { permissionCheck } from "../../components/UserCan/UserCan";
+import Deviations from "./components/Deviations";
 
 const useStyles = makeStyles((theme) => ({
 
@@ -100,6 +101,7 @@ const DealershipDetails = ({ currentUser, match }) => {
   const tabs = [
     'Dealership',
     'Dealers',
+    'Deviations',
     'Sales History',
     'Loans List',
     'Personal Discussion',
@@ -264,6 +266,9 @@ const DealershipDetails = ({ currentUser, match }) => {
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Dealers')}>
           <DealersList id={id} titleAlign="left" currentUser={currentUser} />
+        </TabPanel>
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Deviations')}>
+            <Deviations />
         </TabPanel>
         {
           financialReport_permission && (

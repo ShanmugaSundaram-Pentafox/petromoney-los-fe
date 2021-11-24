@@ -446,3 +446,19 @@ export const downloadAccountStatement = (id, from_date, to_date) => {
       })
   });
 }
+
+// export const getDeviations = () => {
+//   return new Promise((resolve, reject) => {
+//     apiCall(`data`)
+//       .then(res => {
+//         if (res.status === "SUCCESS") {
+//           resolve(res)
+//         } else {
+//           reject(res.message)
+//         }
+//       })
+//       .catch(({ message }) => {
+//         reject(message)
+//       })
+//   });
+// }

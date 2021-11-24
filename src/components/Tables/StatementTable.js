@@ -51,7 +51,7 @@ const StatementTable = ({ addStatement, callback, id }) => {
     const queryClient = useQueryClient()
 
 
-    const bankStatement = useQuery(`bank_statement-${id}`, () => {return getAllBankStatementByDealershipId(id)}, {
+    const bankStatement = useQuery(['bank_statement', id], () => {return getAllBankStatementByDealershipId(id)}, {
         onError: (error) => {
             console.log(error);
         }
@@ -59,7 +59,7 @@ const StatementTable = ({ addStatement, callback, id }) => {
 
     const { mutate: updateStatement } = useMutation(data => updateBankStatementById(id, data) , {
         onSuccess: (message) => {
-            queryClient.invalidateQueries(`bank_statement-${id}`)
+            queryClient.invalidateQueries(['bank_statement', id])
             enqueueSnackbar(message.message, {
                 anchorOrigin: {
                   vertical: 'top',
@@ -75,7 +75,7 @@ const StatementTable = ({ addStatement, callback, id }) => {
 
     const { mutate: deleteStatement } = useMutation(data => deleteBankStatementById(id, data) , {
         onSuccess: (message) => {
-            queryClient.invalidateQueries(`bank_statement-${id}`)
+            queryClient.invalidateQueries(['bank_statement', id])
             enqueueSnackbar(message.message, {
                 anchorOrigin: {
                   vertical: 'top',

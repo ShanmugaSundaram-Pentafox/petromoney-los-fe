@@ -142,7 +142,18 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
         }
       },
       {
-        label: 'Approved by',
+        label: 'Reviewed By',
+        name: 'reviewer',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: (value) => {
+            return <>{value?.toUpperCase() || '-'}</>
+          },
+        }
+      },
+      {
+        label: 'Approver',
         name: 'approver',
         options: {
           filter: false,

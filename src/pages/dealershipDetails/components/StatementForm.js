@@ -164,10 +164,10 @@ const StatementForm = ({callback, rowData, addStatement, updateStatement, delete
                                 onChange={handleChange}
                             >
                                 <option value="">Choose Account Type</option>
-                                <option value="SAVINGS">Current</option>
-                                <option value="Cash Credit">Cash Credit</option>
-                                <option value="Overdraft">Overdraft</option>
-                                <option value="EDFS">EDFS</option>
+                                <option value="current">Current</option>
+                                <option value="cash_credit">Cash Credit</option>
+                                <option value="overdraft">Overdraft</option>
+                                <option value="edfs">EDFS</option>
                             </TextInput>
                         </Grid>
                     </Grid>
@@ -207,8 +207,6 @@ const StatementForm = ({callback, rowData, addStatement, updateStatement, delete
                                                             <TableCell align="right">
                                                                 <Button size="small" variant="outlined" className={classes.btnEdit} onClick={()=>{setEditRow({...item}); setOpenEdit(true)}}>Edit</Button>
                                                                 <Button size="small" variant="outlined" className={classes.btnDelete} onClick={() => handleDelete(item.statement_id)}>Delete</Button>
-                                                                {/* <Tooltip title="Edit"><IconButton size="small" onClick={() => setEditRow({...item, i})}><EditIcon fontSize="small"/></IconButton></Tooltip> */}
-                                                                {/* <Tooltip title="Remove"><IconButton size="small"><CloseIcon fontSize="small"/></IconButton></Tooltip> */}
                                                             </TableCell>
                                                         )
                                                     }

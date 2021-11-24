@@ -326,7 +326,7 @@ export const postDealershipFinancialsById = (id, body) => {
       .then(async ({ status, data, message }) => {
         if (status === "SUCCESS") {
           const res = await getDealershipFinancialsById(id, body.from_year, body.to_year);
-          resolve(res);
+          resolve(res[0]);
         } else {
           reject(message);
         }
@@ -431,3 +431,18 @@ export const deleteDealershipMonthlySalesById = (dealershipId, body, id) => {
       });
   });
 };
+export const downloadAccountStatement = (id, from_date, to_date) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/soa?from_date=${from_date}&to_date=${to_date}`)
+      .then(res => {
+        if (res.status === "SUCCESS") {
+          resolve(res)
+        } else {
+          reject(res.message)
+        }
+      })
+      .catch(({ message }) => {
+        reject(message)
+      })
+  });
+}

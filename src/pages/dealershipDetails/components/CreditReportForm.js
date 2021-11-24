@@ -105,10 +105,10 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
       <Grid {...gridItem}>
         <Grid item md={6}>
           <TextInput
+            number
             readOnly={!editable}
             label="Business Vintage with OMC"
             name="business_vintage"
-            type="number"
             value={values.business_vintage || 0}
             onChange={onChange}
           />
@@ -380,7 +380,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
         <Typography className={classes.sidePanelTitle} variant="h4">Eligibility</Typography>
         <Table className={classes.table} size="small" aria-label="Expenses">
           <TableBody>
-            <Row text={`FOIR % Considered (Normalised to 0 - 1)`} value={`${values.foir}`} />
+            <Row text={`FOIR % Considered (Normalised to 0 - 1)`} value={`${values.foir || 0}`} />
             <Row text={`FOIR % EBIDTA`} value={values.foir_ebidta} />
             <Row text={`Eligibility for Loan`} value={values.is_loan ? 'Yes' : '-'} />
             <Row text={`Max monthly interest possible on fuel credit`} value={<Currency value={values.max_loan_interest} />} />
@@ -461,7 +461,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
               />
             </Row>
             <Row text={`Annual Interest on Loan Amount (Rs)`} value={<Currency value={values.annual_interest} />} />
-            <Row text={`FOIR % on fuel credit`} value={values.foir_percentage * 100} />
+            <Row text={`FOIR % on fuel credit`} value={values.foir_percentage || 0 * 100} />
           </TableBody>
         </Table>
       </Grid>

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useMount } from 'react-use';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
@@ -63,7 +63,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
+const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) => {
   const classes = useStyles();
   // const [ data, setData ] = useState([]);
   const [loanId, setloanId] = useState();
@@ -71,19 +71,31 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [type, setType] = useState("");
   const [loading, setLoading] = useState(false);
-  useMount(() => {
-    if (!loans || !loans.length) {
-      setLoading(true);
-      getLoansByStatus('submitted')
-        .then(data => {
-          setLoansData('submitted', data);
-          setLoading(false);
-        })
-        .catch(e => {
-          setLoading(false);
-        })
-    }
-  });
+  useEffect(() => {
+    setLoading(true);
+    getLoansByStatus('submitted', filterQry)
+      .then(data => {
+        setLoansData('submitted', data);
+        setLoading(false);
+      })
+      .catch(e => {
+        setLoading(false);
+      })
+  }, [filterQry])
+
+  // useMount(() => {
+  //   if (!loans || !loans.length) {
+  //     setLoading(true);
+  //     getLoansByStatus('submitted')
+  //       .then(data => {
+  //         setLoansData('submitted', data);
+  //         setLoading(false);
+  //       })
+  //       .catch(e => {
+  //         setLoading(false);
+  //       })
+  //   }
+  // });
   const columns = useMemo(() => {
     return [
       {
@@ -163,7 +175,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick }) => {
         name: 'application_state',
         options: {
           filter: true,
-          filterWidth:"100%",
+          filterWidth: "100%",
           sort: true,
           setCellProps: () => ({
             align: 'center',

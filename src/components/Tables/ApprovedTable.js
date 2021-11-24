@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from "mui-datatables";
@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
+const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) => {
   const classes = useStyles();
   const [dealershipId, setDealershipId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
@@ -64,20 +64,33 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
   const [loanId, setloanId] = useState();
   const [type, setType] = useState("");
 
+  useEffect(() => {
+    setLoading(true);
+    getLoansByStatus('approved', filterQry)
+      .then(data => {
+        setLoansData('approved', data);
+        setLoading(false);
+      })
+      .catch(e => {
+        setLoading(false);
+      })
+  }, [filterQry])
 
-  useMount(() => {
-    if (!loans || !loans.length) {
-      setLoading(true);
-      getLoansByStatus('approved')
-        .then(data => {
-          setLoansData('approved', data);
-          setLoading(false);
-        })
-        .catch(e => {
-          setLoading(false);
-        })
-    }
-  });
+
+  // useMount(() => {
+  //   if (!loans || !loans.length) {
+  //     setLoading(true);
+  //     getLoansByStatus('approved')
+  //       .then(data => {
+  //         setLoansData('approved', data);
+  //         setLoading(false);
+  //       })
+  //       .catch(e => {
+  //         setLoading(false);
+  //       })
+  //   }
+  // });
+
   const getLoansTable = () => {
     setLoading(true);
     getLoansByStatus('approved')
@@ -139,9 +152,9 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
         options: {
           filter: false,
           sort: true,
-          setCellProps: () => ({
-            align: 'right',
-          }),
+          // setCellProps: () => ({
+          //   align: 'right',
+          // }),
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }
       },
@@ -151,15 +164,26 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick }) => {
         options: {
           filter: false,
           sort: true,
-          setCellProps: () => ({
-            align: 'center',
-          }),
+          // setCellProps: () => ({
+          //   align: 'center',
+          // }),
           customBodyRender: value => {
             return <div>
               {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
               {/* {value ? value : '-'} */}
             </div>
           }
+        }
+      },
+      {
+        label: 'Approved by',
+        name: 'approver',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: (value) => {
+            return <>{value?.toUpperCase() || '-'}</>
+          },
         }
       },
       {

@@ -1,10 +1,9 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from "mui-datatables";
 import Typography from '@material-ui/core/Typography';
 import { useMount } from 'react-use';
-import Paper from '@material-ui/core/Paper';
 // import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -13,6 +12,7 @@ import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
 import Currency from '../Number/Currency';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { Paper } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -41,35 +41,23 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) => {
-  const classes = useStyles();
+const ReviewerTable = ({ title, loans, setLoansData, onRowClick, filterQry }) => {
   const [loading, setLoading] = useState(false);
+  const classes = useStyles();
 
   useEffect(() => {
-    setLoading(true);
-      getLoansByStatus('disbursed', filterQry)
+    // if (!loans || !loans.length) {
+      setLoading(true);
+      getLoansByStatus('loan_review', filterQry)
         .then(data => {
-          setLoansData('disbursed', data);
+          setLoansData('loan_review', data);
           setLoading(false);
         })
         .catch(e => {
           setLoading(false);
         })
-  }, [filterQry])
-
-  // useMount(() => {
-  //   if (!loans || !loans.length) {
-  //     setLoading(true);
-  //     getLoansByStatus('disbursed')
-  //       .then(data => {
-  //         setLoansData('disbursed', data);
-  //         setLoading(false);
-  //       })
-  //       .catch(e => {
-  //         setLoading(false);
-  //       })
-  //   }
-  // });
+    // }
+  }, [filterQry]);
   const columns = useMemo(() => {
     return [
       {
@@ -93,6 +81,7 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
             return <>{value?.toUpperCase()}</>
           },
         }
+
       },
       {
         label: 'Type',
@@ -114,8 +103,8 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
 
       },
       {
-        label: 'Disbursed Amount',
-        name: 'amount_disbursed',
+        label: 'Req. Amount',
+        name: 'amount_requested',
         options: {
           filter: false,
           sort: true,
@@ -126,19 +115,30 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
         }
       },
       {
-        label: 'Disbursed Date',
-        name: 'loan_disbursed_date',
+        label: 'Req. Date',
+        name: 'modified_date',
         options: {
           filter: false,
           sort: true,
-          setCellProps: () => ({
-            align: 'center',
-          }),
+          // setCellProps: () => ({
+          //   align: 'left',
+          // }),
           customBodyRender: value => {
             return <div>
               {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
               {/* {value ? value : '-'} */}
             </div>
+          }
+        }
+      },
+      {
+        label: 'Reviewer',
+        name: 'reviewer',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: value => {
+            return <>{value?.toUpperCase() || '-'}</>
           }
         }
       }
@@ -151,8 +151,7 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
     selectableRows: 'none',
     isRowSelectable: () => false,
     onRowClick: (rowData, { dataIndex }) => {
-      // console.log(rowData, rowMeta);
-      onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'disbursed')
+      onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'loan_review')
     }
   };
 
@@ -166,7 +165,7 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
             columns={columns}
             options={options}
           />
-        ) : (!loading && <Paper style={{ padding: 10 }}>No Disbursed Loans</Paper>)
+        ) : (!loading && <Paper style={{ padding: 10 }} >No Pending loans for Review</Paper>)
       }
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
@@ -176,11 +175,11 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
 }
 
 const mapStateToProps = ({ loans }) => ({
-  loans: loans.disbursed
+  loans: loans.loan_review
 });
 
 const mapDispatchToProps = dispatch => ({
   setLoansData: (status, data) => dispatch(setLoansByStatus(status, data))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(DisbursedTable);
+export default connect(mapStateToProps, mapDispatchToProps)(ReviewerTable);

@@ -18,7 +18,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
-import Select from '@material-ui/core/Select';
+import { Select as MSelect } from '@material-ui/core';
 import Currency from '../../../components/Number/Currency';
 import SalesInfo from './SalesInfo';
 import TextInput from '../../../components/TextInput/TextInput';
@@ -35,8 +35,11 @@ import { useSnackbar } from 'notistack';
 // import CloseIcon from '@material-ui/icons/Close';
 import CloseIcon from '@material-ui/icons/CloseRounded';
 import { Checkbox, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, FormGroup, Tooltip } from '@material-ui/core';
-import { getAllRegion } from '../../../services/common.service';
+import { getAllRegion, getUserRoleForReview } from '../../../services/common.service';
 import { useMount } from 'react-use';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import Select from 'react-select';
+import { green } from '@material-ui/core/colors';
 
 // import Button from '../../../components/CommonComponents/Button/Button'
 
@@ -152,16 +155,16 @@ const useStyles = makeStyles(theme => ({
     marginTop: 10,
     marginBottom: 10
   },
-  actions:{
+  actions: {
     marginTop: 15,
   },
-  actions2:{
+  actions2: {
     marginTop: 15,
     backgroundColor: "#f5f5f5",
     padding: 10,
     borderRadius: 5,
   },
-  list:{
+  list: {
     marginTop: 5,
     marginLeft: 15,
     display: 'flex',
@@ -171,7 +174,7 @@ const useStyles = makeStyles(theme => ({
     borderBottom: '1px solid #c9c7c7',
     paddingTop: 5,
     paddingBottom: 5,
-    '&:hover':{
+    '&:hover': {
       backgroundColor: '#ffffff',
       borderRadius: 2
     },
@@ -265,7 +268,7 @@ const LoanInfo = ({
           <TableBody>
             <TableRow key={row.id}>
               <TableCell scope="row" component="th">
-                <Select
+                <MSelect
                   fullWidth
                   native
                   placeholder={"Select Loan Product"}
@@ -287,7 +290,7 @@ const LoanInfo = ({
                   {
                     products.map(item => <option value={item.product_id}>{item.product_name}</option>)
                   }
-                </Select>
+                </MSelect>
               </TableCell>
               <TableCell scope="row" component="th"><strong>{selectedProduct?.interest}</strong></TableCell>
               <TableCell scope="row" component="th"><strong>{selectedProduct?.penal_interest}</strong></TableCell>
@@ -301,7 +304,7 @@ const LoanInfo = ({
                       yes={() => (
                         <TextInput
                           money
-                          type="number"
+                          number
                           fullWidth={false}
                           value={newInfo.amount_approved}
                           onChange={e => {
@@ -327,7 +330,7 @@ const LoanInfo = ({
                       yes={() => (
                         <TextInput
                           money
-                          type="number"
+                          number
                           fullWidth={false}
                           value={newInfo.amount_disbursed}
                           onChange={e => {
@@ -438,13 +441,16 @@ const DealershipDetails = ({
   const [rejectReason, setRejectReason] = useState([])
   const [displayReason, setDisplayReason] = useState([])
   const [activeTab, setActiveTab] = useState()
+  const [user, setUser] = useState([]);
+  const [remarks, setRemarks] = useState();
+  const [userRole, setUserRole] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
 
   const sortByKey = (a, b, key) => {
-    if ( a[key]?.trim() < b[key]?.trim() ){
+    if (a[key]?.trim() < b[key]?.trim()) {
       return -1;
     }
-    if ( a[key]?.trim() > b[key]?.trim() ){
+    if (a[key]?.trim() > b[key]?.trim()) {
       return 1;
     }
     return 0;
@@ -453,6 +459,22 @@ const DealershipDetails = ({
   const classes = useStyles();
 
   useEffect(() => {
+    if (status === "loan_review") {
+      getUserRoleForReview("is_approve=1")
+        .then(res => {
+          let d = [];
+          res.forEach((item, i) => {
+            d.push({
+              label: `${item.first_name} ${item.last_name}`,
+              value: item.id
+            })
+          })
+          setUserRole(d);
+        })
+        .catch(e => {
+          console.log(e);
+        })
+    }
     if (loanData?.id && data?.id) {
       getLoanById(data.id, loanData.id)
         .then(res => {
@@ -482,22 +504,22 @@ const DealershipDetails = ({
 
   useMount(() => {
     getLoanRejectReason()
-    .then(data => {
-      const optionsBuffer = []
-      const dataBuffer = []
+      .then(data => {
+        const optionsBuffer = []
+        const dataBuffer = []
 
-      data.map((data, index) => {
-        optionsBuffer.push({value: index, label: data.reason})
-        dataBuffer.push([data.list.map((d) => { return({value: d.id, label: `${d.code} - ${d.description}`})})])
-        // console.log(data.list);
+        data.map((data, index) => {
+          optionsBuffer.push({ value: index, label: data.reason })
+          dataBuffer.push([data.list.map((d) => { return ({ value: d.id, label: `${d.code} - ${d.description}` }) })])
+          // console.log(data.list);
+        })
+        setOptionsData(optionsBuffer)
+        setReasonData(dataBuffer)
+        // console.log(dataBuffer);
       })
-      setOptionsData(optionsBuffer)
-      setReasonData(dataBuffer)
-      // console.log(dataBuffer);
-    })
-    .catch(e => {
-      console.log(e);
-    })
+      .catch(e => {
+        console.log(e);
+      })
   })
 
   // selectedCategory && (
@@ -536,10 +558,10 @@ const DealershipDetails = ({
         setApiStatus({ loading: false, type: 'error', message: 'Please choose loan type.' });
         return null
       }
-      reqBody.approval_remarks = newLoanInfo.approval_remarks;
+      // reqBody.approval_remarks = newLoanInfo.approval_remarks;
       reqBody.product_id = newLoanInfo.product_id;
     }
-    if (submitStatus === "approved") {
+    if (submitStatus === "approval") {
       setApproveLoader(true);
       if (status === "loan_approval") {
         resMsg = 'Successfully Approved Loan Request';
@@ -555,19 +577,25 @@ const DealershipDetails = ({
       reqBody.disbursement_approval_remarks = newLoanInfo.disbursement_approval_remarks;
     }
 
-    if (submitStatus === 'rejected') {
+    if (submitStatus === 'reject') {
       setRejectLoader(true);
       setRejectModal(false);
       reqBody.reason_id = rejectReason;
       resMsg = 'Request got rejected successfully';
     }
-    // if(submitStatus === "disbursed") {
-    // if (loanData.amount_disbursed === newLoanInfo.amount_disbursed) {
-    //   setApiStatus({ type: 'error', message: 'Please check Disburse amount. We see no change in Disburse amount!' })
-    //   return null;
-    // }
+    if (submitStatus === 'loan_review') {
+      reqBody.approver_id = user.value;
+      reqBody.status = 'approval'
+      reqBody.recommendation_remarks = remarks;
+      resMsg = 'Request approved successfully';
+    }
+    if(submitStatus === "disbursed") {
+    if (loanData.amount_disbursed === newLoanInfo.amount_disbursed) {
+      setApiStatus({ type: 'error', message: 'Please check Disburse amount. We see no change in Disburse amount!' })
+      return null;
+    }
+    }
 
-    // }
 
     updateLoanApprovalStatusById(values.id, loanData.id, reqBody)
       .then(res => {
@@ -632,9 +660,9 @@ const DealershipDetails = ({
   }
 
   const handleReasonChange = (event) => {
-    let reasonArray = [...displayReason, {label: event.target.name, value: event.target.value}];
+    let reasonArray = [...displayReason, { label: event.target.name, value: event.target.value }];
     let arrayCheck = [...rejectReason, event.target.value];
-    if (rejectReason.includes(event.target.value)){
+    if (rejectReason.includes(event.target.value)) {
       arrayCheck = arrayCheck.filter(value => value !== event.target.value)
       reasonArray = reasonArray.filter(name => name.label !== event.target.name)
     }
@@ -707,7 +735,7 @@ const DealershipDetails = ({
               <Grid item xs={12} md={6}>
                 <TextInput
                   labelText="Pincode"
-                  type="number"
+                  number
                   value={values.pincode}
                   readOnly={readOnly}
                   onChange={handleChange}
@@ -946,7 +974,7 @@ const DealershipDetails = ({
                 onClick={onClose}>Back</Button>
             </div>
             {
-              editable && status && ["rejected", "approved", "disbursment_approval", "loan_approval"].includes(status.toLowerCase()) && (
+              editable && status && ["rejected", "approved", "disbursment_approval", "loan_approval", "loan_review"].includes(status.toLowerCase()) && (
                 <UserCan
                   role={currentUser.role_name}
                   perform={rulesList.loan_approval}
@@ -973,6 +1001,28 @@ const DealershipDetails = ({
             }
           </div>
           <div style={{ display: 'flex' }}>
+            {
+              editable && status && ["loan_review"].includes(status.toLowerCase()) && (
+                <UserCan
+                  role={currentUser.role_name}
+                  perform={rulesList.loan_approval}
+                  yes={() => (
+                    <>
+                    {
+                        <div>
+                          <Button
+                            variant="contained"
+                            disabled={apiStatus.loading}
+                            className={clsx(classes.btn, classes.btnSuccess)}
+                            startIcon={<ThumbUpAltIcon />}
+                            onClick={() => setRejectModal(true)}> Send for Approval</Button>
+                        </div>
+                      }
+                      </>
+                  )}
+                />
+              )
+            }
             <div>
               <Button
                 component={RouterLink}
@@ -997,7 +1047,7 @@ const DealershipDetails = ({
                               disabled={apiStatus.loading}
                               className={clsx(classes.btn, classes.btnError)}
                               startIcon={<ThumbDownAltIcon />}
-                              onClick={() =>setRejectModal(true)}>Reject</Button>
+                              onClick={() => setRejectModal(true)}>Reject</Button>
                           </div>
                         ) : (
                           <div style={{ marginLeft: '16px' }}>
@@ -1013,7 +1063,7 @@ const DealershipDetails = ({
                               disabled={apiStatus.loading}
                               className={clsx(classes.btn, classes.btnSuccess)}
                               startIcon={<ThumbUpAltIcon />}
-                              onClick={() => updateLoanStatus('approved')}>Approve</Button>
+                              onClick={() => updateLoanStatus('approval')}>Approve</Button>
                           </div>
                         ) : (
                           <div style={{ marginLeft: '16px' }}>
@@ -1043,66 +1093,132 @@ const DealershipDetails = ({
         open={rejectModal}
         onClose={() => setRejectModal(false)}
       >
-        <DialogTitle className={classes.dialogTitle}><Typography variant='h6'>Are you Sure?</Typography></DialogTitle>
+
+        {/* <DialogTitle className={classes.dialogTitle}><Typography variant='h6'>Are you Sure?</Typography></DialogTitle> */}
         <DialogContent className={classes.rejectModal}>
-          <div>
-          <Typography style={{marginBottom: 20}} variant='body1'>Choose category and reasons for rejection.</Typography>
-            <Typography variant='body2'>Category</Typography>
-              {
-                optionsData.map((item, i) => {
-                  return <Chip label={item.label} className={classes.chip} variant={activeTab === i ? "default" : "outlined"} onClick={() => {
-                    setSelectedCategory({label: item?.label, value: item?.value})
-                    setActiveTab(item.value)
-                  }} clickable color={activeTab === i ? "primary" : ""} />
-                })
-              }
-          </div>
-              {
-                selectedCategory && (
-                  <div className={classes.actions}>
-                    <Typography variant='body1'>Reason</Typography>
-                    <FormGroup>
+          {
+            status?.toLowerCase() !== 'loan_review' && (
+              <>
+                <div>
+                  <Typography style={{ marginBottom: 20 }} variant='body1'>Choose category and reasons for rejection.</Typography>
+                  <Typography variant='body2'>Category</Typography>
+                  {
+                    optionsData.map((item, i) => {
+                      return <Chip label={item.label} className={classes.chip} variant={activeTab === i ? "default" : "outlined"} onClick={() => {
+                        setSelectedCategory({ label: item?.label, value: item?.value })
+                        setActiveTab(item.value)
+                      }} clickable color={activeTab === i ? "primary" : ""} />
+                    })
+                  }
+                </div>
+                {
+                  selectedCategory && (
+                    <div className={classes.actions}>
+                      <Typography variant='body1'>Reason</Typography>
+                      <FormGroup>
+                        {
+                          reasonData[selectedCategory.value][0].map((data, index) => {
+                            return (
+                              <FormControlLabel control={<Checkbox className={classes.checkbox} onChange={handleReasonChange} value={data.value} key={data.value} checked={rejectReason.includes(data.value)} name={data.label} />} label={data.label} color={activeTab === data.label ? "primary" : ""} />
+                            )
+                          })
+                        }
+                      </FormGroup>
+                    </div>
+                  )
+                }
+                {
+                  displayReason.length != 0 && (
+                    <div className={classes.actions2}>
+                      <Typography variant='body1'><strong>Selected Reasons</strong></Typography>
                       {
-                        reasonData[selectedCategory.value][0].map((data, index) => {
-                          return(
-                            <FormControlLabel control={<Checkbox className={classes.checkbox} onChange={handleReasonChange} value={data.value} key={data.value} checked={rejectReason.includes(data.value)} name={data.label} />} label={data.label} color={activeTab === data.label ? "primary" : ""} />
+                        displayReason.sort((a, b) => sortByKey(a, b, 'label')).map((item, i) => {
+                          return (
+                            <div className={classes.items}>
+                              <p className={classes.eachItem}><span className={classes.itemNotation}>{i + 1}.</span> {item.label}</p>
+                              <Tooltip title="Remove">
+                                <IconButton size='small'>
+                                  <CloseIcon fontSize='small' onClick={() => removeItem(item)} />
+                                </IconButton>
+                              </Tooltip>
+                            </div>
                           )
                         })
                       }
-                    </FormGroup>
-                  </div>
-                )
-              }
-              {
-                displayReason.length !=0 && (
-                  <div className={classes.actions2}>
-                    <Typography variant='body1'><strong>Selected Reasons</strong></Typography>
-                    {
-                      displayReason.sort((a,b) => sortByKey(a,b,'label')).map((item, i) => {
-                        return (
-                          <div className={classes.items}>
-                            <p className={classes.eachItem}><span className={classes.itemNotation}>{i+1}.</span> {item.label}</p>
-                            <Tooltip title="Remove">
-                              <IconButton size='small'>
-                                <CloseIcon fontSize='small' onClick={() => removeItem(item)}/>
-                              </IconButton>
-                            </Tooltip>
-                          </div>
-                        )
-                      })
-                    }
-                  </div>
-                )
-              }
+                    </div>
+                  )
+                }
+              </>
+            )
+          }
+          {
+            status?.toLowerCase() === 'loan_review' && (
+              <div style={{ marginBottom: 20 }}>
+                <DialogContentText id="approval-remarks-desc">
+                  Please choose whom did you want to sent for approval.
+                </DialogContentText>
+                <Select
+                  isClearable
+                  name='user_approve'
+                  styles={{
+                    control: (provided) => ({
+                      ...provided,
+                      // borderWidth: 0,
+                      // borderRadius: 0,
+                      // borderBottomWidth: 1, 
+                      borderColor: 'hsl(0, 0%, 90%)',
+                      minHeight: 29,
+                      '&:hover': {
+                        boxShadow: 'none',
+                        minHeight: 29,
+                      },
+                    }),
+                    menu: (provided) => ({
+                      ...provided,
+                      zIndex: 9999
+                    }),
+                    indicatorsContainer: (provided) => ({
+                      ...provided,
+                      '> div': {
+                        padding: 5
+                      }
+                    }),
+                    indicatorContainer: (provided) => ({
+                      ...provided,
+                    })
+                  }}
+                  onChange={setUser}
+                  options={userRole}
+                />
+                <DialogContentText id="approval-remarks-desc">
+                  Please enter your remarks for sending this for approval.
+                </DialogContentText>
+                <TextInput
+                  multiline
+                  direction='column'
+                  alignTop={true}
+                  rows={4}
+                  rowsMax={8}
+                  labelText="Remarks*"
+                  alignTop
+                  placeholder="Enter your remarks here."
+                  value={remarks}
+                  onChange={e => {
+                    setRemarks(e.target.value);
+                  }}
+                />
+              </div>
+            )
+          }
         </DialogContent>
         <DialogActions>
           <div>
             <Button onClick={handleClose}>Cancel</Button>
-            <Button color='primary' variant='outlined' onClick={() => updateLoanStatus('rejected')} disabled={!rejectReason.length}>Confirm</Button>
+            <Button color='primary' variant='outlined' onClick={() => { status === 'loan_review' ? updateLoanStatus('loan_review') : updateLoanStatus('reject') }}>Confirm</Button>
           </div>
         </DialogActions>
       </Dialog>
-    </div>
+    </div >
   )
 }
 const mapStateToProps = createStructuredSelector({

@@ -55,7 +55,8 @@ const useStyles = makeStyles((theme) => ({
     // paddingTop: 8
   },
   stepperRoot: {
-    // padding: 16,
+    padding: 16,
+    paddingRight: 0,
     paddingTop: 8,
   },
   stepTitle: {
@@ -125,6 +126,7 @@ const DealerEditSideWrapper = ({
     // dob: Yup.number().required("Choose date of birth"),
     residing_since: Yup.number().nullable('Enter the year').required('Enter the year'),
     marital_status: Yup.string('Enter your Marital status'),
+    pincode: Yup.string().nullable('Enter pincode').matches(/^[1-9][0-9]{5}$/, 'Invalid pincode').required('Enter pincode'),
     pan: Yup.string()
       .nullable('Enter PAN')
       .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
@@ -210,12 +212,12 @@ const DealerEditSideWrapper = ({
       }
       const formData = new FormData();
       Object.keys(obj).forEach((key) => {
-        if(key === 'pan'){
+        if (key === 'pan') {
           let pan = values?.pan ? cryptoEncrypt(values.pan) : values?.pan;
-          formData.append(key, pan)          
-        } else if(key === 'aadhar'){
+          formData.append(key, pan)
+        } else if (key === 'aadhar') {
           let aadhar = values?.aadhar ? cryptoEncrypt(values.aadhar) : values?.aadhar;
-          formData.append(key, aadhar)          
+          formData.append(key, aadhar)
         } else {
           formData.append(key, obj[key]);
         }
@@ -277,7 +279,7 @@ const DealerEditSideWrapper = ({
           // setApiCallMessage('Sorry! Unable to add or Update. Try again later.');
           logger(err);
         });
-    }, 
+    },
   });
   const handleDateChange = (date) => {
     setSelectedDate(date);

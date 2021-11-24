@@ -26,10 +26,16 @@ const DashCardWrapper = styled.div`
     text-align: center;
     padding: 4px 10px;
     color: #fff;
-    font-size: 14px;
+    font-size: 11px;
     font-weight: 600;
     background-color: #388e3c;
     border-radius: 14px;
+    position: absolute;
+    bottom: -16px;
+    width: 80%;
+    left: 3%;
+    box-shadow: 0 2px 3px rgb(0 0 0 / 50%);
+    z-index: 3;
   }
 
   &::after {
@@ -54,7 +60,7 @@ const DashCardWrapper = styled.div`
   }
   /* width: 100%; */
   flex: 1;
-  min-width: 140px;
+  min-width: 110px;
   text-align: center;
   border-right: ${props => props.noBorder ? 'none' : '1px dashed #ccc'};
   .stat-number-block {
@@ -65,7 +71,7 @@ const DashCardWrapper = styled.div`
     /* margin-bottom: 8px; */
 
     .stat-number {
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 600;
       flex: 1;
     }

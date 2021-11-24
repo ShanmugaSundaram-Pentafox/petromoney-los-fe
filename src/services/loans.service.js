@@ -6,12 +6,8 @@ export const getLoanStats = (qryStr = {}) => {
   return new Promise((resolve, reject) => {
     const { region, from, to } = qryStr;
     let apiUrl = `metrics/loan/stats`;
-    if (from && to) {
-      apiUrl = `metrics/loan/stats?region=${region}&from=${from}&to=${to}`;
-    }
-    else if (region) {
-      apiUrl = `metrics/loan/stats?region=${region}`;
-    }
+    if (region) apiUrl = `metrics/loan/stats?region=${region}`;
+    if (from && to) apiUrl = `metrics/loan/stats?region=${region}&from=${from}&to=${to}`;
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
@@ -128,9 +124,14 @@ export const getLoanBookData = () => {
   });
 }
 
-export const getLoansByStatus = status => {
+export const getLoansByStatus = (status, filterQry) => {
   return new Promise((resolve, reject) => {
-    apiCall(`${URL.loans}?status=${status}`)
+    const { region, from, to } = filterQry;
+    let apiUrl = `${URL.loans}?status=${status}&region=${region}`;
+    if (from && to) {
+      apiUrl = `${URL.loans}?status=${status}&region=${region}&from=${from}&to=${to}`;
+    }
+    apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === "SUCCESS") {
           resolve(data);
@@ -178,7 +179,7 @@ export const getLoanDocumentHistoryById = (loanId, type) => {
 
 export const updateLoanApprovalStatusById = (dealershipId, loanId, body) => {
   return new Promise((resolve, reject) => {
-    apiCall(`${URL.dealership}/${dealershipId}/loan/${loanId}/approval`, {
+    apiCall(`${URL.dealership}/${dealershipId}/loan/${loanId}/${body.status}`, {
       method: "POST",
       body,
     })

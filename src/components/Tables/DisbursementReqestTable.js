@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from "mui-datatables";
@@ -41,14 +41,13 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const DisbursementReqestTable = ({ title, loans, setLoansData, onRowClick }) => {
+const DisbursementReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry }) => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
 
-  useMount(() => {
-    if (!loans || !loans.length) {
-      setLoading(true);
-      getLoansByStatus('disbursement_approval')
+  useEffect(() => {
+    setLoading(true);
+      getLoansByStatus('disbursement_approval', filterQry)
         .then(data => {
           setLoansData('disbursement_approval', data);
           setLoading(false);
@@ -56,8 +55,21 @@ const DisbursementReqestTable = ({ title, loans, setLoansData, onRowClick }) => 
         .catch(e => {
           setLoading(false);
         })
-    }
-  });
+  }, [filterQry])
+
+  // useMount(() => {
+  //   if (!loans || !loans.length) {
+  //     setLoading(true);
+  //     getLoansByStatus('disbursement_approval')
+  //       .then(data => {
+  //         setLoansData('disbursement_approval', data);
+  //         setLoading(false);
+  //       })
+  //       .catch(e => {
+  //         setLoading(false);
+  //       })
+  //   }
+  // });
 
   const columns = useMemo(() => {
     return [
@@ -108,9 +120,9 @@ const DisbursementReqestTable = ({ title, loans, setLoansData, onRowClick }) => 
         options: {
           filter: false,
           sort: true,
-          setCellProps: () => ({
-            align: 'right',
-          }),
+          // setCellProps: () => ({
+          //   align: 'right',
+          // }),
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }
       },

@@ -108,7 +108,7 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
       remarksObj.disbursement_recommendation_remarks = remarks;
     }
 
-    status && updateLoanApprovalStatusById(id, loan.id, { user_id: currentUser.id, ...remarksObj })
+    status && updateLoanApprovalStatusById(id, loan.id, { user_id: currentUser.id, status:'approval', ...remarksObj })
       .then(res => {
         setLoansData(res.loans);
         setLoading(false);

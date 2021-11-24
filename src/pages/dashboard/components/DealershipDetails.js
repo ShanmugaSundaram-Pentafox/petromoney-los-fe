@@ -574,6 +574,7 @@ const DealershipDetails = ({
       }
     }
     if (status === "disbursement_approval") {
+      reqBody.status = 'approval'
       reqBody.disbursement_approval_remarks = newLoanInfo.disbursement_approval_remarks;
     }
 
@@ -581,6 +582,7 @@ const DealershipDetails = ({
       setRejectLoader(true);
       setRejectModal(false);
       reqBody.reason_id = rejectReason;
+      reqBody.status = 'reject'
       resMsg = 'Request got rejected successfully';
     }
     if (submitStatus === 'loan_review') {

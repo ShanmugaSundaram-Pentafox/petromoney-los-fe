@@ -39,7 +39,8 @@ const useStyles = makeStyles(theme => ({
   },
   actionFooter: {
     justifyContent: 'flex-start',
-    padding: 0
+    padding: 0,
+    marginTop: 20,
   },
   readOnlyWrapper: {
     margin: '8px 4px',
@@ -239,7 +240,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
     fileType === 'PAN'
       ? setFieldValue('pan_file_url', value[0])
       : setFieldValue('gst_file_url', value[0]);
-    handleSubmit(values);
+    // handleSubmit(values);
     onCloseUploader();
   };
   const onDocDelete = (value) => {
@@ -615,7 +616,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
             !loading ? (
               <>
                 <Button variant="contained" size="small" onClick={() => { setReadOnly(true); }}>Cancel</Button>
-                <Button type="submit" color="primary" variant="contained" size="small">Save</Button>
+                <Button type="submit" color="primary" onClick={handleSubmit} variant="contained" size="small">Save</Button>
               </>
             ) : <CircularProgress size={20} />
           ) : (

@@ -109,6 +109,7 @@ const AssetsEditForm = ({ dealer_id, assetData = {}, data, handleClose }) => {
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
+                  number
                   labelText="Asset Value"
                   name="asset_value"
                   value={values.asset_value}
@@ -120,6 +121,7 @@ const AssetsEditForm = ({ dealer_id, assetData = {}, data, handleClose }) => {
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
+                  number
                   labelText="Market value"
                   name="market_value"
                   value={values.market_value}

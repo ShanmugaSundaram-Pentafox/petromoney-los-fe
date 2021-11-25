@@ -253,6 +253,7 @@ const IncomeTable = ({ id, editable, currentUser }) => {
                 </TableCell>
                 <TableCell align={"right"}>
                   <TextInput
+                    number
                     label="Business Age"
                     name="business_age"
                     type="number"
@@ -263,9 +264,9 @@ const IncomeTable = ({ id, editable, currentUser }) => {
                 <TableCell align={"right"}>
                   <TextInput
                     money
+                    number
                     label="FY Income"
                     name="cur_fy_income"
-                    type="number"
                     value={apiData.cur_fy_income}
                     onChange={onTextChange}
                   />

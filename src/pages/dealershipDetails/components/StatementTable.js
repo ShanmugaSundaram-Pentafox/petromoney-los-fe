@@ -1,10 +1,10 @@
 import React, {useState} from 'react'
 import { Button, Drawer, makeStyles, Typography } from '@material-ui/core'
-import { ViewData } from '../CommonComponents/FilePreview'
+import { ViewData } from '../../../components/CommonComponents/FilePreview'
 import ListIcon from '@material-ui/icons/List';
-import StatementForm from '../../pages/dealershipDetails/components/StatementForm'
+import StatementForm from './StatementForm'
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { deleteBankStatementById, getAllBankStatementByDealershipId, updateBankStatementById } from '../../services/dealerships.service'
+import { deleteBankStatementById, getAllBankStatementByDealershipId, updateBankStatementById } from '../../../services/dealerships.service'
 import { useSnackbar } from 'notistack';
 import { CircularProgress } from '@material-ui/core';
 
@@ -45,8 +45,7 @@ const useStyles = makeStyles((theme) => ({
 
 const StatementTable = ({ addStatement, callback, id }) => {
     const classes = useStyles()
-    const [testData, setTestData] = useState([])
-    const [testRowData, setTestRowData] = useState()
+    const [RowData, setRowData] = useState()
     const { enqueueSnackbar } = useSnackbar();
     const queryClient = useQueryClient()
 
@@ -104,7 +103,7 @@ const StatementTable = ({ addStatement, callback, id }) => {
                                         <ViewData title="Type of Account" value={item.account_type} />
                                     </div>
                                     <div className={classes.action}>
-                                        <Button variant="outlined" size='small' className={classes.btns} onClick={() => {callback({open: true, action: 'view'}); setTestRowData(item);}} startIcon={<ListIcon color='primary' />}>View</Button>
+                                        <Button variant="outlined" size='small' className={classes.btns} onClick={() => {callback({open: true, action: 'view'}); setRowData(item);}} startIcon={<ListIcon color='primary' />}>View</Button>
                                     </div>
                                 </div>
                             )
@@ -123,10 +122,10 @@ const StatementTable = ({ addStatement, callback, id }) => {
             <Drawer
             anchor="right"
             open={addStatement?.open}
-            onClose={() => {callback({open: false}); setTestRowData()}}
+            onClose={() => {callback({open: false}); setRowData()}}
             variant="temporary"
             >
-                <StatementForm callback={() => {callback(); setTestRowData()}} rowData={testRowData} addStatement={addStatement} updateStatement={updateStatement} deleteStatement={deleteStatement} id={id} />
+                <StatementForm callback={() => {callback(); setRowData()}} rowData={RowData} addStatement={addStatement} updateStatement={updateStatement} deleteStatement={deleteStatement} id={id} />
             </Drawer>   
       </>
     )

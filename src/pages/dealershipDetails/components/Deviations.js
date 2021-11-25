@@ -21,6 +21,9 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         justifyContent: 'flex-end',
         marginTop: 20
+    },
+    field: {
+        margin: 0
     }
 }))
 
@@ -28,7 +31,7 @@ const Deviations = () => {
     const classes = useStyles()
     const [data, setData] = useState([])
     const [deviation, setDeviation] = useState([])
-    console.log(deviation);
+    // console.log(deviation);
 
     const handleRemove = (index) => {
         const test = [...deviation]
@@ -37,7 +40,7 @@ const Deviations = () => {
     }
 
     // useMount(() => {
-    //     fetch("http://localhost:3333/data")
+    //     fetch("http://localhost:3333/deviations")
     //     .then(res => res.json())
     //     .then(setData)
     // })
@@ -67,6 +70,7 @@ const Deviations = () => {
                                         <TableCell>{item.policy}</TableCell>
                                         <TableCell>
                                             <TextInput
+                                                className={classes.field}
                                                 name="actual"
                                                 value={item.actual}
                                                 disabled={item.particulars === 'Max FOIR %' || item.particulars === 'Min Credit Bureau Score' || item.particulars === 'Min Business Vintage with OMC (Yrs)' ? true : false}
@@ -74,6 +78,7 @@ const Deviations = () => {
                                         </TableCell>
                                         <TableCell>
                                             <TextInput
+                                                className={classes.field}
                                                 select
                                                 name="deviations"
                                             >
@@ -84,8 +89,9 @@ const Deviations = () => {
                                         </TableCell>
                                         <TableCell>
                                             <TextField
-                                                multiline
-                                                label="Remarks"
+                                                className={classes.field}
+                                                // multiline
+                                                placeholder="Remarks"
                                                 variant="outlined"
                                                 fullWidth
                                             />
@@ -127,7 +133,7 @@ const Deviations = () => {
                                                 variant="outlined"
                                                 placeholder="Review..."
                                                 fullWidth
-                                                multiline
+                                                // multiline
                                             />
                                         </TableCell>
                                         <TableCell align="right">
@@ -149,3 +155,56 @@ const Deviations = () => {
 }
 
 export default Deviations;
+
+export const DeviationsTable = () => {
+    const classes = useStyles()
+    const [data, setData] = useState([])
+
+    // useMount(() => {
+    //     fetch("http://localhost:3333/deviations")
+    //     .then(res => res.json())
+    //     .then(setData)
+    // })
+
+    return(
+        <>
+            <div className={classes.title}>
+                <Typography variant="h5">Deviations</Typography>
+            </div>
+            <div className={classes.tableContainer}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Particulars</TableCell>
+                            <TableCell>Policy</TableCell>
+                            <TableCell>Actual</TableCell>
+                            <TableCell>Deviation</TableCell>
+                            <TableCell>Deviation Review</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {
+                            data?.map(item => {
+                                return(
+                                    <TableRow>
+                                        <TableCell>{item.particulars}</TableCell>
+                                        <TableCell>{item.policy}</TableCell>
+                                        <TableCell>{item.actual}</TableCell>
+                                        <TableCell>{item?.deviations}</TableCell>
+                                        <TableCell>{item?.deviationReview}</TableCell>
+                                    </TableRow>
+                                )
+                            })
+                        }
+                    </TableBody>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Deviation Description</TableCell>
+                            <TableCell>Deviation Review</TableCell>
+                        </TableRow>
+                    </TableHead>
+                </Table>
+            </div>
+        </>
+    )
+}

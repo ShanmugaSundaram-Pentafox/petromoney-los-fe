@@ -45,7 +45,7 @@ import StatementAnalysis from "./components/StatementAnalysis";
 
 import { rulesList } from "../../config/userRules";
 import { permissionCheck } from "../../components/UserCan/UserCan";
-import Deviations from "./components/Deviations";
+import Deviations, { DeviationsTable } from "./components/Deviations";
 
 const useStyles = makeStyles((theme) => ({
 
@@ -272,6 +272,7 @@ const DealershipDetails = ({ currentUser, match }) => {
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Deviations')}>
             <Deviations />
+            {/* <DeviationsTable /> */}
         </TabPanel>
         {
           financialReport_permission && (

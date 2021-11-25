@@ -1,26 +1,26 @@
-import React from "react";
-import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
-import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+import { makeStyles } from '@material-ui/core/styles';
 import EditIcon from '@material-ui/icons/Edit';
 import PhonelinkRingIcon from '@material-ui/icons/PhonelinkRing';
 import SendIcon from '@material-ui/icons/Send';
+import clsx from 'clsx';
+import React from 'react';
 
-import EnquiryInfoCard from "../../../components/CommonComponents/Cards/EnquiryInfoCard";
-import PhotoCard from "../../../components/CommonComponents/Cards/PhotoCard";
-import { InfoBoxStyle } from "../../../theme/styled-components/utils";
-import { Info } from "../../../components/CommonComponents/Cards/InfoCard";
-import { UserInfoWrapper, PageWrapper } from "./SolarReportView.styles";
+import { UserInfoWrapper, PageWrapper } from './SolarReportView.styles';
+import EnquiryInfoCard from '../../../components/CommonComponents/Cards/EnquiryInfoCard';
+import { Info } from '../../../components/CommonComponents/Cards/InfoCard';
+import PhotoCard from '../../../components/CommonComponents/Cards/PhotoCard';
+import { InfoBoxStyle } from '../../../theme/styled-components/utils';
 
 const photoData = [
-  "https://bit.ly/2SB6BEy",
-  "https://pyt-images.imgix.net/images/web_app/speed-boat/sidebar/bg1.jpg",
-  "https://pyt-images.imgix.net/images/web_app/speed-boat/sidebar/bg2.jpg",
-  "https://pyt-images.imgix.net/images/web_app/speed-boat/sidebar/bg3.jpg",
-  "https://pyt-images.imgix.net/images/web_app/speed-boat/sidebar/bg4.jpg",
-  "https://pyt-images.imgix.net/images/web_app/speed-boat/sidebar/bg5.jpg",
-  "https://pyt-images.imgix.net/images/web_app/speed-boat/sidebar/bg6.jpg"
+  'https://bit.ly/2SB6BEy',
+  'https://pyt-images.imgix.net/images/web_app/speed-boat/sidebar/bg1.jpg',
+  'https://pyt-images.imgix.net/images/web_app/speed-boat/sidebar/bg2.jpg',
+  'https://pyt-images.imgix.net/images/web_app/speed-boat/sidebar/bg3.jpg',
+  'https://pyt-images.imgix.net/images/web_app/speed-boat/sidebar/bg4.jpg',
+  'https://pyt-images.imgix.net/images/web_app/speed-boat/sidebar/bg5.jpg',
+  'https://pyt-images.imgix.net/images/web_app/speed-boat/sidebar/bg6.jpg'
 ];
 
 const useStyles = makeStyles((theme) => ({
@@ -112,31 +112,31 @@ const SolarEnquiryView = ({ closeAction }) => {
               <Grid container spacing={2}>
                 <Grid item xs={4}>
                   <Info
-                    userInitial={"s"}
-                    name={"Sri Saravana Agencies"}
-                    description={"Sasikumar Palanisamy"}
+                    userInitial={'s'}
+                    name={'Sri Saravana Agencies'}
+                    description={'Sasikumar Palanisamy'}
                   />
                 </Grid>
                 <Grid item xs={3}>
                   <div className="icon-txt">
                     <PhonelinkRingIcon className={classes.userInfoDetailsIconStyle} />
-                                        +91 - 9585262611
-                                    </div>
+                    +91 - 9585262611
+                  </div>
                 </Grid>
                 <Grid item xs={3}>
                   <div className="icon-txt">
                     <SendIcon
                       className={clsx(classes.userInfoDetailsIconStyle, classes.sendIconStyle)}
                     />
-                                        No.5, Nethaji Street, Lakshmi
-                                        Nagar, Valasarakkam, Tamil Nadu,
-                                        Chennai - 600058
-                                    </div>
+                    No.5, Nethaji Street, Lakshmi
+                    Nagar, Valasarakkam, Tamil Nadu,
+                    Chennai - 600058
+                  </div>
                 </Grid>
                 <Grid item xs={2}>
                   <div className="icon-txt text-center">
                     Dealer Interest:
-                                        <span className="pill">Outrage</span>
+                    <span className="pill">Outrage</span>
                   </div>
                 </Grid>
               </Grid>
@@ -160,7 +160,7 @@ const SolarEnquiryView = ({ closeAction }) => {
                 ]}
               />
               <EnquiryInfoCard
-                title={"Building details"}
+                title={'Building details'}
                 listData={[
                   { 'title': 'Office room terrace area:', 'description': '651 sq.ft' },
                   { 'title': 'Available Area in Terrace.Sqmtr:', 'description': '1256 sq.ft' },
@@ -169,7 +169,7 @@ const SolarEnquiryView = ({ closeAction }) => {
                 ]}
               />
               <EnquiryInfoCard
-                title={"Power details"}
+                title={'Power details'}
                 listData={[
                   { 'title': 'Capacity required KWP:', 'description': '65 KW' },
                   { 'title': 'Feasible capacity KWP:', 'description': '45 KW' },
@@ -182,7 +182,7 @@ const SolarEnquiryView = ({ closeAction }) => {
         </Grid>
         <Grid item xs={6}>
           <EnquiryInfoCard
-            title={"Building details"}
+            title={'Building details'}
             listData={[
               { 'title': 'Office room terrace area:', 'description': '651 sq.ft' },
               { 'title': 'Available Area in Terrace.Sqmtr:', 'description': '1256 sq.ft' },
@@ -193,7 +193,7 @@ const SolarEnquiryView = ({ closeAction }) => {
         </Grid>
         <Grid item xs={6}>
           <EnquiryInfoCard
-            title={"Power details"}
+            title={'Power details'}
             listData={[
               { 'title': 'Capacity required KWP:', 'description': '65 KW' },
               { 'title': 'Feasible capacity KWP:', 'description': '45 KW' },
@@ -205,13 +205,13 @@ const SolarEnquiryView = ({ closeAction }) => {
 
         <Grid item xs={6}>
           <PhotoCard
-            title={"Photos of office building with direction indicator"}
+            title={'Photos of office building with direction indicator'}
             photos={photoData}
           />
         </Grid>
         <Grid item xs={6}>
           <PhotoCard
-            title={"Photos of office building with direction indicator"}
+            title={'Photos of office building with direction indicator'}
             photos={photoData}
           />
         </Grid>

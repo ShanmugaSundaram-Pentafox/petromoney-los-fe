@@ -1,5 +1,5 @@
-import { AES } from "crypto-es/lib/aes.js";
-import { Utf8 } from "crypto-es/lib/core";
+import { AES } from 'crypto-es/lib/aes.js';
+import { Utf8 } from 'crypto-es/lib/core';
 // import CryptoJS from "crypto-js";
 const panRegx = new RegExp(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/)
 const gstRegex = new RegExp(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/)

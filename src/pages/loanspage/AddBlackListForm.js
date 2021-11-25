@@ -1,20 +1,18 @@
-import React, { useState, useEffect } from 'react';
 import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import Button from '../../components/CommonComponents/Button/Button';
-import Typography from "@material-ui/core/Typography"
 import Divider from '@material-ui/core/Divider';
-import clsx from 'clsx';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography'
 import CloseIcon from '@material-ui/icons/Close';
-import { makeStyles } from "@material-ui/styles";
-import { useMount } from 'react-use';
-import { addNewRemarks, AddNewRemarks, getAllWithheldRemarks, updateRemarks } from '../../services/withheld.services';
-import CreatableSelect from 'react-select/creatable';
-import Select from 'react-select';
-import AsyncSelect from 'react-select/async';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
-import apiCall from '../../utils/api.util';
+import React, { useState } from 'react';
+import AsyncSelect from 'react-select/async';
+import CreatableSelect from 'react-select/creatable';
+import { useMount } from 'react-use';
+import Button from '../../components/CommonComponents/Button/Button';
 import { getDealershipForSearch } from '../../services/common.service';
+import { addNewRemarks, getAllWithheldRemarks, updateRemarks } from '../../services/withheld.services';
 
 
 
@@ -125,7 +123,7 @@ const AddBlackListForm = ({ data, callback }) => {
   };
   const handleSave = () => {
     const res = value ? value : newRemarks;
-    if (typeof res === "number") {
+    if (typeof res === 'number') {
       updateRemarks(dealerID, res)
         .then(res => {
           enqueueSnackbar(res, {
@@ -139,8 +137,8 @@ const AddBlackListForm = ({ data, callback }) => {
           setTimeout(() => {
             window.location.reload()
           }, 1500);
-          setNewRemarks("")
-          setValue("")
+          setNewRemarks('')
+          setValue('')
         })
         .catch(err => {
           console.log(err)
@@ -166,8 +164,8 @@ const AddBlackListForm = ({ data, callback }) => {
             variant: 'success',
           }
           )
-          setNewRemarks("")
-          setValue("")
+          setNewRemarks('')
+          setValue('')
           setTimeout(() => {
             window.location.reload()
           }, 1500);

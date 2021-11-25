@@ -1,11 +1,11 @@
+import { Drawer } from '@material-ui/core';
 import React, { useState } from 'react';
 // import FormDialog from '../CommonComponents/FormDialog/FormDialog';
-import AddNewUserForm from './AddNewUserForm';
-import Button from '../CommonComponents/Button/Button';
-import { getAllUsers } from '../../services/users.service';
 import { useDispatch } from 'react-redux';
+import AddNewUserForm from './AddNewUserForm';
+import { getAllUsers } from '../../services/users.service';
 import { setAllUsers } from '../../store/dashboard/dashboard.actions';
-import { Drawer } from "@material-ui/core";
+import Button from '../CommonComponents/Button/Button';
 
 
 const AddNewUserAction = () => {

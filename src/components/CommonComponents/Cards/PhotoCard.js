@@ -1,7 +1,7 @@
-import React, { Fragment } from "react";
 import PropTypes from 'prop-types';
-import styled from "styled-components";
-import { InfoBoxStyle } from "../../../theme/styled-components/utils";
+import React, { Fragment } from 'react';
+import styled from 'styled-components';
+import { InfoBoxStyle } from '../../../theme/styled-components/utils';
 
 export const PhotoCardCardWrapper = styled(InfoBoxStyle)`
     padding: 32px;
@@ -70,48 +70,48 @@ export const PhotoCardCardWrapper = styled(InfoBoxStyle)`
 `;
 
 const PhotoCard = ({
-    title="",
-    photos= []
+  title='',
+  photos= []
 }) => {
 
-    const renderPhotos = (photos) => {
-        if (photos.length > 5) {
-            photos.splice(5, photos.length);
-        }
+  const renderPhotos = (photos) => {
+    if (photos.length > 5) {
+      photos.splice(5, photos.length);
+    }
     
-        return photos.map((photo, index) => {
-          return (
-            <Fragment key={index}>
-                <span style={{backgroundImage: `url(${photo})`}}></span>
-            </Fragment>
-          );
-        });
-    };
+    return photos.map((photo, index) => {
+      return (
+        <Fragment key={index}>
+          <span style={{backgroundImage: `url(${photo})`}}></span>
+        </Fragment>
+      );
+    });
+  };
 
-    return (
-        <PhotoCardCardWrapper>
-            <p className="title">{title}</p>
+  return (
+    <PhotoCardCardWrapper>
+      <p className="title">{title}</p>
 
-            <div className="photo-wrap">
-                <figure 
-                    style={{backgroundImage: `url('https://bit.ly/2SB6BEy')`}}
-                    className="main-photo"
-                />
+      <div className="photo-wrap">
+        <figure 
+          style={{backgroundImage: 'url(\'https://bit.ly/2SB6BEy\')'}}
+          className="main-photo"
+        />
 
-                <div className="photo-list">
-                    {photos && photos.length ? (
-                        renderPhotos(photos)
-                    ) : (
-                    <div />
-                    )}
-                </div>
-            </div>
-        </PhotoCardCardWrapper>
-    );
+        <div className="photo-list">
+          {photos && photos.length ? (
+            renderPhotos(photos)
+          ) : (
+            <div />
+          )}
+        </div>
+      </div>
+    </PhotoCardCardWrapper>
+  );
 };
 
 PhotoCard.propTypes = {
-    title: PropTypes.string,
+  title: PropTypes.string,
 };
 
 export default PhotoCard;

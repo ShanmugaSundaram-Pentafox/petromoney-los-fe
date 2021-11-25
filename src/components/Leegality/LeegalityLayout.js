@@ -1,30 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
+import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
+import Chip from '@material-ui/core/Chip';
 import Grid from '@material-ui/core/Grid';
+import Popover from '@material-ui/core/Popover';
+import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
-import TableContainer from '@material-ui/core/TableContainer';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
 import TableRow from '@material-ui/core/TableRow';
-import Button from '@material-ui/core/Button';
-import Avatar from '@material-ui/core/Avatar';
-import Chip from '@material-ui/core/Chip';
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
-import styled from 'styled-components';
-import moment from 'moment';
-import ActivityBox from './components/ActivityBox';
 import CheckCircleOutlineRoundedIcon from '@material-ui/icons/CheckCircleOutlineRounded';
-import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
-import PdfViewer from '../CommonComponents/PdfViewer/PdfViewer';
-import apiCall from '../../utils/api.util';
-import { useSnackbar } from 'notistack';
-import { DockTwoTone } from '@material-ui/icons';
-import SettingsIcon from '@material-ui/icons/Settings';
-import Popover from '@material-ui/core/Popover';
 import DeleteIcon from '@material-ui/icons/Delete';
+import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
 import LinkIcon from '@material-ui/icons/Link';
-import { Typography } from '@material-ui/core';
+import SettingsIcon from '@material-ui/icons/Settings';
+import moment from 'moment';
+import { useSnackbar } from 'notistack';
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import ActivityBox from './components/ActivityBox';
+import apiCall from '../../utils/api.util';
+import PdfViewer from '../CommonComponents/PdfViewer/PdfViewer';
 
 
 const Card = styled.div`
@@ -88,7 +87,7 @@ const LeegalityLayout = ({ docId }) => {
 
     apiCall(`document/details/${docId}`)
       .then(res => {
-        if (res.status === "SUCCESS") {
+        if (res.status === 'SUCCESS') {
           if (res.data?.status) {
             setDocDetails(res?.data?.data)
           }
@@ -102,7 +101,7 @@ const LeegalityLayout = ({ docId }) => {
 
     apiCall(`document/trail/${docId}`)
       .then(res => {
-        if (res.status === "SUCCESS") {
+        if (res.status === 'SUCCESS') {
           if (res.data?.status) {
             setAuditTrails(res?.data?.data.auditTrails)
           }
@@ -116,10 +115,10 @@ const LeegalityLayout = ({ docId }) => {
   }, [])
 
   const ResendNotification = (signUrl) => {
-    apiCall(`document/resend`, {
+    apiCall('document/resend', {
 
-      method: "POST",
-      body: { "sign_url": signUrl },
+      method: 'POST',
+      body: { 'sign_url': signUrl },
     })
       .then(res => {
         enqueueSnackbar(res.message, {
@@ -143,7 +142,7 @@ const LeegalityLayout = ({ docId }) => {
       .then(res => {
         apiCall(`document/details/${docId}`)
           .then(res => {
-            if (res.status === "SUCCESS") {
+            if (res.status === 'SUCCESS') {
               if (res.data?.status) {
                 setDocDetails(res?.data?.data)
               }
@@ -181,7 +180,7 @@ const LeegalityLayout = ({ docId }) => {
                   </TableRow>
                   <TableRow>
                     <TableCell>Last Active Date</TableCell>
-                    <TableCell>{docDetails?.creationDate && moment(docDetails?.creationDate?.split(" ")[0], "DD-MM-YYYY").format('MMM DD, YYYY')}</TableCell>
+                    <TableCell>{docDetails?.creationDate && moment(docDetails?.creationDate?.split(' ')[0], 'DD-MM-YYYY').format('MMM DD, YYYY')}</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>Status</TableCell>

@@ -1,12 +1,12 @@
-import { URL } from "../config/serverUrls";
-import apiCall from "../utils/api.util";
-import { cryptoDecrypt, decrypt } from "./crypto.service";
+import { decrypt } from './crypto.service';
+import { URL } from '../config/serverUrls';
+import apiCall from '../utils/api.util';
 
 export const getDealersByDealershipId = id => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.dealers}/${id}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           const result = data.map(item => ({
             ...item,
             pan: item?.pan ? decrypt(item.pan) : item.pan,
@@ -28,7 +28,7 @@ export const getCoApplicantByDealershipId = id => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.coApplicants}/${id}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           const result = data.map(item => ({
             ...item,
             pan: item?.pan ? decrypt(item.pan) : item.pan,
@@ -49,7 +49,7 @@ export const getAllApplicantsByDealershipId = id => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.applicants}/${id}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
         } else {
           reject(message);
@@ -65,7 +65,7 @@ export const getDealerInfoById = (dealershipId, dealerId) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.dealers}/${dealershipId}/${dealerId}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
         } else {
           reject(message);
@@ -103,9 +103,9 @@ export const getDealersWithCoapplicants = dealershipId => {
 }
 export const getDealerDetails = () => {
   return new Promise((resolve, reject) => {
-    apiCall(`loan/report`)
+    apiCall('loan/report')
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
 
         } else {
@@ -121,7 +121,7 @@ export const getDealerTransportsList = () => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.vehicleInfo}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
 
         } else {
@@ -137,7 +137,7 @@ export const deleteProfileDoc = (data, dealership_id, dealer_id, type) => {
   let apiURL = type === 'DEALER' ? 'dealers' : type === 'COAPPLICANT' ? 'coapplicants': 'guarantors'
   return new Promise((resolve, reject) => {
     apiCall(`${apiURL}/${dealer_id}/${dealership_id}`, {
-      method: "DELETE",
+      method: 'DELETE',
       body: data
 
     })

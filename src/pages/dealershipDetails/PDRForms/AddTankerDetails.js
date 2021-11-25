@@ -1,22 +1,17 @@
-import React, { useState } from 'react';
-import TextInput from '../../../components/TextInput/TextInput';
-import Button from '../../../components/CommonComponents/Button/Button';
-import { useFormik } from 'formik';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import clsx from 'clsx';
-import { makeStyles } from "@material-ui/styles";
-import { useSnackbar } from 'notistack';
-import { addNewTanker, deleteTanker, getTankersById, updateTankerByID } from '../../../services/PDReport.services';
-import { useMount } from 'react-use';
-import PreviewCard from '../../../components/CommonComponents/Cards/PreviewCard';
 import { Grid, Paper, Typography } from '@material-ui/core';
-import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
+import { useFormik } from 'formik';
+import { useSnackbar } from 'notistack';
+import React, { useState } from 'react';
+import { useMount } from 'react-use';
 import * as Yup from 'yup';
+import Button from '../../../components/CommonComponents/Button/Button';
+import PreviewCard from '../../../components/CommonComponents/Cards/PreviewCard';
+import { ViewData } from '../../../components/CommonComponents/FilePreview';
+import TextInput from '../../../components/TextInput/TextInput';
+import { addNewTanker, deleteTanker, getTankersById, updateTankerByID } from '../../../services/PDReport.services';
 
 const useStyles = makeStyles((theme) => ({
   table: {
@@ -69,17 +64,17 @@ const useStyles = makeStyles((theme) => ({
   },
   number: {
     backgroundColor: 'white',
-    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
-        "-webkit-appearance": "none",
-        margin: 0,
+    '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+      '-webkit-appearance': 'none',
+      margin: 0,
     }
-},
-input: {
-    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
-        "-webkit-appearance": "none",
-        margin: 0,
+  },
+  input: {
+    '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+      '-webkit-appearance': 'none',
+      margin: 0,
     }
-}
+  }
 }))
 
 
@@ -90,7 +85,7 @@ const AddTankerDetails = ({ dealer_id, tankerAdd, setTankerAdd }) => {
   // const [addNewRow, setAddNewRow] = useState();
   const [editRow, setEditRow] = useState({});
   const { enqueueSnackbar } = useSnackbar();
-  const [opHours, setOpHours] = useState([{ id: 12, name: "12 hours" }, { id: 24, name: "24 hours" }])
+  const [opHours, setOpHours] = useState([{ id: 12, name: '12 hours' }, { id: 24, name: '24 hours' }])
   const classes = useStyles()
 
   useMount(() => {
@@ -209,7 +204,7 @@ const AddTankerDetails = ({ dealer_id, tankerAdd, setTankerAdd }) => {
                     onChange={handleChange}
                     disabled={edit}
                     error={errors.vehicle_no}
-                    helperText={edit ? "Cannot edit vehicle number" : errors.vehicle_no}
+                    helperText={edit ? 'Cannot edit vehicle number' : errors.vehicle_no}
                   />
                 </Grid>
                 <Grid item md={6}>

@@ -1,26 +1,25 @@
-import React, { useState, Fragment } from 'react';
 // import { Link } from 'react-router-dom';
 // import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
-import Snackbar from '@material-ui/core/Snackbar';
-import Alert from '@material-ui/lab/Alert';
-import TextField from '@material-ui/core/TextField';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Container from '@material-ui/core/Container';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormGroup from '@material-ui/core/FormGroup';
+import Grid from '@material-ui/core/Grid';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Snackbar from '@material-ui/core/Snackbar';
 // import Checkbox from '@material-ui/core/Checkbox';
 // import StyledLink from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
 // import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+import Alert from '@material-ui/lab/Alert';
 import { useFormik } from 'formik';
+import React, { useState, Fragment } from 'react';
 import * as Yup from 'yup';
-import { API } from '../../config/api';
 import apiCall from '../../utils/api.util';
 
 const useStyles = makeStyles(theme => ({
@@ -36,7 +35,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     boxShadow: '0 15px 0 -25px rgba(63,63,68,0.1), 0 1px 16px 0 rgba(63,63,68,0.15)',
     padding: theme.spacing(3),
-    background: "white"
+    background: 'white'
   },
   paper: {
     // marginTop: theme.spacing(8),
@@ -50,9 +49,9 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.secondary.main,
   },
   logoWrapper: {
-    background: "white",
+    background: 'white',
     padding: '16px',
-    marginTop: `-100px`,
+    marginTop: '-100px',
     borderRadius: 68
   },
   form: {
@@ -78,7 +77,7 @@ const useStyles = makeStyles(theme => ({
   },
   question: {
     marginBottom: 4,
-    color: "#000"
+    color: '#000'
   }
 }));
 
@@ -119,7 +118,7 @@ const textStyles = {
 
 const InputField = withStyles(textStyles)(({ money, ...props}) => (
   <TextField
-    type={money ? "number" : "text"}
+    type={money ? 'number' : 'text'}
     variant="outlined"
     margin="normal"
     size="medium"
@@ -148,7 +147,7 @@ const GridText = ({ className, label, value, variant='h5', variantLabel='span' }
     </Grid>
     <Grid item xs={6}>
       <Typography className={className} component="div" variant={variant}>
-      {value}
+        {value}
       </Typography>
     </Grid>
   </Grid>
@@ -161,7 +160,7 @@ const Survey = (props) => {
   // const [vehiclesInfo, setVehiclesInfo] = useState([]);
   const validationSchema = Yup.object().shape({
     transporter: Yup.number().min(8).required('Enter Tranporter Code'),
-    able_to_reach_dealer: Yup.string().required("Choose anything"),
+    able_to_reach_dealer: Yup.string().required('Choose anything'),
     dealer_code: Yup.string(),
     total_vehicle_ins_premium_yr_for_tankers: Yup.number(),
     total_vehicle_ins_premium_yr_for_personal_vehicles: Yup.number(),
@@ -198,7 +197,7 @@ const Survey = (props) => {
       // console.log('Form Values >> ', values);
       if (values.hp) return null;
 
-      if (values.able_to_reach_dealer === "Yes") {
+      if (values.able_to_reach_dealer === 'Yes') {
         if (values.dealer_code === '') {
           setApiStatus({ show: true, type: 'error', message: 'Please Enter Dealer Code'});
           return null;
@@ -215,11 +214,11 @@ const Survey = (props) => {
       
       setSubmitting(true);
       // const url = `https://script.google.com/macros/s/AKfycbyPfjvkTdy9vODrRhIBmUaTIbU96fak3gYH7ASr4jd_w734yoI/exec`;
-      const url = `https://script.google.com/macros/s/AKfycbxbl1ml_p4fQ5y2JYt8YLCKBBnWs7HyMUpC38W9Y271619TmppP/exec`;
+      const url = 'https://script.google.com/macros/s/AKfycbxbl1ml_p4fQ5y2JYt8YLCKBBnWs7HyMUpC38W9Y271619TmppP/exec';
       const xhr = new XMLHttpRequest();
       xhr.open('POST', url);
       // xhr.withCredentials = true;
-      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
       xhr.onreadystatechange = function() {
         setSubmitting(false)
         if (xhr.readyState === 4 && xhr.status === 200) {
@@ -231,7 +230,7 @@ const Survey = (props) => {
       };
       // url encode form data for sending as post data
       var encoded = Object.keys(values).map(function(k) {
-          return encodeURIComponent(k) + "=" + encodeURIComponent(values[k]);
+        return encodeURIComponent(k) + '=' + encodeURIComponent(values[k]);
       }).join('&');
       
       xhr.send(encoded);
@@ -257,16 +256,16 @@ const Survey = (props) => {
     //     }
     //   })
     apiCall(`temp/transporter/info/${values.transporter}`)
-    .then(({ status, data: { data } }) => {
-      console.log('>>', status, data)
-      if(Array.isArray(data) && data[0]) {
-        setTransporterInfo(data[0])
+      .then(({ status, data: { data } }) => {
+        console.log('>>', status, data)
+        if(Array.isArray(data) && data[0]) {
+          setTransporterInfo(data[0])
         // return API.get(`transporters/${values.transporter}/vehicles`);
-      } else {
-        setApiStatus({ show: true, type: 'error', message: 'Transporter Code not found!'});
-        return { data: null };
-      }
-    })
+        } else {
+          setApiStatus({ show: true, type: 'error', message: 'Transporter Code not found!'});
+          return { data: null };
+        }
+      })
       // .then(({ data }) => {
       //   if(data === null) {
 
@@ -365,7 +364,7 @@ const Survey = (props) => {
             </div>
 
             {
-              values.able_to_reach_dealer === "Yes" ? (
+              values.able_to_reach_dealer === 'Yes' ? (
                 <Fragment>
 
                   <div className={classes.inputGroup}>
@@ -523,7 +522,7 @@ const Survey = (props) => {
               value={values.hp}
               onChange={handleChange}
               name="hp"
-              style={{ display: "none" }}
+              style={{ display: 'none' }}
             />
             
             <Button
@@ -533,7 +532,7 @@ const Survey = (props) => {
               className={classes.submit}
               disabled={isSubmitting}
             >
-              {isSubmitting ? `Please wait...` : `Submit`}
+              {isSubmitting ? 'Please wait...' : 'Submit'}
             </Button>
             {
               isSubmitting && <CircularProgress />

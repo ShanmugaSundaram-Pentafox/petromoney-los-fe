@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from 'styled-components'
 
 export const ChartCardContainer = styled.div`
 `;
@@ -21,7 +21,7 @@ export const ChartWrapper = styled.div`
 `;
 
 export const ChartBlock = styled.div`
-  min-width: ${props => props.verticalLabels ? `70%` : `50%`};
+  min-width: ${props => props.verticalLabels ? '70%' : '50%'};
   text-align: center;
 `;
 
@@ -72,7 +72,7 @@ export const ChartLabelWrapper = styled.div`
 
 export const ChartLabelsBlock = styled.div`
   /* display: flex; */
-  flex-direction: ${props => props.vertical ? `column` : `row`};
+  flex-direction: ${props => props.vertical ? 'column' : 'row'};
   /* flex-wrap: wrap;
   justify-content: space-around; */
 `;

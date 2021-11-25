@@ -1,41 +1,33 @@
+import Box from '@material-ui/core/Box';
+import Drawer from '@material-ui/core/Drawer';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 // import { Link as RouterLink } from 'react-router-dom';
 // import moment from 'moment';
 // import clsx from 'clsx';
-import { connect } from 'react-redux';
-import { makeStyles } from '@material-ui/styles';
 // import MUIDataTable from "mui-datatables";
-import Grid from '@material-ui/core/Grid';
-import { selectAllLoans } from '../../../store/loans/loans.selector';
-import { setAllLoans } from '../../../store/loans/loans.actions';
-// import Currency from '../../../components/Number/Currency';
-import Drawer from '@material-ui/core/Drawer';
-import Paper from '@material-ui/core/Paper';
-import Box from '@material-ui/core/Box';
-import { getDealershipById } from '../../../services/dealerships.service';
 import DealershipDetails from './DealershipDetails';
-import SubmittedTable from '../../../components/Tables/SubmittedTable';
+// import Currency from '../../../components/Number/Currency';
 import ApprovalReqestTable from '../../../components/Tables/ApprovalReqestTable';
-import DisbursementReqestTable from '../../../components/Tables/DisbursementReqestTable';
-import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
-import { rulesList } from '../../../config/userRules';
-import DisbursementApprovedTable from '../../../components/Tables/DisbursementApprovedTable';
 import ApprovedTable from '../../../components/Tables/ApprovedTable';
+import DisbursedTable from '../../../components/Tables/DisbursedTable';
+import DisbursementApprovedTable from '../../../components/Tables/DisbursementApprovedTable';
+import DisbursementReqestTable from '../../../components/Tables/DisbursementReqestTable';
+// import DueTable from '';
+import DueTable from '../../../components/Tables/DueTable';
+import OverDueTable from '../../../components/Tables/OverDueTable';
 import RejectedTable from '../../../components/Tables/RejectedTable';
 import ReviewerTable from '../../../components/Tables/ReviewTable';
-import DisbursedTable from '../../../components/Tables/DisbursedTable';
-// import DueTable from '';
-import OverDueTable from '../../../components/Tables/OverDueTable';
-import DueTable from '../../../components/Tables/DueTable';
-import Typography from '@material-ui/core/Typography';
-import Modal from '@material-ui/core/Modal';
-import Backdrop from '@material-ui/core/Backdrop';
-import { getDealerDetails } from '../../../services/dealers.service';
-import Currency from '../../../components/Number/Currency';
-import Button from '../../../components/CommonComponents/Button/Button';
-import { BorderColor } from '@material-ui/icons';
-import Moment from 'moment';
+import SubmittedTable from '../../../components/Tables/SubmittedTable';
+import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
+import { getDealershipById } from '../../../services/dealerships.service';
+import { setAllLoans } from '../../../store/loans/loans.actions';
+import { selectAllLoans } from '../../../store/loans/loans.selector';
 
 
 
@@ -60,7 +52,7 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 400,
     fontSize: 18,
     padding: 8,
-    backgroundColor: "#a6b1e1"
+    backgroundColor: '#a6b1e1'
   },
   cardItem: {
     padding: '14px 12px',
@@ -137,7 +129,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value, filterQry }) =
   const classes = useStyles();
   const [showPanel, setShowPanel] = useState({
     status: false,
-    data: ""
+    data: ''
   });
   const [dealershipData, setDealershipData] = useState();
   const [modalData, setModalData] = useState({});
@@ -174,74 +166,74 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value, filterQry }) =
         yes={() => (
           <Grid container spacing={2}>
             {
-              value === "Pending Approval" ? (
+              value === 'Pending Approval' ? (
                 <Grid item md={12}>
                   <Paper className={classes.tableContainer}>
-                    <ApprovalReqestTable title={"Pending for Initial Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                    <ApprovalReqestTable title={'Pending for Initial Approval'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
               ) : null
             }
             {
-              value === "Pending Review" ? (
+              value === 'Pending Review' ? (
                 <Grid item md={12}>
                   <Paper className={classes.tableContainer}>
-                    <ReviewerTable title={"Pending for Review"} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                    <ReviewerTable title={'Pending for Review'} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
               ) : null
             }
             {
-              value === "Disb. Approval" ? (
+              value === 'Disb. Approval' ? (
                 <Grid item md={12}>
                   <Paper className={classes.tableContainer}>
-                    <DisbursementReqestTable title={"Pending for Disbursement Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                    <DisbursementReqestTable title={'Pending for Disbursement Approval'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
               ) : null
             }
             {
-              value === "Submitted" ? (
+              value === 'Submitted' ? (
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
-                    <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                    <SubmittedTable title={'Submitted Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
               ) : null
             }
             {
-              value === "Approved" ? (
+              value === 'Approved' ? (
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
-                    <ApprovedTable title={"Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                    <ApprovedTable title={'Approved Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
 
               ) : null
             }
             {
-              value === "Rejected" ? (
+              value === 'Rejected' ? (
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
-                    <RejectedTable title={"Rejected Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                    <RejectedTable title={'Rejected Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
               ) : null
             }
             {
-              value === "Disbursed" ? (
+              value === 'Disbursed' ? (
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
-                    <DisbursedTable title={"Disbursed Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                    <DisbursedTable title={'Disbursed Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
               ) : null
             }
             {
-              value === "Disb. Approved" ? (
+              value === 'Disb. Approved' ? (
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
-                    <DisbursementApprovedTable title={"Disbursement Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                    <DisbursementApprovedTable title={'Disbursement Approved Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
               ) : null
@@ -249,7 +241,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value, filterQry }) =
           </Grid>
         )}
         no={() => (
-          currentUser.role_name === "DEALER" ? (
+          currentUser.role_name === 'DEALER' ? (
             <>
               <DueTable onRowClick={showReportsInfo} />
               <OverDueTable onRowClick={showReportsInfo} />
@@ -258,7 +250,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value, filterQry }) =
           ) : (
             <>
               <Paper className={classes.tableContainer}>
-                <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                <SubmittedTable title={'Submitted Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} />
               </Paper>
             </>)
         )}
@@ -270,7 +262,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value, filterQry }) =
           onBackdropClick: () => { setShowPanel({ status: false }) }
         }}
         open={showPanel.status}
-        variant={"temporary"}
+        variant={'temporary'}
       >
         <div className={classes.sidePanelWrapper}>
           <DealershipDetails

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from 'prop-types';
-import styled from "styled-components";
-import AttachFileIcon from '@material-ui/icons/AttachFile';
-import CancelRoundedIcon from '@material-ui/icons/CancelRounded';
+import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
+import AttachFileIcon from '@material-ui/icons/AttachFile';
+import CancelRoundedIcon from '@material-ui/icons/CancelRounded';
+import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
 
 const FileInputWrapper = styled.div`
   position: relative;
@@ -154,8 +154,8 @@ function CircularProgressWithLabel(props) {
 }
 
 export const FileInput = ({
-  uploadFileButtonName = "Attach",
-  uploadFileButtonCaption = "Photos of Roof Space with Direction Indicator",
+  uploadFileButtonName = 'Attach',
+  uploadFileButtonCaption = 'Photos of Roof Space with Direction Indicator',
   maxNoPhotos = 5
 }) => {
   const [progress, setProgress] = useState(10);
@@ -174,8 +174,8 @@ export const FileInput = ({
   return (
     <FileInputWrapper>
       <div className="upload-file-wrapper">
-        <div class="upload-file-btn">
-          <input type="file" class="file-input" onChange={e => {  }} />
+        <div className="upload-file-btn">
+          <input type="file" className="file-input" onChange={e => {  }} />
 
           <span>{uploadFileButtonName}</span>
           <AttachFileIcon className="attach-file-icon" />

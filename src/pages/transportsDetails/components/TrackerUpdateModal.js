@@ -1,21 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import Box from '@material-ui/core/Box'
+import Button from '@material-ui/core/Button'
+import Grid from '@material-ui/core/Grid'
+import Typography from '@material-ui/core/Typography'
 import { Formik } from 'formik';
-import * as Yup from 'yup';
-import Box from "@material-ui/core/Box"
-import Grid from "@material-ui/core/Grid"
-import Button from "@material-ui/core/Button"
-import Typography from "@material-ui/core/Typography"
-import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
-import TextInput from '../../../components/TextInput/TextInput';
-import FileUpload from '../../../components/FileUpload';
-import { updateVehicleServiceDetails } from '../../../services/transports.service';
-import { URL } from '../../../config/serverUrls';
 import { useSnackbar } from 'notistack';
-import apiCall from '../../../utils/api.util';
+import React, { useState, useEffect } from 'react';
+import * as Yup from 'yup';
+import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
+import FileUpload from '../../../components/FileUpload';
+import TextInput from '../../../components/TextInput/TextInput';
+import { URL } from '../../../config/serverUrls';
+import { updateVehicleServiceDetails } from '../../../services/transports.service';
 
 
 const inputProps = {
-  direction: "column",
+  direction: 'column',
   alignTop: true,
 }
 
@@ -42,8 +41,8 @@ const TrackerUpdateModal = ({ id, currentUser, statusId, onClose, data, serviceD
     const formData = new FormData();
     const dealerShipId = id;
     files.map(file => {
-      formData.append(`file`, file);
-      formData.append(`document_id`, 18);
+      formData.append('file', file);
+      formData.append('document_id', 18);
     });
     fetch(`${URL.base}transporter/${id}/vehicle/${serviceData.vehicle_id}/docs`, {
       method: 'POST',
@@ -56,9 +55,9 @@ const TrackerUpdateModal = ({ id, currentUser, statusId, onClose, data, serviceD
         return res.json()
       })
       .then(res => {
-        enqueueSnackbar('File Upload Success', { variant: "success" });
+        enqueueSnackbar('File Upload Success', { variant: 'success' });
         // fileUrl.concat(res.file_url.split(" "))
-        updateVehicleServiceDetails(id, serviceData.vehicle_id, serviceData.credit_head_id, { status_id: status, details: { file_url: res?.file_url?.split(" ") } }, serviceData.loan_id)
+        updateVehicleServiceDetails(id, serviceData.vehicle_id, serviceData.credit_head_id, { status_id: status, details: { file_url: res?.file_url?.split(' ') } }, serviceData.loan_id)
           .then(res => {
             console.log('postServiceStatus >> ', res);
             window.location.reload(false);
@@ -70,7 +69,7 @@ const TrackerUpdateModal = ({ id, currentUser, statusId, onClose, data, serviceD
         onCloseUploader();
       })
       .catch(error => {
-        enqueueSnackbar('File Upload Failed', { variant: "error" });
+        enqueueSnackbar('File Upload Failed', { variant: 'error' });
 
       })
   };
@@ -125,7 +124,7 @@ const TrackerUpdateModal = ({ id, currentUser, statusId, onClose, data, serviceD
   }
 
   if (status === 2) {
-    const d = JSON.parse(serviceData?.tracking_details?.[1]?.details || "{}");
+    const d = JSON.parse(serviceData?.tracking_details?.[1]?.details || '{}');
 
     const _vSchema = Yup.object().shape({
       amount: Yup.number().required('Enter Amount').nullable('Enter Amount'),
@@ -227,7 +226,7 @@ const TrackerUpdateModal = ({ id, currentUser, statusId, onClose, data, serviceD
   }
 
   if (status === 4) {
-    const d = JSON.parse(serviceData?.tracking_details?.[3]?.details || "{}");
+    const d = JSON.parse(serviceData?.tracking_details?.[3]?.details || '{}');
     const _vSchema = Yup.object().shape({
       tag_number: Yup.string().required('Enter tag number').nullable('Enter tag number'),
     });
@@ -323,7 +322,7 @@ const TrackerUpdateModal = ({ id, currentUser, statusId, onClose, data, serviceD
   //   )
   // }
   if (status === 5) {
-    const d = JSON.parse((serviceData?.tracking_details?.[4]?.details || "{}").replace(/\'/g, '\"'));
+    const d = JSON.parse((serviceData?.tracking_details?.[4]?.details || '{}').replace(/\'/g, '\"'));
     return (
       <div style={{ minWidth: '40vw' }}>
         <FileUpload handleSave={handleSave} id={id} data={rowData} open={showUpload} onCloseUploader={onCloseUploader} initialFiles={d.file_url || []} />

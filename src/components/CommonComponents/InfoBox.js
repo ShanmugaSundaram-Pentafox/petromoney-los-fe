@@ -1,7 +1,7 @@
-import React from "react";
-import PropTypes from 'prop-types';
-import styled, { css } from "styled-components";
 import ChevronRightRoundedIcon from '@material-ui/icons/ChevronRightRounded';
+import PropTypes from 'prop-types';
+import React from 'react';
+import styled, { css } from 'styled-components';
 
 export const InfoBoxContainer = styled.div`
     display: flex;
@@ -111,28 +111,28 @@ const InfoBoxCard = styled.div`
 `;
 
 export const InfoBox = ({
-    number= "",
-    title= "",
-    text= "",
-    active,
-    action= () => {},
+  number= '',
+  title= '',
+  text= '',
+  active,
+  action= () => {},
 }) => {
-    return (
-        <InfoBoxCard active={active} onClick={action}>
-            {number ? <i>{number}</i> : <i><ChevronRightRoundedIcon  /></i>}
-            <p>
-                {title ? <span className="title">{title}</span> : null}
-                {text ? <span className="txt">{text}</span> : null}
-            </p>
-        </InfoBoxCard>
-    );
+  return (
+    <InfoBoxCard active={active} onClick={action}>
+      {number ? <i>{number}</i> : <i><ChevronRightRoundedIcon  /></i>}
+      <p>
+        {title ? <span className="title">{title}</span> : null}
+        {text ? <span className="txt">{text}</span> : null}
+      </p>
+    </InfoBoxCard>
+  );
 };
 
 InfoBox.propTypes = {
-    number: PropTypes.number.isRequired,
-    title: PropTypes.string.isRequired,
-    text: PropTypes.string.isRequired,
-    action: PropTypes.func
+  number: PropTypes.number.isRequired,
+  title: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+  action: PropTypes.func
 };
 
 export default InfoBox;

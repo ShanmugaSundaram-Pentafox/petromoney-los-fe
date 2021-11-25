@@ -1,7 +1,7 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/styles';
 import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from 'mui-datatables';
+import React from 'react';
 
 const useStyles = makeStyles(theme => ({
   root: {

@@ -1,45 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
+import { Select as MSelect } from '@material-ui/core';
+import { Checkbox, Chip, CircularProgress, Dialog, DialogActions, DialogContent, FormControlLabel, FormGroup, Tooltip } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import DialogContentText from '@material-ui/core/DialogContentText';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
-import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
-import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
-import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
-import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';
 import IconButton from '@material-ui/core/IconButton';
-import styled from 'styled-components'
-import Typography from '@material-ui/core/Typography';
 import Table from '@material-ui/core/Table';
-import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
-import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
-import { Select as MSelect } from '@material-ui/core';
-import Currency from '../../../components/Number/Currency';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Typography from '@material-ui/core/Typography';
+import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';
+import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
+import CloseIcon from '@material-ui/icons/CloseRounded';
+import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
+import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
+import Alert from '@material-ui/lab/Alert';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
+import { useSnackbar } from 'notistack';
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import { Link as RouterLink } from 'react-router-dom';
+import Select from 'react-select';
+import { useMount } from 'react-use';
+import { createStructuredSelector } from 'reselect';
+import styled from 'styled-components'
+import DispApprovedDataTable from './DispApprovedDataTable';
 import SalesInfo from './SalesInfo';
+import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
+import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
 import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-import { selectCurrentUser } from '../../../store/user/user.selector';
-import { createStructuredSelector } from 'reselect';
-import { getLoanById, getLoanRejectReason, getLoansByStatus, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
-import Alert from '@material-ui/lab/Alert';
-import DispApprovedDataTable from './DispApprovedDataTable';
-import apiCall from '../../../utils/api.util';
-import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
-import { useSnackbar } from 'notistack';
-// import CloseIcon from '@material-ui/icons/Close';
-import CloseIcon from '@material-ui/icons/CloseRounded';
-import { Checkbox, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, FormGroup, Tooltip } from '@material-ui/core';
 import { getAllRegion, getUserRoleForReview } from '../../../services/common.service';
-import { useMount } from 'react-use';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import Select from 'react-select';
-import { green } from '@material-ui/core/colors';
+import { getLoanById, getLoanRejectReason, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
+import { selectCurrentUser } from '../../../store/user/user.selector';
+import apiCall from '../../../utils/api.util';
+// import CloseIcon from '@material-ui/icons/Close';
 
 // import Button from '../../../components/CommonComponents/Button/Button'
 
@@ -160,7 +159,7 @@ const useStyles = makeStyles(theme => ({
   },
   actions2: {
     marginTop: 15,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: '#f5f5f5',
     padding: 10,
     borderRadius: 5,
   },
@@ -203,19 +202,19 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 const fieldProps = {
-  direction: "column",
+  direction: 'column',
   alignTop: true,
 }
 
 const testProducts = [
   {
     product_id: 1,
-    product_name: "FUEL 18",
+    product_name: 'FUEL 18',
     interest: 18
   },
   {
     product_id: 2,
-    product_name: "FUEL 28",
+    product_name: 'FUEL 28',
     interest: 28
   },
 ];
@@ -235,13 +234,13 @@ const LoanInfo = ({
 
 
   useEffect(() => {
-    apiCall(`business/products`)
+    apiCall('business/products')
       .then(res => {
         if (res.status === 'SUCCESS') {
           setProducts(res.data || testProducts);
           if (row.product_id) {
             const re = res.data.find(d => d.product_id == row.product_id)
-            setSelectedProduct({ ...re, disabled: status !== "loan_approval" } || {})
+            setSelectedProduct({ ...re, disabled: status !== 'loan_approval' } || {})
           }
         }
       })
@@ -261,7 +260,7 @@ const LoanInfo = ({
               <TableCell align="right">Req. Amount</TableCell>
               <TableCell align="right">Amount Approved</TableCell>
               {
-                ["disbursed", "disbursement_approval"].includes(status) ? <TableCell align="right">Disbursement Amount</TableCell> : null
+                ['disbursed', 'disbursement_approval'].includes(status) ? <TableCell align="right">Disbursement Amount</TableCell> : null
               }
             </TableRow>
           </TableHead>
@@ -271,7 +270,7 @@ const LoanInfo = ({
                 <MSelect
                   fullWidth
                   native
-                  placeholder={"Select Loan Product"}
+                  placeholder={'Select Loan Product'}
                   value={selectedProduct?.product_id}
                   disabled={selectedProduct?.disabled || !editable}
                   onChange={e => {
@@ -297,7 +296,7 @@ const LoanInfo = ({
               <TableCell align="right"><Currency value={row.amount_requested} /></TableCell>
               <TableCell align="right">
                 {
-                  status === "loan_approval" ? (
+                  status === 'loan_approval' ? (
                     <UserCan
                       role={currentUser.role_name}
                       perform={rulesList.loan_approval}
@@ -322,7 +321,7 @@ const LoanInfo = ({
                 }
               </TableCell>
               {
-                status === "disbursement_approval" ? (
+                status === 'disbursement_approval' ? (
                   <TableCell align="right">
                     <UserCan
                       role={currentUser.role_name}
@@ -344,7 +343,7 @@ const LoanInfo = ({
                       no={() => <Currency value={row.amount_disbursed} />}
                     />
                   </TableCell>
-                ) : (status == "disbursed" ? (
+                ) : (status == 'disbursed' ? (
                   <TableCell align="right">
                     <Currency value={row.amount_disbursed} />
                   </TableCell>
@@ -459,8 +458,8 @@ const DealershipDetails = ({
   const classes = useStyles();
 
   useEffect(() => {
-    if (status === "loan_review") {
-      getUserRoleForReview("is_approve=1")
+    if (status === 'loan_review') {
+      getUserRoleForReview('is_approve=1')
         .then(res => {
           let d = [];
           res.forEach((item, i) => {
@@ -553,7 +552,7 @@ const DealershipDetails = ({
     };
     let resMsg = '';
 
-    if (status === "loan_approval") {
+    if (status === 'loan_approval') {
       if (!newLoanInfo.product_id) {
         setApiStatus({ loading: false, type: 'error', message: 'Please choose loan type.' });
         return null
@@ -561,19 +560,19 @@ const DealershipDetails = ({
       // reqBody.approval_remarks = newLoanInfo.approval_remarks;
       reqBody.product_id = newLoanInfo.product_id;
     }
-    if (submitStatus === "approval") {
+    if (submitStatus === 'approval') {
       setApproveLoader(true);
-      if (status === "loan_approval") {
+      if (status === 'loan_approval') {
         resMsg = 'Successfully Approved Loan Request';
         reqBody.amount_approved = newLoanInfo.amount_approved;
         reqBody.remarks = newLoanInfo.remarks;
-      } else if (status === "disbursement_approval") {
+      } else if (status === 'disbursement_approval') {
         reqBody.status = 'disbursement_approved';
         resMsg = 'Successfully Approved Loan for Disbursement';
         reqBody.amount_disbursed = newLoanInfo.amount_disbursed;
       }
     }
-    if (status === "disbursement_approval") {
+    if (status === 'disbursement_approval') {
       reqBody.status = 'approval'
       reqBody.disbursement_approval_remarks = newLoanInfo.disbursement_approval_remarks;
     }
@@ -591,11 +590,11 @@ const DealershipDetails = ({
       reqBody.recommendation_remarks = remarks;
       resMsg = 'Request approved successfully';
     }
-    if(submitStatus === "disbursed") {
-    if (loanData.amount_disbursed === newLoanInfo.amount_disbursed) {
-      setApiStatus({ type: 'error', message: 'Please check Disburse amount. We see no change in Disburse amount!' })
-      return null;
-    }
+    if(submitStatus === 'disbursed') {
+      if (loanData.amount_disbursed === newLoanInfo.amount_disbursed) {
+        setApiStatus({ type: 'error', message: 'Please check Disburse amount. We see no change in Disburse amount!' })
+        return null;
+      }
     }
 
 
@@ -650,7 +649,7 @@ const DealershipDetails = ({
     });
   }
   const fieldProps = {
-    direction: "column",
+    direction: 'column',
     alignTop: true,
     readOnly,
     className: classes.fieldItemStyle
@@ -808,7 +807,7 @@ const DealershipDetails = ({
           </Grid>
 
           {
-            status == "loan_approval" ? (
+            status == 'loan_approval' ? (
               <Grid {...gridProps}>
                 <TextInput
                   multiline
@@ -832,7 +831,7 @@ const DealershipDetails = ({
           }
 
           {
-            status == "approved" || status == "rejected" ? (
+            status == 'approved' || status == 'rejected' ? (
               <Grid {...gridProps} style={{ position: 'relative' }}>
                 <TextInput
                   multiline
@@ -856,7 +855,7 @@ const DealershipDetails = ({
           }
 
           {
-            status == "disbursement_approval" ? (
+            status == 'disbursement_approval' ? (
               <>
                 <Grid {...gridProps} style={{ position: 'relative' }}>
                   Remarks(Approval)
@@ -976,7 +975,7 @@ const DealershipDetails = ({
                 onClick={onClose}>Back</Button>
             </div>
             {
-              editable && status && ["rejected", "approved", "disbursment_approval", "loan_approval", "loan_review"].includes(status.toLowerCase()) && (
+              editable && status && ['rejected', 'approved', 'disbursment_approval', 'loan_approval', 'loan_review'].includes(status.toLowerCase()) && (
                 <UserCan
                   role={currentUser.role_name}
                   perform={rulesList.loan_approval}
@@ -1004,13 +1003,13 @@ const DealershipDetails = ({
           </div>
           <div style={{ display: 'flex' }}>
             {
-              editable && status && ["loan_review"].includes(status.toLowerCase()) && (
+              editable && status && ['loan_review'].includes(status.toLowerCase()) && (
                 <UserCan
                   role={currentUser.role_name}
                   perform={rulesList.loan_approval}
                   yes={() => (
                     <>
-                    {
+                      {
                         <div>
                           <Button
                             variant="contained"
@@ -1020,7 +1019,7 @@ const DealershipDetails = ({
                             onClick={() => setRejectModal(true)}> Send for Approval</Button>
                         </div>
                       }
-                      </>
+                    </>
                   )}
                 />
               )
@@ -1035,7 +1034,7 @@ const DealershipDetails = ({
                 startIcon={<AccountTreeRoundedIcon />}>View more</Button>
             </div>
             {
-              editable && status && ["loan_approval", "disbursement_approval"].includes(status.toLowerCase()) && (
+              editable && status && ['loan_approval', 'disbursement_approval'].includes(status.toLowerCase()) && (
                 <UserCan
                   role={currentUser.role_name}
                   perform={rulesList.loan_approval}
@@ -1106,10 +1105,10 @@ const DealershipDetails = ({
                   <Typography variant='body2'>Category</Typography>
                   {
                     optionsData.map((item, i) => {
-                      return <Chip label={item.label} className={classes.chip} variant={activeTab === i ? "default" : "outlined"} onClick={() => {
+                      return <Chip label={item.label} className={classes.chip} variant={activeTab === i ? 'default' : 'outlined'} onClick={() => {
                         setSelectedCategory({ label: item?.label, value: item?.value })
                         setActiveTab(item.value)
-                      }} clickable color={activeTab === i ? "primary" : ""} />
+                      }} clickable color={activeTab === i ? 'primary' : ''} />
                     })
                   }
                 </div>
@@ -1121,7 +1120,7 @@ const DealershipDetails = ({
                         {
                           reasonData[selectedCategory.value][0].map((data, index) => {
                             return (
-                              <FormControlLabel control={<Checkbox className={classes.checkbox} onChange={handleReasonChange} value={data.value} key={data.value} checked={rejectReason.includes(data.value)} name={data.label} />} label={data.label} color={activeTab === data.label ? "primary" : ""} />
+                              <FormControlLabel control={<Checkbox className={classes.checkbox} onChange={handleReasonChange} value={data.value} key={data.value} checked={rejectReason.includes(data.value)} name={data.label} />} label={data.label} color={activeTab === data.label ? 'primary' : ''} />
                             )
                           })
                         }

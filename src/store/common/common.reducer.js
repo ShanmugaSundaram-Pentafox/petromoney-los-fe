@@ -1,4 +1,4 @@
-import { CommonActionTypes } from "./common.types"
+import { CommonActionTypes } from './common.types'
 
 const INITIAL_STATE = {
   pageTitle: undefined,
@@ -9,22 +9,22 @@ const INITIAL_STATE = {
 
 export const commonReducer = (state = INITIAL_STATE, action) => {
   switch(action.type) {
-    case CommonActionTypes.SET_PAGE_TITLE:
-      return {
-        ...state,
-        ...(action.payload || {})
-      }
-    case CommonActionTypes.SET_SEARCH_TEXT:
-      return {
-        ...state,
-        searchText: action.payload
-      }
-    case CommonActionTypes.SET_DASHBOARD_VIEW:
-      return {
-        ...state,
-        dashboardView: action.payload
-      }
-    default:
-      return state;
+  case CommonActionTypes.SET_PAGE_TITLE:
+    return {
+      ...state,
+      ...(action.payload || {})
+    }
+  case CommonActionTypes.SET_SEARCH_TEXT:
+    return {
+      ...state,
+      searchText: action.payload
+    }
+  case CommonActionTypes.SET_DASHBOARD_VIEW:
+    return {
+      ...state,
+      dashboardView: action.payload
+    }
+  default:
+    return state;
   }
 }

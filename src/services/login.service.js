@@ -1,5 +1,5 @@
-import { URL } from "../config/serverUrls"
-import apiCall from "../utils/api.util";
+import { URL } from '../config/serverUrls'
+import apiCall from '../utils/api.util';
 
 
 export const getOTP = (number) => {
@@ -9,7 +9,7 @@ export const getOTP = (number) => {
       body: { mobile: number }
     })
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(status);
         } else {
           reject(message);
@@ -28,7 +28,7 @@ export const resendOTP = (number) => {
       body: { mobile: number }
     })
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(status);
         } else {
           reject(message);

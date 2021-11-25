@@ -1,10 +1,10 @@
-import React, { useMemo, useState } from "react"
-import { makeStyles } from "@material-ui/styles"
-import MUIDataTable from "mui-datatables"
-import Typography from "@material-ui/core/Typography";
-import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
+import { Drawer, Tooltip } from '@material-ui/core';
 import { green, grey } from '@material-ui/core/colors';
-import { Drawer, Tooltip } from "@material-ui/core";
+import Typography from '@material-ui/core/Typography';
+import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
+import { makeStyles } from '@material-ui/styles'
+import MUIDataTable from 'mui-datatables'
+import React, { useMemo, useState } from 'react'
 import RightDrawer from './RightDrawer'
 
 
@@ -40,7 +40,7 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
   const columns = useMemo(() => {
     const d = [
       {
-        label: "User ID",
+        label: 'User ID',
         name: 'id',
         options: {
           filter: false,
@@ -51,8 +51,8 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
         }
       },
       {
-        label: "Name",
-        name: "first_name",
+        label: 'Name',
+        name: 'first_name',
         options: {
           filter: false,
           sort: true,
@@ -65,24 +65,24 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
         },
       },
       {
-        label: "Mobile Number",
-        name: "mobile",
+        label: 'Mobile Number',
+        name: 'mobile',
         options: {
           filter: false,
           sort: true,
         },
       },
       {
-        label: "Email",
-        name: "email",
+        label: 'Email',
+        name: 'email',
         options: {
           filter: false,
           sort: true,
         },
       },
       {
-        label: "Role",
-        name: "role_name",
+        label: 'Role',
+        name: 'role_name',
         options: {
           filter: true,
           sort: true,
@@ -90,7 +90,7 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
       },
     ];
     const actionColumnData = {
-      label: "Status",
+      label: 'Status',
       name: 'status',
       options: {
         filter: true,
@@ -132,21 +132,21 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
     return withRole ? [
       ...d,
       {
-        label: "Role",
-        name: "role_name",
+        label: 'Role',
+        name: 'role_name',
         options: {
           filter: true,
           sort: true,
         },
       }
-    ] : [...d, actionColumnData];;
+    ] : [...d, actionColumnData];
   }, [withRole])
 
   const options = {
     filter: true,
     // filterType: 'checkbox',
     selectableRowsHeader: false,
-    selectableRows: "none",
+    selectableRows: 'none',
     rowsPerPage: 10,
     isRowSelectable: () => false,
     onRowClick: (rowData, { dataIndex }) => {

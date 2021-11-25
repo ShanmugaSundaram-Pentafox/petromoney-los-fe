@@ -1,11 +1,11 @@
-import { URL } from "../config/serverUrls"
-import apiCall from "../utils/api.util"
+import { URL } from '../config/serverUrls'
+import apiCall from '../utils/api.util'
 
 export const getAllUsers = () => {
   return new Promise((resolve, reject) => {
     apiCall(URL.allUsers)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -21,7 +21,7 @@ export const getAllUserRoles = () => {
   return new Promise((resolve, reject) => {
     apiCall(URL.userRoles)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -41,8 +41,8 @@ export const getUsersByRole = (users = [], role = '') => {
 
 export const addNewUser = (data, type) => {
   let apiUrl = URL.addNewUser;
-  if (type === "DEALER") apiUrl = URL.addNewDealer;
-  else if (type === "TRANSPORTER") apiUrl = URL.addNewTransporter;
+  if (type === 'DEALER') apiUrl = URL.addNewDealer;
+  else if (type === 'TRANSPORTER') apiUrl = URL.addNewTransporter;
 
   return new Promise((resolve, reject) => {
     apiCall(apiUrl, {
@@ -50,7 +50,7 @@ export const addNewUser = (data, type) => {
       body: data
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message)
         } else {
           reject(message)
@@ -65,10 +65,10 @@ export const addNewUser = (data, type) => {
 export const deleteUser = (userId) => {
   return new Promise((resolve, reject) => {
     apiCall(`user/${userId}`, {
-      method: "DELETE"
+      method: 'DELETE'
     })
       .then(async ({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           const res = getAllUsers(userId);
           resolve({ data: res, message });
         } else {
@@ -84,7 +84,7 @@ export const getReport = () => {
   return new Promise((resolve, reject) => {
     apiCall(URL.report)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -99,7 +99,7 @@ export const getTestReport = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.report}/dealership/${id}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -119,7 +119,7 @@ export const getRegion = () => {
       method: 'GET',
     })
       .then(({ status, data }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           console.log(data)
           resolve(data)
         } else {
@@ -137,10 +137,10 @@ export const getRegionMap = () => {
   console.log(apiUrl)
   return new Promise((resolve, reject) => {
     apiCall(apiUrl, {
-      method: "GET"
+      method: 'GET'
     })
       .then(async ({ status, data }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
         } else {
           reject(data);
@@ -157,10 +157,10 @@ export const regionMapUser = (s) => {
   console.log(apiUrl)
   return new Promise((resolve, reject) => {
     apiCall(apiUrl, {
-      method: "POST"
+      method: 'POST'
     })
       .then(async ({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message);
         } else {
           reject(message);
@@ -177,10 +177,10 @@ export const regionDel = (user, region) => {
   console.log(apiUrl)
   return new Promise((resolve, reject) => {
     apiCall(apiUrl, {
-      method: "POST"
+      method: 'POST'
     })
       .then(async ({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message);
         } else {
           reject(message);
@@ -194,13 +194,13 @@ export const regionDel = (user, region) => {
 
 export const regionMapAdd = (user, region) => {
   let apiUrl = URL.regionMapAdd + user + '/' + region;
-  console.log(apiUrl, "@!)(#")
+  console.log(apiUrl, '@!)(#')
   return new Promise((resolve, reject) => {
     apiCall(apiUrl, {
-      method: "POST"
+      method: 'POST'
     })
       .then(async ({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message);
         } else {
           reject(message);
@@ -220,11 +220,11 @@ export const passReset = (password, userId) => {
   }
   return new Promise((resolve, reject) => {
     apiCall(apiUrl, {
-      method: "POST",
+      method: 'POST',
       body: data
     })
       .then(async ({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message);
         } else {
           reject(message);
@@ -241,7 +241,7 @@ export const getCreditReport = (tab) => {
   return new Promise((resolve, reject) => {
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data || [])
         } else {
           reject(message)
@@ -257,7 +257,7 @@ export const getCreditReportById = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`credit/reload/${id}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data || [])
         } else {
           reject(message)
@@ -271,9 +271,9 @@ export const getCreditReportById = (id) => {
 
 export const getTypeOfAccount = () => {
   return new Promise((resolve, reject) => {
-    apiCall(`credit/reload/typeofaccount`)
+    apiCall('credit/reload/typeofaccount')
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)

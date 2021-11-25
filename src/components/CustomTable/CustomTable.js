@@ -1,24 +1,24 @@
-import React from 'react';
+import { Typography } from '@material-ui/core';
+import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
+import MenuItem from '@material-ui/core/MenuItem';
+import Paper from '@material-ui/core/Paper';
+import Select from '@material-ui/core/Select';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableFooter from '@material-ui/core/TableFooter';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import IconButton from '@material-ui/core/IconButton';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 import FirstPageIcon from '@material-ui/icons/FirstPage';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
+import React from 'react';
 
-import { useTable, usePagination, useSortBy, useGlobalFilter } from 'react-table'
-import { Typography } from '@material-ui/core';
+import { useTable, usePagination, useGlobalFilter } from 'react-table'
 
 const useStyles = makeStyles(theme => ({
   paginationLeft: {
@@ -131,10 +131,10 @@ export default function CustomTable ({
             <TableRow {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map(column => {
                 return (
-                <TableCell {...column.getHeaderProps()}>
-                  {column.render('Header')}
-                </TableCell>
-              )})}
+                  <TableCell {...column.getHeaderProps()}>
+                    {column.render('Header')}
+                  </TableCell>
+                )})}
             </TableRow>
           ))}
         </TableHead>

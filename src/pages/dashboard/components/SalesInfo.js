@@ -1,26 +1,21 @@
+import { makeStyles } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import Popover from '@material-ui/core/Popover';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Typography from '@material-ui/core/Typography';
+import clsx from 'clsx';
+import { useSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import Table from '@material-ui/core/Table';
-import TableHead from '@material-ui/core/TableHead';
-import TableBody from '@material-ui/core/TableBody';
-import TableRow from '@material-ui/core/TableRow';
-import TableCell from '@material-ui/core/TableCell';
-import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
-import ClearRoundedIcon from '@material-ui/icons/ClearRounded';
-import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
-import Currency from '../../../components/Number/Currency';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
-import Popover from '@material-ui/core/Popover';
-import { makeStyles } from '@material-ui/core';
-import { getDealershipSalesById, postDealershipSalesById } from '../../../services/dealerships.service';
+import MonthlySalesInfo from './MonthlySalesInfo';
 import TextInput from '../../../components/TextInput/TextInput';
 import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-import { useSnackbar } from "notistack";
-import MonthlySalesInfo from './MonthlySalesInfo';
-import clsx from 'clsx';
+import { getDealershipSalesById, postDealershipSalesById } from '../../../services/dealerships.service';
 
 
 /**
@@ -58,8 +53,8 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 20,
   },
   btnEdit: {
-    '&.MuiButton-root': { color: "#2196f3" },
-    border: "1px #2196f3 solid",
+    '&.MuiButton-root': { color: '#2196f3' },
+    border: '1px #2196f3 solid',
     marginLeft: 2
   },
 }));
@@ -129,12 +124,12 @@ const SalesInfo = ({
 
   const saveNewSalesData = () => {
     if (parseInt(apiData.from_year) < 1900 || parseInt(apiData.from_year) >= parseInt(apiData.to_year)) {
-      enqueueSnackbar("Year error, Please check...", {
+      enqueueSnackbar('Year error, Please check...', {
         anchorOrigin: {
-          vertical: "top",
-          horizontal: "right",
+          vertical: 'top',
+          horizontal: 'right',
         },
-        variant: "error",
+        variant: 'error',
       });
     }
     else {
@@ -156,12 +151,12 @@ const SalesInfo = ({
 
   const saveEditRow = (data, i) => {
     if (parseInt(data.from_year) < 1900 || parseInt(data.from_year) >= parseInt(data.to_year)) {
-      enqueueSnackbar("Year error, Please check...", {
+      enqueueSnackbar('Year error, Please check...', {
         anchorOrigin: {
-          vertical: "top",
-          horizontal: "right",
+          vertical: 'top',
+          horizontal: 'right',
         },
-        variant: "error",
+        variant: 'error',
       });
     } else {
       const objBody = {
@@ -354,7 +349,7 @@ const SalesInfo = ({
               }
               {
                 addNewRow && (
-                  <TableRow key={"new-row"}>
+                  <TableRow key={'new-row'}>
                     <TableCell scope="row" component="th">
                       <TextInput
                         number

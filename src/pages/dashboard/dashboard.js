@@ -1,28 +1,25 @@
-import React, { useState } from 'react';
-import _countBy from 'lodash/countBy';
-import { useMount } from 'react-use';
-import { connect } from 'react-redux';
-import LoansTable from './components/LoansTable';
-import usePageTitle from '../../hooks/usePageTitle';
-import Paper from '@material-ui/core/Paper';
-import Box from '@material-ui/core/Box';
-import { makeStyles } from '@material-ui/core/styles';
-// import { InfoBoxContainer, InfoBoxWrapper } from '../../components/CommonComponents/InfoBox';
-import styled from 'styled-components';
-import Grid from '@material-ui/core/Grid';
-import moment from 'moment';
-import Skeleton from '@material-ui/lab/Skeleton';
-// import { Tooltip, LabelList,Legend, BarChart, CartesianGrid, XAxis, YAxis, Bar, Text } from 'recharts';
-import LoanBookTable from '../../components/Tables/LoanBookTable';
-import { getLoanStats, getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd } from '../../services/loans.service';
-import { SummaryTile, PieChartData, BarChartData, GroupChartData } from './components/MetricsComponents';
-import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import { Typography } from '@material-ui/core';
-// import { yellow } from '@material-ui/core/colors';
-import { getDealerDetails } from '../../services/dealers.service';
-import Currency from '../../../src/components/Number/Currency';
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import { makeStyles } from '@material-ui/core/styles';
+import moment from 'moment';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import { useMount } from 'react-use';
+import styled from 'styled-components';
+import LoansTable from './components/LoansTable';
 import LoanStats from './components/LoanStats';
-import Datatable from './components/Datatable';
+import { PieChartData, BarChartData, GroupChartData } from './components/MetricsComponents';
+import Currency from '../../../src/components/Number/Currency';
+import DashCard from '../../components/CommonComponents/Cards/DashCard';
+import LoanBookTable from '../../components/Tables/LoanBookTable';
+import usePageTitle from '../../hooks/usePageTitle';
+// import { InfoBoxContainer, InfoBoxWrapper } from '../../components/CommonComponents/InfoBox';
+// import { Tooltip, LabelList,Legend, BarChart, CartesianGrid, XAxis, YAxis, Bar, Text } from 'recharts';
+import { getDealerDetails } from '../../services/dealers.service';
+import { getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd } from '../../services/loans.service';
+// import { yellow } from '@material-ui/core/colors';
 
 const currencyFormat = (value) => {
   const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumSignificantDigits: 8 }).format(value)
@@ -57,7 +54,7 @@ const arrangeData = (res) => {
   const result = res.reduce((temp, item, i) => {
     if (i === 0) {
       const firstRow = item.data?.map(r => r.label);
-      temp[i] = ['', { role: "tooltip", type: "string", p: { html: true } }, ...firstRow];
+      temp[i] = ['', { role: 'tooltip', type: 'string', p: { html: true } }, ...firstRow];
     }
     const dataRow = item.data.map(r => r.value);
     temp[i + 1] = [item.label, createCustomHTMLContent(item), ...dataRow];
@@ -69,9 +66,9 @@ const arrangeData = (res) => {
 const useStyles = makeStyles(theme => ({
   card: {
     [theme.breakpoints.up('sm')]: {
-      flexWrap: "wrap",
+      flexWrap: 'wrap',
       [theme.breakpoints.up('md')]: {
-        flexWrap: "nowrap",
+        flexWrap: 'nowrap',
       }
     }
   },
@@ -101,8 +98,8 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   const [ls2_metrices, setLs2Metrices] = useState([]);
   const [daysChartData, setdaysChartData] = useState(['Days', 'Amount']);
   const [totalForRegion, setTotalForRegion] = useState(0)
-  const [selectedStatsCard, setSelectedStatsCard] = useState("Submitted");
-  const [selectedReportStatsCard, setSelectedReportStatsCard] = useState("Due");
+  const [selectedStatsCard, setSelectedStatsCard] = useState('Submitted');
+  const [selectedReportStatsCard, setSelectedReportStatsCard] = useState('Due');
   const [dealerDetail, setDealerDetail] = useState({});
   const [dealerChartData, setDealerChartData] = useState([]);
   const [omcData, setOmcData] = useState([]);
@@ -169,7 +166,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
           const result = res[0] || {};
           setLs1Metrices(result);
           let overallData = [
-            ['Days', 'Amount', { role: "tooltip", type: "string", p: { html: true } }, { role: 'style' }, { role: 'annotation' }],
+            ['Days', 'Amount', { role: 'tooltip', type: 'string', p: { html: true } }, { role: 'style' }, { role: 'annotation' }],
             ['<=3 Days', result.lt3_days, currencyFormat(result.lt3_days), '#81B214', currencyFormat(result.lt3_days)],
             ['4-15 Days', result.gt4lt15_days, currencyFormat(result.gt4lt15_days), '#5C7AEA', currencyFormat(result.gt4lt15_days)],
             ['15-30 Days', result.gt15lt30_days, currencyFormat(result.gt15lt30_days), '#8236CB', currencyFormat(result.gt15lt30_days)],
@@ -193,7 +190,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
             // createCustomHTMLContentforPie(item.od_amount)
             return [item.cust_region, item.od_amount, colors[index], currencyFormat(item.od_amount)]
           });
-          dataSource.length && dataSource.unshift(['Region', 'Amount', { role: 'style' }, { role: "annotation" },]);
+          dataSource.length && dataSource.unshift(['Region', 'Amount', { role: 'style' }, { role: 'annotation' },]);
           setTotalForRegion(currencyFormat(total));
           setLs2Metrices(dataSource);
         })
@@ -211,8 +208,8 @@ const Dashboard = ({ currentUser, dashboardView }) => {
           tot_count += tot.tot_due
         })
         let dData = [
-          { name: "Active Loans", count: data.due.length + data.overdue.length },
-          { name: "Total Due Amount", count: tot_count }
+          { name: 'Active Loans', count: data.due.length + data.overdue.length },
+          { name: 'Total Due Amount', count: tot_count }
         ]
         setDealerChartData(dData)
       })
@@ -231,7 +228,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   return (
     <div style={{ flexGrow: 1 }}>
       {
-        currentUser.role_name === "DEALER" ? (
+        currentUser.role_name === 'DEALER' ? (
           <>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
@@ -240,7 +237,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                   <Box className={classes.card} borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="nowrap">
                     {
                       dealerChartData.map((item, i) => (
-                        <DashCard key={i} noBorder={i === dealerChartData.length - 1} value={item.name != "Active Loans" ? (<Currency value={item.count} />) : item.count} text={item.name} action={() => handleClick(item.name)} />
+                        <DashCard key={i} noBorder={i === dealerChartData.length - 1} value={item.name != 'Active Loans' ? (<Currency value={item.count} />) : item.count} text={item.name} action={() => handleClick(item.name)} />
                       ))
                     }
                   </Box>
@@ -254,7 +251,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 {
-                  dashboardView === "LOS" && (
+                  dashboardView === 'LOS' && (
                     <LoanStats
                       selectedStatsCard={selectedStatsCard}
                       handleClick={handleClick}
@@ -263,7 +260,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                   )
                 }
                 {
-                  dashboardView === "LMS" ? (
+                  dashboardView === 'LMS' ? (
                     <Box p={2} borderRadius={4} bgcolor="background.paper">
                       <Typography variant="h5">Credit Book</Typography>
                       <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">
@@ -278,7 +275,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                 }
               </Grid>
               {
-                dashboardView === "LMS" && (<>
+                dashboardView === 'LMS' && (<>
                   <Grid item md={12}>
                     <DataCharts>
                       {ls2_metrices.length ? <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion} /> : <Paper className={classes.noData}>No Data Found. Check if EOD has been completed</Paper>}
@@ -318,14 +315,14 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                     </DataCharts>
                   </Grid>
                   <Grid item xs={12}>
-                    <LoanBookTable title={"Loan Book"} currentUser={currentUser} />
+                    <LoanBookTable title={'Loan Book'} currentUser={currentUser} />
                   </Grid>
                 </>
                 )
               }
             </Grid>
             {
-              dashboardView === "LOS" && (
+              dashboardView === 'LOS' && (
                 <LoansTable currentUser={currentUser} value={selectedStatsCard} filterQry={filterQry}/>
               )
             }

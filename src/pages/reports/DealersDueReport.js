@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/styles';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import Typography from '@material-ui/core/Typography';
-import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
+import Modal from '@material-ui/core/Modal';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/styles';
 import Moment from 'moment';
+import React, { useState } from 'react';
 // import Button from '../../components/CommonComponents/Button/Button';
+import { useMount } from 'react-use';
+import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import Currency from '../../components/Number/Currency';
 import DueTable from '../../components/Tables/DueTable';
 import OverDueTable from '../../components/Tables/OverDueTable';
-import { useMount } from 'react-use';
 import { getDealerDetails } from '../../services/dealers.service';
-import DashCard from '../../components/CommonComponents/Cards/DashCard';
 
 const useStyles = makeStyles(theme => ({
   modal: {
@@ -67,8 +67,8 @@ const DealersDueReport = ({ currentUser }) => {
           tot_count += tot.tot_due
         })
         let dData = [
-          { name: "Active Loans", count: data.due.length + data.overdue.length },
-          { name: "Total Due Amount", count: tot_count }
+          { name: 'Active Loans', count: data.due.length + data.overdue.length },
+          { name: 'Total Due Amount', count: tot_count }
         ]
         setDealerChartData(dData)
       })
@@ -86,7 +86,7 @@ const DealersDueReport = ({ currentUser }) => {
   return (
     <>
       {
-        currentUser.role_name === "DEALER" && (
+        currentUser.role_name === 'DEALER' && (
           <>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
@@ -95,7 +95,7 @@ const DealersDueReport = ({ currentUser }) => {
                   <Box className={classes.card} borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="nowrap">
                     {
                       dealerChartData.map((item, i) => (
-                        <DashCard key={i} noBorder={i === dealerChartData.length - 1} value={item.name != "Active Loans" ? (<Currency value={item.count} />) : item.count} text={item.name} />
+                        <DashCard key={i} noBorder={i === dealerChartData.length - 1} value={item.name != 'Active Loans' ? (<Currency value={item.count} />) : item.count} text={item.name} />
                       ))
                     }
                   </Box>

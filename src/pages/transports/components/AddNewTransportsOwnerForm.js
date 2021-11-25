@@ -1,39 +1,39 @@
-import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Switch from '@material-ui/core/Switch';
-import Typography from '@material-ui/core/Typography';
-import TextInput from '../../../components/TextInput/TextInput';
-import Button from '../../../components/CommonComponents/Button/Button';
-import * as Yup from 'yup';
-import { useFormik } from 'formik';
-import clsx from 'clsx';
-import Divider from '@material-ui/core/Divider';
-import { makeStyles } from '@material-ui/styles';
-import CloseIcon from '@material-ui/icons/Close';
-import { URL } from '../../../config/serverUrls';
-import EditIcon from '@material-ui/icons/Edit';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
-import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import { useSnackbar } from 'notistack';
-import 'date-fns';
 import Tooltip from '@material-ui/core/Tooltip';
+import Typography from '@material-ui/core/Typography';
+import UploadIcon from '@material-ui/icons/Backup';
+import CloseIcon from '@material-ui/icons/Close';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
+import { useFormik } from 'formik';
+import { useSnackbar } from 'notistack';
+import React, { useState } from 'react';
+import * as Yup from 'yup';
+import Button from '../../../components/CommonComponents/Button/Button';
+import {
+  AvatarCard,
+  ViewData,
+} from '../../../components/CommonComponents/FilePreview';
+import FileUpload from '../../../components/FileUpload';
+import TextInput from '../../../components/TextInput/TextInput';
+import { URL } from '../../../config/serverUrls';
+import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
-import FileUpload from '../../../components/FileUpload';
-import UploadIcon from '@material-ui/icons/Backup';
 import { grey } from '@material-ui/core/colors';
-import {
-  AvatarCard,
-  ViewData,
-} from '../../../components/CommonComponents/FilePreview';
-import DeleteIcon from '@material-ui/icons/Delete';
-import { deleteTransportOwnerProfileDoc } from '../../../services/transports.service';
 import { cryptoEncrypt } from '../../../services/crypto.service';
+import { deleteTransportOwnerProfileDoc } from '../../../services/transports.service';
 import { format, parse } from 'date-fns';
 
 const useStyles = makeStyles((theme) => ({
@@ -197,13 +197,13 @@ const AddNewTransportsOwnerForm = ({
       first_name: Yup.string().required('Please enter transporter name').nullable('Please enter transporter name'),
       last_name: Yup.string().required('Please enter transporter name').nullable('Please enter transporter name'),
       email: Yup.string().email('Enter valid mail id').nullable('Enter valid mail id'),
-      mobile: Yup.number().required('Enter mobile number').nullable('Enter mobile number').test("maxDigits", "Mobile Number mush have 10 digits", (number) => String(number).length === 10),
+      mobile: Yup.number().required('Enter mobile number').nullable('Enter mobile number').test('maxDigits', 'Mobile Number mush have 10 digits', (number) => String(number).length === 10),
       address: Yup.string().required('Please enter address').nullable('Please enter address'),
     }),
     onSubmit: (values) => {
       values.first_name = values.first_name.toUpperCase();
       values.last_name = values.last_name.toUpperCase();
-      const dob = selectedDate ? format(new Date(selectedDate), "dd-MM-yyyy") : values?.dob
+      const dob = selectedDate ? format(new Date(selectedDate), 'dd-MM-yyyy') : values?.dob
       const date_values = {
         ...values,
         dob: dob,
@@ -367,7 +367,7 @@ const AddNewTransportsOwnerForm = ({
   const aadharBack = () => {
     return (
       <div className={classes.fileStyle}>
-        <a href={rowData.aadhar_b_file_url} className={classes.profileLink} target='_blank' title={'Aadhar Back'}>{'Back'}</a>
+        <a href={rowData.aadhar_b_file_url} className={classes.profileLink} target='_blank' title={'Aadhar Back'} rel="noreferrer">{'Back'}</a>
         <Tooltip title={'Click to edit'}>
           <UploadIcon
             fontSize='small'
@@ -376,7 +376,7 @@ const AddNewTransportsOwnerForm = ({
           />
         </Tooltip>
         <Tooltip title={'Click to delete'}>
-          <DeleteIcon onClick={() => onDocDelete({ aadhar_b_file_url: "" })} fontSize="small" padding={2} />
+          <DeleteIcon onClick={() => onDocDelete({ aadhar_b_file_url: '' })} fontSize="small" padding={2} />
         </Tooltip>
       </div>
     );
@@ -384,7 +384,7 @@ const AddNewTransportsOwnerForm = ({
   const profileAttachment = () => {
     return (
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <a className={classes.profileLink} href={rowData.profile_image_url} target='_blank' title={'Profile Attachment'}>{'Profile Attachment'}</a>
+        <a className={classes.profileLink} href={rowData.profile_image_url} target='_blank' title={'Profile Attachment'} rel="noreferrer">{'Profile Attachment'}</a>
         <Tooltip title={'Click to edit'}>
           <UploadIcon
             fontSize='small'
@@ -394,7 +394,7 @@ const AddNewTransportsOwnerForm = ({
           />
         </Tooltip>
         <Tooltip title={'Click to delete'}>
-          <DeleteIcon onClick={() => onDocDelete({ profile_image_url: "" })} fontSize="small" style={{ color: grey[800] }} padding={2} />
+          <DeleteIcon onClick={() => onDocDelete({ profile_image_url: '' })} fontSize="small" style={{ color: grey[800] }} padding={2} />
         </Tooltip>
       </div>
     );
@@ -403,7 +403,7 @@ const AddNewTransportsOwnerForm = ({
   const aadharFront = () => {
     return (
       <div className={classes.fileStyle}>
-        <a className={classes.profileLink} href={rowData.aadhar_f_file_url} target='_blank' title={'Aadhar Front'}>{'Front'}</a>
+        <a className={classes.profileLink} href={rowData.aadhar_f_file_url} target='_blank' title={'Aadhar Front'} rel="noreferrer">{'Front'}</a>
         <Tooltip title={'Click to edit'}>
           <UploadIcon
             fontSize='small'
@@ -413,7 +413,7 @@ const AddNewTransportsOwnerForm = ({
           />
         </Tooltip>
         <Tooltip title={'Click to delete'}>
-          <DeleteIcon onClick={() => onDocDelete({ aadhar_f_file_url: "" })} fontSize="small" style={{ color: grey[800] }} padding={2} />
+          <DeleteIcon onClick={() => onDocDelete({ aadhar_f_file_url: '' })} fontSize="small" style={{ color: grey[800] }} padding={2} />
         </Tooltip>
       </div>
     );
@@ -421,7 +421,7 @@ const AddNewTransportsOwnerForm = ({
   const panAttachment = () => {
     return (
       <div className={classes.fileStyle}>
-        <a className={classes.profileLink} href={rowData.pan_file_url} target='_blank' title={'PAN Attachment'}>{'PAN Attachment'}</a>
+        <a className={classes.profileLink} href={rowData.pan_file_url} target='_blank' title={'PAN Attachment'} rel="noreferrer">{'PAN Attachment'}</a>
         <Tooltip title={'Click to edit'}>
           <UploadIcon
             fontSize='small'
@@ -431,7 +431,7 @@ const AddNewTransportsOwnerForm = ({
           />
         </Tooltip>
         <Tooltip title={'Click to delete'}>
-          <DeleteIcon onClick={() => onDocDelete({ pan_file_url: "" })} fontSize="small" style={{ color: grey[800] }} padding={2} />
+          <DeleteIcon onClick={() => onDocDelete({ pan_file_url: '' })} fontSize="small" style={{ color: grey[800] }} padding={2} />
         </Tooltip>
       </div>
     );
@@ -479,59 +479,59 @@ const AddNewTransportsOwnerForm = ({
                 values?.pan_file_url ||
                 values?.aadhar_f_file_url ||
                 values?.aadhar_b_file_url ? (
-                <div className={classes.readOnlyWrapper}>
-                  <Typography variant='h4'>Attachments</Typography>
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-around',
-                      marginTop: 16,
-                    }}
-                  >
-                    {values.profile_image_url && (
-                      <AvatarCard
-                        tooltip='View profile'
-                        file={values?.profile_image_url}
-                        title='Profile'
-                      />
-                    )}
-                    {values.pan_file_url && (
-                      <AvatarCard
-                        tooltip='View PAN'
-                        file={values?.pan_file_url}
-                        title='PAN'
-                      />
-                    )}
-                    {values.aadhar_f_file_url && (
-                      <AvatarCard
-                        tooltip='View Aadhar Front'
-                        file={values?.aadhar_f_file_url}
-                        title='Aadhar front'
-                      />
-                    )}
-                    {values.aadhar_b_file_url && (
-                      <AvatarCard
-                        tooltip='View Aadhar back'
-                        file={values?.aadhar_b_file_url}
-                        title='Aadhar back'
-                      />
-                    )}
+                  <div className={classes.readOnlyWrapper}>
+                    <Typography variant='h4'>Attachments</Typography>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-around',
+                        marginTop: 16,
+                      }}
+                    >
+                      {values.profile_image_url && (
+                        <AvatarCard
+                          tooltip='View profile'
+                          file={values?.profile_image_url}
+                          title='Profile'
+                        />
+                      )}
+                      {values.pan_file_url && (
+                        <AvatarCard
+                          tooltip='View PAN'
+                          file={values?.pan_file_url}
+                          title='PAN'
+                        />
+                      )}
+                      {values.aadhar_f_file_url && (
+                        <AvatarCard
+                          tooltip='View Aadhar Front'
+                          file={values?.aadhar_f_file_url}
+                          title='Aadhar front'
+                        />
+                      )}
+                      {values.aadhar_b_file_url && (
+                        <AvatarCard
+                          tooltip='View Aadhar back'
+                          file={values?.aadhar_b_file_url}
+                          title='Aadhar back'
+                        />
+                      )}
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div className={classes.readOnlyWrapper}>
-                  <Typography variant='h4'>Attachments</Typography>
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      marginTop: '20px',
-                    }}
-                  >
-                    <Typography variant='h7'>No Attachments Found</Typography>
+                ) : (
+                  <div className={classes.readOnlyWrapper}>
+                    <Typography variant='h4'>Attachments</Typography>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        marginTop: '20px',
+                      }}
+                    >
+                      <Typography variant='h7'>No Attachments Found</Typography>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </>
           ) : (
             <Box>

@@ -1,50 +1,39 @@
-import React, { useState } from "react";
-import { makeStyles } from "@material-ui/styles";
 // import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
 import Collapse from '@material-ui/core/Collapse';
-import Dialog from "@material-ui/core/Dialog";
+import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import Button from "@material-ui/core/Button";
-import Paper from "@material-ui/core/Paper";
 import Drawer from '@material-ui/core/Drawer';
-import DealershipInfo from "./components/DealershipInfo";
-import { useMount } from "react-use";
-import { getDealershipById, getDealershipLoansById } from "../../services/dealerships.service";
-import { getDealersByDealershipId } from "../../services/dealers.service";
-import DealersList from "./components/DealersList";
-import LoansList from "./components/LoansList";
-import DealershipDoc from "./components/DocList";
-import { NavLink as RouterLink } from "react-router-dom";
-import SalesInfo from "../dashboard/components/SalesInfo";
-import usePageTitle from "../../hooks/usePageTitle";
-import CreditReportSideWrapper from "./components/CreditReportSideWrapper";
-import InfoBox from "../../components/CommonComponents/InfoBox";
-import SolarEnquiryForm from "./components/SolarEnquiryForm";
-import { tabA11yProps, TabPanel } from "../../components/CommonComponents/Tabs/TabPanel";
-import InfoCard from "../../components/CommonComponents/Cards/InfoCard";
-import LeegalityLayout from "../../components/Leegality/LeegalityLayout";
-import DealershipTransport from "./components/DealershipTransport";
-import FleetOperatorsDetails from "./components/FleetOperatorsDetails";
-import styled from 'styled-components';
-import PersonalDiscussionReport from "./components/PDReport";
-import { useHistory } from "react-router-dom";
-import { toInteger } from "lodash-es";
-import {
-  BrowserRouter as Router,
-  Link,
-  Route,
-  useRouteMatch,
-  useParams,
-} from 'react-router-dom'
-import StatementAnalysis from "./components/StatementAnalysis";
+import Tab from '@material-ui/core/Tab';
+import Tabs from '@material-ui/core/Tabs';
+import { makeStyles } from '@material-ui/styles';
+import { toInteger } from 'lodash-es';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
-import { rulesList } from "../../config/userRules";
-import { permissionCheck } from "../../components/UserCan/UserCan";
+
+import { useMount } from 'react-use';
+import CreditReportSideWrapper from './components/CreditReportSideWrapper';
+import DealershipInfo from './components/DealershipInfo';
+import DealershipTransport from './components/DealershipTransport';
+import DealersList from './components/DealersList';
+import DealershipDoc from './components/DocList';
+import FleetOperatorsDetails from './components/FleetOperatorsDetails';
+import LoansList from './components/LoansList';
+import PersonalDiscussionReport from './components/PDReport';
+import SolarEnquiryForm from './components/SolarEnquiryForm';
+import StatementAnalysis from './components/StatementAnalysis';
+import InfoBox from '../../components/CommonComponents/InfoBox';
+import { tabA11yProps, TabPanel } from '../../components/CommonComponents/Tabs/TabPanel';
+import LeegalityLayout from '../../components/Leegality/LeegalityLayout';
+
+import { permissionCheck } from '../../components/UserCan/UserCan';
+import { rulesList } from '../../config/userRules';
+import usePageTitle from '../../hooks/usePageTitle';
+import { getDealersByDealershipId } from '../../services/dealers.service';
+import { getDealershipById, getDealershipLoansById } from '../../services/dealerships.service';
+import SalesInfo from '../dashboard/components/SalesInfo';
 
 const useStyles = makeStyles((theme) => ({
 
@@ -66,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1),
   },
   titleActionContainer: {
-    textAlign: "right",
+    textAlign: 'right',
   },
   topSpacing: {
     marginTop: theme.spacing(2),

@@ -1,4 +1,4 @@
-import { DashboardActionTypes } from "./dashboard.types";
+import { DashboardActionTypes } from './dashboard.types';
 
 export const setAllUsers = allUsers => ({
   type: DashboardActionTypes.SET_ALL_USERS,

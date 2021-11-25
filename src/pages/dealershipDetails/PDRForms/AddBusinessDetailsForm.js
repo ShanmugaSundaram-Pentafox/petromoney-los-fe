@@ -1,26 +1,26 @@
-import React, { useState } from 'react';
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import TextInput from '../../../components/TextInput/TextInput';
-import Button from '../../../components/CommonComponents/Button/Button';
-import * as Yup from 'yup';
-import { useFormik } from 'formik';
-import clsx from 'clsx';
-import Divider from '@material-ui/core/Divider';
-import { makeStyles } from "@material-ui/styles";
-import CloseIcon from '@material-ui/icons/Close';
-import EditIcon from '@material-ui/icons/Edit';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
-import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import { useSnackbar } from 'notistack';
-import { updateBusinessDetailsByID } from '../../../services/PDReport.services';
 import { FormControl } from '@material-ui/core';
 import { RadioGroup } from '@material-ui/core';
 import { FormControlLabel } from '@material-ui/core';
 import { Radio } from '@material-ui/core';
 import { FormGroup } from '@material-ui/core';
+import Box from '@material-ui/core/Box';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Divider from '@material-ui/core/Divider';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import CloseIcon from '@material-ui/icons/Close';
+import EditIcon from '@material-ui/icons/Edit';
+import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
+import { useFormik } from 'formik';
+import { useSnackbar } from 'notistack';
+import React, { useState } from 'react';
+import * as Yup from 'yup';
+import Button from '../../../components/CommonComponents/Button/Button';
+import TextInput from '../../../components/TextInput/TextInput';
+import { updateBusinessDetailsByID } from '../../../services/PDReport.services';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -111,7 +111,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
       monthly_avg_sale_lpg: Yup.number().nullable('Enter monthly average sale').required('Enter monthly average sale'),
     }),
     onSubmit: values => {
-      let data = { ...values, has_atm: values.has_atm === "Yes" ? 1 : 0, is_pep: values.is_pep === "Yes" ? 1 : 0 }
+      let data = { ...values, has_atm: values.has_atm === 'Yes' ? 1 : 0, is_pep: values.is_pep === 'Yes' ? 1 : 0 }
       updateBusinessDetailsByID(data, dealer_id)
         .then(res => {
           console.log(res)
@@ -138,7 +138,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
     }
   });
   const inputProps = {
-    direction: "column",
+    direction: 'column',
     alignTop: true,
     onChange: handleChange,
   }
@@ -404,7 +404,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
               onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
             >
-              {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` :
+              {loading ? <CircularProgress size={20} /> : readOnly ? 'Edit' :
                 'Save'}
             </Button>
           </div>

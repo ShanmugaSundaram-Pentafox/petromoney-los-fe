@@ -1,6 +1,6 @@
-import React from 'react';
+import { Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import { Button, Grid, Typography } from '@material-ui/core';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
@@ -41,9 +41,9 @@ const NotFound = () => {
           Whichever it is, try going back to dashboard!
         </Typography>
         <div style={{marginTop: '30px'}}>
-        <Link to={'/'}>
-          <Button variant='contained' color='secondary'>Go Back!</Button>
-        </Link>
+          <Link to={'/'}>
+            <Button variant='contained' color='secondary'>Go Back!</Button>
+          </Link>
         </div>
       </div>
       <div className={classes.illustration}>

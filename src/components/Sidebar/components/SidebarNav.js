@@ -1,30 +1,29 @@
 /* eslint-disable react/no-multi-comp */
 /* eslint-disable react/display-name */
-import React, { useState, forwardRef, Fragment } from 'react';
-import { NavLink as RouterLink } from 'react-router-dom';
-import clsx from 'clsx';
-import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/styles';
-import InputIcon from '@material-ui/icons/Input';
-import CachedIcon from '@material-ui/icons/Cached';
-import { List, ListItem, IconButton, Button, colors, Hidden } from '@material-ui/core';
-import LocalShippingIcon from '@material-ui/icons/LocalShipping';
-import ListAltIcon from '@material-ui/icons/ListAlt';
-import BookIcon from '@material-ui/icons/Book';
+import { List, ListItem, Button, colors, Hidden } from '@material-ui/core';
+import Badge from '@material-ui/core/Badge';
 import Collapse from '@material-ui/core/Collapse';
 import AssessmentIcon from '@material-ui/icons/Assessment';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
+import BookIcon from '@material-ui/icons/Book';
+import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import InputIcon from '@material-ui/icons/Input';
+import ListAltIcon from '@material-ui/icons/ListAlt';
+import LocalShippingIcon from '@material-ui/icons/LocalShipping';
 import ReportIcon from '@material-ui/icons/Report';
 import ReportProblemIcon from '@material-ui/icons/ReportProblem';
-import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
-import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
-// import { getAllExceptions, getTransportsExceptions } from '../../../services/loans.service';
-import { useMount } from "react-use";
-import Badge from '@material-ui/core/Badge';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
+import PropTypes from 'prop-types';
+import React, { useState, forwardRef, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { resetCurrentUser } from '../../../store/user/user.actions';
+import { NavLink as RouterLink } from 'react-router-dom';
+// import { getAllExceptions, getTransportsExceptions } from '../../../services/loans.service';
+import { useMount } from 'react-use';
 import { getMenuItemCount } from '../../../services/common.service';
+import { resetCurrentUser } from '../../../store/user/user.actions';
 // import { getAllWithheldLoans } from '../../../services/withheld.services';
 
 
@@ -53,7 +52,7 @@ const useStyles = makeStyles(theme => ({
   },
   button: {
     // color: colors.blueGrey[200],
-    color: "rgba(173, 173, 173, 1)",
+    color: 'rgba(173, 173, 173, 1)',
     padding: '8px',
     justifyContent: 'flex-start',
     textTransform: 'none',
@@ -133,7 +132,7 @@ const SidebarNav = props => {
       className={clsx(classes.root, className)}
     >
       {pages.map(page => (
-        page.title !== "Loans" && page.title !== "Transports" && page.title !== "Report" && page.title !== "Exception" && page.title !== "Passbook" ? (
+        page.title !== 'Loans' && page.title !== 'Transports' && page.title !== 'Report' && page.title !== 'Exception' && page.title !== 'Passbook' ? (
           <ListItem
             className={classes.item}
             disableGutters
@@ -150,7 +149,7 @@ const SidebarNav = props => {
               {page.title}
             </Button>
           </ListItem>
-        ) : page.title === "Loans" ? (
+        ) : page.title === 'Loans' ? (
           <Fragment key={page.title}>
             <ListItem
               className={classes.item}
@@ -230,7 +229,7 @@ const SidebarNav = props => {
               </ListItem>
             </Collapse>
           </Fragment>
-        ) : page.title === "Transports" ? (
+        ) : page.title === 'Transports' ? (
           <Fragment key={page.title}>
             <ListItem
               className={classes.item}
@@ -294,7 +293,7 @@ const SidebarNav = props => {
           </Fragment>
 
         ) :
-          page.title === "Report" ? (
+          page.title === 'Report' ? (
             <Fragment key={page.title}>
               <ListItem
                 className={classes.item}
@@ -361,7 +360,7 @@ const SidebarNav = props => {
 
             </Fragment>
 
-          ) : page.title === "Exception" ? (
+          ) : page.title === 'Exception' ? (
             <Fragment>
               <ListItem
                 className={classes.item}
@@ -426,7 +425,7 @@ const SidebarNav = props => {
                 </ListItem>
               </Collapse>
             </Fragment>
-          ) : page.title === "Passbook" ? (
+          ) : page.title === 'Passbook' ? (
             <Fragment>
               <ListItem
                 className={classes.item}

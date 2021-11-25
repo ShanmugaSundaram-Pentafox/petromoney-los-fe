@@ -1,19 +1,18 @@
-import React, { useMemo, useState } from 'react';
-import { NavLink as RouterLink } from 'react-router-dom';
-import { makeStyles } from '@material-ui/styles';
-import MUIDataTable from "mui-datatables";
+import { Grid } from '@material-ui/core'
+import { Paper } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { useMount } from 'react-use';
-import { getAllDealership } from '../../../services/dealerships.service';
-import { selectAllDealerships } from '../../../store/dealership/dealership.selector';
-import { createStructuredSelector } from 'reselect';
-import { connect } from 'react-redux';
-import { setAllDealerships } from '../../../store/dealership/dealership.actions';
-// import { decrypt } from '../../../services/crypto.service';
-import { Grid } from "@material-ui/core"
-import { Paper } from "@material-ui/core";
 import Skeleton from '@material-ui/lab/Skeleton';
+import { makeStyles } from '@material-ui/styles';
+import MUIDataTable from 'mui-datatables';
+import React, { useMemo, useState } from 'react';
+import { connect } from 'react-redux';
+import { NavLink as RouterLink } from 'react-router-dom';
+import { useMount } from 'react-use';
+import { createStructuredSelector } from 'reselect';
+import { getAllDealership } from '../../../services/dealerships.service';
+import { setAllDealerships } from '../../../store/dealership/dealership.actions';
+import { selectAllDealerships } from '../../../store/dealership/dealership.selector';
+// import { decrypt } from '../../../services/crypto.service';
 
 
 const useStyles = makeStyles(theme => ({

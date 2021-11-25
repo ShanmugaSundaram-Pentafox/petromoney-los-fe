@@ -1,11 +1,11 @@
 import React from 'react';
-import { Route, Redirect } from "react-router-dom";
 import { connect } from 'react-redux';
+import { Route, Redirect } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
-import { selectCurrentUser } from '../store/user/user.selector';
-import MainLayout from '../layout/main.layout';
 import { permissionCheck } from '../components/UserCan/UserCan';
 import { rulesList } from '../config/userRules';
+import MainLayout from '../layout/main.layout';
+import { selectCurrentUser } from '../store/user/user.selector';
 
 const ProtectedRoute = ({ component: Component, currentUser, allow, ...rest }) => {
   return (
@@ -25,7 +25,7 @@ const ProtectedRoute = ({ component: Component, currentUser, allow, ...rest }) =
             }
             if (permissionCheck(currentUser.role_name, rulesList.dealer_view)) {
               // return <Redirect to={`/dealership/${currentUser.dealership_id}`} />
-              return <Redirect to={`/reports`} />
+              return <Redirect to={'/reports'} />
             }
             return <Redirect to="/" />
           }

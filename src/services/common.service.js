@@ -1,13 +1,13 @@
 // import { API } from "../config/api"
-import { URL } from "../config/serverUrls"
+import { URL } from '../config/serverUrls'
 // import { store } from "../store";
-import apiCall from "../utils/api.util";
+import apiCall from '../utils/api.util';
 
 export const getBusinessTypes = () => {
   return new Promise((resolve, reject) => {
-    apiCall("business/types")
+    apiCall('business/types')
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data || []);
         } else {
           reject(message);
@@ -21,9 +21,9 @@ export const getBusinessTypes = () => {
 
 export const getOmcList = () => {
   return new Promise((resolve, reject) => {
-    apiCall(`omcs`)
+    apiCall('omcs')
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data || []);
         } else {
           reject(message);
@@ -39,7 +39,7 @@ export const getExperianReportById = (id, type) => {
   return new Promise((resolve, reject) => {
     apiCall(`experian/report/${id}/${type}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
         } else {
           reject(message);
@@ -63,7 +63,7 @@ export const refreshExperianReportById = (id, type) => {
      */
     apiCall(`refresh/experian/report/consumer/${id}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
         } else {
           reject(message);
@@ -77,7 +77,7 @@ export const refreshExperianReportById = (id, type) => {
 
 export const downloadPDF = ({ file, isBase64, name }) => {
   const linkSource = isBase64 ? `data:application/pdf;base64,${file}` : file;
-  const downloadLink = document.createElement("a");
+  const downloadLink = document.createElement('a');
   const fileName = `${name}.pdf`;
   downloadLink.href = linkSource;
   downloadLink.download = fileName;
@@ -108,7 +108,7 @@ export const getAllRegion = () => {
   return new Promise((resolve, reject) => {
     apiCall(URL.region)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data || []);
 
         } else {
@@ -124,7 +124,7 @@ export const getMappedRegion = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`user/${id}/map/region`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
 
         } else {
@@ -142,11 +142,11 @@ export const updateMappedRegion = (data, id) => {
     apiCall(`user/${id}/map/region`, {
       method: 'POST',
       body: {
-        "regions": data
+        'regions': data
       }
     })
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
         } else {
           reject(message);
@@ -162,11 +162,11 @@ export const deleteMappedRegion = (data, id) => {
     apiCall(`user/${id}/map/region`, {
       method: 'DELETE',
       body: {
-        "regions": data
+        'regions': data
       }
     })
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
         } else {
           reject(message);
@@ -186,7 +186,7 @@ export const updatePassword = (data, id) => {
       }
     })
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message);
         } else {
           reject(message);
@@ -206,7 +206,7 @@ export const updateUserDetails = (data, id) => {
 
     })
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message);
         } else {
           reject(message);
@@ -219,14 +219,14 @@ export const updateUserDetails = (data, id) => {
 }
 export const SendReports = () => {
   return new Promise((resolve, reject) => {
-    apiCall(`loan/report/1`, {
+    apiCall('loan/report/1', {
       method: 'POST',
     })
       .then(({ status, message }) => {
 
-        if (status === "SUCCESS") {
-          console.log(status, "status")
-          console.log(message, "status")
+        if (status === 'SUCCESS') {
+          console.log(status, 'status')
+          console.log(message, 'status')
           resolve({ status, message });
         } else {
           reject(message);
@@ -241,7 +241,7 @@ export const getPassbookDetails = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`passbook/dealership/${id}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
         } else {
           reject(message);
@@ -254,9 +254,9 @@ export const getPassbookDetails = (id) => {
 }
 export const getStates = () => {
   return new Promise((resolve, reject) => {
-    apiCall("master/states")
+    apiCall('master/states')
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data || []);
         } else {
           reject(message);
@@ -270,9 +270,9 @@ export const getStates = () => {
 
 export const getAssetType = () => {
   return new Promise((resolve, reject) => {
-    apiCall("asset")
+    apiCall('asset')
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data || []);
         } else {
           reject(message);
@@ -286,9 +286,9 @@ export const getAssetType = () => {
 
 export const getActiveStates = () => {
   return new Promise((resolve, reject) => {
-    apiCall("states")
+    apiCall('states')
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data || []);
         } else {
           reject(message);
@@ -320,7 +320,7 @@ export const getRegionById = (res) => {
   return new Promise((resolve, reject) => {
     apiCall(`states/regions/${res}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data || []);
         } else {
           reject(message);
@@ -339,7 +339,7 @@ export const updateOmcsById = (data, id) => {
       body: data,
     })
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message);
         } else {
           reject(message);
@@ -358,7 +358,7 @@ export const updateRegionById = (data, id) => {
       body: data,
     })
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message);
         } else {
           reject(message);
@@ -377,7 +377,7 @@ export const updateStateById = (data, id) => {
       body: data,
     })
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message);
         } else {
           reject(message);
@@ -396,7 +396,7 @@ export const updateAssetById = (data, id) => {
       body: data,
     })
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message);
         } else {
           reject(message);
@@ -415,7 +415,7 @@ export const updateBusinessById = (data, id) => {
       body: data,
     })
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message);
         } else {
           reject(message);
@@ -434,7 +434,7 @@ export const updateLoanById = (data, id) => {
       body: data,
     })
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message);
         } else {
           reject(message);
@@ -448,12 +448,12 @@ export const updateLoanById = (data, id) => {
 
 export const addOmcs = (data) => {
   return new Promise((resolve, reject) => {
-    apiCall(`omcs`, {
+    apiCall('omcs', {
       method: 'POST',
       body: data
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message)
         } else {
           reject(message)
@@ -467,12 +467,12 @@ export const addOmcs = (data) => {
 
 export const addRegion = (data) => {
   return new Promise((resolve, reject) => {
-    apiCall(`regions`, {
+    apiCall('regions', {
       method: 'POST',
       body: data
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message)
         } else {
           reject(message)
@@ -486,12 +486,12 @@ export const addRegion = (data) => {
 }
 export const addState = (data) => {
   return new Promise((resolve, reject) => {
-    apiCall(`master/states`, {
+    apiCall('master/states', {
       method: 'POST',
       body: data
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message)
         } else {
           reject(message)
@@ -505,12 +505,12 @@ export const addState = (data) => {
 
 export const addBusinessType = (data) => {
   return new Promise((resolve, reject) => {
-    apiCall(`business/types`, {
+    apiCall('business/types', {
       method: 'POST',
       body: data
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message)
         } else {
           reject(message)
@@ -524,12 +524,12 @@ export const addBusinessType = (data) => {
 
 export const addLoanType = (data) => {
   return new Promise((resolve, reject) => {
-    apiCall(`loan/types`, {
+    apiCall('loan/types', {
       method: 'POST',
       body: data
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message)
         } else {
           reject(message)
@@ -543,12 +543,12 @@ export const addLoanType = (data) => {
 
 export const addAssetType = (data) => {
   return new Promise((resolve, reject) => {
-    apiCall(`asset`, {
+    apiCall('asset', {
       method: 'POST',
       body: data
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message)
         } else {
           reject(message)
@@ -567,7 +567,7 @@ export const deleteOmcs = (data, id) => {
       body: data
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message)
         } else {
           reject(message)
@@ -586,7 +586,7 @@ export const deleteRegion = (data, id) => {
       body: data
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message)
         } else {
           reject(message)
@@ -605,7 +605,7 @@ export const deleteState = (data, id) => {
       body: data
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message)
         } else {
           reject(message)
@@ -623,7 +623,7 @@ export const deleteAsset = (data, id) => {
       body: data
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message)
         } else {
           reject(message)
@@ -641,7 +641,7 @@ export const deleteBusiness = (data, id) => {
       // body: data
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message)
         } else {
           reject(message)
@@ -659,7 +659,7 @@ export const deleteLoan = (data, id) => {
       // body: data
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message)
         } else {
           reject(message)
@@ -675,7 +675,7 @@ export const getDealershipForSearch = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/search?status=disbursed&dealership=${id}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
         } else {
           reject(message);
@@ -689,9 +689,9 @@ export const getDealershipForSearch = (id) => {
 
 export const getLoanTypes = () => {
   return new Promise((resolve, reject) => {
-    apiCall(`loan/types`)
+    apiCall('loan/types')
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
 
         } else {
@@ -706,9 +706,9 @@ export const getLoanTypes = () => {
 
 export const getMenuItemCount = () => {
   return new Promise((resolve, reject) => {
-    apiCall(`count`)
+    apiCall('count')
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
 
         } else {
@@ -725,7 +725,7 @@ export const getUserRoleForReview = (status) => {
   return new Promise((resolve, reject) => {
     apiCall(`users?${status}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
         } else {
           reject(message);

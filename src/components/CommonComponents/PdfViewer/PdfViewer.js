@@ -1,15 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
 import Box from '@material-ui/core/Box';
 // import { pdfjs, Document, Page } from 'react-pdf'
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded';
-import ChevronRightRoundedIcon from '@material-ui/icons/ChevronRightRounded';
-import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
+import React from 'react';
 // import throttle from 'lodash/throttle';
 import styled from 'styled-components';
-import { downloadPDF } from '../../../services/common.service';
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 const Wrapper = styled.div`

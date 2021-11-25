@@ -1,6 +1,6 @@
-import React from "react";
-import styled from "styled-components";
 import PropTypes from 'prop-types';
+import React from 'react';
+import styled from 'styled-components';
 
 const SectionTitleWrapper = styled.div`
     display: flex;
@@ -27,34 +27,34 @@ const SectionTitleWrapper = styled.div`
 `;
 
 const SectionTitle = ({
-    title,
-    description,
-    renderLeftElement,
-    renderRightElement,
-    marginBottom
+  title,
+  description,
+  renderLeftElement,
+  renderRightElement,
+  marginBottom
 }) => {
-    return (
-        <SectionTitleWrapper marginBottom={marginBottom}>
-            {!renderLeftElement ? 
-                <div className="left-content">
-                    <p className="title">{title}</p>
-                    {description ? <p className="txt">{description}</p> : null}
-                </div>
-                :
-                renderLeftElement
-            }
+  return (
+    <SectionTitleWrapper marginBottom={marginBottom}>
+      {!renderLeftElement ? 
+        <div className="left-content">
+          <p className="title">{title}</p>
+          {description ? <p className="txt">{description}</p> : null}
+        </div>
+        :
+        renderLeftElement
+      }
 
-            {renderRightElement ? renderRightElement : null}
-        </SectionTitleWrapper>
-    );
+      {renderRightElement ? renderRightElement : null}
+    </SectionTitleWrapper>
+  );
 };
 
 SectionTitle.propTypes = {
-    title: PropTypes.string,
-    description: PropTypes.string,
-    renderLeftElement: PropTypes.element,
-    renderRightElement: PropTypes.element,
-    marginBottom: PropTypes.number
+  title: PropTypes.string,
+  description: PropTypes.string,
+  renderLeftElement: PropTypes.element,
+  renderRightElement: PropTypes.element,
+  marginBottom: PropTypes.number
 };
 
 export default SectionTitle;

@@ -25,7 +25,7 @@ import usePageTitle from '../../hooks/usePageTitle';
 // import { useMount } from 'react-use';
 // import MUIDataTable from "mui-datatables";
 import { getDealersByDealershipId } from '../../services/dealers.service';
-import { getDealershipById, getDealershipLoansById } from '../../services/dealerships.service';
+import { getDealershipById } from '../../services/dealerships.service';
 import { getAllLoans, getLoanStats } from '../../services/loans.service';
 import { setAllLoans } from '../../store/loans/loans.actions';
 import { selectAllLoans } from '../../store/loans/loans.selector';

@@ -3,16 +3,6 @@ import MuiAccordion from '@material-ui/core/Accordion'
 import MuiAccordionDetails from '@material-ui/core/AccordionDetails'
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary'
 import Box from '@material-ui/core/Box'
-import { getVehicleDocuments, getVehicleLoans, getVehicleServiceDetails, deleteVehicleStatus, updateVehicleServiceDetails, deleteVehicleDoc, deleteVehicleLoan } from "../../../services/transports.service"
-import { logger } from "../../../config/logger"
-import NewVehicleLoanAction from '../../../components/NewVehicleLoan/NewVehicleLoanAction'
-import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog'
-import FileUpload from '../../../components/FileUpload'
-import { URL } from '../../../config/serverUrls'
-import { useSnackbar } from 'notistack';
-import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
-import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
-import AddNewVehicleForm from '../../transports/components/AddNewVehicleForm';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -28,15 +18,25 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography'
+import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
+import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { makeStyles } from '@material-ui/styles';
+import { useSnackbar } from 'notistack';
 import React, { useState } from 'react'
 import TrackerUpdateModal from './TrackerUpdateModal'
 import Button from '../../../components/CommonComponents/Button/Button'
 import FilePreview from '../../../components/CommonComponents/FilePreview';
+import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog'
+import FileUpload from '../../../components/FileUpload'
+import NewVehicleLoanAction from '../../../components/NewVehicleLoan/NewVehicleLoanAction'
 import Currency from '../../../components/Number/Currency'
 import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { logger } from '../../../config/logger'
+import { URL } from '../../../config/serverUrls'
 import { rulesList } from '../../../config/userRules';
+import { getVehicleDocuments, getVehicleLoans, getVehicleServiceDetails, deleteVehicleStatus, deleteVehicleDoc, deleteVehicleLoan } from '../../../services/transports.service'
+import AddNewVehicleForm from '../../transports/components/AddNewVehicleForm';
 
 
 const useStyles = makeStyles((theme) => ({

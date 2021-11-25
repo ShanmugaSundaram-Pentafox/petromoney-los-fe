@@ -8,14 +8,11 @@ import Drawer from '@material-ui/core/Drawer';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import { makeStyles } from '@material-ui/styles';
-import { toInteger } from "lodash-es";
-import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
-import { NavLink as RouterLink } from 'react-router-dom';
-import {
-  Link,
-  useRouteMatch,
-} from 'react-router-dom'
+import { toInteger } from 'lodash-es';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
+
+
 import { useMount } from 'react-use';
 import CreditReportSideWrapper from './components/CreditReportSideWrapper';
 import DealershipInfo from './components/DealershipInfo';

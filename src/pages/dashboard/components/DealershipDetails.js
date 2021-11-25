@@ -16,11 +16,13 @@ import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 import CloseIcon from '@material-ui/icons/CloseRounded';
 import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
+import Alert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/styles';
-import React, { useState, useEffect } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
-import { connect } from 'react-redux';
 import clsx from 'clsx';
+import { useSnackbar } from 'notistack';
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import { Link as RouterLink } from 'react-router-dom';
 import Select from 'react-select';
 import { useMount } from 'react-use';
 import { createStructuredSelector } from 'reselect';
@@ -35,9 +37,7 @@ import { rulesList } from '../../../config/userRules';
 import { getAllRegion, getUserRoleForReview } from '../../../services/common.service';
 import { getLoanById, getLoanRejectReason, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
 import { selectCurrentUser } from '../../../store/user/user.selector';
-import Alert from '@material-ui/lab/Alert';
 import apiCall from '../../../utils/api.util';
-import { useSnackbar } from 'notistack';
 // import CloseIcon from '@material-ui/icons/Close';
 
 // import Button from '../../../components/CommonComponents/Button/Button'

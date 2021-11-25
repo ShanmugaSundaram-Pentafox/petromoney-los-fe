@@ -56,20 +56,6 @@ const useStyles = makeStyles((theme) => ({
   btn: {
     margin: 8
   },
-  number: {
-    backgroundColor: 'white',
-    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0,
-    }
-  },
-  input: {
-    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0,
-    }
-  }
-
 }))
 
 
@@ -183,55 +169,49 @@ const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
                 <Grid item md={6}>
                   <TextInput
                     {...inputProps}
-                    type="number"
+                    number
                     labelText="Business age(in year)"
                     name="business_age"
                     value={values.business_age}
                     error={errors.business_age}
                     helperText={errors.business_age}
-                    className={classes.number}
-                    inputProps={{ className: classes.input }}
-                    type='number'
                   />
                 </Grid>
                 <Grid item md={6}>
                   <TextInput
                     {...inputProps}
                     money
+                    number
                     labelText="FY Income"
                     name="cur_fy_income"
                     value={values.cur_fy_income}
                     error={errors.cur_fy_income}
                     helperText={errors.cur_fy_income}
-                    className={classes.number}
-                    inputProps={{ className: classes.input }}
-                    type='number'
                   />
                 </Grid>
                 <Grid item md={6}>
                   <TextInput
                     {...inputProps}
                     money
-                    type='number'
+                    number
                     labelText="FY Turnover"
                     name="cur_fy_turnover"
                     value={values.cur_fy_turnover}
                     error={errors.cur_fy_turnover}
                     helperText={errors.cur_fy_turnover}
-                    inputProps={{ className: classes.input }}
                   />
                 </Grid>
                 <Grid item md={6}>
                   <TextInput
                     {...inputProps}
                     money
+                    number
                     labelText="FY Profit"
                     name="cur_fy_profit_loss"
                     type='number'
                     value={values.cur_fy_profit_loss}
                     error={errors.cur_fy_profit_loss}
                     helperText={errors.cur_fy_profit_loss}
-                    inputProps={{className: classes.input}}
                   />
                 </Grid>
               </Grid>

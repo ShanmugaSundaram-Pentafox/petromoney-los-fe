@@ -479,6 +479,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
               </Grid>
               <Grid {...gridItem} md={6}>
                 <TextInput
+                  number
                   label="Mobile"
                   name="mobile"
                   readOnly={readOnly}
@@ -486,7 +487,6 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   onChange={onChange}
                   error={errors.mobile}
                   helperText={errors.mobile}
-                  type='number'
                   InputLabelProps={{ shrink: true }}
                 ></TextInput>
               </Grid>
@@ -596,6 +596,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
 
               <Grid {...gridItem} md={6}>
                 <TextInput
+                  number
                   label="Aadhar"
                   name="aadhar"
                   value={values.aadhar}

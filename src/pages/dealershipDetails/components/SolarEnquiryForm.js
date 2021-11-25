@@ -64,6 +64,7 @@ const SolarEnquiryForm = ({ solarTab, onChangeTab, dealershipId, mainApplicant, 
               </Grid>
               <Grid item md={6}>
                 <TextInput
+                  number
                   {...inputProps}
                   value={mainApplicant?.mobile}
                   labelText="Dealer Phone Number"
@@ -129,6 +130,7 @@ const SolarEnquiryForm = ({ solarTab, onChangeTab, dealershipId, mainApplicant, 
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
+                  number
                   labelText="Pincode"
                   onChange={() => null}
                 />
@@ -185,6 +187,7 @@ const SolarEnquiryForm = ({ solarTab, onChangeTab, dealershipId, mainApplicant, 
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
+                  number
                   labelText="Available Area in Terrace.Sqmtr"
                   onChange={() => null}
                 />

@@ -25,7 +25,7 @@ module.exports = {
     ecmaVersion: 12, // Allows for the parsing of modern ECMAScript features
     sourceType: 'module' // Allows for the use of imports
   },
-  plugins: ['import'],
+  plugins: ['import', 'unused-imports'],
   root: true, // For configuration cascading.
   rules: {
     // "prettier/prettier": "warn",
@@ -34,7 +34,12 @@ module.exports = {
     'react/prop-types': 'off',
     'no-console': 'warn',
     'no-duplicate-imports': 'error',
-    'no-unused-vars': 'error',
+    'no-unused-vars': 'off',
+    'unused-imports/no-unused-imports': 'error',
+    'unused-imports/no-unused-vars': [
+      'warn',
+      { 'vars': 'all', 'varsIgnorePattern': '^_', 'args': 'after-used', 'argsIgnorePattern': '^_' }
+    ],
     'max-len': ['warn', { code: 200 }],
     'import/order': ['warn',{
       alphabetize: {

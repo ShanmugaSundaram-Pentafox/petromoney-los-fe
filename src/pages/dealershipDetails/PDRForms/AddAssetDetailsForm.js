@@ -82,19 +82,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 12,
     textAlign: 'center'
   },
-  number: {
-    backgroundColor: 'white',
-    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0
-    }
-  },
-  input: {
-    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0,
-    }
-  }
 }))
 
 const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
@@ -152,26 +139,26 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
   };
 
   let CustomValidation = {};
-  if (type.label === 'Car'){
-    CustomValidation={
+  if (type.label === 'Car') {
+    CustomValidation = {
       address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
-      yom: Yup.number().nullable('Please enter year of manufacture').required('Please enter year of manufacture').test('year', 'Invalid Manufacture Year', value => value >= 1900 && value <= format(new Date(), 'yyyy') ),
+      yom: Yup.number().nullable('Please enter year of manufacture').required('Please enter year of manufacture').test('year', 'Invalid Manufacture Year', value => value >= 1900 && value <= format(new Date(), 'yyyy')),
     };
-  } else if(type.label === 'Gold'){
-    CustomValidation={
+  } else if (type.label === 'Gold') {
+    CustomValidation = {
       quantity: Yup.number().nullable('Please enter quantity').required('Please enter quantity'),
-    } 
-  } else if(type.label === 'CV'){
-    CustomValidation={
-      model: Yup.number().nullable('Please enter model').required('Please enter model'),
-      yom: Yup.number().nullable('Please enter year of manufacture').required('Please enter year of manufacture').test('year', 'Invalid Manufacture Year', value => value >= 1900 && value <= format(new Date(), 'yyyy') ),
     }
-  } else if(type.label === 'Land'){
-    CustomValidation={
+  } else if (type.label === 'CV') {
+    CustomValidation = {
+      model: Yup.number().nullable('Please enter model').required('Please enter model'),
+      yom: Yup.number().nullable('Please enter year of manufacture').required('Please enter year of manufacture').test('year', 'Invalid Manufacture Year', value => value >= 1900 && value <= format(new Date(), 'yyyy')),
+    }
+  } else if (type.label === 'Land') {
+    CustomValidation = {
       address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
     }
-  } else if(type.label === 'Building'){
-    CustomValidation={
+  } else if (type.label === 'Building') {
+    CustomValidation = {
       address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
     }
   }
@@ -292,7 +279,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                                           <TextInput
                                             {...inputProps}
                                             className={classes.number}
-                                            inputProps={{className: classes.input}}
+                                            inputProps={{ className: classes.input }}
                                             labelText={item.label}
                                             name={item.key}
                                             // value={values.key}
@@ -308,27 +295,23 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                                   <Grid item md={6}>
                                     <TextInput
                                       {...inputProps}
-                                      className={classes.number}
-                                      inputProps={{className: classes.input}}
+                                      number
                                       labelText="Asset Value"
                                       name="asset_value"
                                       value={values.asset_value}
                                       error={errors.asset_value}
                                       helperText={errors.asset_value}
-                                      type='number'
                                     />
                                   </Grid>
                                   <Grid item md={6}>
                                     <TextInput
                                       {...inputProps}
-                                      className={classes.number}
-                                      inputProps={{className: classes.input}}
+                                      number
                                       labelText="Market value"
                                       name="market_value"
                                       value={values.market_value}
                                       error={errors.market_value}
                                       helperText={errors.market_value}
-                                      type='number'
                                     />
                                   </Grid>
                                   <Grid item md={6}>

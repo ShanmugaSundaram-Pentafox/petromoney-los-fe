@@ -54,20 +54,6 @@ const useStyles = makeStyles((theme) => ({
   btn: {
     margin: 8
   },
-  number: {
-    backgroundColor: 'white',
-    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0,
-    }
-  },
-  input: {
-    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0,
-    }
-  }
-
 }))
 
 
@@ -142,14 +128,12 @@ const AddExpenseForm = ({ data, isEdit, id, handleClose }) => {
                   <TextInput
                     {...inputProps}
                     money
+                    number
                     labelText="Expense Amount"
                     name="expense_amount"
                     value={values.expense_amount}
                     error={errors.expense_amount}
                     helperText={errors.expense_amount}
-                    className={classes.number}
-                    inputProps={{className: classes.input}}
-                    type='number'
                   />
                 </Grid>
               </Grid>

@@ -70,10 +70,8 @@ const AccountStatement = ({ id, currentUser }) => {
 
 
   const handleDownload = values => {
-    const from_date = selectedDate && format(new Date(selectedDate?.from_date), 'dd-MM-yyyy');
-    const to_date = selectedDate && format(new Date(selectedDate?.to_date), 'dd-MM-yyyy');
-
-    const data = { from_date, to_date }
+    const from_date = selectedDate?.from_date && format(new Date(selectedDate?.from_date), 'dd-MM-yyyy');
+    const to_date = selectedDate?.to_date && format(new Date(selectedDate?.to_date), 'dd-MM-yyyy');
     setLoading(true)
     if (from_date && to_date) {
       downloadAccountStatement(id, from_date, to_date)
@@ -82,8 +80,8 @@ const AccountStatement = ({ id, currentUser }) => {
           setOpenDialog(true)
           setLoading(false)
         })
-        .catch((e) => {
-          enqueueSnackbar('Something went wrong please try again.', {
+        .catch(e => {
+          enqueueSnackbar(e, {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',

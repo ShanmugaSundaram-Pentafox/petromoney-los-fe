@@ -23,73 +23,81 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
   useEffect(() => {
     setFormData(values);
   }, [values])
-  
+
   return (
     <Grid container>
       <Grid {...gridItem}>
         <TextInput
+          number
           label="CIBIL Score"
           name="cibil_score"
           type="number"
           value={formData.cibil_score || ""}
           onChange={onChange}
-          />
+        />
       </Grid>
       <Grid {...gridItem} md={6}>
         <TextInput
+          number
           label="Total no.of loans"
           name="loans_count"
           value={formData.loans_count || ""}
           onChange={onChange}
-          />
+        />
       </Grid>
       <Grid {...gridItem} md={6}>
         <TextInput
+          number
           label="No of closed loans"
           name="closed_loans_count"
           value={formData.closed_loans_count || ""}
           onChange={onChange}
-          />
+        />
       </Grid>
       <Grid {...gridItem} md={6}>
         <TextInput
+          number
           label="No of overdue accounts"
           name="od_accounts_count"
           value={formData.od_accounts_count || ""}
           onChange={onChange}
-          />
+        />
       </Grid>
       <Grid {...gridItem} md={6}>
         <TextInput
+          number
           label="Overdue Amount"
           name="od_amount"
           value={formData.od_amount || ""}
           onChange={onChange}
-          />
+        />
       </Grid>
       <Grid {...gridItem}>
         <TextInput
+          number
           label="Current O/S amount"
           name="current_os_amount"
           value={formData.current_os_amount || ""}
           onChange={onChange}
-          />
+        />
       </Grid>
       <Grid {...gridItem}>
         <TextInput
+          number
           label="Vintage with CIBIL bureau"
           name="cibil_vintage"
           value={formData.cibil_vintage || ""}
           onChange={onChange}
-          />
+        />
       </Grid>
       <Grid {...gridItem}>
         <TextInput
+          number
           label="No of enquiries last 6 months"
           name="no_of_enquiries"
           value={formData.no_of_enquiries || ""}
           onChange={onChange}
-          />
+        />
       </Grid>
       <Grid {...gridItem}>
         <Grid item md={6}>
@@ -102,10 +110,10 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
             SelectProps={{
               native: true,
             }}
-            >
-              <option value="NA">Select</option>
-              <option value="1">Yes</option>
-              <option value="0">No</option>
+          >
+            <option value="NA">Select</option>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
           </TextInput>
         </Grid>
       </Grid>
@@ -119,7 +127,7 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
           SelectProps={{
             native: true,
           }}
-          >
+        >
           <option value="NA">0</option>
           <option value="1">1 time</option>
           <option value="2">2 times</option>
@@ -137,7 +145,7 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
           SelectProps={{
             native: true,
           }}
-          >
+        >
           <option value="0">0</option>
           <option value="01-29">01 - 29</option>
           <option value="30-59">30 - 59</option>
@@ -169,7 +177,7 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
       <Grid {...gridItem}>
         <TextInput
           select
-          label="Status - For Loans & Credit Cards"
+          label="Status - For Loans &amp; Credit Cards"
           name="status"
           value={formData.status}
           onChange={onChange}

@@ -102,19 +102,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 12,
     textAlign: 'center'
   },
-  number: {
-    backgroundColor: 'white',
-    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0,
-    }
-  },
-  input: {
-    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0,
-    }
-  }
 }))
 
 const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => {
@@ -196,27 +183,27 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
 
   const onChangeIFSC = e => {
     if (/^[A-Za-z]{4}0[A-Za-z0-9]{6}$/.test(e.target.value)) {
-        fetch(`${URL.ifscApiUrl}${e.target.value}`)
-          .then(res => {
-            return res.json()
-          })
-          .then(data => {
-            if (data.BANK) {
-              setValues({
-                ...values,
-                ifsc: data.IFSC,
-                bank_name: data.BANK,
-                bank_branch: data.BRANCH,
-                bank_city: data.CITY
-              })
-            } else {
-              console.log(data)
-            }
-          })
-          .catch(err => {
-            console.log('GET IFSC DATA ERR >> ', err)
-          })
-    } 
+      fetch(`${URL.ifscApiUrl}${e.target.value}`)
+        .then(res => {
+          return res.json()
+        })
+        .then(data => {
+          if (data.BANK) {
+            setValues({
+              ...values,
+              ifsc: data.IFSC,
+              bank_name: data.BANK,
+              bank_branch: data.BRANCH,
+              bank_city: data.CITY
+            })
+          } else {
+            console.log(data)
+          }
+        })
+        .catch(err => {
+          console.log('GET IFSC DATA ERR >> ', err)
+        })
+    }
     // else 
     // {
     //   if (value.length >= 10){
@@ -275,15 +262,12 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
+                      number
                       labelText="Account Number"
                       name="account_no"
-                      type="number"
                       value={values.account_no}
                       error={errors.account_no}
                       helperText={errors.account_no}
-                      className={classes.number}
-                      inputProps={{ className: classes.input }}
-                      type='number'
                     />
                   </Grid>
                   <Grid item md={6}>
@@ -353,15 +337,13 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
                     <TextInput
                       {...inputProps}
                       money
+                      number
                       labelText="Transaction Limit"
                       name="transaction_limit"
                       type="number"
                       value={values.transaction_limit}
                       error={errors.transaction_limit}
                       helperText={errors.transaction_limit}
-                      className={classes.number}
-                      inputProps={{ className: classes.input }}
-                      type='number'
                     />
                   </Grid>
                   <Grid item md={6}>

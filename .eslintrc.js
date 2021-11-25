@@ -31,10 +31,11 @@ module.exports = {
     // "prettier/prettier": "warn",
     indent: ['error', 2],
     quotes: ['warn', 'single'],
+    'react/prop-types': 'off',
     'no-console': 'warn',
-    'no-duplicate-imports': 'warn',
-    'no-unused-vars': 'warn',
-    'max-len': ['warn', { code: 120 }],
+    'no-duplicate-imports': 'error',
+    'no-unused-vars': 'error',
+    'max-len': ['warn', { code: 200 }],
     'import/order': ['warn',{
       alphabetize: {
         caseInsensitive: true,
@@ -82,6 +83,7 @@ module.exports = {
     }
     ],
     'react/jsx-indent-props': ['error', 2],
+    'jsx-a11y/label-has-associated-control': 'off',
   },
   settings: {
     react: {

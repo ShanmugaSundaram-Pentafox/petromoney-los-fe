@@ -103,12 +103,13 @@ const StatementForm = ({callback, rowData, addStatement, updateStatement, delete
         if(rowData){
             let obj = compareObject(rowData, postData)
             updateStatement({id:rowData.id, ...obj})
+            callback(false)
         } else {
             if(addData){
                 updateStatement(postData)
+                callback(false)
             }
         }
-        callback(false)
     }
 
     const handleDelete = (id) => {

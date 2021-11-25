@@ -69,6 +69,13 @@ const StatementTable = ({ addStatement, callback, id }) => {
         },
         onError: (message) => {
             console.log(message);
+            enqueueSnackbar(message, {
+                anchorOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+                variant: 'error',
+            });
         }
     })
 
@@ -85,6 +92,13 @@ const StatementTable = ({ addStatement, callback, id }) => {
         },
         onError: (message) => {
             console.log(message);
+            enqueueSnackbar(message, {
+                anchorOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+                variant: 'error',
+            });
         }
     })
 

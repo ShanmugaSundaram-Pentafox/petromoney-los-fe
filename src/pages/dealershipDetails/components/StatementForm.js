@@ -102,8 +102,10 @@ const StatementForm = ({callback, rowData, addStatement, updateStatement, delete
         const postData = {...addData, statement: statementRow}
         if(rowData){
             let obj = compareObject(rowData, postData)
-            updateStatement({id:rowData.id, ...obj})
-            callback(false)
+            if(obj.statement[0]?.month != "" || obj.account_holder_name || obj.account_no || obj.account_type || obj.bank_name){
+                updateStatement({id:rowData.id, ...obj})
+                callback(false)
+            }
         } else {
             if(addData){
                 updateStatement(postData)

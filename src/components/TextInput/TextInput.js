@@ -1,7 +1,7 @@
+import InputAdornment from '@material-ui/core/InputAdornment';
+import TextField from '@material-ui/core/TextField';
 import React from 'react';
 import styled, { css } from 'styled-components';
-import TextField from '@material-ui/core/TextField';
-import InputAdornment from '@material-ui/core/InputAdornment';
 
 export const InputWrapper = styled.div`
   display: flex;
@@ -11,7 +11,7 @@ export const InputWrapper = styled.div`
 
   .input-label {
     font-size: 12px;
-    width: ${props => props.labelWidth ? props.labelWidth : "15"}%;
+    width: ${props => props.labelWidth ? props.labelWidth : '15'}%;
     margin-right: 8px;
     text-align: right;
     padding: 0;

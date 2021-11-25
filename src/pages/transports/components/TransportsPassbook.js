@@ -1,29 +1,29 @@
 import { Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel } from '@material-ui/core';
 import { Tooltip } from '@material-ui/core';
 import { Paper } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
-import React, { useMemo, useState, useEffect } from 'react';
 import { Typography } from '@material-ui/core';
-import MUIDataTable from 'mui-datatables';
 import { Button } from '@material-ui/core';
 import { Radio } from '@material-ui/core';
 import { RadioGroup } from '@material-ui/core';
-import apiCall from '../../../utils/api.util';
-import { subDays, format } from 'date-fns';
-import PublishIcon from '@material-ui/icons/Publish';
 import { CircularProgress } from '@material-ui/core';
-import Currency from '../../../components/Number/Currency';
-import { URL } from '../../../config/serverUrls';
-import { useSnackbar } from 'notistack';
 import { Popover } from '@material-ui/core';
-import { DateRange } from 'react-date-range';
 import { Box } from '@material-ui/core';
 import GetAppIcon from '@material-ui/icons/GetApp';
-import AsyncSelect from 'react-select/async';
+import PublishIcon from '@material-ui/icons/Publish';
 import ShareIcon from '@material-ui/icons/Share';
-import usePageTitle from '../../../hooks/usePageTitle';
+import { makeStyles } from '@material-ui/styles';
+import { subDays, format } from 'date-fns';
+import MUIDataTable from 'mui-datatables';
+import { useSnackbar } from 'notistack';
+import React, { useMemo, useState, useEffect } from 'react';
+import { DateRange } from 'react-date-range';
+import AsyncSelect from 'react-select/async';
+import Currency from '../../../components/Number/Currency';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
+import usePageTitle from '../../../hooks/usePageTitle';
+import apiCall from '../../../utils/api.util';
 
 
 const useStyles = makeStyles({
@@ -158,7 +158,7 @@ function FastTagPassbook( {currentUser} ) {
       apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${from}&to=${to}&page=${pageQry}&row_count=${rowsPerPage}`)
         .then(res => {
           setPageLoader(false)
-          if(res.status === "SUCCESS"){
+          if(res.status === 'SUCCESS'){
             setData(res.data.list)
             setVehicle(res.data.total_vehicles)
             setAmount(res.data.total_amount)
@@ -236,14 +236,14 @@ function FastTagPassbook( {currentUser} ) {
             }
             else{
               return (
-              <Tooltip title={tableMeta?.rowData[5]}>
-                <strong>
-                  <Currency value={value} style={{color: 'red'}}/>
-                </strong>
-              </Tooltip>
+                <Tooltip title={tableMeta?.rowData[5]}>
+                  <strong>
+                    <Currency value={value} style={{color: 'red'}}/>
+                  </strong>
+                </Tooltip>
               )
             }
-        }
+          }
         },
       },
       {
@@ -275,9 +275,9 @@ function FastTagPassbook( {currentUser} ) {
     count: total,
     onTableChange: (action, tableState) => {
       switch(action) {
-        case "changePage":
-          pageChange(tableState.page)
-          break;
+      case 'changePage':
+        pageChange(tableState.page)
+        break;
       }
     }
   };
@@ -295,7 +295,7 @@ function FastTagPassbook( {currentUser} ) {
       apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${qry.from}&to=${qry.to}&page=${page}&row_count=${rowsPerPage}`)
         .then(res => {
           setPageLoader(false)
-          if(res.status === "SUCCESS"){
+          if(res.status === 'SUCCESS'){
             setData(res.data.list)
             setVehicle(res.data.total_vehicles)
             setAmount(res.data.total_amount)
@@ -308,34 +308,34 @@ function FastTagPassbook( {currentUser} ) {
   const onDateChange = (type) => (event) => {
     setSelectedPeriodType(type);
     switch (type) {
-      case 'D':
-        setSelectedPeriod({
-          from: new Date(),
-          to: new Date(),
-        });
-        setPeriod('today')
-        break;
-      case 'W':
-        setSelectedPeriod({
-          from: subDays(new Date(), 8),
-          to: subDays(new Date(), 1),
-        });
-        setPeriod('1week')
-        break;
-      case '2W':
-        setSelectedPeriod({
-          from: subDays(new Date(), 16),
-          to: subDays(new Date(), 1),
-        });
-        setPeriod('2week')
-        break;
-      case 'Custom':
-        setShowPicker(event.currentTarget)
-        setPeriod('custom')
-          break;
+    case 'D':
+      setSelectedPeriod({
+        from: new Date(),
+        to: new Date(),
+      });
+      setPeriod('today')
+      break;
+    case 'W':
+      setSelectedPeriod({
+        from: subDays(new Date(), 8),
+        to: subDays(new Date(), 1),
+      });
+      setPeriod('1week')
+      break;
+    case '2W':
+      setSelectedPeriod({
+        from: subDays(new Date(), 16),
+        to: subDays(new Date(), 1),
+      });
+      setPeriod('2week')
+      break;
+    case 'Custom':
+      setShowPicker(event.currentTarget)
+      setPeriod('custom')
+      break;
       
-      default:
-        break;
+    default:
+      break;
     }
   };
 
@@ -374,49 +374,49 @@ function FastTagPassbook( {currentUser} ) {
     if(searchValue)
     {
       apiCall(`fastag/details?${selectedValue}=${searchValue}&from=${from}&to=${to}&pagination=1&${action === 'download'? 'send=1&download=1' : 'send=1'}`)
-    .then(res => {
-      if(res.status === 'SUCCESS')
-      {
-        action === 'download' ? window.open(res?.data[0]) : 
-          setShareLoading(false)
-          setShareModal(false)
-          if (action === 'share'){
+        .then(res => {
+          if(res.status === 'SUCCESS')
+          {
+            action === 'download' ? window.open(res?.data[0]) : 
+              setShareLoading(false)
+            setShareModal(false)
+            if (action === 'share'){
+              enqueueSnackbar(res.message, {
+                anchorOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+                variant: 'success',
+                style: { width: 400 },
+              })
+            }
+          }
+          else {
+            setShareLoading(false)
+            setShareModal(false)
             enqueueSnackbar(res.message, {
               anchorOrigin: {
                 vertical: 'top',
                 horizontal: 'right',
               },
-              variant: 'success',
+              variant: 'error',
               style: { width: 400 },
             })
           }
-      }
-      else {
-        setShareLoading(false)
-        setShareModal(false)
-        enqueueSnackbar(res.message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-          style: { width: 400 },
         })
-      }
-    })
-    .catch(e => {
-      setShareLoading(false)
-      enqueueSnackbar('Something went wrong, Please try Again!', {
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-        variant: 'error',
-        style: { width: 400 },
-      })
-      console.log(e)
-    })
-  }
+        .catch(e => {
+          setShareLoading(false)
+          enqueueSnackbar('Something went wrong, Please try Again!', {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+            style: { width: 400 },
+          })
+          console.log(e)
+        })
+    }
   }
   const handleDownload = () => {
     handleCSV('download');
@@ -437,15 +437,15 @@ function FastTagPassbook( {currentUser} ) {
     event.target.type = 'submit';
     event.target.type = 'file';
     fetch(`${URL.base}fastag/upload/statement`, {
-      method: "POST",
+      method: 'POST',
       body: formData,
       headers: {
         Authorization: `Bearer ${currentUser.token}`,
       },
     })
-    .then(res => {
-      return res.json()
-    })
+      .then(res => {
+        return res.json()
+      })
       .then(({ status, message}) => {
         setFile('')
         setDisable(false)
@@ -465,13 +465,13 @@ function FastTagPassbook( {currentUser} ) {
         }
         else {
           setLoading(false)
-        enqueueSnackbar(message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        })
+          enqueueSnackbar(message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
         }
       })
       .catch(e => {
@@ -507,7 +507,7 @@ function FastTagPassbook( {currentUser} ) {
       {
         if (event.key === 'Enter') {
           handleSubmit();
-         }
+        }
       }}>
         <div className={classes.find}>
           <Typography
@@ -568,52 +568,52 @@ function FastTagPassbook( {currentUser} ) {
               2W
             </div>
             <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')}>
-            {
-              'Custom'
-            }
+              {
+                'Custom'
+              }
             </div>
           </div>
           <Popover
-                id={Boolean(showPicker) ? 'dp' : undefined}
-                open={Boolean(showPicker)}
-                anchorEl={showPicker}
-                onClose={onDateRangeClose}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'center',
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'center',
-                }}
-              >
-                <DateRange
-                  ranges={[dateRange]}
-                  onChange={onDatePickerChange}
-                  maxDate={new Date()}
-                  months={2}
-                  direction="horizontal"
-                  minDate={subDays(new Date(), 1095)}
-                />
-                <Box p={1} textAlign='right'>
-                  <Button variant="contained" color="primary" onClick={onDateRangeClose}>
-                    Apply
-                  </Button>
-                </Box>
-              </Popover>
+            id={showPicker ? 'dp' : undefined}
+            open={Boolean(showPicker)}
+            anchorEl={showPicker}
+            onClose={onDateRangeClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'center',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'center',
+            }}
+          >
+            <DateRange
+              ranges={[dateRange]}
+              onChange={onDatePickerChange}
+              maxDate={new Date()}
+              months={2}
+              direction="horizontal"
+              minDate={subDays(new Date(), 1095)}
+            />
+            <Box p={1} textAlign='right'>
+              <Button variant="contained" color="primary" onClick={onDateRangeClose}>
+                Apply
+              </Button>
+            </Box>
+          </Popover>
         </div>
         <div className={classes.top}>
           <div className={classes.search}>
             <div style={{width: 200}}>
               <AsyncSelect
-              components={optionsLoading? null : {LoadingIndicator: null}}
-              styles={{
-                menu: provided => ({ ...provided, zIndex: 9999 })
-              }}
-              loadingMessage={() => ' '}
-              onChange={onChangeOption}
-              loadOptions={getOptions}
-              placeholder = {selectedValue === 'vehicle' ? `Enter Vehicle Number` : `Enter Transports`}
+                components={optionsLoading? null : {LoadingIndicator: null}}
+                styles={{
+                  menu: provided => ({ ...provided, zIndex: 9999 })
+                }}
+                loadingMessage={() => ' '}
+                onChange={onChangeOption}
+                loadOptions={getOptions}
+                placeholder = {selectedValue === 'vehicle' ? 'Enter Vehicle Number' : 'Enter Transports'}
               />
             </div>
             <Button
@@ -656,7 +656,7 @@ function FastTagPassbook( {currentUser} ) {
                   disabled={disable}
                   accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                 />
-                <label for='file' className={!file? classes.label : classes.disabled}>
+                <label htmlFor='file' className={!file? classes.label : classes.disabled}>
                   {file ? loading? <><CircularProgress size={11} style={{marginRight: 7}}/> {file.name}</> : file.name : <><PublishIcon fontSize='small' style={{paddingRight: 4,}}/> Upload Statement</>}
                 </label>
               </div>
@@ -666,56 +666,56 @@ function FastTagPassbook( {currentUser} ) {
       </Paper>
       {
         data ? (
-      <Paper className={classes.root} style={{ marginTop: 20 }}>
-        <MUIDataTable columns={columns} options={options} data={data}
-        title={
-          <>
-        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-          <Typography variant="h6">
-            Fastag Passbook
-          </Typography>
-          {
-            period === 'today' ? (
-              <Typography variant="h6">
-                <span style={{color: '#999999'}}>Period:</span> {format(selectedPeriod.from, 'dd-MM-yyyy')}
-              </Typography>
-            ) : (
-              <Typography variant="h6">
-                <span style={{color: '#999999'}}>Period:</span> {format(selectedPeriod.from, 'dd-MM-yyyy')} - {format(selectedPeriod.to, 'dd-MM-yyyy')}
-              </Typography>
-            )
-          }
-          {
-            selectedValue === 'id' ? (
-              <Typography variant="h6">
-                <span style={{color: '#999999'}}>Vehicle:</span> {vehicle}
-              </Typography>
-            ) : (null)
-          }
-          <Typography variant='h6'>
-            <span style={{color: '#999999'}}>Transactions:</span> {total}
-          </Typography>
+          <Paper className={classes.root} style={{ marginTop: 20 }}>
+            <MUIDataTable columns={columns} options={options} data={data}
+              title={
+                <>
+                  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <Typography variant="h6">
+                      Fastag Passbook
+                    </Typography>
+                    {
+                      period === 'today' ? (
+                        <Typography variant="h6">
+                          <span style={{color: '#999999'}}>Period:</span> {format(selectedPeriod.from, 'dd-MM-yyyy')}
+                        </Typography>
+                      ) : (
+                        <Typography variant="h6">
+                          <span style={{color: '#999999'}}>Period:</span> {format(selectedPeriod.from, 'dd-MM-yyyy')} - {format(selectedPeriod.to, 'dd-MM-yyyy')}
+                        </Typography>
+                      )
+                    }
+                    {
+                      selectedValue === 'id' ? (
+                        <Typography variant="h6">
+                          <span style={{color: '#999999'}}>Vehicle:</span> {vehicle}
+                        </Typography>
+                      ) : (null)
+                    }
+                    <Typography variant='h6'>
+                      <span style={{color: '#999999'}}>Transactions:</span> {total}
+                    </Typography>
           
-          <Typography variant='h6'>
-            <span style={{color: '#999999'}}>Amount:</span> <Currency value={amount? amount : '0'}/>
-          </Typography>
-        </div>
-        <div style={{position: 'absolute', top: '15px', right: '10px'}}>
-          {
-              pageLoader && (
-                <CircularProgress size={24} style={{ marginLeft: 15, position: "relative"}} />
-              )
-            }
-        </div>
-        </>
-        }
-        />
-      </Paper>
+                    <Typography variant='h6'>
+                      <span style={{color: '#999999'}}>Amount:</span> <Currency value={amount? amount : '0'}/>
+                    </Typography>
+                  </div>
+                  <div style={{position: 'absolute', top: '15px', right: '10px'}}>
+                    {
+                      pageLoader && (
+                        <CircularProgress size={24} style={{ marginLeft: 15, position: 'relative'}} />
+                      )
+                    }
+                  </div>
+                </>
+              }
+            />
+          </Paper>
         ) : null
       }
       <Dialog 
-      open={shareModal}
-      onClose={() => setShareModal(false)}
+        open={shareModal}
+        onClose={() => setShareModal(false)}
       >
         <DialogTitle>Mail Statement</DialogTitle>
         <DialogContent style={{width: 400}}>
@@ -726,7 +726,7 @@ function FastTagPassbook( {currentUser} ) {
           <Button onClick={() => {
             // setShareLoading(true)
             handleCSV('share')
-            }}>{shareLoading ? <CircularProgress size={20}/> : 'Send'}</Button>
+          }}>{shareLoading ? <CircularProgress size={20}/> : 'Send'}</Button>
         </DialogActions>
 
       </Dialog>

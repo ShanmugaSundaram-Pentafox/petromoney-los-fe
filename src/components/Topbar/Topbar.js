@@ -1,26 +1,25 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import { withRouter } from 'react-router-dom';
-// import { Link as RouterLink } from 'react-router-dom';
+import { AppBar, Toolbar, Hidden, Tooltip, IconButton, RadioGroup, Radio, FormControlLabel } from '@material-ui/core';
+import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
+import MenuIcon from '@material-ui/icons/Menu';
+import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/styles';
-import { AppBar, Toolbar, Badge, Hidden, Tooltip, IconButton, RadioGroup, Radio, FormControlLabel } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
+import React, { Fragment, useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+// import { Link as RouterLink } from 'react-router-dom';
 // import ToggleButton from '@material-ui/lab/ToggleButton';
 // import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import InputIcon from '@material-ui/icons/Input';
-import { connect } from 'react-redux';
-import { resetCurrentUser, setCurrentUser } from '../../store/user/user.actions';
+import styled from 'styled-components';
+import { rulesList } from '../../config/userRules';
+import SendEmailAction from '../../pages/reports/SendEmailAction';
+import { setDashboardView } from '../../store/common/common.actions';
+import { resetCurrentUser } from '../../store/user/user.actions';
 // import NotificationsBell from '../CommonComponents/NotificationsBell';
+import AddNewUserAction from '../AddNewUser/AddNewUserAction';
 import LoginUserInfo from '../CommonComponents/LoginUserInfo';
 import NotificationSidebar from '../CommonComponents/NotificationSidebar';
-import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
-import { setDashboardView } from '../../store/common/common.actions';
-import AddNewUserAction from '../AddNewUser/AddNewUserAction';
-import SendEmailAction from '../../pages/reports/SendEmailAction';
 import { permissionCheck } from '../UserCan/UserCan';
-import { rulesList } from '../../config/userRules';
-import styled from 'styled-components';
 // import Searchbox from '../CommonComponents/Searchbox';
 
 const useStyles = makeStyles(theme => {
@@ -57,7 +56,7 @@ const useStyles = makeStyles(theme => {
       paddingLeft: theme.spacing(2),
       marginLeft: theme.spacing(1),
       borderRadius: 20,
-      boxShadow: `inset 0 0 8px 0px #cdcdcd`,
+      boxShadow: 'inset 0 0 8px 0px #cdcdcd',
     },
     actionsContainer: {
       paddingRight: theme.spacing(2),
@@ -157,7 +156,7 @@ const Topbar = (props) => {
               </>
             )}
             {
-              typeof pageTitle === 'string' && pageTitle?.toLowerCase() == "dashboard" && user.role_name != "DEALER" ? (
+              typeof pageTitle === 'string' && pageTitle?.toLowerCase() == 'dashboard' && user.role_name != 'DEALER' ? (
                 <span className={classes.optionsContainer}>
                   <RadioGroup onChange={(e, v) => updateDashboardView(v)} row aria-label="dashboard-view-type" name="dashboard-view-type" defaultValue={dashboardView}>
                     <Tooltip title="Loan Origination System">
@@ -180,21 +179,21 @@ const Topbar = (props) => {
             }
 
             {
-              match?.path?.toLowerCase() == "/users" && (
+              match?.path?.toLowerCase() == '/users' && (
                 <span className={classes.actionsContainer}>
                   <AddNewUserAction />
                 </span>
               )
             }
             {
-              match?.path?.toLowerCase() == "/reports/due" && (
+              match?.path?.toLowerCase() == '/reports/due' && (
                 <span className={classes.actionsContainer}>
                   <SendEmailAction />
                 </span>
               )
             }
             {
-              match?.path?.toLowerCase() == "/reports/overdue" && (
+              match?.path?.toLowerCase() == '/reports/overdue' && (
                 <span className={classes.actionsContainer}>
                   <SendEmailAction />
                 </span>

@@ -1,26 +1,26 @@
-import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/styles';
-import Stepper from '@material-ui/core/Stepper';
-import Step from '@material-ui/core/Step';
-import Typography from '@material-ui/core/Typography';
-import * as Yup from 'yup';
-import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Divider from '@material-ui/core/Divider';
+import Step from '@material-ui/core/Step';
+import Stepper from '@material-ui/core/Stepper';
+import Typography from '@material-ui/core/Typography';
+import CloseIcon from '@material-ui/icons/Close';
+import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
-import EditIcon from '@material-ui/icons/Edit';
-import { useFormik } from 'formik';
-import { cryptoEncrypt, encrypt } from '../../../services/crypto.service';
-import clsx from 'clsx';
 import Alert from '@material-ui/lab/Alert';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { API } from '../../../config/api';
-import { URL } from '../../../config/serverUrls';
-import { logger } from '../../../config/logger';
-import DealerEditForm from './DealerEditForm';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
+import { format } from 'date-fns';
+import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
-import CloseIcon from '@material-ui/icons/Close';
-import { format, parse } from 'date-fns';
+import React, { useState } from 'react';
+import * as Yup from 'yup';
+import DealerEditForm from './DealerEditForm';
+import { API } from '../../../config/api';
+import { logger } from '../../../config/logger';
+import { URL } from '../../../config/serverUrls';
+import { cryptoEncrypt } from '../../../services/crypto.service';
 import { compareObject } from '../../../utils/compareObject.util';
 
 
@@ -201,7 +201,7 @@ const DealerEditSideWrapper = ({
       values.first_name = values.first_name.toUpperCase();
       values.last_name = values.last_name.toUpperCase();
       setLoading(true);
-      const dob = selectedDate ? format(new Date(selectedDate), "dd-MM-yyyy") : values.dob ? values.dob : null
+      const dob = selectedDate ? format(new Date(selectedDate), 'dd-MM-yyyy') : values.dob ? values.dob : null
       const date_values = { ...values, dob: dob, pan: values.pan.toUpperCase(), is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0 };
       let obj = {};
       if (values.id) {

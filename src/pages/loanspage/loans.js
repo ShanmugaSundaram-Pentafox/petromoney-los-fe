@@ -1,38 +1,38 @@
-import React, { useMemo, useState } from 'react';
+import Box from '@material-ui/core/Box';
+import Drawer from '@material-ui/core/Drawer';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/styles';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import { useMount } from 'react-use';
 import { createStructuredSelector } from 'reselect';
 // import { Link as RouterLink } from 'react-router-dom';
 // import moment from 'moment';
 // import clsx from 'clsx';
-import usePageTitle from '../../hooks/usePageTitle';
-import { connect } from 'react-redux';
-// import { useMount } from 'react-use';
-import { makeStyles } from '@material-ui/styles';
-// import MUIDataTable from "mui-datatables";
-import Grid from '@material-ui/core/Grid';
-import { selectAllLoans } from '../../store/loans/loans.selector';
-import { setAllLoans } from '../../store/loans/loans.actions';
-import { getAllLoans, getLoanStats } from '../../services/loans.service';
+import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import Currency from '../../components/Number/Currency';
-import Drawer from '@material-ui/core/Drawer';
-import Paper from '@material-ui/core/Paper';
+import ApprovalReqestTable from '../../components/Tables/ApprovalReqestTable';
+import ApprovedTable from '../../components/Tables/ApprovedTable';
+import DisbursedTable from '../../components/Tables/DisbursedTable';
+import DisbursementApprovedTable from '../../components/Tables/DisbursementApprovedTable';
+import DisbursementReqestTable from '../../components/Tables/DisbursementReqestTable';
+import RejectedTable from '../../components/Tables/RejectedTable';
+import ReviewerTable from '../../components/Tables/ReviewTable';
+import SubmittedTable from '../../components/Tables/SubmittedTable';
+import usePageTitle from '../../hooks/usePageTitle';
+// import { useMount } from 'react-use';
+// import MUIDataTable from "mui-datatables";
+import { getDealersByDealershipId } from '../../services/dealers.service';
+import { getDealershipById, getDealershipLoansById } from '../../services/dealerships.service';
+import { getAllLoans, getLoanStats } from '../../services/loans.service';
+import { setAllLoans } from '../../store/loans/loans.actions';
+import { selectAllLoans } from '../../store/loans/loans.selector';
 // import Avatar from '@material-ui/core/Avatar';
 // import AvatarGroup from '@material-ui/lab/AvatarGroup';
 // import AvatarGroup from '@material-ui/lab/AvatarGroup';
-import { getDealershipById, getDealershipLoansById } from '../../services/dealerships.service';
-import { getDealersByDealershipId } from '../../services/dealers.service';
 import DealershipDetails from '../dashboard/components/DealershipDetails';
-import SubmittedTable from '../../components/Tables/SubmittedTable';
-import ApprovedTable from '../../components/Tables/ApprovedTable';
-import DisbursedTable from '../../components/Tables/DisbursedTable';
-import RejectedTable from '../../components/Tables/RejectedTable';
-import DashCard from '../../components/CommonComponents/Cards/DashCard';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
-import { useMount } from 'react-use';
-import ApprovalReqestTable from '../../components/Tables/ApprovalReqestTable';
-import ReviewerTable from '../../components/Tables/ReviewTable';
-import DisbursementReqestTable from '../../components/Tables/DisbursementReqestTable';
-import DisbursementApprovedTable from '../../components/Tables/DisbursementApprovedTable';
 
 
 const useStyles = makeStyles(theme => ({
@@ -55,7 +55,7 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 400,
     fontSize: 18,
     padding: 8,
-    backgroundColor: "#a6b1e1"
+    backgroundColor: '#a6b1e1'
   },
   cardItem: {
     padding: '14px 12px',
@@ -136,12 +136,12 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
   const [chartData, setChartData] = useState([{}, {}, {}, {}, {}, {}]);
   const [showPanel, setShowPanel] = useState({
     status: false,
-    data: ""
+    data: ''
   });
   const [dealershipData, setDealershipData] = useState();
   const [loansData, setLoansData] = useState();
   const [dealersData, setDealersData] = useState();
-  const [selectedStatsCard, setSelectedStatsCard] = useState("Approved");
+  const [selectedStatsCard, setSelectedStatsCard] = useState('Approved');
   const [filterQry, setFilterQry] = useState({ region: 0 })
 
   const handleClick = (name) => {
@@ -227,74 +227,74 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
       }
       <Grid container spacing={2}>
         {
-          selectedStatsCard === "Pending Approval" ? (
+          selectedStatsCard === 'Pending Approval' ? (
             <Grid item md={12}>
               <Paper className={classes.tableContainer}>
-                <ApprovalReqestTable title={"Pending for Initial Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                <ApprovalReqestTable title={'Pending for Initial Approval'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
               </Paper>
             </Grid>
           ) : null
         }
         {
-          selectedStatsCard === "Pending Review" ? (
+          selectedStatsCard === 'Pending Review' ? (
             <Grid item md={12}>
               <Paper className={classes.tableContainer}>
-                <ReviewerTable title={"Pending for Review"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                <ReviewerTable title={'Pending for Review'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
               </Paper>
             </Grid>
           ) : null
         }
         {
-          selectedStatsCard === "Disb. Approval" ? (
+          selectedStatsCard === 'Disb. Approval' ? (
             <Grid item md={12}>
               <Paper className={classes.tableContainer}>
-                <DisbursementReqestTable title={"Pending for Disbursement Approval"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                <DisbursementReqestTable title={'Pending for Disbursement Approval'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
               </Paper>
             </Grid>
           ) : null
         }
         {
-          selectedStatsCard === "Submitted" ? (
+          selectedStatsCard === 'Submitted' ? (
             <Grid item xs={12}>
               <Paper className={classes.tableContainer}>
-                <SubmittedTable title={"Submitted Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                <SubmittedTable title={'Submitted Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
               </Paper>
             </Grid>
           ) : null
         }
         {
-          selectedStatsCard === "Approved" ? (
+          selectedStatsCard === 'Approved' ? (
             <Grid item xs={12}>
               <Paper className={classes.tableContainer}>
-                <ApprovedTable title={"Disbursement Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                <ApprovedTable title={'Disbursement Approved Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
               </Paper>
             </Grid>
 
           ) : null
         }
         {
-          selectedStatsCard === "Rejected" ? (
+          selectedStatsCard === 'Rejected' ? (
             <Grid item xs={12}>
               <Paper className={classes.tableContainer}>
-                <RejectedTable title={"Rejected Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                <RejectedTable title={'Rejected Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
               </Paper>
             </Grid>
           ) : null
         }
         {
-          selectedStatsCard === "Disbursed" ? (
+          selectedStatsCard === 'Disbursed' ? (
             <Grid item xs={12}>
               <Paper className={classes.tableContainer}>
-                <DisbursedTable title={"Disbursed Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                <DisbursedTable title={'Disbursed Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
               </Paper>
             </Grid>
           ) : null
         }
         {
-          selectedStatsCard === "Disb. Approved" ? (
+          selectedStatsCard === 'Disb. Approved' ? (
             <Grid item xs={12}>
               <Paper className={classes.tableContainer}>
-                <DisbursementApprovedTable title={"Disbursement Approved Applications"} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                <DisbursementApprovedTable title={'Disbursement Approved Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
               </Paper>
             </Grid>
           ) : null
@@ -317,7 +317,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
           onBackdropClick: () => { setShowPanel({ status: false }) }
         }}
         open={showPanel.status}
-        variant={"temporary"}
+        variant={'temporary'}
       >
         <div className={classes.sidePanelWrapper}>
           <DealershipDetails

@@ -1,13 +1,13 @@
-import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/styles';
+import React from 'react';
 
 const useStyles = makeStyles(theme => ({
   labelStyle: {
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(1),
-    display: "block"
+    display: 'block'
   }
 }))
 

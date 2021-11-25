@@ -1,42 +1,42 @@
-import React, { useState } from "react"
-import { withStyles } from "@material-ui/core/styles"
-import { makeStyles } from "@material-ui/styles";
-import MuiAccordion from "@material-ui/core/Accordion"
-import Box from "@material-ui/core/Box"
-import MuiAccordionSummary from "@material-ui/core/AccordionSummary"
-import MuiAccordionDetails from "@material-ui/core/AccordionDetails"
-import Typography from "@material-ui/core/Typography"
-import Currency from "../../../components/Number/Currency"
+import { Drawer } from '@material-ui/core';
+import MuiAccordion from '@material-ui/core/Accordion'
+import MuiAccordionDetails from '@material-ui/core/AccordionDetails'
+import MuiAccordionSummary from '@material-ui/core/AccordionSummary'
+import Box from '@material-ui/core/Box'
+import { getVehicleDocuments, getVehicleLoans, getVehicleServiceDetails, deleteVehicleStatus, updateVehicleServiceDetails, deleteVehicleDoc, deleteVehicleLoan } from "../../../services/transports.service"
+import { logger } from "../../../config/logger"
+import NewVehicleLoanAction from '../../../components/NewVehicleLoan/NewVehicleLoanAction'
+import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog'
+import FileUpload from '../../../components/FileUpload'
+import { URL } from '../../../config/serverUrls'
+import { useSnackbar } from 'notistack';
+import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
+import AddNewVehicleForm from '../../transports/components/AddNewVehicleForm';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import Step from '@material-ui/core/Step';
+import StepButton from '@material-ui/core/StepButton';
+import Stepper from '@material-ui/core/Stepper';
+import { withStyles } from '@material-ui/core/styles'
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Tooltip from '@material-ui/core/Tooltip';
-import Stepper from '@material-ui/core/Stepper';
-import Step from '@material-ui/core/Step';
-import StepButton from '@material-ui/core/StepButton';
+import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { getVehicleDocuments, getVehicleLoans, getVehicleServiceDetails, deleteVehicleStatus, updateVehicleServiceDetails, deleteVehicleDoc, deleteVehicleLoan } from "../../../services/transports.service"
-import { logger } from "../../../config/logger"
-import Button from "../../../components/CommonComponents/Button/Button"
-import NewVehicleLoanAction from "../../../components/NewVehicleLoan/NewVehicleLoanAction"
-import FormDialog from "../../../components/CommonComponents/FormDialog/FormDialog"
-import TrackerUpdateModal from "./TrackerUpdateModal"
-import FileUpload from "../../../components/FileUpload"
-import { URL } from "../../../config/serverUrls"
-import { useSnackbar } from 'notistack';
-import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
-import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
-import AddNewVehicleForm from "../../transports/components/AddNewVehicleForm";
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import { Drawer } from "@material-ui/core";
-import FilePreview from "../../../components/CommonComponents/FilePreview";
-import { permissionCheck } from "../../../components/UserCan/UserCan";
-import { rulesList } from "../../../config/userRules";
+import { makeStyles } from '@material-ui/styles';
+import React, { useState } from 'react'
+import TrackerUpdateModal from './TrackerUpdateModal'
+import Button from '../../../components/CommonComponents/Button/Button'
+import FilePreview from '../../../components/CommonComponents/FilePreview';
+import Currency from '../../../components/Number/Currency'
+import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -97,20 +97,20 @@ const useStyles = makeStyles((theme) => ({
 
 const Accordion = withStyles({
   root: {
-    border: "1px solid rgba(0, 0, 0, .125)",
+    border: '1px solid rgba(0, 0, 0, .125)',
     borderRadius: 4,
     marginBottom: 8,
     minWidth: '52vw',
     // boxShadow: "none",
-    "&:not(:last-child)": {
+    '&:not(:last-child)': {
       borderBottom: 0,
     },
-    "&:before": {
-      display: "none",
+    '&:before': {
+      display: 'none',
     },
-    "&$expanded": {
-      margin: "auto",
-      "&:last-child": {
+    '&$expanded': {
+      margin: 'auto',
+      '&:last-child': {
         marginBottom: 8,
       },
     },
@@ -124,15 +124,15 @@ const AccordionSummary = withStyles({
     // borderBottom: "1px solid rgba(0, 0, 0, .125)",
     // marginBottom: -1,
     minHeight: 56,
-    "&$expanded": {
+    '&$expanded': {
       minHeight: 56,
     },
   },
   content: {
-    "&$expanded": {
-      margin: "12px 0",
+    '&$expanded': {
+      margin: '12px 0',
     },
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
   },
   expanded: {},
 })(MuiAccordionSummary)
@@ -141,12 +141,12 @@ const AccordionDetails = withStyles((theme) => ({
   root: {
     padding: theme.spacing(2),
     flexDirection: 'column',
-    borderTop: "1px solid rgba(0, 0, 0, .125)",
+    borderTop: '1px solid rgba(0, 0, 0, .125)',
   },
 }))(MuiAccordionDetails)
 
 export default function VehicleInfo({ id, data, currentUser }) {
-  const [expanded, setExpanded] = useState("")
+  const [expanded, setExpanded] = useState('')
   const [docs, setDocs] = useState({})
   const [loans, setLoans] = useState({})
   const [open, setOpen] = useState(false)
@@ -215,8 +215,8 @@ export default function VehicleInfo({ id, data, currentUser }) {
     const formData = new FormData();
     const dealerShipId = id;
     files.map(file => {
-      formData.append(`file`, file);
-      formData.append(`document_id`, rowData.doc_id);
+      formData.append('file', file);
+      formData.append('document_id', rowData.doc_id);
     });
     fetch(`${URL.base}transporter/${id}/vehicle/${vehicleDetails.vehicle_id}/docs`, {
       method: 'POST',
@@ -430,12 +430,12 @@ export default function VehicleInfo({ id, data, currentUser }) {
                 <Typography>
                   Credit Limit: <Currency value={vehicleInfo.credit_limit} />
                 </Typography>
-                <div style={{ display: "flex" }}>
+                <div style={{ display: 'flex' }}>
                   {
                     !permissionCheck(currentUser.role_name, rulesList.transporter_view) ? (
                       <>
                         <Tooltip title="Edit vehicle">
-                          <Typography style={{ marginRight: '7px', color: "#4770C1" }} onClick={() => { modalOpen(vehicleInfo.tt_no, vehicleInfo.vehicle_id) }}>
+                          <Typography style={{ marginRight: '7px', color: '#4770C1' }} onClick={() => { modalOpen(vehicleInfo.tt_no, vehicleInfo.vehicle_id) }}>
                             <EditOutlinedIcon fontSize="medium" />
                           </Typography>
                         </Tooltip>
@@ -467,7 +467,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
                             <TableCell>{row.description}</TableCell>
                             <TableCell>
                               <Button onClick={() => setImageModal({ open: true, image: row.file_path, type: row.file_path.endsWith('.pdf') })} >
-                                <a>{row.file_path?.split("/")[row.file_path?.split("/").length - 1] || '-'}</a>
+                                <a>{row.file_path?.split('/')[row.file_path?.split('/').length - 1] || '-'}</a>
                               </Button>
                             </TableCell>
                             <TableCell>
@@ -607,15 +607,15 @@ export default function VehicleInfo({ id, data, currentUser }) {
           </div>
         )
       })}
-      <FormDialog title={"File Preview"} onDownload={imageModal.image} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
+      <FormDialog title={'File Preview'} onDownload={imageModal.image} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
         <FilePreview data={imageModal} />
       </FormDialog>
       {
         // const d = JSON.parse((serviceData?.tracking_details?.[4]?.details || "{}").replace(/\'/g,'\"'));
         fileUpload &&
-        <div style={{ minWidth: '40vw' }}>
-          {<FileUpload handleSave={handleSave} id={id} data={rowData} open={fileUpload} onCloseUploader={() => setFileUpload(false)} />}
-        </div>
+          <div style={{ minWidth: '40vw' }}>
+            {<FileUpload handleSave={handleSave} id={id} data={rowData} open={fileUpload} onCloseUploader={() => setFileUpload(false)} />}
+          </div>
       }
 
       {/* <FormDialog title={"Update Service Status"} open={serviceModal.open} onClose={() => setServiceModal({ open: false })}>

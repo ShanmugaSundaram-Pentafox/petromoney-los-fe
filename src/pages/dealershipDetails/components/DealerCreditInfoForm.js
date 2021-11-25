@@ -1,7 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { makeStyles } from '@material-ui/styles';
 import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/styles';
+import React, { useState, useEffect } from 'react';
 import TextInput from '../../../components/TextInput/TextInput';
 
 const useStyles = makeStyles({
@@ -32,7 +31,7 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
           label="CIBIL Score"
           name="cibil_score"
           type="number"
-          value={formData.cibil_score || ""}
+          value={formData.cibil_score || ''}
           onChange={onChange}
         />
       </Grid>
@@ -41,7 +40,7 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
           number
           label="Total no.of loans"
           name="loans_count"
-          value={formData.loans_count || ""}
+          value={formData.loans_count || ''}
           onChange={onChange}
         />
       </Grid>
@@ -50,7 +49,7 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
           number
           label="No of closed loans"
           name="closed_loans_count"
-          value={formData.closed_loans_count || ""}
+          value={formData.closed_loans_count || ''}
           onChange={onChange}
         />
       </Grid>
@@ -59,7 +58,7 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
           number
           label="No of overdue accounts"
           name="od_accounts_count"
-          value={formData.od_accounts_count || ""}
+          value={formData.od_accounts_count || ''}
           onChange={onChange}
         />
       </Grid>
@@ -68,7 +67,7 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
           number
           label="Overdue Amount"
           name="od_amount"
-          value={formData.od_amount || ""}
+          value={formData.od_amount || ''}
           onChange={onChange}
         />
       </Grid>
@@ -77,7 +76,7 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
           number
           label="Current O/S amount"
           name="current_os_amount"
-          value={formData.current_os_amount || ""}
+          value={formData.current_os_amount || ''}
           onChange={onChange}
         />
       </Grid>
@@ -86,7 +85,7 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
           number
           label="Vintage with CIBIL bureau"
           name="cibil_vintage"
-          value={formData.cibil_vintage || ""}
+          value={formData.cibil_vintage || ''}
           onChange={onChange}
         />
       </Grid>
@@ -95,7 +94,7 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange }) => {
           number
           label="No of enquiries last 6 months"
           name="no_of_enquiries"
-          value={formData.no_of_enquiries || ""}
+          value={formData.no_of_enquiries || ''}
           onChange={onChange}
         />
       </Grid>

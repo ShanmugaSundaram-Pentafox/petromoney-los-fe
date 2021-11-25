@@ -1,25 +1,24 @@
-import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
+import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import TextInput from '../../../components/TextInput/TextInput';
-import Button from '../../../components/CommonComponents/Button/Button';
+import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
+import { useFormik } from 'formik';
+import { useSnackbar } from 'notistack';
+import React, { useState } from 'react';
+import * as Yup from 'yup';
+import Button from '../../../components/CommonComponents/Button/Button';
+import TextInput from '../../../components/TextInput/TextInput';
 import {
   addNewVehicle,
-  getAllTransport,
   updateVehicle,
 } from '../../../services/transports.service';
-import { useSnackbar } from 'notistack';
-import CloseIcon from '@material-ui/icons/Close';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {

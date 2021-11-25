@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import FormDialog from '../CommonComponents/FormDialog/FormDialog';
 import NewVehicleLoanForm from './NewVehicleLoanForm';
 import Button from '../CommonComponents/Button/Button';
+import FormDialog from '../CommonComponents/FormDialog/FormDialog';
 
 const NewVehicleLoanAction = ({ vehicleId, callback, currentUser }) => {
   const [openModal, setOpenModal] = useState(false);

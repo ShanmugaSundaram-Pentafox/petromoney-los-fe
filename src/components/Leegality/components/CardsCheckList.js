@@ -1,20 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
-import Avatar from '@material-ui/core/Avatar';
-import Chip from '@material-ui/core/Chip';
-import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
-import CheckCircleOutlineRoundedIcon from '@material-ui/icons/CheckCircleOutlineRounded';
-import RadioButtonUncheckedRoundedIcon from '@material-ui/icons/RadioButtonUncheckedRounded';
-import CheckBoxOutlinedIcon from '@material-ui/icons/CheckBoxOutlined';
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
-import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
-import { green } from '@material-ui/core/colors';
-import { Divider, Switch, Tooltip } from '@material-ui/core';
+import { Divider, Switch } from '@material-ui/core';
 import { Typography } from '@material-ui/core';
+import Box from '@material-ui/core/Box';
+import { green } from '@material-ui/core/colors';
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import CheckBoxOutlinedIcon from '@material-ui/icons/CheckBoxOutlined';
 import { makeStyles } from '@material-ui/styles';
+import React, { useState } from 'react';
+import styled from 'styled-components';
 
 const useStyles = makeStyles(theme => ({
   container:{
@@ -120,7 +112,7 @@ const CardItem = ({ onChange, data }) => {
                   inputProps={{ 'aria-label': 'secondary checkbox' }}
                 />
                 <Typography style={{fontSize:'10px'}} >Virtual Sign</Typography>
-            </div>
+              </div>
             </div>
           )
         }

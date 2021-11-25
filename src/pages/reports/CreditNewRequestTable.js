@@ -1,27 +1,20 @@
-import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/styles';
-import usePageTitle from '../../hooks/usePageTitle';
-import { useMemo } from 'react';
-import { classes } from 'istanbul-lib-coverage';
-import MUIDataTable from 'mui-datatables';
-import { useMount } from 'react-use';
-import {
-  getCreditReport,
-  getCreditReportById,
-  getReport,
-  getTypeOfAccount,
-} from '../../services/users.service';
-import Currency from '../../components/Number/Currency';
 import { Button } from '@material-ui/core';
 import { Grid } from '@material-ui/core';
-import Skeleton from '@material-ui/lab/Skeleton';
 import { Tooltip } from '@material-ui/core';
-import { Badge } from '@material-ui/core';
-import styled from 'styled-components';
-import { Box } from '@material-ui/core';
 import { Drawer } from '@material-ui/core';
+import Skeleton from '@material-ui/lab/Skeleton';
+import { classes } from 'istanbul-lib-coverage';
+import MUIDataTable from 'mui-datatables';
+import { useMemo } from 'react';
+import React, { useState } from 'react';
+import { useMount } from 'react-use';
 import CreditReloadForm from './CreditReloadForm';
 import CreditReloadRemarks from './CreditReloadRemarks';
+import Currency from '../../components/Number/Currency';
+import usePageTitle from '../../hooks/usePageTitle';
+import {
+  getTypeOfAccount,
+} from '../../services/users.service';
 
 
 const CreditNewRequestTable = ({ data, currentUser }) => {
@@ -32,7 +25,7 @@ const CreditNewRequestTable = ({ data, currentUser }) => {
   const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [statusModal, setStatusModal] = useState(false);
-  const [selectedTab, setSelectedTab] = useState("processed");
+  const [selectedTab, setSelectedTab] = useState('processed');
   const [dealershipData, setDealershipData] = useState();
 
 
@@ -161,7 +154,7 @@ const CreditNewRequestTable = ({ data, currentUser }) => {
         let d = [];
         d.push({
           ...data[cellMeta.dataIndex],
-          payment_proof_attachment: typeof (data[cellMeta.dataIndex].payment_proof_attachment) === "string" ? JSON.parse(data[cellMeta.dataIndex].payment_proof_attachment) : (data[cellMeta.dataIndex].payment_proof_attachment || [])
+          payment_proof_attachment: typeof (data[cellMeta.dataIndex].payment_proof_attachment) === 'string' ? JSON.parse(data[cellMeta.dataIndex].payment_proof_attachment) : (data[cellMeta.dataIndex].payment_proof_attachment || [])
         })
         setRowData(d[0])
         setStatusModal(true)

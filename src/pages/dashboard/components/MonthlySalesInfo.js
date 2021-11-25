@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Table from '@material-ui/core/Table';
-import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
-import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
-import { makeStyles } from '@material-ui/core';
-import { deleteDealershipMonthlySalesById, getDealershipMonthlySalesById, postDealershipMonthlySalesById, updateDealershipMonthlySalesById } from '../../../services/dealerships.service';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Typography from '@material-ui/core/Typography';
+import clsx from 'clsx';
+import { useSnackbar } from 'notistack';
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
 import TextInput from '../../../components/TextInput/TextInput';
 import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-import { useSnackbar } from "notistack";
+import { deleteDealershipMonthlySalesById, getDealershipMonthlySalesById, postDealershipMonthlySalesById, updateDealershipMonthlySalesById } from '../../../services/dealerships.service';
 import { getMonth as month } from '../../../utils/commonFunctions.util';
-import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -34,13 +34,13 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 20,
   },
   btnDelete: {
-    '&.MuiButton-root': { color: "#ef5350" },
-    border: "1px #ef5350 solid",
+    '&.MuiButton-root': { color: '#ef5350' },
+    border: '1px #ef5350 solid',
     marginLeft: 2
   },
   btnEdit: {
-    '&.MuiButton-root': { color: "#2196f3" },
-    border: "1px #2196f3 solid",
+    '&.MuiButton-root': { color: '#2196f3' },
+    border: '1px #2196f3 solid',
     marginLeft: 2
   },
 }));
@@ -293,7 +293,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
               }
               {
                 addNewRow && (
-                  <TableRow key={"new-row"}>
+                  <TableRow key={'new-row'}>
                     <TableCell scope="row" component="th">
                       <TextInput
                         select

@@ -1,4 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { Select as MSelect } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -6,26 +12,19 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Tooltip from '@material-ui/core/Tooltip';
-import Button from '@material-ui/core/Button';
-// import ButtonGroup from '@material-ui/core/ButtonGroup';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import Typography from '@material-ui/core/Typography';
+import { useSnackbar } from 'notistack';
+import React, { useEffect, useState } from 'react';
+// import ButtonGroup from '@material-ui/core/ButtonGroup';
+import Select from 'react-select';
 import Currency from '../../../components/Number/Currency';
-import { useMount } from 'react-use';
-import { getDealershipLoansById } from '../../../services/dealerships.service';
+import TextInput from '../../../components/TextInput/TextInput';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-import { getApplicationStatusById, getLoansByStatus, updateLoanApprovalStatusById } from '../../../services/loans.service';
-import TextInput from '../../../components/TextInput/TextInput';
-import { Select as MSelect } from '@material-ui/core';
-import apiCall from '../../../utils/api.util';
-import { useSnackbar } from 'notistack';
-import Select from 'react-select';
 import { getUserRoleForReview } from '../../../services/common.service';
+import { getDealershipLoansById } from '../../../services/dealerships.service';
+import { getApplicationStatusById, updateLoanApprovalStatusById } from '../../../services/loans.service';
+import apiCall from '../../../utils/api.util';
 
 
 const useStyles = makeStyles({
@@ -60,7 +59,7 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
       .then(data => {
         setLoansData(data)
         if (data) {
-          let val = data[0]?.status === "submitted" ? 'is_review=1' : 'is_approve=1'
+          let val = data[0]?.status === 'submitted' ? 'is_review=1' : 'is_approve=1'
           getUserRoleForReview(val)
             .then(res => {
               let d = [];
@@ -83,7 +82,7 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
         setStatus(data)
         if (dealerData[0].application_state_id) {
           const re = data.find(d => d.id == dealerData[0].application_state_id)
-          setSelectedStatus({ ...re, disabled: status !== "loan_approval" } || {})
+          setSelectedStatus({ ...re, disabled: status !== 'loan_approval' } || {})
         }
       })
       .catch(e => null)
@@ -91,18 +90,18 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
   }, [dealerData]);
   const processLoan = loan => {
     let status, remarksObj = {};
-    if (loan?.status?.toLowerCase() === "submitted") {
+    if (loan?.status?.toLowerCase() === 'submitted') {
       setLoading(true);
       status = 'loan_review';
       remarksObj.reviewer_id = user.value;
       remarksObj.review_remarks = remarks;
-    } else if (loan?.status?.toLowerCase() === "loan_review") {
+    } else if (loan?.status?.toLowerCase() === 'loan_review') {
       setLoading(true);
       status = 'loan_approval';
       remarksObj.approver_id = user.value;
       remarksObj.recommendation_remarks = remarks;
     }
-    else if (loan?.status?.toLowerCase() === "approved") {
+    else if (loan?.status?.toLowerCase() === 'approved') {
       setLoading(true);
       status = 'disbursement_approval';
       remarksObj.disbursement_recommendation_remarks = remarks;
@@ -132,7 +131,7 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
   }
   const updateApplicationStatus = (state) => {
     apiCall(`dealership/${id}/loans/${data[0].id}`, {
-      method: "POST",
+      method: 'POST',
       body: state,
     })
       .then(res => {
@@ -197,7 +196,7 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
                 <MSelect
                   fullWidth
                   native
-                  placeholder={"Select status"}
+                  placeholder={'Select status'}
                   value={selectedStatus?.id}
                   onChange={e => {
                     const d = status.find(i => i.id == e.target.value)
@@ -215,7 +214,7 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
               </TableCell>
               <TableCell align="center">
                 {
-                  row?.status?.toLowerCase() === "submitted" && editable && (
+                  row?.status?.toLowerCase() === 'submitted' && editable && (
                     <Button
                       variant="outlined"
                       color="primary"
@@ -231,7 +230,7 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
                   )
                 }
                 {
-                  row?.status?.toLowerCase() === "loan_review" && editable && (
+                  row?.status?.toLowerCase() === 'loan_review' && editable && (
                     <Button
                       variant="outlined"
                       color="primary"
@@ -247,7 +246,7 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
                   )
                 }
                 {
-                  row?.status?.toLowerCase() === "approved" && editable && (
+                  row?.status?.toLowerCase() === 'approved' && editable && (
                     <Button
                       variant="outlined"
                       color="primary"
@@ -262,10 +261,10 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
                   )
                 }
                 {
-                  row?.status?.toLowerCase() === "loan_approval" && 'Pending for approval'
+                  row?.status?.toLowerCase() === 'loan_approval' && 'Pending for approval'
                 }
                 {
-                  row?.status?.toLowerCase() === "disbursement_approval" && 'Pending for disbursement approval'
+                  row?.status?.toLowerCase() === 'disbursement_approval' && 'Pending for disbursement approval'
                 }
               </TableCell>
             </TableRow>
@@ -279,7 +278,7 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
         aria-labelledby="approval-remarks"
         aria-describedby="approval-remarks-desc"
       >
-        <DialogTitle id="approval-remarks">Remarks: Send for {dialogState.data?.status?.toLowerCase() === 'submitted' ? `review` : dialogState.data?.status?.toLowerCase() === `loan_review` ? `Approval` : 'Disbursement Approval'}</DialogTitle>
+        <DialogTitle id="approval-remarks">Remarks: Send for {dialogState.data?.status?.toLowerCase() === 'submitted' ? 'review' : dialogState.data?.status?.toLowerCase() === 'loan_review' ? 'Approval' : 'Disbursement Approval'}</DialogTitle>
         <DialogContent>
           {
             dialogState.data?.status?.toLowerCase() === 'submitted' && (
@@ -320,7 +319,7 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
           }
           <div>
             <DialogContentText id="approval-remarks-desc">
-              Please enter your remarks for sending this for {dialogState.data?.status?.toLowerCase() === 'submitted' ? `review` : dialogState.data?.status?.toLowerCase() === `loan_review` ? `Approval` : 'Disbursement Approval'}.
+              Please enter your remarks for sending this for {dialogState.data?.status?.toLowerCase() === 'submitted' ? 'review' : dialogState.data?.status?.toLowerCase() === 'loan_review' ? 'Approval' : 'Disbursement Approval'}.
             </DialogContentText>
             <TextInput
               multiline
@@ -343,7 +342,7 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
             Cancel
           </Button>
           <Button disabled={!remarks || loading} onClick={submitRemarks} color="primary" autoFocus>
-            {loading ? `Please wait...` : `Confirm`}
+            {loading ? 'Please wait...' : 'Confirm'}
           </Button>
         </DialogActions>
       </Dialog>

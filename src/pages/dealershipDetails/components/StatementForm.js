@@ -1,14 +1,13 @@
-import React, { useState } from 'react'
-import { Box, Button, Divider, Drawer, Grid, IconButton, makeStyles, Table, TableBody, TableFooter, TableHead, TableRow, Tooltip, Typography, TableCell } from '@material-ui/core'
+import { Button, Divider, Drawer, Grid, makeStyles, Table, TableBody, TableFooter, TableHead, TableRow, TableCell, Typography } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
-import TextInput from '../../../components/TextInput/TextInput';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import React, { useState } from 'react'
 import Currency from '../../../components/Number/Currency';
+import TextInput from '../../../components/TextInput/TextInput';
 import { getPastYears, getMonth as month } from '../../../utils/commonFunctions.util';
 import { compareObject } from '../../../utils/compareObject.util';
-import { DataUsageSharp } from '@material-ui/icons';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   sidePanelFormWrapper: {
     position: 'relative',
     display: 'flex',
@@ -37,13 +36,13 @@ const useStyles = makeStyles((theme) => ({
     padding: '12px 16px'
   },
   btnDelete: {
-    '&.MuiButton-root': { color: "#ef5350" },
-    border: "1px #ef5350 solid",
+    '&.MuiButton-root': { color: '#ef5350' },
+    border: '1px #ef5350 solid',
     margin: 2
   },
   btnEdit: {
-    '&.MuiButton-root': { color: "#2196f3" },
-    border: "1px #2196f3 solid",
+    '&.MuiButton-root': { color: '#2196f3' },
+    border: '1px #2196f3 solid',
     margin: 2
   },
   sidePanelWrapper: {
@@ -55,13 +54,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const StatementForm = ({ callback, rowData, addStatement, updateStatement, deleteStatement, id }) => {
+const StatementForm = ({ callback, rowData, addStatement, updateStatement, deleteStatement }) => {
   const classes = useStyles()
   const [openEdit, setOpenEdit] = useState(false)
   const [disabled, setDisabled] = useState(addStatement?.action === 'view')
   const [editRow, setEditRow] = useState({})
   const [addData, setAddData] = useState(rowData)
-  const [statementRow, setStatementRow] = useState([{ month: "", year: "", in_bound: "", out_bound: "", credits_total: "", no_of_credits: "", debits_total: "", no_of_debits: "", omc_transaction: "" }])
+  const [statementRow, setStatementRow] = useState([{ month: '', year: '', in_bound: '', out_bound: '', credits_total: '', no_of_credits: '', debits_total: '', no_of_debits: '', omc_transaction: '' }])
   const LastThreeYear = getPastYears(3)
 
   const handleInputChange = (e, index) => {
@@ -72,7 +71,7 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
   }
 
   const handleAddClick = () => {
-    setStatementRow([...statementRow, { month: "", year: "", in_bound: "", out_bound: "", credits_total: "", no_of_credits: "", debits_total: "", no_of_debits: "", omc_transaction: "" }])
+    setStatementRow([...statementRow, { month: '', year: '', in_bound: '', out_bound: '', credits_total: '', no_of_credits: '', debits_total: '', no_of_debits: '', omc_transaction: '' }])
   }
 
   const handleRemoveClick = (i) => {
@@ -195,7 +194,7 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
                 </TableHead>
                 <TableBody>
                   {
-                    rowData?.statement?.map((item, i) => (
+                    rowData?.statement?.map(item => (
                       <TableRow key={item.statement_id}>
                         <TableCell scope="row" component="th">{month?.find(type => { return type.value === item.month })?.label} - {item.year}</TableCell>
                         <TableCell align="center">{item.in_bound}</TableCell>
@@ -234,7 +233,7 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
                               {
                                 month.map((item, i) => {
                                   return (
-                                    <option value={item?.value}>{item?.label}</option>
+                                    <option key={i} value={item?.value}>{item?.label}</option>
                                   )
                                 })
                               }
@@ -251,7 +250,7 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
                               <option value=" ">Choose year</option>
                               {
                                 LastThreeYear.map(item => {
-                                  return <option value={item}>{item}</option>
+                                  return <option key={item} value={item}>{item}</option>
                                 })
                               }
                             </TextInput>
@@ -358,8 +357,8 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
                   </TableHead>
                   <TableBody>
                     <TableRow>
-                      <TableCell>{parseInt(rowData?.in_bound_percent).toFixed(2)}</TableCell>
-                      <TableCell>{parseInt(rowData?.out_bound_percent).toFixed(2)}</TableCell>
+                      <TableCell>{parseFloat(rowData?.in_bound_percent).toFixed(2)}</TableCell>
+                      <TableCell>{parseFloat(rowData?.out_bound_percent).toFixed(2)}</TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>
@@ -375,7 +374,7 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
             <Button variant="outlined" startIcon={<NavigateBeforeRoundedIcon />} onClick={() => callback(false)}>Back</Button>
           </div>
           <div>
-            <Button variant="contained" color="primary" onClick={() => disabled ? setDisabled(!disabled) : handleSave()} style={{ marginBottom: 12 }}>{disabled ? "Edit" : "Save"}</Button>
+            <Button variant="contained" color="primary" onClick={() => disabled ? setDisabled(!disabled) : handleSave()} style={{ marginBottom: 12 }}>{disabled ? 'Edit' : 'Save'}</Button>
           </div>
         </div>
       </div>

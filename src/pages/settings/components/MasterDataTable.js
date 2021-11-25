@@ -316,7 +316,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
   }
 
   const handleRemoveClick = index => {
-    console.log(index);
+    // console.log(index);
     const list = [...assetValue]
     list.splice(index, 1)
     setAssetValue(list)

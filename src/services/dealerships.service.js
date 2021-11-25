@@ -447,6 +447,60 @@ export const downloadAccountStatement = (id, from_date, to_date) => {
   });
 }
 
+export const getAllBankStatementByDealershipId = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/banks/statement`)
+      .then(res => {
+        if (res.status === "SUCCESS") {
+          resolve(res.data || [])
+        } else {
+          reject(res.message)
+        }
+      })
+      .catch(({ message }) => {
+        reject(message)
+      })
+  });
+}
+
+export const updateBankStatementById = (id, body) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/banks/statement`, {
+      method: 'POST',
+      body: body
+    })
+      .then(res => {
+        if (res.status === "SUCCESS") {
+          resolve(res);
+        } else {
+          reject(res.message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
+
+export const deleteBankStatementById = (id, body) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${URL.dealership}/${id}/banks/statement`, {
+      method: 'DELETE',
+      body: body
+    })
+      .then(res => {
+        if (res.status === "SUCCESS") {
+          resolve(res);
+        } else {
+          reject(res.message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
+
 // export const getDeviations = () => {
 //   return new Promise((resolve, reject) => {
 //     apiCall(`data`)
@@ -462,3 +516,4 @@ export const downloadAccountStatement = (id, from_date, to_date) => {
 //       })
 //   });
 // }
+

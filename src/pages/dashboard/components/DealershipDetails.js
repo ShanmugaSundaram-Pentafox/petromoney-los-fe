@@ -1,7 +1,6 @@
-import { Select as MSelect } from '@material-ui/core';
-import { Checkbox, Chip, CircularProgress, Dialog, DialogActions, DialogContent, FormControlLabel, FormGroup, Tooltip } from '@material-ui/core';
+
+import { Checkbox, Select as MSelect, Chip, CircularProgress, Dialog, DialogActions, DialogContent, FormControlLabel, FormGroup, Tooltip } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
@@ -23,7 +22,6 @@ import { useSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
-import Select from 'react-select';
 import { useMount } from 'react-use';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components'
@@ -38,9 +36,7 @@ import { getAllRegion, getUserRoleForReview } from '../../../services/common.ser
 import { getLoanById, getLoanRejectReason, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
 import { selectCurrentUser } from '../../../store/user/user.selector';
 import apiCall from '../../../utils/api.util';
-// import CloseIcon from '@material-ui/icons/Close';
-
-// import Button from '../../../components/CommonComponents/Button/Button'
+import LoanStatusDialog from '../../dealershipDetails/components/LoanStatusDialog';
 
 const LoanInfoWrapper = styled.div`
   padding: 12px;
@@ -287,7 +283,7 @@ const LoanInfo = ({
                 >
                   {/* <option value="">Choose Loan type</option> */}
                   {
-                    products.map(item => <option value={item.product_id}>{item.product_name}</option>)
+                    products.map(item => <option key={item.product_id} value={item.product_id}>{item.product_name}</option>)
                   }
                 </MSelect>
               </TableCell>
@@ -435,6 +431,7 @@ const DealershipDetails = ({
   const [newLoanInfo, setNewLoanInfo] = useState({});
   const [selectedCategory, setSelectedCategory] = useState()
   const [rejectModal, setRejectModal] = useState(false);
+  const [approveModal, setApproveModal] = useState(false);
   const [optionsData, setOptionsData] = useState([])
   const [reasonData, setReasonData] = useState()
   const [rejectReason, setRejectReason] = useState([])
@@ -585,12 +582,13 @@ const DealershipDetails = ({
       resMsg = 'Request got rejected successfully';
     }
     if (submitStatus === 'loan_review') {
+
       reqBody.approver_id = user.value;
-      reqBody.status = 'approval'
+      // reqBody.status = 'approval'
       reqBody.recommendation_remarks = remarks;
       resMsg = 'Request approved successfully';
     }
-    if(submitStatus === 'disbursed') {
+    if (submitStatus === 'disbursed') {
       if (loanData.amount_disbursed === newLoanInfo.amount_disbursed) {
         setApiStatus({ type: 'error', message: 'Please check Disburse amount. We see no change in Disburse amount!' })
         return null;
@@ -598,7 +596,7 @@ const DealershipDetails = ({
     }
 
 
-    updateLoanApprovalStatusById(values.id, loanData.id, reqBody)
+    updateLoanApprovalStatusById(values.id, loanData.id, 'approval', reqBody)
       .then(res => {
         setApproveLoader(false);
         setRejectLoader(false);
@@ -672,6 +670,7 @@ const DealershipDetails = ({
   }
 
   const handleClose = () => {
+    setApproveModal(false);
     setRejectModal(false);
     setRejectReason([])
     setDisplayReason([])
@@ -988,7 +987,8 @@ const DealershipDetails = ({
                           className={clsx(classes.btn, classes.btnError)}
                           onClick={handleResubmit}
                         >
-                          Re-submit</Button>
+                          Re-submit
+                        </Button>
                       </div>
                     ) : (
                       <div style={{ marginLeft: '16px' }}>
@@ -1002,8 +1002,8 @@ const DealershipDetails = ({
             }
           </div>
           <div style={{ display: 'flex' }}>
-            {
-              editable && status && ['loan_review'].includes(status.toLowerCase()) && (
+            {/* {
+              editable && status && ["loan_review"].includes(status.toLowerCase()) && (
                 <UserCan
                   role={currentUser.role_name}
                   perform={rulesList.loan_approval}
@@ -1016,7 +1016,29 @@ const DealershipDetails = ({
                             disabled={apiStatus.loading}
                             className={clsx(classes.btn, classes.btnSuccess)}
                             startIcon={<ThumbUpAltIcon />}
-                            onClick={() => setRejectModal(true)}> Send for Approval</Button>
+                            onClick={() => setApproveModal(true)}> Send for Approval</Button>
+                        </div>
+                      }
+                    </>
+                  )}
+                />
+              )
+            } */}
+            {
+              editable && status && ['submitted'].includes(status.toLowerCase()) && (
+                <UserCan
+                  role={currentUser.role_name}
+                  perform={rulesList.loan_approval}
+                  yes={() => (
+                    <>
+                      {
+                        <div>
+                          <Button
+                            variant="contained"
+                            disabled={apiStatus.loading}
+                            className={clsx(classes.btn, classes.btnSuccess)}
+                            startIcon={<ThumbUpAltIcon />}
+                            onClick={() => setApproveModal(true)}> Send for Review</Button>
                         </div>
                       }
                     </>
@@ -1024,17 +1046,8 @@ const DealershipDetails = ({
                 />
               )
             }
-            <div>
-              <Button
-                component={RouterLink}
-                to={`/dealership/${values.id}`}
-                variant="contained"
-                disabled={apiStatus.loading}
-                className={clsx(classes.btn, classes.btnSuccess)}
-                startIcon={<AccountTreeRoundedIcon />}>View more</Button>
-            </div>
             {
-              editable && status && ['loan_approval', 'disbursement_approval'].includes(status.toLowerCase()) && (
+              editable && status && ['loan_approval', 'disbursement_approval', 'loan_review'].includes(status.toLowerCase()) && (
                 <UserCan
                   role={currentUser.role_name}
                   perform={rulesList.loan_approval}
@@ -1057,26 +1070,41 @@ const DealershipDetails = ({
                         )
                       }
                       {
-                        !approveLoader ? (
+                        ['loan_approval', 'disbursement_approval'].includes(status) &&
+                          <div>
+                            <Button
+                              variant="contained"
+                              disabled={apiStatus.loading}
+                              className={clsx(classes.btn, classes.btnSuccess)}
+                              startIcon={approveLoader ? <CircularProgress size={30} /> : <ThumbUpAltIcon />}
+                              onClick={() => updateLoanStatus('approval')}>Approve</Button>
+                          </div>
+                      }
+                      {
+                        status === 'loan_review' &&
                           <div>
                             <Button
                               variant="contained"
                               disabled={apiStatus.loading}
                               className={clsx(classes.btn, classes.btnSuccess)}
                               startIcon={<ThumbUpAltIcon />}
-                              onClick={() => updateLoanStatus('approval')}>Approve</Button>
+                              onClick={() => setApproveModal(true)}> Send for Approval</Button>
                           </div>
-                        ) : (
-                          <div style={{ marginLeft: '16px' }}>
-                            <CircularProgress size={30} />
-                          </div>
-                        )
                       }
                     </>
                   )}
                 />
               )
             }
+            <div>
+              <Button
+                component={RouterLink}
+                to={`/dealership/${values.id}`}
+                variant="contained"
+                disabled={apiStatus.loading}
+                className={clsx(classes.btn, classes.btnSuccess)}
+                startIcon={<AccountTreeRoundedIcon />}>View more</Button>
+            </div>
           </div>
         </div>
       </div>
@@ -1091,21 +1119,21 @@ const DealershipDetails = ({
         />
       </FormDialog>
       <Dialog
-        open={rejectModal}
-        onClose={() => setRejectModal(false)}
+        open={rejectModal || approveModal}
+        onClose={() => { setRejectModal(false); setApproveModal(false) }}
       >
 
         {/* <DialogTitle className={classes.dialogTitle}><Typography variant='h6'>Are you Sure?</Typography></DialogTitle> */}
         <DialogContent className={classes.rejectModal}>
           {
-            status?.toLowerCase() !== 'loan_review' && (
+            status && ['loan_review', 'loan_approval'].includes(status) && rejectModal && (
               <>
                 <div>
                   <Typography style={{ marginBottom: 20 }} variant='body1'>Choose category and reasons for rejection.</Typography>
                   <Typography variant='body2'>Category</Typography>
                   {
                     optionsData.map((item, i) => {
-                      return <Chip label={item.label} className={classes.chip} variant={activeTab === i ? 'default' : 'outlined'} onClick={() => {
+                      return <Chip key={i} label={item.label} className={classes.chip} variant={activeTab === i ? 'default' : 'outlined'} onClick={() => {
                         setSelectedCategory({ label: item?.label, value: item?.value })
                         setActiveTab(item.value)
                       }} clickable color={activeTab === i ? 'primary' : ''} />
@@ -1120,7 +1148,7 @@ const DealershipDetails = ({
                         {
                           reasonData[selectedCategory.value][0].map((data, index) => {
                             return (
-                              <FormControlLabel control={<Checkbox className={classes.checkbox} onChange={handleReasonChange} value={data.value} key={data.value} checked={rejectReason.includes(data.value)} name={data.label} />} label={data.label} color={activeTab === data.label ? 'primary' : ''} />
+                              <FormControlLabel key={index} control={<Checkbox className={classes.checkbox} onChange={handleReasonChange} value={data.value} key={data.value} checked={rejectReason.includes(data.value)} name={data.label} />} label={data.label} color={activeTab === data.label ? 'primary' : ''} />
                             )
                           })
                         }
@@ -1135,7 +1163,7 @@ const DealershipDetails = ({
                       {
                         displayReason.sort((a, b) => sortByKey(a, b, 'label')).map((item, i) => {
                           return (
-                            <div className={classes.items}>
+                            <div key={i} className={classes.items}>
                               <p className={classes.eachItem}><span className={classes.itemNotation}>{i + 1}.</span> {item.label}</p>
                               <Tooltip title="Remove">
                                 <IconButton size='small'>
@@ -1152,7 +1180,8 @@ const DealershipDetails = ({
               </>
             )
           }
-          {
+          <LoanStatusDialog status={status?.toLowerCase()} data={data} callback={(e) => setRemarks(e.target.value)} remarks={remarks} handleUser={(e) => setUser(e)} />
+          {/* {
             status?.toLowerCase() === 'loan_review' && (
               <div style={{ marginBottom: 20 }}>
                 <DialogContentText id="approval-remarks-desc">
@@ -1210,7 +1239,7 @@ const DealershipDetails = ({
                 />
               </div>
             )
-          }
+          } */}
         </DialogContent>
         <DialogActions>
           <div>

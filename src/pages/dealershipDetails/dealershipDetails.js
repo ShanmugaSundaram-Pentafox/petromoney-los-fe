@@ -1,4 +1,3 @@
-// import Typography from "@material-ui/core/Typography";
 import Button from '@material-ui/core/Button';
 import Collapse from '@material-ui/core/Collapse';
 import Dialog from '@material-ui/core/Dialog';
@@ -8,11 +7,9 @@ import Drawer from '@material-ui/core/Drawer';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import { makeStyles } from '@material-ui/styles';
-import { toInteger } from 'lodash-es';
+import { toInteger } from 'lodash-es/foo';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-
-
 import { useMount } from 'react-use';
 import CreditReportSideWrapper from './components/CreditReportSideWrapper';
 import DealershipInfo from './components/DealershipInfo';
@@ -27,7 +24,6 @@ import StatementAnalysis from './components/StatementAnalysis';
 import InfoBox from '../../components/CommonComponents/InfoBox';
 import { tabA11yProps, TabPanel } from '../../components/CommonComponents/Tabs/TabPanel';
 import LeegalityLayout from '../../components/Leegality/LeegalityLayout';
-
 import { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import usePageTitle from '../../hooks/usePageTitle';
@@ -91,17 +87,17 @@ const DealershipDetails = ({ currentUser, match }) => {
   const tabs = [
     'Dealership',
     'Dealers',
+    'Bank Statement Analysis',
     'Sales History',
     'Loans List',
     'Personal Discussion',
     'Document Checklist',
     'Transporters',
-    'Fleet Operators',
-    'Statement Analysis'
+    'Fleet Operators'
   ];
-  
-  if (financialReport_permission){
-    tabs.splice(2,0,'Financial Report')
+
+  if (financialReport_permission) {
+    tabs.splice(2, 0, 'Financial Report')
   }
 
   const {
@@ -124,7 +120,7 @@ const DealershipDetails = ({ currentUser, match }) => {
 
   useMount(() => {
     const queryString = window.location.hash;
-    const test = queryString.split('='); 
+    const test = queryString.split('=');
     setActiveTab(toInteger(test[1]))
     getDealershipById(id)
       .then((data) => setDealershipData(data))
@@ -198,7 +194,7 @@ const DealershipDetails = ({ currentUser, match }) => {
             >
               {
                 tabs.map((title, i) => {
-                  return(<Tab label={<InfoBox active={activeTab === i} number={i+1} title={title} />} {...tabA11yProps(i)} />)
+                  return (<Tab key={1} label={<InfoBox active={activeTab === i} number={i + 1} title={title} />} {...tabA11yProps(i)} />)
                 })
               }
               {/* <Tab label={<InfoBox active={activeTab === 0} title="Dealership" />} {...tabA11yProps(0)} />
@@ -271,7 +267,7 @@ const DealershipDetails = ({ currentUser, match }) => {
           <LoansList id={id} titleAlign="left" currentUser={currentUser} dealerData={dealerLoanData} />
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Personal Discussion')}>
-          <PersonalDiscussionReport id ={id} textAlign="left" currentUser={currentUser} />
+          <PersonalDiscussionReport id={id} textAlign="left" currentUser={currentUser} />
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Document Checklist')}>
           <DealershipDoc id={id} currentUser={currentUser} />
@@ -282,7 +278,7 @@ const DealershipDetails = ({ currentUser, match }) => {
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Fleet Operators')}>
           <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={tabs.indexOf('Statement Analysis')}>
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Bank Statement Analysis')}>
           <StatementAnalysis id={id} textAlign="left" currentUser={currentUser} />
         </TabPanel>
         <SolarEnquiryForm

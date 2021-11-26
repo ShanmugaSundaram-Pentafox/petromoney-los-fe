@@ -93,22 +93,25 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
     callback(false)
   }
 
+  const handleSave = () => {
+    const postData = {...addData, statement: statementRow}
+    if(rowData){
+      let obj = compareObject(rowData, postData)
+      if(obj.statement[0]?.month != '' || obj.account_holder_name || obj.account_no || obj.account_type || obj.bank_name){
+        updateStatement({id:rowData.id, ...obj})
+        callback(false)
+      }
+    } else {
+      if(addData){
+        updateStatement(postData)
+        callback(false)
+      }
+    }
+  }
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setAddData({ ...addData, [name]: value })
-  }
-
-  const handleSave = () => {
-    const postData = { ...addData, statement: statementRow }
-    if (rowData) {
-      let obj = compareObject(rowData, postData)
-      updateStatement({ id: rowData.id, ...obj })
-    } else {
-      if (addData) {
-        updateStatement(postData)
-      }
-    }
-    callback(false)
   }
 
   const handleDelete = (id) => {
@@ -354,8 +357,8 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
                   </TableHead>
                   <TableBody>
                     <TableRow>
-                      <TableCell>{parseInt(rowData?.in_bound_percent).toFixed(2)}</TableCell>
-                      <TableCell>{parseInt(rowData?.out_bound_percent).toFixed(2)}</TableCell>
+                      <TableCell>{parseFloat(rowData?.in_bound_percent).toFixed(2)}</TableCell>
+                      <TableCell>{parseFloat(rowData?.out_bound_percent).toFixed(2)}</TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>

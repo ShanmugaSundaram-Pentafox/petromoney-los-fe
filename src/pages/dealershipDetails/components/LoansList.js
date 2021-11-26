@@ -51,7 +51,6 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
   const [user, setUser] = useState([]);
   const [userRole, setUserRole] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState();
-  const [optionsLoading, setOptionsLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
@@ -303,7 +302,7 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
             dialogState.data?.status?.toLowerCase() === 'loan_review' && (
               <div style={{ marginBottom: 20 }}>
                 <DialogContentText id="approval-remarks-desc">
-                  Please choose whom did you want to sent for approval.
+                  Please choose whom did you want to sent for disburse
                 </DialogContentText>
                 <Select
                   isClearable
@@ -324,7 +323,6 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
             <TextInput
               multiline
               direction='column'
-              alignTop={true}
               rows={4}
               rowsMax={8}
               labelText="Remarks*"
@@ -341,7 +339,7 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
           <Button onClick={() => setDialogState({})} color="primary">
             Cancel
           </Button>
-          <Button disabled={!remarks || loading} onClick={submitRemarks} color="primary" autoFocus>
+          <Button disabled={!remarks || loading} onClick={submitRemarks} color="primary">
             {loading ? 'Please wait...' : 'Confirm'}
           </Button>
         </DialogActions>

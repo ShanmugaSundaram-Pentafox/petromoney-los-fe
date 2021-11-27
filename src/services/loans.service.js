@@ -146,6 +146,7 @@ export const getLoansByStatus = (status, filterQry) => {
 }
 
 export const getLoanById = (dealershipId, loanId) => {
+  console.log('loan id >>>>>>>>>>>>>>>>', dealershipId, loanId)
   return new Promise((resolve, reject) => {
     apiCall(`${URL.dealership}/${dealershipId}/loans/${loanId}`)
       .then(({ status, data, message }) => {
@@ -177,9 +178,9 @@ export const getLoanDocumentHistoryById = (loanId, type) => {
   });
 }
 
-export const updateLoanApprovalStatusById = (dealershipId, loanId, body) => {
+export const updateLoanApprovalStatusById = (dealershipId, loanId, status, body) => {
   return new Promise((resolve, reject) => {
-    apiCall(`${URL.dealership}/${dealershipId}/loan/${loanId}/${body.status}`, {
+    apiCall(`${URL.dealership}/${dealershipId}/loan/${loanId}/${status}`, {
       method: 'POST',
       body,
     })

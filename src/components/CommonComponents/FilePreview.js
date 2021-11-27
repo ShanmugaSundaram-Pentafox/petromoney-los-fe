@@ -1,6 +1,4 @@
-import { Box } from '@material-ui/core';
-import { Avatar } from '@material-ui/core';
-import { Typography } from '@material-ui/core';
+import { Box, Avatar, Typography } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react'
@@ -15,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
   details: {
     borderColor: 'grey',
     minWidth: 80,
+    minHeight: 60,
     maxWidth: 250,
     textAlign: 'left',
     marginBottom: 8,
@@ -22,6 +21,12 @@ const useStyles = makeStyles((theme) => ({
   text: {
     fontSize: 12
   },
+  avatarCard: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
 }))
 
 const PreviewWrapper = styled.div`
@@ -59,9 +64,9 @@ export const AvatarCard = ({ file, title, tooltip }) => {
   const [imageModal, setImageModal] = useState({})
   return (
     <>
-      <div onClick={() => setImageModal({ open: true, image: file, type: file?.endsWith('.pdf') })} style={{ margin: 10, paddingLeft: 10 }}>
+      <div onClick={() => setImageModal({ open: true, image: file, type: file?.endsWith('.pdf') })} style={{ margin: 10, paddingLeft: 10 }} tabIndex={0} role="button" onKeyDown={'click'}>
         <Tooltip title={tooltip}>
-          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+          <div className={classes.avatarCard}>
             <Avatar src={`${file}`} />
             <Typography style={{ marginTop: 4 }}>{title}</Typography>
           </div>
@@ -89,9 +94,9 @@ const FilePreview = ({ data }) => {
       {
         data.type == true || data.type == 'pdf' ?
           <div className="iframe-container">
-            <iframe src={data.image} frameBorder="0" ></iframe>
+            <iframe title='File Preview' src={data.image} frameBorder="0" ></iframe>
           </div> :
-          <img className="image" src={data.image} alt="image-viewer" />
+          <img className="image" src={data.image} alt='viewer' />
       }
     </PreviewWrapper>
   )

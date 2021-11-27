@@ -8,11 +8,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { useMount } from 'react-use';
 import { createStructuredSelector } from 'reselect';
-// import { Link as RouterLink } from 'react-router-dom';
-// import moment from 'moment';
-// import clsx from 'clsx';
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
-import Currency from '../../components/Number/Currency';
 import ApprovalReqestTable from '../../components/Tables/ApprovalReqestTable';
 import ApprovedTable from '../../components/Tables/ApprovedTable';
 import DisbursedTable from '../../components/Tables/DisbursedTable';
@@ -21,19 +17,18 @@ import DisbursementReqestTable from '../../components/Tables/DisbursementReqestT
 import RejectedTable from '../../components/Tables/RejectedTable';
 import ReviewerTable from '../../components/Tables/ReviewTable';
 import SubmittedTable from '../../components/Tables/SubmittedTable';
+import { permissionCheck } from '../../components/UserCan/UserCan';
+import { rulesList } from '../../config/userRules';
 import usePageTitle from '../../hooks/usePageTitle';
-// import { useMount } from 'react-use';
-// import MUIDataTable from "mui-datatables";
 import { getDealersByDealershipId } from '../../services/dealers.service';
 import { getDealershipById } from '../../services/dealerships.service';
 import { getAllLoans, getLoanStats } from '../../services/loans.service';
 import { setAllLoans } from '../../store/loans/loans.actions';
 import { selectAllLoans } from '../../store/loans/loans.selector';
-// import Avatar from '@material-ui/core/Avatar';
-// import AvatarGroup from '@material-ui/lab/AvatarGroup';
-// import AvatarGroup from '@material-ui/lab/AvatarGroup';
-import DealershipDetails from '../dashboard/components/DealershipDetails';
-
+import ApprovedDrawer from '../dashboard/RightDrawer/ApprovedDrawer';
+import PendingApprovalDrawer from '../dashboard/RightDrawer/PendingApprovalDrawer';
+import PendingReviewDrawer from '../dashboard/RightDrawer/PendingReviewDrawer';
+import SubmittedDrawer from '../dashboard/RightDrawer/SubmittedDrawer';
 
 const useStyles = makeStyles(theme => ({
   tableContainer: {
@@ -107,28 +102,6 @@ const useStyles = makeStyles(theme => ({
     maxWidth: '80vw'
   }
 }));
-// {
-//   "amount_approved":0
-//   "amount_disbursed":0
-//   "amount_requested":2300000
-//   "commission":0.0
-//   "created_date":"Thu
-//    16 Jan 2020 18:00:02 GMT"
-//   "dealership_id":11727030
-//   "downpayment":0
-//   "id":47
-//   "insurance":0.0
-//   "loan_approved_rejected_date":"0000-00-00 00:00:00"
-//   "loan_disbursed_date":"0000-00-00 00:00:00"
-//   "modified_date":"Tue
-//    28 Jan 2020 13:56:57 GMT"
-//   "need_microatm":0
-//   "roi":18.0
-//   "status":"SUBMITTED"
-//   "tenure":15
-//   "type":"FUEL"}
-
-const convertToCurrency = value => <Currency value={value} />;
 
 const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
   usePageTitle('Loans List');
@@ -154,15 +127,12 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
         setDealershipData(data)
       })
       .catch(e => null);
-    // getDealershipLoansById(id)
-    //   .then(data => setLoansData(data))
-    //   .catch(e => null)
 
     getDealersByDealershipId(id)
       .then(data => setDealersData(data))
       .catch(e => null)
 
-    setShowPanel({ status: true, data: status });
+    setShowPanel({ id: id, status: true, data: status, editable: permissionCheck(currentUser.role_name, rulesList.loan_approval) });
   }
   useMount(() => {
     if (!all_loans.length) {
@@ -174,9 +144,6 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
     }
     getLoanStats()
       .then(data => {
-        // const data = _countBy(res, item => {
-        //   return item.status?.toLowerCase()
-        // });
         let cdata = [
           { name: 'Submitted', count: data.submitted_count },
           { name: 'Pending Review', count: data.loan_review_count },
@@ -196,25 +163,10 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
 
   return (
     <div>
-      {/* <UserCan
-        role={currentUser.role_name}
-        perform={rulesList.loan_approval}
-        yes={() => (
-          <>
-           <Paper elevation={1} className={classes.tableContainer}>
-              <ApprovedTable title={"Approved Loans"} currentUser={currentUser} onRowClick={showDealershipInfo} />
-            </Paper>
-            <Paper elevation={1} className={classes.tableContainer}>
-              <DisbursedTable title={"Disbursed Loans"} currentUser={currentUser} onRowClick={showDealershipInfo} />
-            </Paper>
-          </>
-        )}
-        no={() => null}
-      /> */}
       {
         Array.isArray(chartData) && (
           <Box p={2} mb={2} borderRadius={4} bgcolor="background.paper">
-            <Typography variant="h5">Loans' Statistics</Typography>
+            <Typography variant="h5">Loans&apos; Statistics</Typography>
             <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="nowrap"   >
               {
                 chartData.map((item, i) => (
@@ -300,19 +252,8 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
           ) : null
         }
       </Grid>
-
-      {/* <Paper elevation={1} className={classes.tableContainer}>
-                <ApprovedTable title={"Approved Loans"} currentUser={currentUser} onRowClick={showDealershipInfo} />
-            </Paper>
-            <Paper elevation={1} className={classes.tableContainer}>
-                <DisbursedTable title={"Disbursed Loans"} currentUser={currentUser} onRowClick={showDealershipInfo} />
-            </Paper>
-            <Paper elevation={1} className={classes.tableContainer}>
-                <RejectedTable title={"Rejected Loans"} currentUser={currentUser} onRowClick={showDealershipInfo} />
-            </Paper> */}
       <Drawer
         anchor="right"
-        // elevation={4}
         ModalProps={{
           onBackdropClick: () => { setShowPanel({ status: false }) }
         }}
@@ -320,13 +261,45 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
         variant={'temporary'}
       >
         <div className={classes.sidePanelWrapper}>
-          <DealershipDetails
-            data={dealershipData}
-            loanData={loansData}
-            status={showPanel.data}
-            currentUser={currentUser}
-            onClose={() => { setShowPanel({ status: false }) }}
-          />
+          {
+            showPanel.data === 'submitted' ? (
+              <SubmittedDrawer
+                id={showPanel?.id}
+                status={showPanel?.data}
+                editable={showPanel?.editable}
+                currentUser={currentUser}
+                data={dealershipData}
+                selectedLoanData={loansData}
+              />
+            ) : showPanel.data === 'loan_review' ? (
+              <PendingReviewDrawer
+                id={showPanel?.id}
+                status={showPanel?.data}
+                editable={showPanel?.editable}
+                currentUser={currentUser}
+                data={dealershipData}
+                selectedLoanData={loansData}
+              />
+            ) : showPanel.data === 'loan_approval' ? (
+              <PendingApprovalDrawer
+                id={showPanel?.id}
+                status={showPanel?.data}
+                editable={showPanel?.editable}
+                currentUser={currentUser}
+                data={dealershipData}
+                selectedLoanData={loansData}
+              />
+            ) : showPanel.data === 'approved' ? (
+              <ApprovedDrawer
+                id={showPanel?.id}
+                status={showPanel?.data}
+                editable={showPanel?.editable}
+                currentUser={currentUser}
+                data={dealershipData}
+                selectedLoanData={loansData}
+              />
+            ) : null
+          }
         </div>
       </Drawer>
     </div>

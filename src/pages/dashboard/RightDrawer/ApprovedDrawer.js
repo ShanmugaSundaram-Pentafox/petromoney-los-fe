@@ -137,7 +137,7 @@ const ApprovedDrawer = ({ id, selectedLoanData, status, currentUser, readOnly, e
         }
       </div>
       <div>
-        <DrawerFooter editable={editable} currentUser={currentUser} status={status} />
+        <DrawerFooter onClose={onClose} id={id} editable={editable} currentUser={currentUser} status={status} />
       </div>
     </div >
   );

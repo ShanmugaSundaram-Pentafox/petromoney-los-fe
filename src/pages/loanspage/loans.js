@@ -26,8 +26,12 @@ import { getAllLoans, getLoanStats } from '../../services/loans.service';
 import { setAllLoans } from '../../store/loans/loans.actions';
 import { selectAllLoans } from '../../store/loans/loans.selector';
 import ApprovedDrawer from '../dashboard/RightDrawer/ApprovedDrawer';
+import DisbApprovedDrawer from '../dashboard/RightDrawer/DisbApprovedDrawer';
+import DisbursedDrawer from '../dashboard/RightDrawer/DisbursedDrawer';
 import PendingApprovalDrawer from '../dashboard/RightDrawer/PendingApprovalDrawer';
+import PendingDisbApprovedDrawer from '../dashboard/RightDrawer/PendingDisbApprovalDrawer';
 import PendingReviewDrawer from '../dashboard/RightDrawer/PendingReviewDrawer';
+import RejectedDrawer from '../dashboard/RightDrawer/RejectedDrawer';
 import SubmittedDrawer from '../dashboard/RightDrawer/SubmittedDrawer';
 
 const useStyles = makeStyles(theme => ({
@@ -257,7 +261,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
         ModalProps={{
           onBackdropClick: () => { setShowPanel({ status: false }) }
         }}
-        open={showPanel.status}
+        open={showPanel?.status}
         variant={'temporary'}
       >
         <div className={classes.sidePanelWrapper}>
@@ -269,6 +273,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
                 editable={showPanel?.editable}
                 currentUser={currentUser}
                 data={dealershipData}
+                onClose={() => { setShowPanel({ status: false }) }}
                 selectedLoanData={loansData}
               />
             ) : showPanel.data === 'loan_review' ? (
@@ -278,6 +283,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
                 editable={showPanel?.editable}
                 currentUser={currentUser}
                 data={dealershipData}
+                onClose={() => { setShowPanel({ status: false }) }}
                 selectedLoanData={loansData}
               />
             ) : showPanel.data === 'loan_approval' ? (
@@ -287,6 +293,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
                 editable={showPanel?.editable}
                 currentUser={currentUser}
                 data={dealershipData}
+                onClose={() => { setShowPanel({ status: false }) }}
                 selectedLoanData={loansData}
               />
             ) : showPanel.data === 'approved' ? (
@@ -296,6 +303,47 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
                 editable={showPanel?.editable}
                 currentUser={currentUser}
                 data={dealershipData}
+                onClose={() => { setShowPanel({ status: false }) }}
+                selectedLoanData={loansData}
+              />
+            ) : showPanel?.data === 'disbursement_approval' ? (
+              <PendingDisbApprovedDrawer
+                id={showPanel?.id}
+                status={showPanel?.data}
+                editable={showPanel?.editable}
+                currentUser={currentUser}
+                data={dealershipData}
+                onClose={() => { setShowPanel({ status: false }) }}
+                selectedLoanData={loansData}
+              />
+            ) : showPanel?.data === 'disbursement_approved' ? (
+              <DisbApprovedDrawer
+                id={showPanel?.id}
+                status={showPanel?.data}
+                editable={showPanel?.editable}
+                currentUser={currentUser}
+                data={dealershipData}
+                onClose={() => { setShowPanel({ status: false }) }}
+                selectedLoanData={loansData}
+              />
+            ) : showPanel?.data === 'disbursed' ? (
+              <DisbursedDrawer
+                id={showPanel?.id}
+                status={showPanel?.data}
+                editable={showPanel?.editable}
+                currentUser={currentUser}
+                data={dealershipData}
+                onClose={() => { setShowPanel({ status: false }) }}
+                selectedLoanData={loansData}
+              />
+            ) : showPanel?.data === 'rejected' ? (
+              <RejectedDrawer
+                id={showPanel?.id}
+                status={showPanel?.data}
+                editable={showPanel?.editable}
+                currentUser={currentUser}
+                data={dealershipData}
+                onClose={() => { setShowPanel({ status: false }) }}
                 selectedLoanData={loansData}
               />
             ) : null

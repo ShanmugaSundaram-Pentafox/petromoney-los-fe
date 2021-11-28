@@ -37,6 +37,7 @@ import {
 
 const useStyles = makeStyles(theme => ({
   root: {
+    marginTop: 20,
     // padding: theme.spacing(3),
     // paddingTop: 0,
   },
@@ -93,8 +94,8 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
 
   useEffect(() => {
     setDispHistory({
-      applicant_code: loanData.applicant_code,
-      disbursement_details: loanData.disbursement_details
+      applicant_code: loanData?.applicant_code,
+      disbursement_details: loanData?.disbursement_details
     });
 
   }, [loanData]);
@@ -353,7 +354,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
           <Button onClick={() => setConfirmDelete({})} disableElevation>
             Cancel
           </Button>
-          <Button onClick={() => deleteRecord(confirmDelete.data)} color="primary" autoFocus disableElevation>
+          <Button onClick={() => deleteRecord(confirmDelete.data)} color="primary" disableElevation>
             Confirm
           </Button>
         </DialogActions>

@@ -137,7 +137,7 @@ const PendingApprovalDrawer = ({ id, selectedLoanData, status, currentUser, read
         }
       </div>
       <div>
-        <DrawerFooter editable={editable} currentUser={currentUser} status={status} />
+        <DrawerFooter onClose={onClose} id={id} editable={editable} currentUser={currentUser} status={status} />
       </div>
     </div >
   );

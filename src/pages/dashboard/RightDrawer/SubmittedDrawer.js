@@ -76,7 +76,7 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
         <LoanInfo status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} />
       </div>
       <div>
-        <DrawerFooter currentUser={currentUser} status={status} />
+        <DrawerFooter data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
       </div>
     </div >
   );

@@ -1,6 +1,7 @@
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/CloseRounded';
+import { Skeleton } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 import { useQuery } from 'react-query';
@@ -10,6 +11,7 @@ import DrawerFooter from './DrawerFooter';
 import LoanInfo from './LoanInfo';
 import TextInput from '../../../components/TextInput/TextInput';
 import { getLoanById } from '../../../services/loans.service';
+import DispApprovedDataTable from '../components/DispApprovedDataTable';
 import SalesInfo from '../components/SalesInfo';
 
 const ViewMoreBtn = styled.div`
@@ -30,9 +32,10 @@ const ViewMoreBtn = styled.div`
   }
 `;
 
+
 const useStyles = makeStyles(theme => ({
   wrapper: {
-    padding: '0 24px 24px 24px',
+    padding: '0 24px 10px 24px',
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
@@ -80,7 +83,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 
-const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editable, data, onClose, readOnly }) => {
+const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, readOnly, editable, data, onClose }) => {
   const loanData = useQuery(['dealership-loans-data', id, status], () => { getLoanById(data.id, selectedLoanData.id) })
   const classes = useStyles();
 
@@ -96,6 +99,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
     xs: 12,
     className: classes.gridItemStyle
   }
+
   return (
     <div className={classes.wrapper}>
       <div className={classes.wrapperTitle}>
@@ -133,12 +137,14 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
             </>
           )
         }
+        {
+          loanData?.isLoading ? <Skeleton variant="rect" width="100%" height={400} /> : <DispApprovedDataTable id={id} editable={editable} loanData={loanData?.data} />
+        }
       </div>
       <div>
-        <DrawerFooter data={data} onClose={onClose} id={id} editable={editable} status={status} currentUser={currentUser} />
+        <DrawerFooter onClose={onClose} id={id} editable={editable} currentUser={currentUser} status={status} />
       </div>
     </div >
   );
-
 }
-export default PendingReviewDrawer;
+export default PendingDisbApprovedDrawer;

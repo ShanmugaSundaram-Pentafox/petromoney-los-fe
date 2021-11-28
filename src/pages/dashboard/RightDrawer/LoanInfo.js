@@ -136,12 +136,12 @@ const LoanInfo = ({
                           number
                           fullWidth={false}
                           value={newInfo?.amount_approved}
-                          onChange={e => {
-                            updateNewLoanInfo({
-                              ...newInfo,
-                              amount_approved: e.target.value
-                            })
-                          }}
+                          // onChange={e => {
+                          //   updateNewLoanInfo({
+                          //     ...newInfo,
+                          //     amount_approved: e.target.value
+                          //   })
+                          // }}
                         />
                       )}
                       no={() => <Currency value={row?.amount_approved} />}
@@ -161,13 +161,13 @@ const LoanInfo = ({
                           money
                           number
                           fullWidth={false}
-                          value={newInfo.amount_disbursed}
-                          onChange={e => {
-                            updateNewLoanInfo({
-                              ...newInfo,
-                              amount_disbursed: e.target.value
-                            })
-                          }}
+                          value={newInfo?.amount_disbursed}
+                          // onChange={e => {
+                          //   updateNewLoanInfo({
+                          //     ...newInfo,
+                          //     amount_disbursed: e.target.value
+                          //   })
+                          // }}
                         />
                       )}
                       no={() => <Currency value={row?.amount_disbursed} />}

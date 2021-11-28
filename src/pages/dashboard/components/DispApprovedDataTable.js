@@ -101,6 +101,8 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
   }, [loanData]);
 
   const { values, errors, handleChange, handleSubmit, setValues } = useFormik({
+    validateOnChange: false,
+    validateOnBlur: false,
     initialValues: {
       disbursement_status: 1,
       status: 'disbursed',
@@ -295,13 +297,13 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                   </Grid>
                   <Grid item sm={6}>
                     <TextInput
+                      number
                       direction
                       alignTop
                       money
-                      required
                       name={'amount'}
                       labelText="Amount"
-                      defaultValue={values.amount}
+                      value={values.amount}
                       error={errors.amount}
                       helperText={errors.amount}
                       onChange={handleChange}
@@ -324,7 +326,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                       />
                   </Grid> */}
                   <Grid item xs={12} className={classes.actionFooter}>
-                    <Button disabled={loading} variant="outlined" color="default" onClick={() => setModalData({})}>Cancel</Button>
+                    <Button disabled={loading} variant="outlined" color="default" onClick={() => { setModalData({}); setValues({}) }}>Cancel</Button>
                     <Button disabled={loading} className={classes.actionButton} type="submit" variant="outlined" color="primary">
                       {
                         loading ? <CircularProgress size={23} /> : 'Save'

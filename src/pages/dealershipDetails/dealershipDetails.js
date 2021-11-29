@@ -8,7 +8,7 @@ import Drawer from '@material-ui/core/Drawer';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import { makeStyles } from '@material-ui/styles';
-import { toInteger } from 'lodash-es/foo';
+import toInteger from 'lodash-es/toInteger';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 

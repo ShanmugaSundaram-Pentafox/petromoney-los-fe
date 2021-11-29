@@ -250,17 +250,37 @@ const DrawerFooter = ({
                 perform={rulesList.loan_approval}
                 yes={() => (
                   <>
-                    <Button
-                      variant="contained"
-                      disabled={loanData?.loading}
-                      className={clsx(classes.btn, classes.btnError)}
-                      startIcon={<ThumbDownAltIcon />}
-                      onClick={() => setRejectModal(true)}
-                    >
-                      Reject
-                    </Button>
                     {
-                      status !== 'loan_review' &&
+                      editable && status && ['loan_review'].includes(status.toLowerCase()) &&
+                        <>
+                          {
+                            (currentUser.id == loanData?.reviewer_id || currentUser.role_id == 1) &&
+                              <Button
+                                variant="contained"
+                                disabled={loanData?.loading}
+                                className={clsx(classes.btn, classes.btnError)}
+                                startIcon={<ThumbDownAltIcon />}
+                                onClick={() => setRejectModal(true)}
+                              >
+                                Reject
+                              </Button>
+                          }
+                        </>
+                    }
+                    {
+                      status !== 'loan_review' && status !== 'loan_approval' &&
+                        <Button
+                          variant="contained"
+                          disabled={loanData?.loading}
+                          className={clsx(classes.btn, classes.btnSuccess)}
+                          startIcon={<ThumbUpAltIcon />}
+                          onClick={updateApprovalStatus}
+                        >
+                          Approve
+                        </Button>
+                    }
+                    {
+                      status && status.toLowerCase() === 'loan_approval' && (currentUser.id == loanData?.approver_id || currentUser.role_id == 1) &&
                         <Button
                           variant="contained"
                           disabled={loanData?.loading}
@@ -276,8 +296,8 @@ const DrawerFooter = ({
               />
           }
           {
-            editable && status && ['loan_review'].includes(status.toLowerCase()) &&
-              <UserCan
+            editable && status && ['loan_review'].includes(status.toLowerCase()) && (currentUser.id == loanData?.reviewer_id || currentUser.role_id == 1) &&
+              < UserCan
                 role={currentUser.role_name}
                 perform={rulesList.loan_approval}
                 yes={() => (

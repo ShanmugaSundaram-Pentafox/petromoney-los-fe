@@ -1,4 +1,4 @@
-import { Button, Divider, Drawer, Grid, makeStyles, Table, TableBody, TableFooter, TableHead, TableRow, TableCell, Typography } from '@material-ui/core'
+import { Button, Divider, Drawer, Grid, makeStyles, Table, TableBody, TableFooter, TableHead, TableRow, TableCell, Typography, IconButton } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import React, { useState } from 'react'
@@ -16,9 +16,10 @@ const useStyles = makeStyles(() => ({
     width: '80vw'
   },
   sidePanelTitle: {
-    padding: '24px 16px',
+    padding: '15px 16px',
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
@@ -60,7 +61,7 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
   const [disabled, setDisabled] = useState(addStatement?.action === 'view')
   const [editRow, setEditRow] = useState({})
   const [addData, setAddData] = useState(rowData)
-  const [statementRow, setStatementRow] = useState([{ month: '', year: '', in_bound: '', out_bound: '', credits_total: '', no_of_credits: '', debits_total: '', no_of_debits: '', omc_transaction: '' }])
+  const [statementRow, setStatementRow] = useState([{ month: 0, year: 0, in_bound: 0, out_bound: 0, credits_total: 0, no_of_credits: 0, debits_total: 0, no_of_debits: 0, omc_transaction: 0 }])
   const LastThreeYear = getPastYears(3)
 
   const handleInputChange = (e, index) => {
@@ -71,7 +72,7 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
   }
 
   const handleAddClick = () => {
-    setStatementRow([...statementRow, { month: '', year: '', in_bound: '', out_bound: '', credits_total: '', no_of_credits: '', debits_total: '', no_of_debits: '', omc_transaction: '' }])
+    setStatementRow([...statementRow, { month: 0, year: 0, in_bound: 0, out_bound: 0, credits_total: 0, no_of_credits: 0, debits_total: 0, no_of_debits: 0, omc_transaction: 0 }])
   }
 
   const handleRemoveClick = (i) => {
@@ -123,7 +124,9 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Add Bank Statement</div>
-        <CloseIcon fontSize='size' onClick={() => callback({ open: false })} />
+        <IconButton onClick={() => callback({ open: false })} size='small'>
+          <CloseIcon fontSize='size' />
+        </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
@@ -311,6 +314,7 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
                           </TableCell>
                           <TableCell align="right">
                             <TextInput
+                              number
                               label="OMC Transaction"
                               name="omc_transaction"
                               value={data?.omc_transaction}
@@ -318,8 +322,8 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
                             />
                           </TableCell>
                           <TableCell align="right">
-                            {statementRow.length !== 1 && <Button size="small" variant="outlined" className={classes.btnDelete} onClick={() => handleRemoveClick(i)}>Remove</Button>}
-                            {statementRow.length - 1 === i && <Button size="small" variant="outlined" color="primary" style={{ margin: 2 }} onClick={handleAddClick}>Add</Button>}
+                            {statementRow?.length !== 1 && <Button size="small" variant="outlined" className={classes.btnDelete} onClick={() => handleRemoveClick(i)}>Remove</Button>}
+                            {statementRow?.length - 1 === i && <Button size="small" variant="outlined" color="primary" style={{ margin: 2 }} onClick={handleAddClick}>Add</Button>}
                           </TableCell>
                         </TableRow>
                       ))
@@ -328,18 +332,22 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
                 </TableBody>
                 {
                   disabled && (
-                    <TableFooter>
-                      <TableRow style={{ backgroundColor: '#f2f2f0' }}>
-                        <TableCell><strong>Total</strong></TableCell>
-                        <TableCell align="center"><strong>{rowData?.in_bound_total}</strong></TableCell>
-                        <TableCell align="center"><strong>{rowData?.out_bound_total}</strong></TableCell>
-                        <TableCell align="center"><strong><Currency value={rowData?.credits_total_sum} /></strong></TableCell>
-                        <TableCell align="center"><strong>{rowData?.total_no_of_credits}</strong></TableCell>
-                        <TableCell align="center"><strong><Currency value={rowData?.debits_total_sum} /></strong></TableCell>
-                        <TableCell align="center"><strong>{rowData?.total_no_of_debits}</strong></TableCell>
-                        <TableCell align="center"><strong><Currency value={rowData?.total_omc_transaction} /></strong></TableCell>
-                      </TableRow>
-                    </TableFooter>
+                    rowData?.statement?.length != 0 ? (
+                      <TableFooter>
+                        <TableRow style={{ backgroundColor: '#f2f2f0' }}>
+                          <TableCell><strong>Total</strong></TableCell>
+                          <TableCell align="center"><strong>{rowData?.in_bound_total}</strong></TableCell>
+                          <TableCell align="center"><strong>{rowData?.out_bound_total}</strong></TableCell>
+                          <TableCell align="center"><strong><Currency value={rowData?.credits_total_sum} /></strong></TableCell>
+                          <TableCell align="center"><strong>{rowData?.total_no_of_credits}</strong></TableCell>
+                          <TableCell align="center"><strong><Currency value={rowData?.debits_total_sum} /></strong></TableCell>
+                          <TableCell align="center"><strong>{rowData?.total_no_of_debits}</strong></TableCell>
+                          <TableCell align="center"><strong><Currency value={rowData?.total_omc_transaction} /></strong></TableCell>
+                        </TableRow>
+                      </TableFooter>
+                    ) : (
+                      <Typography variant="h6" style={{color: 'rgb(0,0,0,0.4)', marginTop: 15, marginLeft: 5}}>No Statements Found!</Typography>
+                    )
                   )
                 }
               </Table>
@@ -347,35 +355,35 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
           </div>
           {
             disabled && (
-              <div style={{ marginTop: 20 }}>
-                <Table style={{ width: 250 }}>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>I/W Bounce %</TableCell>
-                      <TableCell>O/W Bounce %</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>{parseFloat(rowData?.in_bound_percent).toFixed(2)}</TableCell>
-                      <TableCell>{parseFloat(rowData?.out_bound_percent).toFixed(2)}</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </div>
+              rowData?.statement?.length != 0 && (
+                <div style={{ marginTop: 20 }}>
+                  <Table style={{ width: 250 }}>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>I/W Bounce %</TableCell>
+                        <TableCell>O/W Bounce %</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell>{parseFloat(rowData?.in_bound_percent).toFixed(2)}</TableCell>
+                        <TableCell>{parseFloat(rowData?.out_bound_percent).toFixed(2)}</TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </div>
+              )
             )
           }
         </div>
       </div>
-      <div className={classes.actionFooter}>
-        <Divider />
-        <div className={classes.actionButtonsWrapper}>
-          <div>
-            <Button variant="outlined" startIcon={<NavigateBeforeRoundedIcon />} onClick={() => callback(false)}>Back</Button>
-          </div>
-          <div>
-            <Button variant="contained" color="primary" onClick={() => disabled ? setDisabled(!disabled) : handleSave()} style={{ marginBottom: 12 }}>{disabled ? 'Edit' : 'Save'}</Button>
-          </div>
+      <Divider />
+      <div className={classes.actionButtonsWrapper}>
+        <div>
+          <Button variant="outlined" startIcon={<NavigateBeforeRoundedIcon />} onClick={() => callback(false)}>Back</Button>
+        </div>
+        <div>
+          <Button variant="contained" color="primary" onClick={() => disabled ? setDisabled(!disabled) : handleSave()} style={{ marginBottom: 12 }}>{disabled ? 'Edit' : 'Save'}</Button>
         </div>
       </div>
       <Drawer
@@ -394,63 +402,63 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
               <Grid container spacing={2}>
                 <Grid item md={6}>
                   <TextInput
+                    number
                     label="I/W Bounce"
                     name="in_bound"
-                    type="number"
                     onChange={onTextChange}
                     value={editRow.in_bound}
                   />
                 </Grid>
                 <Grid item md={6}>
                   <TextInput
+                    number
                     label="O/W Bounce"
                     name="out_bound"
-                    type="number"
                     onChange={onTextChange}
                     value={editRow.out_bound}
                   />
                 </Grid>
                 <Grid item md={6}>
                   <TextInput
+                    number
                     label="Credits"
                     name="credits_total"
-                    type="number"
                     onChange={onTextChange}
                     value={editRow.credits_total}
                   />
                 </Grid>
                 <Grid item md={6}>
                   <TextInput
+                    number
                     label="No.Credits"
                     name="no_of_credits"
-                    type="number"
                     onChange={onTextChange}
                     value={editRow.no_of_credits}
                   />
                 </Grid>
                 <Grid item md={6}>
                   <TextInput
+                    number
                     label="Debits"
                     name="debits_total"
-                    type="number"
                     onChange={onTextChange}
                     value={editRow.debits_total}
                   />
                 </Grid>
                 <Grid item md={6}>
                   <TextInput
+                    number
                     label="No.Debits"
                     name="no_of_debits"
-                    type="number"
                     onChange={onTextChange}
                     value={editRow.no_of_debits}
                   />
                 </Grid>
                 <Grid item md={6}>
                   <TextInput
+                    number
                     label="OMC Transaction"
                     name="omc_transaction"
-                    type="number"
                     onChange={onTextChange}
                     value={editRow.omc_transaction}
                   />

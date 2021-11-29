@@ -8,7 +8,7 @@ import Drawer from '@material-ui/core/Drawer';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import { makeStyles } from '@material-ui/styles';
-import { toInteger } from 'lodash-es';
+import { toInteger } from 'lodash-es/foo';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
@@ -18,6 +18,7 @@ import CreditReportSideWrapper from './components/CreditReportSideWrapper';
 import DealershipInfo from './components/DealershipInfo';
 import DealershipTransport from './components/DealershipTransport';
 import DealersList from './components/DealersList';
+import Deviations from './components/Deviations';
 import DealershipDoc from './components/DocList';
 import FleetOperatorsDetails from './components/FleetOperatorsDetails';
 import LoansList from './components/LoansList';
@@ -31,7 +32,6 @@ import LeegalityLayout from '../../components/Leegality/LeegalityLayout';
 import { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import usePageTitle from '../../hooks/usePageTitle';
-import Deviations, { DeviationsTable } from "./components/Deviations";
 import { getDealersByDealershipId } from '../../services/dealers.service';
 import { getDealershipById, getDealershipLoansById } from '../../services/dealerships.service';
 import SalesInfo from '../dashboard/components/SalesInfo';
@@ -200,7 +200,7 @@ const DealershipDetails = ({ currentUser, match }) => {
             >
               {
                 tabs.map((title, i) => {
-                  return(<Tab label={<InfoBox active={activeTab === i} number={i+1} title={title} />} {...tabA11yProps(i)} />)
+                  return(<Tab key={i} label={<InfoBox active={activeTab === i} number={i+1} title={title} />} {...tabA11yProps(i)} />)
                 })
               }
               {/* <Tab label={<InfoBox active={activeTab === 0} title="Dealership" />} {...tabA11yProps(0)} />
@@ -260,8 +260,8 @@ const DealershipDetails = ({ currentUser, match }) => {
           <DealersList id={id} titleAlign="left" currentUser={currentUser} />
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Deviations')}>
-            <Deviations />
-            {/* <DeviationsTable /> */}
+          <Deviations id={id} />
+          {/* <DeviationsTable id={id}/> */}
         </TabPanel>
         {
           financialReport_permission && (

@@ -1,5 +1,6 @@
-import { Grid } from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
+import ChatIcon from '@material-ui/icons/Chat';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from 'mui-datatables';
@@ -39,6 +40,8 @@ const OverDueTable = () => {
 
   const [loans, setLoans] = useState([])
   const [loading, setLoading] = useState(false)
+  const [remarksModal, setRemarksModal] = useState({open: false})
+  console.log(remarksModal);
   useMount(async () => {
     setLoading(true)
     getReport()
@@ -87,6 +90,25 @@ const OverDueTable = () => {
           }
         }
       },
+      {
+        name: 'remarks',
+        label: 'Remarks',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: value => {
+            // console.log(value);
+            return (
+              <div style={{display: 'flex', alignItems: 'center'}}>
+                <IconButton size="small" onClick={() => setRemarksModal({open:true, data: value})}>
+                  <ChatIcon style={{color: 'grey'}} fontSize="small" />
+                </IconButton>
+                {/* <p style={{color: 'rgb(0,0,0,0.4)'}}>{value.length}</p> */}
+              </div>
+            )
+          }
+        }
+      },
     ]
   }, []);
 
@@ -113,6 +135,31 @@ const OverDueTable = () => {
           />
         ) : <Paper style={{ padding: 10 }}>No overdue Reports found</Paper>
       }
+      <Dialog
+        open={remarksModal?.open}
+        onClose={() => setRemarksModal({open: false})}
+      >
+        <DialogTitle>Overdue Remarks</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {
+              remarksModal?.data?.map((data, i) => {
+                console.log(data);
+                // return(
+                //   <ul>
+                //     <li>{`${data?.label} by`}</li>
+                //   </ul>
+                // )
+              })
+            }
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setRemarksModal({open: false})}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   )
 }

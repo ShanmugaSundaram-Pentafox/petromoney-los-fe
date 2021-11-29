@@ -1,5 +1,6 @@
-import { Grid } from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
+import ChatIcon from '@material-ui/icons/Chat';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from 'mui-datatables';
@@ -40,7 +41,9 @@ const DueTable = () => {
   const classes = useStyles();
 
   const [loans, setLoans] = useState([])
+  console.log(loans);
   const [loading, setLoading] = useState(false)
+  const [remarksModal, setRemarksModal] = useState(false);
 
   useMount(async () => {
     setLoading(true)
@@ -53,6 +56,9 @@ const DueTable = () => {
         setLoading(false);
         console.log(e);
       });
+    // fetch('http://localhost:3333/data')
+    // .then(res => res.json())
+    // .then(setLoans)
   })
   usePageTitle('Report')
   const columns = useMemo(() => {
@@ -108,6 +114,24 @@ const DueTable = () => {
           }
         }
       },
+      {
+        name: 'remarks',
+        label: 'Remarks',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: value => {
+            return (
+              <div style={{display: 'flex', alignItems: 'center'}}>
+                <IconButton size="small" onClick={() => setRemarksModal(true)}>
+                  <ChatIcon style={{color: 'grey'}} fontSize="small" />
+                </IconButton>
+                <p style={{color: 'rgb(0,0,0,0.4)'}}>(3)</p>
+              </div>
+            )
+          }
+        }
+      },
     ]
   }, []);
   const options = {
@@ -147,6 +171,22 @@ const DueTable = () => {
           />
         ) : <Paper style={{ padding: 10 }}>No due Reports found</Paper>
       }
+      <Dialog
+        open={remarksModal}
+        onClose={() => setRemarksModal(false)}
+      >
+        <DialogTitle>Due Remarks</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            remarks
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setRemarksModal(false)}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   )
 }

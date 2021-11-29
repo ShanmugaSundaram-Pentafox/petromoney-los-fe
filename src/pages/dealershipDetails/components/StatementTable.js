@@ -1,5 +1,4 @@
-import { Button, Drawer, makeStyles, Typography } from '@material-ui/core'
-import { CircularProgress } from '@material-ui/core';
+import { Button, Drawer, makeStyles, Typography, CircularProgress } from '@material-ui/core'
 import ListIcon from '@material-ui/icons/List';
 import { useSnackbar } from 'notistack';
 import React, {useState} from 'react'
@@ -53,7 +52,8 @@ const StatementTable = ({ addStatement, callback, id }) => {
   const bankStatement = useQuery(['bank_statement', id], () => {return getAllBankStatementByDealershipId(id)}, {
     onError: (error) => {
       console.log(error);
-    }
+    },
+    refetchOnWindowFocus: false
   })
 
   const { mutate: updateStatement } = useMutation(data => updateBankStatementById(id, data) , {
@@ -109,7 +109,7 @@ const StatementTable = ({ addStatement, callback, id }) => {
           bankStatement?.data?.length ? (
             bankStatement.data?.map((item, i) => {
               return (
-                <div className={classes.card}>
+                <div className={classes.card} key={i}>
                   <div className={classes.content}>
                     <ViewData title="Account Holder Name" value={item.account_holder_name} />
                     <ViewData title="Account No" value={item.account_no} />

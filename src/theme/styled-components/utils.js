@@ -22,3 +22,21 @@ export const InfoBoxStyle = styled.div`
     margin-bottom: ${props => `${props.titleMarginBottom || 24}px`};
   }
 `;
+
+export const ViewMoreBtn = styled.div`
+  position: absolute;
+  bottom: 5px;
+  width: 100%;
+  text-align: center;
+  padding: 5px;
+  padding-top: 15px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  background: linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(176,176,176,0.75) 100%);
+  transition: all .35s ease-in-out;
+
+  &:hover {
+    background: linear-gradient(180deg, rgba(255,255,255,0.50) 0%, rgba(176,176,176,0.90) 100%);
+  }
+`;

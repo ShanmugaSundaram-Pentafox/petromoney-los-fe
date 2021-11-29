@@ -10,25 +10,14 @@ import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { NavLink as RouterLink } from 'react-router-dom';
-// import Grid from '@material-ui/core/Grid';
-// import Box from '@material-ui/core/Box';
-// import CloseIcon from '@material-ui/icons/Close';
-// import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
-// import Button from "@material-ui/core/Button";
-// import { createStructuredSelector } from 'reselect';
 import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
 import SignRequestLayout from '../Leegality/SignRequestLayout';
 import Currency from '../Number/Currency';
-// import CircularProgress from '@material-ui/core/CircularProgress';
-// import PdfViewer from '../CommonComponents/PdfViewer/PdfViewer';
+
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    // padding: theme.spacing(3),
-    // paddingTop: 0,
-  },
   title: {
     fontWeight: 500
   },
@@ -63,7 +52,6 @@ const useStyles = makeStyles(theme => ({
 
 const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) => {
   const classes = useStyles();
-  // const [ data, setData ] = useState([]);
   const [loanId, setloanId] = useState();
   const [dealershipId, setDealershipId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
@@ -81,19 +69,6 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
       })
   }, [filterQry])
 
-  // useMount(() => {
-  //   if (!loans || !loans.length) {
-  //     setLoading(true);
-  //     getLoansByStatus('submitted')
-  //       .then(data => {
-  //         setLoansData('submitted', data);
-  //         setLoading(false);
-  //       })
-  //       .catch(e => {
-  //         setLoading(false);
-  //       })
-  //   }
-  // });
   const columns = useMemo(() => {
     return [
       {
@@ -159,15 +134,12 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
             align: 'center',
           }),
           customBodyRender: value => {
-            // moment(new Date(value)).format('DD MMM, YYYY')
             return <div>
               {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
-              {/* {value ? value : '-'} */}
             </div>
           }
         }
       },
-
       {
         label: 'Application state',
         name: 'application_state',
@@ -197,10 +169,6 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
                 <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setType('application'); setDealershipId(value); setModalVisible(true); }}>
                   <div>
                     <ESignIcon width={24} />
-                    {/* <img
-                      alt="Under development"
-                      src={eSign}
-                    /> */}
                   </div>
                 </IconButton>
               </Tooltip>
@@ -212,17 +180,12 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
   }, [loans]);
 
   const options = {
-    // filterType: 'checkbox',
     selectableRowsHeader: false,
     selectableRows: 'none',
     isRowSelectable: () => false,
-    // downloadOptions: {
-    //   customCSVdata: loans,
-    // },
-    // onRowClick: (rowData, { dataIndex }) => {
-    //   // console.log(rowData, rowMeta);
-    //   onRowClick(loans[dataIndex].dealership_id, 'submitted')
-    // }
+    onRowClick: (rowData, { dataIndex }) => {
+      onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'submitted')
+    }
   };
 
   return (

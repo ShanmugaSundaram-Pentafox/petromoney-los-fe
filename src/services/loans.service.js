@@ -177,9 +177,9 @@ export const getLoanDocumentHistoryById = (loanId, type) => {
   });
 }
 
-export const updateLoanApprovalStatusById = (dealershipId, loanId, body) => {
+export const updateLoanApprovalStatusById = (dealershipId, loanId, status, body) => {
   return new Promise((resolve, reject) => {
-    apiCall(`${URL.dealership}/${dealershipId}/loan/${loanId}/${body.status}`, {
+    apiCall(`${URL.dealership}/${dealershipId}/loan/${loanId}/${status}`, {
       method: 'POST',
       body,
     })

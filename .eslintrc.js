@@ -41,7 +41,7 @@ module.exports = {
       { 'vars': 'all', 'varsIgnorePattern': '^_', 'args': 'after-used', 'argsIgnorePattern': '^_' }
     ],
     'max-len': ['warn', { code: 200 }],
-    'import/order': ['warn',{
+    'import/order': ['warn', {
       alphabetize: {
         caseInsensitive: true,
         order: 'asc'
@@ -56,7 +56,7 @@ module.exports = {
       ]
     }
     ],
-    'no-restricted-imports': ['error',{
+    'no-restricted-imports': ['error', {
       paths: [
         {
           message: 'Please use import foo from \'lodash-es/foo\' instead.',
@@ -89,6 +89,8 @@ module.exports = {
     ],
     'react/jsx-indent-props': ['error', 2],
     'jsx-a11y/label-has-associated-control': 'off',
+    'jsx-a11y/interactive-supports-focus': 'off',
+    'jsx-a11y/no-static-element-interactions':'off',
   },
   settings: {
     react: {

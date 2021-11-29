@@ -60,7 +60,7 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
   const [disabled, setDisabled] = useState(addStatement?.action === 'view')
   const [editRow, setEditRow] = useState({})
   const [addData, setAddData] = useState(rowData)
-  const [statementRow, setStatementRow] = useState([{ month: '', year: '', in_bound: '', out_bound: '', credits_total: '', no_of_credits: '', debits_total: '', no_of_debits: '', omc_transaction: '' }])
+  const [statementRow, setStatementRow] = useState([{ month: 0, year: 0, in_bound: 0, out_bound: 0, credits_total: 0, no_of_credits: 0, debits_total: 0, no_of_debits: 0, omc_transaction: 0 }])
   const LastThreeYear = getPastYears(3)
 
   const handleInputChange = (e, index) => {
@@ -71,7 +71,7 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
   }
 
   const handleAddClick = () => {
-    setStatementRow([...statementRow, { month: '', year: '', in_bound: '', out_bound: '', credits_total: '', no_of_credits: '', debits_total: '', no_of_debits: '', omc_transaction: '' }])
+    setStatementRow([...statementRow, { month: 0, year: 0, in_bound: 0, out_bound: 0, credits_total: 0, no_of_credits: 0, debits_total: 0, no_of_debits: 0, omc_transaction: 0 }])
   }
 
   const handleRemoveClick = (i) => {
@@ -93,31 +93,31 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
     callback(false)
   }
 
-    const handleSave = () => {
-        const postData = {...addData, statement: statementRow}
-        if(rowData){
-            let obj = compareObject(rowData, postData)
-            if(obj.statement[0]?.month != "" || obj.account_holder_name || obj.account_no || obj.account_type || obj.bank_name){
-                updateStatement({id:rowData.id, ...obj})
-                callback(false)
-            }
-        } else {
-            if(addData){
-                updateStatement(postData)
-                callback(false)
-            }
-        }
-    }
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setAddData({ ...addData, [name]: value })
-    }
-
-    const handleDelete = (id) => {
-        deleteStatement({ statement: [id] })
+  const handleSave = () => {
+    const postData = {...addData, statement: statementRow}
+    if(rowData){
+      let obj = compareObject(rowData, postData)
+      if(obj.statement[0]?.month != '' || obj.account_holder_name || obj.account_no || obj.account_type || obj.bank_name){
+        updateStatement({id:rowData.id, ...obj})
         callback(false)
+      }
+    } else {
+      if(addData){
+        updateStatement(postData)
+        callback(false)
+      }
     }
+  }
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setAddData({ ...addData, [name]: value })
+  }
+
+  const handleDelete = (id) => {
+    deleteStatement({ statement: [id] })
+    callback(false)
+  }
 
   return (
     <div className={classes.sidePanelFormWrapper}>

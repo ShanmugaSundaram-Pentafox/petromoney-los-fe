@@ -1,36 +1,15 @@
-import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/CloseRounded';
-import { Skeleton } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/styles';
-import React from 'react';
+import { useSnackbar } from 'notistack';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import styled from 'styled-components';
 import DealershipData from './DealershipData';
 import DrawerFooter from './DrawerFooter';
+import DrawerRemarks from './DrawerRemarks';
 import LoanInfo from './LoanInfo';
-import TextInput from '../../../components/TextInput/TextInput';
-import { getLoanById } from '../../../services/loans.service';
-import DispApprovedDataTable from '../components/DispApprovedDataTable';
+import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import SalesInfo from '../components/SalesInfo';
-
-const ViewMoreBtn = styled.div`
-  position: absolute;
-  bottom: 5px;
-  width: 100%;
-  text-align: center;
-  padding: 5px;
-  padding-top: 15px;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  background: linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(176,176,176,0.75) 100%);
-  transition: all .35s ease-in-out;
-
-  &:hover {
-    background: linear-gradient(180deg, rgba(255,255,255,0.50) 0%, rgba(176,176,176,0.90) 100%);
-  }
-`;
 
 
 const useStyles = makeStyles(theme => ({
@@ -84,22 +63,46 @@ const useStyles = makeStyles(theme => ({
 
 
 const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, readOnly, editable, data, onClose }) => {
-  const loanData = useQuery(['dealership-loans-data', id, status], () => { getLoanById(data.id, selectedLoanData.id) })
+  const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
+  const [info, setInfo] = useState({})
   const classes = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
 
-  const fieldProps = {
-    direction: 'column',
-    alignTop: true,
-    readOnly,
-    className: classes.fieldItemStyle
+  const updateNewLoanInfo = (d) => {
+    setInfo({
+      ...info,
+      ...d
+    })
   }
+  const updateLoanStatus = () => {
+    let reqBody = {
+      user_id: currentUser.id,
+      amount_disbursed: loanData.amount_disbursed
+    }
+    updateLoanApprovalStatusById(id, loanData.id, 'approval', reqBody)
+      .then(res => {
+        enqueueSnackbar(res.message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500)
+      })
+      .catch(err => {
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+      })
 
-  const gridProps = {
-    item: true,
-    xs: 12,
-    className: classes.gridItemStyle
   }
-
   return (
     <div className={classes.wrapper}>
       <div className={classes.wrapperTitle}>
@@ -109,40 +112,16 @@ const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, 
       <div className={classes.contentWrapper}>
         <DealershipData data={data} readOnly={true} />
         <SalesInfo id={id} currentUser={currentUser} readOnly={true} />
-        <LoanInfo status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} />
-        {
-          selectedLoanData?.remarks && (
-            <>
-              <Grid {...gridProps} style={{ position: 'relative' }}>
-                <TextInput
-                  multiline
-                  rows={4}
-                  rowsMax={8}
-                  labelText="Remarks*"
-                  alignTop
-                  value={selectedLoanData?.review_remarks}
-                  disabled
-                  {...fieldProps}
-                />
-                {
-                  selectedLoanData?.approval_remarks?.length >= 300 ? (
-                    <ViewMoreBtn
-                    // onClick={() => setShowRemarksModal(loanInfo.approval_remarks)}
-                    >
-                      View more
-                    </ViewMoreBtn>
-                  ) : null
-                }
-              </Grid>
-            </>
-          )
-        }
-        {
-          loanData?.isLoading ? <Skeleton variant="rect" width="100%" height={400} /> : <DispApprovedDataTable id={id} editable={editable} loanData={loanData?.data} />
-        }
+        <LoanInfo status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} updateNewLoanInfo={updateNewLoanInfo} />
+        <>
+          {loanData?.submitted_remarks && <DrawerRemarks label={'Submitted remarks'} loanData={loanData?.submitted_remarks} readOnly={readOnly} />}
+          {loanData?.review_remarks && <DrawerRemarks label={'Review remarks'} loanData={loanData?.review_remarks} readOnly={readOnly} />}
+          {loanData?.approval_remarks && <DrawerRemarks label={'Remarks(Approval)'} loanData={loanData?.approval_remarks} readOnly={readOnly} />}
+          {loanData?.disbursement_approval_remarks && <DrawerRemarks label={'Remarks(Pending disbursement)'} loanData={loanData?.disbursement_approval_remarks} readOnly={readOnly} />}
+        </>
       </div>
       <div>
-        <DrawerFooter onClose={onClose} id={id} editable={editable} currentUser={currentUser} status={status} />
+        <DrawerFooter selectedLoanData={selectedLoanData} onClose={onClose} id={id} editable={editable} currentUser={currentUser} status={status} updateApprovalStatus={updateLoanStatus} />
       </div>
     </div >
   );

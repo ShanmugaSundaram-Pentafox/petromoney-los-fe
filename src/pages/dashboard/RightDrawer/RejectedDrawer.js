@@ -5,6 +5,7 @@ import React from 'react';
 import { useQuery } from 'react-query';
 import DealershipData from './DealershipData';
 import DrawerFooter from './DrawerFooter';
+import DrawerRemarks from './DrawerRemarks';
 import LoanInfo from './LoanInfo';
 import { getLoanById } from '../../../services/loans.service';
 import SalesInfo from '../components/SalesInfo';
@@ -41,8 +42,6 @@ const useStyles = makeStyles(theme => ({
     marginTop: 8,
   },
   actionButtonsWrapper: {
-    // display: 'flex',
-    // justifyContent: 'space-between',
     paddingTop: 16,
   },
   btn: {
@@ -59,9 +58,8 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-
-const RejectedDrawer = ({ id, selectedLoanData, status, currentUser, editable, data, onClose }) => {
-  const loanData = useQuery(['dealership-loans-data', id, status], () => { getLoanById(data.id, selectedLoanData.id) })
+const RejectedDrawer = ({ id, selectedLoanData, status, currentUser, editable, data, onClose, readOnly }) => {
+  const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
   const classes = useStyles();
 
   return (
@@ -74,9 +72,12 @@ const RejectedDrawer = ({ id, selectedLoanData, status, currentUser, editable, d
         <DealershipData data={data} readOnly={true} />
         <SalesInfo id={id} currentUser={currentUser} readOnly={true} />
         <LoanInfo status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} />
+        <>
+          {loanData?.approval_remarks && <DrawerRemarks label={'Remarks (Approval)'} loanData={loanData?.approval_remarks} readOnly={readOnly} />}
+        </>
       </div>
       <div>
-        <DrawerFooter onClose={onClose} id={id} currentUser={currentUser} status={status} />
+        <DrawerFooter selectedLoanData={selectedLoanData} editable={editable} onClose={onClose} id={id} currentUser={currentUser} status={status} />
       </div>
     </div >
   );

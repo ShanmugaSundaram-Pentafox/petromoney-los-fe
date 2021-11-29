@@ -20,23 +20,6 @@ const LoanInfoWrapper = styled.div`
   background-color: rgba(0, 160, 0, 0.15);
 `;
 
-const ViewMoreBtn = styled.div`
-  position: absolute;
-  bottom: 5px;
-  width: 100%;
-  text-align: center;
-  padding: 5px;
-  padding-top: 15px;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  background: linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(176,176,176,0.75) 100%);
-  transition: all .35s ease-in-out;
-
-  &:hover {
-    background: linear-gradient(180deg, rgba(255,255,255,0.50) 0%, rgba(176,176,176,0.90) 100%);
-  }
-`;
 
 const testProducts = [
   {
@@ -74,10 +57,8 @@ const LoanInfo = ({
           }
         }
       })
-      .catch(err => {
-        console.log(err)
-      })
-  }, [row?.product_id]);
+      .catch(() => null)
+  }, [row?.product_id, status]);
   return (
     <>
       <LoanInfoWrapper>
@@ -136,12 +117,12 @@ const LoanInfo = ({
                           number
                           fullWidth={false}
                           value={newInfo?.amount_approved}
-                          // onChange={e => {
-                          //   updateNewLoanInfo({
-                          //     ...newInfo,
-                          //     amount_approved: e.target.value
-                          //   })
-                          // }}
+                          onChange={e => {
+                            updateNewLoanInfo({
+                              ...newInfo,
+                              amount_approved: e.target.value
+                            })
+                          }}
                         />
                       )}
                       no={() => <Currency value={row?.amount_approved} />}
@@ -162,12 +143,12 @@ const LoanInfo = ({
                           number
                           fullWidth={false}
                           value={newInfo?.amount_disbursed}
-                          // onChange={e => {
-                          //   updateNewLoanInfo({
-                          //     ...newInfo,
-                          //     amount_disbursed: e.target.value
-                          //   })
-                          // }}
+                          onChange={e => {
+                            updateNewLoanInfo({
+                              ...newInfo,
+                              amount_disbursed: e.target.value
+                            })
+                          }}
                         />
                       )}
                       no={() => <Currency value={row?.amount_disbursed} />}

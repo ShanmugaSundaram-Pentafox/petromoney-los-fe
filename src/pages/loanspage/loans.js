@@ -165,6 +165,16 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
       })
   })
 
+  const compProps = {
+    id: showPanel?.id,
+    status: showPanel?.data,
+    editable: showPanel?.editable,
+    currentUser: currentUser,
+    data: dealershipData,
+    onClose: () => { setShowPanel({ status: false }) },
+    selectedLoanData: loansData,
+  }
+
   return (
     <div>
       {
@@ -266,87 +276,14 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
       >
         <div className={classes.sidePanelWrapper}>
           {
-            showPanel.data === 'submitted' ? (
-              <SubmittedDrawer
-                id={showPanel?.id}
-                status={showPanel?.data}
-                editable={showPanel?.editable}
-                currentUser={currentUser}
-                data={dealershipData}
-                onClose={() => { setShowPanel({ status: false }) }}
-                selectedLoanData={loansData}
-              />
-            ) : showPanel.data === 'loan_review' ? (
-              <PendingReviewDrawer
-                id={showPanel?.id}
-                status={showPanel?.data}
-                editable={showPanel?.editable}
-                currentUser={currentUser}
-                data={dealershipData}
-                onClose={() => { setShowPanel({ status: false }) }}
-                selectedLoanData={loansData}
-              />
-            ) : showPanel.data === 'loan_approval' ? (
-              <PendingApprovalDrawer
-                id={showPanel?.id}
-                status={showPanel?.data}
-                editable={showPanel?.editable}
-                currentUser={currentUser}
-                data={dealershipData}
-                onClose={() => { setShowPanel({ status: false }) }}
-                selectedLoanData={loansData}
-              />
-            ) : showPanel.data === 'approved' ? (
-              <ApprovedDrawer
-                id={showPanel?.id}
-                status={showPanel?.data}
-                editable={showPanel?.editable}
-                currentUser={currentUser}
-                data={dealershipData}
-                onClose={() => { setShowPanel({ status: false }) }}
-                selectedLoanData={loansData}
-              />
-            ) : showPanel?.data === 'disbursement_approval' ? (
-              <PendingDisbApprovedDrawer
-                id={showPanel?.id}
-                status={showPanel?.data}
-                editable={showPanel?.editable}
-                currentUser={currentUser}
-                data={dealershipData}
-                onClose={() => { setShowPanel({ status: false }) }}
-                selectedLoanData={loansData}
-              />
-            ) : showPanel?.data === 'disbursement_approved' ? (
-              <DisbApprovedDrawer
-                id={showPanel?.id}
-                status={showPanel?.data}
-                editable={showPanel?.editable}
-                currentUser={currentUser}
-                data={dealershipData}
-                onClose={() => { setShowPanel({ status: false }) }}
-                selectedLoanData={loansData}
-              />
-            ) : showPanel?.data === 'disbursed' ? (
-              <DisbursedDrawer
-                id={showPanel?.id}
-                status={showPanel?.data}
-                editable={showPanel?.editable}
-                currentUser={currentUser}
-                data={dealershipData}
-                onClose={() => { setShowPanel({ status: false }) }}
-                selectedLoanData={loansData}
-              />
-            ) : showPanel?.data === 'rejected' ? (
-              <RejectedDrawer
-                id={showPanel?.id}
-                status={showPanel?.data}
-                editable={showPanel?.editable}
-                currentUser={currentUser}
-                data={dealershipData}
-                onClose={() => { setShowPanel({ status: false }) }}
-                selectedLoanData={loansData}
-              />
-            ) : null
+            showPanel.data === 'submitted' ? <SubmittedDrawer {...compProps} />
+              : showPanel.data === 'loan_review' ? <PendingReviewDrawer {...compProps} />
+                : showPanel.data === 'loan_approval' ? <PendingApprovalDrawer {...compProps} />
+                  : showPanel.data === 'approved' ? <ApprovedDrawer {...compProps} />
+                    : showPanel?.data === 'disbursement_approval' ? <PendingDisbApprovedDrawer {...compProps} />
+                      : showPanel?.data === 'disbursement_approved' ? <DisbApprovedDrawer {...compProps} />
+                        : showPanel?.data === 'disbursed' ? <DisbursedDrawer {...compProps} />
+                          : showPanel?.data === 'rejected' ? <RejectedDrawer {...compProps} /> : null
           }
         </div>
       </Drawer>

@@ -10,7 +10,6 @@ import { createStructuredSelector } from 'reselect';
 // import moment from 'moment';
 // import clsx from 'clsx';
 // import MUIDataTable from "mui-datatables";
-import DealershipDetails from './DealershipDetails';
 // import Currency from '../../../components/Number/Currency';
 import ApprovalReqestTable from '../../../components/Tables/ApprovalReqestTable';
 import ApprovedTable from '../../../components/Tables/ApprovedTable';
@@ -28,6 +27,14 @@ import { rulesList } from '../../../config/userRules';
 import { getDealershipById } from '../../../services/dealerships.service';
 import { setAllLoans } from '../../../store/loans/loans.actions';
 import { selectAllLoans } from '../../../store/loans/loans.selector';
+import ApprovedDrawer from '../RightDrawer/ApprovedDrawer';
+import DisbApprovedDrawer from '../RightDrawer/DisbApprovedDrawer';
+import DisbursedDrawer from '../RightDrawer/DisbursedDrawer';
+import PendingApprovalDrawer from '../RightDrawer/PendingApprovalDrawer';
+import PendingDisbApprovedDrawer from '../RightDrawer/PendingDisbApprovalDrawer';
+import PendingReviewDrawer from '../RightDrawer/PendingReviewDrawer';
+import RejectedDrawer from '../RightDrawer/RejectedDrawer';
+import SubmittedDrawer from '../RightDrawer/SubmittedDrawer';
 
 
 
@@ -125,14 +132,14 @@ const useStyles = makeStyles(theme => ({
 
 // const convertToCurrency = value => <Currency value={value} />;
 
-const LoansTable = ({ currentUser, all_loans, setAllLoans, value, filterQry }) => {
+const LoansTable = ({ currentUser, value, filterQry }) => {
   const classes = useStyles();
   const [showPanel, setShowPanel] = useState({
     status: false,
     data: ''
   });
   const [dealershipData, setDealershipData] = useState();
-  const [modalData, setModalData] = useState({});
+  // const [modalData, setModalData] = useState({});
   const [loansData, setLoansData] = useState();
   const [reportDetails, setReportDetails] = useState({});
 
@@ -151,11 +158,21 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value, filterQry }) =
     //   .then(data => setDealersData(data))
     //   .catch(e => null)
 
-    setShowPanel({ status: true, data: status, editable: permissionCheck(currentUser.role_name, rulesList.loan_approval) });
+    setShowPanel({ status: true, data: status, id: id, editable: permissionCheck(currentUser.role_name, rulesList.loan_approval) });
   }
   const showReportsInfo = (id, selectedLoanData, status) => {
     setReportDetails(selectedLoanData)
-    setModalData({ open: true })
+    // setModalData({ open: true })
+  }
+  const compProps = {
+    id: showPanel?.id,
+    status: showPanel?.data,
+    editable: showPanel?.editable,
+    currentUser: currentUser,
+    data: dealershipData,
+    onClose: () => { setShowPanel({ status: false }) },
+    selectedLoanData: loansData,
+    // updateLoanStatus: updateLoanStatus
   }
 
   return (
@@ -265,14 +282,16 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans, value, filterQry }) =
         variant={'temporary'}
       >
         <div className={classes.sidePanelWrapper}>
-          <DealershipDetails
-            data={dealershipData}
-            loanData={loansData}
-            status={showPanel.data}
-            editable={showPanel.editable}
-            currentUser={currentUser}
-            onClose={() => { setShowPanel({ status: false }) }}
-          />
+          {
+            showPanel.data === 'submitted' ? <SubmittedDrawer {...compProps} />
+              : showPanel.data === 'loan_review' ? <PendingReviewDrawer {...compProps} />
+                : showPanel.data === 'loan_approval' ? <PendingApprovalDrawer {...compProps} />
+                  : showPanel.data === 'approved' ? <ApprovedDrawer {...compProps} />
+                    : showPanel?.data === 'disbursement_approval' ? <PendingDisbApprovedDrawer {...compProps} />
+                      : showPanel?.data === 'disbursement_approved' ? <DisbApprovedDrawer {...compProps} />
+                        : showPanel?.data === 'disbursed' ? <DisbursedDrawer {...compProps} />
+                          : showPanel?.data === 'rejected' ? <RejectedDrawer {...compProps} /> : null
+          }
         </div>
       </Drawer>
     </Box>

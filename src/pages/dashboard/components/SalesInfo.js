@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
   },
   table: {
-    marginBottom: 20,
+    marginBottom: 10,
   },
   btnEdit: {
     '&.MuiButton-root': { color: '#2196f3' },

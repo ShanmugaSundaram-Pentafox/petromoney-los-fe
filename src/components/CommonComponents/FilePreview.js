@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 import styled from 'styled-components';
 import FormDialog from './FormDialog/FormDialog';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   title: {
     fontSize: 11,
     color: '#888',
@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
   details: {
     borderColor: 'grey',
     minWidth: 80,
-    minHeight: 60,
+    minHeight: 45,
     maxWidth: 250,
     textAlign: 'left',
     marginBottom: 8,

@@ -146,7 +146,6 @@ export const getLoansByStatus = (status, filterQry) => {
 }
 
 export const getLoanById = (dealershipId, loanId) => {
-  console.log('loan id >>>>>>>>>>>>>>>>', dealershipId, loanId)
   return new Promise((resolve, reject) => {
     apiCall(`${URL.dealership}/${dealershipId}/loans/${loanId}`)
       .then(({ status, data, message }) => {

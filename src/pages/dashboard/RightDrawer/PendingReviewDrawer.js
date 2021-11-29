@@ -1,38 +1,24 @@
-import Grid from '@material-ui/core/Grid';
+import { Dialog, DialogActions, DialogContent, DialogContentText, Button } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/CloseRounded';
 import { makeStyles } from '@material-ui/styles';
-import React from 'react';
+import { useSnackbar } from 'notistack';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import styled from 'styled-components';
+import Select from 'react-select';
+import { useMount } from 'react-use';
 import DealershipData from './DealershipData';
 import DrawerFooter from './DrawerFooter';
+import DrawerRemarks from './DrawerRemarks';
 import LoanInfo from './LoanInfo';
 import TextInput from '../../../components/TextInput/TextInput';
-import { getLoanById } from '../../../services/loans.service';
+import { getUserRoleForReview } from '../../../services/common.service';
+import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import SalesInfo from '../components/SalesInfo';
-
-const ViewMoreBtn = styled.div`
-  position: absolute;
-  bottom: 5px;
-  width: 100%;
-  text-align: center;
-  padding: 5px;
-  padding-top: 15px;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  background: linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(176,176,176,0.75) 100%);
-  transition: all .35s ease-in-out;
-
-  &:hover {
-    background: linear-gradient(180deg, rgba(255,255,255,0.50) 0%, rgba(176,176,176,0.90) 100%);
-  }
-`;
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
-    padding: '0 24px 24px 24px',
+    padding: '0 24px 10px 24px',
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
@@ -61,8 +47,6 @@ const useStyles = makeStyles(theme => ({
     marginTop: 8,
   },
   actionButtonsWrapper: {
-    // display: 'flex',
-    // justifyContent: 'space-between',
     paddingTop: 16,
   },
   btn: {
@@ -81,63 +65,138 @@ const useStyles = makeStyles(theme => ({
 
 
 const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editable, data, onClose, readOnly }) => {
-  const loanData = useQuery(['dealership-loans-data', id, status], () => { getLoanById(data.id, selectedLoanData.id) })
+  const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
   const classes = useStyles();
+  const [approvalModal, setApprovalModal] = useState(false)
+  const [user, setUser] = useState([])
+  const [userRole, setUserRole] = useState([]);
+  const [remarks, setRemarks] = useState();
+  const { enqueueSnackbar } = useSnackbar();
 
-  const fieldProps = {
-    direction: 'column',
-    alignTop: true,
-    readOnly,
-    className: classes.fieldItemStyle
+
+  useMount(() => {
+    getUserRoleForReview('is_approve=1')
+      .then(res => {
+        let d = [];
+        res.forEach((item) => {
+          d.push({
+            label: `${item.first_name} ${item.last_name}`,
+            value: item.id
+          })
+        })
+        setUserRole(d);
+      })
+      .catch(() => null)
+  })
+
+  const handleApprovalModal = () => {
+    setApprovalModal(!approvalModal)
   }
+  const updateLoanStatus = () => {
+    let reqBody = {
+      user_id: currentUser.id,
+      approver_id: user.value,
+      approval_remarks: remarks,
+    }
+    updateLoanApprovalStatusById(id, loanData.id, 'approval', reqBody)
+      .then(res => {
+        enqueueSnackbar(res.message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500)
+      })
+      .catch(err => {
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+      })
 
-  const gridProps = {
-    item: true,
-    xs: 12,
-    className: classes.gridItemStyle
   }
   return (
-    <div className={classes.wrapper}>
-      <div className={classes.wrapperTitle}>
-        <Typography className={classes.title} variant="h4" component="h4">{data?.id}</Typography>
-        <CloseIcon className={classes.closeIcon} onClick={onClose} />
+    <>
+      <div className={classes.wrapper}>
+        <div className={classes.wrapperTitle}>
+          <Typography className={classes.title} variant="h4" component="h4">{data?.id}</Typography>
+          <CloseIcon className={classes.closeIcon} onClick={onClose} />
+        </div>
+        <div className={classes.contentWrapper}>
+          <DealershipData data={data} readOnly={true} />
+          <SalesInfo id={id} currentUser={currentUser} readOnly={true} />
+          <LoanInfo status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} />
+          <>
+            {loanData?.submitted_remarks && <DrawerRemarks label={'Submitted remarks'} loanData={loanData?.submitted_remarks} readOnly={readOnly} />}
+          </>
+        </div>
+        <div>
+          <DrawerFooter
+            selectedLoanData={selectedLoanData}
+            handleApprovalModal={handleApprovalModal}
+            loanData={loanData}
+            onClose={onClose}
+            id={id}
+            editable={editable}
+            status={status}
+            currentUser={currentUser}
+          />
+        </div>
       </div>
-      <div className={classes.contentWrapper}>
-        <DealershipData data={data} readOnly={true} />
-        <SalesInfo id={id} currentUser={currentUser} readOnly={true} />
-        <LoanInfo status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} />
-        {
-          selectedLoanData?.remarks && (
-            <>
-              <Grid {...gridProps} style={{ position: 'relative' }}>
-                <TextInput
-                  multiline
-                  rows={4}
-                  rowsMax={8}
-                  labelText="Remarks*"
-                  alignTop
-                  value={selectedLoanData?.review_remarks}
-                  disabled
-                  {...fieldProps}
-                />
-                {
-                  selectedLoanData?.approval_remarks?.length >= 300 ? (
-                    <ViewMoreBtn
-                    // onClick={() => setShowRemarksModal(loanInfo.approval_remarks)}
-                    >
-                      View more
-                    </ViewMoreBtn>
-                  ) : null
-                }
-              </Grid>
-            </>
-          )
-        }
-      </div>
-      <div>
-        <DrawerFooter data={data} onClose={onClose} id={id} editable={editable} status={status} currentUser={currentUser} />
-      </div>
-    </div >
+      <Dialog
+        open={approvalModal}
+        onClose={handleApprovalModal}
+      >
+        <DialogContent>
+          <div className={classes.dialog}>
+            <div style={{ marginBottom: 20 }}>
+              <DialogContentText id="approval-remarks-desc">
+                Please choose whom did you want to sent for approval.
+              </DialogContentText>
+              <Select
+                isClearable
+                name='user_approve'
+                onChange={setUser}
+                options={userRole}
+              />
+            </div>
+            <DialogContentText id="approval-remarks-desc">
+              Please enter your remarks for sending this for approval.
+            </DialogContentText>
+            <TextInput
+              multiline
+              alignTop
+              direction='column'
+              rows={4}
+              rowsMax={8}
+              labelText="Remarks*"
+              placeholder="Enter your remarks here."
+              value={remarks}
+              onChange={e => {
+                setRemarks(e.target.value);
+              }}
+            />
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <div>
+            <Button onClick={handleApprovalModal}>Cancel</Button>
+            <Button color='primary' variant='outlined'
+              onClick={updateLoanStatus}
+            >
+              Confirm
+            </Button>
+          </div>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 
 }

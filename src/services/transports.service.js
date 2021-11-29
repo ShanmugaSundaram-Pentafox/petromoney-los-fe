@@ -1,13 +1,13 @@
 // import { API } from "../config/api"
-import { URL } from "../config/serverUrls"
-import apiCall from "../utils/api.util"
-import { cryptoDecrypt, decrypt } from "./crypto.service"
+import { cryptoDecrypt } from './crypto.service'
+import { URL } from '../config/serverUrls'
+import apiCall from '../utils/api.util'
 
 export const getAllTransport = () => {
   return new Promise((resolve, reject) => {
     apiCall(URL.transport)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           const result = data.map(item => ({
             ...item,
             pan: item?.pan ? cryptoDecrypt(item.pan) : item.pan,
@@ -28,7 +28,7 @@ export const getTransportersOwnerById = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.vehicleInfo}/owner/${id}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -44,7 +44,7 @@ export const getTransporterInfoFromID = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.vehicleInfo}/${id}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data[0])
         } else {
           reject(message)
@@ -61,7 +61,7 @@ export const getTransportOwnerInfo = (pm_user_id) => {
     // apiCall(`transport/profile?pm_user_id=${pm_user_id}`)
     apiCall(`transport/owner/${pm_user_id}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           const result = data[0];
           if (result?.pan) {
             result.pan = cryptoDecrypt(result.pan);
@@ -84,7 +84,7 @@ export const getVehicleInfoFromID = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.vehicleInfo}/${id}/vehicles`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -100,7 +100,7 @@ export const getVehicleDocuments = (transportId, vehicleId) => {
   return new Promise((resolve, reject) => {
     apiCall(`transporter/${transportId}/vehicle/${vehicleId}/docs`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -116,7 +116,7 @@ export const getVehicleLoans = (vehicleId) => {
   return new Promise((resolve, reject) => {
     apiCall(`vehicle/${vehicleId}/loan`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -132,7 +132,7 @@ export const getVehicleServiceDetails = (vehicleId, serviceId, loanId) => {
   return new Promise((resolve, reject) => {
     apiCall(`vehicle/${vehicleId}/service/${serviceId}/tracker/${loanId}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -151,7 +151,7 @@ export const updateVehicleServiceDetails = (id, vehicleId, serviceId, data, loan
       body: data
     })
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -165,9 +165,9 @@ export const updateVehicleServiceDetails = (id, vehicleId, serviceId, data, loan
 
 export const getVehicleLoanOptions = () => {
   return new Promise((resolve, reject) => {
-    apiCall(`vehicle/loan/options`)
+    apiCall('vehicle/loan/options')
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -181,9 +181,9 @@ export const getVehicleLoanOptions = () => {
 
 export const getAllVehicleLoans = () => {
   return new Promise((resolve, reject) => {
-    apiCall(`vehicle/loans`)
+    apiCall('vehicle/loans')
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -200,7 +200,7 @@ export const deleteVehicleLoan = (rowData) => {
       method: 'DELETE',
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message)
         } else {
           reject(message)
@@ -218,7 +218,7 @@ export const addNewTransport = (data) => {
       body: data
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message)
         } else {
           reject(message)
@@ -236,7 +236,7 @@ export const updateTransport = (id, data) => {
       body: data
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message)
         } else {
           reject(message)
@@ -254,7 +254,7 @@ export const addNewVehicle = (data, transId) => {
       body: { tt_no: data.tt_no }
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message)
         } else {
           reject(message)
@@ -272,7 +272,7 @@ export const updateVehicle = (data, transId, vehicleId) => {
       body: { tt_no: data.tt_no }
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message)
         } else {
           reject(message)
@@ -290,7 +290,7 @@ export const deleteVehicleStatus = (id, vehicleId) => {
       body: { status: 0 }
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message)
         } else {
           reject(message)
@@ -306,7 +306,7 @@ export const getOwnersById = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`transport/owners/${id}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           const result = data.map(item => ({
             ...item,
             pan: item?.pan ? cryptoDecrypt(item.pan) : item.pan,
@@ -330,12 +330,12 @@ export const getOwnersById = (id) => {
 }
 export const addNewTransportOwner = (data) => {
   return new Promise((resolve, reject) => {
-    apiCall(`transport/owner`, {
+    apiCall('transport/owner', {
       method: 'POST',
       body: data
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message)
         } else {
           reject(message)
@@ -350,7 +350,7 @@ export const getTransportsByOwnersId = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`transporters/owner/${id}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           const result = data.map(item => ({
             ...item,
             pan: item?.pan ? cryptoDecrypt(item.pan) : item.pan,
@@ -377,7 +377,7 @@ export const getOwnerDetailsById = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`transport/owner/${id}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           const result = data.map(item => ({
             ...item,
             pan: item?.pan ? cryptoDecrypt(item.pan) : item.pan,
@@ -404,7 +404,7 @@ export const getFleetOperatorsById = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.dealership}/${id}/operators`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -423,7 +423,7 @@ export const addNewFleetOperator = (data, id) => {
       body: data
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message)
         } else {
           reject(message)
@@ -442,7 +442,7 @@ export const updateFleetOperator = (data, dealerId, id) => {
       body: data
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message)
         } else {
           reject(message)
@@ -460,7 +460,7 @@ export const deleteVehicleDoc = (id, rowData, vehicle) => {
       method: 'DELETE',
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message)
         } else {
           reject(message)
@@ -474,7 +474,7 @@ export const deleteVehicleDoc = (id, rowData, vehicle) => {
 export const deleteTransportProfileDoc = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`transporters/${id}`, {
-      method: "DELETE",
+      method: 'DELETE',
       body: data
 
     })
@@ -489,7 +489,7 @@ export const deleteTransportProfileDoc = (data, id) => {
 export const deleteTransportOwnerProfileDoc = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`transport/owner/${id}`, {
-      method: "DELETE",
+      method: 'DELETE',
       body: data
 
     })

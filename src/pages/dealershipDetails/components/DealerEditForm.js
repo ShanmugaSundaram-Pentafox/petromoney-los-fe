@@ -1,25 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import Tooltip from '@material-ui/core/Tooltip';
-import { makeStyles, withStyles } from '@material-ui/styles';
+import DateFnsUtils from '@date-io/date-fns';
+import { Divider } from '@material-ui/core';
+import Box from '@material-ui/core/Box';
+import { grey } from '@material-ui/core/colors';
 import Grid from '@material-ui/core/Grid';
-import TextInput from '../../../components/TextInput/TextInput';
+import Switch from '@material-ui/core/Switch';
+import Tooltip from '@material-ui/core/Tooltip';
 // import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
 import Typography from '@material-ui/core/Typography';
-import { useSnackbar } from 'notistack';
-import Switch from '@material-ui/core/Switch';
-import Box from '@material-ui/core/Box';
-import DeleteIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import UploadIcon from '@material-ui/icons/CloudUploadOutlined';
-import { grey } from '@material-ui/core/colors';
-import { format, parse } from 'date-fns';
-import DateFnsUtils from '@date-io/date-fns';
+import DeleteIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker
 } from '@material-ui/pickers';
-import FileUpload from '../../../components/FileUpload';
+import { makeStyles } from '@material-ui/styles';
+import { parse } from 'date-fns';
+import { useSnackbar } from 'notistack';
+import React, { useState, useEffect } from 'react';
 import { AvatarCard, ViewData } from '../../../components/CommonComponents/FilePreview';
-import { Divider } from '@material-ui/core';
+import FileUpload from '../../../components/FileUpload';
+import TextInput from '../../../components/TextInput/TextInput';
 import { deleteProfileDoc } from '../../../services/dealers.service';
 
 
@@ -130,46 +130,46 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
   const currentYear = date.getFullYear();
   const currentYearDiff = date.getFullYear() - 1970;
   const relationShipOptions = [
-    { label: "Choose Relationship", value: "" },
-    { label: "Father", value: "FATHER" },
-    { label: "Mother", value: "MOTHER" },
-    { label: "Uncle", value: "UNCLE" },
-    { label: "Aunt", value: "AUNT" },
-    { label: "Son", value: "SON" },
-    { label: "Daughter", value: "DAUGHTER" },
-    { label: "Grandfather", value: "GRANDFATHER" },
-    { label: "Grandmother", value: "GRANDMOTHER" },
-    { label: "Mother-in-law", value: "MOTHER-IN-LAW" },
-    { label: "Father-in-law", value: "FATHER-IN-LAW" },
-    { label: "Sister-in-law", value: "SISTER-IN-LAW" },
-    { label: "Brother-in-law", value: "BROTHER-IN-LAW" },
-    { label: "Brother", value: "BROTHER" },
-    { label: "Newphew", value: "NEPHEW" },
-    { label: "Partner", value: "PARTNER" },
-    { label: "Friend", value: "FRIEND" },
-    { label: "Shareholder", value: "SHAREHOLDER" },
-    { label: "Buyer", value: "BUYER" },
-    { label: "Supplier", value: "SUPPLIER" },
-    { label: "Business Neighbour", value: "BUSINESS NEIGHBOUR" },
-    { label: "Home Neighbour", value: "HOME NEIGHBOUR" },
-    { label: "Director", value: "DIRECTOR" },
-    { label: "Proprietor", value: "PROPRIETOR" },
-    { label: "Debtors", value: "DEBTORS" },
-    { label: "Creditors", value: "CREDITORS" },
-    { label: "Principal", value: "PRINCIPAL" },
-    { label: "Others", value: "OTHERS" }
+    { label: 'Choose Relationship', value: '' },
+    { label: 'Father', value: 'FATHER' },
+    { label: 'Mother', value: 'MOTHER' },
+    { label: 'Uncle', value: 'UNCLE' },
+    { label: 'Aunt', value: 'AUNT' },
+    { label: 'Son', value: 'SON' },
+    { label: 'Daughter', value: 'DAUGHTER' },
+    { label: 'Grandfather', value: 'GRANDFATHER' },
+    { label: 'Grandmother', value: 'GRANDMOTHER' },
+    { label: 'Mother-in-law', value: 'MOTHER-IN-LAW' },
+    { label: 'Father-in-law', value: 'FATHER-IN-LAW' },
+    { label: 'Sister-in-law', value: 'SISTER-IN-LAW' },
+    { label: 'Brother-in-law', value: 'BROTHER-IN-LAW' },
+    { label: 'Brother', value: 'BROTHER' },
+    { label: 'Newphew', value: 'NEPHEW' },
+    { label: 'Partner', value: 'PARTNER' },
+    { label: 'Friend', value: 'FRIEND' },
+    { label: 'Shareholder', value: 'SHAREHOLDER' },
+    { label: 'Buyer', value: 'BUYER' },
+    { label: 'Supplier', value: 'SUPPLIER' },
+    { label: 'Business Neighbour', value: 'BUSINESS NEIGHBOUR' },
+    { label: 'Home Neighbour', value: 'HOME NEIGHBOUR' },
+    { label: 'Director', value: 'DIRECTOR' },
+    { label: 'Proprietor', value: 'PROPRIETOR' },
+    { label: 'Debtors', value: 'DEBTORS' },
+    { label: 'Creditors', value: 'CREDITORS' },
+    { label: 'Principal', value: 'PRINCIPAL' },
+    { label: 'Others', value: 'OTHERS' }
   ]
 
   const aadharBack = () => {
     return (
       <div className={classes.fileStyle}>
         <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#eeeeee', color: '#43a047' }}
-          href={data.aadhar_b_file_url} target="_blank" title={'Aadhar Back'}>{'Back'}</a>
+          href={data.aadhar_b_file_url} target="_blank" title={'Aadhar Back'} rel="noreferrer">{'Back'}</a>
         <Tooltip title={'Click to edit'}>
           <UploadIcon fontSize="small" padding={2} onClick={() => docUpload('Back')} />
         </Tooltip>
         <Tooltip title={'Click to delete'}>
-          <DeleteIcon onClick={() => onDocDelete({ aadhar_b_file_url: "" })} fontSize="small" padding={2} />
+          <DeleteIcon onClick={() => onDocDelete({ aadhar_b_file_url: '' })} fontSize="small" padding={2} />
         </Tooltip>
       </div>
     )
@@ -178,12 +178,12 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
     return (
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#eeeeee', color: '#43a047' }}
-          href={data.profile_image_url} target="_blank" title={'Profile Attachment'}>{'Profile Attachment'}</a>
+          href={data.profile_image_url} target="_blank" title={'Profile Attachment'} rel="noreferrer">{'Profile Attachment'}</a>
         <Tooltip title={'Click to edit'}>
           <UploadIcon fontSize="small" style={{ color: grey[800] }} padding={2} onClick={() => docUpload('Profile')} />
         </Tooltip>
         <Tooltip title={'Click to delete'}>
-          <DeleteIcon onClick={() => onDocDelete({ profile_image_url: "" })} fontSize="small" style={{ color: grey[800] }} padding={2} />
+          <DeleteIcon onClick={() => onDocDelete({ profile_image_url: '' })} fontSize="small" style={{ color: grey[800] }} padding={2} />
         </Tooltip>
       </div>
     )
@@ -193,12 +193,12 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
     return (
       <div className={classes.fileStyle} >
         <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#eeeeee', color: '#43a047' }}
-          href={data.aadhar_f_file_url} target="_blank" title={'Aadhar Front'}>{'Front'}</a>
+          href={data.aadhar_f_file_url} target="_blank" title={'Aadhar Front'} rel="noreferrer">{'Front'}</a>
         <Tooltip title={'Click to edit'}>
           <UploadIcon fontSize="small" style={{ color: grey[800] }} padding={2} onClick={() => docUpload('Front')} />
         </Tooltip>
         <Tooltip title={'Click to delete'}>
-          <DeleteIcon onClick={() => onDocDelete({ aadhar_f_file_url: "" })} fontSize="small" style={{ color: grey[800] }} padding={2} />
+          <DeleteIcon onClick={() => onDocDelete({ aadhar_f_file_url: '' })} fontSize="small" style={{ color: grey[800] }} padding={2} />
         </Tooltip>
       </div>
     )
@@ -207,12 +207,12 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
     return (
       <div className={classes.fileStyle}>
         <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#eeeeee', color: '#43a047' }}
-          href={data.pan_file_url} target="_blank" title={'PAN Attachment'}>{'PAN Attachment'}</a>
+          href={data.pan_file_url} target="_blank" title={'PAN Attachment'} rel="noreferrer">{'PAN Attachment'}</a>
         <Tooltip title={'Click to edit'}>
           <UploadIcon fontSize="small" padding={2} style={{ color: grey[800] }} onClick={() => docUpload('PAN')} />
         </Tooltip>
         <Tooltip title={'Click to delete'}>
-          <DeleteIcon onClick={() => onDocDelete({ pan_file_url: "" })} fontSize="small" style={{ color: grey[800] }} padding={2} />
+          <DeleteIcon onClick={() => onDocDelete({ pan_file_url: '' })} fontSize="small" style={{ color: grey[800] }} padding={2} />
         </Tooltip>
       </div>
     )
@@ -479,6 +479,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
               </Grid>
               <Grid {...gridItem} md={6}>
                 <TextInput
+                  number
                   label="Mobile"
                   name="mobile"
                   readOnly={readOnly}
@@ -486,7 +487,6 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   onChange={onChange}
                   error={errors.mobile}
                   helperText={errors.mobile}
-                  type='number'
                   InputLabelProps={{ shrink: true }}
                 ></TextInput>
               </Grid>
@@ -554,13 +554,13 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   {
                     data.profile_image_url ? profileAttachment() :
                       <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }} onClick={() => docUpload('Profile')}>
-                        <Tooltip title={'Click to attach Profile'}>
+                      <Tooltip title={'Click to attach Profile'}>
                           <>
-                            <UploadIcon fontSize='small' />
-                            <Typography style={{ marginLeft: 12 }}>Attach profile</Typography>
-                          </>
+                          <UploadIcon fontSize='small' />
+                          <Typography style={{ marginLeft: 12 }}>Attach profile</Typography>
+                        </>
                         </Tooltip>
-                      </div>
+                    </div>
                   }
                 </>
               </Grid>
@@ -583,12 +583,12 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   <Grid {...gridItem} md={6}>
                     {data.pan_file_url ? panAttachment() :
                       <div className={classes.fileAttachement} onClick={() => docUpload('PAN')}>
-                        <Tooltip title={'Click to attach PAN'}>
+                      <Tooltip title={'Click to attach PAN'}>
                           <>
-                            <UploadIcon className={classes.icon} disabled={readOnly} />
-                          </>
+                          <UploadIcon className={classes.icon} disabled={readOnly} />
+                        </>
                         </Tooltip>
-                      </div>
+                    </div>
                     }
                   </Grid>
                 ) : null
@@ -596,6 +596,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
 
               <Grid {...gridItem} md={6}>
                 <TextInput
+                  number
                   label="Aadhar"
                   name="aadhar"
                   value={values.aadhar}
@@ -614,13 +615,13 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                     <Grid {...gridItem} md={3}>
                       {data.aadhar_f_file_url ? aadharFront() :
                         <div className={classes.fileAttachement} onClick={() => docUpload('Front')}>
-                          <Tooltip title={'Click to attach aadhar front'}>
+                        <Tooltip title={'Click to attach aadhar front'}>
                             <>
-                              <UploadIcon className={classes.icon} disabled={readOnly} />
-                              <Typography className={classes.typography}>Front</Typography>
-                            </>
+                            <UploadIcon className={classes.icon} disabled={readOnly} />
+                            <Typography className={classes.typography}>Front</Typography>
+                          </>
                           </Tooltip>
-                        </div>
+                      </div>
                       }
                     </Grid>
                     <Grid {...gridItem} md={3}>

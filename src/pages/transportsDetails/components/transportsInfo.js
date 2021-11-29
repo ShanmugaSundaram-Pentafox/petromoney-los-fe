@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import Alert from '@material-ui/lab/Alert';
-import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
-import TextInput from '../../../components/TextInput/TextInput';
-import { useFormik } from 'formik';
-import { URL } from '../../../config/serverUrls';
-import { logger } from '../../../config/logger';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import apiCall from '../../../utils/api.util';
+import Grid from '@material-ui/core/Grid';
+import Alert from '@material-ui/lab/Alert';
+import { useFormik } from 'formik';
+import React, { useState } from 'react';
 import { useMount } from 'react-use';
-import { getOmcList } from '../../../services/common.service';
-import { getDistricts, getFormattedStatesList } from '../../../utils/indianStates.util';
 import Button from '../../../components/CommonComponents/Button/Button';
+import TextInput from '../../../components/TextInput/TextInput';
+import { logger } from '../../../config/logger';
+import { URL } from '../../../config/serverUrls';
+import { getOmcList } from '../../../services/common.service';
+import apiCall from '../../../utils/api.util';
+import { getDistricts, getFormattedStatesList } from '../../../utils/indianStates.util';
 
 const TransportsInfo = ({ data, currentUser }) => {
   const [loading, setLoading] = useState();
@@ -78,7 +78,7 @@ const TransportsInfo = ({ data, currentUser }) => {
             name="name"
             defaultValue={values.name}
             {...fieldProps}
-            />
+          />
         </Grid>
         <Grid {...gridProps} md={6}>
           <TextInput
@@ -87,7 +87,7 @@ const TransportsInfo = ({ data, currentUser }) => {
             name="mobile"
             defaultValue={values.mobile}
             {...fieldProps}
-            />
+          />
         </Grid>
         <Grid {...gridProps}>
           <TextInput
@@ -96,7 +96,7 @@ const TransportsInfo = ({ data, currentUser }) => {
             name="address"
             defaultValue={values.address}
             {...fieldProps}
-            />
+          />
         </Grid>
         <Grid {...gridProps} md={6}>
           <TextInput
@@ -104,7 +104,7 @@ const TransportsInfo = ({ data, currentUser }) => {
             name="pincode"
             defaultValue={values.pincode === 'NULL' ? '' : values.pincode}
             {...fieldProps}
-            />
+          />
         </Grid>
         <Grid {...gridProps} md={6}>
           <TextInput
@@ -126,7 +126,7 @@ const TransportsInfo = ({ data, currentUser }) => {
             name="pan"
             defaultValue={values.pan}
             {...fieldProps}
-            />
+          />
         </Grid>
         <Grid {...gridProps} md={6}>
           <TextInput 
@@ -134,7 +134,7 @@ const TransportsInfo = ({ data, currentUser }) => {
             name="gst"
             defaultValue={values.gst}
             {...fieldProps}
-            />
+          />
         </Grid>
         <Grid {...gridProps} md={6}>
           <TextInput 
@@ -143,11 +143,11 @@ const TransportsInfo = ({ data, currentUser }) => {
             name="state"
             value={values.state}
             {...fieldProps}
-            >
-              <option value="">Choose State</option>
-              {
-                getFormattedStatesList().map(item => <option key={item.code} value={item.value}>{item.label}</option>)
-              }
+          >
+            <option value="">Choose State</option>
+            {
+              getFormattedStatesList().map(item => <option key={item.code} value={item.value}>{item.label}</option>)
+            }
           </TextInput>
         </Grid>
         <Grid {...gridProps} md={6}>
@@ -170,7 +170,7 @@ const TransportsInfo = ({ data, currentUser }) => {
             name="region"
             defaultValue={values.region}
             {...fieldProps}
-            />
+          />
         </Grid>
         <Grid {...gridProps} md={6}>
           <TextInput 
@@ -178,7 +178,7 @@ const TransportsInfo = ({ data, currentUser }) => {
             name="zone"
             defaultValue={values.zone}
             {...fieldProps}
-            />
+          />
         </Grid>
         <Grid {...gridProps}>
           {
@@ -191,7 +191,7 @@ const TransportsInfo = ({ data, currentUser }) => {
               {/* <Button variant="contained" size="small" onClick={() => { console.log(data); setValues({...data}); }}>Cancel</Button> */}
               <Button type="submit" color="primary" variant="contained" size="medium">Save</Button>
             </Box>
-            ) : <CircularProgress />
+          ) : <CircularProgress />
           }
         </Grid>
       </Grid>

@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import clsx from 'clsx';
-import { connect } from 'react-redux';
-import { makeStyles, useTheme } from '@material-ui/styles';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Box from '@material-ui/core/Box';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { makeStyles, useTheme } from '@material-ui/styles';
+import clsx from 'clsx';
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import Sidebar from '../components/Sidebar/Sidebar';
 import Topbar from '../components/Topbar/Topbar';
 import { resetCurrentUser } from '../store/user/user.actions';
@@ -60,10 +60,10 @@ const MainLayout = props => {
         onClose={handleSidebarClose}
         open={shouldOpenSidebar}
         variant={isDesktop ? 'persistent' : 'temporary'}
-        />
+      />
       <main className={classes.content}>
         <Topbar user={currentUser} logout={logout} appBarProps={{
-          position: "sticky",
+          position: 'sticky',
         }}  
         onSidebarOpen= {handleSidebarOpen}
         />

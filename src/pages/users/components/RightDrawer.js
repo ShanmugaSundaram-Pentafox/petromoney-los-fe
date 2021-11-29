@@ -1,40 +1,40 @@
-import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
 // import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
 // import IconButton from '@material-ui/core/IconButton';
 // import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
-import { updatePassword, updateUserDetails } from '../../../services/common.service';
-import { CircularProgress, Paper, TextField, Tooltip, Typography } from '@material-ui/core';
+import { CircularProgress, Typography } from '@material-ui/core';
+import Box from '@material-ui/core/Box';
 // import Snackbar from '@material-ui/core/Snackbar';
 // import MuiAlert from '@material-ui/lab/Alert';
-import Button from '../../../components/CommonComponents/Button/Button';
-import { logger } from '../../../config/logger';
 // import clsx from 'clsx';
 // import CircularProgress from '@material-ui/core/CircularProgress';
 // import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
-import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 // import EditIcon from '@material-ui/icons/Edit';
 // import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
-import MapRegion from './MapRegion';
 // import Skeleton from '@material-ui/lab/Skeleton';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import UserCan from '../../../components/UserCan/UserCan';
+import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
-import { rulesList } from '../../../config/userRules';
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import { deleteUser, getAllUserRoles } from '../../../services/users.service';
-import TextInput from '../../../components/TextInput/TextInput';
-import { useMount } from 'react-use';
+import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack'
+import React, { useState } from 'react';
+import { useMount } from 'react-use';
+import * as Yup from 'yup';
+import MapRegion from './MapRegion';
 import PasswordForm from './PasswordForm';
+import Button from '../../../components/CommonComponents/Button/Button';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
+import TextInput from '../../../components/TextInput/TextInput';
+import UserCan from '../../../components/UserCan/UserCan';
+import { logger } from '../../../config/logger';
+import { rulesList } from '../../../config/userRules';
+import { updateUserDetails } from '../../../services/common.service';
+import { deleteUser, getAllUserRoles } from '../../../services/users.service';
 
 
 
@@ -257,8 +257,8 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
       role_id: Yup.number().required('Choose Proper User Role').nullable('Choose user role'),
       first_name: Yup.string().required('Enter first name').nullable('Enter first name'),
       last_name: Yup.string().required('Enter last name').nullable('Enter last name'),
-      mobile: Yup.string().matches(/^\d{10}$/, "Enter valid mobile number").required("Enter mobile number").nullable('Enter mobile number'),
-      email: Yup.string().email("Enter valid email").nullable('Enter mail ID').required('Enter mail ID'),
+      mobile: Yup.string().matches(/^\d{10}$/, 'Enter valid mobile number').required('Enter mobile number').nullable('Enter mobile number'),
+      email: Yup.string().email('Enter valid email').nullable('Enter mail ID').required('Enter mail ID'),
     }),
     onSubmit: values => {
       const { status, ...d } = values;
@@ -292,7 +292,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
     }
   });
   const inputProps = {
-    direction: "column",
+    direction: 'column',
     alignTop: true,
     onChange: handleChange,
   }

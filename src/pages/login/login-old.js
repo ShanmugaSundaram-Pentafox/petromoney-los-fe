@@ -1,22 +1,21 @@
-import React, { useState, useCallback } from 'react';
-import { connect } from 'react-redux';
 // import { Link } from 'react-router-dom';
 // import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
 import { colors } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 // import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-// import StyledLink from '@material-ui/core/Link';
+import Container from '@material-ui/core/Container';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
+import { makeStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+// import StyledLink from '@material-ui/core/Link';
 // import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import { API } from '../../config/api';
-import { URL } from '../../config/serverUrls';
+import React, { useState, useCallback } from 'react';
+import { connect } from 'react-redux';
 import { logger } from '../../config/logger';
+import { URL } from '../../config/serverUrls';
 import { setCurrentUser } from '../../store/user/user.actions';
 import apiCall from '../../utils/api.util';
 
@@ -30,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     boxShadow: '0 15px 0 -25px rgba(63,63,68,0.1), 0 1px 16px 0 rgba(63,63,68,0.15)',
     padding: theme.spacing(3),
-    background: "white"
+    background: 'white'
   },
   paper: {
     // marginTop: theme.spacing(8),
@@ -43,9 +42,9 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.secondary.main,
   },
   logoWrapper: {
-    background: "white",
+    background: 'white',
     padding: '16px',
-    marginTop: `-100px`,
+    marginTop: '-100px',
     borderRadius: 68
   },
   form: {
@@ -57,7 +56,7 @@ const useStyles = makeStyles(theme => ({
     fontSize: 16
   },
   version: {
-    textAlign: "center",
+    textAlign: 'center',
     marginTop: 16,
     fontSize: 12,
     color: colors.blueGrey[700]

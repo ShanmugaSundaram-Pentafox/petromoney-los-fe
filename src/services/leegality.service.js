@@ -1,12 +1,12 @@
-import { URL } from "../config/serverUrls";
-import apiCall from "../utils/api.util";
-import { cryptoDecrypt, decrypt } from "./crypto.service";
+import { cryptoDecrypt } from './crypto.service';
+import { URL } from '../config/serverUrls';
+import apiCall from '../utils/api.util';
 
 export const getAllGuarantor = (dealerId) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.guarantor}/${dealerId}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           const result = data.map(item => ({
             ...item,
             pan: item?.pan ? cryptoDecrypt(item.pan) : item.pan,
@@ -47,7 +47,7 @@ export const getPdfContent = (loanId, dealerId, type) => {
   return new Promise((resolve, reject) => {
     apiCall(`loans/dealership/${dealerId}/loans/${loanId}/${type}`)
       .then(({ status, file, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(file);
         } else {
           reject(message);

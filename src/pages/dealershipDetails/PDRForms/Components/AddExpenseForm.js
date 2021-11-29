@@ -1,13 +1,13 @@
-import React from 'react';
 import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import * as Yup from 'yup';
-import { useFormik } from 'formik';
-import clsx from 'clsx';
 import Divider from '@material-ui/core/Divider';
-import { makeStyles } from "@material-ui/styles";
+import Grid from '@material-ui/core/Grid';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
+import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
+import React from 'react';
+import * as Yup from 'yup';
 import Button from '../../../../components/CommonComponents/Button/Button';
 import TextInput from '../../../../components/TextInput/TextInput';
 import { addExpenseDetailsByID } from '../../../../services/PDReport.services';
@@ -54,20 +54,6 @@ const useStyles = makeStyles((theme) => ({
   btn: {
     margin: 8
   },
-  number: {
-    backgroundColor: 'white',
-    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0,
-    }
-  },
-  input: {
-    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0,
-    }
-  }
-
 }))
 
 
@@ -116,7 +102,7 @@ const AddExpenseForm = ({ data, isEdit, id, handleClose }) => {
     }
   });
   const inputProps = {
-    direction: "column",
+    direction: 'column',
     alignTop: true,
     onChange: handleChange,
   }
@@ -142,14 +128,12 @@ const AddExpenseForm = ({ data, isEdit, id, handleClose }) => {
                   <TextInput
                     {...inputProps}
                     money
+                    number
                     labelText="Expense Amount"
                     name="expense_amount"
                     value={values.expense_amount}
                     error={errors.expense_amount}
                     helperText={errors.expense_amount}
-                    className={classes.number}
-                    inputProps={{className: classes.input}}
-                    type='number'
                   />
                 </Grid>
               </Grid>

@@ -1,25 +1,24 @@
-import React, { useState } from 'react';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import MuiDialogActions from '@material-ui/core/DialogActions';
+import MuiDialogContent from '@material-ui/core/DialogContent';
+import MuiDialogTitle from '@material-ui/core/DialogTitle';
+import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import TableContainer from '@material-ui/core/TableContainer';
 import Typography from '@material-ui/core/Typography';
 
-import Dialog from '@material-ui/core/Dialog';
-import MuiDialogTitle from '@material-ui/core/DialogTitle';
-import MuiDialogContent from '@material-ui/core/DialogContent';
-import MuiDialogActions from '@material-ui/core/DialogActions';
-import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import { saveDealerCreditInfo } from '../../../services/creditreport.service';
+import React, { useState } from 'react';
 import GridTextField from './GridTextField';
+import { saveDealerCreditInfo } from '../../../services/creditreport.service';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -34,13 +33,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const fields = [
-  { key: "highest_dpd", label: "No of times of highest DPD" },
-  { key: "highest_dpd_bracket", label: "Highest DPD bracket"},
-  { key: "closed_loans_count", label: "No of Closed loans"},
-  { key: "cibil_vintage", label: "Vintage with CIBIL bureau"},
-  { key: "business_vintage", label: "Business Vintage"},
-  { key: "cibil_score", label: "CIBIL Score"},
-  { key: "internal_score", label: "Internal Score"}
+  { key: 'highest_dpd', label: 'No of times of highest DPD' },
+  { key: 'highest_dpd_bracket', label: 'Highest DPD bracket'},
+  { key: 'closed_loans_count', label: 'No of Closed loans'},
+  { key: 'cibil_vintage', label: 'Vintage with CIBIL bureau'},
+  { key: 'business_vintage', label: 'Business Vintage'},
+  { key: 'cibil_score', label: 'CIBIL Score'},
+  { key: 'internal_score', label: 'Internal Score'}
 ];
 
 const RowContent = ({ data, onChange }) => (
@@ -54,7 +53,7 @@ const RowContent = ({ data, onChange }) => (
             label={row.label}
             value={data[row.key]}
             onChange={onChange}
-            />
+          />
         ))
       }
     </Grid>
@@ -126,17 +125,17 @@ const CreditInfoCard = ({
   const [modalStatus, setModalStatus] = useState({ open: false });
 
   const onSubmit = id => {
-    const [dealer_id, coapplicant_id] = id.split("_");
+    const [dealer_id, coapplicant_id] = id.split('_');
     saveDealerCreditInfo(dealership_id, {
       dealer_id,
       coapplicant_id,
       user_id: currentUser.id,
       ...creditInfoData[id]
     })
-    .then(() => {
-      handleModalClose();
-    })
-    .catch(e => null)
+      .then(() => {
+        handleModalClose();
+      })
+      .catch(e => null)
   }
 
   const handleModalClose = () => {

@@ -1,11 +1,11 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
 import { Typography } from '@material-ui/core';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import { makeStyles } from '@material-ui/core/styles';
 import moment from 'moment';
-import CountUp from "react-countup";
-import Chart from "react-google-charts";
+import React from 'react';
+import CountUp from 'react-countup';
+import Chart from 'react-google-charts';
 
 const useStyles = makeStyles(() => ({
   GridParent: {
@@ -21,13 +21,13 @@ const useStyles = makeStyles(() => ({
     color: 'rgb(77, 144, 147)'
   },
   summary: {
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
     borderRadius: 6,
     padding: 32,
   },
   testCount: {
-    fontSize: "30px",
+    fontSize: '30px',
     color: 'rgb(0, 96, 100)'
   },
   title: {
@@ -86,7 +86,7 @@ export const PieChartData = ({
 }) => {
   const classes = useStyles();
   const options = {
-    legend: { position: "none" },
+    legend: { position: 'none' },
     focusTarget: 'category',
     fontSize: 9.5,
   };
@@ -131,13 +131,13 @@ export const BarChartData = ({
         //     },
         //   ]}
         options={{
-          legend: { position: "none" },
+          legend: { position: 'none' },
           // colors: ['rgb(66, 133, 244)'],
           // tooltip: { isHtml: true },
           focusTarget: 'category',
           chartArea: { width: '70%' },
           hAxis: {
-            title: `Amount`,
+            title: 'Amount',
             minValue: 0,
           },
         }}

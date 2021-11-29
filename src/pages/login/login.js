@@ -1,20 +1,20 @@
-import React, { useState } from "react";
-import { connect } from 'react-redux';
-import { setCurrentUser } from '../../store/user/user.actions';
+import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import Box from "@material-ui/core/Box";
+import Alert from '@material-ui/lab/Alert';
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { LoginWrapper } from "./login.css";
-import { URL } from '../../config/serverUrls';
-import { logger } from '../../config/logger';
-import apiCall from "../../utils/api.util";
-import Alert from "@material-ui/lab/Alert";
+import { toString } from 'lodash-es';
 import { useSnackbar } from 'notistack';
-import { getOTP, resendOTP } from "../../services/login.service";
-import { toString } from "lodash-es";
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import * as Yup from 'yup';
+import { LoginWrapper } from './login.css';
+import { logger } from '../../config/logger';
+import { URL } from '../../config/serverUrls';
+import { getOTP, resendOTP } from '../../services/login.service';
+import { setCurrentUser } from '../../store/user/user.actions';
+import apiCall from '../../utils/api.util';
 
 const domain = process.env?.REACT_APP_OTP_ONLY_DOMAINS?.split(/[ ,]+/)
 const url = window.location.href.split('/')[2]
@@ -64,14 +64,14 @@ const useStyles = makeStyles(() => ({
     }
   },
   number: {
-    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
+    '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+      '-webkit-appearance': 'none',
       margin: 0
     }
   },
   input: {
-    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
+    '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+      '-webkit-appearance': 'none',
       margin: 0
     }
   },
@@ -105,7 +105,7 @@ const Login = ({ setCurrentUser }) => {
     }
   } else {
     validFields = {
-      password: Yup.string().nullable().required("Enter password")
+      password: Yup.string().nullable().required('Enter password')
     }
   }
 
@@ -113,25 +113,25 @@ const Login = ({ setCurrentUser }) => {
     initialValues: {},
     validateOnChange: false,
     validationSchema: Yup.object().shape({
-      mobile: Yup.number().nullable('Enter mobile number').required("Enter mobile number").test("maxDigits", "Mobile Number must have 10 digits", (number) => String(number).length === 10),
+      mobile: Yup.number().nullable('Enter mobile number').required('Enter mobile number').test('maxDigits', 'Mobile Number must have 10 digits', (number) => String(number).length === 10),
       ...validFields
     }),
     onSubmit: values => {
-        apiCall(URL.login, {
-          method: 'POST',
-          body: values
+      apiCall(URL.login, {
+        method: 'POST',
+        body: values
+      })
+        .then(({ status, data, message }) => {
+          // logger(status, data);
+          if (status == 'SUCCESS') {
+            setCurrentUser(data);
+          }
+          setApiStatus({ type: status, message })
         })
-          .then(({ status, data, message }) => {
-            // logger(status, data);
-            if (status == 'SUCCESS') {
-              setCurrentUser(data);
-            }
-            setApiStatus({ type: status, message })
-          })
-          .catch(e => {
-            logger(e);
-            setApiStatus({ type: "ERROR", message: e?.message })
-          });
+        .catch(e => {
+          logger(e);
+          setApiStatus({ type: 'ERROR', message: e?.message })
+        });
     }
   });
 
@@ -159,12 +159,12 @@ const Login = ({ setCurrentUser }) => {
               },
               variant: 'error',
             });
-            console.log("Unable to send OTP")
+            console.log('Unable to send OTP')
           }
         })
         .catch((error) => {
-          console.log("error", error)
-          setApiStatus({ type: "ERROR", message: error })
+          console.log('error', error)
+          setApiStatus({ type: 'ERROR', message: error })
         })
     } else {
       setHelperText(true)
@@ -191,11 +191,11 @@ const Login = ({ setCurrentUser }) => {
             },
             variant: 'error',
           });
-          console.log("Unable to send OTP")
+          console.log('Unable to send OTP')
         }
       })
       .catch((error) => {
-        console.log("error", error)
+        console.log('error', error)
       })
   }
 
@@ -270,7 +270,7 @@ const Login = ({ setCurrentUser }) => {
                             setLoginWithOTP(false)
                             setOtpLogin(false)
                             setFieldValue('otp', undefined)
-                            }}>Login with password</label>
+                          }}>Login with password</label>
                         )
                       }
                     </div>
@@ -294,7 +294,7 @@ const Login = ({ setCurrentUser }) => {
                         setLoginWithOTP(false)
                         setOtpLogin(false)
                         setFieldValue('otp', undefined)
-                        }}>Login with password</label>                      
+                      }}>Login with password</label>                      
                     )
                   }
                 </div>
@@ -326,7 +326,7 @@ const Login = ({ setCurrentUser }) => {
                     setLoginWithOTP(true)
                     setOtpLogin(true)
                     setFieldValue('password', undefined)
-                    }}>Login with OTP</label>
+                  }}>Login with OTP</label>
                 </div>
               </>
             )

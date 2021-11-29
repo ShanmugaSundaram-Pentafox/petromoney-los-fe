@@ -1,22 +1,21 @@
-import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import Switch from '@material-ui/core/Switch';
-import Typography from '@material-ui/core/Typography';
-import TextInput from '../../../components/TextInput/TextInput';
-import Button from '../../../components/CommonComponents/Button/Button';
-import * as Yup from 'yup';
-import { useFormik } from 'formik';
-import clsx from 'clsx';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
-import { makeStyles } from "@material-ui/styles";
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
+import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
-import { addNewFleetOperator, addNewTransport, updateFleetOperator } from '../../../services/transports.service';
+import React, { useState } from 'react';
+import * as Yup from 'yup';
+import Button from '../../../components/CommonComponents/Button/Button';
+import TextInput from '../../../components/TextInput/TextInput';
+import { addNewFleetOperator, updateFleetOperator } from '../../../services/transports.service';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -116,7 +115,7 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
     validationSchema: Yup.object().shape({
       transport_name: Yup.string().required('Please enter Transport Name').nullable('Please enter Transport Name'),
       vehicle_no: Yup.string().required('Please Enter Vehicle Number').nullable('Please Enter Vehicle Number'),
-      mobile: Yup.number().required("Enter mobile number").nullable('Enter mobile number').test("maxDigits", "Mobile Number mush have 10 digits", (number) => String(number).length === 10),
+      mobile: Yup.number().required('Enter mobile number').nullable('Enter mobile number').test('maxDigits', 'Mobile Number mush have 10 digits', (number) => String(number).length === 10),
       name_on_card: Yup.string().required('Please Enter your name').nullable('Please Enter your name'),
       dtplus_card_number: Yup.string().max(16, 'Enter valid card number').required('Please enter your card number').nullable('Please enter your card number'),
       validity: Yup.number().required('Please enter Validity').nullable('Please enter Validity'),

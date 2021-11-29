@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import Alert from '@material-ui/lab/Alert';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import TextInput from '../TextInput/TextInput';
-import Button from '../CommonComponents/Button/Button';
-import { addNewUser, getAllUserRoles } from '../../services/users.service';
-import { useMount } from 'react-use';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import clsx from 'clsx';
-import CloseIcon from '@material-ui/icons/Close';
-import { makeStyles } from '@material-ui/styles';
-import { useSnackbar } from 'notistack';
 import { CircularProgress } from '@material-ui/core';
+import Box from '@material-ui/core/Box';
+import Divider from '@material-ui/core/Divider';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import CloseIcon from '@material-ui/icons/Close';
+import Alert from '@material-ui/lab/Alert';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
+import { useFormik } from 'formik';
+import { useSnackbar } from 'notistack';
+import React, { useState } from 'react';
+import { useMount } from 'react-use';
+import * as Yup from 'yup';
+import { addNewUser, getAllUserRoles } from '../../services/users.service';
+import Button from '../CommonComponents/Button/Button';
+import TextInput from '../TextInput/TextInput';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -87,9 +87,9 @@ const AddNewUserForm = ({ callback, action }) => {
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       role_id: Yup.number().nullable('Choose Proper User Role').required('Choose Proper User Role'),
-      first_name: Yup.string().nullable('Enter first name').matches(/^[A-Za-z]+$/, "Enter valid name").required('Enter first name'),
-      last_name: Yup.string().nullable('Enter last name').min(1).matches(/^[A-Za-z]+$/, "Enter valid name").required('Enter last name'),
-      mobile: Yup.string().nullable('Enter mobile number').matches(/^\d{10}$/, "Enter valid mobile number").required("Enter mobile number"),
+      first_name: Yup.string().nullable('Enter first name').matches(/^[A-Za-z]+$/, 'Enter valid name').required('Enter first name'),
+      last_name: Yup.string().nullable('Enter last name').min(1).matches(/^[A-Za-z]+$/, 'Enter valid name').required('Enter last name'),
+      mobile: Yup.string().nullable('Enter mobile number').matches(/^\d{10}$/, 'Enter valid mobile number').required('Enter mobile number'),
       email: Yup.string().nullable('Enter email').email('Enter valid email').required('Enter email'),
       password: Yup.string(),
     }),

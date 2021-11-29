@@ -1,21 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/styles';
-import Grid from '@material-ui/core/Grid';
-import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
-import Button from '../../../components/CommonComponents/Button/Button';
-import { useSnackbar } from 'notistack';
-import { Typography } from '@material-ui/core';
-import { downloadAccountStatement } from '../../../services/dealerships.service';
-import DialogContent from '@material-ui/core/DialogContent';
-import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import DateFnsUtils from '@date-io/date-fns';
-import { format } from 'date-fns';
+import { Typography } from '@material-ui/core';
+import DialogContent from '@material-ui/core/DialogContent';
+import Grid from '@material-ui/core/Grid';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker
 } from '@material-ui/pickers';
-import { Formik } from 'formik';
-import { date, object } from "yup";
+import { makeStyles } from '@material-ui/styles';
+import { format } from 'date-fns';
+import { useSnackbar } from 'notistack';
+import React, { useState } from 'react';
+import Button from '../../../components/CommonComponents/Button/Button';
+import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
+import { InputWrapper } from '../../../components/TextInput/TextInput';
+import { downloadAccountStatement } from '../../../services/dealerships.service';
 
 
 const useStyles = makeStyles(theme => ({
@@ -44,14 +42,14 @@ const useStyles = makeStyles(theme => ({
     marginRight: 16,
   },
   number: {
-    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
+    '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+      '-webkit-appearance': 'none',
       margin: 0
     }
   },
   input: {
-    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
+    '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+      '-webkit-appearance': 'none',
       margin: 0
     }
   }
@@ -70,10 +68,8 @@ const AccountStatement = ({ id, currentUser }) => {
 
 
   const handleDownload = values => {
-    const from_date = selectedDate && format(new Date(selectedDate?.from_date), 'dd-MM-yyyy');
-    const to_date = selectedDate && format(new Date(selectedDate?.to_date), 'dd-MM-yyyy');
-
-    const data = { from_date, to_date }
+    const from_date = selectedDate?.from_date && format(new Date(selectedDate?.from_date), 'dd-MM-yyyy');
+    const to_date = selectedDate?.to_date && format(new Date(selectedDate?.to_date), 'dd-MM-yyyy');
     setLoading(true)
     if (from_date && to_date) {
       downloadAccountStatement(id, from_date, to_date)
@@ -82,8 +78,8 @@ const AccountStatement = ({ id, currentUser }) => {
           setOpenDialog(true)
           setLoading(false)
         })
-        .catch((e) => {
-          enqueueSnackbar('Something went wrong please try again.', {
+        .catch(e => {
+          enqueueSnackbar(e, {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',

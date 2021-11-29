@@ -1,21 +1,21 @@
 export const rulesList = {
-  "dashboard": "dashboard",
-  "users_view": "users:view",
-  "loan_approval": "loan:approval",
-  "dealership_edit": "dealership:edit",
-  "dealer_edit": "dealer:edit",
-  "dealer_credit_edit": "dealer:credit:edit",
-  "dealership_credit_edit": "dealership:credit:edit",
-  "dealer_credit_view": "dealer:credit:view",
-  "dealership_credit_view": "dealership:credit:view",
-  "dealer_view": "dealer:view",
-  "transporter_view": "transporter:view",
-  "region_map": "region:map",
-  "settings_view": "settings:view",
-  "credit_view": "credit:view",
-  "pdr_view": "sales:view",
-  "financial_view": "financial:view",
-  "upload_statement": "upload:statement"
+  'dashboard': 'dashboard',
+  'users_view': 'users:view',
+  'loan_approval': 'loan:approval',
+  'dealership_edit': 'dealership:edit',
+  'dealer_edit': 'dealer:edit',
+  'dealer_credit_edit': 'dealer:credit:edit',
+  'dealership_credit_edit': 'dealership:credit:edit',
+  'dealer_credit_view': 'dealer:credit:view',
+  'dealership_credit_view': 'dealership:credit:view',
+  'dealer_view': 'dealer:view',
+  'transporter_view': 'transporter:view',
+  'region_map': 'region:map',
+  'settings_view': 'settings:view',
+  'credit_view': 'credit:view',
+  'pdr_view': 'sales:view',
+  'financial_view': 'financial:view',
+  'upload_statement': 'upload:statement'
 }
 
 export const rulesForUserRoles = {

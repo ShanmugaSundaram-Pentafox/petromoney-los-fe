@@ -1,18 +1,17 @@
+import { Grid } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
+import CallMadeIcon from '@material-ui/icons/CallMade';
+import CallReceivedIcon from '@material-ui/icons/CallReceived';
+import Skeleton from '@material-ui/lab/Skeleton';
+import { makeStyles } from '@material-ui/styles';
+import moment from 'moment';
+import MUIDataTable from 'mui-datatables';
 import React, { useState, useMemo } from 'react'
 import { useMount } from 'react-use';
-import { makeStyles } from '@material-ui/styles';
 import Currency from '../../../components/Number/Currency';
 import usePageTitle from '../../../hooks/usePageTitle';
 import { getPassbookDetails } from '../../../services/common.service';
 import { getDealerDetails } from '../../../services/dealers.service';
-import MUIDataTable from "mui-datatables";
-import Paper from '@material-ui/core/Paper';
-import Skeleton from '@material-ui/lab/Skeleton';
-import moment from 'moment';
-import { Grid } from '@material-ui/core';
-import DisbursementApprovedTable from '../../../components/Tables/DisbursementApprovedTable';
-import CallMadeIcon from '@material-ui/icons/CallMade';
-import CallReceivedIcon from '@material-ui/icons/CallReceived';
 const useStyles = makeStyles(theme => ({
 
   credit: {
@@ -103,7 +102,7 @@ const PassbookDetails = ({ CurrentUser }) => {
     rowsPerPageOptions: [15, 20, 30],
 
   };
-  usePageTitle("Passbook")
+  usePageTitle('Passbook')
   return (
     <>
       <div className={classes.root} >
@@ -115,7 +114,7 @@ const PassbookDetails = ({ CurrentUser }) => {
           ) : (
             Array.isArray(data) && data.length ? (
               <MUIDataTable
-                title={"Transaction Details"}
+                title={'Transaction Details'}
                 data={data}
                 columns={columns}
                 options={options}

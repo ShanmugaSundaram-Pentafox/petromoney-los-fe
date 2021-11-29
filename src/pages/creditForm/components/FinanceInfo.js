@@ -1,7 +1,7 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import { makeStyles } from '@material-ui/core/styles';
+import React from 'react';
 import GridTextField from './GridTextField';
 
 const useStyles = makeStyles(theme => ({
@@ -12,12 +12,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const fields = [
-  { key: "loan_os", label: "Loan O/S" },
-  { key: "networth", label: "Networth" },
-  { key: "it_paid", label: "IT Paid" },
-  { key: "net_profit", label: "Net Profit" },
-  { key: "net_profit_percentage", label: "Net Profit %" },
-  { key: "turnover", label: "Turnover" }
+  { key: 'loan_os', label: 'Loan O/S' },
+  { key: 'networth', label: 'Networth' },
+  { key: 'it_paid', label: 'IT Paid' },
+  { key: 'net_profit', label: 'Net Profit' },
+  { key: 'net_profit_percentage', label: 'Net Profit %' },
+  { key: 'turnover', label: 'Turnover' }
 ];
 
 const FinanceInfo = ({
@@ -37,7 +37,7 @@ const FinanceInfo = ({
                 label={row.label}
                 value={data[row.key]}
                 onChange={onChange}
-                />
+              />
             ))
           }
         </Grid>

@@ -1,7 +1,7 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import { makeStyles } from '@material-ui/core/styles';
+import React from 'react';
 import GridTextField from './GridTextField';
 
 const useStyles = makeStyles(theme => ({
@@ -12,9 +12,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const fields = [
-  { key: "foir", label: "FOIR Considered" },
-  { key: "total_income", label: "Total income considered" },
-  { key: "total_obligation", label: "Total Obligation" }
+  { key: 'foir', label: 'FOIR Considered' },
+  { key: 'total_income', label: 'Total income considered' },
+  { key: 'total_obligation', label: 'Total Obligation' }
 ];
 
 const ScoreCardInfo = ({
@@ -34,7 +34,7 @@ const ScoreCardInfo = ({
                 label={row.label}
                 value={data[row.key]}
                 onChange={onChange}
-                />
+              />
             ))
           }
         </Grid>

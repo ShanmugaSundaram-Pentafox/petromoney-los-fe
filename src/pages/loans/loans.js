@@ -1,8 +1,8 @@
-import React from 'react'
-import styled from 'styled-components'
-import { useTable, useFilters, useGlobalFilter } from 'react-table'
-// A great library for fuzzy filtering/sorting items
 import matchSorter from 'match-sorter'
+import React from 'react'
+import { useTable, useFilters, useGlobalFilter } from 'react-table'
+import styled from 'styled-components'
+// A great library for fuzzy filtering/sorting items
 
 import makeData from './makeData'
 
@@ -219,8 +219,8 @@ function Table({ columns, data }) {
           const rowValue = row.values[id]
           return rowValue !== undefined
             ? String(rowValue)
-                .toLowerCase()
-                .startsWith(String(filterValue).toLowerCase())
+              .toLowerCase()
+              .startsWith(String(filterValue).toLowerCase())
             : true
         })
       },

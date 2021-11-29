@@ -1,6 +1,6 @@
-import React from 'react';
 import ButtonComp from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
+import React from 'react';
 
 const CustomButton = withStyles(theme => ({
   root: {

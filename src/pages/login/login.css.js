@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 import { xs, sm, md } from '../../theme/styled-components/device';
 
 export const LoginWrapper = styled.div`

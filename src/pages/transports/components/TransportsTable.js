@@ -1,18 +1,18 @@
-import React, { useMemo, useState } from "react"
-import { NavLink as RouterLink } from "react-router-dom"
-import { makeStyles } from "@material-ui/styles"
-import MUIDataTable from "mui-datatables"
-import Typography from "@material-ui/core/Typography"
-import { useMount } from "react-use"
-import { getAllTransport, getTransportersOwnerById } from "../../../services/transports.service"
-import { selectAllTransports } from "../../../store/transports/transports.selector"
-import { createStructuredSelector } from "reselect"
-import { connect } from "react-redux"
-import { setAllTransports } from "../../../store/transports/transports.actions"
-import { Grid } from "@material-ui/core"
-import { Paper } from "@material-ui/core";
+import { Grid } from '@material-ui/core'
+import { Paper } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography'
 import Skeleton from '@material-ui/lab/Skeleton';
-import { getOmcList } from "../../../services/common.service"
+import { makeStyles } from '@material-ui/styles'
+import MUIDataTable from 'mui-datatables'
+import React, { useMemo, useState } from 'react'
+import { connect } from 'react-redux'
+import { NavLink as RouterLink } from 'react-router-dom'
+import { useMount } from 'react-use'
+import { createStructuredSelector } from 'reselect'
+import { getOmcList } from '../../../services/common.service'
+import { getAllTransport, getTransportersOwnerById } from '../../../services/transports.service'
+import { setAllTransports } from '../../../store/transports/transports.actions'
+import { selectAllTransports } from '../../../store/transports/transports.selector'
 
 
 
@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight: 12,
   },
   button: {
-    display: "flex",
+    display: 'flex',
     marginTop: theme.spacing(1),
     marginRight: theme.spacing(1),
   },
@@ -45,8 +45,8 @@ const TransportsTable = ({ transports, setAllTransports, onRowClick, portal, tra
   const columns = useMemo(() => {
     return [
       {
-        label: "Code",
-        name: "transporter_id",
+        label: 'Code',
+        name: 'transporter_id',
         options: {
           filter: false,
           sort: true,
@@ -56,8 +56,8 @@ const TransportsTable = ({ transports, setAllTransports, onRowClick, portal, tra
         },
       },
       {
-        label: "Name",
-        name: "name",
+        label: 'Name',
+        name: 'name',
         options: {
           filter: false,
           sort: true,
@@ -67,16 +67,16 @@ const TransportsTable = ({ transports, setAllTransports, onRowClick, portal, tra
         },
       },
       {
-        label: "Mobile Number",
-        name: "mobile",
+        label: 'Mobile Number',
+        name: 'mobile',
         options: {
           filter: false,
           sort: true,
         },
       },
       {
-        label: "OMC",
-        name: "omc_value",
+        label: 'OMC',
+        name: 'omc_value',
         options: {
           filter: true,
           sort: true,
@@ -101,19 +101,19 @@ const TransportsTable = ({ transports, setAllTransports, onRowClick, portal, tra
           setLoading(false)
         })
     } else
-      if (!transports.length) {
-        setLoading(true)
-        getAllTransport()
-          .then((data) => {
-            setAllTransports(data)
-            setLoading(false)
-            // setData(data)
-          })
-          .catch((e) => {
-            console.log(e);
-            setLoading(false);
-          })
-      }
+    if (!transports.length) {
+      setLoading(true)
+      getAllTransport()
+        .then((data) => {
+          setAllTransports(data)
+          setLoading(false)
+          // setData(data)
+        })
+        .catch((e) => {
+          console.log(e);
+          setLoading(false);
+        })
+    }
     getOmcList()
       .then((data) => {
         setOmcs(data);
@@ -126,7 +126,7 @@ const TransportsTable = ({ transports, setAllTransports, onRowClick, portal, tra
   const options = {
     // filterType: 'checkbox',
     selectableRowsHeader: false,
-    selectableRows: "none",
+    selectableRows: 'none',
     print: false,
     viewColumns: false,
     rowsPerPage: 10,

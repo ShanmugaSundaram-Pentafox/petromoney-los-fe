@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 import TextInput from '../../../components/TextInput/TextInput';
-import Button from '../../../components/CommonComponents/Button/Button';
-import * as Yup from 'yup';
-import { useFormik } from 'formik';
-import clsx from 'clsx';
-import Divider from '@material-ui/core/Divider';
-import { makeStyles } from "@material-ui/styles";
-import CloseIcon from '@material-ui/icons/Close';
-import EditIcon from '@material-ui/icons/Edit';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
-import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import { useSnackbar } from 'notistack';
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
+import Divider from '@material-ui/core/Divider';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import CloseIcon from '@material-ui/icons/Close';
+import EditIcon from '@material-ui/icons/Edit';
+import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker
 } from '@material-ui/pickers';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
 import { format, parse } from 'date-fns';
+import { useFormik } from 'formik';
+import { useSnackbar } from 'notistack';
+import * as Yup from 'yup';
+import Button from '../../../components/CommonComponents/Button/Button';
 import { URL } from '../../../config/serverUrls';
 
 const useStyles = makeStyles((theme) => ({
@@ -68,14 +68,14 @@ const useStyles = makeStyles((theme) => ({
   },
   number: {
     backgroundColor: 'white',
-    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
+    '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+      '-webkit-appearance': 'none',
       margin: 0
     }
   },
   input: {
-    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
+    '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+      '-webkit-appearance': 'none',
       margin: 0
     }
   }
@@ -158,7 +158,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
     }
   });
   const inputProps = {
-    direction: "column",
+    direction: 'column',
     alignTop: true,
     onChange: handleChange,
   }
@@ -301,7 +301,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
               startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
               onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
             >
-              {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` :
+              {loading ? <CircularProgress size={20} /> : readOnly ? 'Edit' :
                 'Save'}
             </Button>
           </div>

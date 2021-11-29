@@ -1,13 +1,13 @@
-import React, { useMemo, useState } from 'react';
-import { makeStyles } from '@material-ui/styles';
-import MUIDataTable from "mui-datatables";
-import { useMount } from 'react-use';
-import Paper from '@material-ui/core/Paper';
-import Currency from '../../components/Number/Currency';
-import { getReport } from '../../services/users.service';
-import usePageTitle from '../../hooks/usePageTitle';
 import { Grid } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
 import Skeleton from '@material-ui/lab/Skeleton';
+import { makeStyles } from '@material-ui/styles';
+import MUIDataTable from 'mui-datatables';
+import React, { useMemo, useState } from 'react';
+import { useMount } from 'react-use';
+import Currency from '../../components/Number/Currency';
+import usePageTitle from '../../hooks/usePageTitle';
+import { getReport } from '../../services/users.service';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -106,7 +106,7 @@ const OverDueTable = () => {
           </Grid>
         ) : Array.isArray(loans) && loans.length ? (
           <MUIDataTable
-            title={"Loan Overdue Reports"}
+            title={'Loan Overdue Reports'}
             data={loans}
             columns={columns}
             options={options}

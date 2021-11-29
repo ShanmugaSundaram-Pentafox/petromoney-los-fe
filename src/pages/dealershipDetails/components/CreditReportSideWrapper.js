@@ -1,23 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/styles';
-import Typography from '@material-ui/core/Typography';
-// import DealerCreditInfoForm from './DealerCreditInfoForm';
 import Divider from '@material-ui/core/Divider';
-import Button from '@material-ui/core/Button';
-import isEqual from 'lodash/isEqual';
-import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-// import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
-import { useFormik } from 'formik';
-import clsx from 'clsx';
+import Typography from '@material-ui/core/Typography';
 import Alert from '@material-ui/lab/Alert';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { API } from '../../../config/api';
-import { URL } from '../../../config/serverUrls';
-import { logger } from '../../../config/logger';
+import { makeStyles } from '@material-ui/styles';
+import { useFormik } from 'formik';
+import isEqual from 'lodash/isEqual';
+import React, { useState, useEffect } from 'react';
+// import DealerCreditInfoForm from './DealerCreditInfoForm';
+// import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
 import CreditReportForm from './CreditReportForm';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { logger } from '../../../config/logger';
+import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
-import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 import apiCall from '../../../utils/api.util';
 
 const useStyles = makeStyles(theme => ({
@@ -111,7 +105,7 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
   const getCreditReport = () => {
     apiCall(`${URL.dealership}/${dealershipId}/credit/report`)
       .then(({ status, data }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           setApiData(data[0] || {});
           setValues(data[0] || {})
         } else {

@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { useMount } from 'react-use';
-import { subDays, format } from 'date-fns'
 import { Box, Typography, Tooltip, Popover } from '@material-ui/core';
+import { Button } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { subDays, format } from 'date-fns'
+import React, { useEffect, useState } from 'react';
 import { DateRange } from 'react-date-range';
 import Select from 'react-select'
-import { makeStyles } from '@material-ui/core/styles';
-import { getLoanStats } from '../../../services/loans.service';
+import { useMount } from 'react-use';
 import DashCard from '../../../components/CommonComponents/Cards/DashCard';
 import { getAllRegions } from '../../../services/common.service';
-import { Button } from '@material-ui/core';
+import { getLoanStats } from '../../../services/loans.service';
 
 const useStyles = makeStyles(theme => ({
   card: {
     [theme.breakpoints.up('sm')]: {
-      flexWrap: "wrap",
+      flexWrap: 'wrap',
       [theme.breakpoints.up('md')]: {
-        flexWrap: "nowrap",
+        flexWrap: 'nowrap',
       }
     }
   },
@@ -91,38 +91,38 @@ const LoanStats = ({ selectedStatsCard, handleClick, filterQry }) => {
   const onDateChange = type => (event) => {
     setSelectedPeriodType(type)
     switch (type) {
-      case 'D':
-        setSelectedPeriod({
-          from: new Date(),
-          to: new Date(),
-        })
-        break;
-      case 'W':
-        setSelectedPeriod({
-          from: subDays(new Date(), 8),
-          to: new Date(),
-        })
-        break;
-      case 'M':
-        setSelectedPeriod({
-          from: new Date(new Date().getFullYear(), new Date().getMonth()),
-          to: new Date(),
-        })
-        break;
-      case 'Y':
-        setSelectedPeriod({
-          from: new Date(new Date().getFullYear(), 0),
-          to: new Date(),
-        })
-        break;
-      case 'UTD':
-        setSelectedPeriod({})
-        break;
-      case 'Custom':
-        setShowPicker(event.currentTarget)
-        break;
-      default:
-        break;
+    case 'D':
+      setSelectedPeriod({
+        from: new Date(),
+        to: new Date(),
+      })
+      break;
+    case 'W':
+      setSelectedPeriod({
+        from: subDays(new Date(), 8),
+        to: new Date(),
+      })
+      break;
+    case 'M':
+      setSelectedPeriod({
+        from: new Date(new Date().getFullYear(), new Date().getMonth()),
+        to: new Date(),
+      })
+      break;
+    case 'Y':
+      setSelectedPeriod({
+        from: new Date(new Date().getFullYear(), 0),
+        to: new Date(),
+      })
+      break;
+    case 'UTD':
+      setSelectedPeriod({})
+      break;
+    case 'Custom':
+      setShowPicker(event.currentTarget)
+      break;
+    default:
+      break;
     }
   }
 
@@ -248,7 +248,7 @@ const LoanStats = ({ selectedStatsCard, handleClick, filterQry }) => {
               </Tooltip>
             </div>
             <Popover
-              id={Boolean(showPicker) ? 'dp' : undefined}
+              id={showPicker ? 'dp' : undefined}
               open={Boolean(showPicker)}
               anchorEl={showPicker}
               onClose={onDateRangeClose}

@@ -24,31 +24,31 @@ export default Currency;
 */
 
 export const convertCurrencyWithUnit = (number, decimals = 2, recursiveCall) => {
-   const decimalPoints = decimals;
-   const noOfLakhs = number / 100000;
-   let displayStr;
-   let isPlural;
+  const decimalPoints = decimals;
+  const noOfLakhs = number / 100000;
+  let displayStr;
+  let isPlural;
 
-   // Rounds off digits to decimalPoints decimal places
-   function roundOf(integer) {
-       return +integer.toLocaleString(undefined, {
-           minimumFractionDigits: decimalPoints,
-           maximumFractionDigits: decimalPoints,
-       });
-   }
+  // Rounds off digits to decimalPoints decimal places
+  function roundOf(integer) {
+    return +integer.toLocaleString(undefined, {
+      minimumFractionDigits: decimalPoints,
+      maximumFractionDigits: decimalPoints,
+    });
+  }
 
-   if (noOfLakhs >= 1 && noOfLakhs <= 99) {
-       const lakhs = roundOf(noOfLakhs);
-       isPlural = lakhs > 1 && !recursiveCall;
-       displayStr = `${lakhs} Lakh${isPlural ? 's' : ''}`;
-   } else if (noOfLakhs >= 100) {
-       const crores = roundOf(noOfLakhs / 100);
-       const crorePrefix = crores >= 100000 ? convertCurrencyWithUnit(crores, decimals, true) : crores;
-       isPlural = crores > 1 && !recursiveCall;
-       displayStr = `${crorePrefix} Cr${isPlural ? 's.' : ''}`;
-   } else {
-       displayStr = roundOf(+number);
-   }
+  if (noOfLakhs >= 1 && noOfLakhs <= 99) {
+    const lakhs = roundOf(noOfLakhs);
+    isPlural = lakhs > 1 && !recursiveCall;
+    displayStr = `${lakhs} Lakh${isPlural ? 's' : ''}`;
+  } else if (noOfLakhs >= 100) {
+    const crores = roundOf(noOfLakhs / 100);
+    const crorePrefix = crores >= 100000 ? convertCurrencyWithUnit(crores, decimals, true) : crores;
+    isPlural = crores > 1 && !recursiveCall;
+    displayStr = `${crorePrefix} Cr${isPlural ? 's.' : ''}`;
+  } else {
+    displayStr = roundOf(+number);
+  }
 
-   return displayStr;
+  return displayStr;
 }

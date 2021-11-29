@@ -1,25 +1,25 @@
-import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
+import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import TextInput from '../../../components/TextInput/TextInput';
-import Button from '../../../components/CommonComponents/Button/Button';
-import { format } from 'date-fns'
-import * as Yup from 'yup';
-import { useFormik } from 'formik';
-import clsx from 'clsx';
-import Divider from '@material-ui/core/Divider';
-import { makeStyles } from "@material-ui/styles";
-import CloseIcon from '@material-ui/icons/Close';
 import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
+import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
+import { format } from 'date-fns'
+import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
-import { addAssetDetailsById, deleteAssetDetailsById, getAssetDataById, getAssetDetailsById, getAssetList } from '../../../services/PDReport.services';
+import React, { useState } from 'react';
 import Select from 'react-select';
 import { useMount } from 'react-use';
-import { ViewData } from '../../../components/CommonComponents/FilePreview';
-import PreviewCard from '../../../components/CommonComponents/Cards/PreviewCard';
+import * as Yup from 'yup';
 import AssetsEditForm, { AssetCard } from './Components/AssetsEditForm';
+import Button from '../../../components/CommonComponents/Button/Button';
+import PreviewCard from '../../../components/CommonComponents/Cards/PreviewCard';
+import { ViewData } from '../../../components/CommonComponents/FilePreview';
+import TextInput from '../../../components/TextInput/TextInput';
+import { addAssetDetailsById, deleteAssetDetailsById, getAssetDetailsById, getAssetList } from '../../../services/PDReport.services';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -82,26 +82,13 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 12,
     textAlign: 'center'
   },
-  number: {
-    backgroundColor: 'white',
-    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0
-    }
-  },
-  input: {
-    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0,
-    }
-  }
 }))
 
 const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
 
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles()
-  const [type, setType] = useState("")
+  const [type, setType] = useState('')
   const [loading, setLoading] = useState(false)
   const [editRowData, setEditRowData] = useState({})
   const [editRow, setEditRow] = useState(false);
@@ -121,7 +108,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
           })
           d.push({
             ...item,
-            details: typeof (item.details) === "string" ? JSON.parse(item.details) : (item.details || [])
+            details: typeof (item.details) === 'string' ? JSON.parse(item.details) : (item.details || [])
           })
         })
         setAssetList(list);
@@ -136,7 +123,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
         data.forEach((item, i) => {
           d.push({
             ...item,
-            details: typeof (item.details) === "string" ? JSON.parse(item.details) : (item.details || [])
+            details: typeof (item.details) === 'string' ? JSON.parse(item.details) : (item.details || [])
           })
         })
         setAsset(d)
@@ -152,26 +139,26 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
   };
 
   let CustomValidation = {};
-  if (type.label === 'Car'){
-    CustomValidation={
+  if (type.label === 'Car') {
+    CustomValidation = {
       address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
-      yom: Yup.number().nullable('Please enter year of manufacture').required('Please enter year of manufacture').test('year', 'Invalid Manufacture Year', value => value >= 1900 && value <= format(new Date(), 'yyyy') ),
+      yom: Yup.number().nullable('Please enter year of manufacture').required('Please enter year of manufacture').test('year', 'Invalid Manufacture Year', value => value >= 1900 && value <= format(new Date(), 'yyyy')),
     };
-  } else if(type.label === 'Gold'){
-    CustomValidation={
+  } else if (type.label === 'Gold') {
+    CustomValidation = {
       quantity: Yup.number().nullable('Please enter quantity').required('Please enter quantity'),
-    } 
-  } else if(type.label === 'CV'){
-    CustomValidation={
-      model: Yup.number().nullable('Please enter model').required('Please enter model'),
-      yom: Yup.number().nullable('Please enter year of manufacture').required('Please enter year of manufacture').test('year', 'Invalid Manufacture Year', value => value >= 1900 && value <= format(new Date(), 'yyyy') ),
     }
-  } else if(type.label === 'Land'){
-    CustomValidation={
+  } else if (type.label === 'CV') {
+    CustomValidation = {
+      model: Yup.number().nullable('Please enter model').required('Please enter model'),
+      yom: Yup.number().nullable('Please enter year of manufacture').required('Please enter year of manufacture').test('year', 'Invalid Manufacture Year', value => value >= 1900 && value <= format(new Date(), 'yyyy')),
+    }
+  } else if (type.label === 'Land') {
+    CustomValidation = {
       address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
     }
-  } else if(type.label === 'Building'){
-    CustomValidation={
+  } else if (type.label === 'Building') {
+    CustomValidation = {
       address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
     }
   }
@@ -213,7 +200,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
     }
   });
   const inputProps = {
-    direction: "column",
+    direction: 'column',
     alignTop: true,
     onChange: handleChange,
   }
@@ -292,7 +279,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                                           <TextInput
                                             {...inputProps}
                                             className={classes.number}
-                                            inputProps={{className: classes.input}}
+                                            inputProps={{ className: classes.input }}
                                             labelText={item.label}
                                             name={item.key}
                                             // value={values.key}
@@ -308,27 +295,23 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                                   <Grid item md={6}>
                                     <TextInput
                                       {...inputProps}
-                                      className={classes.number}
-                                      inputProps={{className: classes.input}}
+                                      number
                                       labelText="Asset Value"
                                       name="asset_value"
                                       value={values.asset_value}
                                       error={errors.asset_value}
                                       helperText={errors.asset_value}
-                                      type='number'
                                     />
                                   </Grid>
                                   <Grid item md={6}>
                                     <TextInput
                                       {...inputProps}
-                                      className={classes.number}
-                                      inputProps={{className: classes.input}}
+                                      number
                                       labelText="Market value"
                                       name="market_value"
                                       value={values.market_value}
                                       error={errors.market_value}
                                       helperText={errors.market_value}
-                                      type='number'
                                     />
                                   </Grid>
                                   <Grid item md={6}>
@@ -345,7 +328,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser }) => {
                                       <option value="Self owned">Self owned</option>
                                       <option value="Family owned">Family owned</option>
                                       <option value="Partnership">Partnership</option>
-                                      {type.label !== "Gold" && <option value="Leased">Leased</option>}
+                                      {type.label !== 'Gold' && <option value="Leased">Leased</option>}
                                     </TextInput>
                                   </Grid>
                                   {/* <Grid item md={6}>

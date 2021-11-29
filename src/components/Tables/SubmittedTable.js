@@ -1,30 +1,28 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import { useMount } from 'react-use';
-import { NavLink as RouterLink } from 'react-router-dom';
-import { makeStyles } from '@material-ui/styles';
-import MUIDataTable from "mui-datatables";
+import CircularProgress from '@material-ui/core/CircularProgress';
+import IconButton from '@material-ui/core/IconButton';
+import Paper from '@material-ui/core/Paper';
+import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
+import moment from 'moment';
+import MUIDataTable from 'mui-datatables';
+import React, { useMemo, useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import { NavLink as RouterLink } from 'react-router-dom';
 // import Grid from '@material-ui/core/Grid';
 // import Box from '@material-ui/core/Box';
-import Tooltip from '@material-ui/core/Tooltip';
-import IconButton from '@material-ui/core/IconButton';
-import AssignmentIcon from '@material-ui/icons/Assignment';
 // import CloseIcon from '@material-ui/icons/Close';
 // import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
-import Paper from '@material-ui/core/Paper';
 // import Button from "@material-ui/core/Button";
 // import { createStructuredSelector } from 'reselect';
-import { connect } from 'react-redux';
-import moment from 'moment';
-import clsx from 'clsx';
+import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
+import SignRequestLayout from '../Leegality/SignRequestLayout';
 import Currency from '../Number/Currency';
 // import CircularProgress from '@material-ui/core/CircularProgress';
 // import PdfViewer from '../CommonComponents/PdfViewer/PdfViewer';
-import SignRequestLayout from '../Leegality/SignRequestLayout';
-import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -69,7 +67,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
   const [loanId, setloanId] = useState();
   const [dealershipId, setDealershipId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
-  const [type, setType] = useState("");
+  const [type, setType] = useState('');
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     setLoading(true);
@@ -175,7 +173,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
         name: 'application_state',
         options: {
           filter: true,
-          filterWidth: "100%",
+          filterWidth: '100%',
           sort: true,
           setCellProps: () => ({
             align: 'center',
@@ -196,7 +194,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
           customBodyRender: (value, r) => {
             return (
               <Tooltip title="eSign Application">
-                <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setType("application"); setDealershipId(value); setModalVisible(true); }}>
+                <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setType('application'); setDealershipId(value); setModalVisible(true); }}>
                   <div>
                     <ESignIcon width={24} />
                     {/* <img

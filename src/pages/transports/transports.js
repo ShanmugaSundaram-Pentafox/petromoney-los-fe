@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import { Drawer } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
-import TransportTable from '../transports/components/TransportsTable';
-import usePageTitle from '../../hooks/usePageTitle';
-import VehiclesLoanTable from './components/VehiclesLoanTable';
-import { Drawer } from "@material-ui/core";
+import React, { useState } from 'react';
+import AddNewTransportsForm from './components/AddNewTransportsForm';
+import DealerTransportsTable from './components/DealerTransportsTable';
 import { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
-import DealerTransportsTable from './components/DealerTransportsTable';
-import AddNewTransportsForm from './components/AddNewTransportsForm';
+import usePageTitle from '../../hooks/usePageTitle';
+import TransportTable from '../transports/components/TransportsTable';
 
 const Transport = ({ currentUser }) => {
   usePageTitle('Transports');

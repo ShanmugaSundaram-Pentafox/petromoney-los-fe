@@ -1,7 +1,7 @@
-import React from "react";
-import PropTypes from 'prop-types';
-import styled, { keyframes } from "styled-components";
 import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
+import PropTypes from 'prop-types';
+import React from 'react';
+import styled, { keyframes } from 'styled-components';
 
 const highlightCircle = () => keyframes`
     0% {
@@ -49,17 +49,17 @@ const NotificationsBellWrapper = styled.span`
 `;
 
 export const NotificationsBell = ({
-    action= () => {}
+  action= () => {}
 }) => {
-    return (
-        <NotificationsBellWrapper onClick={action}>
-            <NotificationsIcon />
-        </NotificationsBellWrapper>
-    );
+  return (
+    <NotificationsBellWrapper onClick={action}>
+      <NotificationsIcon />
+    </NotificationsBellWrapper>
+  );
 };
 
 NotificationsBell.propTypes = {
-    action: PropTypes.func
+  action: PropTypes.func
 };
 
 export default NotificationsBell;

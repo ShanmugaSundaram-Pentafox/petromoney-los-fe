@@ -1,9 +1,9 @@
-import _ from "lodash";
-import { resetCurrentUser } from "../store/user/user.actions";
-import { store } from "../store";
-import { logger } from "../config/logger";
-import { URL } from "../config/serverUrls";
-import { selectCurrentUser } from "../store/user/user.selector";
+import isEmpty from 'lodash-es/isEmpty';
+import { logger } from '../config/logger';
+import { URL } from '../config/serverUrls';
+import { store } from '../store';
+import { resetCurrentUser } from '../store/user/user.actions';
+import { selectCurrentUser } from '../store/user/user.selector';
 
 const timeoutDuration = 60000;
 const apiServer = URL.base;
@@ -12,7 +12,7 @@ let isJustLoggedOut = false;
 const apiCall = async (route, options = {}) => {
   const {
     body = {},
-    method = "GET",
+    method = 'GET',
     customDomain = false,
     customToken = null,
     customHeader = {}
@@ -20,11 +20,11 @@ const apiCall = async (route, options = {}) => {
   const credentials = await selectCurrentUser(store.getState());
 
   let headerObject = {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Credentials":"no-cors"
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Credentials':'no-cors'
   };
 
-  if (customHeader && !_.isEmpty(customHeader)) {
+  if (customHeader && !isEmpty(customHeader)) {
     headerObject = {
       ...headerObject,
       ...customHeader
@@ -42,12 +42,12 @@ const apiCall = async (route, options = {}) => {
 
   const requestDetails = {
     method,
-    mode: "cors",
+    mode: 'cors',
     headers,
     credentials: 'include',
   };
 
-  if (method !== "GET") {
+  if (method !== 'GET') {
     requestDetails.body = JSON.stringify(body);
   }
 
@@ -120,7 +120,7 @@ const apiCall = async (route, options = {}) => {
         // logOut();
         store.dispatch(resetCurrentUser({ timeout: true }));
 
-        return { status: "EXPIRED" };
+        return { status: 'EXPIRED' };
       } else {
         isJustLoggedOut = false;
         /**
@@ -133,14 +133,14 @@ const apiCall = async (route, options = {}) => {
           /**
            * Request success but no data returned from the server
            */
-          const data = { status: "SUCCESS" };
+          const data = { status: 'SUCCESS' };
           return data;
         } else {
           /**
            * Request failed. This will throw an error object to fail the fetch promise
            */
           const errorInfo = {
-            type: "apiCall",
+            type: 'apiCall',
             url: requestURL,
             body,
             status: response.status,
@@ -197,14 +197,14 @@ const apiCall = async (route, options = {}) => {
   const networkTimeOut = reject => {
     return setTimeout(() => {
       const errorInfo = {
-        type: "apiCall",
+        type: 'apiCall',
         url: requestURL,
         body,
         ...headerObject
       };
       const errorObject = Error(
         JSON.stringify({
-          status: `Request timed out!`,
+          status: 'Request timed out!',
           url: requestURL
         })
       );

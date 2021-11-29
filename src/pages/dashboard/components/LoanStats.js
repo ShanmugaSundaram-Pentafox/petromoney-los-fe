@@ -1,5 +1,4 @@
-import { Box, Typography, Tooltip, Popover } from '@material-ui/core';
-import { Button } from '@material-ui/core';
+import { Box, Typography, Tooltip, Popover, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { subDays, format } from 'date-fns'
 import React, { useEffect, useState } from 'react';
@@ -132,9 +131,7 @@ const LoanStats = ({ selectedStatsCard, handleClick, filterQry }) => {
       .then(data => {
         setRegions(data);
       })
-      .catch(err => {
-        console.log(err)
-      });
+      .catch(() => null);
   })
 
   useEffect(() => {
@@ -147,7 +144,7 @@ const LoanStats = ({ selectedStatsCard, handleClick, filterQry }) => {
     }
     getStats(qry)
     filterQry(qry)
-  }, [selectedRegion, selectedPeriod])
+  }, [selectedRegion, selectedPeriod, filterQry])
 
   const getStats = (qry) => {
     getLoanStats(qry)
@@ -187,10 +184,10 @@ const LoanStats = ({ selectedStatsCard, handleClick, filterQry }) => {
 
   return (
     <Box p={2} pt={1} borderRadius={4} bgcolor="background.paper">
-      <Box pb={1} display='flex' flexDirection='row' justifyContent='space-between' alignItems='center'>
-        <Typography variant="h5">Loans' Statistics {totalLoans ? `(${totalLoans})` : null}</Typography>
-        <Box display='flex' flexDirection='row'>
-          <Box pr={1} display='flex' justifyContent='center' alignItems='center'>
+      <Box pb={1} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
+        <Typography variant='h5'>Loans&apos; Statistics {totalLoans ? `(${totalLoans})` : null}</Typography>
+        <Box style={{ display: 'flex', flexDirection: 'row' }}>
+          <Box pr={1} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <div style={{ color: 'hsl(0,0%,75%)' }}>Region</div>
           </Box>
           <Box style={{ width: '200px' }}>
@@ -230,15 +227,15 @@ const LoanStats = ({ selectedStatsCard, handleClick, filterQry }) => {
           <Box pl={2}>
             {/* <small>Period</small> */}
             <div className={classes.filterWrapper}>
-              <div className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')}>Today</div>
-              <div className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')}>1W</div>
-              <div className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')}>MTD</div>
-              <div className={`${classes.filterItem} ${selectedPeriodType === 'Y' && 'active'}`} onClick={onDateChange('Y')}>YTD</div>
+              <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
+              <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
+              <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
+              <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'Y' && 'active'}`} onClick={onDateChange('Y')} onKeyDown>YTD</div>
               <Tooltip title='Up to Date'>
-                <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')}>UTD</div>
+                <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')} onKeyDown>UTD</div>
               </Tooltip>
               <Tooltip title='Choose custom dates'>
-                <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')}>
+                <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
                   {
                     selectedPeriodType === 'Custom' ? (
                       `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`

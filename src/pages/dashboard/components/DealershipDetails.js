@@ -1,15 +1,9 @@
-import { Select as MSelect } from '@material-ui/core';
 import { Checkbox, Chip, CircularProgress, Dialog, DialogActions, DialogContent, FormControlLabel, FormGroup, Tooltip } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';
 import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
@@ -30,24 +24,15 @@ import styled from 'styled-components'
 import DispApprovedDataTable from './DispApprovedDataTable';
 import SalesInfo from './SalesInfo';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
-import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
 import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { getAllRegion, getUserRoleForReview } from '../../../services/common.service';
 import { getLoanById, getLoanRejectReason, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
 import { selectCurrentUser } from '../../../store/user/user.selector';
-import apiCall from '../../../utils/api.util';
-// import CloseIcon from '@material-ui/icons/Close';
+import LoanInfo from '../RightDrawer/LoanInfo';
 
-// import Button from '../../../components/CommonComponents/Button/Button'
 
-const LoanInfoWrapper = styled.div`
-  padding: 12px;
-  margin-bottom: 16px;
-  border-radius: 4px;
-  background-color: rgba(0, 160, 0, 0.15);
-`;
 
 const ViewMoreBtn = styled.div`
   position: absolute;
@@ -100,16 +85,6 @@ const useStyles = makeStyles(theme => ({
   closeIcon: {
     marginTop: 8,
   },
-  gridItemStyle: {
-    // paddingTop: theme.spacing(1),
-    // paddingBottom: theme.spacing(1)
-  },
-  fieldItemStyle: {
-    // marginBottom:theme.spacing(2)
-  },
-  actionFooter: {
-    // justifyContent: 'flex-end',
-  },
   actionButtonsWrapper: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -142,7 +117,6 @@ const useStyles = makeStyles(theme => ({
     maxHeight: '50vh',
     display: 'flex',
     flexDirection: 'column',
-    // justifyContent: 'space-between'
   },
   errorText: {
     color: '#D83A56',
@@ -201,218 +175,6 @@ const useStyles = makeStyles(theme => ({
     borderBottom: '1px dashed #ccc'
   }
 }));
-const fieldProps = {
-  direction: 'column',
-  alignTop: true,
-}
-
-const testProducts = [
-  {
-    product_id: 1,
-    product_name: 'FUEL 18',
-    interest: 18
-  },
-  {
-    product_id: 2,
-    product_name: 'FUEL 28',
-    interest: 28
-  },
-];
-
-const LoanInfo = ({
-  data: row,
-  status,
-  newInfo,
-  currentUser,
-  editable,
-  updateNewLoanInfo
-}) => {
-  const classes = useStyles();
-  const [products, setProducts] = useState([]);
-  const [showRemarksModal, setShowRemarksModal] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState({});
-
-
-  useEffect(() => {
-    apiCall('business/products')
-      .then(res => {
-        if (res.status === 'SUCCESS') {
-          setProducts(res.data || testProducts);
-          if (row.product_id) {
-            const re = res.data.find(d => d.product_id == row.product_id)
-            setSelectedProduct({ ...re, disabled: status !== 'loan_approval' } || {})
-          }
-        }
-      })
-      .catch(err => {
-        console.log(err)
-      })
-  }, [row.product_id]);
-  return (
-    <>
-      <LoanInfoWrapper>
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell>Loan Type</TableCell>
-              <TableCell>Interest %</TableCell>
-              <TableCell>Penal Interest %</TableCell>
-              <TableCell align="right">Req. Amount</TableCell>
-              <TableCell align="right">Amount Approved</TableCell>
-              {
-                ['disbursed', 'disbursement_approval'].includes(status) ? <TableCell align="right">Disbursement Amount</TableCell> : null
-              }
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow key={row.id}>
-              <TableCell scope="row" component="th">
-                <MSelect
-                  fullWidth
-                  native
-                  placeholder={'Select Loan Product'}
-                  value={selectedProduct?.product_id}
-                  disabled={selectedProduct?.disabled || !editable}
-                  onChange={e => {
-                    const d = products.find(i => i.product_id == e.target.value)
-                    setSelectedProduct(d)
-                    updateNewLoanInfo({
-                      ...newInfo,
-                      product_id: e.target.value
-                    })
-                  }}
-                  style={{
-                    color: '#333'
-                  }}
-                >
-                  {/* <option value="">Choose Loan type</option> */}
-                  {
-                    products.map(item => <option value={item.product_id}>{item.product_name}</option>)
-                  }
-                </MSelect>
-              </TableCell>
-              <TableCell scope="row" component="th"><strong>{selectedProduct?.interest}</strong></TableCell>
-              <TableCell scope="row" component="th"><strong>{selectedProduct?.penal_interest}</strong></TableCell>
-              <TableCell align="right"><Currency value={row.amount_requested} /></TableCell>
-              <TableCell align="right">
-                {
-                  status === 'loan_approval' ? (
-                    <UserCan
-                      role={currentUser.role_name}
-                      perform={rulesList.loan_approval}
-                      yes={() => (
-                        <TextInput
-                          money
-                          number
-                          fullWidth={false}
-                          value={newInfo.amount_approved}
-                          onChange={e => {
-                            updateNewLoanInfo({
-                              ...newInfo,
-                              amount_approved: e.target.value
-                            })
-                          }}
-                        />
-                      )}
-                      no={() => <Currency value={row.amount_approved} />}
-                    />
-                  )
-                    : <Currency value={row.amount_approved} />
-                }
-              </TableCell>
-              {
-                status === 'disbursement_approval' ? (
-                  <TableCell align="right">
-                    <UserCan
-                      role={currentUser.role_name}
-                      perform={rulesList.loan_approval}
-                      yes={() => (
-                        <TextInput
-                          money
-                          number
-                          fullWidth={false}
-                          value={newInfo.amount_disbursed}
-                          onChange={e => {
-                            updateNewLoanInfo({
-                              ...newInfo,
-                              amount_disbursed: e.target.value
-                            })
-                          }}
-                        />
-                      )}
-                      no={() => <Currency value={row.amount_disbursed} />}
-                    />
-                  </TableCell>
-                ) : (status == 'disbursed' ? (
-                  <TableCell align="right">
-                    <Currency value={row.amount_disbursed} />
-                  </TableCell>
-                ) : null)
-              }
-            </TableRow>
-          </TableBody>
-        </Table>
-      </LoanInfoWrapper>
-      <Grid container>
-        <Grid item xs={12} className={classes.gridItemStyle} style={{ position: 'relative' }}>
-          Recommendation Remarks(for Approval):
-          <TextInput
-            disabled
-            alignTop
-            multiline
-            rows={4}
-            // rowsMax={8}
-            value={row.recommendation_remarks}
-            {...fieldProps}
-          />
-          {
-            row.recommendation_remarks?.length >= 300 ? (
-              <ViewMoreBtn onClick={() => setShowRemarksModal(row.recommendation_remarks)}>
-                View more
-              </ViewMoreBtn>
-            ) : null
-          }
-        </Grid>
-      </Grid>
-      {
-        row.disbursement_recommendation_remarks && (
-          <Grid container>
-            <Grid item xs={12} className={classes.gridItemStyle} style={{ position: 'relative' }}>
-              Recommendation Remarks(for Disbursement):
-              <TextInput
-                disabled
-                readOnly
-                alignTop
-                multiline
-                rows={4}
-                // rowsMax={8}
-                value={row.disbursement_recommendation_remarks}
-              />
-
-              {
-                row.disbursement_recommendation_remarks?.length >= 300 ? (
-                  <ViewMoreBtn onClick={() => setShowRemarksModal(row.disbursement_recommendation_remarks)}>
-                    View more
-                  </ViewMoreBtn>
-                ) : null
-              }
-            </Grid>
-          </Grid>
-        )
-      }
-      <FormDialog open={showRemarksModal} title="Remarks" onClose={() => setShowRemarksModal(false)}>
-        <TextInput
-          disabled
-          alignTop
-          multiline
-          readOnly
-          value={showRemarksModal}
-          style={{ width: '40vw', minWidth: 400 }}
-        />
-      </FormDialog>
-    </>
-  )
-}
 
 const DealershipDetails = ({
   data,
@@ -573,7 +335,6 @@ const DealershipDetails = ({
       }
     }
     if (status === 'disbursement_approval') {
-      reqBody.status = 'approval'
       reqBody.disbursement_approval_remarks = newLoanInfo.disbursement_approval_remarks;
     }
 
@@ -581,7 +342,6 @@ const DealershipDetails = ({
       setRejectLoader(true);
       setRejectModal(false);
       reqBody.reason_id = rejectReason;
-      reqBody.status = 'reject'
       resMsg = 'Request got rejected successfully';
     }
     if (submitStatus === 'loan_review') {
@@ -590,7 +350,7 @@ const DealershipDetails = ({
       reqBody.recommendation_remarks = remarks;
       resMsg = 'Request approved successfully';
     }
-    if(submitStatus === 'disbursed') {
+    if (submitStatus === 'disbursed') {
       if (loanData.amount_disbursed === newLoanInfo.amount_disbursed) {
         setApiStatus({ type: 'error', message: 'Please check Disburse amount. We see no change in Disburse amount!' })
         return null;
@@ -1105,7 +865,7 @@ const DealershipDetails = ({
                   <Typography variant='body2'>Category</Typography>
                   {
                     optionsData.map((item, i) => {
-                      return <Chip label={item.label} className={classes.chip} variant={activeTab === i ? 'default' : 'outlined'} onClick={() => {
+                      return <Chip key={i} label={item.label} className={classes.chip} variant={activeTab === i ? 'default' : 'outlined'} onClick={() => {
                         setSelectedCategory({ label: item?.label, value: item?.value })
                         setActiveTab(item.value)
                       }} clickable color={activeTab === i ? 'primary' : ''} />
@@ -1120,7 +880,7 @@ const DealershipDetails = ({
                         {
                           reasonData[selectedCategory.value][0].map((data, index) => {
                             return (
-                              <FormControlLabel control={<Checkbox className={classes.checkbox} onChange={handleReasonChange} value={data.value} key={data.value} checked={rejectReason.includes(data.value)} name={data.label} />} label={data.label} color={activeTab === data.label ? 'primary' : ''} />
+                              <FormControlLabel key={index} control={<Checkbox className={classes.checkbox} onChange={handleReasonChange} value={data.value} key={data.value} checked={rejectReason.includes(data.value)} name={data.label} />} label={data.label} color={activeTab === data.label ? 'primary' : ''} />
                             )
                           })
                         }
@@ -1135,7 +895,7 @@ const DealershipDetails = ({
                       {
                         displayReason.sort((a, b) => sortByKey(a, b, 'label')).map((item, i) => {
                           return (
-                            <div className={classes.items}>
+                            <div key={i} className={classes.items}>
                               <p className={classes.eachItem}><span className={classes.itemNotation}>{i + 1}.</span> {item.label}</p>
                               <Tooltip title="Remove">
                                 <IconButton size='small'>
@@ -1196,12 +956,11 @@ const DealershipDetails = ({
                 </DialogContentText>
                 <TextInput
                   multiline
+                  alignTop
                   direction='column'
-                  alignTop={true}
                   rows={4}
                   rowsMax={8}
                   labelText="Remarks*"
-                  alignTop
                   placeholder="Enter your remarks here."
                   value={remarks}
                   onChange={e => {

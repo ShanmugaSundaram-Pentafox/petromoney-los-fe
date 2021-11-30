@@ -73,12 +73,14 @@ const DisbursedDrawer = ({ id, selectedLoanData, status, currentUser, readOnly, 
       <div className={classes.contentWrapper}>
         <DealershipData data={data} readOnly={true} />
         <SalesInfo id={id} currentUser={currentUser} readOnly={true} />
-        <LoanInfo status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} />
+        <LoanInfo viewable={true} status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} />
         <>
-          {loanData?.submitted_remarks && <DrawerRemarks label={'Submitted remarks'} loanData={loanData?.submitted_remarks} readOnly={readOnly} />}
-          {loanData?.review_remarks && <DrawerRemarks label={'Review remarks'} loanData={loanData?.review_remarks} readOnly={readOnly} />}
-          {loanData?.approval_remarks && <DrawerRemarks label={'Remarks(Approval)'} loanData={loanData?.approval_remarks} readOnly={readOnly} />}
-          {loanData?.disbursement_approval_remarks && <DrawerRemarks label={'Remarks(Pending disbursement)'} loanData={loanData?.disbursement_approval_remarks} readOnly={readOnly} />}
+          <DrawerRemarks label={'Remarks'} loanData={loanData?.review_remarks} readOnly={readOnly} />
+          <DrawerRemarks label={'Reviewer remarks'} loanData={loanData?.approval_remarks} readOnly={readOnly} />
+          <DrawerRemarks label={'Approver remarks'} loanData={loanData?.remarks} readOnly={readOnly} />
+          <DrawerRemarks label={'Disbursement Recommendation remarks'} loanData={loanData?.disbursement_recommendation_remarks} readOnly={readOnly} />
+          <DrawerRemarks label={'Disbursement Approved Remarks'} loanData={loanData?.disbursement_approval_remarks} readOnly={readOnly} />
+
         </>
         {
           loanData?.isLoading ? <Skeleton variant="rect" width="100%" height={400} /> : <DispApprovedDataTable id={id} editable={editable} loanData={loanData} />

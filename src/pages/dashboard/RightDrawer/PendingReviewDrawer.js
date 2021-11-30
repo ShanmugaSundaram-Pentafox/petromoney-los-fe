@@ -68,6 +68,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
   const classes = useStyles();
   const [approvalModal, setApprovalModal] = useState(false)
+  const [info, setInfo] = useState({})
   const [user, setUser] = useState([])
   const [userRole, setUserRole] = useState([]);
   const [remarks, setRemarks] = useState();
@@ -122,6 +123,12 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
       })
 
   }
+  const updateNewLoanInfo = (d) => {
+    setInfo({
+      ...info,
+      ...d
+    })
+  }
   return (
     <>
       <div className={classes.wrapper}>
@@ -132,9 +139,9 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
         <div className={classes.contentWrapper}>
           <DealershipData data={data} readOnly={true} />
           <SalesInfo id={id} currentUser={currentUser} readOnly={true} />
-          <LoanInfo status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} />
+          <LoanInfo status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} updateNewLoanInfo={updateNewLoanInfo} />
           <>
-            {loanData?.submitted_remarks && <DrawerRemarks label={'Submitted remarks'} loanData={loanData?.submitted_remarks} readOnly={readOnly} />}
+            <DrawerRemarks label={'Reviewer Remarks'} loanData={loanData?.review_remarks} readOnly={readOnly} />
           </>
         </div>
         <div>
@@ -165,6 +172,9 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
                 name='user_approve'
                 onChange={setUser}
                 options={userRole}
+                menuPlacement='bottom'
+                menuPosition='fixed'
+                maxMenuHeight='200px'
               />
             </div>
             <DialogContentText id="approval-remarks-desc">

@@ -75,6 +75,7 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
   const [user, setUser] = useState([])
   const [userRole, setUserRole] = useState([]);
   const [remarks, setRemarks] = useState();
+  const [info, setInfo] = useState({})
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -101,7 +102,9 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
       user_id: currentUser.id,
       reviewer_id: user.value,
       review_remarks: remarks,
+      product_id: info?.product_id,
     }
+
     updateLoanApprovalStatusById(id, loanData.id, 'approval', reqBody)
       .then(res => {
         enqueueSnackbar(res.message, {
@@ -126,6 +129,12 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
       })
 
   }
+  const updateNewLoanInfo = (d) => {
+    setInfo({
+      ...info,
+      ...d
+    })
+  }
   return (
     <>
       <div className={classes.wrapper}>
@@ -136,7 +145,7 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
         <div className={classes.contentWrapper}>
           <DealershipData data={data} readOnly={true} />
           <SalesInfo id={id} currentUser={currentUser} readOnly={true} />
-          <LoanInfo status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} />
+          <LoanInfo status={status} viewable={false} currentUser={currentUser} newInfo={loanData} editable={editable} data={selectedLoanData} updateNewLoanInfo={updateNewLoanInfo} />
         </div>
         <div>
           <DrawerFooter selectedLoanData={selectedLoanData} handleReviewModal={handleReviewModal} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
@@ -155,8 +164,11 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
               <Select
                 isClearable
                 name='user_approve'
-                onChange={setUser}
+                onChange={setUser}                
                 options={userRole}
+                menuPlacement='bottom'
+                menuPosition='fixed'
+                maxMenuHeight='200px'
               />
             </div>
             <DialogContentText id="approval-remarks-desc">

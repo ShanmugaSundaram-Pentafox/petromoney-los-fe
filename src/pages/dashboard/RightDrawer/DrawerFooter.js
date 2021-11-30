@@ -81,6 +81,7 @@ const DrawerFooter = ({
   selectedLoanData,
   handleReviewModal,
   handleApprovalModal,
+  handlePendingApprovalModal,
   updateApprovalStatus
 }) => {
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
@@ -159,7 +160,7 @@ const DrawerFooter = ({
   const updateLoanStatus = () => {
     let reqBody = {
       user_id: currentUser.id,
-      reason_id: rejectReason
+      reason_id: rejectReason,
     }
     updateLoanApprovalStatusById(id, loanData.id, 'reject', reqBody)
       .then(res => {
@@ -251,7 +252,7 @@ const DrawerFooter = ({
                 yes={() => (
                   <>
                     {
-                      editable && status && ['loan_review'].includes(status.toLowerCase()) &&
+                      editable && status && ['loan_review', 'loan_approval'].includes(status.toLowerCase()) &&
                         <>
                           {
                             (currentUser.id == loanData?.reviewer_id || currentUser.role_id == 1) &&
@@ -286,7 +287,7 @@ const DrawerFooter = ({
                           disabled={loanData?.loading}
                           className={clsx(classes.btn, classes.btnSuccess)}
                           startIcon={<ThumbUpAltIcon />}
-                          onClick={updateApprovalStatus}
+                          onClick={handlePendingApprovalModal}
                         >
                           Approve
                         </Button>

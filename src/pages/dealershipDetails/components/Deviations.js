@@ -11,6 +11,7 @@ const useStyles = makeStyles(theme => ({
   },
   tableContainer: {
     marginTop: 10,
+    marginBottom: 10,
   },
   topicBtn: {
     display: 'flex',
@@ -251,50 +252,67 @@ export const DeviationsTable = ({id}) => {
         <Typography variant="h5">Deviations</Typography>
       </div>
       <div className={classes.tableContainer}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Particulars</TableCell>
-              <TableCell>Policy</TableCell>
-              <TableCell>Actual</TableCell>
-              <TableCell>Deviation</TableCell>
-              <TableCell>Deviation Review</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {
-                            deviationsTable?.data?.data?.map((item, i)=> {
-                              return(
-                                <TableRow key={i}>
-                                  <TableCell>{item.particulars}</TableCell>
-                                  <TableCell>{item.policy}</TableCell>
-                                  <TableCell>{item.actual}</TableCell>
-                                  <TableCell>{item?.deviation}</TableCell>
-                                  <TableCell>{item?.deviation_review}</TableCell>
-                                </TableRow>
-                              )
-                            })
-            }
-          </TableBody>
-          <TableHead>
-            <TableRow>
-              <TableCell>Deviation Description</TableCell>
-              <TableCell>Deviation Review</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {
-                            deviationsTable?.data?.others.map((item, i) => {
-                              return(
-                                <TableRow key={i}>
-                                  <TableCell>{item.deviation_description}</TableCell>
-                                  <TableCell>{item.deviation_review}</TableCell>
-                                </TableRow>
-                              )
-                            })
-            }
-          </TableBody>
-        </Table>
+        {
+          deviationsTable?.data?.data?.length ? (
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Particulars</TableCell>
+                  <TableCell>Policy</TableCell>
+                  <TableCell>Actual</TableCell>
+                  <TableCell>Deviation</TableCell>
+                  <TableCell>Deviation Review</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {
+                                deviationsTable?.data?.data?.map((item, i)=> {
+                                  return(
+                                    <TableRow key={i}>
+                                      <TableCell>{item.particulars}</TableCell>
+                                      <TableCell>{item.policy}</TableCell>
+                                      <TableCell>{item.actual}</TableCell>
+                                      <TableCell>{item?.deviation}</TableCell>
+                                      <TableCell>{item?.deviation_review}</TableCell>
+                                    </TableRow>
+                                  )
+                                })
+                }
+              </TableBody>
+            </Table>
+          ) : (
+            <Typography variant="body2">NA</Typography>
+          )
+        }
+        <div className={classes.title}>
+          <Typography variant="h5">Manual Deviations</Typography>
+        </div>
+        {
+          deviationsTable?.data?.others?.length ? (
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Deviation Description</TableCell>
+                  <TableCell>Deviation Review</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {
+                                deviationsTable?.data?.others.map((item, i) => {
+                                  return(
+                                    <TableRow key={i}>
+                                      <TableCell>{item.deviation_description}</TableCell>
+                                      <TableCell>{item.deviation_review}</TableCell>
+                                    </TableRow>
+                                  )
+                                })
+                }
+              </TableBody>
+            </Table>
+          ) : (
+            <Typography variant="body2" style={{marginTop: 10}}>NA</Typography>
+          )
+        }
       </div>
     </>
   )

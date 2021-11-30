@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton } from '@material-ui/core';
+import { Badge, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Tooltip, Typography } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import ChatIcon from '@material-ui/icons/Chat';
 import Skeleton from '@material-ui/lab/Skeleton';
@@ -8,7 +8,7 @@ import React, { useMemo, useState } from 'react';
 import { useMount } from 'react-use';
 import Currency from '../../components/Number/Currency';
 import usePageTitle from '../../hooks/usePageTitle';
-import { getReport } from '../../services/users.service';
+import { getCollectionRemark, getReport } from '../../services/users.service';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -34,6 +34,9 @@ const useStyles = makeStyles(theme => ({
   pills_SOLAR: {
     color: '#51b37f',
     backgroundColor: '#e1f8e5',
+  },
+  opac: {
+    color: 'rgb(0,0,0,0.4)'
   }
 }));
 
@@ -41,9 +44,10 @@ const DueTable = () => {
   const classes = useStyles();
 
   const [loans, setLoans] = useState([])
-  console.log(loans);
+  const [remarks, setRemarks] = useState()
+  const [remarkOptions, setRemarkOptions] = useState()
   const [loading, setLoading] = useState(false)
-  const [remarksModal, setRemarksModal] = useState(false);
+  const [remarksModal, setRemarksModal] = useState({open: false})
 
   useMount(async () => {
     setLoading(true)
@@ -56,9 +60,14 @@ const DueTable = () => {
         setLoading(false);
         console.log(e);
       });
-    // fetch('http://localhost:3333/data')
-    // .then(res => res.json())
-    // .then(setLoans)
+    
+    getCollectionRemark()
+      .then(setRemarks)
+      .catch(e => {console.log(e)})
+      
+    // getCollectionRemarkOptions()
+    //   .then(setRemarkOptions)
+    //   .catch(e => {console.log(e)})
   })
   usePageTitle('Report')
   const columns = useMemo(() => {
@@ -123,10 +132,11 @@ const DueTable = () => {
           customBodyRender: value => {
             return (
               <div style={{display: 'flex', alignItems: 'center'}}>
-                <IconButton size="small" onClick={() => setRemarksModal(true)}>
-                  <ChatIcon style={{color: 'grey'}} fontSize="small" />
-                </IconButton>
-                <p style={{color: 'rgb(0,0,0,0.4)'}}>(3)</p>
+                <Badge color="primary" badgeContent={value?.length} max={99} onClick={() => value?.length && (setRemarksModal({open:true, data: value}))}>
+                  <Tooltip title={value?.length === 0 ? 'No Remarks' : 'Click to view Remarks'}>
+                    <ChatIcon style={{color: 'grey'}} fontSize="small" />
+                  </Tooltip>
+                </Badge>
               </div>
             )
           }
@@ -139,6 +149,28 @@ const DueTable = () => {
     selectableRows: 'none',
     rowsPerPage: 15,
     rowsPerPageOptions: [15, 20, 30],
+    onDownload: (buildHead, buildBody, columns, data) => {
+      let Data = () => {
+        let array = []
+        data.map((item, index) => {
+          let buffer = []
+          item.data.map((data, i) => {
+            if(typeof(data) !== 'object'){
+              buffer.push(data)
+            } else {
+              let est = data.map((obj, num) => {
+                const rem = remarks?.find(d => d.id === obj.id)
+                return(obj.options ? (rem.remarks+':'+obj?.options?.map(item => {return(`${Object.values(item)}, `)})) : (rem.remarks))
+              })
+              buffer.push(est.toString())
+            }
+          })
+          array.push({index: index, data: buffer})
+        })
+        return array
+      }
+      return '\uFEFF' + buildHead(columns) + buildBody(Data())
+    }
   };
 
   return (
@@ -172,17 +204,28 @@ const DueTable = () => {
         ) : <Paper style={{ padding: 10 }}>No due Reports found</Paper>
       }
       <Dialog
-        open={remarksModal}
-        onClose={() => setRemarksModal(false)}
+        open={remarksModal?.open}
+        onClose={() => setRemarksModal({open: false})}
       >
         <DialogTitle>Due Remarks</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            remarks
-          </DialogContentText>
+        <DialogContent style={{width: 400}}>
+          {
+              remarksModal?.data?.length ? (
+                <ol style={{marginLeft: 15}}>
+                  {
+                    remarksModal?.data?.map((data, i) => {
+                      const rem = remarks?.find(d => d.id === data.id)
+                      return(
+                        <li key={i}>{rem?.remarks} {data?.options?.map((item, i)=> {return(<span key={i}>{`${Object.values(item)}, `}</span>)})}</li>
+                      )
+                    })
+                  }
+                </ol>
+              ) : ( <Typography variant="body1" className={classes.opac}>No Remarks</Typography> )
+          }
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setRemarksModal(false)}>
+          <Button onClick={() => setRemarksModal({open: false})}>
             Close
           </Button>
         </DialogActions>

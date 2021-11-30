@@ -47,8 +47,7 @@ export const convertCurrencyWithUnit = (number, decimals = 2, recursiveCall) => 
     isPlural = crores > 1 && !recursiveCall;
     displayStr = `${crorePrefix} Cr${isPlural ? 's.' : ''}`;
   } else {
-    displayStr = roundOf(+number);
+    displayStr = roundOf(number);
   }
-
   return displayStr;
 }

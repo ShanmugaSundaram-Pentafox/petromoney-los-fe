@@ -69,7 +69,7 @@ const getPastFiveYears = () => {
 }
 
 
-const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
+const MonthlySalesInfo = ({ id, titleAlign, column, currentUser, readOnly }) => {
   const [info, setInfo] = useState([]);
   const classes = useStyles();
   const [addNewRow, setAddNewRow] = useState();
@@ -129,10 +129,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
       })
   }
 
-  const saveEditRow = (data, i) => {
-    // const objBody = {
-    //   user_id: currentUser.id, ...data
-    // }
+  const saveEditRow = (data) => {
     delete data.rowIndex
     updateDealershipMonthlySalesById(id, data)
       .then(res => {
@@ -167,28 +164,35 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
     <SalesInfoWrapper>
       <div className={classes.title}>
         <Typography align={titleAlign} variant="h5">Sales History (Month-wise)</Typography>
-        <UserCan
-          role={currentUser.role_name}
-          perform={rulesList.dealership_edit}
-          yes={() => (
-            <div style={{ textAlign: 'right', marginTop: 8 }}>
-              <Button color="primary" variant="contained" size="small" onClick={() => { setAddNewRow(true); setEditRow({}) }}>Add</Button>
-            </div>
-          )}
-        />
+        {
+          !readOnly &&
+            <UserCan
+              role={currentUser.role_name}
+              perform={rulesList.dealership_edit}
+              yes={() => (
+                <div style={{ textAlign: 'right', marginTop: 8 }}>
+                  <Button color="primary" variant="contained" size="small" onClick={() => { setAddNewRow(true); setEditRow({}) }}>Add</Button>
+                </div>
+              )}
+            />
+        }
       </div>
       <SalesTableWrapper column={column}>
         <div className={classes.table}>
           <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>Sales Data(in KL)</TableCell>
-                <TableCell align="center">MS</TableCell>
-                <TableCell align="center">HSD</TableCell>
-                <TableCell align="right">Total (in KL)</TableCell>
-                <TableCell align="right">Action</TableCell>
-              </TableRow>
-            </TableHead>
+            {
+              Array.isArray(info) && info.length ? (
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Sales Data(in KL)</TableCell>
+                    <TableCell>MS</TableCell>
+                    <TableCell>HSD</TableCell>
+                    <TableCell>Total (in KL)</TableCell>
+                    {!readOnly && <TableCell align="right">Action</TableCell>}
+                  </TableRow>
+                </TableHead>
+              ) : <Typography>No data found!</Typography>
+            }
             <TableBody>
               {
                 info?.map((row, i) => i === editRow?.rowIndex ? (
@@ -213,7 +217,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                         onChange={onEditTextChange}
                       />
                     </TableCell>
-                    <TableCell align="right">
+                    <TableCell>
                       <TextInput
                         number
                         label="MS (KL)"
@@ -232,25 +236,29 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                       />
                     </TableCell>
                     <TableCell>&nbsp;</TableCell>
-                    <TableCell align="center">
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        color="success"
-                        className={classes.btnSuccess}
-                        onClick={() => saveEditRow(editRow, i)}>
-                        Save
-                      </Button>
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        color="error"
-                        onClick={() => {
-                          setEditRow({});
-                        }}>
-                        Cancel
-                      </Button>
-                    </TableCell>
+                    {
+                      !readOnly && (
+                        <TableCell>
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            color="success"
+                            className={classes.btnSuccess}
+                            onClick={() => saveEditRow(editRow, i)}>
+                            Save
+                          </Button>
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            color="error"
+                            onClick={() => {
+                              setEditRow({});
+                            }}>
+                            Cancel
+                          </Button>
+                        </TableCell>
+                      )
+                    }
                   </TableRow>
                 ) : (
                   <TableRow key={i}>
@@ -258,10 +266,10 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                       if (type.value == row.month)
                         return true;
                     })?.label} - {row.year}</TableCell>
-                    <TableCell align="right">{row.ms?.toFixed(2)}</TableCell>
-                    <TableCell align="right">{row.hsd?.toFixed(2)}</TableCell>
-                    <TableCell align="right">{(row.ms + row.hsd)?.toFixed(2)}</TableCell>
-                    <TableCell align="right">
+                    <TableCell>{row.ms?.toFixed(2)}</TableCell>
+                    <TableCell>{row.hsd?.toFixed(2)}</TableCell>
+                    <TableCell>{(row.ms + row.hsd)?.toFixed(2)}</TableCell>
+                    {!readOnly && <TableCell align="right">
                       {
                         editable ? (
                           <Button
@@ -287,7 +295,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                         ) : null
                       }
 
-                    </TableCell>
+                    </TableCell>}
                   </TableRow>
                 ))
               }
@@ -305,7 +313,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                       >
                         <option value=" ">Choose month</option>
                         {
-                          month.map((item, i) => <option value={item.value}>{item.label}</option>)
+                          month.map((item, i) => <option key={i} value={item.value}>{item.label}</option>)
                         }
                       </TextInput>
                       -
@@ -320,7 +328,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                         <option value=" ">Choose year</option>
                         {
                           LastFiveYear.map(item => {
-                            return <option value={item}>{item}</option>
+                            return <option key={item} value={item}>{item}</option>
                           })
                         }
                       </TextInput>
@@ -344,7 +352,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                       />
                     </TableCell>
                     <TableCell>&nbsp;</TableCell>
-                    <TableCell align="center">
+                    {!readOnly && <TableCell align="center">
                       <Button
                         size="small"
                         variant="outlined"
@@ -362,7 +370,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                         onClick={saveNewSalesData}>
                         Save
                       </Button>
-                    </TableCell>
+                    </TableCell>}
                   </TableRow>
                 )
               }
@@ -370,7 +378,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
           </Table>
         </div>
       </SalesTableWrapper>
-    </SalesInfoWrapper>
+    </SalesInfoWrapper >
   )
 }
 export default MonthlySalesInfo;

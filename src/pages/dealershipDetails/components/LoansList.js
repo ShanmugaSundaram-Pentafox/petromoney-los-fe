@@ -1,5 +1,8 @@
+
+
 import { Select as MSelect } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
+// import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -15,7 +18,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
-// import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Select from 'react-select';
 import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
@@ -107,7 +109,7 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
       remarksObj.disbursement_recommendation_remarks = remarks;
     }
 
-    status && updateLoanApprovalStatusById(id, loan.id, { user_id: currentUser.id, status:'approval', ...remarksObj })
+    status && updateLoanApprovalStatusById(id, loan.id, 'approval', { user_id: currentUser.id, ...remarksObj })
       .then(res => {
         setLoansData(res.loans);
         setLoading(false);
@@ -323,12 +325,11 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
             </DialogContentText>
             <TextInput
               multiline
+              alignTop
               direction='column'
-              alignTop={true}
               rows={4}
               rowsMax={8}
               labelText="Remarks*"
-              alignTop
               placeholder="Enter your remarks here."
               value={remarks}
               onChange={e => {
@@ -341,7 +342,7 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
           <Button onClick={() => setDialogState({})} color="primary">
             Cancel
           </Button>
-          <Button disabled={!remarks || loading} onClick={submitRemarks} color="primary" autoFocus>
+          <Button disabled={!remarks || loading} onClick={submitRemarks} color="primary">
             {loading ? 'Please wait...' : 'Confirm'}
           </Button>
         </DialogActions>

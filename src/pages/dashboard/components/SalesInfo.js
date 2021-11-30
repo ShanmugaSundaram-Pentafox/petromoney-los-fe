@@ -18,20 +18,6 @@ import { rulesList } from '../../../config/userRules';
 import { getDealershipSalesById, postDealershipSalesById } from '../../../services/dealerships.service';
 
 
-/**
-{
-  "dealership_id": 15257010,
-  "from_year": 2016,
-  "hsd": 593.77,
-  "hsd_rs": 930.03,
-  "ms": 729.0,
-  "ms_rs": 1343.0,
-  "tmf": 1523.8,
-  "to_year": 2017
-}
- */
-
-
 const useStyles = makeStyles(theme => ({
   popover: {
     pointerEvents: 'none',
@@ -50,7 +36,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
   },
   table: {
-    marginBottom: 20,
+    marginBottom: 10,
   },
   btnEdit: {
     '&.MuiButton-root': { color: '#2196f3' },
@@ -63,30 +49,20 @@ const SalesInfoWrapper = styled.div`
   padding-top: 8px;
   margin-bottom:10px;
   overflow-y:auto;
-  h5 {
-    // margin-top: 12px;
-    // font-size: 18px;
-  }
 `;
 
 const SalesTableWrapper = styled.div`
   display: flex;
   padding: 4px 0;
   flex-direction: ${props => props.column ? 'column' : 'row'};
-
-  > div {
-    &:last-child {
-      // flex: 1;
-      // padding-left: 12px;
-    }
-  }
 `;
 
 const SalesInfo = ({
   id,
   titleAlign,
   column,
-  currentUser
+  currentUser,
+  readOnly
 }) => {
   const [info, setInfo] = useState([]);
   const classes = useStyles();
@@ -103,10 +79,6 @@ const SalesInfo = ({
         .catch(err => null)
     }
   }, [id]);
-
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
 
   const handlePopoverClose = () => {
     setAnchorEl(null);
@@ -184,16 +156,6 @@ const SalesInfo = ({
       [name]: value
     })
   }
-
-  // if(Array.isArray(info) && !info.length)
-  //   return (
-  //     <SalesInfoWrapper>
-  //       <Typography align={titleAlign} variant="h5">Sales data not available</Typography>
-  //       <div style={{ textAlign: 'center', marginTop: 8, paddingBottom: 8 }}>
-  //         <Button color="primary" variant="contained" size="small" onClick={() => null}>Add Sales Data</Button>
-  //       </div>
-  //     </SalesInfoWrapper>
-  //   );
   const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit)
   return (
     <SalesInfoWrapper>
@@ -220,15 +182,20 @@ const SalesInfo = ({
       </Popover>
       <div className={classes.title}>
         <Typography align={titleAlign} variant="h5">Sales History</Typography>
-        <UserCan
-          role={currentUser.role_name}
-          perform={rulesList.dealership_edit}
-          yes={() => (
-            <div style={{ textAlign: 'right', marginTop: 8 }}>
-              <Button color="primary" variant="contained" size="small" onClick={() => setAddNewRow(true)}>Add</Button>
-            </div>
-          )}
-        />
+        {
+          !readOnly && (
+            <UserCan
+              role={currentUser.role_name}
+              perform={rulesList.dealership_edit}
+              yes={() => (
+                <div style={{ textAlign: 'right', marginTop: 8 }}>
+                  <Button color="primary" variant="contained" size="small" onClick={() => setAddNewRow(true)}>Add</Button>
+                </div>
+              )}
+            />
+          )
+        }
+
       </div>
       <SalesTableWrapper column='row'>
         <div className={classes.table}>
@@ -236,12 +203,10 @@ const SalesInfo = ({
             <TableHead>
               <TableRow>
                 <TableCell>Sales Data(in KL)</TableCell>
-                <TableCell align="center">MS</TableCell>
-                {/* <TableCell align="center">MS Gross</TableCell> */}
-                <TableCell align="center">HSD</TableCell>
-                {/* <TableCell align="center">HSD Gross</TableCell> */}
-                <TableCell align="right">Total (in KL)</TableCell>
-                <TableCell align="right">Action</TableCell>
+                <TableCell>MS</TableCell>
+                <TableCell>HSD</TableCell>
+                <TableCell>Total (in KL)</TableCell>
+                {!readOnly && <TableCell align="right">Action</TableCell>}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -269,7 +234,7 @@ const SalesInfo = ({
                         onChange={onEditTextChange}
                       />
                     </TableCell>
-                    <TableCell align="right">
+                    <TableCell>
                       <TextInput
                         number
                         label="MS (KL)"
@@ -278,7 +243,7 @@ const SalesInfo = ({
                         onChange={onEditTextChange}
                       />
                     </TableCell>
-                    <TableCell align="right">
+                    <TableCell>
                       <TextInput
                         number
                         label="HSD (KL)"
@@ -288,48 +253,38 @@ const SalesInfo = ({
                       />
                     </TableCell>
                     <TableCell>&nbsp;</TableCell>
-                    <TableCell align="center">
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        color="success"
-                        className={classes.btnSuccess}
-                        onClick={() => saveEditRow(editRow, i)}>
-                        Save
-                      </Button>
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        color="error"
-                        onClick={() => {
-                          setEditRow({});
-                        }}>
-                        Cancel
-                      </Button>
-                    </TableCell>
+                    {
+                      !readOnly && (
+                        <TableCell>
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            color="success"
+                            className={classes.btnSuccess}
+                            onClick={() => saveEditRow(editRow, i)}>
+                            Save
+                          </Button>
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            color="error"
+                            onClick={() => {
+                              setEditRow({});
+                            }}>
+                            Cancel
+                          </Button>
+                        </TableCell>
+                      )
+                    }
+
                   </TableRow>
                 ) : (
                   <TableRow key={i}>
-                    <TableCell scope="row" component="th">{row.from_year} - {row.to_year}
-                      {/* {row.to_year >= 2020 ? <InfoOutlinedIcon
-                        className={classes.infoIcon}
-                        color='primary'
-                        aria-haspopup="true"
-                        aria-owns={open ? 'mouse-over-popover' : undefined}
-                        onMouseEnter={handlePopoverOpen}
-                        onMouseLeave={handlePopoverClose} />
-                        : null} */}
-                    </TableCell>
-                    {/* {row.to_year >= 2020 ?
-                      <TableCell align="center" colSpan={2}>{row.ms?.toFixed(2)}</TableCell>
-                      : <> */}
-                    <TableCell align="right">{row.ms?.toFixed(2)}</TableCell>
-                    {/* <TableCell align="right">{row.ms_gross?.toFixed(2)}</TableCell> */}
-                    <TableCell align="right">{row.hsd?.toFixed(2)}</TableCell>
-                    {/* <TableCell align="right">{row.hsd_gross?.toFixed(2)}</TableCell> */}
-                    {/* </>} */}
-                    <TableCell align="right">{(row.ms + row.hsd)?.toFixed(2)}</TableCell>
-                    <TableCell align="right">
+                    <TableCell scope="row" component="th">{row.from_year} - {row.to_year}</TableCell>
+                    <TableCell>{row.ms?.toFixed(2)}</TableCell>
+                    <TableCell>{row.hsd?.toFixed(2)}</TableCell>
+                    <TableCell>{(row.ms + row.hsd)?.toFixed(2)}</TableCell>
+                    {!readOnly && <TableCell align="right">
                       {
                         editable ? (
                           <Button
@@ -342,8 +297,7 @@ const SalesInfo = ({
                           </Button>
                         ) : null
                       }
-
-                    </TableCell>
+                    </TableCell>}
                   </TableRow>
                 ))
               }
@@ -369,7 +323,7 @@ const SalesInfo = ({
                         onChange={onTextChange}
                       />
                     </TableCell>
-                    <TableCell align="right">
+                    <TableCell>
                       <TextInput
                         number
                         label="MS (KL)"
@@ -378,7 +332,7 @@ const SalesInfo = ({
                         onChange={onTextChange}
                       />
                     </TableCell>
-                    <TableCell align="right">
+                    <TableCell>
                       <TextInput
                         number
                         label="HSD (KL)"
@@ -388,7 +342,7 @@ const SalesInfo = ({
                       />
                     </TableCell>
                     <TableCell>&nbsp;</TableCell>
-                    <TableCell align="center">
+                    <TableCell>
                       <Button
                         size="small"
                         variant="outlined"
@@ -408,67 +362,13 @@ const SalesInfo = ({
                       </Button>
                     </TableCell>
                   </TableRow>
-
                 )
               }
             </TableBody>
           </Table>
-
-          {/* <UserCan
-            role={currentUser.role_name}
-            perform={rulesList.dealership_edit}
-            yes={() => (
-              <div style={{ textAlign: 'right', marginTop: 8 }}>
-                <Button color="primary" variant="contained" size="small" onClick={() => setAddNewRow(true)}>Add Sales Data</Button>
-              </div>
-            )}
-          /> */}
         </div>
-        {/* <div className={classes.table}>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>Sales Data(in Lakhs)</TableCell>
-                <TableCell align="center">MS</TableCell>
-                <TableCell align="center">MS Gross</TableCell>
-                <TableCell align="center">HSD</TableCell>
-                <TableCell align="center">HSD Gross</TableCell>
-                <TableCell align="right">Total (in Lakhs)</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {
-                info.map((row, i) => (
-                  <TableRow key={i}>
-                    <TableCell scope="row" component="th">{row.from_year} - {row.to_year}
-                      {
-                        // row.to_year >= 2020 ? <InfoOutlinedIcon
-                        // className={classes.infoIcon}
-                        // color='primary'
-                        // aria-haspopup="true"
-                        // aria-owns={open ? 'mouse-over-popover' : undefined}
-                        // onMouseEnter={handlePopoverOpen}
-                        // onMouseLeave={handlePopoverClose} />
-                        // : null
-                      }
-                    </TableCell>
-                    {row.to_year >= 2020 ?
-                      <TableCell align="center" colSpan={2}><Currency value={row.ms_rs?.toFixed(2)} /></TableCell>
-                      : <>
-                        <TableCell align="right"><Currency value={row.ms_rs?.toFixed(2)} /></TableCell>
-                        <TableCell align="right"><Currency value={row.ms_gross?.toFixed(2)} /></TableCell>
-                        <TableCell align="right"><Currency value={row.hsd_rs?.toFixed(2)} /></TableCell>
-                        <TableCell align="right"><Currency value={row.hsd_gross?.toFixed(2)} /></TableCell>
-                      </>}
-                    <TableCell align="right"><Currency value={(row.ms_rs + row.hsd_rs)?.toFixed(2)} /></TableCell>
-                  </TableRow>
-                ))
-              }
-            </TableBody>
-          </Table>
-        </div> */}
       </SalesTableWrapper>
-      <MonthlySalesInfo currentUser={currentUser} id={id} titleAlign={titleAlign} column='row' />
+      <MonthlySalesInfo readOnly={readOnly} currentUser={currentUser} id={id} titleAlign={titleAlign} column='row' />
     </SalesInfoWrapper>
   )
 }

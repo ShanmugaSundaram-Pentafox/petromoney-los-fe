@@ -1,7 +1,6 @@
 /* eslint-disable react/no-multi-comp */
 /* eslint-disable react/display-name */
 import { List, ListItem, Button, colors, Hidden } from '@material-ui/core';
-import Badge from '@material-ui/core/Badge';
 import Collapse from '@material-ui/core/Collapse';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
@@ -21,8 +20,6 @@ import React, { useState, forwardRef, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { NavLink as RouterLink } from 'react-router-dom';
 // import { getAllExceptions, getTransportsExceptions } from '../../../services/loans.service';
-import { useMount } from 'react-use';
-import { getMenuItemCount } from '../../../services/common.service';
 import { resetCurrentUser } from '../../../store/user/user.actions';
 // import { getAllWithheldLoans } from '../../../services/withheld.services';
 
@@ -101,19 +98,9 @@ const SidebarNav = props => {
   const { pages, className, logout, ...rest } = props;
   const classes = useStyles();
   const [checked, setChecked] = React.useState(false);
-  const [count, setCount] = useState();
   const [tap, setTap] = React.useState(false);
   const [check, setCheck] = React.useState(false);
   const [checkStatus, setCheckStatus] = useState(false);
-  useMount(() => {
-    getMenuItemCount()
-      .then((data) => {
-        setCount(data)
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  });
   const handleChange = () => {
     setChecked((prev) => !prev);
   };
@@ -221,10 +208,8 @@ const SidebarNav = props => {
                   to={'/withheld'}
                   exact
                 >
-                  <Badge badgeContent={count?.withheld} style={{ paddingTop: 2, paddingRight: 8 }} max={999} color="primary">
-                    <div className={classes.icon}><BookmarkBorderIcon /></div>
-                    {'Withheld'}
-                  </Badge>
+                  <div className={classes.icon}><BookmarkBorderIcon /></div>
+                  {'Withheld'}
                 </Button>
               </ListItem>
             </Collapse>
@@ -349,11 +334,8 @@ const SidebarNav = props => {
                     to={'/reports/overdue'}
                     exact
                   >
-                    <Badge badgeContent={count?.over_due} style={{ paddingTop: 2, paddingRight: 8 }} max={999} color="primary">
-                      <div className={classes.icon}><ReportProblemIcon /></div>
-                      {'Loan Overdue'}
-                    </Badge>
-
+                    <div className={classes.icon}><ReportProblemIcon /></div>
+                    {'Loan Overdue'}
                   </Button>
                 </ListItem>
               </Collapse>
@@ -399,10 +381,8 @@ const SidebarNav = props => {
                     to={'/loans/exceptions'}
                     exact
                   >
-                    <Badge badgeContent={count?.loan_exception} max={999} color="primary">
-                      <div className={classes.icon}><AssessmentOutlinedIcon /></div>
-                      Loans &nbsp;
-                    </Badge>
+                    <div className={classes.icon}><AssessmentOutlinedIcon /></div>
+                    Loans &nbsp;
                   </Button>
                 </ListItem>
                 <ListItem
@@ -417,10 +397,8 @@ const SidebarNav = props => {
                     to={'/transport/exceptions'}
                     exact
                   >
-                    <Badge badgeContent={count?.transporter_exception} max={999} color="primary">
-                      <div className={classes.icon}><AssessmentOutlinedIcon /></div>
-                      Transports &nbsp;
-                    </Badge>
+                    <div className={classes.icon}><AssessmentOutlinedIcon /></div>
+                    Transports &nbsp;
                   </Button>
                 </ListItem>
               </Collapse>
@@ -464,10 +442,8 @@ const SidebarNav = props => {
                     to={'/passbook'}
                     exact
                   >
-                    <Badge badgeContent={count?.loan_exception} max={999} color="primary">
-                      <div className={classes.icon}><AssessmentOutlinedIcon /></div>
-                      Dealer Passbook &nbsp;
-                    </Badge>
+                    <div className={classes.icon}><AssessmentOutlinedIcon /></div>
+                    Dealer Passbook &nbsp;
                   </Button>
                 </ListItem>
                 <ListItem
@@ -482,10 +458,8 @@ const SidebarNav = props => {
                     to={'/transport/fastag/details'}
                     exact
                   >
-                    <Badge badgeContent={count?.transporter_exception} max={999} color="primary">
-                      <div className={classes.icon}><AssessmentOutlinedIcon /></div>
-                      Transport Passbook &nbsp;
-                    </Badge>
+                    <div className={classes.icon}><AssessmentOutlinedIcon /></div>
+                    Transport Passbook &nbsp;
                   </Button>
                 </ListItem>
               </Collapse>

@@ -704,23 +704,6 @@ export const getLoanTypes = () => {
   });
 }
 
-export const getMenuItemCount = () => {
-  return new Promise((resolve, reject) => {
-    apiCall('count')
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          resolve(data);
-
-        } else {
-          reject(message);
-        }
-      })
-      .catch(e => {
-        reject(e.message);
-      })
-  });
-}
-
 export const getUserRoleForReview = (status) => {
   return new Promise((resolve, reject) => {
     apiCall(`users?${status}`)

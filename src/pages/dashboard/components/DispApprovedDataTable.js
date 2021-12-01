@@ -128,7 +128,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
           setApiStatus({ status: 'success', message });
           setTimeout(() => {
             setModalData({ open: false })
-          }, 700);
+          }, 500);
         })
         .catch(e => {
           setLoading(false);

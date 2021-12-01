@@ -41,10 +41,11 @@ const LoanInfo = ({
   newInfo,
   currentUser,
   editable,
-  updateNewLoanInfo
+  updateNewLoanInfo,
+  viewable
 }) => {
   const [products, setProducts] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState({});
+  const [selectedProduct, setSelectedProduct] = useState({ amount_approved: newInfo?.amount_approved });
 
   useEffect(() => {
     apiCall('business/products')
@@ -53,11 +54,17 @@ const LoanInfo = ({
           setProducts(res.data || testProducts);
           if (row.product_id) {
             const re = res.data.find(d => d.product_id == row.product_id)
-            setSelectedProduct({ ...re, disabled: status !== 'loan_approval' } || {})
+            setSelectedProduct({ ...re, disabled: status !== 'loan_approval' && status !== 'submitted' && status !== 'loan_review' } || {})
           }
         }
       })
       .catch(() => null)
+    if (status === 'disbursement_approval') {
+      updateNewLoanInfo({
+        ...newInfo,
+        amount_disbursed: newInfo.amount_approved
+      })
+    }
   }, [row?.product_id, status]);
   return (
     <>
@@ -69,7 +76,7 @@ const LoanInfo = ({
               <TableCell>Interest %</TableCell>
               <TableCell>Penal Interest %</TableCell>
               <TableCell align="right">Req. Amount</TableCell>
-              <TableCell align="right">Amount Approved</TableCell>
+              {viewable && <TableCell align="right">Amount Approved</TableCell>}
               {
                 ['disbursed', 'disbursement_approval'].includes(status) ? <TableCell align="right">Disbursement Amount</TableCell> : null
               }
@@ -128,7 +135,7 @@ const LoanInfo = ({
                       no={() => <Currency value={row?.amount_approved} />}
                     />
                   )
-                    : <Currency value={row?.amount_approved} />
+                    : viewable && <Currency value={row?.amount_approved} />
                 }
               </TableCell>
               {
@@ -142,7 +149,7 @@ const LoanInfo = ({
                           money
                           number
                           fullWidth={false}
-                          value={newInfo?.amount_disbursed}
+                          value={selectedProduct?.amount_approved}
                           onChange={e => {
                             updateNewLoanInfo({
                               ...newInfo,

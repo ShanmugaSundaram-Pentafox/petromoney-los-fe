@@ -1,4 +1,4 @@
-import { Badge, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Tooltip, Typography } from '@material-ui/core';
+import { Badge, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Typography } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import ChatIcon from '@material-ui/icons/Chat';
 import Skeleton from '@material-ui/lab/Skeleton';
@@ -131,13 +131,13 @@ const DueTable = () => {
           sort: true,
           customBodyRender: value => {
             return (
-              <div style={{display: 'flex', alignItems: 'center'}}>
-                <Badge color="primary" badgeContent={value?.length} max={99} onClick={() => value?.length && (setRemarksModal({open:true, data: value}))}>
-                  <Tooltip title={value?.length === 0 ? 'No Remarks' : 'Click to view Remarks'}>
+              value?.length === 0 ? (null) : (
+                <div style={{display: 'flex', alignItems: 'center'}}>
+                  <Badge color="primary" badgeContent={value?.length} max={99} onClick={() => value?.length && (setRemarksModal({open:true, data: value}))}>
                     <ChatIcon style={{color: 'grey'}} fontSize="small" />
-                  </Tooltip>
-                </Badge>
-              </div>
+                  </Badge>
+                </div>
+              )
             )
           }
         }

@@ -113,8 +113,17 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
 
       },
       {
-        label: 'Disbursed Amount',
+        label: 'Sanctioned Amount',
         name: 'amount_disbursed',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: value => <strong><Currency value={value} /></strong>
+        }
+      },
+      {
+        label: 'Disbursed Amount',
+        name: 'actual_amount_disbursed',
         options: {
           filter: false,
           sort: true,
@@ -131,7 +140,7 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
           filter: false,
           sort: true,
           setCellProps: () => ({
-            align: 'center',
+            align: 'left',
           }),
           customBodyRender: value => {
             return <div>

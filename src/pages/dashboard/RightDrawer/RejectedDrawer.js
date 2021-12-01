@@ -71,9 +71,12 @@ const RejectedDrawer = ({ id, selectedLoanData, status, currentUser, editable, d
       <div className={classes.contentWrapper}>
         <DealershipData data={data} readOnly={true} />
         <SalesInfo id={id} currentUser={currentUser} readOnly={true} />
-        <LoanInfo status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} />
+        <LoanInfo viewable={true} status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} />
         <>
-          {loanData?.approval_remarks && <DrawerRemarks label={'Remarks (Approval)'} loanData={loanData?.approval_remarks} readOnly={readOnly} />}
+          <DrawerRemarks label={'Remarks'} loanData={loanData?.review_remarks} readOnly={readOnly} />
+          <DrawerRemarks label={'Reviewer remarks'} loanData={loanData?.approval_remarks} readOnly={readOnly} />
+          <DrawerRemarks label={'Approver remarks'} loanData={loanData?.remarks} readOnly={readOnly} />
+          <DrawerRemarks label={'Remarks(Pending disbursement)'} loanData={loanData?.disbursement_approval_remarks} readOnly={readOnly} />
         </>
       </div>
       <div>

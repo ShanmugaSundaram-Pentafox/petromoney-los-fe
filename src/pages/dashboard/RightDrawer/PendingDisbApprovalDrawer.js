@@ -1,3 +1,4 @@
+import { Dialog, DialogActions, DialogContent, DialogContentText, Button, CircularProgress } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/CloseRounded';
 import { makeStyles } from '@material-ui/styles';
@@ -8,8 +9,10 @@ import DealershipData from './DealershipData';
 import DrawerFooter from './DrawerFooter';
 import DrawerRemarks from './DrawerRemarks';
 import LoanInfo from './LoanInfo';
+import TextInput from '../../../components/TextInput/TextInput';
 import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import SalesInfo from '../components/SalesInfo';
+
 
 
 const useStyles = makeStyles(theme => ({
@@ -65,6 +68,9 @@ const useStyles = makeStyles(theme => ({
 const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, readOnly, editable, data, onClose }) => {
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
   const [info, setInfo] = useState({})
+  const [openModal, setOpenModal] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [remarks, setRemarks] = useState();
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -74,10 +80,26 @@ const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, 
       ...d
     })
   }
+  const handleModal = () => {
+    if (!info?.amount_disbursed) {
+      enqueueSnackbar('Please enter amount to disburse', {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'error',
+      })
+    }
+    else {
+      setOpenModal(!openModal)
+    }
+  }
   const updateLoanStatus = () => {
+    setLoading(true)
     let reqBody = {
       user_id: currentUser.id,
-      amount_disbursed: loanData.amount_disbursed
+      amount_disbursed: info?.amount_disbursed,
+      disbursement_approval_remarks: remarks
     }
     updateLoanApprovalStatusById(id, loanData.id, 'approval', reqBody)
       .then(res => {
@@ -90,9 +112,11 @@ const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, 
         })
         setTimeout(() => {
           window.location.reload();
+          setLoading(false)
         }, 1500)
       })
       .catch(err => {
+        setLoading(false)
         enqueueSnackbar(err, {
           anchorOrigin: {
             vertical: 'top',
@@ -104,26 +128,63 @@ const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, 
 
   }
   return (
-    <div className={classes.wrapper}>
-      <div className={classes.wrapperTitle}>
-        <Typography className={classes.title} variant="h4" component="h4">{data?.id}</Typography>
-        <CloseIcon className={classes.closeIcon} onClick={onClose} />
-      </div>
-      <div className={classes.contentWrapper}>
-        <DealershipData data={data} readOnly={true} />
-        <SalesInfo id={id} currentUser={currentUser} readOnly={true} />
-        <LoanInfo status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} updateNewLoanInfo={updateNewLoanInfo} />
-        <>
-          {loanData?.submitted_remarks && <DrawerRemarks label={'Submitted remarks'} loanData={loanData?.submitted_remarks} readOnly={readOnly} />}
-          {loanData?.review_remarks && <DrawerRemarks label={'Review remarks'} loanData={loanData?.review_remarks} readOnly={readOnly} />}
-          {loanData?.approval_remarks && <DrawerRemarks label={'Remarks(Approval)'} loanData={loanData?.approval_remarks} readOnly={readOnly} />}
-          {loanData?.disbursement_approval_remarks && <DrawerRemarks label={'Remarks(Pending disbursement)'} loanData={loanData?.disbursement_approval_remarks} readOnly={readOnly} />}
-        </>
-      </div>
-      <div>
-        <DrawerFooter selectedLoanData={selectedLoanData} onClose={onClose} id={id} editable={editable} currentUser={currentUser} status={status} updateApprovalStatus={updateLoanStatus} />
-      </div>
-    </div >
+    <>
+      <div className={classes.wrapper}>
+        <div className={classes.wrapperTitle}>
+          <Typography className={classes.title} variant="h4" component="h4">{data?.id}</Typography>
+          <CloseIcon className={classes.closeIcon} onClick={onClose} />
+        </div>
+        <div className={classes.contentWrapper}>
+          <DealershipData data={data} readOnly={true} />
+          <SalesInfo id={id} currentUser={currentUser} readOnly={true} />
+          <LoanInfo viewable={true} status={status} currentUser={currentUser} newInfo={loanData} editable={editable} data={selectedLoanData} updateNewLoanInfo={updateNewLoanInfo} />
+          <>
+            <DrawerRemarks label={'Remarks'} loanData={loanData?.review_remarks} readOnly={readOnly} />
+            <DrawerRemarks label={'Reviewer remarks'} loanData={loanData?.approval_remarks} readOnly={readOnly} />
+            <DrawerRemarks label={'Approver remarks'} loanData={loanData?.remarks} readOnly={readOnly} />
+            <DrawerRemarks label={'Recommendation remarks'} loanData={loanData?.disbursement_recommendation_remarks} readOnly={readOnly} />
+          </>
+        </div>
+        <div>
+          <DrawerFooter selectedLoanData={selectedLoanData} onClose={onClose} id={id} editable={editable} currentUser={currentUser} status={status} updateApprovalStatus={handleModal} />
+        </div>
+      </div >
+      <Dialog
+        open={openModal}
+        onClose={handleModal}
+      >
+        <DialogContent>
+          <div className={classes.dialog}>
+            <DialogContentText id="approval-remarks-desc">
+              Please enter your remarks for sending this for approval.
+            </DialogContentText>
+            <TextInput
+              multiline
+              alignTop
+              direction='column'
+              rows={4}
+              rowsMax={8}
+              labelText="Remarks*"
+              placeholder="Enter your remarks here."
+              value={remarks}
+              onChange={e => {
+                setRemarks(e.target.value);
+              }}
+            />
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <div>
+            <Button onClick={handleModal}>Cancel</Button>
+            <Button color='primary' variant='outlined'
+              onClick={() => { updateLoanStatus() }}
+            >
+              {loading ? <CircularProgress size={22} /> : 'Confirm'}
+            </Button>
+          </div>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 }
 export default PendingDisbApprovedDrawer;

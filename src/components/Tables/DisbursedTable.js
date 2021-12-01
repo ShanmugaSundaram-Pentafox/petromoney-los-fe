@@ -114,7 +114,7 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
       },
       {
         label: 'Sanctioned Amount',
-        name: 'sanctioned_amount',
+        name: 'amount_disbursed',
         options: {
           filter: false,
           sort: true,
@@ -123,7 +123,7 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
       },
       {
         label: 'Disbursed Amount',
-        name: 'amount_disbursed',
+        name: 'actual_amount_disbursed',
         options: {
           filter: false,
           sort: true,

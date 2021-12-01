@@ -224,7 +224,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
     selectableRows: 'none',
     isRowSelectable: () => false,
     onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex !== 6) {
+      if (cellMeta.colIndex !== 7) {
         onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'approved')
       }
     },

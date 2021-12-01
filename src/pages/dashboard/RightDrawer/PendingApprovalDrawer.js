@@ -1,4 +1,4 @@
-import { Dialog, DialogActions, DialogContent, DialogContentText, Button } from '@material-ui/core';
+import { Dialog, DialogActions, DialogContent, DialogContentText, Button, CircularProgress } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/CloseRounded';
 import { makeStyles } from '@material-ui/styles';
@@ -65,15 +65,17 @@ const PendingApprovalDrawer = ({ id, selectedLoanData, status, currentUser, read
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
   const [info, setInfo] = useState({})
   const [openModal, setOpenModal] = useState(false)
+  const [loading, setLoading] = useState(false)
   const classes = useStyles();
   const [remarks, setRemarks] = useState();
   const { enqueueSnackbar } = useSnackbar();
 
   const updateLoanStatus = () => {
+    setLoading(true)
     let reqBody = {
       user_id: currentUser.id,
-      product_id: info.product_id,
-      amount_approved: info.amount_approved,
+      product_id: info?.product_id,
+      amount_approved: info?.amount_approved,
       remarks: remarks
     }
 
@@ -88,9 +90,11 @@ const PendingApprovalDrawer = ({ id, selectedLoanData, status, currentUser, read
         })
         setTimeout(() => {
           window.location.reload();
+          setLoading(false)
         }, 1500)
       })
       .catch(err => {
+        setLoading(false)
         enqueueSnackbar(err, {
           anchorOrigin: {
             vertical: 'top',
@@ -172,7 +176,7 @@ const PendingApprovalDrawer = ({ id, selectedLoanData, status, currentUser, read
             <Button color='primary' variant='outlined'
               onClick={() => { updateLoanStatus() }}
             >
-              Confirm
+              {loading ? <CircularProgress size={22} /> : 'Confirm'}
             </Button>
           </div>
         </DialogActions>

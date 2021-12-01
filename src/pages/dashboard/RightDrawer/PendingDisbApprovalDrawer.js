@@ -1,4 +1,4 @@
-import { Dialog, DialogActions, DialogContent, DialogContentText, Button } from '@material-ui/core';
+import { Dialog, DialogActions, DialogContent, DialogContentText, Button, CircularProgress } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/CloseRounded';
 import { makeStyles } from '@material-ui/styles';
@@ -69,6 +69,7 @@ const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, 
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
   const [info, setInfo] = useState({})
   const [openModal, setOpenModal] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [remarks, setRemarks] = useState();
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
@@ -94,10 +95,11 @@ const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, 
     }
   }
   const updateLoanStatus = () => {
+    setLoading(true)
     let reqBody = {
       user_id: currentUser.id,
       amount_disbursed: info?.amount_disbursed,
-      disbursement_approval_remarks:remarks
+      disbursement_approval_remarks: remarks
     }
     updateLoanApprovalStatusById(id, loanData.id, 'approval', reqBody)
       .then(res => {
@@ -110,9 +112,11 @@ const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, 
         })
         setTimeout(() => {
           window.location.reload();
+          setLoading(false)
         }, 1500)
       })
       .catch(err => {
+        setLoading(false)
         enqueueSnackbar(err, {
           anchorOrigin: {
             vertical: 'top',
@@ -175,7 +179,7 @@ const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, 
             <Button color='primary' variant='outlined'
               onClick={() => { updateLoanStatus() }}
             >
-              Confirm
+              {loading ? <CircularProgress size={22} /> : 'Confirm'}
             </Button>
           </div>
         </DialogActions>

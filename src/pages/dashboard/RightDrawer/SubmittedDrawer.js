@@ -1,4 +1,4 @@
-import { Dialog, DialogActions, DialogContent, DialogContentText, Button } from '@material-ui/core';
+import { Dialog, DialogActions, DialogContent, DialogContentText, Button, CircularProgress } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/CloseRounded';
 import { makeStyles } from '@material-ui/styles';
@@ -73,6 +73,7 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
   const [reviewModal, setReviewModal] = useState(false);
   const [user, setUser] = useState([])
+  const [loading, setLoading] = useState(false)
   const [userRole, setUserRole] = useState([]);
   const [remarks, setRemarks] = useState();
   const [info, setInfo] = useState({})
@@ -98,6 +99,7 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
   }
 
   const updateLoanStatus = () => {
+    setLoading(true)
     let reqBody = {
       user_id: currentUser.id,
       reviewer_id: user.value,
@@ -105,7 +107,7 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
       product_id: info?.product_id,
     }
 
-    updateLoanApprovalStatusById(id, loanData.id, 'approval', reqBody)
+    updateLoanApprovalStatusById(id, loanData?.id, 'approval', reqBody)
       .then(res => {
         enqueueSnackbar(res.message, {
           anchorOrigin: {
@@ -116,9 +118,11 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
         })
         setTimeout(() => {
           window.location.reload();
+          setLoading(false)
         }, 1500)
       })
       .catch(err => {
+        setLoading(false)
         enqueueSnackbar(err, {
           anchorOrigin: {
             vertical: 'top',
@@ -164,7 +168,7 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
               <Select
                 isClearable
                 name='user_approve'
-                onChange={setUser}                
+                onChange={setUser}
                 options={userRole}
                 menuPlacement='bottom'
                 menuPosition='fixed'
@@ -195,7 +199,7 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
             <Button color='primary' variant='outlined'
               onClick={() => { updateLoanStatus('loan_review') }}
             >
-              Confirm
+              {loading ? <CircularProgress size={22} /> : 'Confirm'}
             </Button>
           </div>
         </DialogActions>

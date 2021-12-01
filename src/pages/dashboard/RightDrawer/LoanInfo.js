@@ -59,6 +59,12 @@ const LoanInfo = ({
         }
       })
       .catch(() => null)
+    if (status === 'disbursement_approval') {
+      updateNewLoanInfo({
+        ...newInfo,
+        amount_disbursed: newInfo.amount_approved
+      })
+    }
   }, [row?.product_id, status]);
   return (
     <>

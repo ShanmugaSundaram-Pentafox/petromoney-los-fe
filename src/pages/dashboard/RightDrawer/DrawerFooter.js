@@ -94,6 +94,7 @@ const DrawerFooter = ({
   const [reasonData, setReasonData] = useState()
   const [rejectReason, setRejectReason] = useState([])
   const [displayReason, setDisplayReason] = useState([])
+  const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar();
 
   useMount(() => {
@@ -158,6 +159,7 @@ const DrawerFooter = ({
   }
 
   const updateLoanStatus = () => {
+    setLoading(true)
     let reqBody = {
       user_id: currentUser.id,
       reason_id: rejectReason,
@@ -173,9 +175,11 @@ const DrawerFooter = ({
         })
         setTimeout(() => {
           window.location.reload();
+          setLoading(false)
         }, 1500)
       })
       .catch(err => {
+        setLoading(false)
         enqueueSnackbar(err, {
           anchorOrigin: {
             vertical: 'top',
@@ -252,7 +256,7 @@ const DrawerFooter = ({
                 yes={() => (
                   <>
                     {
-                      editable && status && ['loan_review', 'loan_approval'].includes(status.toLowerCase()) &&
+                      editable && status && ['loan_review', 'loan_approval', 'disbursement_approval'].includes(status.toLowerCase()) &&
                         <>
                           {
                             (currentUser.id == loanData?.reviewer_id || currentUser.role_id == 1) &&
@@ -390,7 +394,7 @@ const DrawerFooter = ({
         <DialogActions>
           <div>
             <Button onClick={() => setRejectModal(false)}>Cancel</Button>
-            <Button color='primary' variant='outlined' onClick={updateLoanStatus}>Confirm</Button>
+            <Button color='primary' variant='outlined' onClick={updateLoanStatus}>{loading ? <CircularProgress size={22} /> : 'Confirm'}</Button>
           </div>
         </DialogActions>
       </Dialog>

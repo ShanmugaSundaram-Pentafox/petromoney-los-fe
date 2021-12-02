@@ -554,3 +554,18 @@ export const deleteDeviationsById = (id, itemId) => {
   });
 };
 
+// export const getCalculateDeviation = (id) => {
+//   return new Promise((resolve, reject) => {
+//     apiCall(`dealership/${id}/deviation/matrix/calculate`)
+//       .then(res => {
+//         if (res.status === 'SUCCESS') {
+//           resolve(res)
+//         } else {
+//           reject(res.message)
+//         }
+//       })
+//       .catch(({ message }) => {
+//         reject(message)
+//       })
+//   });
+// }

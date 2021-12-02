@@ -7,7 +7,9 @@ import { deleteDeviationsById, getDeviations, updateDeviationsById } from '../..
 
 const useStyles = makeStyles(theme => ({
   title: {
-    marginTop:15
+    marginTop:15,
+    display: 'flex',
+    justifyContent: 'space-between'
   },
   tableContainer: {
     marginTop: 10,
@@ -37,9 +39,11 @@ const Deviations = ({id}) => {
   const classes = useStyles()
   const queryClient = useQueryClient()
   const [deviationData, setDeviationData] = useState([])
+  console.log(deviationData);
   const [manualDeviationData, setManualDeviationData] = useState([])
+  console.log(manualDeviationData);
   const { enqueueSnackbar } = useSnackbar();
-
+  
   const deviationsTable = useQuery(['deviations', id], () => {return getDeviations(id)}, {
     onError: (error) => {
       console.log(error);
@@ -99,10 +103,25 @@ const Deviations = ({id}) => {
     updateDeviation({data: deviationData, others: manualDeviationData})
   }
 
+  // const calculateDeviation = () => {
+  //   // setMethod('PUT')
+  //   queryClient.invalidateQueries(['deviations', id])
+
+  //   // getCalculateDeviation(id)
+  //   //   .then(() => {
+  //       // queryClient.invalidateQueries(['deviations', id])
+  //   //     // setDeviationData(data.data)
+  //   //     // setManualDeviationData(data.others)
+  //   //     // window.location.reload(false)
+  //   //   })
+  //   //   .catch(e => console.log(e))
+  // }
+
   return (
     <>
       <div className={classes.title}>
         <Typography variant="h5">Deviations</Typography>
+        {/* <Button variant='contained' size='small' color='secondary' onClick={() => calculateDeviation()}>Calculate Deviations</Button> */}
       </div>
       {
         deviationsTable.isLoading ? (

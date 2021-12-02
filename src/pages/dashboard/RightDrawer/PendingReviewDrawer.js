@@ -1,4 +1,4 @@
-import { Dialog, DialogActions, DialogContent, DialogContentText, Button } from '@material-ui/core';
+import { Dialog, DialogActions, DialogContent, DialogContentText, Button, CircularProgress } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/CloseRounded';
 import { makeStyles } from '@material-ui/styles';
@@ -68,6 +68,8 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
   const classes = useStyles();
   const [approvalModal, setApprovalModal] = useState(false)
+  const [info, setInfo] = useState({})
+  const [loading, setLoading] = useState(false)
   const [user, setUser] = useState([])
   const [userRole, setUserRole] = useState([]);
   const [remarks, setRemarks] = useState();
@@ -93,12 +95,14 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
     setApprovalModal(!approvalModal)
   }
   const updateLoanStatus = () => {
+    setLoading(true)
     let reqBody = {
       user_id: currentUser.id,
       approver_id: user.value,
+      product_id: info?.product_id,
       approval_remarks: remarks,
     }
-    updateLoanApprovalStatusById(id, loanData.id, 'approval', reqBody)
+    updateLoanApprovalStatusById(id, loanData?.id, 'approval', reqBody)
       .then(res => {
         enqueueSnackbar(res.message, {
           anchorOrigin: {
@@ -109,9 +113,11 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
         })
         setTimeout(() => {
           window.location.reload();
+          setLoading(false)
         }, 1500)
       })
       .catch(err => {
+        setLoading(false)
         enqueueSnackbar(err, {
           anchorOrigin: {
             vertical: 'top',
@@ -120,7 +126,12 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
           variant: 'error',
         })
       })
-
+  }
+  const updateNewLoanInfo = (d) => {
+    setInfo({
+      ...info,
+      ...d
+    })
   }
   return (
     <>
@@ -132,9 +143,9 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
         <div className={classes.contentWrapper}>
           <DealershipData data={data} readOnly={true} />
           <SalesInfo id={id} currentUser={currentUser} readOnly={true} />
-          <LoanInfo status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} />
+          <LoanInfo status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} updateNewLoanInfo={updateNewLoanInfo} />
           <>
-            {loanData?.submitted_remarks && <DrawerRemarks label={'Submitted remarks'} loanData={loanData?.submitted_remarks} readOnly={readOnly} />}
+            <DrawerRemarks label={'Reviewer Remarks'} loanData={loanData?.review_remarks} readOnly={readOnly} />
           </>
         </div>
         <div>
@@ -165,6 +176,9 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
                 name='user_approve'
                 onChange={setUser}
                 options={userRole}
+                menuPlacement='bottom'
+                menuPosition='fixed'
+                maxMenuHeight='200px'
               />
             </div>
             <DialogContentText id="approval-remarks-desc">
@@ -191,7 +205,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
             <Button color='primary' variant='outlined'
               onClick={updateLoanStatus}
             >
-              Confirm
+              {loading ? <CircularProgress size={22} /> : 'Confirm'}
             </Button>
           </div>
         </DialogActions>

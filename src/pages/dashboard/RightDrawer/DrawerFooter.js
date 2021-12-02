@@ -81,6 +81,7 @@ const DrawerFooter = ({
   selectedLoanData,
   handleReviewModal,
   handleApprovalModal,
+  handlePendingApprovalModal,
   updateApprovalStatus
 }) => {
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
@@ -93,6 +94,7 @@ const DrawerFooter = ({
   const [reasonData, setReasonData] = useState()
   const [rejectReason, setRejectReason] = useState([])
   const [displayReason, setDisplayReason] = useState([])
+  const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar();
 
   useMount(() => {
@@ -157,9 +159,10 @@ const DrawerFooter = ({
   }
 
   const updateLoanStatus = () => {
+    setLoading(true)
     let reqBody = {
       user_id: currentUser.id,
-      reason_id: rejectReason
+      reason_id: rejectReason,
     }
     updateLoanApprovalStatusById(id, loanData.id, 'reject', reqBody)
       .then(res => {
@@ -172,9 +175,11 @@ const DrawerFooter = ({
         })
         setTimeout(() => {
           window.location.reload();
+          setLoading(false)
         }, 1500)
       })
       .catch(err => {
+        setLoading(false)
         enqueueSnackbar(err, {
           anchorOrigin: {
             vertical: 'top',
@@ -251,7 +256,7 @@ const DrawerFooter = ({
                 yes={() => (
                   <>
                     {
-                      editable && status && ['loan_review'].includes(status.toLowerCase()) &&
+                      editable && status && ['loan_review', 'loan_approval', 'disbursement_approval'].includes(status.toLowerCase()) &&
                         <>
                           {
                             (currentUser.id == loanData?.reviewer_id || currentUser.role_id == 1) &&
@@ -286,7 +291,7 @@ const DrawerFooter = ({
                           disabled={loanData?.loading}
                           className={clsx(classes.btn, classes.btnSuccess)}
                           startIcon={<ThumbUpAltIcon />}
-                          onClick={updateApprovalStatus}
+                          onClick={handlePendingApprovalModal}
                         >
                           Approve
                         </Button>
@@ -389,7 +394,7 @@ const DrawerFooter = ({
         <DialogActions>
           <div>
             <Button onClick={() => setRejectModal(false)}>Cancel</Button>
-            <Button color='primary' variant='outlined' onClick={updateLoanStatus}>Confirm</Button>
+            <Button color='primary' variant='outlined' onClick={updateLoanStatus}>{loading ? <CircularProgress size={22} /> : 'Confirm'}</Button>
           </div>
         </DialogActions>
       </Dialog>

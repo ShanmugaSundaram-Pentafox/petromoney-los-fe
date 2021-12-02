@@ -169,7 +169,6 @@ const Deviations = ({id}) => {
                                           defaultValue={item.deviation}
                                           onChange={(e) => onChange(e, i)}
                                         >
-                                          <option value="">Select Deviation</option>
                                           <option value="Yes">Yes</option>
                                           <option value="No">No</option>
                                         </TextInput>

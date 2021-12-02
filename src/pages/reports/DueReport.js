@@ -80,10 +80,58 @@ const DueTable = () => {
         }
       },
       {
+        name: 'prospect_code',
+        label: 'Prospect Code',
+        options: {
+          filter: false,
+          display: false
+        }
+      },
+      {
         name: 'applicant_name',
         label: 'Applicant Name',
         options: {
           filter: false,
+        }
+      },
+      {
+        name: 'omc',
+        label: 'OMC',
+        options: {
+          filter: false,
+          display: false
+        }
+      },
+      {
+        name: 'disb_amt',
+        label: 'Disbursed Amount',
+        options: {
+          filter: false,
+          display: false
+        }
+      },
+      {
+        name: 'disb_date',
+        label: 'Disbursed Date',
+        options: {
+          filter: false,
+          display: false
+        }
+      },
+      {
+        name: 'duedate',
+        label: 'Due Date',
+        options: {
+          filter: false,
+          display: false
+        }
+      },
+      {
+        name: 'prin_due',
+        label: 'Print Due',
+        options: {
+          filter: false,
+          display: false
         }
       },
       {

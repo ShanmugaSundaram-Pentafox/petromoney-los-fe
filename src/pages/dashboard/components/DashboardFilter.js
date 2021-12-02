@@ -8,7 +8,7 @@ import { useMount } from 'react-use';
 import { getAllRegions, getProducts } from '../../../services/common.service';
 import { getLoanStats } from '../../../services/loans.service';
 
-export const Selector = ({ options, value, setValue, title }) => {
+export const Selector = ({ options, value, setValue, title, isMulti }) => {
   return(
     <>
       <Box pr={1} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -17,6 +17,7 @@ export const Selector = ({ options, value, setValue, title }) => {
       <Box style={{ width: '200px' }}>
         <Select
           options={options}
+          isMulti = {isMulti}
           value={value}
           onChange={setValue}
           styles={{
@@ -229,9 +230,9 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans }) => {
     <Box p={3} borderRadius={4} bgcolor="background.paper" style={{padding: 10}}>
       <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
         <Box style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
-          <Selector title="Zone" options={regions} value={selectedRegion} setValue={setSelectedRegion} />
+          <Selector title="Zone" options={regions} value={selectedRegion} setValue={setSelectedRegion} isMulti={true} />
           <Selector title="Region" options={regions} value={selectedRegion} setValue={setSelectedRegion} />
-          <Selector title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} />
+          <Selector title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} isMulti={true} />
         </Box>
         <Box>
           <div className={classes.filterWrapper}>

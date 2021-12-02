@@ -191,7 +191,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser, readOnly }) => 
                     {!readOnly && <TableCell align="right">Action</TableCell>}
                   </TableRow>
                 </TableHead>
-              ) : <Typography>No data found!</Typography>
+              ) : <Typography variant="body1" style={{color: 'rgb(0,0,0,0.5)'}}>NA</Typography>
             }
             <TableBody>
               {

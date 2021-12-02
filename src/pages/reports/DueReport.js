@@ -80,7 +80,7 @@ const DueTable = () => {
         }
       },
       {
-        name: 'prospect_code',
+        name: 'prospectcode',
         label: 'Prospect Code',
         options: {
           filter: false,
@@ -97,14 +97,6 @@ const DueTable = () => {
       {
         name: 'omc',
         label: 'OMC',
-        options: {
-          filter: false,
-          display: false
-        }
-      },
-      {
-        name: 'disb_amt',
-        label: 'Disbursed Amount',
         options: {
           filter: false,
           display: false
@@ -151,7 +143,7 @@ const DueTable = () => {
       },
       {
         name: 'disb_amt',
-        label: 'disburse Amt',
+        label: 'Disburse Amt',
         options: {
           filter: false,
           sort: true,

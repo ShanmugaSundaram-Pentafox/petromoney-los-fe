@@ -70,7 +70,47 @@ const OverDueTable = () => {
   const columns = useMemo(() => {
     return [
       { name: 'applicant_code', label: 'Applicant Code' },
+      {
+        name: 'prospectcode',
+        label: 'Prospect Code',
+        options: {
+          filter: false,
+          display: false
+        }
+      },
       { name: 'applicant_name', label: 'Applicant Name' },
+      {
+        name: 'omc',
+        label: 'OMC',
+        options: {
+          filter: false,
+          display: false
+        }
+      },
+      {
+        name: 'disb_amt',
+        label: 'Disbursed Amount',
+        options: {
+          filter: false,
+          display: false
+        }
+      },
+      {
+        name: 'disb_date',
+        label: 'Disbursed Date',
+        options: {
+          filter: false,
+          display: false
+        }
+      },
+      {
+        name: 'prin_overdue',
+        label: 'Print Due',
+        options: {
+          filter: false,
+          display: false
+        }
+      },
       { name: 'cust_code', label: 'Customer Code' },
       { name: 'cust_region', label: 'Customer Region' },
       {
@@ -82,6 +122,14 @@ const OverDueTable = () => {
           customBodyRender: value => {
             return <Currency value={value} />
           }
+        }
+      },
+      {
+        name: 'int_overdue',
+        label: 'Int Overdue',
+        options: {
+          filter: false,
+          display: false
         }
       },
       {

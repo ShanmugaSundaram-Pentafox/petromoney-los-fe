@@ -114,6 +114,7 @@ const AccountStatement = ({ id, currentUser }) => {
                 variant='inline'
                 inputVariant='outlined'
                 format='dd/MM/yyyy'
+                disableFuture={true}
                 animateYearScrolling={true}
                 initialFocusedDate={''}
                 invalidDateMessage='Invalid Date'
@@ -187,7 +188,7 @@ const AccountStatement = ({ id, currentUser }) => {
       >
         <div className={classes.dialogBox} >
           <DialogContent className={classes.frame}>
-            <iframe src={`data:application/pdf;base64,${fileCode}`} height="900" width="500" frameBorder="0"></iframe>
+            <iframe src={`data:application/pdf;base64,${fileCode}`} height="900" width="500" frameBorder="0" title="Account Statement"></iframe>
           </DialogContent>
         </div>
       </FormDialog>

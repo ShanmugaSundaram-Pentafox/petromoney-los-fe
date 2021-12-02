@@ -200,15 +200,19 @@ const SalesInfo = ({
       <SalesTableWrapper column='row'>
         <div className={classes.table}>
           <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>Sales Data(in KL)</TableCell>
-                <TableCell>MS</TableCell>
-                <TableCell>HSD</TableCell>
-                <TableCell>Total (in KL)</TableCell>
-                {!readOnly && <TableCell align="right">Action</TableCell>}
-              </TableRow>
-            </TableHead>
+            {
+              Array.isArray(info) && info.length ? (
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Sales Data(in KL)</TableCell>
+                    <TableCell>MS</TableCell>
+                    <TableCell>HSD</TableCell>
+                    <TableCell>Total (in KL)</TableCell>
+                    {!readOnly && <TableCell align="right">Action</TableCell>}
+                  </TableRow>
+                </TableHead>
+              ) : <Typography variant="body1" style={{color: 'rgb(0,0,0,0.5)'}}>NA</Typography>
+            }
             <TableBody>
               {
                 info?.map((row, i) => i === editRow?.rowIndex ? (

@@ -3,7 +3,7 @@ import { useSnackbar } from 'notistack';
 import React, {useState} from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import TextInput from '../../../components/TextInput/TextInput';
-import { deleteDeviationsById, getDeviations, updateDeviationsById } from '../../../services/dealerships.service';
+import { deleteDeviationsById, getCalculateDeviation, getDeviations, updateDeviationsById } from '../../../services/dealerships.service';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -39,9 +39,7 @@ const Deviations = ({id}) => {
   const classes = useStyles()
   const queryClient = useQueryClient()
   const [deviationData, setDeviationData] = useState([])
-  console.log(deviationData);
   const [manualDeviationData, setManualDeviationData] = useState([])
-  console.log(manualDeviationData);
   const { enqueueSnackbar } = useSnackbar();
   
   const deviationsTable = useQuery(['deviations', id], () => {return getDeviations(id)}, {
@@ -103,25 +101,22 @@ const Deviations = ({id}) => {
     updateDeviation({data: deviationData, others: manualDeviationData})
   }
 
-  // const calculateDeviation = () => {
-  //   // setMethod('PUT')
-  //   queryClient.invalidateQueries(['deviations', id])
-
-  //   // getCalculateDeviation(id)
-  //   //   .then(() => {
-  //       // queryClient.invalidateQueries(['deviations', id])
-  //   //     // setDeviationData(data.data)
-  //   //     // setManualDeviationData(data.others)
-  //   //     // window.location.reload(false)
-  //   //   })
-  //   //   .catch(e => console.log(e))
-  // }
+  const calculateDeviation = () => {
+    let body = {data: deviationData, others: manualDeviationData}
+    getCalculateDeviation(id, body)
+      .then((data) => {
+        setDeviationData(data.data)
+        setManualDeviationData(data.others)
+        // window.location.reload(false)
+      })
+      .catch(e => console.log(e))
+  }
 
   return (
     <>
       <div className={classes.title}>
         <Typography variant="h5">Deviations</Typography>
-        {/* <Button variant='contained' size='small' color='secondary' onClick={() => calculateDeviation()}>Calculate Deviations</Button> */}
+        <Button variant='contained' size='small' color='secondary' onClick={() => calculateDeviation()}>Calculate Deviations</Button>
       </div>
       {
         deviationsTable.isLoading ? (
@@ -144,6 +139,7 @@ const Deviations = ({id}) => {
                 <TableBody>
                   {
                                 deviationData?.map((item, i) => {
+                                  console.log('mapping')
                                   return(
                                     <TableRow key={i}>
                                       <TableCell>{item.particulars}</TableCell>

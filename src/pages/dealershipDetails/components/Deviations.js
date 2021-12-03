@@ -107,7 +107,7 @@ const Deviations = ({id}) => {
       .then((data) => {
         setDeviationData(data.data)
         setManualDeviationData(data.others)
-        window.location.reload(false)
+        // window.location.reload(false)
       })
       .catch(e => console.log(e))
   }
@@ -147,7 +147,7 @@ const Deviations = ({id}) => {
                                         <TextInput
                                           className={classes.field}
                                           name="actual"
-                                          defaultValue={item.actual}
+                                          value={item.actual}
                                           onChange={(e) => onChange(e, i)}
                                           disabled={
                                             item.particulars === 'Max FOIR%' ||
@@ -161,7 +161,7 @@ const Deviations = ({id}) => {
                                           className={classes.field}
                                           select
                                           name="deviation"
-                                          defaultValue={item.deviation}
+                                          value={item.deviation}
                                           onChange={(e) => onChange(e, i)}
                                         >
                                           <option value="Yes">Yes</option>
@@ -173,7 +173,7 @@ const Deviations = ({id}) => {
                                           className={classes.field}
                                           name="deviation_review"
                                           onChange={(e) => onChange(e, i)}
-                                          defaultValue={item.deviation_review}
+                                          value={item.deviation_review}
                                           placeholder="Remarks"
                                           variant="outlined"
                                           fullWidth

@@ -207,7 +207,8 @@ export const deleteLoanDisbursementRecord = (dealershipId, loanId, body) => {
       .then(async ({ status, data, message }) => {
         if (status === 'SUCCESS') {
           const res = await getDealershipLoansById(dealershipId);
-          resolve({ data: res, message });
+          const updatedLoanData = await getLoanById(dealershipId, loanId);
+          resolve({ loans: res, data: updatedLoanData, message });
         } else {
           reject(message);
         }

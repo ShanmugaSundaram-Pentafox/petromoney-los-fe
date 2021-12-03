@@ -154,7 +154,8 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
   const deleteRecord = data => {
     setLoading(true);
     deleteLoanDisbursementRecord(id, loanData.id, data)
-      .then(({ message }) => {
+      .then(({ data, message }) => {
+        setDispHistory({disbursement_details: data?.disbursement_details ? data.disbursement_details : []})
         setLoading(false);
         setApiStatus({ status: 'success', message });
         setTimeout(() => {

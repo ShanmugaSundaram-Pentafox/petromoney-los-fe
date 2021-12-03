@@ -81,24 +81,13 @@ const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, 
     })
   }
   const handleModal = () => {
-    if (!info?.amount_disbursed) {
-      enqueueSnackbar('Please enter amount to disburse', {
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-        variant: 'error',
-      })
-    }
-    else {
-      setOpenModal(!openModal)
-    }
+    setOpenModal(!openModal)
   }
   const updateLoanStatus = () => {
     setLoading(true)
     let reqBody = {
       user_id: currentUser.id,
-      amount_disbursed: info?.amount_disbursed,
+      amount_disbursed: info?.amount_disbursed ? info?.amount_disbursed : info?.amount_approved,
       disbursement_approval_remarks: remarks
     }
     updateLoanApprovalStatusById(id, loanData.id, 'approval', reqBody)

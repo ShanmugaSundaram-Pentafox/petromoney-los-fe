@@ -139,7 +139,6 @@ const Deviations = ({id}) => {
                 <TableBody>
                   {
                                 deviationData?.map((item, i) => {
-                                  console.log('mapping')
                                   return(
                                     <TableRow key={i}>
                                       <TableCell>{item.particulars}</TableCell>

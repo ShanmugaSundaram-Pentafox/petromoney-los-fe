@@ -107,7 +107,7 @@ const Deviations = ({id}) => {
       .then((data) => {
         setDeviationData(data.data)
         setManualDeviationData(data.others)
-        // window.location.reload(false)
+        window.location.reload(false)
       })
       .catch(e => console.log(e))
   }

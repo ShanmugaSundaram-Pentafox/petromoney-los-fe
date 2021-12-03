@@ -87,7 +87,7 @@ const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, 
     setLoading(true)
     let reqBody = {
       user_id: currentUser.id,
-      amount_disbursed: info?.amount_disbursed,
+      amount_disbursed: info?.amount_disbursed ? info?.amount_disbursed : info?.amount_approved,
       disbursement_approval_remarks: remarks
     }
     updateLoanApprovalStatusById(id, loanData.id, 'approval', reqBody)

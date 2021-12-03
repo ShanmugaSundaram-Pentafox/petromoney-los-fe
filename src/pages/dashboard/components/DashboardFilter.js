@@ -8,13 +8,13 @@ import { useMount } from 'react-use';
 import { getAllRegions, getProducts } from '../../../services/common.service';
 import { getLoanStats } from '../../../services/loans.service';
 
-export const Selector = ({ options, value, setValue, title, isMulti }) => {
+export const Selector = ({ options, value, setValue, title, isMulti, width }) => {
   return(
     <>
       <Box pr={1} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <div style={{ color: 'hsl(0,0%,75%)' }}>{title}</div>
       </Box>
-      <Box style={{ width: '200px' }}>
+      <Box style={{ width: width }}>
         <Select
           options={options}
           isMulti = {isMulti}
@@ -31,12 +31,19 @@ export const Selector = ({ options, value, setValue, title, isMulti }) => {
                 minHeight: 29,
               },
             }),
+            valueContainer: (provided, state) => ({
+              ...provided,
+              maxHeight: '50px',
+              padding: '0 6px',
+              overflow: 'auto'
+            }),
             menu: (provided) => ({
               ...provided,
               zIndex: 9999,
             }),
             indicatorsContainer: (provided) => ({
               ...provided,
+              maxHeight: '50px',
               '> div': {
                 padding: 5
               }
@@ -230,9 +237,9 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans }) => {
     <Box p={3} borderRadius={4} bgcolor="background.paper" style={{padding: 10}}>
       <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
         <Box style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
-          <Selector title="Zone" options={regions} value={selectedRegion} setValue={setSelectedRegion} isMulti={true} />
-          <Selector title="Region" options={regions} value={selectedRegion} setValue={setSelectedRegion} />
-          <Selector title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} isMulti={true} />
+          <Selector title="Zone" options={regions} value={selectedRegion} setValue={setSelectedRegion} isMulti={true} width='300px' />
+          <Selector title="Region" options={regions} value={selectedRegion} setValue={setSelectedRegion} width='150px' />
+          <Selector title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} isMulti={true} width='300px' />
         </Box>
         <Box>
           <div className={classes.filterWrapper}>

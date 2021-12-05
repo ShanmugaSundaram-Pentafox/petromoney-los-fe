@@ -1,3 +1,4 @@
+import DateFnsUtils from '@date-io/date-fns';
 import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
@@ -12,6 +13,10 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { format, parse } from 'date-fns';
@@ -29,25 +34,19 @@ import FileUpload from '../../../components/FileUpload';
 import TextInput from '../../../components/TextInput/TextInput';
 // import { URL } from '../../../config/serverUrls';
 // import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { URL } from '../../../config/serverUrls';
+import { rulesList } from '../../../config/userRules';
 import {
   getBusinessTypes,
   getOmcList,
   getRegionById,
   getStates,
 } from '../../../services/common.service';
+import { cryptoEncrypt } from '../../../services/crypto.service';
 import { deleteTransportProfileDoc } from '../../../services/transports.service';
 import { getDistricts } from '../../../utils/indianStates.util';
 // import { addNewTransport, updateTransport } from '../../../services/transports.service';
-import 'date-fns';
-import DateFnsUtils from '@date-io/date-fns';
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from '@material-ui/pickers';
-import { permissionCheck } from '../../../components/UserCan/UserCan';
-import { rulesList } from '../../../config/userRules';
-import { cryptoEncrypt } from '../../../services/crypto.service';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -148,7 +147,7 @@ const useStyles = makeStyles((theme) => ({
 
 const AddNewTransportsForm = ({
   title,
-  handleBack,
+  // handleBack,
   id,
   data,
   currentUser,
@@ -163,7 +162,7 @@ const AddNewTransportsForm = ({
   const [showUpload, setShowUpload] = useState(false);
   const [regionList, setRegionList] = useState([]);
   const [fileType, setFileType] = useState('');
-  const [regions, setRegions] = useState([]);
+  // const [regions, setRegions] = useState([]);
   const [checked, setChecked] = useState(false);
   const [imageModal, setImageModal] = useState({});
   const [selectedDate, setSelectedDate] = useState(data?.doi && parse(data?.doi, 'dd-MM-yyyy', new Date()));
@@ -433,7 +432,7 @@ const AddNewTransportsForm = ({
             setImageModal({ open: true, image: data.gst_file_url })
           }
         >
-          <a className={classes.profileLink} target='_blank' title={'GST Attachment'}>{'GST Attachment'}</a>
+          <span className={classes.profileLink} target='_blank' title={'GST Attachment'}>{'GST Attachment'}</span>
         </Button>
         <Tooltip title={'Click to edit'}>
           <UploadIcon
@@ -488,7 +487,7 @@ const AddNewTransportsForm = ({
                         return true;
                     }))?.name} />
                     <ViewData title='Date of Incoporation' value={values?.doi} />
-                    <ViewData title='Region' value={(regionList.find(function (region, index) {
+                    <ViewData title='Region' value={(regionList.find(function (region) {
                       if (region.id == values.region)
                         return true;
                     }))?.name} />
@@ -500,11 +499,11 @@ const AddNewTransportsForm = ({
                   <Box className={classes.box}>
                     <ViewData title='Transport Name' value={values.name} />
                     <ViewData title='Address' value={values.address} />
-                    <ViewData title='Business Type' value={(businessType.find(function (business, index) {
+                    <ViewData title='Business Type' value={(businessType.find(function (business) {
                       if (business.id == values.business_type)
                         return true;
                     }))?.name} />
-                    <ViewData title='State' value={(states.find(function (state, index) {
+                    <ViewData title='State' value={(states.find(function (state) {
                       if (state.id == values.state)
                         return true;
                     }))?.name} />
@@ -654,7 +653,7 @@ const AddNewTransportsForm = ({
                   </Grid>
                   <Grid item md={6}>
                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                      <label>Date of Birth</label>
+                      <label>Date of Incoporation</label>
                       <KeyboardDatePicker
                         // disableToolbar
                         // hideTabs={true}
@@ -895,7 +894,6 @@ const AddNewTransportsForm = ({
                 <Button
                   variant='contained'
                   type='submit'
-                  onClick={handleSubmit}
                   className={clsx(classes.btn, classes.editButton)}
                   startIcon={
                     !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />

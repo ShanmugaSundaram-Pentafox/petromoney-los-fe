@@ -60,6 +60,8 @@ export const rulesForUserRoles = {
   CREDIT_HEAD: {
     static: [
       rulesList.dashboard,
+      rulesList.dealership_edit,
+      rulesList.dealer_edit,
       rulesList.loan_approval,
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
@@ -155,6 +157,8 @@ export const rulesForUserRoles = {
   FIELD_OFFICER: {
     static: [
       rulesList.dashboard,
+      rulesList.dealership_edit,
+      rulesList.dealer_edit,
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
       rulesList.credit_view,

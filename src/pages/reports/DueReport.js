@@ -171,13 +171,13 @@ const DueTable = () => {
           sort: true,
           customBodyRender: value => {
             return (
-              value?.length === 0 ? (null) : (
+              value ? (
                 <div style={{display: 'flex', alignItems: 'center'}}>
                   <Badge color="primary" badgeContent={value?.length} max={99} onClick={() => value?.length && (setRemarksModal({open:true, data: value}))}>
                     <ChatIcon style={{color: 'grey'}} fontSize="small" />
                   </Badge>
                 </div>
-              )
+              ) : <Typography variant='body1'>-</Typography>
             )
           }
         }

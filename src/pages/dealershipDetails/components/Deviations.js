@@ -211,18 +211,17 @@ const Deviations = ({id}) => {
                                             <TextInput
                                               name="deviation_description"
                                               placeholder="Description..."
-                                              defaultValue={item.deviation_description}
+                                              value={item.deviation_description}
                                               onChange={e => onManualChange(e, i)}
                                             />
                                           </TableCell>
                                           <TableCell>
-                                            <TextField
+                                            <TextInput
                                               name="deviation_review"
                                               variant="outlined"
                                               placeholder="Review..."
-                                              defaultValue={item.deviation_review}
+                                              value={item.deviation_review}
                                               onChange={e => onManualChange(e, i)}
-                                              fullWidth
                                             />
                                           </TableCell>
                                           <TableCell align="right">

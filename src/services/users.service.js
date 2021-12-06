@@ -284,3 +284,35 @@ export const getTypeOfAccount = () => {
       })
   })
 }
+
+export const getCollectionRemark = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('collection/remarks')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const getCollectionRemarkOptions = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('collection/remarks/options')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}

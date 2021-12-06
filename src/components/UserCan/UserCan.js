@@ -1,4 +1,4 @@
-import { rulesForUserRoles } from "../../config/userRules";
+import { rulesForUserRoles } from '../../config/userRules';
 
 export const permissionCheck = (role, action, data) => {
   const permissions = rulesForUserRoles[role];

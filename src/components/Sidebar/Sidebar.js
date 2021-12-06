@@ -1,26 +1,24 @@
-import React from 'react';
+import { Divider, Drawer, List, ListItem, Button } from '@material-ui/core';
+import AccountBoxIcon from '@material-ui/icons/AccountBox';
+import CachedIcon from '@material-ui/icons/Cached';
+import DashboardIcon from '@material-ui/icons/Dashboard';
+import ListIcon from '@material-ui/icons/List';
+import LocalShippingIcon from '@material-ui/icons/LocalShipping';
+import PeopleIcon from '@material-ui/icons/People';
+import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
+import PersonOutlineRoundedIcon from '@material-ui/icons/PersonOutlineRounded';
+import SettingsIcon from '@material-ui/icons/Settings';
+import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/styles';
-import { Divider, Drawer, List, ListItem, Button, colors } from '@material-ui/core';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import PeopleIcon from '@material-ui/icons/People';
-import AccountBoxIcon from '@material-ui/icons/AccountBox';
-import LocalShippingIcon from '@material-ui/icons/LocalShipping';
-import WbSunnyRoundedIcon from '@material-ui/icons/WbSunnyRounded';
+import React from 'react';
 // import SettingsIcon from '@material-ui/icons/Settings';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 // import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
-import PersonOutlineRoundedIcon from '@material-ui/icons/PersonOutlineRounded';
-import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
 // import Profile from './components/Profile';
 import SidebarNav from './components/SidebarNav';
 // import { resetCurrentUser } from '../../store/user/user.actions';
-import { permissionCheck } from '../UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
-import ListIcon from '@material-ui/icons/List';
-import SettingsIcon from '@material-ui/icons/Settings';
-import CachedIcon from '@material-ui/icons/Cached';
+import { permissionCheck } from '../UserCan/UserCan';
 // import { ExitToApp } from '@material-ui/icons';
 // import { connect } from 'formik';
 const packageJSON = require('../../../package.json');
@@ -37,7 +35,7 @@ const useStyles = makeStyles(theme => ({
     // backgroundColor: theme.palette.white,
     // backgroundColor: "#050712",
 
-    backgroundColor: "#FFF",
+    backgroundColor: '#FFF',
     color: theme.palette.black,
     display: 'flex',
     flexDirection: 'column',
@@ -69,11 +67,11 @@ const useStyles = makeStyles(theme => ({
   },
   active: {
     backgroundColor: 'white',
-    color: "rgba(34, 36, 68, 1)"
+    color: 'rgba(34, 36, 68, 1)'
   },
   icon: {
     // color: theme.palette.icon,
-    color: "rgba(34, 36, 68, 1)",
+    color: 'rgba(34, 36, 68, 1)',
     width: 24,
     height: 24,
     display: 'flex',
@@ -82,7 +80,7 @@ const useStyles = makeStyles(theme => ({
   },
   version: {
     textAlign: 'center',
-    color: "rgba(34, 36, 68, .75)",
+    color: 'rgba(34, 36, 68, .75)',
     fontSize: 12,
     display: 'block',
   },
@@ -178,7 +176,7 @@ const Sidebar = props => {
     pages = [
       {
         title: 'Profile',
-        href: `/transports-field`,
+        href: '/transports-field',
         icon: <PersonOutlineIcon />
       },
       {

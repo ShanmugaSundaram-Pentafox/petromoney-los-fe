@@ -1,21 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Table from '@material-ui/core/Table';
-import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
-import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
-import { makeStyles } from '@material-ui/core';
-import { deleteDealershipMonthlySalesById, getDealershipMonthlySalesById, postDealershipMonthlySalesById, updateDealershipMonthlySalesById } from '../../../services/dealerships.service';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Typography from '@material-ui/core/Typography';
+import clsx from 'clsx';
+import { useSnackbar } from 'notistack';
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
 import TextInput from '../../../components/TextInput/TextInput';
 import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-import { useSnackbar } from "notistack";
-import clsx from 'clsx';
-
-
+import { deleteDealershipMonthlySalesById, getDealershipMonthlySalesById, postDealershipMonthlySalesById, updateDealershipMonthlySalesById } from '../../../services/dealerships.service';
+import { getMonth as month } from '../../../utils/commonFunctions.util';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -35,13 +34,13 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 20,
   },
   btnDelete: {
-    '&.MuiButton-root': { color: "#ef5350" },
-    border: "1px #ef5350 solid",
+    '&.MuiButton-root': { color: '#ef5350' },
+    border: '1px #ef5350 solid',
     marginLeft: 2
   },
   btnEdit: {
-    '&.MuiButton-root': { color: "#2196f3" },
-    border: "1px #2196f3 solid",
+    '&.MuiButton-root': { color: '#2196f3' },
+    border: '1px #2196f3 solid',
     marginLeft: 2
   },
 }));
@@ -70,7 +69,7 @@ const getPastFiveYears = () => {
 }
 
 
-const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
+const MonthlySalesInfo = ({ id, titleAlign, column, currentUser, readOnly }) => {
   const [info, setInfo] = useState([]);
   const classes = useStyles();
   const [addNewRow, setAddNewRow] = useState();
@@ -78,21 +77,6 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
   const [editRow, setEditRow] = useState({});
   const { enqueueSnackbar } = useSnackbar();
   const LastFiveYear = getPastFiveYears()
-
-  const month = [
-    { label: 'January', value: 1 },
-    { label: 'Feburary', value: 2 },
-    { label: 'March', value: 3 },
-    { label: 'Apirl', value: 4 },
-    { label: 'May', value: 5 },
-    { label: 'June', value: 6 },
-    { label: 'July', value: 7 },
-    { label: 'August', value: 8 },
-    { label: 'September', value: 9 },
-    { label: 'October', value: 10 },
-    { label: 'November', value: 11 },
-    { label: 'December', value: 12 },
-  ]
 
   useEffect(() => {
     if (id) {
@@ -145,10 +129,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
       })
   }
 
-  const saveEditRow = (data, i) => {
-    // const objBody = {
-    //   user_id: currentUser.id, ...data
-    // }
+  const saveEditRow = (data) => {
     delete data.rowIndex
     updateDealershipMonthlySalesById(id, data)
       .then(res => {
@@ -183,28 +164,35 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
     <SalesInfoWrapper>
       <div className={classes.title}>
         <Typography align={titleAlign} variant="h5">Sales History (Month-wise)</Typography>
-        <UserCan
-          role={currentUser.role_name}
-          perform={rulesList.dealership_edit}
-          yes={() => (
-            <div style={{ textAlign: 'right', marginTop: 8 }}>
-              <Button color="primary" variant="contained" size="small" onClick={() => { setAddNewRow(true); setEditRow({}) }}>Add</Button>
-            </div>
-          )}
-        />
+        {
+          !readOnly &&
+            <UserCan
+              role={currentUser.role_name}
+              perform={rulesList.dealership_edit}
+              yes={() => (
+                <div style={{ textAlign: 'right', marginTop: 8 }}>
+                  <Button color="primary" variant="contained" size="small" onClick={() => { setAddNewRow(true); setEditRow({}) }}>Add</Button>
+                </div>
+              )}
+            />
+        }
       </div>
       <SalesTableWrapper column={column}>
         <div className={classes.table}>
           <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>Sales Data(in KL)</TableCell>
-                <TableCell align="center">MS</TableCell>
-                <TableCell align="center">HSD</TableCell>
-                <TableCell align="right">Total (in KL)</TableCell>
-                <TableCell align="right">Action</TableCell>
-              </TableRow>
-            </TableHead>
+            {
+              Array.isArray(info) && info.length ? (
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Sales Data(in KL)</TableCell>
+                    <TableCell>MS</TableCell>
+                    <TableCell>HSD</TableCell>
+                    <TableCell>Total (in KL)</TableCell>
+                    {!readOnly && <TableCell align="right">Action</TableCell>}
+                  </TableRow>
+                </TableHead>
+              ) : <Typography variant="body1" style={{color: 'rgb(0,0,0,0.5)'}}>NA</Typography>
+            }
             <TableBody>
               {
                 info?.map((row, i) => i === editRow?.rowIndex ? (
@@ -220,53 +208,57 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                       />
                       -
                       <TextInput
+                        number
                         fullWidth={true}
                         label="Year"
                         name="year"
-                        type="number"
                         disabled={true}
                         value={editRow.year}
                         onChange={onEditTextChange}
                       />
                     </TableCell>
-                    <TableCell align="right">
+                    <TableCell>
                       <TextInput
+                        number
                         label="MS (KL)"
                         name="ms"
-                        type="number"
                         value={editRow.ms}
                         onChange={onEditTextChange}
                       />
                     </TableCell>
                     <TableCell align="right">
                       <TextInput
+                        number
                         label="HSD (KL)"
                         name="hsd"
-                        type="number"
                         value={editRow.hsd}
                         onChange={onEditTextChange}
                       />
                     </TableCell>
                     <TableCell>&nbsp;</TableCell>
-                    <TableCell align="center">
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        color="success"
-                        className={classes.btnSuccess}
-                        onClick={() => saveEditRow(editRow, i)}>
-                        Save
-                      </Button>
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        color="error"
-                        onClick={() => {
-                          setEditRow({});
-                        }}>
-                        Cancel
-                      </Button>
-                    </TableCell>
+                    {
+                      !readOnly && (
+                        <TableCell>
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            color="success"
+                            className={classes.btnSuccess}
+                            onClick={() => saveEditRow(editRow, i)}>
+                            Save
+                          </Button>
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            color="error"
+                            onClick={() => {
+                              setEditRow({});
+                            }}>
+                            Cancel
+                          </Button>
+                        </TableCell>
+                      )
+                    }
                   </TableRow>
                 ) : (
                   <TableRow key={i}>
@@ -274,10 +266,10 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                       if (type.value == row.month)
                         return true;
                     })?.label} - {row.year}</TableCell>
-                    <TableCell align="right">{row.ms?.toFixed(2)}</TableCell>
-                    <TableCell align="right">{row.hsd?.toFixed(2)}</TableCell>
-                    <TableCell align="right">{(row.ms + row.hsd)?.toFixed(2)}</TableCell>
-                    <TableCell align="right">
+                    <TableCell>{row.ms?.toFixed(2)}</TableCell>
+                    <TableCell>{row.hsd?.toFixed(2)}</TableCell>
+                    <TableCell>{(row.ms + row.hsd)?.toFixed(2)}</TableCell>
+                    {!readOnly && <TableCell align="right">
                       {
                         editable ? (
                           <Button
@@ -303,26 +295,25 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                         ) : null
                       }
 
-                    </TableCell>
+                    </TableCell>}
                   </TableRow>
                 ))
               }
               {
                 addNewRow && (
-                  <TableRow key={"new-row"}>
+                  <TableRow key={'new-row'}>
                     <TableCell scope="row" component="th">
                       <TextInput
                         select
                         fullWidth={true}
                         label="Month"
                         name="month"
-                        type="number"
                         value={apiData.month}
                         onChange={onTextChange}
                       >
                         <option value=" ">Choose month</option>
                         {
-                          month.map((item, i) => <option value={item.value}>{item.label}</option>)
+                          month.map((item, i) => <option key={i} value={item.value}>{item.label}</option>)
                         }
                       </TextInput>
                       -
@@ -331,38 +322,37 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                         fullWidth={true}
                         label="Year"
                         name="year"
-                        type="number"
                         value={apiData.year}
                         onChange={onTextChange}
                       >
                         <option value=" ">Choose year</option>
                         {
                           LastFiveYear.map(item => {
-                            return <option value={item}>{item}</option>
+                            return <option key={item} value={item}>{item}</option>
                           })
                         }
                       </TextInput>
                     </TableCell>
                     <TableCell align="right">
                       <TextInput
+                        number
                         label="MS (KL)"
                         name="ms"
-                        type="number"
                         value={apiData.ms}
                         onChange={onTextChange}
                       />
                     </TableCell>
                     <TableCell align="right">
                       <TextInput
+                        number
                         label="HSD (KL)"
                         name="hsd"
-                        type="number"
                         value={apiData.hsd}
                         onChange={onTextChange}
                       />
                     </TableCell>
                     <TableCell>&nbsp;</TableCell>
-                    <TableCell align="center">
+                    {!readOnly && <TableCell align="center">
                       <Button
                         size="small"
                         variant="outlined"
@@ -380,7 +370,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
                         onClick={saveNewSalesData}>
                         Save
                       </Button>
-                    </TableCell>
+                    </TableCell>}
                   </TableRow>
                 )
               }
@@ -388,7 +378,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser }) => {
           </Table>
         </div>
       </SalesTableWrapper>
-    </SalesInfoWrapper>
+    </SalesInfoWrapper >
   )
 }
 export default MonthlySalesInfo;

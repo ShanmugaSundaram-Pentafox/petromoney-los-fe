@@ -1,0 +1,199 @@
+import DateFnsUtils from '@date-io/date-fns';
+import { Typography } from '@material-ui/core';
+import DialogContent from '@material-ui/core/DialogContent';
+import Grid from '@material-ui/core/Grid';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker
+} from '@material-ui/pickers';
+import { makeStyles } from '@material-ui/styles';
+import { format } from 'date-fns';
+import { useSnackbar } from 'notistack';
+import React, { useState } from 'react';
+import Button from '../../../components/CommonComponents/Button/Button';
+import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
+import { InputWrapper } from '../../../components/TextInput/TextInput';
+import { downloadAccountStatement } from '../../../services/dealerships.service';
+
+
+const useStyles = makeStyles(theme => ({
+  root: {},
+  gridItemStyle: {
+    // paddingTop: theme.spacing(1),
+    // paddingBottom: theme.spacing(1)
+  },
+  actionFooter: {
+    justifyContent: 'flex-end'
+  },
+  readOnlyWrapper: {
+    margin: '8px 4px',
+    maxWidth: '100%',
+  },
+  icon: {
+    marginRight: 4,
+    marginTop: 12,
+  },
+  fileStyle: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginTop: 24,
+  },
+  icons: {
+    marginRight: 16,
+  },
+  number: {
+    '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+      '-webkit-appearance': 'none',
+      margin: 0
+    }
+  },
+  input: {
+    '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+      '-webkit-appearance': 'none',
+      margin: 0
+    }
+  }
+}));
+
+
+
+
+const AccountStatement = ({ id, currentUser }) => {
+  const [selectedDate, setSelectedDate] = useState();
+  const [fileCode, setFileCode] = useState();
+  const [openDialog, setOpenDialog] = useState(false);
+  const [loading, setLoading] = useState();
+  const { enqueueSnackbar } = useSnackbar();
+  const classes = useStyles();
+
+
+  const handleDownload = values => {
+    const from_date = selectedDate?.from_date && format(new Date(selectedDate?.from_date), 'dd-MM-yyyy');
+    const to_date = selectedDate?.to_date && format(new Date(selectedDate?.to_date), 'dd-MM-yyyy');
+    setLoading(true)
+    if (from_date && to_date) {
+      downloadAccountStatement(id, from_date, to_date)
+        .then(res => {
+          setFileCode(res?.data)
+          setOpenDialog(true)
+          setLoading(false)
+        })
+        .catch(e => {
+          enqueueSnackbar(e, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          });
+        })
+    }
+    else {
+      enqueueSnackbar('Please enter from date and to date.', {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'error',
+      });
+    }
+  }
+
+  return (
+    <>
+      <Typography variant='h4' style={{ marginTop: 4, marginBottom: 12 }}>Account statement</Typography>
+      <Grid container spacing={2}>
+        <Grid item>
+          <InputWrapper direction top>
+            <label className="input-label">From date</label>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <KeyboardDatePicker
+                clearable
+                name="from_date"
+                hideTabs={true}
+                variant='inline'
+                inputVariant='outlined'
+                format='dd/MM/yyyy'
+                disableFuture={true}
+                animateYearScrolling={true}
+                initialFocusedDate={''}
+                invalidDateMessage='Invalid Date'
+                margin='normal'
+                id='date-picker'
+                autoOk={true}
+                value={selectedDate?.from_date}
+                onChange={(date) => setSelectedDate({ ...selectedDate, from_date: date })}
+                keyboardButtonProps={{
+                  'aria-label': 'change date'
+                }}
+                PopoverProps={{
+                  anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                  }
+                }}
+              />
+            </MuiPickersUtilsProvider>
+          </InputWrapper>
+        </Grid>
+        <Grid item>
+          <InputWrapper direction top>
+            <label className="input-label">To date</label>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <KeyboardDatePicker
+                name="to_date"
+                hideTabs={true}
+                variant='inline'
+                inputVariant='outlined'
+                format='dd/MM/yyyy'
+                animateYearScrolling={true}
+                disableFuture={true}
+                initialFocusedDate={null}
+                margin='normal'
+                id='date-picker'
+                invalidDateMessage='Invalid Date'
+                autoOk={true}
+                value={selectedDate?.to_date}
+                onChange={(date) => setSelectedDate({ ...selectedDate, to_date: date })}
+                keyboardButtonProps={{
+                  'aria-label': 'change date'
+                }}
+                PopoverProps={{
+                  anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                  }
+                }}
+              />
+            </MuiPickersUtilsProvider>
+          </InputWrapper>
+        </Grid>
+      </Grid>
+      <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: 8 }}>
+        <Button
+          // disabled={!permissionCheck(currentUser.role_name, rulesList.dealership_edit)}
+          color="primary"
+          variant="contained"
+          size="small"
+          type="submit"
+          onClick={handleDownload}
+        >
+          Get statement
+        </Button>
+      </div>
+      <FormDialog
+        open={openDialog}
+        title={'Account statement'}
+        onClose={() => { setOpenDialog(false) }}
+      >
+        <div className={classes.dialogBox} >
+          <DialogContent className={classes.frame}>
+            <iframe src={`data:application/pdf;base64,${fileCode}`} height="900" width="500" frameBorder="0" title="Account Statement"></iframe>
+          </DialogContent>
+        </div>
+      </FormDialog>
+    </>
+  )
+}
+
+export default AccountStatement;

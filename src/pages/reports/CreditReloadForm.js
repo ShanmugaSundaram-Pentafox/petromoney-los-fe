@@ -1,23 +1,23 @@
-import { makeStyles } from '@material-ui/styles';
-import React, { useState } from 'react';
-import CloseIcon from '@material-ui/icons/Close';
 import { Typography } from '@material-ui/core';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
 import { Box } from '@material-ui/core';
 import { Grid } from '@material-ui/core';
-import Select from 'react-select';
 import { Button } from '@material-ui/core';
 import { Divider } from '@material-ui/core';
-import clsx from 'clsx';
-import { useSnackbar } from 'notistack';
-import AsyncSelect from 'react-select/async';
-import { getDealershipForSearch } from '../../services/common.service';
-import TextInput from '../../components/TextInput/TextInput';
-import { addCreditReport } from '../../services/creditreport.service';
-import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { green, grey } from '@material-ui/core/colors';
+import { green } from '@material-ui/core/colors';
+import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
+import CloseIcon from '@material-ui/icons/Close';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
+import { useFormik } from 'formik';
+import { useSnackbar } from 'notistack';
+import React, { useState } from 'react';
+import Select from 'react-select';
+import AsyncSelect from 'react-select/async';
+import * as Yup from 'yup';
+import TextInput from '../../components/TextInput/TextInput';
+import { getDealershipForSearch } from '../../services/common.service';
+import { addCreditReport } from '../../services/creditreport.service';
 const useStyles = makeStyles((theme) => ({
   sidePanelFormWrapper: {
     position: 'relative',
@@ -78,8 +78,8 @@ const useStyles = makeStyles((theme) => ({
   },
   number: {
     backgroundColor: 'white',
-    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
+    '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+      '-webkit-appearance': 'none',
       margin: 0
     }
   },
@@ -106,7 +106,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       // mobile: Yup.number().nullable('Enter mobile number').required("Enter mobile number").test("maxDigits", "Mobile Number mush have 10 digits", (number) => String(number).length === 10),
-      amount: Yup.number().nullable('Enter Amount').required('Enter Amount').moreThan(0, 'Invalid Amount').test("maxDigits", "Request Amount Invalid", (value) => String(value) >= 50000 && String(value) <= 3000000)
+      amount: Yup.number().nullable('Enter Amount').required('Enter Amount').moreThan(0, 'Invalid Amount').test('maxDigits', 'Request Amount Invalid', (value) => String(value) >= 50000 && String(value) <= 3000000)
     }),
     onSubmit: (values) => {
       const d = { ...values, request_source: 'mdm', account_id: accountId?.id }
@@ -244,7 +244,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                             accept="image/jpeg,image/png,application/pdf"
                             onChange={(e) => { onChangeHandler(e, 'proof1') }}
                           />
-                          <label for='proof1'>
+                          <label htmlFor='proof1'>
                             <div style={{
                               border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center'
                             }}>
@@ -254,7 +254,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                                     <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
                                   </>
                                 ) : (
-                                  <label for='proof1' style={{ fontSize: 32, color: 'grey' }}>+</label>
+                                  <label htmlFor='proof1' style={{ fontSize: 32, color: 'grey' }}>+</label>
                                 )
                               }
                             </div>
@@ -279,7 +279,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                                   className={classes.inputFile}
                                   onChange={(e) => { onChangeHandler(e, 'proof2') }}
                                 />
-                                <label for='proof2'>
+                                <label htmlFor='proof2'>
                                   <div style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                     {
                                       values?.proof_2_file ? (
@@ -287,7 +287,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                                           <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
                                         </>
                                       ) : (
-                                        <label for='proof2' style={{ fontSize: 32, color: 'grey' }}>+</label>
+                                        <label htmlFor='proof2' style={{ fontSize: 32, color: 'grey' }}>+</label>
                                       )
                                     }
                                   </div>
@@ -311,7 +311,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                                       className={classes.inputFile}
                                       onChange={(e) => { onChangeHandler(e, 'proof3') }}
                                     />
-                                    <label for='proof3'>
+                                    <label htmlFor='proof3'>
                                       <div style={{ border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                         {
                                           values?.proof_3_file ? (
@@ -319,7 +319,7 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                                               <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
                                             </>
                                           ) : (
-                                            <label for='proof3' style={{ fontSize: 32, color: 'grey' }}>+</label>
+                                            <label htmlFor='proof3' style={{ fontSize: 32, color: 'grey' }}>+</label>
                                           )
                                         }
                                       </div>

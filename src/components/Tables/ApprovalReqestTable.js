@@ -1,18 +1,17 @@
-import React, { useMemo, useState } from 'react';
-import { NavLink as RouterLink } from 'react-router-dom';
-import { makeStyles } from '@material-ui/styles';
-import MUIDataTable from "mui-datatables";
+import { Paper } from '@material-ui/core';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
-import { useMount } from 'react-use';
-// import { createStructuredSelector } from 'reselect';
-import { connect } from 'react-redux';
-import moment from 'moment';
+import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
+import moment from 'moment';
+import MUIDataTable from 'mui-datatables';
+import React, { useMemo, useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import { NavLink as RouterLink } from 'react-router-dom';
+// import { createStructuredSelector } from 'reselect';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
 import Currency from '../Number/Currency';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { Paper } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -41,24 +40,34 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick }) => {
+const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry }) => {
   const [loading, setLoading] = useState(false);
   const classes = useStyles();
+  useEffect(() => {
+    setLoading(true);
+    getLoansByStatus('loan_approval', filterQry)
+      .then(data => {
+        setLoansData('loan_approval', data);
+        setLoading(false);
+      })
+      .catch(e => {
+        setLoading(false);
+      })
+  }, [filterQry])
 
-  useMount(() => {
-    if (!loans || !loans.length) {
-      setLoading(true);
-      getLoansByStatus('loan_approval')
-        .then(data => {
-          setLoansData('loan_approval', data);
-          setLoading(false);
-        })
-        .catch(e => {
-          setLoading(false);
-        })
-    }
-  });
-
+  // useMount(() => {
+  //   if (!loans || !loans.length) {
+  //     setLoading(true);
+  //     getLoansByStatus('loan_approval', filterQry)
+  //       .then(data => {
+  //         setLoansData('loan_approval', data);
+  //         setLoading(false);
+  //       })
+  //       .catch(e => {
+  //         setLoading(false);
+  //       })
+  //   }
+  // });
   const columns = useMemo(() => {
     return [
       {
@@ -82,7 +91,6 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick }) => {
             return <>{value?.toUpperCase()}</>
           },
         }
-
       },
       {
         label: 'Type',
@@ -109,9 +117,9 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick }) => {
         options: {
           filter: false,
           sort: true,
-          setCellProps: () => ({
-            align: 'right',
-          }),
+          // setCellProps: () => ({
+          //   align: 'right',
+          // }),
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }
       },
@@ -131,7 +139,29 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick }) => {
             </div>
           }
         }
-      }
+      },
+      {
+        label: 'Reviewed by',
+        name: 'reviewer',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: (value) => {
+            return <>{value?.toUpperCase() || '-'}</>
+          },
+        }
+      },
+      {
+        label: 'Approver',
+        name: 'approver',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: (value) => {
+            return <>{value?.toUpperCase() || '-'}</>
+          },
+        }
+      },
     ]
   }, []);
 

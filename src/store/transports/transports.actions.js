@@ -1,4 +1,4 @@
-import { TransportsActionTypes } from "./transports.types";
+import { TransportsActionTypes } from './transports.types';
 
 export const setAllTransports = transports => {
   // console.log('setAllTransports >> ', {
@@ -6,7 +6,7 @@ export const setAllTransports = transports => {
   //   payload: transports
   // })
   return ({
-  type: TransportsActionTypes.SET_TRANSPORTS_DATA,
-  payload: transports
-});}
+    type: TransportsActionTypes.SET_TRANSPORTS_DATA,
+    payload: transports
+  });}
 

@@ -1,33 +1,32 @@
-import React, { useState } from "react"
-import { useMount } from "react-use"
-import { makeStyles } from "@material-ui/styles"
-import Box from "@material-ui/core/Box"
-import Grid from "@material-ui/core/Grid"
-import Alert from "@material-ui/lab/Alert"
-import Radio from "@material-ui/core/Radio"
-import RadioGroup from "@material-ui/core/RadioGroup"
-import FormControl from "@material-ui/core/FormControl"
-import FormControlLabel from "@material-ui/core/FormControlLabel"
-import ChevronLeftRoundedIcon from "@material-ui/icons/ChevronLeftRounded"
+import Box from '@material-ui/core/Box'
+import FormControl from '@material-ui/core/FormControl'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import Grid from '@material-ui/core/Grid'
+import Radio from '@material-ui/core/Radio'
+import RadioGroup from '@material-ui/core/RadioGroup'
+import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded'
+import Alert from '@material-ui/lab/Alert'
+import { makeStyles } from '@material-ui/styles'
+import React, { useState } from 'react'
+import Button from '../../../components/CommonComponents/Button/Button'
 import {
   TabPanel,
-} from "../../../components/CommonComponents/Tabs/TabPanel"
+} from '../../../components/CommonComponents/Tabs/TabPanel'
 import TextInput, {
   InputFieldWrapper,
   InputLabel,
-} from "../../../components/TextInput/TextInput"
-import Button from "../../../components/CommonComponents/Button/Button"
+} from '../../../components/TextInput/TextInput'
 
 const useStyles = makeStyles((theme) => ({
   pageTitle: {
     marginBottom: 16
   },
   tabsWrapper: {
-    display: "flex",
+    display: 'flex',
     flexGrow: 1,
   },
   tabs: {
-    borderRight: "none",
+    borderRight: 'none',
     minWidth: 180,
   },
   topSpacing: {
@@ -39,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const inputProps = {
-  direction: "column",
+  direction: 'column',
   alignTop: true,
 }
 
@@ -64,6 +63,7 @@ const SolarEnquiryForm = ({ solarTab, onChangeTab, dealershipId, mainApplicant, 
               </Grid>
               <Grid item md={6}>
                 <TextInput
+                  number
                   {...inputProps}
                   value={mainApplicant?.mobile}
                   labelText="Dealer Phone Number"
@@ -129,6 +129,7 @@ const SolarEnquiryForm = ({ solarTab, onChangeTab, dealershipId, mainApplicant, 
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
+                  number
                   labelText="Pincode"
                   onChange={() => null}
                 />
@@ -185,6 +186,7 @@ const SolarEnquiryForm = ({ solarTab, onChangeTab, dealershipId, mainApplicant, 
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
+                  number
                   labelText="Available Area in Terrace.Sqmtr"
                   onChange={() => null}
                 />

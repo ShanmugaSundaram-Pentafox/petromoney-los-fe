@@ -1,20 +1,19 @@
-import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { useMount } from 'react-use';
-import Drawer from '@material-ui/core/Drawer';
 import Button from '@material-ui/core/Button';
-import { getDealersByDealershipId, getCoApplicantByDealershipId } from '../../../services/dealers.service';
-import CreditInfoSideWrapper from "./CreditInfoSideWrapper";
-import DealerEditSideWrapper from './DealerEditSideWrapper';
+import Drawer from '@material-ui/core/Drawer';
+import { makeStyles } from '@material-ui/core/styles';
+import React, { useState } from 'react';
+import { useMount } from 'react-use';
 import AddIconButon from './AddIcon';
-import DealersTable from './DealersTable';
 import CoApplicantsTable from './CoApplicantsTable';
+import CreditInfoSideWrapper from './CreditInfoSideWrapper';
+import DealerEditSideWrapper from './DealerEditSideWrapper';
+import DealersTable from './DealersTable';
+import GuarantorsTable from './GuarantorsTable';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 // import ExperianReport from './ExperianReport';
-import GuarantorsTable from './GuarantorsTable';
+import { getDealersByDealershipId, getCoApplicantByDealershipId } from '../../../services/dealers.service';
 import { getAllGuarantor } from '../../../services/leegality.service';
-import { get } from 'lodash-es';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {

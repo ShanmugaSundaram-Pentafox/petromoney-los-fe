@@ -1,21 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { useMount } from 'react-use';
-import clsx from 'clsx';
-import { makeStyles } from '@material-ui/styles';
-import { Box, Button, CircularProgress, Divider, FormHelperText, Grid, TextField, Typography } from '@material-ui/core';
+import { Box, Button, Divider, FormHelperText, Grid, Typography } from '@material-ui/core';
+import { green } from '@material-ui/core/colors';
+import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import CloseIcon from '@material-ui/icons/Close';
-import * as Yup from 'yup';
-import CreatableSelect from 'react-select/creatable';
-import { addNewRemarks, getAllWithheldRemarks, updateRemarks } from '../../services/withheld.services';
+import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
-import apiCall from '../../utils/api.util';
-import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import { addCreditReport, creditReloadById } from '../../services/creditreport.service';
+import React, { useState } from 'react';
+import CreatableSelect from 'react-select/creatable';
+import { useMount } from 'react-use';
 import FilePreview, { ViewData } from '../../components/CommonComponents/FilePreview';
 import FormDialog from '../../components/CommonComponents/FormDialog/FormDialog';
-import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
-import { green, grey } from '@material-ui/core/colors';
+import { addCreditReport } from '../../services/creditreport.service';
+import { getAllWithheldRemarks } from '../../services/withheld.services';
 
 
 
@@ -213,77 +211,77 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
                     </div>
                   ) : (
                     <div style={{ display: 'flex', width: '80%', marginLeft: 30}}>
-                    <Grid item md={4}>
-                      <div style={{ width: 125}}>
-                      { 
-                        !rowData?.payment_proof_attachment.proof_1_url?.endsWith('.pdf') ? (
-                          rowData?.payment_proof_attachment?.proof_1_url && (
-                            <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_1_url, type: rowData?.payment_proof_attachment.proof_1_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', width: 120, height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                              <img src={`${rowData?.payment_proof_attachment.proof_1_url}`} height="100%" width="100%" className={classes.image} />
-                            </div> )
-                        ) : (
-                          rowData?.payment_proof_attachment?.proof_1_url && (
-                            <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_1_url, type: rowData?.payment_proof_attachment.proof_1_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', width: 120, height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                              <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
-                            </div>
-                          )
-                        )
-                      }
-                      {
-                        rowData?.payment_proof_attachment.proof_1_url ? (
-                          <h5 style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden' }}>{rowData?.payment_proof_attachment.proof_1_url.split('/')[5]}</h5>
-                        ) : null
-                      }
-                      </div>
-                    </Grid>
-                    <Grid item md={4}>
-                    <div style={{ width: 125}}>
-                      {
-                        !rowData?.payment_proof_attachment.proof_2_url?.endsWith('.pdf') ? (
-                          rowData?.payment_proof_attachment?.proof_2_url && (
-                            <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_2_url, type: rowData?.payment_proof_attachment.proof_2_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', width: 120, height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                              <img src={`${rowData?.payment_proof_attachment.proof_2_url}`} height="100%" width="100%" className={classes.image} />
-                            </div>
-                          )
-                        ) : (
-                          rowData?.payment_proof_attachment?.proof_2_url && (
-                            <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_2_url, type: rowData?.payment_proof_attachment.proof_2_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', width: 120, height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                              <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
-                            </div>
-                          )
-                        )
-                      }
-                      {
-                        rowData?.payment_proof_attachment.proof_2_url ? (
-                          <h5 style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden' }}>{rowData?.payment_proof_attachment.proof_2_url.split('/')[5]}</h5>
-                        ) : null
-                      }
-                    </div>
-                    </Grid>
-                    <Grid item md={4}>
-                    <div style={{ width: 125}}>
-                      {
-                        !rowData?.payment_proof_attachment.proof_3_url?.endsWith('.pdf') ? (
-                          rowData?.payment_proof_attachment?.proof_3_url && (
-                            <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_3_url, type: rowData?.payment_proof_attachment.proof_3_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', width: 120, height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                              <img src={`${rowData?.payment_proof_attachment.proof_3_url}`} height="100%" width="100%" className={classes.image} />
-                            </div>
+                      <Grid item md={4}>
+                        <div style={{ width: 125}}>
+                          { 
+                            !rowData?.payment_proof_attachment.proof_1_url?.endsWith('.pdf') ? (
+                              rowData?.payment_proof_attachment?.proof_1_url && (
+                                <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_1_url, type: rowData?.payment_proof_attachment.proof_1_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', width: 120, height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                  <img src={`${rowData?.payment_proof_attachment.proof_1_url}`} height="100%" width="100%" className={classes.image} />
+                                </div> )
+                            ) : (
+                              rowData?.payment_proof_attachment?.proof_1_url && (
+                                <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_1_url, type: rowData?.payment_proof_attachment.proof_1_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', width: 120, height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                  <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
+                                </div>
+                              )
                             )
-                        ) : (
-                          rowData?.payment_proof_attachment?.proof_2_url && (
-                            <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_3_url, type: rowData?.payment_proof_attachment.proof_3_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', width: 120, height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                              <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
-                            </div>
-                          )
-                        )
-                      }
-                      {
-                        rowData?.payment_proof_attachment.proof_3_url ? (
-                          <h5 style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden' }}>{rowData?.payment_proof_attachment.proof_3_url.split('/')[5]}</h5>
-                        ) : null
-                      }
-                      </div>
-                    </Grid>
+                          }
+                          {
+                            rowData?.payment_proof_attachment.proof_1_url ? (
+                              <h5 style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden' }}>{rowData?.payment_proof_attachment.proof_1_url.split('/')[5]}</h5>
+                            ) : null
+                          }
+                        </div>
+                      </Grid>
+                      <Grid item md={4}>
+                        <div style={{ width: 125}}>
+                          {
+                            !rowData?.payment_proof_attachment.proof_2_url?.endsWith('.pdf') ? (
+                              rowData?.payment_proof_attachment?.proof_2_url && (
+                                <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_2_url, type: rowData?.payment_proof_attachment.proof_2_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', width: 120, height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                  <img src={`${rowData?.payment_proof_attachment.proof_2_url}`} height="100%" width="100%" className={classes.image} />
+                                </div>
+                              )
+                            ) : (
+                              rowData?.payment_proof_attachment?.proof_2_url && (
+                                <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_2_url, type: rowData?.payment_proof_attachment.proof_2_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', width: 120, height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                  <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
+                                </div>
+                              )
+                            )
+                          }
+                          {
+                            rowData?.payment_proof_attachment.proof_2_url ? (
+                              <h5 style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden' }}>{rowData?.payment_proof_attachment.proof_2_url.split('/')[5]}</h5>
+                            ) : null
+                          }
+                        </div>
+                      </Grid>
+                      <Grid item md={4}>
+                        <div style={{ width: 125}}>
+                          {
+                            !rowData?.payment_proof_attachment.proof_3_url?.endsWith('.pdf') ? (
+                              rowData?.payment_proof_attachment?.proof_3_url && (
+                                <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_3_url, type: rowData?.payment_proof_attachment.proof_3_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', width: 120, height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                  <img src={`${rowData?.payment_proof_attachment.proof_3_url}`} height="100%" width="100%" className={classes.image} />
+                                </div>
+                              )
+                            ) : (
+                              rowData?.payment_proof_attachment?.proof_2_url && (
+                                <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_3_url, type: rowData?.payment_proof_attachment.proof_3_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', width: 120, height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                  <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
+                                </div>
+                              )
+                            )
+                          }
+                          {
+                            rowData?.payment_proof_attachment.proof_3_url ? (
+                              <h5 style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden' }}>{rowData?.payment_proof_attachment.proof_3_url.split('/')[5]}</h5>
+                            ) : null
+                          }
+                        </div>
+                      </Grid>
                     </div>
                   )
                 }
@@ -333,15 +331,15 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
                 >
                   Decline
                 </Button>
-                    <Button
-                      variant='contained'
-                      type='submit'
-                      color='primary'
-                      onClick={disburseSubmit}
-                      className={clsx(classes.btn, classes.editButton)}
-                    >
-                      Disburse
-                    </Button>
+                <Button
+                  variant='contained'
+                  type='submit'
+                  color='primary'
+                  onClick={disburseSubmit}
+                  className={clsx(classes.btn, classes.editButton)}
+                >
+                  Disburse
+                </Button>
                 {/* {
                   disburseLoading ? (
                     <CircularProgress size={20} />

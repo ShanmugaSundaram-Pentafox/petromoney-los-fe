@@ -1,7 +1,6 @@
-import React from "react";
-import PropTypes from 'prop-types';
-import styled from "styled-components";
 import SearchIcon from '@material-ui/icons/Search';
+import React from 'react';
+import styled from 'styled-components';
 
 
 const SearchboxWrapper = styled.div`
@@ -58,15 +57,15 @@ const SearchboxWrapper = styled.div`
 `;
 
 export const Searchbox = () => {
-    return (
-        <SearchboxWrapper>
-            <span className="search-icon-wrapper">
-                <SearchIcon className="search-icon" />
-            </span>
+  return (
+    <SearchboxWrapper>
+      <span className="search-icon-wrapper">
+        <SearchIcon className="search-icon" />
+      </span>
 
-            <input placeholder="Search..." type="text" className="form-control" />
-        </SearchboxWrapper>
-    );
+      <input placeholder="Search..." type="text" className="form-control" />
+    </SearchboxWrapper>
+  );
 };
 
 Searchbox.propTypes = {

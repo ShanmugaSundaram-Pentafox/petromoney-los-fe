@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
+import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import TextInput from '../../../components/TextInput/TextInput';
-import Button from '../../../components/CommonComponents/Button/Button';
-import * as Yup from 'yup';
-import { useFormik } from 'formik';
-import clsx from 'clsx';
-import Divider from '@material-ui/core/Divider';
-import { makeStyles } from "@material-ui/styles";
-import CloseIcon from '@material-ui/icons/Close';
 import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
+import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import { useMount } from 'react-use';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
+import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
-import { getBankDetailsbyID, updateBankDetailsByID } from '../../../services/PDReport.services';
+import React, { useState } from 'react';
+import { useMount } from 'react-use';
+import * as Yup from 'yup';
 import BankDetailsCard from './Components/BankDetailsCard';
+import Button from '../../../components/CommonComponents/Button/Button';
+import TextInput from '../../../components/TextInput/TextInput';
 import { URL } from '../../../config/serverUrls';
+import { getBankDetailsbyID, updateBankDetailsByID } from '../../../services/PDReport.services';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -102,19 +102,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 12,
     textAlign: 'center'
   },
-  number: {
-    backgroundColor: 'white',
-    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0,
-    }
-  },
-  input: {
-    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0,
-    }
-  }
 }))
 
 const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => {
@@ -147,7 +134,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      ifsc: Yup.string().required("Enter IFSC code").nullable('Enter IFSC code').matches(/^[A-Za-z]{4}0[A-Z0-9]{6}$/, 'Enter valid IFSC'),
+      ifsc: Yup.string().required('Enter IFSC code').nullable('Enter IFSC code').matches(/^[A-Za-z]{4}0[A-Z0-9]{6}$/, 'Enter valid IFSC'),
       account_name: Yup.string('Enter valid name').nullable('Enter Account Holder name').required('Enter Account holder name'),
       bank_name: Yup.string('Enter valid name').nullable('Enter bank name').required('Enter name'),
       account_no: Yup.number().nullable('Enter account number').required('Enter account number'),
@@ -189,34 +176,34 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
   const currentYearDiff = date.getFullYear() - 1970;
 
   const inputProps = {
-    direction: "column",
+    direction: 'column',
     alignTop: true,
     onChange: handleChange,
   }
 
   const onChangeIFSC = e => {
     if (/^[A-Za-z]{4}0[A-Za-z0-9]{6}$/.test(e.target.value)) {
-        fetch(`${URL.ifscApiUrl}${e.target.value}`)
-          .then(res => {
-            return res.json()
-          })
-          .then(data => {
-            if (data.BANK) {
-              setValues({
-                ...values,
-                ifsc: data.IFSC,
-                bank_name: data.BANK,
-                bank_branch: data.BRANCH,
-                bank_city: data.CITY
-              })
-            } else {
-              console.log(data)
-            }
-          })
-          .catch(err => {
-            console.log('GET IFSC DATA ERR >> ', err)
-          })
-    } 
+      fetch(`${URL.ifscApiUrl}${e.target.value}`)
+        .then(res => {
+          return res.json()
+        })
+        .then(data => {
+          if (data.BANK) {
+            setValues({
+              ...values,
+              ifsc: data.IFSC,
+              bank_name: data.BANK,
+              bank_branch: data.BRANCH,
+              bank_city: data.CITY
+            })
+          } else {
+            console.log(data)
+          }
+        })
+        .catch(err => {
+          console.log('GET IFSC DATA ERR >> ', err)
+        })
+    }
     // else 
     // {
     //   if (value.length >= 10){
@@ -275,15 +262,12 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
+                      number
                       labelText="Account Number"
                       name="account_no"
-                      type="number"
                       value={values.account_no}
                       error={errors.account_no}
                       helperText={errors.account_no}
-                      className={classes.number}
-                      inputProps={{ className: classes.input }}
-                      type='number'
                     />
                   </Grid>
                   <Grid item md={6}>
@@ -353,15 +337,13 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
                     <TextInput
                       {...inputProps}
                       money
+                      number
                       labelText="Transaction Limit"
                       name="transaction_limit"
                       type="number"
                       value={values.transaction_limit}
                       error={errors.transaction_limit}
                       helperText={errors.transaction_limit}
-                      className={classes.number}
-                      inputProps={{ className: classes.input }}
-                      type='number'
                     />
                   </Grid>
                   <Grid item md={6}>

@@ -1,4 +1,4 @@
-import { TransportsActionTypes } from "./transports.types";
+import { TransportsActionTypes } from './transports.types';
 
 const INITIAL_STATE = {
   all: []
@@ -7,12 +7,12 @@ const INITIAL_STATE = {
 export const transportsReducer = (state = INITIAL_STATE, action) => {
   // console.log('Reducer >> ', action)
   switch(action.type) {
-    case TransportsActionTypes.SET_TRANSPORTS_DATA:
-      return {  
-        ...state,
-        all: action.payload
-      }
-    default:
-      return state;
+  case TransportsActionTypes.SET_TRANSPORTS_DATA:
+    return {  
+      ...state,
+      all: action.payload
+    }
+  default:
+    return state;
   }
 }

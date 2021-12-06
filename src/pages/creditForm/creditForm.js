@@ -1,17 +1,17 @@
-import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import Stepper from '@material-ui/core/Stepper';
-import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
-import StepContent from '@material-ui/core/StepContent';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
+import Step from '@material-ui/core/Step';
+import StepContent from '@material-ui/core/StepContent';
+import StepLabel from '@material-ui/core/StepLabel';
+import Stepper from '@material-ui/core/Stepper';
+import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import React, { Component } from 'react';
 import CreditInfoCard from './components/CreditInfoCard';
-import { getDealersCreditInfo, getDealershipCreditReportData, saveDealershipCreditReportData } from '../../services/creditreport.service';
-import { getAllApplicantsByDealershipId } from '../../services/dealers.service';
 import FinanceInfo from './components/FinanceInfo';
 import ScoreCardInfo from './components/ScoreCardInfo';
+import { getDealersCreditInfo, getDealershipCreditReportData, saveDealershipCreditReportData } from '../../services/creditreport.service';
+import { getAllApplicantsByDealershipId } from '../../services/dealers.service';
 
 const withStylesHOC = withStyles(theme => ({
   root: {
@@ -39,10 +39,10 @@ const withStylesHOC = withStyles(theme => ({
 }));
 
 const steps = [
-  "Credit Info",
-  "Financials",
-  "Score Card & Bank Statement",
-  "Remarks"
+  'Credit Info',
+  'Financials',
+  'Score Card & Bank Statement',
+  'Remarks'
 ];
 
 const validateCreditInfo = (applicants, creditInfoData) => {
@@ -51,14 +51,14 @@ const validateCreditInfo = (applicants, creditInfoData) => {
 
 const validateCreditReport = (reportData, type) => {
   switch(type) {
-    case steps[1]:
-      break;
-    case steps[2]:
-      break;
-    case steps[3]:
-      break;
-    default:
-      return false;
+  case steps[1]:
+    break;
+  case steps[2]:
+    break;
+  case steps[3]:
+    break;
+  default:
+    return false;
   }
   return true;
 }
@@ -149,22 +149,22 @@ class CreditForm extends Component {
     const { activeStep } = this.state;
     let isValid = false;
     switch(activeStep) {
-      case 0:
-        isValid = validateCreditInfo(this.state.applicants, this.state.creditInfoData);
-        break;
-      case 1:
-      case 2:
-      case 3:
-        const { id } = this.props.match.params;
-        const objBody = {
-          user_id: this.props.currentUser.id, ...this.state.reportData
-        }
-        isValid = await saveDealershipCreditReportData(id, objBody);
-        // isValid = validateCreditReport(this.state.reportData, steps[activeStep]);
-        break;
-      default:
-        isValid = false;
-        break;
+    case 0:
+      isValid = validateCreditInfo(this.state.applicants, this.state.creditInfoData);
+      break;
+    case 1:
+    case 2:
+    case 3:
+      const { id } = this.props.match.params;
+      const objBody = {
+        user_id: this.props.currentUser.id, ...this.state.reportData
+      }
+      isValid = await saveDealershipCreditReportData(id, objBody);
+      // isValid = validateCreditReport(this.state.reportData, steps[activeStep]);
+      break;
+    default:
+      isValid = false;
+      break;
     }
     
     if(isValid) {
@@ -199,21 +199,21 @@ class CreditForm extends Component {
                       applicants={applicants}
                       updateCreditData={this.updateCreditData}
                       currentUser={currentUser}
-                      />)
+                    />)
                 }
                 {
                   index === 1 && (
                     <FinanceInfo
                       data={reportData}
                       onChange={this.updateReportData}
-                      />)
+                    />)
                 }
                 {
                   index === 2 && (
                     <ScoreCardInfo
                       data={reportData}
                       onChange={this.updateReportData}
-                      />)
+                    />)
                 }
                 <div className={classes.actionsContainer}>
                   <div>

@@ -1,9 +1,9 @@
-import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Avatar, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/styles';
-import { Avatar, Typography } from '@material-ui/core';
+import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
   root: {

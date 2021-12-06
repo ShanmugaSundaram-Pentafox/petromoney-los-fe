@@ -1,13 +1,13 @@
-import React, { useMemo, useState } from 'react';
 // import { useMount } from 'react-use';
-import { Grid } from "@material-ui/core";
-import usePageTitle from '../../hooks/usePageTitle';
-import styled from 'styled-components';
+import { Grid } from '@material-ui/core';
 import { Box } from '@material-ui/core';
 // import { getAllWithheldLoans } from '../../services/withheld.services';
-import UnresolvedTable from './UnResolvedTable';
-import ResolvedTable from './ResolvedTable';
 import { Badge } from '@material-ui/core';
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import ResolvedTable from './ResolvedTable';
+import UnresolvedTable from './UnResolvedTable';
+import usePageTitle from '../../hooks/usePageTitle';
 
 
 const PaperWrapper = styled.div`
@@ -29,7 +29,7 @@ const BlacklistTable = () => {
   // const [loading, setLoading] = useState(false);
   const [resolvedData, setResolvedData] = useState([])
   const [unresolvedData, setUnresolvedData] = useState([])
-  const [selectedTab, setSelectedTab] = useState("unresolved");
+  const [selectedTab, setSelectedTab] = useState('unresolved');
   usePageTitle('Withheld loan', true)
 
   // useMount(() => {
@@ -49,12 +49,12 @@ const BlacklistTable = () => {
       <PaperWrapper>
         <Box borderRadius={4} bgcolor="background.paper">
           <Grid container>
-            <Grid onClick={() => { setSelectedTab("unresolved") }} style={{ textAlign: 'center', padding: 16, borderRight: '1px dashed gray' }} className={selectedTab === "unresolved" ? ' ' : 'active'} item md={6}>
+            <Grid onClick={() => { setSelectedTab('unresolved')}} style={{ textAlign: 'center', padding: 16, borderRight: '1px dashed gray' }} className={selectedTab === 'unresolved' ? ' ' : 'active'} item md={6}>
               <Badge badgeContent={unresolvedData?.length} style={{ paddingTop: 4, paddingRight: 8 }} color="primary">
                 <div>Unresolved</div>
               </Badge>
             </Grid>
-            <Grid onClick={() => { setSelectedTab("resolved") }} className={selectedTab === "resolved" ? ' ' : 'active'} style={{ textAlign: 'center', padding: 16 }} item md={6}>
+            <Grid onClick={() => { setSelectedTab('resolved') }} className={selectedTab === 'resolved' ? ' ' : 'active'} style={{ textAlign: 'center', padding: 16 }} item md={6}>
               <Badge badgeContent={resolvedData?.length} style={{ paddingTop: 4, paddingRight: 8 }} color="primary">
                 <div>Resolved</div>
               </Badge>
@@ -63,7 +63,7 @@ const BlacklistTable = () => {
         </Box>
       </PaperWrapper>
       {
-        selectedTab === "unresolved" ? <UnresolvedTable /> : <ResolvedTable />
+        selectedTab === 'unresolved' ? <UnresolvedTable /> : <ResolvedTable />
       }
     </>
   )

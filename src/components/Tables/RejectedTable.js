@@ -1,18 +1,17 @@
-import React, { useMemo, useState } from 'react';
-import { NavLink as RouterLink } from 'react-router-dom';
-import { makeStyles } from '@material-ui/styles';
-import MUIDataTable from "mui-datatables";
-import Typography from '@material-ui/core/Typography';
-import { useMount } from 'react-use';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Paper from '@material-ui/core/Paper';
-// import { createStructuredSelector } from 'reselect';
-import { connect } from 'react-redux';
-import moment from 'moment';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
+import moment from 'moment';
+import MUIDataTable from 'mui-datatables';
+import React, { useMemo, useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import { NavLink as RouterLink } from 'react-router-dom';
+// import { createStructuredSelector } from 'reselect';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
 import Currency from '../Number/Currency';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -41,23 +40,35 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const RejectedTable = ({ title, loans, setLoansData, onRowClick }) => {
+const RejectedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
 
-  useMount(() => {
-    if (!loans || !loans.length) {
-      setLoading(true);
-      getLoansByStatus('rejected')
-        .then(data => {
-          setLoansData('rejected', data);
-          setLoading(false);
-        })
-        .catch(e => {
-          setLoading(false);
-        })
-    }
-  });
+  useEffect(() => {
+    setLoading(true);
+    getLoansByStatus('rejected', filterQry)
+      .then(data => {
+        setLoansData('rejected', data);
+        setLoading(false);
+      })
+      .catch(e => {
+        setLoading(false);
+      })
+  }, [filterQry])
+
+  // useMount(() => {
+  //   if (!loans || !loans.length) {
+  //     setLoading(true);
+  //     getLoansByStatus('rejected')
+  //       .then(data => {
+  //         setLoansData('rejected', data);
+  //         setLoading(false);
+  //       })
+  //       .catch(e => {
+  //         setLoading(false);
+  //       })
+  //   }
+  // });
 
   const columns = useMemo(() => {
     return [

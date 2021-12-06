@@ -1,14 +1,13 @@
-import { Badge, Button, Paper, Typography } from '@material-ui/core'
-import { makeStyles } from "@material-ui/core/styles";
-import React, { useState } from 'react';
+import { Badge, Button, Typography } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
-import Divider from '@material-ui/core/Divider';
-import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
-import ListAltIcon from '@material-ui/icons/ListAlt';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import AddIcon from '@material-ui/icons/Add';
-import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import ListAltIcon from '@material-ui/icons/ListAlt';
+import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
+import React, { useState } from 'react';
 import FilePreview from '../../../components/CommonComponents/FilePreview';
+import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 
 const imgFileTypes = ['jfif', 'pjpeg', 'jpeg', 'pjp', 'jpg', 'png'];
 const csvFileTypes = ['csv', 'xls', 'xlsx'];

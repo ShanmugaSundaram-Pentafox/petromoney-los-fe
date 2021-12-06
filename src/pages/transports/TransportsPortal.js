@@ -1,17 +1,15 @@
-import React, { useState } from 'react';
+import { Drawer } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
-import TransportTable from '../transports/components/TransportsTable';
-import usePageTitle from '../../hooks/usePageTitle';
-import VehiclesLoanTable from './components/VehiclesLoanTable';
-import { Drawer } from "@material-ui/core";
+import React, { useState } from 'react';
+import { Redirect } from 'react-router';
+import AddNewTransportsForm from './components/AddNewTransportsForm';
 import { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
-import DealerTransportsTable from './components/DealerTransportsTable';
-import AddNewTransportsForm from './components/AddNewTransportsForm';
-import { Redirect, Route } from 'react-router';
+import usePageTitle from '../../hooks/usePageTitle';
+import TransportTable from '../transports/components/TransportsTable';
 
 const TransportsPortal = ({ currentUser }) => {
-    console.log(currentUser);
+  console.log(currentUser);
   usePageTitle('Transports');
   const [openModal, setOpenModal] = useState(false);
   const [rowData, setRowData] = useState({})
@@ -39,13 +37,13 @@ const TransportsPortal = ({ currentUser }) => {
     <Grid container spacing={2}>
       {
         currentUser?.transporters ? (
-            <>
-              <Grid item sm={12} md={9}>
-                <TransportTable onRowClick={showEditForm} portal={true} transporterId={currentUser.transporters[0].t_owner_id}/>
-              </Grid>
-            </>
-          ):(
-            <Redirect to={`/transports/${currentUser?.id}`} />
+          <>
+            <Grid item sm={12} md={9}>
+              <TransportTable onRowClick={showEditForm} portal={true} transporterId={currentUser.transporters[0].t_owner_id}/>
+            </Grid>
+          </>
+        ):(
+          <Redirect to={`/transports/${currentUser?.id}`} />
         )
       }
       <Drawer
@@ -53,9 +51,9 @@ const TransportsPortal = ({ currentUser }) => {
         open={openModal}
         onClose={() => setOpenModal(false)}
         variant="temporary"
-        >
-            <AddNewTransportsForm title= {'Edit Transport Details Form'} currentUser={currentUser} id={rowData.t_owner_id} callback={handleClose} data={rowData} />
-        </Drawer>
+      >
+        <AddNewTransportsForm title= {'Edit Transport Details Form'} currentUser={currentUser} id={rowData.t_owner_id} callback={handleClose} data={rowData} />
+      </Drawer>
 
     </Grid>
   );

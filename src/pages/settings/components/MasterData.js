@@ -1,51 +1,51 @@
+import { Drawer, Grid, Paper, Tooltip, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import React, {useState} from 'react';
 import Contain from './MasterDataTable';
-import { ReactComponent as BunkIcon } from '../../../icons/bunk.svg';
 import { ReactComponent as AssetIcon } from '../../../icons/assets.svg';
-import { ReactComponent as LoanIcon } from '../../../icons/loan.svg';
+import { ReactComponent as BunkIcon } from '../../../icons/bunk.svg';
 import { ReactComponent as BusinessIcon } from '../../../icons/business.svg';
-import { ReactComponent as OtherIcon } from '../../../icons/other_icons.svg';
 import { ReactComponent as InfrastructureIcon } from '../../../icons/infrastructure.svg';
-import { Drawer, Grid, Paper, Tooltip, Typography } from '@material-ui/core';
+import { ReactComponent as LoanIcon } from '../../../icons/loan.svg';
+import { ReactComponent as OtherIcon } from '../../../icons/other_icons.svg';
 
 const useStyles = makeStyles({
-    root: {
-      display: 'flex',
-      marginTop: 4,
-      flexGrow: 1,
-      justifyContent: 'center'
+  root: {
+    display: 'flex',
+    marginTop: 4,
+    flexGrow: 1,
+    justifyContent: 'center'
+  },
+  title: {
+    fontSize: 12,
+    // paddingLeft: 8,
+    marginBottom: 8
+  },
+  content: {
+    textAlign: 'center',
+    marginBottom: 10,
+    borderRadius: 6,
+    paddingTop: 16,
+    paddingBottom: 12,
+    cursor: 'pointer',
+    transition: 'all 0.35s',
+    '&:hover': {
+      backgroundColor: '#e6e6e6',
     },
-    title: {
-      fontSize: 12,
-      // paddingLeft: 8,
-      marginBottom: 8
-    },
-    content: {
-      textAlign: 'center',
-      marginBottom: 10,
-      borderRadius: 6,
-      paddingTop: 16,
-      paddingBottom: 12,
-      cursor: 'pointer',
-      transition: 'all 0.35s',
-      '&:hover': {
-        backgroundColor: '#e6e6e6',
-      },
-    },
-    icons: {
-      // textAlign: 'center',
-    },
-    header: {
-      display: 'flex',
-      marginBottom: 10,
-      marginLeft: 20,
-      marginTop: 15
-    },
-    WrapperTitle: {
-      fontSize: 18,
-      marginBottom: 12
-    },
+  },
+  icons: {
+    // textAlign: 'center',
+  },
+  header: {
+    display: 'flex',
+    marginBottom: 10,
+    marginLeft: 20,
+    marginTop: 15
+  },
+  WrapperTitle: {
+    fontSize: 18,
+    marginBottom: 12
+  },
 })
 
 function MasterData() {

@@ -1,20 +1,20 @@
-import React, { useMemo, useState } from 'react';
-import { makeStyles } from "@material-ui/styles";
-import { Grid } from "@material-ui/core";
-import MUIDataTable from "mui-datatables";
-import Typography from "@material-ui/core/Typography";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import { Paper } from "@material-ui/core"; import Button from '../../components/CommonComponents/Button/Button';
+import { Grid } from '@material-ui/core';
+import { Paper } from '@material-ui/core';import { Tooltip } from '@material-ui/core';
+import { Drawer } from '@material-ui/core';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { green } from '@material-ui/core/colors';
+import Typography from '@material-ui/core/Typography';
 import { DeleteOutlineRounded } from '@material-ui/icons';
 import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
-import { Tooltip } from '@material-ui/core';
-import { Drawer } from "@material-ui/core";
-import { green } from '@material-ui/core/colors';
-import AddBlackListForm from './AddBlackListForm';
-import { deleteRemarks, getAllWithheldLoans, resolveRemarks } from '../../services/withheld.services';
+import { makeStyles } from '@material-ui/styles';
+import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
+import React, { useMemo, useState } from 'react';
 import { useMount } from 'react-use';
+import AddBlackListForm from './AddBlackListForm';
+import Button from '../../components/CommonComponents/Button/Button';
 import { getAllDealership } from '../../services/dealerships.service';
+import { deleteRemarks, getAllWithheldLoans, resolveRemarks } from '../../services/withheld.services';
 
 
 
@@ -114,8 +114,8 @@ const UnresolvedTable = () => {
   const columns = useMemo(() => {
     return [
       {
-        label: "Dealership ID",
-        name: "id",
+        label: 'Dealership ID',
+        name: 'id',
         options: {
           filter: true,
           sort: true,
@@ -125,8 +125,8 @@ const UnresolvedTable = () => {
         },
       },
       {
-        label: "Name",
-        name: "name",
+        label: 'Name',
+        name: 'name',
         options: {
           filter: true,
           sort: true,
@@ -136,16 +136,16 @@ const UnresolvedTable = () => {
         },
       },
       {
-        label: "Region",
-        name: "region",
+        label: 'Region',
+        name: 'region',
         options: {
           filter: true,
           sort: true,
         },
       },
       {
-        label: "Remarks",
-        name: "remarks",
+        label: 'Remarks',
+        name: 'remarks',
         options: {
           filter: false,
           sort: true,
@@ -165,7 +165,7 @@ const UnresolvedTable = () => {
                     </div>
                     <div onClick={() => { handleDelete(remark.id) }} style={{ marginLeft: 12 }}>
                       <Tooltip title='Click to delete'>
-                        <DeleteOutlineRounded style={{ color: "#ff6666" }} fontSize={'small'} />
+                        <DeleteOutlineRounded style={{ color: '#ff6666' }} fontSize={'small'} />
                       </Tooltip>
                     </div>
                   </div>
@@ -180,7 +180,7 @@ const UnresolvedTable = () => {
   const options = {
     // filterType: 'checkbox',
     selectableRowsHeader: false,
-    selectableRows: "none",
+    selectableRows: 'none',
     rowsPerPage: 10,
     viewColumns: false,
     print: false,
@@ -197,8 +197,26 @@ const UnresolvedTable = () => {
           Add
         </Button>
       );
+    },
+    onDownload: (buildHead, buildBody, columns, data) => {
+      let Data = () => {
+        let array = []
+        data.map((item, index) => {
+          let buffer = []
+          item.data.map((data, i) => {
+            if(typeof(data) !== 'object'){
+              buffer.push(data)
+            } else {
+              let est = data.map((obj, num) => Object.values(obj)[2])
+              buffer.push(est.toString())
+            }
+          })
+          array.push({index: index, data: buffer})
+        })
+        return array
+      }
+      return '\uFEFF' + buildHead(columns) + buildBody(Data())
     }
-
   }
 
   return (

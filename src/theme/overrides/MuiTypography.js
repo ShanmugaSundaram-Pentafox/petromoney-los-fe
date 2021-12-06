@@ -1,4 +1,4 @@
-import typography from "../typography";
+import typography from '../typography';
 
 export default {
   fontWeightMedium: 600,

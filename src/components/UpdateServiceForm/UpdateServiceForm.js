@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
-import Alert from "@material-ui/lab/Alert"
 import Typography from '@material-ui/core/Typography';
-import TextInput from '../TextInput/TextInput';
-import Button from '../CommonComponents/Button/Button';
-import { useMount } from 'react-use';
-import FileUpload from '../FileUpload';
+import Alert from '@material-ui/lab/Alert'
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import Button from '../CommonComponents/Button/Button';
+import FileUpload from '../FileUpload';
+import TextInput from '../TextInput/TextInput';
 
 const OrderedList = styled.ol`
   li {
@@ -27,7 +26,7 @@ const UpdateServiceForm = ({ data, callback }) => {
   const [concentLetterStatus, setConcentLetterStatus] = useState(false);
 
   const inputProps = {
-    direction: "column",
+    direction: 'column',
     alignTop: true,
   }
 

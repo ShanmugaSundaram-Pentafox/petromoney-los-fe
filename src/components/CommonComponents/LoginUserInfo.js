@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
 import PropTypes from 'prop-types';
-import styled, { css } from "styled-components";
+import React, { useEffect, useRef, useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
+import styled, { css } from 'styled-components';
 
 
 const LoginUserInfoWrapper = styled.div`
@@ -110,48 +110,48 @@ const LoginUserInfoWrapper = styled.div`
 `;
 
 export const LoginUserInfo = ({
-    open = false,
-    user,
-    logout
+  open = false,
+  user,
+  logout
 }) => {
-    const [show, setShow] = useState();
-    let ref = useRef();
-    useEffect(() => {
-        let handler = (event) => {
-            if (!ref.current.contains(event.target)) {
-                setShow(false);
-            }
-        }
-        document.addEventListener("mousedown", handler);
-        return () => {
-            document.removeEventListener("mousedown", handler);
-        }
-    });
-    return (
-        <LoginUserInfoWrapper open={show} ref={ref} onClick={() => setShow(!show)}>
-            <p>
-                {user.first_name}
-                {/* <span>{user.mobile}</span> */}
-            </p>
-            {/* user image style */}
-            {/* <img src="https://i.imgur.com/JBj1jMv.png" alt="user-img" /> */}
+  const [show, setShow] = useState();
+  let ref = useRef();
+  useEffect(() => {
+    let handler = (event) => {
+      if (!ref.current.contains(event.target)) {
+        setShow(false);
+      }
+    }
+    document.addEventListener('mousedown', handler);
+    return () => {
+      document.removeEventListener('mousedown', handler);
+    }
+  });
+  return (
+    <LoginUserInfoWrapper open={show} ref={ref} onClick={() => setShow(!show)}>
+      <p>
+        {user.first_name}
+        {/* <span>{user.mobile}</span> */}
+      </p>
+      {/* user image style */}
+      {/* <img src="https://i.imgur.com/JBj1jMv.png" alt="user-img" /> */}
 
-            {/* user initials style */}
-            <div className="user-initials-wrapper">
-                <span className="user-initials">{user.first_name?.charAt(0)}</span>
-                <i className="caret"></i>
-            </div>
+      {/* user initials style */}
+      <div className="user-initials-wrapper">
+        <span className="user-initials">{user.first_name?.charAt(0)}</span>
+        <i className="caret"></i>
+      </div>
 
-            <div className="header-dropdown">
-                <RouterLink to={'/profile'}><span>Profile</span></RouterLink>
-                <span onClick={logout}>Logout</span>
-            </div>
-        </LoginUserInfoWrapper>
-    );
+      <div className="header-dropdown">
+        <RouterLink to={'/profile'}><span>Profile</span></RouterLink>
+        <span onClick={logout}>Logout</span>
+      </div>
+    </LoginUserInfoWrapper>
+  );
 };
 
 LoginUserInfo.propTypes = {
-    open: PropTypes.bool
+  open: PropTypes.bool
 };
 
 export default LoginUserInfo;

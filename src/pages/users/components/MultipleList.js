@@ -1,17 +1,17 @@
-import React, { useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
+import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import Checkbox from '@material-ui/core/Checkbox';
-import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
-import Box from '@material-ui/core/Box';
+import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import React, { useEffect } from 'react';
 import { useMount } from 'react-use';
-import { regionDel, regionMapAdd, regionMapUser, regionUserMap } from '../../../services/users.service';
+import { regionDel, regionMapAdd, regionMapUser } from '../../../services/users.service';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function not(a, b) {
-    return a.filter((value) => b.indexOf(value) === -1);
+  return a.filter((value) => b.indexOf(value) === -1);
 }
 
 function intersection(a, b) {
@@ -37,11 +37,11 @@ function intersection(a, b) {
 }
 
 function nots(a, b) {
-    return a.filter((value) => b.includes(value['region']) );
+  return a.filter((value) => b.includes(value['region']) );
 }
 
 function notsf(a, b) {
-    return a.filter((value) => !b.includes(value['region']) );
+  return a.filter((value) => !b.includes(value['region']) );
 }
 
 export default function TransferList(props) {
@@ -72,17 +72,17 @@ export default function TransferList(props) {
   };
   useMount(() => { 
     regionMapUser(props.userId)
-        .then(data => {
-            setMapped(data)
-        })
-        .catch(e => {
-            console.log(e);
-        })
-})
+      .then(data => {
+        setMapped(data)
+      })
+      .catch(e => {
+        console.log(e);
+      })
+  })
   useEffect(() => { 
     var vv=[];
     for( var i in mapped){
-        vv.push(mapped[i].region)
+      vv.push(mapped[i].region)
     }
     
     setLeft (notsf(props.region,vv) )
@@ -91,8 +91,8 @@ export default function TransferList(props) {
 
   const handleCheckedRight = () => { 
     checked.filter((value) =>{
-        regionMapAdd(props.userId,value.region)
-        console.log(value.region,props.userId) 
+      regionMapAdd(props.userId,value.region)
+      console.log(value.region,props.userId) 
     })
     setRight(right.concat(leftChecked));
     setLeft(not(left, leftChecked));
@@ -101,8 +101,8 @@ export default function TransferList(props) {
 
   const handleCheckedLeft = () => { 
     checked.filter((value) => {
-        console.log(value.region,props.userId)
-        regionDel(props.userId,value.region)
+      console.log(value.region,props.userId)
+      regionDel(props.userId,value.region)
     }) 
     setLeft(left.concat(rightChecked));
     setRight(not(right, rightChecked));
@@ -136,7 +136,7 @@ export default function TransferList(props) {
   );
 
   return (
-    <Box my={2} p={2} borderRadius={4} bgcolor={"#fafafa"}>
+    <Box my={2} p={2} borderRadius={4} bgcolor={'#fafafa'}>
       <Typography variant="h5" component="h5">Map User Regions</Typography>
       {/* <p>Select regions from left side panel and move right to map and vice versa.</p> */}
       <Grid container spacing={2} className={classes.root}>

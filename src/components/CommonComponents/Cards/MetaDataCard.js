@@ -1,10 +1,10 @@
-import React from "react";
-import PropTypes from 'prop-types';
-import styled from "styled-components";
 import { makeStyles } from '@material-ui/core/styles';
-import DoneIcon from '@material-ui/icons/Done';
 import CachedIcon from '@material-ui/icons/Cached';
+import DoneIcon from '@material-ui/icons/Done';
 import PriorityHighIcon from '@material-ui/icons/PriorityHigh';
+import PropTypes from 'prop-types';
+import React from 'react';
+import styled from 'styled-components';
 
 export const MetaDataCardWrapper = styled.div`
     display: flex;
@@ -60,37 +60,37 @@ export const MetaDataCardWrapper = styled.div`
 `;
 
 const useStyles = makeStyles((theme) => ({
-    icon: {
-        color: '#FFFFFF',
-        fontSize: '16px',
-        marginLeft: '4px'
-    }
+  icon: {
+    color: '#FFFFFF',
+    fontSize: '16px',
+    marginLeft: '4px'
+  }
 }));
 
 const MetaDataCard = ({
-    cardText= "Lorem Ipsum",
-    done= false,
-    inprocess= false,
-    pending= false
+  cardText= 'Lorem Ipsum',
+  done= false,
+  inprocess= false,
+  pending= false
 }) => {
-    const classes = useStyles();
+  const classes = useStyles();
 
-    return (
-        <MetaDataCardWrapper>
-            <span className="text">{cardText}</span>
+  return (
+    <MetaDataCardWrapper>
+      <span className="text">{cardText}</span>
             
-            {done ? <span className="pill">Done <DoneIcon className={classes.icon} /></span> : null}
-            {inprocess ? <span className="pill inprocess">Inprocess <CachedIcon className={classes.icon} /></span> : null}
-            {pending ? <span className="pill pending">Pending <PriorityHighIcon className={classes.icon} /></span> : null}
-        </MetaDataCardWrapper>
-    );
+      {done ? <span className="pill">Done <DoneIcon className={classes.icon} /></span> : null}
+      {inprocess ? <span className="pill inprocess">Inprocess <CachedIcon className={classes.icon} /></span> : null}
+      {pending ? <span className="pill pending">Pending <PriorityHighIcon className={classes.icon} /></span> : null}
+    </MetaDataCardWrapper>
+  );
 };
 
 MetaDataCard.propTypes = {
-    cardText: PropTypes.string.isRequired,
-    done: PropTypes.bool,
-    inprocess: PropTypes.bool,
-    pending: PropTypes.bool,
+  cardText: PropTypes.string.isRequired,
+  done: PropTypes.bool,
+  inprocess: PropTypes.bool,
+  pending: PropTypes.bool,
 };
 
 export default MetaDataCard;

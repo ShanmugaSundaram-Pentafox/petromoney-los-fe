@@ -1,47 +1,36 @@
-import React, { useState } from "react";
-import { makeStyles } from "@material-ui/styles";
-// import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
 import Collapse from '@material-ui/core/Collapse';
-import Dialog from "@material-ui/core/Dialog";
+import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import Button from "@material-ui/core/Button";
-import Paper from "@material-ui/core/Paper";
 import Drawer from '@material-ui/core/Drawer';
-import DealershipInfo from "./components/DealershipInfo";
-import { useMount } from "react-use";
-import { getDealershipById, getDealershipLoansById } from "../../services/dealerships.service";
-import { getDealersByDealershipId } from "../../services/dealers.service";
-import DealersList from "./components/DealersList";
-import LoansList from "./components/LoansList";
-import DealershipDoc from "./components/DocList";
-import { NavLink as RouterLink } from "react-router-dom";
-import SalesInfo from "../dashboard/components/SalesInfo";
-import usePageTitle from "../../hooks/usePageTitle";
-import CreditReportSideWrapper from "./components/CreditReportSideWrapper";
-import InfoBox from "../../components/CommonComponents/InfoBox";
-import SolarEnquiryForm from "./components/SolarEnquiryForm";
-import { tabA11yProps, TabPanel } from "../../components/CommonComponents/Tabs/TabPanel";
-import InfoCard from "../../components/CommonComponents/Cards/InfoCard";
-import LeegalityLayout from "../../components/Leegality/LeegalityLayout";
-import DealershipTransport from "./components/DealershipTransport";
-import FleetOperatorsDetails from "./components/FleetOperatorsDetails";
-import styled from 'styled-components';
-import PersonalDiscussionReport from "./components/PDReport";
-import { useHistory } from "react-router-dom";
-import { toInteger } from "lodash-es";
-import {
-  BrowserRouter as Router,
-  Link,
-  Route,
-  useRouteMatch,
-  useParams,
-} from 'react-router-dom'
-
+import Tab from '@material-ui/core/Tab';
+import Tabs from '@material-ui/core/Tabs';
+import { makeStyles } from '@material-ui/styles';
+import toInteger from 'lodash-es/toInteger';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import { useMount } from 'react-use';
+import CreditReportSideWrapper from './components/CreditReportSideWrapper';
+import DealershipInfo from './components/DealershipInfo';
+import DealershipTransport from './components/DealershipTransport';
+import DealersList from './components/DealersList';
+import Deviations from './components/Deviations';
+import DealershipDoc from './components/DocList';
+import FleetOperatorsDetails from './components/FleetOperatorsDetails';
+import LoansList from './components/LoansList';
+import PersonalDiscussionReport from './components/PDReport';
+import SolarEnquiryForm from './components/SolarEnquiryForm';
+import StatementAnalysis from './components/StatementAnalysis';
+import InfoBox from '../../components/CommonComponents/InfoBox';
+import { tabA11yProps, TabPanel } from '../../components/CommonComponents/Tabs/TabPanel';
+import LeegalityLayout from '../../components/Leegality/LeegalityLayout';
+import { permissionCheck } from '../../components/UserCan/UserCan';
+import { rulesList } from '../../config/userRules';
+import usePageTitle from '../../hooks/usePageTitle';
+import { getDealersByDealershipId } from '../../services/dealers.service';
+import { getDealershipById, getDealershipLoansById } from '../../services/dealerships.service';
+import SalesInfo from '../dashboard/components/SalesInfo';
 
 const useStyles = makeStyles((theme) => ({
 
@@ -63,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1),
   },
   titleActionContainer: {
-    textAlign: "right",
+    textAlign: 'right',
   },
   topSpacing: {
     marginTop: theme.spacing(2),
@@ -94,6 +83,25 @@ const DealershipDetails = ({ currentUser, match }) => {
   const [leegalityModalVisible, setLeegalityModalVisible] = useState(false);
   const [dealerLoanData, setDealerLoanData] = useState();
   const history = useHistory();
+  const financialReport_permission = permissionCheck(currentUser.role_name, rulesList.financial_view);
+
+  const tabs = [
+    'Dealership',
+    'Dealers',
+    'Bank Statement Analysis',
+    'Deviations',
+    'Sales History',
+    'Loans List',
+    'Personal Discussion',
+    'Document Checklist',
+    'Transporters',
+    'Fleet Operators'
+  ];
+
+  if (financialReport_permission) {
+    tabs.splice(2, 0, 'Financial Report')
+  }
+
   const {
     url,
     params: { id },
@@ -114,7 +122,7 @@ const DealershipDetails = ({ currentUser, match }) => {
 
   useMount(() => {
     const queryString = window.location.hash;
-    const test = queryString.split('='); 
+    const test = queryString.split('=');
     setActiveTab(toInteger(test[1]))
     getDealershipById(id)
       .then((data) => setDealershipData(data))
@@ -186,15 +194,24 @@ const DealershipDetails = ({ currentUser, match }) => {
               aria-label="Dealership Details Panel"
               className={classes.tabs}
             >
-              <Tab label={<InfoBox active={activeTab === 0} number={1} title="Dealership" />} {...tabA11yProps(0)} />
-              <Tab label={<InfoBox active={activeTab === 1} number={2} title="Dealers" />} {...tabA11yProps(1)} />
-              <Tab label={<InfoBox active={activeTab === 2} number={3} title="Financial Report" />} {...tabA11yProps(2)} />
-              <Tab label={<InfoBox active={activeTab === 3} number={4} title="Sales History" />} {...tabA11yProps(3)} />
-              <Tab label={<InfoBox active={activeTab === 4} number={5} title="Loans List" />} {...tabA11yProps(4)} />
-              <Tab label={<InfoBox active={activeTab === 5} number={6} title="Personal Discussion" />} {...tabA11yProps(5)} />
-              <Tab label={<InfoBox active={activeTab === 6} number={7} title="Document Checklist" />} {...tabA11yProps(6)} />
-              <Tab label={<InfoBox active={activeTab === 7} number={8} title="Transporters" />} {...tabA11yProps(7)} />
-              <Tab label={<InfoBox active={activeTab === 8} number={9} title="Fleet Operators" />} {...tabA11yProps(8)} />
+              {
+                tabs.map((title, i) => {
+                  return (<Tab key={1} label={<InfoBox active={activeTab === i} number={i + 1} title={title} />} {...tabA11yProps(i)} />)
+                })
+              }
+              {/* <Tab label={<InfoBox active={activeTab === 0} title="Dealership" />} {...tabA11yProps(0)} />
+              <Tab label={<InfoBox active={activeTab === 1} title="Dealers" />} {...tabA11yProps(1)} />
+              {
+                financialReport_permission && (
+                  <Tab label={<InfoBox active={activeTab === 2} title="Financial Report" />} {...tabA11yProps(2)} />
+                )
+              }
+              <Tab label={<InfoBox active={activeTab === 3} title="Sales History" />} {...tabA11yProps(3)} />
+              <Tab label={<InfoBox active={activeTab === 4} title="Loans List" />} {...tabA11yProps(4)} />
+              <Tab label={<InfoBox active={activeTab === 5} title="Personal Discussion" />} {...tabA11yProps(5)} />
+              <Tab label={<InfoBox active={activeTab === 6} title="Document Checklist" />} {...tabA11yProps(6)} />
+              <Tab label={<InfoBox active={activeTab === 7} title="Transporters" />} {...tabA11yProps(7)} />
+              <Tab label={<InfoBox active={activeTab === 8} title="Fleet Operators" />} {...tabA11yProps(8)} /> */}
             </Tabs>
           </Collapse>
           {/* <div>
@@ -230,34 +247,45 @@ const DealershipDetails = ({ currentUser, match }) => {
             </Collapse>
           </div> */}
         </div>
-        <TabPanel activeTab={activeTab} index={0}>
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Dealership')}>
           {dealershipData && (
             <DealershipInfo data={dealershipData} currentUser={currentUser} toggleCreditReport={toggleCreditReport} />
           )}
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={1}>
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Dealers')}>
           <DealersList id={id} titleAlign="left" currentUser={currentUser} />
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={2}>
-          <CreditReportSideWrapper dealershipId={id} data={{}} currentUser={currentUser} />
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Deviations')}>
+          <Deviations id={id} />
+          {/* <DeviationsTable id={id}/> */}
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={3}>
+        {
+          financialReport_permission && (
+            <TabPanel activeTab={activeTab} index={tabs.indexOf('Financial Report')}>
+              <CreditReportSideWrapper dealershipId={id} data={{}} currentUser={currentUser} />
+            </TabPanel>
+          )
+        }
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Sales History')}>
           <SalesInfo id={id} titleAlign="left" currentUser={currentUser} column />
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={4}>
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Loans List')}>
           <LoansList id={id} titleAlign="left" currentUser={currentUser} dealerData={dealerLoanData} />
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={5}>
-          <PersonalDiscussionReport id ={id} textAlign="left" currentUser={currentUser} />
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Personal Discussion')}>
+          <PersonalDiscussionReport id={id} textAlign="left" currentUser={currentUser} />
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={6}>
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Document Checklist')}>
           <DealershipDoc id={id} currentUser={currentUser} />
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={7}>
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Transporters')}>
           <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={8}>
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Fleet Operators')}>
           <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
+        </TabPanel>
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Bank Statement Analysis')}>
+          <StatementAnalysis id={id} textAlign="left" currentUser={currentUser} />
         </TabPanel>
         <SolarEnquiryForm
           dealershipId={id}

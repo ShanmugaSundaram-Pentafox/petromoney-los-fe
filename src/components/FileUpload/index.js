@@ -1,5 +1,5 @@
-import React from "react";
-import { DropzoneDialog, DropzoneArea } from "material-ui-dropzone";
+import { DropzoneDialog, DropzoneArea } from 'material-ui-dropzone';
+import React from 'react';
 
 const FileUpload = ({id,data, inline, open, onCloseUploader, title, excel, limit, handleSave, initialFiles=[] }) => {
   if(inline) {
@@ -10,7 +10,7 @@ const FileUpload = ({id,data, inline, open, onCloseUploader, title, excel, limit
         showPreviewsInDropzone={false}
         previewText="Selected Files"
         onChange={handleSave}
-        acceptedFiles={["image/*", ".pdf"]}
+        acceptedFiles={['image/*', '.pdf']}
         maxFileSize={11000000}
         showAlerts={false}
         initialFiles={initialFiles}
@@ -20,21 +20,21 @@ const FileUpload = ({id,data, inline, open, onCloseUploader, title, excel, limit
 
   if(excel) {
     return(
-    <DropzoneDialog
-      open={open}
-      dialogTitle={title}
-      dialogProps={{
-        disableBackdropClick: true
-      }}
-      onSave={handleSave}
-      acceptedFiles={[".xls", ".xlsx", ".csv"]}
-      showPreviews={true}
-      submitButtonText={'Upload'}
-      maxFileSize={11000000}
-      filesLimit={limit}
-      onClose={onCloseUploader}
-      initialFiles={initialFiles}
-    />
+      <DropzoneDialog
+        open={open}
+        dialogTitle={title}
+        dialogProps={{
+          disableBackdropClick: true
+        }}
+        onSave={handleSave}
+        acceptedFiles={['.xls', '.xlsx', '.csv']}
+        showPreviews={true}
+        submitButtonText={'Upload'}
+        maxFileSize={11000000}
+        filesLimit={limit}
+        onClose={onCloseUploader}
+        initialFiles={initialFiles}
+      />
     )
   }
 
@@ -43,10 +43,10 @@ const FileUpload = ({id,data, inline, open, onCloseUploader, title, excel, limit
       open={open}
       dialogTitle={title}
       dialogProps={{
-          disableBackdropClick: true
+        disableBackdropClick: true
       }}
       onSave={handleSave}
-      acceptedFiles={["image/jpeg", "image/png", ".pdf", ".xls", ".xlsx", ".csv"]}
+      acceptedFiles={['image/jpeg', 'image/png', '.pdf', '.xls', '.xlsx', '.csv']}
       showPreviews={true}
       submitButtonText={'Upload'}
       maxFileSize={11000000}

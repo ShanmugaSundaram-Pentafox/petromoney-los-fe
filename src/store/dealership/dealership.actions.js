@@ -1,4 +1,4 @@
-import { DealershipActionTypes } from "./dealership.types";
+import { DealershipActionTypes } from './dealership.types';
 
 export const setAllDealerships = dealerships => {
   // console.log('setAllDealerships >> ', {

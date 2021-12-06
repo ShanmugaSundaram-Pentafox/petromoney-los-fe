@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.7.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.6.1...v2.7.0) (2021-12-06)
+
+
+### Features
+
+* **coll-rem:** API integration and Local testing ([aa1f892](https://gitlab.com/vignesh3/petromall-fe/commit/aa1f8927a5a18e1d141a7cf806a296a053763126))
+* **coll-rmks:** UI changes ([ef58f76](https://gitlab.com/vignesh3/petromall-fe/commit/ef58f76225d4559b80cb22efb06716c5fb5b3041))
+
+
+### Bug Fixes
+
+* **coll-remark:** Conflict fix ([b2d6502](https://gitlab.com/vignesh3/petromall-fe/commit/b2d650232d8518d402bc1c63a1f97e055506e10d))
+* **Dealership:** conflict-fix ([094bde6](https://gitlab.com/vignesh3/petromall-fe/commit/094bde63806e8e1831c5bface3224a760290013a))
+* **dev-mat:** value fix ([525953c](https://gitlab.com/vignesh3/petromall-fe/commit/525953ceb7d977e36264c1b97df2ee0a822072e8))
+* **Deviation:** Conflict fix ([d119ef7](https://gitlab.com/vignesh3/petromall-fe/commit/d119ef7358ccadcd2dd57934809cbdf0b11599e4))
+* **deviation:** deviations value fix ([47564f6](https://gitlab.com/vignesh3/petromall-fe/commit/47564f6806c0444ba9730b5b610bfddbeee1d67f))
+* **deviation:** deviations value fix ([b6f1b5d](https://gitlab.com/vignesh3/petromall-fe/commit/b6f1b5dc17a5d9a635e15c2aadd8f46ab5da7697))
+* **Deviation:** Import fix ([a2de0df](https://gitlab.com/vignesh3/petromall-fe/commit/a2de0df79f4c1d96f8bb621239e35dd96ac6ae64))
+* **Deviations:** conflict fix ([f67c9df](https://gitlab.com/vignesh3/petromall-fe/commit/f67c9df33ceb432943a98ae523f037bccbbd616b))
+* **Deviations:** Conflict fix ([db7673d](https://gitlab.com/vignesh3/petromall-fe/commit/db7673d219c46d2f90b642da175d22e85bacfe56))
+* **deviation:** updated deviations fix ([9de1490](https://gitlab.com/vignesh3/petromall-fe/commit/9de1490f225d4af024ff19285b06093d58aad032))
+* **disb-approval:** set amount disbursed as amount approved ([5015a69](https://gitlab.com/vignesh3/petromall-fe/commit/5015a699be49914836d769391a41cce38c81ea74))
+* **Disb:** Disb approval amount fix ([2a97206](https://gitlab.com/vignesh3/petromall-fe/commit/2a972064feaad5e3caff61cc1834b1b7ecc23fef))
+* **disb:** disb details delete api fix ([3bc05e5](https://gitlab.com/vignesh3/petromall-fe/commit/3bc05e519f5dba864aeb326674d99541ea96bffb))
+* **sales-hist:** no data handle ([0586da6](https://gitlab.com/vignesh3/petromall-fe/commit/0586da66ad6a30293cdccb63b0111e03fe53fc2c))
+* **soa:** future date disabled in from date ([29a20d3](https://gitlab.com/vignesh3/petromall-fe/commit/29a20d3c664349e21eea61fcdf9fda3ce87398ae))
+* **transporter:** doi label change ([1f3a70e](https://gitlab.com/vignesh3/petromall-fe/commit/1f3a70e455f2db2d6f67b4ed2beb7014e7a448c9))
+* **user-rules:** add dealership edit to FO role ([a2db062](https://gitlab.com/vignesh3/petromall-fe/commit/a2db06282662942069375c6832df746bda66fb20))
+
 ### [2.6.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.6.0...v2.6.1) (2021-12-01)
 
 

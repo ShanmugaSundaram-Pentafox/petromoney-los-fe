@@ -1,7 +1,4 @@
-import { CircularProgress, TextField } from '@material-ui/core';
-import { Box } from '@material-ui/core';
-import { Typography } from '@material-ui/core';
-import { Divider } from '@material-ui/core';
+import { CircularProgress, TextField, Box, Typography, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';

@@ -11,6 +11,7 @@ import DrawerRemarks from './DrawerRemarks';
 import LoanInfo from './LoanInfo';
 import TextInput from '../../../components/TextInput/TextInput';
 import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
+import { DeviationsTable } from '../../dealershipDetails/components/Deviations';
 import SalesInfo from '../components/SalesInfo';
 
 const useStyles = makeStyles(theme => ({
@@ -136,6 +137,7 @@ const PendingApprovalDrawer = ({ id, selectedLoanData, status, currentUser, read
         <div className={classes.contentWrapper}>
           <DealershipData data={data} readOnly={true} />
           <SalesInfo id={id} currentUser={currentUser} readOnly={true} />
+          <DeviationsTable id={id} />
           <LoanInfo status={status} currentUser={currentUser} viewable={true} editable={editable} data={selectedLoanData} updateNewLoanInfo={updateNewLoanInfo} />
           <>
             <DrawerRemarks label={'Remarks'} loanData={loanData?.review_remarks} readOnly={readOnly} />

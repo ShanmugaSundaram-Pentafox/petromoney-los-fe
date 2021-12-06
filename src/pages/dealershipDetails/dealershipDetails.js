@@ -15,6 +15,7 @@ import CreditReportSideWrapper from './components/CreditReportSideWrapper';
 import DealershipInfo from './components/DealershipInfo';
 import DealershipTransport from './components/DealershipTransport';
 import DealersList from './components/DealersList';
+import Deviations from './components/Deviations';
 import DealershipDoc from './components/DocList';
 import FleetOperatorsDetails from './components/FleetOperatorsDetails';
 import LoansList from './components/LoansList';
@@ -88,6 +89,7 @@ const DealershipDetails = ({ currentUser, match }) => {
     'Dealership',
     'Dealers',
     'Bank Statement Analysis',
+    'Deviations',
     'Sales History',
     'Loans List',
     'Personal Discussion',
@@ -252,6 +254,10 @@ const DealershipDetails = ({ currentUser, match }) => {
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Dealers')}>
           <DealersList id={id} titleAlign="left" currentUser={currentUser} />
+        </TabPanel>
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Deviations')}>
+          <Deviations id={id} />
+          {/* <DeviationsTable id={id}/> */}
         </TabPanel>
         {
           financialReport_permission && (

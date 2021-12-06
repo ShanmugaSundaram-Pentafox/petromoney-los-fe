@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import isEmpty from 'lodash-es/isEmpty';
 import { logger } from '../config/logger';
 import { URL } from '../config/serverUrls';
 import { store } from '../store';
@@ -24,7 +24,7 @@ const apiCall = async (route, options = {}) => {
     'Access-Control-Allow-Credentials':'no-cors'
   };
 
-  if (customHeader && !_.isEmpty(customHeader)) {
+  if (customHeader && !isEmpty(customHeader)) {
     headerObject = {
       ...headerObject,
       ...customHeader

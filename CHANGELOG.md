@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.7.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.7.0...v2.7.1) (2021-12-06)
+
+
+### Bug Fixes
+
+* **Coll-Rem:** Remarks value condition check ([9adbc12](https://gitlab.com/vignesh3/petromall-fe/commit/9adbc124360be94c561fdd15cd6d7ac9b18dfed6))
+* **coll-rem:** value check ([90562e5](https://gitlab.com/vignesh3/petromall-fe/commit/90562e5425d4584f34037ca41a6d824a4d81f2b5))
+* **Dev-Mat:** Manual Deviation value ([df83b08](https://gitlab.com/vignesh3/petromall-fe/commit/df83b08add61e80bb97213f815390b14101cf0af))
+* **prod-cicd:** add cicd for prod ([12f8f10](https://gitlab.com/vignesh3/petromall-fe/commit/12f8f10e3b237420543b693008d2ca9a08bb722a))
+
 ## [2.7.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.6.1...v2.7.0) (2021-12-06)
 
 

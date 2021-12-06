@@ -16,6 +16,8 @@ import { getOTP, resendOTP } from '../../services/login.service';
 import { setCurrentUser } from '../../store/user/user.actions';
 import apiCall from '../../utils/api.util';
 
+const packageJSON = require('../../../package.json');
+
 const domain = process.env?.REACT_APP_OTP_ONLY_DOMAINS?.split(/[ ,]+/)
 const url = window.location.href.split('/')[2]
 
@@ -384,7 +386,12 @@ const Login = ({ setCurrentUser }) => {
             {isShowOTP ? 'Login with Password' : 'Login with OTP'}
           </Button> */}
         </Box>
+
+        <Box pt={2}>
+          <p style={{ color: '#888' }}>v{packageJSON.version}</p>
+        </Box>
       </div>
+
     </LoginWrapper >
   );
 };

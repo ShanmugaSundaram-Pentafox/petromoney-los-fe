@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.7.2](https://gitlab.com/vignesh3/petromall-fe/compare/v2.7.1...v2.7.2) (2021-12-07)
+
+
+### Bug Fixes
+
+* **transport:** value trim and omc value fix ([c1bffcd](https://gitlab.com/vignesh3/petromall-fe/commit/c1bffcda167fa2826e9dd4de034ae827b5d1bcf4))
+* **version:** add version text to login screen ([0f93d83](https://gitlab.com/vignesh3/petromall-fe/commit/0f93d834d2adb8d488d5974a1088e38def251746))
+
 ### [2.7.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.7.0...v2.7.1) (2021-12-06)
 
 

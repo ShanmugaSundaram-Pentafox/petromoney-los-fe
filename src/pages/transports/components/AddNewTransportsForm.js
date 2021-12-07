@@ -243,7 +243,7 @@ const AddNewTransportsForm = ({
       setLoading(true);
       values.name = values.name.toUpperCase();
       const doi = selectedDate ? format(selectedDate, 'dd-MM-yyyy') : values?.doi
-      const data = { ...values, doi: doi, t_owner_id: id, pan: values.pan?.toUpperCase(), gst: values.gst?.toUpperCase() };
+      const data = { ...values, doi: doi, t_owner_id: id, pan: values.pan?.toUpperCase(), gst: values.gst?.toUpperCase(), omc: omcs.find(item => {return item.name === values.omc})?.id };
       // let apiURL = isAdd === 'Add' ? `transporters` : `tranporters/${data.transporter_id}`
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
@@ -482,10 +482,7 @@ const AddNewTransportsForm = ({
                       value={values.transporter_id}
                     />
                     <ViewData title='Mobile' value={values.mobile} />
-                    <ViewData title='OMC' value={(omcs.find(function (omc, index) {
-                      if (omc.id == values.omc)
-                        return true;
-                    }))?.name} />
+                    <ViewData title='OMC' value={omcs.find(item => {return item.name === values.omc})?.name} />
                     <ViewData title='Date of Incoporation' value={values?.doi} />
                     <ViewData title='Region' value={(regionList.find(function (region) {
                       if (region.id == values.region)
@@ -499,10 +496,7 @@ const AddNewTransportsForm = ({
                   <Box className={classes.box}>
                     <ViewData title='Transport Name' value={values.name} />
                     <ViewData title='Address' value={values.address} />
-                    <ViewData title='Business Type' value={(businessType.find(function (business) {
-                      if (business.id == values.business_type)
-                        return true;
-                    }))?.name} />
+                    <ViewData title='Business Type' value={businessType.find(item => {return item.name === values?.business_type})?.name} />
                     <ViewData title='State' value={(states.find(function (state) {
                       if (state.id == values.state)
                         return true;
@@ -625,14 +619,15 @@ const AddNewTransportsForm = ({
                         select
                         labelText="OMC"
                         name="omc"
-                        value={values.omc}
+                        value={omcs.find(item => {return item.name === values.omc})?.name}
                         readOnly={readOnly}
                         disabled={readOnly}
                         error={errors.omc}
                         helperText={errors.omc}
                       >
+                        <option value="">Choose OMC</option>
                         {
-                          omcs?.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))
+                          omcs?.map((item, i) => (<option key={i} value={item.name}>{item.name}</option>))
                         }
                       </TextInput>
                     }
@@ -648,6 +643,7 @@ const AddNewTransportsForm = ({
                       disabled={readOnly}
                       error={errors.business_type}
                     >
+                      <option value="">Choose Business Type</option>
                       {businessType.map((type) => (<option key={type.id} value={type.name}>{type.name}</option>))}
                     </TextInput>
                   </Grid>

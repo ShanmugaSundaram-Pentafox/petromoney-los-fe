@@ -6,12 +6,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
-<<<<<<< HEAD
-import Button from '@material-ui/core/Button';
-
-=======
 import React from 'react';
->>>>>>> ca63aaac1f5fc2b0c381d2b9b97d37141ca95840
 
 const useStyles = makeStyles(theme => ({
   wrapper: {

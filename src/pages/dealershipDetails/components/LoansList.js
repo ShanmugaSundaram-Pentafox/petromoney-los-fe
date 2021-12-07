@@ -16,6 +16,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
 import Select from 'react-select';
 import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
@@ -25,8 +26,6 @@ import { getUserRoleForReview } from '../../../services/common.service';
 import { getDealershipLoansById } from '../../../services/dealerships.service';
 import { getApplicationStatusById, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import apiCall from '../../../utils/api.util';
-import { useSnackbar } from 'notistack';
-import { useQuery } from 'react-query';
 
 
 const useStyles = makeStyles({
@@ -78,7 +77,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
       }
       if (loanData[0]?.application_state_id) {
         const re = status.find(d => d.id == loanData[0]?.application_state_id)
-        setSelectedStatus({ ...re, disabled: status !== "loan_approval" } || {})
+        setSelectedStatus({ ...re, disabled: status !== 'loan_approval' } || {})
       }
     }
   }, [status])
@@ -126,7 +125,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
   }
   const updateApplicationStatus = (state) => {
     apiCall(`dealership/${id}/loans/${loanData[0].id}`, {
-      method: "POST",
+      method: 'POST',
       body: state,
     })
       .then(res => {

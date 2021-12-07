@@ -12,8 +12,8 @@ import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
-import { useMount } from 'react-use';
 // import CardHeader from '@material-ui/core/CardHeader';
+import { useQuery } from 'react-query';
 import * as Yup from 'yup';
 import AccountStatement from './AccountStatement';
 import Button from '../../../components/CommonComponents/Button/Button';
@@ -26,10 +26,8 @@ import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
 import { getBusinessTypes, getRegionById, getActiveStates } from '../../../services/common.service';
 import { cryptoEncrypt } from '../../../services/crypto.service';
-import { deleteDealershipDocument, downloadAccountStatement } from '../../../services/dealerships.service';
+import { deleteDealershipDocument } from '../../../services/dealerships.service';
 import { compareObject } from '../../../utils/compareObject.util';
-import { useMutation, useQuery } from 'react-query';
-import AccountStatement from './AccountStatement';
 
 
 const useStyles = makeStyles(theme => ({

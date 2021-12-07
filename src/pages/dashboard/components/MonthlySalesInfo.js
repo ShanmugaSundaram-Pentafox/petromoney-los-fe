@@ -8,14 +8,12 @@ import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useQuery } from 'react-query';
 import styled from 'styled-components';
 import TextInput from '../../../components/TextInput/TextInput';
 import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-import { useSnackbar } from "notistack";
-import { useQuery } from 'react-query';
-import clsx from 'clsx';
 import { deleteDealershipMonthlySalesById, getDealershipMonthlySalesById, postDealershipMonthlySalesById, updateDealershipMonthlySalesById } from '../../../services/dealerships.service';
 import { getMonth as month } from '../../../utils/commonFunctions.util';
 

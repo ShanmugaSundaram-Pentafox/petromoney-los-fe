@@ -133,6 +133,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
     { label: 'Choose Relationship', value: '' },
     { label: 'Father', value: 'FATHER' },
     { label: 'Mother', value: 'MOTHER' },
+    { label: 'Spouse', value: 'SPOUSE' },
     { label: 'Uncle', value: 'UNCLE' },
     { label: 'Aunt', value: 'AUNT' },
     { label: 'Son', value: 'SON' },
@@ -369,7 +370,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                       {
                         dealersList.map((item, i) => {
                           return (
-                            <option value={item.id}>{item.first_name} {item.last_name}</option>
+                            <option key={i} value={item.id}>{item.first_name} {item.last_name}</option>
                           )
                         })
                       }
@@ -394,7 +395,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                       {
                         relationShipOptions.map((item, i) => {
                           return (
-                            <option value={item.value}>{item.label}</option>
+                            <option key={i} value={item.value}>{item.label}</option>
                           )
                         })
                       }
@@ -447,7 +448,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                       <option value="null">Residing Since</option>
                       {[...Array(currentYearDiff)].map((_, i) => {
                         return (
-                          <option value={currentYear - i}>{currentYear - i}</option>
+                          <option key={i} value={currentYear - i}>{currentYear - i}</option>
                         )
                       })}
                     </>
@@ -554,13 +555,13 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   {
                     data.profile_image_url ? profileAttachment() :
                       <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }} onClick={() => docUpload('Profile')}>
-                      <Tooltip title={'Click to attach Profile'}>
+                        <Tooltip title={'Click to attach Profile'}>
                           <>
-                          <UploadIcon fontSize='small' />
-                          <Typography style={{ marginLeft: 12 }}>Attach profile</Typography>
-                        </>
+                            <UploadIcon fontSize='small' />
+                            <Typography style={{ marginLeft: 12 }}>Attach profile</Typography>
+                          </>
                         </Tooltip>
-                    </div>
+                      </div>
                   }
                 </>
               </Grid>
@@ -583,12 +584,12 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   <Grid {...gridItem} md={6}>
                     {data.pan_file_url ? panAttachment() :
                       <div className={classes.fileAttachement} onClick={() => docUpload('PAN')}>
-                      <Tooltip title={'Click to attach PAN'}>
+                        <Tooltip title={'Click to attach PAN'}>
                           <>
-                          <UploadIcon className={classes.icon} disabled={readOnly} />
-                        </>
+                            <UploadIcon className={classes.icon} disabled={readOnly} />
+                          </>
                         </Tooltip>
-                    </div>
+                      </div>
                     }
                   </Grid>
                 ) : null
@@ -615,13 +616,13 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                     <Grid {...gridItem} md={3}>
                       {data.aadhar_f_file_url ? aadharFront() :
                         <div className={classes.fileAttachement} onClick={() => docUpload('Front')}>
-                        <Tooltip title={'Click to attach aadhar front'}>
+                          <Tooltip title={'Click to attach aadhar front'}>
                             <>
-                            <UploadIcon className={classes.icon} disabled={readOnly} />
-                            <Typography className={classes.typography}>Front</Typography>
-                          </>
+                              <UploadIcon className={classes.icon} disabled={readOnly} />
+                              <Typography className={classes.typography}>Front</Typography>
+                            </>
                           </Tooltip>
-                      </div>
+                        </div>
                       }
                     </Grid>
                     <Grid {...gridItem} md={3}>

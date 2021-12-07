@@ -9,14 +9,14 @@ import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useQuery } from 'react-query';
 import styled from 'styled-components';
 import MonthlySalesInfo from './MonthlySalesInfo';
 import TextInput from '../../../components/TextInput/TextInput';
 import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { getDealershipSalesById, postDealershipSalesById } from '../../../services/dealerships.service';
-import { useQuery } from 'react-query';
 
 
 const useStyles = makeStyles(theme => ({

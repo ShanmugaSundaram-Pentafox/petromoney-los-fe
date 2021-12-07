@@ -1,7 +1,4 @@
-import { Typography } from '@material-ui/core';
-import { Grid } from '@material-ui/core';
-import Avatar from '@material-ui/core/Avatar';
-import Box from '@material-ui/core/Box';
+import { Typography, Grid, Box, Avatar } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
@@ -11,15 +8,14 @@ import EditIcon from '@material-ui/icons/Edit';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState } from 'react';
+import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
-import { useMount } from 'react-use';
 import styled from 'styled-components';
 import Button from '../../../components/CommonComponents/Button/Button';
 import usePageTitle from '../../../hooks/usePageTitle';
 import AddNewTransportForm from '../../../pages/transports/components/AddNewTransportsForm';
+import AddNewTransportsOwnerForm from '../../../pages/transports/components/AddNewTransportsOwnerForm';
 import { getTransportsByOwnersId, getOwnerDetailsById } from '../../../services/transports.service';
-import { useMount } from 'react-use';
-import { useQuery } from 'react-query';
 
 
 const Card = styled.div`
@@ -203,7 +199,6 @@ const OwnerDetails = ({ currentUser, match }) => {
   }, [transportsData]);
 
   const options = {
-    selectableRowsHeader: false,
     selectableRows: 'none',
     print: false,
     filter: false,

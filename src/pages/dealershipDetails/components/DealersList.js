@@ -2,7 +2,7 @@ import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState } from 'react';
-import { useMount } from 'react-use';
+import { useQuery } from 'react-query';
 import AddIconButon from './AddIcon';
 import CoApplicantsTable from './CoApplicantsTable';
 import CreditInfoSideWrapper from './CreditInfoSideWrapper';
@@ -14,9 +14,6 @@ import { rulesList } from '../../../config/userRules';
 // import ExperianReport from './ExperianReport';
 import { getDealersByDealershipId, getCoApplicantByDealershipId } from '../../../services/dealers.service';
 import { getAllGuarantor } from '../../../services/leegality.service';
-import { get } from 'lodash-es';
-import { useQuery } from 'react-query';
-import { de } from 'date-fns/locale';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -172,7 +169,6 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         coApplicantsData={coApplicantsData}
         formType={formType}
         rowData={rowData}
-        titleAlign={titleAlign}
         showCreditForm={showCreditForm}
         openCloseCreditForm={openCloseCreditForm}
         editFormClose={editFormClose}
@@ -188,7 +184,6 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         guarantorsData={guarantorsData}
         formType={formType}
         rowData={rowData}
-        titleAlign={titleAlign}
         showCreditForm={showCreditForm}
         openCloseCreditForm={openCloseCreditForm}
         editFormClose={editFormClose}
@@ -248,7 +243,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
               <div className={classes.sidePanelWrapper}>
                 {
                   !dealerData?.isLoading && !coApplicantsData?.isLoading &&
-                  <CreditInfoSideWrapper dealershipId={id} data={[...dealerData.data, ...coApplicantsData.data]} currentUser={currentUser} onClose={() => openCloseCreditForm()} />
+                    <CreditInfoSideWrapper dealershipId={id} data={[...dealerData.data, ...coApplicantsData.data]} currentUser={currentUser} onClose={() => openCloseCreditForm()} />
                 }
               </div>
             </Drawer>

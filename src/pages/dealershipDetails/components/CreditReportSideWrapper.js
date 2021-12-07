@@ -4,17 +4,17 @@ import Alert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/styles';
 import { useFormik } from 'formik';
 import isEqual from 'lodash/isEqual';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 // import DealerCreditInfoForm from './DealerCreditInfoForm';
 // import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
+import { useQuery } from 'react-query';
 import CreditReportForm from './CreditReportForm';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { logger } from '../../../config/logger';
 import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
-import apiCall from '../../../utils/api.util';
-import { useQuery } from 'react-query';
 import { getCreditReport } from '../../../services/dealerships.service';
+import apiCall from '../../../utils/api.util';
 
 const useStyles = makeStyles(theme => ({
   sidePanelTitle: {

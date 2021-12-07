@@ -2,11 +2,10 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from 'mui-datatables';
-import React, { useMemo, useState } from 'react';
-import { NavLink as RouterLink } from 'react-router-dom';
-import { useMount } from 'react-use';
-import { getOwnersById } from '../../services/transports.service';
+import React, { useMemo } from 'react';
 import { useQuery } from 'react-query';
+import { NavLink as RouterLink } from 'react-router-dom';
+import { getOwnersById } from '../../services/transports.service';
 
 
 const useStyles = makeStyles(theme => ({
@@ -71,7 +70,7 @@ const TransportOwnerTable = ({ id, onRowClick }) => {
         name: 'mobile',
         options: {
           filter: true,
-          filterWidth: "100%",
+          filterWidth: '100%',
           sort: true,
           customBodyRender: value => {
             return (
@@ -86,7 +85,6 @@ const TransportOwnerTable = ({ id, onRowClick }) => {
   }, [ownerData]);
 
   const options = {
-    selectableRowsHeader: false,
     selectableRows: 'none',
     print: false,
     filter: false,

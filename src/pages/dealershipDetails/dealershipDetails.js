@@ -1,10 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { makeStyles } from "@material-ui/styles";
 // import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Collapse from '@material-ui/core/Collapse';
 import Dialog from '@material-ui/core/Dialog';
@@ -16,6 +10,7 @@ import Tabs from '@material-ui/core/Tabs';
 import { makeStyles } from '@material-ui/styles';
 import toInteger from 'lodash-es/toInteger';
 import React, { useState } from 'react';
+import { useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { useMount } from 'react-use';
 import CreditReportSideWrapper from './components/CreditReportSideWrapper';
@@ -36,9 +31,8 @@ import { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getDealersByDealershipId } from '../../services/dealers.service';
-import { getDealershipById, getDealershipLoansById } from '../../services/dealerships.service';
+import { getDealershipById } from '../../services/dealerships.service';
 import SalesInfo from '../dashboard/components/SalesInfo';
-import { useQuery } from "react-query";
 
 const useStyles = makeStyles((theme) => ({
 
@@ -267,13 +261,13 @@ const DealershipDetails = ({ currentUser, match }) => {
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Dealers')}>
           {
             activeTab == tabs.indexOf('Dealers') &&
-            <DealersList id={id} titleAlign="left" currentUser={currentUser} />
+              <DealersList id={id} titleAlign="left" currentUser={currentUser} />
           }
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Deviations')}>
           {
-            activeTab == tabs.indexOf('Deviations') && 
-            <Deviations id={id} />
+            activeTab == tabs.indexOf('Deviations') &&
+              <Deviations id={id} />
           }
         </TabPanel>
         {
@@ -281,7 +275,7 @@ const DealershipDetails = ({ currentUser, match }) => {
             <TabPanel activeTab={activeTab} index={tabs.indexOf('Financial Report')}>
               {
                 activeTab == tabs.indexOf('Financial Report') &&
-                <CreditReportSideWrapper dealershipId={id} data={{}} currentUser={currentUser} />
+                  <CreditReportSideWrapper dealershipId={id} data={{}} currentUser={currentUser} />
               }
             </TabPanel>
           )
@@ -289,43 +283,43 @@ const DealershipDetails = ({ currentUser, match }) => {
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Sales History')}>
           {
             activeTab == tabs.indexOf('Sales History') &&
-            <SalesInfo id={id} titleAlign="left" currentUser={currentUser} column />
+              <SalesInfo id={id} titleAlign="left" currentUser={currentUser} column />
           }
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Loans List')}>
           {
             activeTab == tabs.indexOf('Loans List') &&
-            <LoansList id={id} titleAlign="left" currentUser={currentUser} />
+              <LoansList id={id} titleAlign="left" currentUser={currentUser} />
           }
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Personal Discussion')}>
           {
             activeTab == tabs.indexOf('Personal Discussion') &&
-            <PersonalDiscussionReport id={id} textAlign="left" currentUser={currentUser} />
+              <PersonalDiscussionReport id={id} textAlign="left" currentUser={currentUser} />
           }
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Document Checklist')}>
           {
             activeTab == tabs.indexOf('Document Checklist') &&
-            <DealershipDoc id={id} currentUser={currentUser} />
+              <DealershipDoc id={id} currentUser={currentUser} />
           }
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Transporters')}>
           {
             activeTab == tabs.indexOf('Transporters') &&
-            <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
+              <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
           }
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Fleet Operators')}>
           {
             activeTab == tabs.indexOf('Fleet Operators') &&
-            <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
+              <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
           }
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Bank Statement Analysis')}>
           {
             activeTab == tabs.indexOf('Bank Statement Analysis') &&
-            <StatementAnalysis id={id} textAlign="left" currentUser={currentUser} />
+              <StatementAnalysis id={id} textAlign="left" currentUser={currentUser} />
           }
         </TabPanel>
         <SolarEnquiryForm

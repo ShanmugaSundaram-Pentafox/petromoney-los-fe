@@ -1,31 +1,12 @@
-import { Checkbox, FormControlLabel, FormGroup, Paper, Typography } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import ButtonComp from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
-import { withStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-// import Typography from "@material-ui/core/Typography";
+import { Checkbox, FormControlLabel, FormGroup, Paper, Typography, Table, TableBody, TableRow, TableHead, Button, ButtonComp, makeStyles, withStyles } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
-import { useMount } from 'react-use';
-// import Chip from '@material-ui/core/Chip';
+import { useQuery } from 'react-query';
 import DocListPreview from './DocListPreview';
 import FilePreview from '../../../components/CommonComponents/FilePreview';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import FileUpload from '../../../components/FileUpload';
 import { URL } from '../../../config/serverUrls';
-// import Modal from '@material-ui/core/Modal';
-import { Box, Checkbox, FormControlLabel, FormGroup, IconButton, Paper, Typography } from "@material-ui/core";
-// import CloseIcon from '@material-ui/icons/Close';
-import ButtonComp from '@material-ui/core/Button';
-import { withStyles } from '@material-ui/core/styles';
-import FormDialog from "../../../components/CommonComponents/FormDialog/FormDialog";
-import FilePreview from "../../../components/CommonComponents/FilePreview";
-import DocListPreview from "./DocListPreview";
-import { useQuery } from "react-query";
 import { deleteDocsImage, getDealershipCheckList } from '../../../services/dealerships.service';
 import { getFileNameFromUrl } from '../../../utils/strings.util';
 
@@ -295,7 +276,7 @@ const DocList = ({ id }) => {
             </div>
           </div>
         </div>
-      </FormDialog> 
+      </FormDialog>
 
       {/* <Modal
         className={classes.modal}

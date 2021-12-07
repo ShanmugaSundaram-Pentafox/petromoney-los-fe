@@ -301,9 +301,9 @@ export const getActiveStates = () => {
 }
 export const getMenuItemsCount = () => {
   return new Promise((resolve, reject) => {
-    apiCall(`count`)
+    apiCall('count')
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data || {});
         } else {
           reject(message);

@@ -4,14 +4,14 @@ import apiCall from '../utils/api.util';
 
 export const getLoanStats = (qryStr = {}) => {
   return new Promise((resolve, reject) => {
-    const { region, from, to, products } = qryStr;
-    let apiUrl = `metrics/loan/stats?product_id=${products}`;
-    if (region) apiUrl = `metrics/loan/stats?region=${region}&product_id=${products}`;
-    if (from && to) apiUrl = `metrics/loan/stats?region=${region}&from=${from}&to=${to}&product_id=${products}`;
+    const { region, from, to, products, zone } = qryStr;
+    let apiUrl = `metrics/loan/stats?product=${products}&zone=${zone}`;
+    if (region) apiUrl = `metrics/loan/stats?region=${region}&product=${products}&zone=${zone}`;
+    if (from && to) apiUrl = `metrics/loan/stats?region=${region}&from=${from}&to=${to}&product=${products}&zone=${zone}`;
     apiCall(apiUrl)
-      .then(({ status, data, message }) => {
+      .then(({ status, data, message, region }) => {
         if (status === 'SUCCESS') {
-          resolve(data[0]);
+          resolve({data: data[0], region: region});
         } else {
           reject(message);
         }
@@ -126,10 +126,10 @@ export const getLoanBookData = () => {
 
 export const getLoansByStatus = (status, filterQry) => {
   return new Promise((resolve, reject) => {
-    const { region, from, to, products } = filterQry;
-    let apiUrl = `${URL.loans}?status=${status}&region=${region}&product_id=${products}`;
+    const { region, from, to, products, zone } = filterQry;
+    let apiUrl = `${URL.loans}?status=${status}&region=${region}&product=${products}&zone=${zone}`;
     if (from && to) {
-      apiUrl = `${URL.loans}?status=${status}&region=${region}&from=${from}&to=${to}&product_id${products}`;
+      apiUrl = `${URL.loans}?status=${status}&region=${region}&from=${from}&to=${to}&product=${products}&zone=${zone}`;
     }
     apiCall(apiUrl)
       .then(({ status, data, message }) => {

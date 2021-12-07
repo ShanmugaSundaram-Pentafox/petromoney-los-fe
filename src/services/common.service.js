@@ -735,3 +735,19 @@ export const getProducts = () => {
       })
   })
 }
+
+export const getZones = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('zones')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(err => {
+        reject(err.message);
+      })
+  })
+}

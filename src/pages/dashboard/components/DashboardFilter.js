@@ -3,9 +3,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import { subDays, format } from 'date-fns'
 import React, { useEffect, useState } from 'react';
 import { DateRange } from 'react-date-range';
+import { useQuery } from 'react-query';
 import Select from 'react-select'
 import { useMount } from 'react-use';
-import { getAllRegions, getProducts } from '../../../services/common.service';
+import { getAllRegions, getProducts, getZones } from '../../../services/common.service';
 import { getLoanStats } from '../../../services/loans.service';
 
 export const Selector = ({ options, value, setValue, title, isMulti, width }) => {
@@ -18,8 +19,19 @@ export const Selector = ({ options, value, setValue, title, isMulti, width }) =>
         <Select
           options={options}
           isMulti = {isMulti}
+          isClearable
           value={value}
-          onChange={setValue}
+          onChange={(selectedOption, triggeredAction) => {
+            if(triggeredAction?.action === 'clear'){
+              if(isMulti){
+                setValue([{value:0, label: 'ALL'}])
+              }else{
+                setValue({value:0, label: 'ALL'})
+              }
+            } else {
+              setValue(selectedOption)
+            }
+          }}
           styles={{
             control: (provided) => ({
               ...provided, 
@@ -116,7 +128,8 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans }) => {
   const [regions, setRegions] = useState([]);
   const [products, setProducts] = useState([]);
   const [selectedRegion, setSelectedRegion] = useState({ label: 'ALL', value: 0 });
-  const [selectedProducts, setSelectedProducts] = useState({ label: 'ALL', value: 0 });
+  const [selectedProducts, setSelectedProducts] = useState([{ label: 'ALL', value: 0 }]);
+  const [selectedZones, setSelectedZones] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedPeriodType, setSelectedPeriodType] = useState('UTD');
   const [selectedPeriod, setSelectedPeriod] = useState({});
   const [showPicker, setShowPicker] = useState();
@@ -125,6 +138,8 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans }) => {
     endDate: new Date(),
     key: 'range'
   });
+
+  const { data: zones = []} = useQuery('zones', () => {return getZones()}, {refetchOnWindowFocus: false})
 
   const onDatePickerChange = ({ range }) => {
     setDateRange(range)
@@ -188,9 +203,14 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans }) => {
   })
 
   useEffect(() => {
+    let zoneId = []
+    selectedZones.forEach(item => zoneId.push(item.value))
+    let productId = []
+    selectedProducts.forEach(item => productId.push(item.value))
     let qry = {
       region: selectedRegion.value,
-      products: selectedProducts.value
+      products: productId.toString() || 0,
+      zone: zoneId.toString() || 0
     }
     if (selectedPeriod?.from) {
       qry.from = format(selectedPeriod?.from || new Date(), 'yyyy-MM-dd');
@@ -198,22 +218,23 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans }) => {
     }
     getStats(qry)
     filterQry(qry)
-  }, [selectedRegion, selectedPeriod, filterQry, selectedProducts])
+  }, [selectedRegion, selectedPeriod, filterQry, selectedProducts, selectedZones])
 
   const getStats = (qry) => {
     getLoanStats(qry)
       .then(data => {
         let cdata = [
-          { name: 'Submitted', count: data.submitted_count },
-          { name: 'Pending Review', count: data.loan_review_count },
-          { name: 'Pending Approval', count: data.loan_approval_count || 0, amount: data.amount_requested },
-          { name: 'Approved', count: data.approved_count, amount: data.amount_approved },
-          { name: 'Disb. Approval', count: data.disbursement_approval_count || 0, amount: data.amount_disbursement_approval },
-          { name: 'Disb. Approved', count: data.disbursement_approved_count || 0, amount: data.amount_disbursement_approved },
-          { name: 'Disbursed', count: data.disbursed_count, amount: data.amount_disbursed },
-          { name: 'Rejected', count: data.rejected_count },
+          { name: 'Submitted', count: data?.data?.submitted_count },
+          { name: 'Pending Review', count: data?.data?.loan_review_count },
+          { name: 'Pending Approval', count: data?.data?.loan_approval_count || 0, amount: data?.data?.amount_requested },
+          { name: 'Approved', count: data?.data?.approved_count, amount: data?.data?.amount_approved },
+          { name: 'Disb. Approval', count: data?.data?.disbursement_approval_count || 0, amount: data?.data?.amount_disbursement_approval },
+          { name: 'Disb. Approved', count: data?.data?.disbursement_approved_count || 0, amount: data?.data?.amount_disbursement_approved },
+          { name: 'Disbursed', count: data?.data?.disbursed_count, amount: data?.data?.actual_amount_disbursed },
+          { name: 'Rejected', count: data?.data?.rejected_count },
         ];
         setChartData(cdata);
+        setRegions(data?.region)
         let s = 0;
         for (let i = 0; i < cdata.length; i++) {
           s += cdata[i].count;
@@ -237,7 +258,7 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans }) => {
     <Box p={3} borderRadius={4} bgcolor="background.paper" style={{padding: 10}}>
       <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
         <Box style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
-          <Selector title="Zone" options={regions} value={selectedRegion} setValue={setSelectedRegion} isMulti={true} width='300px' />
+          <Selector title="Zone" options={zones} value={selectedZones} setValue={setSelectedZones} isMulti={true} width='300px' />
           <Selector title="Region" options={regions} value={selectedRegion} setValue={setSelectedRegion} width='150px' />
           <Selector title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} isMulti={true} width='300px' />
         </Box>

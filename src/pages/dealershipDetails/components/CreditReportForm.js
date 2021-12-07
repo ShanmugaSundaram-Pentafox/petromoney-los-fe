@@ -105,7 +105,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
             readOnly={!editable}
             label="Business Vintage with OMC"
             name="business_vintage"
-            value={values.business_vintage || 0}
+            value={values.business_vintage}
             onChange={onChange}
           />
         </Grid>

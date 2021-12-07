@@ -4,22 +4,24 @@ import Alert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/styles';
 import { useFormik } from 'formik';
 import isEqual from 'lodash/isEqual';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 // import DealerCreditInfoForm from './DealerCreditInfoForm';
 // import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
+import { useQuery } from 'react-query';
 import CreditReportForm from './CreditReportForm';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { logger } from '../../../config/logger';
 import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
+import { getCreditReport } from '../../../services/dealerships.service';
 import apiCall from '../../../utils/api.util';
 
 const useStyles = makeStyles(theme => ({
   sidePanelTitle: {
     textAlign: 'center',
     padding: '12px 16px',
-    display:'flex',
-    justifyContent:'space-between',
+    display: 'flex',
+    justifyContent: 'space-between',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
@@ -99,33 +101,34 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
   const classes = useStyles();
   const [readOnly, setReadOnly] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [apiData, setApiData] = useState({});
+  // const [apiData, setApiData] = useState({});
   const [apiStatus, setApiStatus] = useState({});
+  const { data: apiData, refetch: getReport } = useQuery(['credit-report', dealershipId], () => getCreditReport(dealershipId))
 
-  const getCreditReport = () => {
-    apiCall(`${URL.dealership}/${dealershipId}/credit/report`)
-      .then(({ status, data }) => {
-        if (status === 'SUCCESS') {
-          setApiData(data[0] || {});
-          setValues(data[0] || {})
-        } else {
-          // reject(data.message);
-        }
-      })
-      .catch(e => {
-        // reject(e.message);
-      })
-  }
+  // const getCreditReport = () => {
+  //   apiCall(`${URL.dealership}/${dealershipId}/credit/report`)
+  //     .then(({ status, data }) => {
+  //       if (status === "SUCCESS") {
+  //         setApiData(data[0] || {});
+  //         setValues(data[0] || {})
+  //       } else {
+  //         // reject(data.message);
+  //       }
+  //     })
+  //     .catch(e => {
+  //       // reject(e.message);
+  //     })
+  // }
 
-  useEffect(() => {
-    getCreditReport();
-  }, [])
+  // useEffect(() => {
+  //   getCreditReport();
+  // }, [])
 
   const { values, errors, handleChange, handleSubmit, handleReset, setValues } = useFormik({
-    initialValues: initObject,
+    initialValues: { ...apiData },
     onSubmit: values => {
       // console.log('Form Values >> ', values);
-      if(isEqual(values, initObject)) {
+      if (isEqual(values, apiData)) {
         setApiStatus({ type: 'info', message: 'No changes made! Kindly make any change before submitting.' })
         setTimeout(() => {
           setApiStatus({})
@@ -147,7 +150,8 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
       })
         .then(({ status, message }) => {
           if (status == 'SUCCESS') {
-            getCreditReport();
+            // getCreditReport();
+            getReport();
             setApiStatus({ type: 'success', message: message || 'Report details updated' })
             setLoading(false);
             // handleReset();
@@ -171,7 +175,7 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
   return (
     <div className={classes.sidePanelFormWrapper}>
       <div className={classes.title}>
-        <Typography  variant="h4">Dealership credit report</Typography>
+        <Typography variant="h4">Dealership credit report</Typography>
         {/* <CloseRoundedIcon onClick={onClose} /> */}
       </div>
 

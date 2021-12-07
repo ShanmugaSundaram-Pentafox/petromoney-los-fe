@@ -1,7 +1,7 @@
-import React from "react";
-import PropTypes from 'prop-types';
-import styled, { css } from "styled-components";
 import CloseIcon from '@material-ui/icons/Close';
+import PropTypes from 'prop-types';
+import React from 'react';
+import styled, { css } from 'styled-components';
 
 export const NotificationSidebarWrapper = styled.aside`
     min-width: 100%;
@@ -77,31 +77,31 @@ export const NotificationSidebarWrapper = styled.aside`
 `;
 
 const NotificationSidebar = ({
-    showNotification= false ,
-    closeButton= () => {}
+  showNotification= false ,
+  closeButton= () => {}
 }) => {
-    return (
-        <NotificationSidebarWrapper show={showNotification}>
-            <CloseIcon className="close-icon" onClick={closeButton} />
+  return (
+    <NotificationSidebarWrapper show={showNotification}>
+      <CloseIcon className="close-icon" onClick={closeButton} />
 
-            {[1,2,3,4,5].map((data, index) => {
-                return (
-                    <div className="notification-card" key={index}>
-                        <span className="title">
-                            Notificaion Title
-                            <i>Yesterday, 12:20</i>
-                        </span>
-                        <span className="txt">New Loand request from this Dealership.</span>
-                    </div>
-                );
-            })}
-        </NotificationSidebarWrapper>
-    );
+      {[1,2,3,4,5].map((data, index) => {
+        return (
+          <div className="notification-card" key={index}>
+            <span className="title">
+              Notificaion Title
+              <i>Yesterday, 12:20</i>
+            </span>
+            <span className="txt">New Loand request from this Dealership.</span>
+          </div>
+        );
+      })}
+    </NotificationSidebarWrapper>
+  );
 };
 
 NotificationSidebar.propTypes = {
-    showNotification: PropTypes.bool,
-    closeButton: PropTypes.func
+  showNotification: PropTypes.bool,
+  closeButton: PropTypes.func
 };
 
 export default NotificationSidebar;

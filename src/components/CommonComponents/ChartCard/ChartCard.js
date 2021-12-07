@@ -1,7 +1,6 @@
-import React from "react"
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
-import Paper from "@material-ui/core/Paper";
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+import React from 'react'
 import {
   ChartCardContainer,
   ChartCardHeader,
@@ -9,8 +8,8 @@ import {
   ChartBlock,
   ChartLabelsBlock,
   ChartLabelWrapper,
-} from "./ChartCard.css";
-import { CHART_COLORS } from "../../../config/constants";
+} from './ChartCard.css';
+import { CHART_COLORS } from '../../../config/constants';
 
 const ChartLabelItem = ({
   text,

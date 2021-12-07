@@ -1,23 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import clsx from 'clsx';
-import { makeStyles } from '@material-ui/styles';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Grid from '@material-ui/core/Grid';
 import Table from '@material-ui/core/Table';
-import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
-import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import TextInput from '../../../components/TextInput/TextInput';
-import Currency from '../../../components/Number/Currency';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
+import React, { useEffect, useState } from 'react';
 import ExpensesTable from './ExpensesTable';
 import IncomeTable from './IncomeTable';
+import Currency from '../../../components/Number/Currency';
+import TextInput from '../../../components/TextInput/TextInput';
 import { postDealershipFinancialsById, getDealershipFinancialsById } from '../../../services/dealerships.service';
-import { useMount } from 'react-use';
-import { split } from 'lodash-es';
 
 const useStyles = makeStyles(theme => ({
   row: {
@@ -109,7 +105,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
             readOnly={!editable}
             label="Business Vintage with OMC"
             name="business_vintage"
-            value={values.business_vintage || 0}
+            value={values.business_vintage}
             onChange={onChange}
           />
         </Grid>
@@ -352,17 +348,17 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
         <Typography className={classes.sidePanelTitle} variant="h4">Obligations</Typography>
         <Table className={classes.table} size="small" aria-label="Expenses">
           <TableBody>
-            <Row text={`Existing Loan Obligations in form of EMI`}>
+            <Row text={'Existing Loan Obligations in form of EMI'}>
               <TextInput
                 money
                 readOnly={!editable}
                 name="current_loans_emi"
                 type="number"
-                value={values.current_loans_emi || ""}
+                value={values.current_loans_emi || ''}
                 onChange={onChange}
               />
             </Row>
-            <Row text={`Interest PA on Working Capital Limits (From P&L)`}>
+            <Row text={'Interest PA on Working Capital Limits (From P&L)'}>
               <TextInput
                 money
                 readOnly={!editable}
@@ -372,7 +368,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 onChange={onChange}
               />
             </Row>
-            <Row text={`Total Existing Obligations`} value={<Currency value={values.total_obligations} />} />
+            <Row text={'Total Existing Obligations'} value={<Currency value={values.total_obligations} />} />
           </TableBody>
         </Table>
       </Grid>
@@ -380,11 +376,11 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
         <Typography className={classes.sidePanelTitle} variant="h4">Eligibility</Typography>
         <Table className={classes.table} size="small" aria-label="Expenses">
           <TableBody>
-            <Row text={`FOIR % Considered (Normalised to 0 - 1)`} value={`${values.foir || 0}`} />
-            <Row text={`FOIR % EBIDTA`} value={values.foir_ebidta} />
-            <Row text={`Eligibility for Loan`} value={values.is_loan ? 'Yes' : '-'} />
-            <Row text={`Max monthly interest possible on fuel credit`} value={<Currency value={values.max_loan_interest} />} />
-            <Row text={`Applicable Interest Rate for Loan per Annum %`}>
+            <Row text={'FOIR % Considered (Normalised to 0 - 1)'} value={`${values.foir || 0}`} />
+            <Row text={'FOIR % EBIDTA'} value={values.foir_ebidta} />
+            <Row text={'Eligibility for Loan'} value={values.is_loan ? 'Yes' : '-'} />
+            <Row text={'Max monthly interest possible on fuel credit'} value={<Currency value={values.max_loan_interest} />} />
+            <Row text={'Applicable Interest Rate for Loan per Annum %'}>
               <TextInput
                 readOnly={!editable}
                 name="applicable_interest"
@@ -395,9 +391,9 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 max={100}
               />
             </Row>
-            <Row text={`Max Loan possible as per FOIR on EBIDTA`} value={<Currency value={values.max_loan_foir} />} />
-            <Row text={`Annual Turnover (Rs)`} value={<Currency value={values.annual_turnover} />} />
-            <Row text={`% of Turnover to be considered for Loan`}>
+            <Row text={'Max Loan possible as per FOIR on EBIDTA'} value={<Currency value={values.max_loan_foir} />} />
+            <Row text={'Annual Turnover (Rs)'} value={<Currency value={values.annual_turnover} />} />
+            <Row text={'% of Turnover to be considered for Loan'}>
               <TextInput
                 readOnly={!editable}
                 name="loan_percentage"
@@ -406,9 +402,9 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 onChange={onChange}
               />
             </Row>
-            <Row text={`Max Loan possible as per Turnover criteria`} value={<Currency value={values.max_loan_turnover} />} />
-            <Row text={`Max Loan Possible (Lower of FOIR & Turnover Criteria calculations)`} value={<Currency value={values.max_loan_possible} />} />
-            <Row text={`Score as per Scorecard`}>
+            <Row text={'Max Loan possible as per Turnover criteria'} value={<Currency value={values.max_loan_turnover} />} />
+            <Row text={'Max Loan Possible (Lower of FOIR & Turnover Criteria calculations)'} value={<Currency value={values.max_loan_possible} />} />
+            <Row text={'Score as per Scorecard'}>
               <TextInput
                 readOnly={!editable}
                 name="score"
@@ -417,9 +413,9 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 onChange={onChange}
               />
             </Row>
-            <Row text={`Score Impact`} value={values.score_impact} />
-            <Row text={`Max Loan Exposure possible post score impact`} value={values.max_loan_exposure || 0} />
-            <Row text={`Max Exposure Cap as per policy (RS)`}>
+            <Row text={'Score Impact'} value={values.score_impact} />
+            <Row text={'Max Loan Exposure possible post score impact'} value={values.max_loan_exposure || 0} />
+            <Row text={'Max Exposure Cap as per policy (RS)'}>
               <TextInput
                 money
                 readOnly={!editable}
@@ -429,7 +425,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 onChange={onChange}
               />
             </Row>
-            <Row text={`Existing PetroMoney Exposure`}>
+            <Row text={'Existing PetroMoney Exposure'}>
               <TextInput
                 money
                 readOnly={!editable}
@@ -439,8 +435,8 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 onChange={onChange}
               />
             </Row>
-            <Row text={`Max Loan Possible (after applying policy caps) (Rs)`} value={<Currency value={values.final_loan_value} />} />
-            <Row text={`Loan Amount applied for (Rs)`}>
+            <Row text={'Max Loan Possible (after applying policy caps) (Rs)'} value={<Currency value={values.final_loan_value} />} />
+            <Row text={'Loan Amount applied for (Rs)'}>
               <TextInput
                 money
                 readOnly={!editable}
@@ -450,7 +446,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 onChange={onChange}
               />
             </Row>
-            <Row text={`Loan Amount to be given (Rs)`}>
+            <Row text={'Loan Amount to be given (Rs)'}>
               <TextInput
                 money
                 readOnly={!editable}
@@ -460,8 +456,8 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 onChange={onChange}
               />
             </Row>
-            <Row text={`Annual Interest on Loan Amount (Rs)`} value={<Currency value={values.annual_interest} />} />
-            <Row text={`FOIR % on fuel credit`} value={values.foir_percentage || 0 * 100} />
+            <Row text={'Annual Interest on Loan Amount (Rs)'} value={<Currency value={values.annual_interest} />} />
+            <Row text={'FOIR % on fuel credit'} value={values.foir_percentage || 0 * 100} />
           </TableBody>
         </Table>
       </Grid>
@@ -473,7 +469,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
               className={clsx(classes.btn, classes.btnSuccess)}
               // startIcon={<NavigateNextRoundedIcon />}
               disabled={loading}
-              onClick={loading ? () => null : onSubmit}>{loading ? <CircularProgress size={20} /> : `Save`}</Button>
+              onClick={loading ? () => null : onSubmit}>{loading ? <CircularProgress size={20} /> : 'Save'}</Button>
           )
         }
       </Grid>
@@ -523,7 +519,7 @@ const FinanceFormData = ({ id, editable, btnLabel, data, values = {}, errors, cu
             label="Turnover"
             name="turnover"
             type="number"
-            value={financeData?.turnover || ""}
+            value={financeData?.turnover || ''}
             onChange={onTextChange}
           />
         </Grid>
@@ -535,7 +531,7 @@ const FinanceFormData = ({ id, editable, btnLabel, data, values = {}, errors, cu
           label="Net Profit before Tax"
           name="net_profit"
           type="number"
-          value={financeData?.net_profit || ""}
+          value={financeData?.net_profit || ''}
           onChange={onTextChange}
         />
       </Grid>
@@ -546,7 +542,7 @@ const FinanceFormData = ({ id, editable, btnLabel, data, values = {}, errors, cu
           label="NP %"
           name="net_profit_percentage"
           type="number"
-          value={((financeData?.net_profit_percentage || 0) * 100) || ""}
+          value={((financeData?.net_profit_percentage || 0) * 100) || ''}
           onChange={onTextChange}
         />
       </Grid>
@@ -557,7 +553,7 @@ const FinanceFormData = ({ id, editable, btnLabel, data, values = {}, errors, cu
           label="NP % Change"
           name="net_profit_change_percentage"
           type="number"
-          value={financeData?.net_profit_change_percentage || ""}
+          value={financeData?.net_profit_change_percentage || ''}
           onChange={onTextChange}
         />
       </Grid>
@@ -568,7 +564,7 @@ const FinanceFormData = ({ id, editable, btnLabel, data, values = {}, errors, cu
           label="Income tax for the year"
           name="it_paid"
           type="number"
-          value={financeData?.it_paid || ""}
+          value={financeData?.it_paid || ''}
           onChange={onTextChange}
         />
       </Grid>
@@ -579,7 +575,7 @@ const FinanceFormData = ({ id, editable, btnLabel, data, values = {}, errors, cu
           label="Net Worth (Equity + Reserves)"
           name="networth"
           type="number"
-          value={financeData?.networth || ""}
+          value={financeData?.networth || ''}
           onChange={onTextChange}
         />
       </Grid>
@@ -590,7 +586,7 @@ const FinanceFormData = ({ id, editable, btnLabel, data, values = {}, errors, cu
           label="Value if assets owned by family members"
           name="assets_value"
           type="number"
-          value={financeData?.assets_value || ""}
+          value={financeData?.assets_value || ''}
           onChange={onTextChange}
         />
       </Grid>
@@ -601,7 +597,7 @@ const FinanceFormData = ({ id, editable, btnLabel, data, values = {}, errors, cu
           label="Total loan amount outstanding"
           name="loan_os"
           type="number"
-          value={financeData?.loan_os || ""}
+          value={financeData?.loan_os || ''}
           onChange={onTextChange}
         />
       </Grid>
@@ -612,7 +608,7 @@ const FinanceFormData = ({ id, editable, btnLabel, data, values = {}, errors, cu
           label="Leverage (No of Times)"
           name="leverage"
           type="number"
-          value={financeData?.leverage || ""}
+          value={financeData?.leverage || ''}
           onChange={onTextChange}
         />
       </Grid>

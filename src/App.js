@@ -1,14 +1,17 @@
-import React from "react";
-import { HashRouter } from "react-router-dom";
-import { Provider } from "react-redux";
-import { QueryClientProvider, QueryClient } from 'react-query'
-import { PersistGate } from "redux-persist/integration/react";
-import { ThemeProvider } from "@material-ui/styles";
-import { SnackbarProvider } from "notistack";
-import theme from "./theme";
-import "./App.scss";
-import Routes from "./routes/routes";
-import { store, persistor } from "./store";
+import { ThemeProvider } from '@material-ui/styles';
+import { SnackbarProvider } from 'notistack';
+import React from 'react';
+import { QueryClient,QueryClientProvider } from 'react-query';
+import { Provider } from 'react-redux';
+import { HashRouter } from 'react-router-dom';
+import { PersistGate } from 'redux-persist/integration/react';
+
+import './App.scss';
+import Routes from './routes/routes';
+import { store, persistor } from './store';
+import theme from './theme';
+
+
 
 
 const queryClient = new QueryClient()
@@ -16,7 +19,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-        <SnackbarProvider maxSnack={3} anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
+        <SnackbarProvider maxSnack={3} anchorOrigin={{ vertical: 'bottom', horizontal: 'left'}}>
           <ThemeProvider theme={theme}>
             <HashRouter>
               <PersistGate persistor={persistor}>

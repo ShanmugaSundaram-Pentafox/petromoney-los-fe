@@ -1,15 +1,15 @@
 import { Grid } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
-import TextInput from '../../../../components/TextInput/TextInput';
-import clsx from 'clsx';
-import { makeStyles } from "@material-ui/styles";
-import { Formik } from 'formik';
-import { ViewData } from '../../../../components/CommonComponents/FilePreview';
 import { Divider } from '@material-ui/core';
-import Button from '../../../../components/CommonComponents/Button/Button';
-import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
-import { useSnackbar } from 'notistack';
 import { CircularProgress } from '@material-ui/core';
+import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
+import { Formik } from 'formik';
+import { useSnackbar } from 'notistack';
+import React, { useEffect, useState } from 'react';
+import Button from '../../../../components/CommonComponents/Button/Button';
+import { ViewData } from '../../../../components/CommonComponents/FilePreview';
+import TextInput from '../../../../components/TextInput/TextInput';
 import { updateAssetDetailsById } from '../../../../services/PDReport.services';
 
 const useStyles = makeStyles((theme) => ({
@@ -74,7 +74,7 @@ const AssetsEditForm = ({ dealer_id, assetData = {}, data, handleClose }) => {
       })
   }
   const inputProps = {
-    direction: "column",
+    direction: 'column',
     alignTop: true,
   }
   if (!data?.details) return null
@@ -109,6 +109,7 @@ const AssetsEditForm = ({ dealer_id, assetData = {}, data, handleClose }) => {
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
+                  number
                   labelText="Asset Value"
                   name="asset_value"
                   value={values.asset_value}
@@ -120,6 +121,7 @@ const AssetsEditForm = ({ dealer_id, assetData = {}, data, handleClose }) => {
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
+                  number
                   labelText="Market value"
                   name="market_value"
                   value={values.market_value}

@@ -1,18 +1,21 @@
-import React, { useState } from "react";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Button from "@material-ui/core/Button";
-// import ButtonGroup from "@material-ui/core/ButtonGroup";
+import { Checkbox, FormControlLabel, FormGroup, Paper, Typography } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import ButtonComp from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 // import Typography from "@material-ui/core/Typography";
 import { useSnackbar } from 'notistack';
+import React, { useState } from 'react';
+import { useMount } from 'react-use';
 // import Chip from '@material-ui/core/Chip';
-import { makeStyles } from "@material-ui/core/styles";
-import FileUpload from "../../../components/FileUpload";
-import { deleteDocsImage, getDealershipCheckList } from "../../../services/dealerships.service";
-import { getFileNameFromUrl } from "../../../utils/strings.util";
+import DocListPreview from './DocListPreview';
+import FilePreview from '../../../components/CommonComponents/FilePreview';
+import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
+import FileUpload from '../../../components/FileUpload';
 import { URL } from '../../../config/serverUrls';
 // import Modal from '@material-ui/core/Modal';
 import { Box, Checkbox, FormControlLabel, FormGroup, IconButton, Paper, Typography } from "@material-ui/core";
@@ -23,6 +26,8 @@ import FormDialog from "../../../components/CommonComponents/FormDialog/FormDial
 import FilePreview from "../../../components/CommonComponents/FilePreview";
 import DocListPreview from "./DocListPreview";
 import { useQuery } from "react-query";
+import { deleteDocsImage, getDealershipCheckList } from '../../../services/dealerships.service';
+import { getFileNameFromUrl } from '../../../utils/strings.util';
 
 const DeleteButton = withStyles(theme => ({
   root: {
@@ -61,9 +66,9 @@ const useStyles = makeStyles((theme) => ({
     padding: 8,
   },
   modal: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   inner_modal: {
     backgroundColor: theme.palette.background.paper,
@@ -79,11 +84,11 @@ const useStyles = makeStyles((theme) => ({
 
   },
   list: {
-    textAlign: "center",
+    textAlign: 'center',
   },
   button: {
     margin: 0,
-    float: "right",
+    float: 'right',
   },
 }));
 
@@ -107,7 +112,7 @@ const Docs = ({ data }) => {
           ) : null
         })
       }
-      <FormDialog title={"File Preview"} onDownload={imageModal.image} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
+      <FormDialog title={'File Preview'} onDownload={imageModal.image} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
         <FilePreview data={imageModal} />
       </FormDialog>
     </>
@@ -193,20 +198,20 @@ const DocList = ({ id }) => {
     files.map(file => {
       const fileName = file.name.replace(/[()%.,+\-&]/g, '').toLowerCase().replace(/\s/g, '_');
       formData.append(`file-${id}`, file);
-      formData.append(`fileName`, fileName);
-      formData.append(`id`, rowData.doc_id);
+      formData.append('fileName', fileName);
+      formData.append('id', rowData.doc_id);
     });
     fetch(`${URL.base}${URL.checklist}/${dealerShipId}/doc/${docID}`, {
       method: 'POST',
       body: formData
     })
       .then(data => {
-        enqueueSnackbar('File Upload Success', { variant: "success" });
+        enqueueSnackbar('File Upload Success', { variant: 'success' });
         onCloseUploader();
         window.location.reload();
       })
       .catch(error => {
-        enqueueSnackbar('File Upload Failed', { variant: "error" });
+        enqueueSnackbar('File Upload Failed', { variant: 'error' });
 
       })
 
@@ -223,7 +228,7 @@ const DocList = ({ id }) => {
   return (
     <div className={classes.wrapper}>
       {showUpload && <FileUpload handleSave={handleSave} id={id} data={rowData} title='Upload Dealership Document' open={showUpload} onCloseUploader={onCloseUploader} />}
-      <Typography variant="h5" align={"Left"} className={classes.title}>
+      <Typography variant="h5" align={'Left'} className={classes.title}>
         Dealership Documents
       </Typography>
       <Table className={classes.table} size="small" aria-label="Dealers">
@@ -290,7 +295,7 @@ const DocList = ({ id }) => {
             </div>
           </div>
         </div>
-      </FormDialog>
+      </FormDialog> 
 
       {/* <Modal
         className={classes.modal}

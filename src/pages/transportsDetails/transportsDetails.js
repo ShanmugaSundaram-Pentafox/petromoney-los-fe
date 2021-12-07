@@ -1,17 +1,17 @@
-import React, { useState } from "react"
-import { makeStyles } from "@material-ui/styles"
-import Grid from "@material-ui/core/Grid"
-import Button from "@material-ui/core/Button"
-import { useMount } from "react-use"
-import usePageTitle from "../../hooks/usePageTitle"
+import { Drawer } from '@material-ui/core';
+import Button from '@material-ui/core/Button'
+import Grid from '@material-ui/core/Grid'
+import { makeStyles } from '@material-ui/styles'
+import React, { useState } from 'react'
+import { useMount } from 'react-use'
+import VehicleInfo from './components/VehicleInfo'
+import usePageTitle from '../../hooks/usePageTitle'
 import {
   getTransporterInfoFromID,
   getTransportOwnerInfo,
   getVehicleInfoFromID,
-} from "../../services/transports.service"
-import VehicleInfo from "./components/VehicleInfo"
+} from '../../services/transports.service'
 import AddNewVehicleForm from '../transports/components/AddNewVehicleForm'
-import { Drawer } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
 

@@ -1,18 +1,17 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import { NavLink as RouterLink } from 'react-router-dom';
-import { makeStyles } from '@material-ui/styles';
-import MUIDataTable from "mui-datatables";
-import Typography from '@material-ui/core/Typography';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Paper from '@material-ui/core/Paper';
-import { useMount } from 'react-use';
-// import { createStructuredSelector } from 'reselect';
-import { connect } from 'react-redux';
-import moment from 'moment';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
+import moment from 'moment';
+import MUIDataTable from 'mui-datatables';
+import React, { useMemo, useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import { NavLink as RouterLink } from 'react-router-dom';
+// import { createStructuredSelector } from 'reselect';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
 import Currency from '../Number/Currency';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -47,14 +46,14 @@ const DisbursementReqestTable = ({ title, loans, setLoansData, onRowClick, filte
 
   useEffect(() => {
     setLoading(true);
-      getLoansByStatus('disbursement_approval', filterQry)
-        .then(data => {
-          setLoansData('disbursement_approval', data);
-          setLoading(false);
-        })
-        .catch(e => {
-          setLoading(false);
-        })
+    getLoansByStatus('disbursement_approval', filterQry)
+      .then(data => {
+        setLoansData('disbursement_approval', data);
+        setLoading(false);
+      })
+      .catch(e => {
+        setLoading(false);
+      })
   }, [filterQry])
 
   // useMount(() => {
@@ -120,9 +119,9 @@ const DisbursementReqestTable = ({ title, loans, setLoansData, onRowClick, filte
         options: {
           filter: false,
           sort: true,
-          setCellProps: () => ({
-            align: 'right',
-          }),
+          // setCellProps: () => ({
+          //   align: 'right',
+          // }),
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }
       },

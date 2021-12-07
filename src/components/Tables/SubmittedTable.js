@@ -1,36 +1,23 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import { useMount } from 'react-use';
-import { NavLink as RouterLink } from 'react-router-dom';
-import { makeStyles } from '@material-ui/styles';
-import MUIDataTable from "mui-datatables";
-import Typography from '@material-ui/core/Typography';
-// import Grid from '@material-ui/core/Grid';
-// import Box from '@material-ui/core/Box';
-import Tooltip from '@material-ui/core/Tooltip';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import IconButton from '@material-ui/core/IconButton';
-import AssignmentIcon from '@material-ui/icons/Assignment';
-// import CloseIcon from '@material-ui/icons/Close';
-// import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 import Paper from '@material-ui/core/Paper';
-// import Button from "@material-ui/core/Button";
-// import { createStructuredSelector } from 'reselect';
-import { connect } from 'react-redux';
-import moment from 'moment';
+import Tooltip from '@material-ui/core/Tooltip';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
+import moment from 'moment';
+import MUIDataTable from 'mui-datatables';
+import React, { useMemo, useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import { NavLink as RouterLink } from 'react-router-dom';
+import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
-import Currency from '../Number/Currency';
-// import CircularProgress from '@material-ui/core/CircularProgress';
-// import PdfViewer from '../CommonComponents/PdfViewer/PdfViewer';
 import SignRequestLayout from '../Leegality/SignRequestLayout';
-import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import Currency from '../Number/Currency';
+
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    // padding: theme.spacing(3),
-    // paddingTop: 0,
-  },
   title: {
     fontWeight: 500
   },
@@ -65,38 +52,23 @@ const useStyles = makeStyles(theme => ({
 
 const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) => {
   const classes = useStyles();
-  // const [ data, setData ] = useState([]);
   const [loanId, setloanId] = useState();
   const [dealershipId, setDealershipId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
-  const [type, setType] = useState("");
+  const [type, setType] = useState('');
   const [loading, setLoading] = useState(false);
-
   useEffect(() => {
     setLoading(true);
-      getLoansByStatus('submitted', filterQry)
-        .then(data => {
-          setLoansData('submitted', data);
-          setLoading(false);
-        })
-        .catch(e => {
-          setLoading(false);
-        })
+    getLoansByStatus('submitted', filterQry)
+      .then(data => {
+        setLoansData('submitted', data);
+        setLoading(false);
+      })
+      .catch(e => {
+        setLoading(false);
+      })
   }, [filterQry])
 
-  // useMount(() => {
-  //   if (!loans || !loans.length) {
-  //     setLoading(true);
-  //     getLoansByStatus('submitted')
-  //       .then(data => {
-  //         setLoansData('submitted', data);
-  //         setLoading(false);
-  //       })
-  //       .catch(e => {
-  //         setLoading(false);
-  //       })
-  //   }
-  // });
   const columns = useMemo(() => {
     return [
       {
@@ -162,21 +134,18 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
             align: 'center',
           }),
           customBodyRender: value => {
-            // moment(new Date(value)).format('DD MMM, YYYY')
             return <div>
               {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
-              {/* {value ? value : '-'} */}
             </div>
           }
         }
       },
-
       {
         label: 'Application state',
         name: 'application_state',
         options: {
           filter: true,
-          filterWidth:"100%",
+          filterWidth: '100%',
           sort: true,
           setCellProps: () => ({
             align: 'center',
@@ -197,13 +166,9 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
           customBodyRender: (value, r) => {
             return (
               <Tooltip title="eSign Application">
-                <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setType("application"); setDealershipId(value); setModalVisible(true); }}>
+                <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setType('application'); setDealershipId(value); setModalVisible(true); }}>
                   <div>
                     <ESignIcon width={24} />
-                    {/* <img
-                      alt="Under development"
-                      src={eSign}
-                    /> */}
                   </div>
                 </IconButton>
               </Tooltip>
@@ -215,17 +180,12 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
   }, [loans]);
 
   const options = {
-    // filterType: 'checkbox',
     selectableRowsHeader: false,
     selectableRows: 'none',
     isRowSelectable: () => false,
-    // downloadOptions: {
-    //   customCSVdata: loans,
-    // },
-    // onRowClick: (rowData, { dataIndex }) => {
-    //   // console.log(rowData, rowMeta);
-    //   onRowClick(loans[dataIndex].dealership_id, 'submitted')
-    // }
+    onRowClick: (rowData, { dataIndex }) => {
+      onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'submitted')
+    }
   };
 
   return (

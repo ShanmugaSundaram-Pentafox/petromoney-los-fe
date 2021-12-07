@@ -1,33 +1,33 @@
-import React, { useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
+import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
+import Checkbox from '@material-ui/core/Checkbox';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormGroup from '@material-ui/core/FormGroup';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import { makeStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import React, { useState } from 'react';
+import { useMount } from 'react-use';
 import {
   getAllRegion,
   getMappedRegion,
   updateMappedRegion,
   deleteMappedRegion,
-} from "../../../services/common.service";
-import { useMount } from "react-use";
-import Button from "@material-ui/core/Button";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormGroup from "@material-ui/core/FormGroup";
-import Checkbox from "@material-ui/core/Checkbox";
-import Paper from "@material-ui/core/Paper";
-import CircularProgress from '@material-ui/core/CircularProgress';
+} from '../../../services/common.service';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: 10,
-    minWidth: "15vw",
+    minWidth: '15vw',
     maxHeight: 300,
-    overflowY: "auto",
+    overflowY: 'auto',
   },
   paper: {
-    width: "auto",
+    width: 'auto',
     height: 20,
-    overflow: "auto",
+    overflow: 'auto',
   },
   button: {
     margin: theme.spacing(0.5, 0),
@@ -142,10 +142,10 @@ const MapRegion = (data) => {
     // return !mappedRegion.find(rg => rg.region_id === r.region);
   })
   return (
-    <Box mt={2} mb={2} bgcolor={"#fafafa"} position={"relative"}>
+    <Box mt={2} mb={2} bgcolor={'#fafafa'} position={'relative'}>
       {
         loading && (
-          <Box p={2} pt={10} mx={'auto'} bgcolor={"rgba(207, 216, 220, .25)"} textAlign={"center"} position={"absolute"} zIndex={10} top={0} bottom={0} width={'100%'}>
+          <Box p={2} pt={10} mx={'auto'} bgcolor={'rgba(207, 216, 220, .25)'} textAlign={'center'} position={'absolute'} zIndex={10} top={0} bottom={0} width={'100%'}>
             <CircularProgress color="secondary" />
           </Box>
         )
@@ -171,7 +171,7 @@ const MapRegion = (data) => {
           })}
         </Grid>
         <Grid item xs={2}>
-          <Grid container direction="column" alignItems="center" justify={"center"}>
+          <Grid container direction="column" alignItems="center" justify={'center'}>
             <Button
               variant="contained"
               color="primary"

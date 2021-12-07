@@ -1,4 +1,4 @@
-import { CommonActionTypes } from "./common.types";
+import { CommonActionTypes } from './common.types';
 
 export const setPageTitle = (pageTitle, goBackIcon) => ({
   type: CommonActionTypes.SET_PAGE_TITLE,

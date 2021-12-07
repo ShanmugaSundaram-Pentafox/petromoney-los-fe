@@ -1,21 +1,23 @@
-import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/styles';
 import { Button, Typography } from '@material-ui/core';
-import Paper from '@material-ui/core/Paper';
-import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import TextField from '@material-ui/core/TextField';
-import CloseIcon from '@material-ui/icons/Close';
-import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-import TextInput from '../../../components/TextInput/TextInput';
-import SearchIcon from '@material-ui/icons/Search';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import { Tooltip } from '@material-ui/core';
 import { Grid } from '@material-ui/core';
-import { useSnackbar } from 'notistack';
+import Divider from '@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import Paper from '@material-ui/core/Paper';
+import TextField from '@material-ui/core/TextField';
 
+import CheckCircleTwoTone from '@material-ui/icons/CheckCircleTwoTone';
+import CloseIcon from '@material-ui/icons/Close';
+import DeleteIcon from '@material-ui/icons/Delete';
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import EditIcon from '@material-ui/icons/Edit';
+import SearchIcon from '@material-ui/icons/Search';
+import { makeStyles } from '@material-ui/styles';
+import { useSnackbar } from 'notistack';
+import React, { useState } from 'react';
+import { useMount } from 'react-use';
+import TextInput from '../../../components/TextInput/TextInput';
 import {
   addAssetType,
   addBusinessType,
@@ -43,8 +45,6 @@ import {
   updateRegionById,
   updateStateById,
 } from '../../../services/common.service';
-import CheckCircleTwoTone from '@material-ui/icons/CheckCircleTwoTone';
-import { useMount } from 'react-use';
 
 const useStyles = makeStyles((theme) => ({
   '@global': {
@@ -199,57 +199,57 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
   const [deactivateId, setDeactivateId] = useState();
   const [openRegionForm, setOpenRegionForm] = useState(false);
   const [openAssetForm, setOpenAssetForm] = useState(false);
-  const [assetValue, setAssetValue] = useState([{label: "", type: ""}]);
+  const [assetValue, setAssetValue] = useState([{label: '', type: ''}]);
   const [states, setStates] = useState();
   const {enqueueSnackbar} = useSnackbar();
 
   useMount(() => {  
     if(title === 'OMCs'){
-        getOmcList()
+      getOmcList()
         .then(setData)
         .catch((e) => {
           console.log(e)
         });
-      } else if(title === 'Region'){
-        getAllRegion()
+    } else if(title === 'Region'){
+      getAllRegion()
         .then(setData)
         .catch((e) => {
           console.log(e)
         });
-        getActiveStates()
+      getActiveStates()
         .then(setStates)
         .catch((e) => {
           console.log(e)
         })
-      } else if(title === 'State'){
-        getStates()
+    } else if(title === 'State'){
+      getStates()
         .then(setData)
         .catch((e) => {
           console.log(e)
           // setLoading(false)
         });
-      } else if(title === 'Business Type'){
-        getBusinessTypes()
+    } else if(title === 'Business Type'){
+      getBusinessTypes()
         .then(setData) 
         .catch((e) => {
           console.log(e)
           // setLoading(false)
         });
-      } else if(title === 'Loan Type'){
-        getLoanTypes()
+    } else if(title === 'Loan Type'){
+      getLoanTypes()
         .then(setData) 
         .catch((e) => {
           console.log(e)
           // setLoading(false)
         });
-      } else if(title === 'Asset Type'){
-        getAssetType()
+    } else if(title === 'Asset Type'){
+      getAssetType()
         .then(setData) 
         .catch((e) => {
           console.log(e)
           // setLoading(false)
         });
-      }
+    }
   })
 
 
@@ -281,15 +281,15 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
       .catch((err) => {
         console.log(err);
       });
-    }
+  }
 
   const filteredData = data?.filter((item) =>
     item.name?.toUpperCase().includes(value?.toUpperCase())
   );
   const editItem = (item, title) => {
-      setRowData(item);
-      setStatus(title);
-      title === 'Asset Type' && setAssetValue(JSON.parse(item.details))
+    setRowData(item);
+    setStatus(title);
+    title === 'Asset Type' && setAssetValue(JSON.parse(item.details))
   };
 
   const deleteItem = (item, title) => {
@@ -316,14 +316,14 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
   }
 
   const handleRemoveClick = index => {
-    console.log(index);
+    // console.log(index);
     const list = [...assetValue]
     list.splice(index, 1)
     setAssetValue(list)
   }
 
   const handleAddClick = () => {
-    setAssetValue([...assetValue, { label: "", type: "" }]);
+    setAssetValue([...assetValue, { label: '', type: '' }]);
   }
 
   const handleAdd = (event) => {
@@ -503,162 +503,162 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
     if(AddData){
       if(status === 'OMCs'){
         addOmcs(AddData)
-        .then((res) => {
-          handleClose()
-          enqueueSnackbar(res, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'success',
+          .then((res) => {
+            handleClose()
+            enqueueSnackbar(res, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'success',
+            })
+            setTimeout(() => {  
+              window.location.reload(false);
+            }, 1500);
           })
-          setTimeout(() => {  
-            window.location.reload(false);
-          }, 1500);
-        })
-        .catch((err) => {
-          console.log(err);
-          enqueueSnackbar('Something went wrong, Please try Again!', {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'error',
+          .catch((err) => {
+            console.log(err);
+            enqueueSnackbar('Something went wrong, Please try Again!', {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            })
           })
-        })
       }
       if(status === 'Region'){
         addRegion(AddData)
-        .then((res) => {
-          handleClose()
-          enqueueSnackbar(res, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'success',
+          .then((res) => {
+            handleClose()
+            enqueueSnackbar(res, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'success',
+            })
+            setTimeout(() => {
+              window.location.reload(false);
+            }, 1500);
           })
-          setTimeout(() => {
-            window.location.reload(false);
-          }, 1500);
-        })
-        .catch((err) => {
-          console.log(err);
-          enqueueSnackbar('Something went wrong, Please try Again!', {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'error',
+          .catch((err) => {
+            console.log(err);
+            enqueueSnackbar('Something went wrong, Please try Again!', {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            })
           })
-        })
       }
       if(status === 'State'){
         addState(AddData)
-        .then((res) => {
-          handleClose()
-          enqueueSnackbar(res, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'success',
+          .then((res) => {
+            handleClose()
+            enqueueSnackbar(res, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'success',
+            })
+            setTimeout(() => {
+              window.location.reload(false);
+            }, 1500);
           })
-          setTimeout(() => {
-            window.location.reload(false);
-          }, 1500);
-        })
-        .catch((err) => {
-          console.log(err);
-          enqueueSnackbar('Something went wrong, Please try Again!', {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'error',
+          .catch((err) => {
+            console.log(err);
+            enqueueSnackbar('Something went wrong, Please try Again!', {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            })
           })
-        })
       }
       if(status === 'Business Type'){
         addBusinessType(AddData)
-        .then((res) => {
-          handleClose()
-          enqueueSnackbar(res, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'success',
+          .then((res) => {
+            handleClose()
+            enqueueSnackbar(res, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'success',
+            })
+            setTimeout(() => {
+              window.location.reload(false);
+            }, 1500);
           })
-          setTimeout(() => {
-            window.location.reload(false);
-          }, 1500);
-        })
-        .catch((err) => {
-          console.log(err);
-          enqueueSnackbar('Something went wrong, Please try Again!', {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'error',
+          .catch((err) => {
+            console.log(err);
+            enqueueSnackbar('Something went wrong, Please try Again!', {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            })
           })
-        })
       }
 
       if(status === 'Loan Type'){
         addLoanType(AddData)
-        .then((res) => {
-          handleClose()
-          enqueueSnackbar(res, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'success',
+          .then((res) => {
+            handleClose()
+            enqueueSnackbar(res, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'success',
+            })
+            setTimeout(() => {
+              window.location.reload(false);
+            }, 1500);
           })
-          setTimeout(() => {
-            window.location.reload(false);
-          }, 1500);
-        })
-        .catch((err) => {
-          console.log(err);
-          enqueueSnackbar('Something went wrong, Please try Again!', {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'error',
+          .catch((err) => {
+            console.log(err);
+            enqueueSnackbar('Something went wrong, Please try Again!', {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            })
           })
-        })
       }
       
       if(status === 'Asset Type'){
         const assetData = {name: AddData.name, details: assetValue}
         addAssetType(assetData)
-        .then((res) => {
-          handleClose()
-          enqueueSnackbar(res, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'success',
+          .then((res) => {
+            handleClose()
+            enqueueSnackbar(res, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'success',
+            })
+            setTimeout(() => {
+              window.location.reload(false);
+            }, 1500);
           })
-          setTimeout(() => {
-            window.location.reload(false);
-          }, 1500);
-        })
-        .catch((err) => {
-          console.log(err);
-          enqueueSnackbar('Something went wrong, Please try Again!', {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'error',
+          .catch((err) => {
+            console.log(err);
+            enqueueSnackbar('Something went wrong, Please try Again!', {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            })
           })
-        })
       }
     }
   }
@@ -666,159 +666,159 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
   const handleDelete = () => {
     if(status === 'OMCs'){
       deleteOmcs(rowData, rowData.id)
-      .then((res) => {
-        handleClose()
-        enqueueSnackbar(res, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
+        .then((res) => {
+          handleClose()
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
+          setTimeout(() => {
+            window.location.reload(false);
+          }, 1500);
         })
-        setTimeout(() => {
-          window.location.reload(false);
-        }, 1500);
-      })
-      .catch((err) => {
-        console.log(err);
-        enqueueSnackbar('Something went wrong, Please try Again!', {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        })
-      });
+        .catch((err) => {
+          console.log(err);
+          enqueueSnackbar('Something went wrong, Please try Again!', {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
+        });
     }
     if(status === 'Region'){
       deleteRegion(rowData, rowData.region)
-      .then((res) => {
-        handleClose()
-        enqueueSnackbar(res, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
+        .then((res) => {
+          handleClose()
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
+          setTimeout(() => {
+            window.location.reload(false);
+          }, 1500);
         })
-        setTimeout(() => {
-          window.location.reload(false);
-        }, 1500);
-      })
-      .catch((err) => {
-        console.log(err);
-        enqueueSnackbar('Something went wrong, Please try Again!', {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        })
-      });
+        .catch((err) => {
+          console.log(err);
+          enqueueSnackbar('Something went wrong, Please try Again!', {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
+        });
     }
     if(status === 'State'){
       deleteState(rowData, rowData.id)
-      .then((res) => {
-        handleClose()
-        enqueueSnackbar(res, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
+        .then((res) => {
+          handleClose()
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
+          setTimeout(() => {
+            window.location.reload(false);
+          }, 1500);
         })
-        setTimeout(() => {
-          window.location.reload(false);
-        }, 1500);
-      })
-      .catch((err) => {
-        console.log(err);
-        enqueueSnackbar('Something went wrong, Please try Again!', {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        })
-      });
+        .catch((err) => {
+          console.log(err);
+          enqueueSnackbar('Something went wrong, Please try Again!', {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
+        });
     }
     if(status === 'Asset Type'){
       deleteAsset(rowData, rowData.asset_id)
-      .then((res) => {
-        handleClose()
-        enqueueSnackbar(res, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
+        .then((res) => {
+          handleClose()
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
+          setTimeout(() => {
+            window.location.reload(false);
+          }, 1500);
         })
-        setTimeout(() => {
-          window.location.reload(false);
-        }, 1500);
-      })
-      .catch((err) => {
-        console.log(err);
-        enqueueSnackbar('Something went wrong, Please try Again!', {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        })
-      });
+        .catch((err) => {
+          console.log(err);
+          enqueueSnackbar('Something went wrong, Please try Again!', {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
+        });
     }
     if(status === 'Loan Type'){
       deleteLoan(rowData, rowData.loan_id)
-      .then((res) => {
-        handleClose()
-        enqueueSnackbar(res, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
+        .then((res) => {
+          handleClose()
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
+          setTimeout(() => {
+            window.location.reload(false);
+          }, 1500);
         })
-        setTimeout(() => {
-          window.location.reload(false);
-        }, 1500);
-      })
-      .catch((err) => {
-        console.log(err);
-        enqueueSnackbar('Something went wrong, Please try Again!', {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        })
-      });
+        .catch((err) => {
+          console.log(err);
+          enqueueSnackbar('Something went wrong, Please try Again!', {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
+        });
     }
     if(status === 'Business Type'){
       deleteBusiness(rowData, rowData.id)
-      .then((res) => {
-        handleClose()
-        enqueueSnackbar(res, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
+        .then((res) => {
+          handleClose()
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
+          setTimeout(() => {
+            window.location.reload(false);
+          }, 1500);
         })
-        setTimeout(() => {
-          window.location.reload(false);
-        }, 1500);
-      })
-      .catch((err) => {
-        console.log(err);
-        enqueueSnackbar('Something went wrong, Please try Again!', {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        })
-      });
+        .catch((err) => {
+          console.log(err);
+          enqueueSnackbar('Something went wrong, Please try Again!', {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
+        });
     }
   }
 
@@ -859,91 +859,91 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                       </Typography>
                       <div>
                         {
-                        setStateBtn ? (
-                          item.is_active ? (
-                            <>
+                          setStateBtn ? (
+                            item.is_active ? (
+                              <>
+                                <Tooltip title='Delete'>
+                                  <IconButton className={classes.btn} size='small' onClick={() => {
+                                    handleClose()
+                                    setOpenDeleteForm(true);
+                                    deleteItem(item, title);
+                                  }}>
+                                    <DeleteIcon fontSize='small' />
+                                  </IconButton>
+                                </Tooltip>
+                                <Tooltip title='Deactivate'>
+                                  <IconButton
+                                    className={classes.btn}
+                                    size='small'
+                                    onClick={() => {
+                                      handleClose()
+                                      setOpenDeactiveForm(true);
+                                      DeactivateItem(item.id)
+                                    }}
+                                  >
+                                    <CheckCircleTwoTone style={{ color: '#93D9A3' }}/>
+                                  </IconButton>
+                                </Tooltip>
+                              </>
+                            ) : (
+                              <>
+                                <Tooltip title='Delete'>
+                                  <IconButton className={classes.btn} size='small' onClick={() => {
+                                    handleClose()
+                                    setOpenDeleteForm(true);
+                                    deleteItem(item, title);
+                                  }}>
+                                    <DeleteIcon fontSize='small' />
+                                  </IconButton>
+                                </Tooltip>
+                                <Tooltip title='Activate'>
+                                  <IconButton
+                                    className={classes.btn}
+                                    size='small'
+                                    onClick={() => {
+                                      const test = {is_active: 1}
+                                      updateStateById(test, item.id)
+                                        .then((res) => {
+                                          enqueueSnackbar(res, {
+                                            anchorOrigin: {
+                                              vertical: 'top',
+                                              horizontal: 'right',
+                                            },
+                                            variant: 'success',
+                                          })
+                                          setTimeout(() => {
+                                            window.location.reload(false);
+                                          }, 1500);
+                                        })
+                                        .catch((err) => {
+                                          console.log(err);
+                                        });
+                                    }}
+                                  >
+                                    <CheckCircleTwoTone style={{ color: '#C9CCD5' }}/>
+                                  </IconButton>
+                                </Tooltip>
+                              </>
+                            )
+                          ) : (
                             <Tooltip title='Delete'>
-                          <IconButton className={classes.btn} size='small' onClick={() => {
-                            handleClose()
-                            setOpenDeleteForm(true);
-                            deleteItem(item, title);
-                          }}>
-                            <DeleteIcon fontSize='small' />
-                          </IconButton>
-                        </Tooltip>
-                            <Tooltip title='Deactivate'>
                               <IconButton
                                 className={classes.btn}
                                 size='small'
                                 onClick={() => {
                                   handleClose()
-                                  setOpenDeactiveForm(true);
-                                  DeactivateItem(item.id)
+                                  setOpenDeleteForm(true);
+                                  deleteItem(item, title);
                                 }}
                               >
-                                <CheckCircleTwoTone style={{ color: '#93D9A3' }}/>
+                                <DeleteIcon
+                                  fontSize='small'
+                                  className={classes.del}
+                                />
                               </IconButton>
                             </Tooltip>
-                            </>
-                          ) : (
-                            <>
-                            <Tooltip title='Delete'>
-                          <IconButton className={classes.btn} size='small' onClick={() => {
-                            handleClose()
-                            setOpenDeleteForm(true);
-                            deleteItem(item, title);
-                          }}>
-                            <DeleteIcon fontSize='small' />
-                          </IconButton>
-                        </Tooltip>
-                            <Tooltip title='Activate'>
-                              <IconButton
-                                className={classes.btn}
-                                size='small'
-                                onClick={() => {
-                                  const test = {is_active: 1}
-                                  updateStateById(test, item.id)
-                                    .then((res) => {
-                                      enqueueSnackbar(res, {
-                                        anchorOrigin: {
-                                          vertical: 'top',
-                                          horizontal: 'right',
-                                        },
-                                        variant: 'success',
-                                      })
-                                      setTimeout(() => {
-                                        window.location.reload(false);
-                                      }, 1500);
-                                    })
-                                    .catch((err) => {
-                                      console.log(err);
-                                    });
-                                }}
-                              >
-                                <CheckCircleTwoTone style={{ color: '#C9CCD5' }}/>
-                              </IconButton>
-                            </Tooltip>
-                            </>
                           )
-                        ) : (
-                          <Tooltip title='Delete'>
-                        <IconButton
-                          className={classes.btn}
-                          size='small'
-                          onClick={() => {
-                            handleClose()
-                            setOpenDeleteForm(true);
-                            deleteItem(item, title);
-                          }}
-                        >
-                          <DeleteIcon
-                            fontSize='small'
-                            className={classes.del}
-                          />
-                        </IconButton>
-                      </Tooltip>
-                        )
-                      }
+                        }
                       </div>
                     </div>
                     <Divider className={classes.divider} />
@@ -1010,86 +1010,86 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                         setStateBtn ? (
                           item.is_active ? (
                             <>
-                            <Tooltip title='Delete'>
-                          <IconButton className={classes.btn} size='small' onClick={() => {
-                            handleClose()
-                            setOpenDeleteForm(true);
-                            deleteItem(item, title);
-                          }}>
-                            <DeleteIcon fontSize='small' />
-                          </IconButton>
-                        </Tooltip>
-                            <Tooltip title='Deactivate'>
-                              <IconButton
-                                className={classes.btn}
-                                size='small'
-                                onClick={() => {
+                              <Tooltip title='Delete'>
+                                <IconButton className={classes.btn} size='small' onClick={() => {
                                   handleClose()
-                                  setOpenDeactiveForm(true);
-                                  DeactivateItem(item.id)
-                                }}
-                              >
-                                <CheckCircleTwoTone style={{ color: '#93D9A3' }}/>
-                              </IconButton>
-                            </Tooltip>
+                                  setOpenDeleteForm(true);
+                                  deleteItem(item, title);
+                                }}>
+                                  <DeleteIcon fontSize='small' />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title='Deactivate'>
+                                <IconButton
+                                  className={classes.btn}
+                                  size='small'
+                                  onClick={() => {
+                                    handleClose()
+                                    setOpenDeactiveForm(true);
+                                    DeactivateItem(item.id)
+                                  }}
+                                >
+                                  <CheckCircleTwoTone style={{ color: '#93D9A3' }}/>
+                                </IconButton>
+                              </Tooltip>
                             </>
                           ) : (
                             <>
-                            <Tooltip title='Delete'>
-                          <IconButton className={classes.btn} size='small' onClick={() => {
-                            handleClose()
-                            setOpenDeleteForm(true);
-                            deleteItem(item, title);
-                          }}>
-                            <DeleteIcon fontSize='small' />
-                          </IconButton>
-                        </Tooltip>
-                            <Tooltip title='Activate'>
-                              <IconButton
-                                className={classes.btn}
-                                size='small'
-                                onClick={() => {
-                                  const test = {is_active: 1}
-                                  updateStateById(test, item.id)
-                                    .then((res) => {
-                                      enqueueSnackbar(res, {
-                                        anchorOrigin: {
-                                          vertical: 'top',
-                                          horizontal: 'right',
-                                        },
-                                        variant: 'success',
+                              <Tooltip title='Delete'>
+                                <IconButton className={classes.btn} size='small' onClick={() => {
+                                  handleClose()
+                                  setOpenDeleteForm(true);
+                                  deleteItem(item, title);
+                                }}>
+                                  <DeleteIcon fontSize='small' />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title='Activate'>
+                                <IconButton
+                                  className={classes.btn}
+                                  size='small'
+                                  onClick={() => {
+                                    const test = {is_active: 1}
+                                    updateStateById(test, item.id)
+                                      .then((res) => {
+                                        enqueueSnackbar(res, {
+                                          anchorOrigin: {
+                                            vertical: 'top',
+                                            horizontal: 'right',
+                                          },
+                                          variant: 'success',
+                                        })
+                                        setTimeout(() => {
+                                          window.location.reload(false);
+                                        }, 1500);
                                       })
-                                      setTimeout(() => {
-                                        window.location.reload(false);
-                                      }, 1500);
-                                    })
-                                    .catch((err) => {
-                                      console.log(err);
-                                    });
-                                }}
-                              >
-                                <CheckCircleTwoTone style={{ color: '#C9CCD5' }}/>
-                              </IconButton>
-                            </Tooltip>
+                                      .catch((err) => {
+                                        console.log(err);
+                                      });
+                                  }}
+                                >
+                                  <CheckCircleTwoTone style={{ color: '#C9CCD5' }}/>
+                                </IconButton>
+                              </Tooltip>
                             </>
                           )
                         ) : (
                           <Tooltip title='Delete'>
-                        <IconButton
-                          className={classes.btn}
-                          size='small'
-                          onClick={() => {
-                            handleClose()
-                            setOpenDeleteForm(true);
-                            deleteItem(item, title);
-                          }}
-                        >
-                          <DeleteIcon
-                            fontSize='small'
-                            className={classes.del}
-                          />
-                        </IconButton>
-                      </Tooltip>
+                            <IconButton
+                              className={classes.btn}
+                              size='small'
+                              onClick={() => {
+                                handleClose()
+                                setOpenDeleteForm(true);
+                                deleteItem(item, title);
+                              }}
+                            >
+                              <DeleteIcon
+                                fontSize='small'
+                                className={classes.del}
+                              />
+                            </IconButton>
+                          </Tooltip>
                         )
                       }   
                     </div>
@@ -1200,7 +1200,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
         openDeactiveForm && (
           <div className={classes.addForm}>
             <Typography variant='h7'>Do you want to disable this state ?</Typography>            
-          <div className={classes.formFooter}>
+            <div className={classes.formFooter}>
               <Button
                 onClick={handleClose}
                 // style={{marginTop: 15}}
@@ -1228,10 +1228,10 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
               <Grid item md={6}>
                 <label style={{ marginBottom: 8 }}>State</label>
                 <TextInput
-                select
-                name='states'
-                variant='outlined'
-                onChange={handleStateAdd}
+                  select
+                  name='states'
+                  variant='outlined'
+                  onChange={handleStateAdd}
                 >
                   {
                     states?.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
@@ -1241,11 +1241,11 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
               <Grid item md={6}>
                 <label style={{ marginBottom: 8 }}>{title}</label>
                 <TextField 
-                id='add'
-                style={{width: '100%', marginTop: 4}}
-                autoFocus
-                variant='outlined'
-                onChange={handleAdd}
+                  id='add'
+                  style={{width: '100%', marginTop: 4}}
+                  autoFocus
+                  variant='outlined'
+                  onChange={handleAdd}
                 />
               </Grid>
             </Grid>
@@ -1345,29 +1345,29 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
         )
       }
       <div className={classes.actionFooter}>
-          <Divider />
-          <div className={classes.actionButtonsWrapper}>
-            <div>
-              <Button variant='outlined' onClick={callback}>
-                Back
-              </Button>
-            </div>
-            <div>
-              <Button
-                variant='contained'
-                type='submit'
-                onClick={() => {
-                  handleClose()
-                  !regionForm && !assetForm? setOpenAddForm(true) : !assetForm? setOpenRegionForm(true) : setOpenAssetForm(true)
-                  setStatus(title)
-                }}
-                color='primary'
-              >
-                Add
-              </Button>
-            </div>
+        <Divider />
+        <div className={classes.actionButtonsWrapper}>
+          <div>
+            <Button variant='outlined' onClick={callback}>
+              Back
+            </Button>
+          </div>
+          <div>
+            <Button
+              variant='contained'
+              type='submit'
+              onClick={() => {
+                handleClose()
+                !regionForm && !assetForm? setOpenAddForm(true) : !assetForm? setOpenRegionForm(true) : setOpenAssetForm(true)
+                setStatus(title)
+              }}
+              color='primary'
+            >
+              Add
+            </Button>
           </div>
         </div>
+      </div>
     </>
   );
 }

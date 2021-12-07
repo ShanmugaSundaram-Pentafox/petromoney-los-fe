@@ -1,7 +1,7 @@
-import React from "react";
 import PropTypes from 'prop-types';
-import styled from "styled-components";
-import { InfoBoxStyle } from "../../../theme/styled-components/utils";
+import React from 'react';
+import styled from 'styled-components';
+import { InfoBoxStyle } from '../../../theme/styled-components/utils';
 
 export const EnquiryInfoCardWrapper = styled(InfoBoxStyle)`
     padding: 32px 12px 0px 24px;
@@ -33,29 +33,29 @@ export const EnquiryInfoCardWrapper = styled(InfoBoxStyle)`
 `;
 
 const EnquiryInfoCard = ({
-    title="",
-    listData= []
+  title='',
+  listData= []
 }) => {
-    return (
-        <EnquiryInfoCardWrapper>
-            {title ? <p className="title">{title}</p> : null}
+  return (
+    <EnquiryInfoCardWrapper>
+      {title ? <p className="title">{title}</p> : null}
 
-            <ul>
-                {listData.map((item, i) => {
-                    return (
-                        <li key={i}>
-                            {item.title}
-                            <span>{item.description}</span>
-                        </li>
-                    )
-                })}
-            </ul>
-        </EnquiryInfoCardWrapper>
-    );
+      <ul>
+        {listData.map((item, i) => {
+          return (
+            <li key={i}>
+              {item.title}
+              <span>{item.description}</span>
+            </li>
+          )
+        })}
+      </ul>
+    </EnquiryInfoCardWrapper>
+  );
 };
 
 EnquiryInfoCard.propTypes = {
-    title: PropTypes.string
+  title: PropTypes.string
 };
 
 export default EnquiryInfoCard;

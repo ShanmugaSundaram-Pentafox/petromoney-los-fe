@@ -1,22 +1,22 @@
-import React, { useMemo, useState } from 'react';
-import { makeStyles } from "@material-ui/styles";
-import { NavLink as RouterLink } from 'react-router-dom';
-import styled from 'styled-components';
-import MUIDataTable from "mui-datatables";
 import { Typography } from '@material-ui/core';
 import { Grid } from '@material-ui/core';
-import Paper from '@material-ui/core/Paper';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Box from '@material-ui/core/Box';
-import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 import Avatar from '@material-ui/core/Avatar';
-import EditIcon from '@material-ui/icons/Edit';
-import IconButton from '@material-ui/core/IconButton';
-import Button from '../../../components/CommonComponents/Button/Button';
+import Box from '@material-ui/core/Box';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Drawer from '@material-ui/core/Drawer';
-import AddNewTransportForm from '../../../pages/transports/components/AddNewTransportsForm';
-import AddNewTransportsOwnerForm from '../../transports/components/AddNewTransportsOwnerForm';
+import IconButton from '@material-ui/core/IconButton';
+import Paper from '@material-ui/core/Paper';
+import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
+import EditIcon from '@material-ui/icons/Edit';
+import { makeStyles } from '@material-ui/styles';
+import MUIDataTable from 'mui-datatables';
+import React, { useMemo, useState } from 'react';
+import { NavLink as RouterLink } from 'react-router-dom';
+import { useMount } from 'react-use';
+import styled from 'styled-components';
+import Button from '../../../components/CommonComponents/Button/Button';
 import usePageTitle from '../../../hooks/usePageTitle';
+import AddNewTransportForm from '../../../pages/transports/components/AddNewTransportsForm';
 import { getTransportsByOwnersId, getOwnerDetailsById } from '../../../services/transports.service';
 import { useMount } from 'react-use';
 import { useQuery } from 'react-query';
@@ -182,7 +182,7 @@ const OwnerDetails = ({ currentUser, match }) => {
         name: 'mobile',
         options: {
           filter: true,
-          filterWidth: "100%",
+          filterWidth: '100%',
           sort: true,
           customBodyRender: value => {
             return <div>
@@ -204,7 +204,7 @@ const OwnerDetails = ({ currentUser, match }) => {
 
   const options = {
     selectableRowsHeader: false,
-    selectableRows: "none",
+    selectableRows: 'none',
     print: false,
     filter: false,
     search: false,

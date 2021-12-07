@@ -1,16 +1,16 @@
-import React from 'react';
-import { useMount } from 'react-use';
-import { connect } from 'react-redux';
 import Grid from '@material-ui/core/Grid';
-import usePageTitle from '../../hooks/usePageTitle';
-import { getAllUsers, getUsersByRole } from '../../services/users.service';
-import UsersTable from './components/UsersTable';
+import { makeStyles } from '@material-ui/core/styles';
 import Skeleton from '@material-ui/lab/Skeleton';
-import { setAllUsers } from '../../store/dashboard/dashboard.actions';
+import React from 'react';
+import { connect } from 'react-redux';
+import { useMount } from 'react-use';
+import { VictoryPie } from 'victory';
+import UsersTable from './components/UsersTable';
 import ChartCard from '../../components/CommonComponents/ChartCard/ChartCard';
 import { CHART_COLORS } from '../../config/constants';
-import { VictoryPie } from 'victory';
-import { makeStyles } from '@material-ui/core/styles';
+import usePageTitle from '../../hooks/usePageTitle';
+import { getAllUsers, getUsersByRole } from '../../services/users.service';
+import { setAllUsers } from '../../store/dashboard/dashboard.actions';
 
 
 const currencies = [ 
@@ -54,10 +54,10 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
         })
     }
   })
-  const fo = getUsersByRole(allUsers, "FIELD_OFFICER");
-  const trans = getUsersByRole(allUsers, "TRANSPORTER");
-  const dealers = getUsersByRole(allUsers, "DEALER");
-  const others = allUsers.filter(user => !(["FIELD_OFFICER", "TRANSPORTER", "DEALER"].includes(user.role_name)));
+  const fo = getUsersByRole(allUsers, 'FIELD_OFFICER');
+  const trans = getUsersByRole(allUsers, 'TRANSPORTER');
+  const dealers = getUsersByRole(allUsers, 'DEALER');
+  const others = allUsers.filter(user => !(['FIELD_OFFICER', 'TRANSPORTER', 'DEALER'].includes(user.role_name)));
   const classes = useStyles();
   const [currency, setCurrency] = React.useState();
   const handleChange = (event) => {
@@ -68,21 +68,21 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
   }
   let button;
   currencies.map((value) => {
-  if (currency==="Field Officiers") {
-    button = <UsersTable currentUser={currentUser} title="Field Officiers" data={fo} />;
-  } else if (currency==="Dealers") {
-    button = <UsersTable currentUser={currentUser} title="Dealers" data={dealers} />;
-  } else if (currency==="Sales Head (State)") {
-    button = <UsersTable currentUser={currentUser} title="Sales Head (State)" data={getUsersByRole(allUsers, "SALES_HEAD_STATE")} />;
-  } else if (currency==="Sales Head (Regional)") {
-    button = <UsersTable currentUser={currentUser} title="Sales Head (Regional)" data={getUsersByRole(allUsers, "SALES_HEAD_REGIONAL")} />;
-  } else if (currency==="Transporters") {
-    button = <UsersTable currentUser={currentUser} title="Transporters" data={trans} />;
-  } else if (currency==="Other Users") {
-    button = <UsersTable currentUser={currentUser} withRole title="Other Users" data={others} />;
-  }
-  else
-    button =<UsersTable currentUser={currentUser} title="Users" data={allUsers}/>
+    if (currency==='Field Officiers') {
+      button = <UsersTable currentUser={currentUser} title="Field Officiers" data={fo} />;
+    } else if (currency==='Dealers') {
+      button = <UsersTable currentUser={currentUser} title="Dealers" data={dealers} />;
+    } else if (currency==='Sales Head (State)') {
+      button = <UsersTable currentUser={currentUser} title="Sales Head (State)" data={getUsersByRole(allUsers, 'SALES_HEAD_STATE')} />;
+    } else if (currency==='Sales Head (Regional)') {
+      button = <UsersTable currentUser={currentUser} title="Sales Head (Regional)" data={getUsersByRole(allUsers, 'SALES_HEAD_REGIONAL')} />;
+    } else if (currency==='Transporters') {
+      button = <UsersTable currentUser={currentUser} title="Transporters" data={trans} />;
+    } else if (currency==='Other Users') {
+      button = <UsersTable currentUser={currentUser} withRole title="Other Users" data={others} />;
+    }
+    else
+      button =<UsersTable currentUser={currentUser} title="Users" data={allUsers}/>
   })
   return (
     <div>

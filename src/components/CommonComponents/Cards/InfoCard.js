@@ -1,8 +1,8 @@
-import React from "react";
-import PropTypes from 'prop-types';
-import styled, { css } from "styled-components";
-import EditIcon from '@material-ui/icons/Edit';
 import IconButton from '@material-ui/core/IconButton';
+import EditIcon from '@material-ui/icons/Edit';
+import PropTypes from 'prop-types';
+import React from 'react';
+import styled, { css } from 'styled-components';
 
 export const InfoWrapper = styled.div`
     // display: flex;
@@ -97,56 +97,56 @@ export const InfoCardWrapper = styled.div`
 `;
 
 export const Info = ({
-    title,
-    userInitial = "",
-    name = "",
-    description = "",
-    caption = "",
-    content = "",
+  title,
+  userInitial = '',
+  name = '',
+  description = '',
+  caption = '',
+  content = '',
 }) => {
-    return (
-        <InfoWrapper>
-            <div className="card-body">
-                <i className="user-initial">{userInitial}</i>
-                <div className="user-info-txt">
-                    {caption ? <p className="caption">{caption}</p> : null}
-                    {name ? <p className="name">{name}</p> : null}
-                    {description ? <p><small>{description}</small></p> : null}
-                    {content ? <p className="light"><small>{content}</small></p> : null}
-                </div>
+  return (
+    <InfoWrapper>
+      <div className="card-body">
+        <i className="user-initial">{userInitial}</i>
+        <div className="user-info-txt">
+          {caption ? <p className="caption">{caption}</p> : null}
+          {name ? <p className="name">{name}</p> : null}
+          {description ? <p><small>{description}</small></p> : null}
+          {content ? <p className="light"><small>{content}</small></p> : null}
+        </div>
 
-            </div>
+      </div>
 
-        </InfoWrapper>
-    );
+    </InfoWrapper>
+  );
 };
 
 const InfoCard = ({
-    title = "",
-    userInitial = "",
-    name = "",
-    description = "",
-    caption = "",
-    content = "",
-    onClick = () => { },
-    hover,
-    noMargin,
+  title = '',
+  userInitial = '',
+  name = '',
+  description = '',
+  caption = '',
+  content = '',
+  onClick = () => { },
+  hover,
+  noMargin,
 }) => {
-    return (
-        <InfoCardWrapper noMargin={noMargin} hover={hover} onClick={onClick}>
-            {title === 'Transport Info' ? (
-                <p className="title">{title} &nbsp;&nbsp;
-                    <IconButton
-                        color="primary"
-                        aria-label="edit owner"
-                        component="span"
-                    >
-                        <EditIcon fontSize="small" />
-                    </IconButton>
-                </p>
+  return (
+    <InfoCardWrapper noMargin={noMargin} hover={hover} onClick={onClick}>
+      {title === 'Transport Info' ? (
+        <p className="title">{title} &nbsp;&nbsp;
+          <IconButton
+            color="primary"
+            aria-label="edit owner"
+            component="span"
+          >
+            <EditIcon fontSize="small" />
+          </IconButton>
+        </p>
 
-            ) : title ? <p className="title">{title}</p> : null}
-            {/* {
+      ) : title ? <p className="title">{title}</p> : null}
+      {/* {
                     title === 'Transport Info' && (
                         <div style={{ float: 'right' }}>
                             
@@ -155,32 +155,32 @@ const InfoCard = ({
                 }
             </div> */}
 
-            <Info
-                title={title}
-                userInitial={userInitial}
-                caption={caption}
-                name={name}
-                description={description}
-                content={content}
-            />
-        </InfoCardWrapper>
-    );
+      <Info
+        title={title}
+        userInitial={userInitial}
+        caption={caption}
+        name={name}
+        description={description}
+        content={content}
+      />
+    </InfoCardWrapper>
+  );
 };
 
 Info.propTypes = {
-    userInitial: PropTypes.string,
-    name: PropTypes.string,
-    description: PropTypes.string,
-    caption: PropTypes.string
+  userInitial: PropTypes.string,
+  name: PropTypes.string,
+  description: PropTypes.string,
+  caption: PropTypes.string
 };
 
 InfoCard.propTypes = {
-    title: PropTypes.string,
-    userInitial: PropTypes.string,
-    name: PropTypes.string,
-    description: PropTypes.string,
-    caption: PropTypes.string,
-    onClick: PropTypes.func
+  title: PropTypes.string,
+  userInitial: PropTypes.string,
+  name: PropTypes.string,
+  description: PropTypes.string,
+  caption: PropTypes.string,
+  onClick: PropTypes.func
 };
 
 export default InfoCard;

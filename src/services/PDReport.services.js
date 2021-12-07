@@ -1,4 +1,3 @@
-import { URL } from '../config/serverUrls';
 import apiCall from '../utils/api.util';
 
 export const addOmcDetails = (data, id) => {
@@ -24,7 +23,7 @@ export const getOmcDetailsById = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -43,7 +42,7 @@ export const updateOmcDetailsById = (data, id) => {
       body: data
     })
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -81,7 +80,7 @@ export const updateOutletDetailsById = (data, id) => {
       body: data
     })
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -97,7 +96,7 @@ export const getOutletDetailsById = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/outlet`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -113,7 +112,7 @@ export const getInfrastructureDetailsById = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/infrastructure`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -144,9 +143,9 @@ export const addInfrastructureDetails = (data, id) => {
 }
 export const getAssetList = () => {
   return new Promise((resolve, reject) => {
-    apiCall(`asset`)
+    apiCall('asset')
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -215,7 +214,7 @@ export const getAssetDetailsById = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/assets`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -230,7 +229,7 @@ export const getTankersById = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/tanker`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -298,7 +297,7 @@ export const getBankDetailsbyID = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/bank`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -367,7 +366,7 @@ export const getBusinessDetailsbyID = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/business/details`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -400,7 +399,7 @@ export const getPartnerDetailsbyID = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/business/partner`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -433,7 +432,7 @@ export const getLoanDetailsbyID = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/bank/loans`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -502,7 +501,7 @@ export const downloadPDReport = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/pdr`)
       .then(res => {
-        if (res.status === "SUCCESS") {
+        if (res.status === 'SUCCESS') {
           resolve(res)
         } else {
           reject(res.message)
@@ -517,7 +516,7 @@ export const getIncomeDetailsById = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/income/details`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -570,7 +569,7 @@ export const getExpensesDetailsById = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/expense/details`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -623,7 +622,7 @@ export const getReferenceDetailsbyID = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/references`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)
@@ -692,7 +691,7 @@ export const getOtherDetailsbyID = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/details`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)

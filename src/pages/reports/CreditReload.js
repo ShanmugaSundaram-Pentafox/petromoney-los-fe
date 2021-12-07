@@ -1,16 +1,16 @@
-import React from 'react';
+import { Grid } from '@material-ui/core';
+import { Badge } from '@material-ui/core';
+import { Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
+import React from 'react';
 import { useState } from 'react';
 import { useMount } from 'react-use';
+import styled from 'styled-components';
+import CreditNewRequestTable from './CreditNewRequestTable';
+import CreditProcessedTable from './CreditProcessedTable';
 import {
   getCreditReport
 } from '../../services/users.service';
-import { Grid } from '@material-ui/core';
-import { Badge } from '@material-ui/core';
-import styled from 'styled-components';
-import { Box } from '@material-ui/core';
-import CreditProcessedTable from './CreditProcessedTable';
-import CreditNewRequestTable from './CreditNewRequestTable';
 
 const PaperWrapper = styled.div`
 margin-bottom:10px;
@@ -39,7 +39,7 @@ const CreditReload = ({ currentUser }) => {
   const [tableData, setTableData] = useState([]);
   const [processedData, setProcessedData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedTab, setSelectedTab] = useState("new");
+  const [selectedTab, setSelectedTab] = useState('new');
 
   useMount(async () => {
     setLoading(true)
@@ -67,13 +67,13 @@ const CreditReload = ({ currentUser }) => {
       <PaperWrapper>
         <Box borderRadius={4} bgcolor="background.paper">
           <Grid container>
-            <Grid onClick={() => { setSelectedTab("new") }} className={selectedTab === "new" ? 'inactive' : 'active'} style={{ textAlign: 'center', padding: 16 }} item md={6}>
+            <Grid onClick={() => { setSelectedTab('new') }} className={selectedTab === 'new' ? 'inactive' : 'active'} style={{ textAlign: 'center', padding: 16 }} item md={6}>
               <Badge badgeContent={tableData?.length || 0} style={{ paddingTop: 4, paddingRight: 8 }} color="primary">
                 <div>New Requests</div>
               </Badge>
             </Grid>
-            <Grid onClick={() => { setSelectedTab("processed") }} style={{ textAlign: 'center', padding: 16 }} className={selectedTab === "processed" ? 'inactive' : 'active'} item md={6}>
-                <div>Processed</div>
+            <Grid onClick={() => { setSelectedTab('processed') }} style={{ textAlign: 'center', padding: 16 }} className={selectedTab === 'processed' ? 'inactive' : 'active'} item md={6}>
+              <div>Processed</div>
             </Grid>
           </Grid>
         </Box>

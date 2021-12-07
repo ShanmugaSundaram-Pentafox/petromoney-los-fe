@@ -1,27 +1,24 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import { NavLink as RouterLink } from 'react-router-dom';
-import { makeStyles } from '@material-ui/styles';
-import MUIDataTable from "mui-datatables";
-import Typography from '@material-ui/core/Typography';
-import Tooltip from '@material-ui/core/Tooltip';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import IconButton from '@material-ui/core/IconButton';
-import AssignmentIcon from '@material-ui/icons/Assignment';
-import DescriptionIcon from '@material-ui/icons/Description';
-import GetAppOutlinedIcon from '@material-ui/icons/GetAppOutlined';
-import { useMount } from 'react-use';
 import Paper from '@material-ui/core/Paper';
-// import { createStructuredSelector } from 'reselect';
-import { connect } from 'react-redux';
-import moment from 'moment';
+import Tooltip from '@material-ui/core/Tooltip';
+import Typography from '@material-ui/core/Typography';
+import DescriptionIcon from '@material-ui/icons/Description';
+import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
+import moment from 'moment';
+import MUIDataTable from 'mui-datatables';
+import React, { useMemo, useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import { NavLink as RouterLink } from 'react-router-dom';
+// import { createStructuredSelector } from 'reselect';
+import { ReactComponent as LoanAgreementIcon } from '../../icons/loan_agreement.svg';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
+import SignRequestLayout from '../Leegality/SignRequestLayout';
 import Currency from '../Number/Currency';
 // import { URL } from '../../config/serverUrls';
-import SignRequestLayout from '../Leegality/SignRequestLayout';
 // import CircularProgress from '@material-ui/core/CircularProgress';
-import { ReactComponent as LoanAgreementIcon } from '../../icons/loan_agreement.svg';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
 
 
@@ -62,18 +59,18 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loanId, setloanId] = useState();
-  const [type, setType] = useState("");
+  const [type, setType] = useState('');
 
   useEffect(() => {
     setLoading(true);
-      getLoansByStatus('approved', filterQry)
-        .then(data => {
-          setLoansData('approved', data);
-          setLoading(false);
-        })
-        .catch(e => {
-          setLoading(false);
-        })
+    getLoansByStatus('approved', filterQry)
+      .then(data => {
+        setLoansData('approved', data);
+        setLoading(false);
+      })
+      .catch(e => {
+        setLoading(false);
+      })
   }, [filterQry])
 
 
@@ -90,6 +87,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
   //       })
   //   }
   // });
+
   const getLoansTable = () => {
     setLoading(true);
     getLoansByStatus('approved')
@@ -151,9 +149,9 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
         options: {
           filter: false,
           sort: true,
-          setCellProps: () => ({
-            align: 'right',
-          }),
+          // setCellProps: () => ({
+          //   align: 'right',
+          // }),
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }
       },
@@ -163,15 +161,26 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
         options: {
           filter: false,
           sort: true,
-          setCellProps: () => ({
-            align: 'center',
-          }),
+          // setCellProps: () => ({
+          //   align: 'center',
+          // }),
           customBodyRender: value => {
             return <div>
               {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
               {/* {value ? value : '-'} */}
             </div>
           }
+        }
+      },
+      {
+        label: 'Approved by',
+        name: 'approver',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: (value) => {
+            return <>{value?.toUpperCase() || '-'}</>
+          },
         }
       },
       {
@@ -187,12 +196,12 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
             return (
               <>
                 <Tooltip title="Sanction Letter">
-                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType("sanction"); setModalVisible(true); }}>
+                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType('sanction'); setModalVisible(true); }}>
                     <DescriptionIcon />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Loan Agreement">
-                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType("agreement"); setModalVisible(true); }}>
+                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType('agreement'); setModalVisible(true); }}>
                     <LoanAgreementIcon width={14} />
                   </IconButton>
                 </Tooltip>

@@ -1,44 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import { useMount } from 'react-use';
-import { makeStyles } from '@material-ui/styles';
-import Typography from '@material-ui/core/Typography';
-import Table from '@material-ui/core/Table';
-import TableHead from '@material-ui/core/TableHead';
-import TableBody from '@material-ui/core/TableBody';
-import TableFooter from '@material-ui/core/TableFooter';
-import TableRow from '@material-ui/core/TableRow';
-import TableCell from '@material-ui/core/TableCell';
-import AddRoundedIcon from '@material-ui/icons/AddRounded';
-import Button from '@material-ui/core/Button';
-import Modal from '@material-ui/core/Modal';
-import Grid from '@material-ui/core/Grid';
+import 'date-fns';
+import DateFnsUtils from '@date-io/date-fns';
 import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
-import Alert from '@material-ui/lab/Alert';
+import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { useFormik } from 'formik';
-import moment from 'moment';
-import * as Yup from 'yup';
-import clsx from 'clsx';
-import Currency from '../../../components/Number/Currency';
-import { logger } from '../../../config/logger';
-import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
-import { updateLoanApprovalStatusById, deleteLoanDisbursementRecord } from '../../../services/loans.service';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import 'date-fns';
-import DateFnsUtils from '@date-io/date-fns';
+import Fade from '@material-ui/core/Fade';
+import Grid from '@material-ui/core/Grid';
+import Modal from '@material-ui/core/Modal';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableFooter from '@material-ui/core/TableFooter';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Typography from '@material-ui/core/Typography';
+import AddRoundedIcon from '@material-ui/icons/AddRounded';
+import Alert from '@material-ui/lab/Alert';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker
 } from '@material-ui/pickers';
+import { makeStyles } from '@material-ui/styles';
+import { useFormik } from 'formik';
+import moment from 'moment';
+import React, { useState, useEffect } from 'react';
+import * as Yup from 'yup';
+import Currency from '../../../components/Number/Currency';
+import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
+import { logger } from '../../../config/logger';
+import { updateLoanApprovalStatusById, deleteLoanDisbursementRecord } from '../../../services/loans.service';
+
 
 
 const useStyles = makeStyles(theme => ({
   root: {
+    marginTop: 20,
     // padding: theme.spacing(3),
     // paddingTop: 0,
   },
@@ -55,7 +55,7 @@ const useStyles = makeStyles(theme => ({
     maxWidth: 600
   },
   actionFooter: {
-    textAlign: "right",
+    textAlign: 'right',
   },
   actionButton: {
     marginLeft: 12,
@@ -70,13 +70,13 @@ const useStyles = makeStyles(theme => ({
     padding: 10,
   },
   btnDelete: {
-    '&.MuiButton-root': { color: "#ef5350" },
-    border: "1px #ef5350 solid",
+    '&.MuiButton-root': { color: '#ef5350' },
+    border: '1px #ef5350 solid',
     marginLeft: 2
   },
   btnEdit: {
-    '&.MuiButton-root': { color: "#2196f3" },
-    border: "1px #2196f3 solid",
+    '&.MuiButton-root': { color: '#2196f3' },
+    border: '1px #2196f3 solid',
     marginLeft: 2
   },
 }));
@@ -92,33 +92,33 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
   const handleDateChange = (date) => {
     setSelectedDate(date)
   }
-
   useEffect(() => {
     setDispHistory({
-      applicant_code: loanData.applicant_code,
-      disbursement_details: loanData.disbursement_details
+      applicant_code: loanData?.applicant_code,
+      disbursement_details: loanData?.disbursement_details
     });
 
   }, [loanData]);
 
   const { values, errors, handleChange, handleSubmit, setValues } = useFormik({
+    validateOnChange: false,
+    validateOnBlur: false,
     initialValues: {
       disbursement_status: 1,
-      status: "disbursed",
       disbursement_date: selectedDate,
     },
     validationSchema: Yup.object().shape({
       // applicant_code: Yup.string().required("Enter valid Applicant code").matches(/^CN0000[0-9]+$/, "Enter Valid Applicant code"),
-      prospect_code: Yup.string().nullable('Enter Prospect code').required("Enter Prospect code"),
+      prospect_code: Yup.string().nullable('Enter Prospect code').required('Enter Prospect code'),
       // disbursement_date: Yup.date().required("Enter Disbursement date"),
-      amount: Yup.string().nullable('Enter Amount').required("Enter Amount"),
+      amount: Yup.string().nullable('Enter Amount').required('Enter Amount'),
     }),
     onSubmit: values => {
       const date = moment(selectedDate).format('YYYY/MM/DD')
       const data = values.applicant_code ? { ...values, disbursement_date: date } : { ...values, applicant_code: dispHistory.applicant_code, disbursement_date: date };
       // alert(JSON.stringify(data, null, 2));
       setLoading(true);
-      updateLoanApprovalStatusById(id, loanData.id, data)
+      updateLoanApprovalStatusById(id, loanData.id, 'approval', data)
         .then(({ data, message }) => {
           data?.applicant_code && setDispHistory({
             applicant_code: data.applicant_code,
@@ -128,7 +128,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
           setApiStatus({ status: 'success', message });
           setTimeout(() => {
             setModalData({ open: false })
-          }, 700);
+          }, 500);
         })
         .catch(e => {
           setLoading(false);
@@ -141,7 +141,6 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
   const onRowEdit = data => {
     setValues({
       ...data,
-      status: "disbursed",
       // disbursement_date: moment(new Date(data.disbursement_date)).format("YYYY/MM/DD")
     });
     setSelectedDate(data.disbursement_date)
@@ -155,7 +154,8 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
   const deleteRecord = data => {
     setLoading(true);
     deleteLoanDisbursementRecord(id, loanData.id, data)
-      .then(({ message }) => {
+      .then(({ data, message }) => {
+        setDispHistory({disbursement_details: data?.disbursement_details ? data.disbursement_details : []})
         setLoading(false);
         setApiStatus({ status: 'success', message });
         setTimeout(() => {
@@ -172,7 +172,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
   return (
     <div className={classes.root}>
       <Typography variant="h5" style={{ marginBottom: 16 }}>Disbursement Details</Typography>
-      <Typography variant="h5" style={{ marginBottom: 12 }}><span style={{ color: "#888", fontSize: 14 }}>Applicant Code:</span> {dispHistory.applicant_code || "?"}</Typography>
+      <Typography variant="h5" style={{ marginBottom: 12 }}><span style={{ color: '#888', fontSize: 14 }}>Applicant Code:</span> {dispHistory.applicant_code || '?'}</Typography>
       <Table size="small">
         <TableHead>
           <TableRow>
@@ -202,7 +202,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
             <TableCell colSpan={4} align="center">
               {
                 editable &&
-                <Button variant="outlined" size="medium" color="secondary" onClick={() => setModalData({ open: true })} startIcon={<AddRoundedIcon fontSize="small" />}>Add Disbursed Amount</Button>
+                  <Button variant="outlined" size="medium" color="secondary" onClick={() => setModalData({ open: true })} startIcon={<AddRoundedIcon fontSize="small" />}>Add Disbursed Amount</Button>
               }
             </TableCell>
           </TableRow>
@@ -233,13 +233,13 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                   <Grid item xs={12}>
                     {
                       dispHistory.applicant_code ? (
-                        <Typography variant="h5" style={{ marginBottom: 12 }}><span style={{ color: "#888", fontSize: 14 }}>Applicant Code:</span> {dispHistory.applicant_code || "?"}</Typography>
+                        <Typography variant="h5" style={{ marginBottom: 12 }}><span style={{ color: '#888', fontSize: 14 }}>Applicant Code:</span> {dispHistory.applicant_code || '?'}</Typography>
                       ) : (
                         <TextInput
                           direction
                           alignTop
                           required
-                          name={"applicant_code"}
+                          name={'applicant_code'}
                           labelText="Applicant Code"
                           error={errors.applicant_code}
                           helperText={errors.applicant_code}
@@ -254,7 +254,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                       direction
                       alignTop
                       required
-                      name={"prospect_code"}
+                      name={'prospect_code'}
                       labelText="Prospect Code"
                       error={errors.prospect_code}
                       helperText={errors.prospect_code}
@@ -296,13 +296,13 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                   </Grid>
                   <Grid item sm={6}>
                     <TextInput
+                      number
                       direction
                       alignTop
                       money
-                      required
-                      name={"amount"}
+                      name={'amount'}
                       labelText="Amount"
-                      defaultValue={values.amount}
+                      value={values.amount}
                       error={errors.amount}
                       helperText={errors.amount}
                       onChange={handleChange}
@@ -325,7 +325,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                       />
                   </Grid> */}
                   <Grid item xs={12} className={classes.actionFooter}>
-                    <Button disabled={loading} variant="outlined" color="default" onClick={() => setModalData({})}>Cancel</Button>
+                    <Button disabled={loading} variant="outlined" color="default" onClick={() => { setModalData({}); setValues({}) }}>Cancel</Button>
                     <Button disabled={loading} className={classes.actionButton} type="submit" variant="outlined" color="primary">
                       {
                         loading ? <CircularProgress size={23} /> : 'Save'
@@ -355,7 +355,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
           <Button onClick={() => setConfirmDelete({})} disableElevation>
             Cancel
           </Button>
-          <Button onClick={() => deleteRecord(confirmDelete.data)} color="primary" autoFocus disableElevation>
+          <Button onClick={() => deleteRecord(confirmDelete.data)} color="primary" disableElevation>
             Confirm
           </Button>
         </DialogActions>

@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
-import Alert from "@material-ui/lab/Alert"
+import Alert from '@material-ui/lab/Alert'
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import TextInput from '../TextInput/TextInput';
-import Button from '../CommonComponents/Button/Button';
-import { getVehicleLoanOptions } from '../../services/transports.service';
+import React, { useState } from 'react';
 import { useMount } from 'react-use';
+import * as Yup from 'yup';
+import { getVehicleLoanOptions } from '../../services/transports.service';
 import apiCall from '../../utils/api.util';
+import Button from '../CommonComponents/Button/Button';
+import TextInput from '../TextInput/TextInput';
 
 const NewVehicleLoanForm = ({ vehicleId, callback, currentUser }) => {
   const [apiStatus, setApiStatus] = useState({});
-  const [otherType, setOtherType] = useState("");
+  const [otherType, setOtherType] = useState('');
   const [loanOptions, setLoanOptions] = useState([]);
 
   useMount(() => {
@@ -34,12 +34,12 @@ const NewVehicleLoanForm = ({ vehicleId, callback, currentUser }) => {
     onSubmit: formData => {
       const d = loanOptions.find(d => d.id == formData?.credit_head);
       if (Number(formData.credit_head) === 5 && !formData.remarks) {
-        setErrors({ remarks: "Please enter remarks" });
+        setErrors({ remarks: 'Please enter remarks' });
         setSubmitting(false)
         return;
       }
       if (!d.is_service && !formData.loan_amount) {
-        setErrors({ loan_amount: "Please enter loan amount" });
+        setErrors({ loan_amount: 'Please enter loan amount' });
         setSubmitting(false)
         return;
       }
@@ -79,7 +79,7 @@ const NewVehicleLoanForm = ({ vehicleId, callback, currentUser }) => {
     }
   });
   const inputProps = {
-    direction: "column",
+    direction: 'column',
     alignTop: true,
     onChange: handleChange,
   }
@@ -144,7 +144,7 @@ const NewVehicleLoanForm = ({ vehicleId, callback, currentUser }) => {
               variant="contained"
               disabled={isSubmitting}
             >
-              {isSubmitting ? `Please wait...` : (Number(values.credit_head) === 4 ? `Raise request` : `Submit Loan Request`)}
+              {isSubmitting ? 'Please wait...' : (Number(values.credit_head) === 4 ? 'Raise request' : 'Submit Loan Request')}
             </Button>
           </Grid>
         </Grid>

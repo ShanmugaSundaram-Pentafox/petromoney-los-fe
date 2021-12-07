@@ -1,10 +1,10 @@
+import { Grid } from '@material-ui/core';
+import { Paper } from '@material-ui/core';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/styles';
+import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState } from 'react';
-import { makeStyles } from "@material-ui/styles";
-import { Grid } from "@material-ui/core";
-import MUIDataTable from "mui-datatables";
-import Typography from "@material-ui/core/Typography";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import { Paper } from "@material-ui/core";
 import { useMount } from 'react-use';
 import { getAllWithheldLoans } from '../../services/withheld.services';
 
@@ -32,8 +32,8 @@ const ResolvedTable = () => {
   const columns = useMemo(() => {
     return [
       {
-        label: "Dealership ID",
-        name: "id",
+        label: 'Dealership ID',
+        name: 'id',
         options: {
           filter: true,
           sort: true,
@@ -43,8 +43,8 @@ const ResolvedTable = () => {
         },
       },
       {
-        label: "Name",
-        name: "name",
+        label: 'Name',
+        name: 'name',
         options: {
           filter: true,
           sort: true,
@@ -54,16 +54,16 @@ const ResolvedTable = () => {
         },
       },
       {
-        label: "Region",
-        name: "region",
+        label: 'Region',
+        name: 'region',
         options: {
           filter: true,
           sort: true,
         },
       },
       {
-        label: "Remarks",
-        name: "remarks",
+        label: 'Remarks',
+        name: 'remarks',
         options: {
           filter: false,
           sort: true,
@@ -88,7 +88,7 @@ const ResolvedTable = () => {
   const options = {
     // filterType: 'checkbox',
     selectableRowsHeader: false,
-    selectableRows: "none",
+    selectableRows: 'none',
     rowsPerPage: 10,
     viewColumns: false,
     print: true,
@@ -112,9 +112,9 @@ const ResolvedTable = () => {
         })
         return array
       }
-      return "\uFEFF" + buildHead(columns) + buildBody(Data())
+      return '\uFEFF' + buildHead(columns) + buildBody(Data())
+    }
   }
-}
 
   return (
     <>

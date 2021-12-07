@@ -1,53 +1,52 @@
-import React, { useEffect, useState } from 'react';
+import DateFnsUtils from '@date-io/date-fns';
 import Box from '@material-ui/core/Box';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
 import { withStyles } from '@material-ui/core/styles';
 import Switch from '@material-ui/core/Switch';
+import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
-import TextInput from '../../../components/TextInput/TextInput';
-import clsx from 'clsx';
-import Divider from '@material-ui/core/Divider';
-import { makeStyles } from '@material-ui/styles';
-import Button from '../../../components/CommonComponents/Button/Button';
-import { useMount } from 'react-use';
-import CloseIcon from '@material-ui/icons/Close';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
-import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-// import { URL } from '../../../config/serverUrls';
-import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
 import UploadIcon from '@material-ui/icons/Backup';
+import CloseIcon from '@material-ui/icons/Close';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
+import { format, parse } from 'date-fns';
+import { useFormik } from 'formik';
+import { useSnackbar } from 'notistack';
+import React, { useEffect, useState } from 'react';
+import { useMount } from 'react-use';
+import * as Yup from 'yup';
+import Button from '../../../components/CommonComponents/Button/Button';
+import {
+  AvatarCard,
+  ViewData,
+} from '../../../components/CommonComponents/FilePreview';
+import FileUpload from '../../../components/FileUpload';
+import TextInput from '../../../components/TextInput/TextInput';
+// import { URL } from '../../../config/serverUrls';
 // import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { URL } from '../../../config/serverUrls';
+import { rulesList } from '../../../config/userRules';
 import {
   getBusinessTypes,
   getOmcList,
   getRegionById,
   getStates,
 } from '../../../services/common.service';
+import { cryptoEncrypt } from '../../../services/crypto.service';
+import { deleteTransportProfileDoc } from '../../../services/transports.service';
 import { getDistricts } from '../../../utils/indianStates.util';
 // import { addNewTransport, updateTransport } from '../../../services/transports.service';
-import { useSnackbar } from 'notistack';
-import Tooltip from '@material-ui/core/Tooltip';
-import { URL } from '../../../config/serverUrls';
-import FileUpload from '../../../components/FileUpload';
-import {
-  AvatarCard,
-  ViewData,
-} from '../../../components/CommonComponents/FilePreview';
-import { deleteTransportProfileDoc } from '../../../services/transports.service';
-import { format, parse } from 'date-fns';
-import 'date-fns';
-import DateFnsUtils from '@date-io/date-fns';
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from '@material-ui/pickers';
-import { permissionCheck } from '../../../components/UserCan/UserCan';
-import { rulesList } from '../../../config/userRules';
-import { cryptoEncrypt } from '../../../services/crypto.service';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -148,7 +147,7 @@ const useStyles = makeStyles((theme) => ({
 
 const AddNewTransportsForm = ({
   title,
-  handleBack,
+  // handleBack,
   id,
   data,
   currentUser,
@@ -163,7 +162,7 @@ const AddNewTransportsForm = ({
   const [showUpload, setShowUpload] = useState(false);
   const [regionList, setRegionList] = useState([]);
   const [fileType, setFileType] = useState('');
-  const [regions, setRegions] = useState([]);
+  // const [regions, setRegions] = useState([]);
   const [checked, setChecked] = useState(false);
   const [imageModal, setImageModal] = useState({});
   const [selectedDate, setSelectedDate] = useState(data?.doi && parse(data?.doi, 'dd-MM-yyyy', new Date()));
@@ -221,7 +220,7 @@ const AddNewTransportsForm = ({
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       // id: Yup.number().required('Please enter transporter code'),
-      name: Yup.string().required('Please enter transporter name').nullable('Enter transporter name').matches(/^[aA-zZ.,&/-\s]+$/, "Only alphabets are allowed for this field "),
+      name: Yup.string().required('Please enter transporter name').nullable('Enter transporter name').matches(/^[aA-zZ.,&/-\s]+$/, 'Only alphabets are allowed for this field '),
       mobile: Yup.number()
         .nullable('Enter your mobile number')
         .min(10, 'Enter valid mobile number')
@@ -238,7 +237,7 @@ const AddNewTransportsForm = ({
         .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
         .required('Enter PAN')
         .uppercase(),
-      gst: Yup.string().nullable('Enter GST').matches(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/, "Invalid GST").required("Enter GST").uppercase(),
+      gst: Yup.string().nullable('Enter GST').matches(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/, 'Invalid GST').required('Enter GST').uppercase(),
     }),
     onSubmit: (values) => {
       setLoading(true);
@@ -433,7 +432,7 @@ const AddNewTransportsForm = ({
             setImageModal({ open: true, image: data.gst_file_url })
           }
         >
-          <a className={classes.profileLink} target='_blank' title={'GST Attachment'}>{'GST Attachment'}</a>
+          <span className={classes.profileLink} target='_blank' title={'GST Attachment'}>{'GST Attachment'}</span>
         </Button>
         <Tooltip title={'Click to edit'}>
           <UploadIcon
@@ -443,7 +442,7 @@ const AddNewTransportsForm = ({
           />
         </Tooltip>
         <Tooltip title={'Click to delete'}>
-          <DeleteIcon onClick={() => onDocDelete({ gst_file_url: "" })} fontSize="small" padding={2} />
+          <DeleteIcon onClick={() => onDocDelete({ gst_file_url: '' })} fontSize="small" padding={2} />
         </Tooltip>
       </div>
     );
@@ -451,7 +450,7 @@ const AddNewTransportsForm = ({
   const panAttachment = () => {
     return (
       <div className={classes.fileStyle}>
-        <a className={classes.profileLink} href={data.pan_file_url} target='_blank' title={'PAN Attachment'}>{'PAN Attachment'}</a>
+        <a className={classes.profileLink} href={data.pan_file_url} target='_blank' title={'PAN Attachment'} rel="noreferrer">{'PAN Attachment'}</a>
         <Tooltip title={'Click to edit'}>
           <UploadIcon
             fontSize='small'
@@ -460,7 +459,7 @@ const AddNewTransportsForm = ({
           />
         </Tooltip>
         <Tooltip title={'Click to delete'}>
-          <DeleteIcon onClick={() => onDocDelete({ pan_file_url: "" })} fontSize="small" padding={2} />
+          <DeleteIcon onClick={() => onDocDelete({ pan_file_url: '' })} fontSize="small" padding={2} />
         </Tooltip>
       </div>
     );
@@ -488,7 +487,7 @@ const AddNewTransportsForm = ({
                         return true;
                     }))?.name} />
                     <ViewData title='Date of Incoporation' value={values?.doi} />
-                    <ViewData title='Region' value={(regionList.find(function (region, index) {
+                    <ViewData title='Region' value={(regionList.find(function (region) {
                       if (region.id == values.region)
                         return true;
                     }))?.name} />
@@ -500,11 +499,11 @@ const AddNewTransportsForm = ({
                   <Box className={classes.box}>
                     <ViewData title='Transport Name' value={values.name} />
                     <ViewData title='Address' value={values.address} />
-                    <ViewData title='Business Type' value={(businessType.find(function (business, index) {
+                    <ViewData title='Business Type' value={(businessType.find(function (business) {
                       if (business.id == values.business_type)
                         return true;
                     }))?.name} />
-                    <ViewData title='State' value={(states.find(function (state, index) {
+                    <ViewData title='State' value={(states.find(function (state) {
                       if (state.id == values.state)
                         return true;
                     }))?.name} />
@@ -518,45 +517,45 @@ const AddNewTransportsForm = ({
                 values?.pan_file_url ||
                 values?.aadhar_f_file_url ||
                 values?.aadhar_b_file_url ? (
-                <div className={classes.readOnlyWrapper}>
-                  <Typography variant='h4'>Attachments</Typography>
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-around',
-                      marginTop: 16,
-                    }}
-                  >
-                    {values.pan_file_url && (
-                      <AvatarCard
-                        tooltip='View PAN'
-                        file={values?.pan_file_url}
-                        title='PAN'
-                      />
-                    )}
-                    {values.gst_file_url && (
-                      <AvatarCard
-                        tooltip='View GST'
-                        file={values?.gst_file_url}
-                        title='GST'
-                      />
-                    )}
+                  <div className={classes.readOnlyWrapper}>
+                    <Typography variant='h4'>Attachments</Typography>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-around',
+                        marginTop: 16,
+                      }}
+                    >
+                      {values.pan_file_url && (
+                        <AvatarCard
+                          tooltip='View PAN'
+                          file={values?.pan_file_url}
+                          title='PAN'
+                        />
+                      )}
+                      {values.gst_file_url && (
+                        <AvatarCard
+                          tooltip='View GST'
+                          file={values?.gst_file_url}
+                          title='GST'
+                        />
+                      )}
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div className={classes.readOnlyWrapper}>
-                  <Typography variant='h4'>Attachments</Typography>
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      marginTop: '20px',
-                    }}
-                  >
-                    <Typography variant='h7'>No Attachments Found</Typography>
+                ) : (
+                  <div className={classes.readOnlyWrapper}>
+                    <Typography variant='h4'>Attachments</Typography>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        marginTop: '20px',
+                      }}
+                    >
+                      <Typography variant='h7'>No Attachments Found</Typography>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </>
           ) : (
             <Box>
@@ -654,7 +653,7 @@ const AddNewTransportsForm = ({
                   </Grid>
                   <Grid item md={6}>
                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                      <label>Date of Birth</label>
+                      <label>Date of Incoporation</label>
                       <KeyboardDatePicker
                         // disableToolbar
                         // hideTabs={true}
@@ -895,7 +894,6 @@ const AddNewTransportsForm = ({
                 <Button
                   variant='contained'
                   type='submit'
-                  onClick={handleSubmit}
                   className={clsx(classes.btn, classes.editButton)}
                   startIcon={
                     !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />

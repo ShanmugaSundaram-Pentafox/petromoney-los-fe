@@ -1,18 +1,16 @@
-import React, { useState } from 'react';
+import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import TextInput from '../../../components/TextInput/TextInput';
-import Button from '../../../components/CommonComponents/Button/Button';
-import clsx from 'clsx';
-import Divider from '@material-ui/core/Divider';
-import { makeStyles } from "@material-ui/styles";
 import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import { useMount } from 'react-use';
-import * as Yup from 'yup';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
-import { format, parse } from 'date-fns'
+import React from 'react';
+import * as Yup from 'yup';
+import Button from '../../../components/CommonComponents/Button/Button';
+import TextInput from '../../../components/TextInput/TextInput';
 // import { getDealershipById } from '../../../services/dealerships.service';
 import { URL } from '../../../config/serverUrls';
 
@@ -123,7 +121,7 @@ const AddCreditPdForm = ({ data, dealer_id, callback, currentUser }) => {
   });
 
   const fieldProps = {
-    direction: "column",
+    direction: 'column',
     alignTop: true,
   }
   return (

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -6,8 +6,12 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
+<<<<<<< HEAD
 import Button from '@material-ui/core/Button';
 
+=======
+import React from 'react';
+>>>>>>> ca63aaac1f5fc2b0c381d2b9b97d37141ca95840
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -53,18 +57,18 @@ const CoApplicantsTable = ({id, editable, coApplicantsData, titleAlign, getExper
   const classes = useStyles();
     
   if (!coApplicantsData || !coApplicantsData.length)
-  return (
-    <div className={classes.wrapper}>
-      <Typography variant="h5" align={titleAlign} className={classes.title}>No CoApplicants Found</Typography>
-      {
-        editable && (
-          <div style={{ textAlign: 'center', marginTop: 8 }}>
-            <Button color="primary" variant="outlined" size="small" onClick={() => onClickAddMenu('COAPPLICANT')}>Add CoApplicants</Button>
-          </div>
-        )
-      }
-    </div>
-  );
+    return (
+      <div className={classes.wrapper}>
+        <Typography variant="h5" align={titleAlign} className={classes.title}>No CoApplicants Found</Typography>
+        {
+          editable && (
+            <div style={{ textAlign: 'center', marginTop: 8 }}>
+              <Button color="primary" variant="outlined" size="small" onClick={() => onClickAddMenu('COAPPLICANT')}>Add CoApplicants</Button>
+            </div>
+          )
+        }
+      </div>
+    );
 
   return (
     <div className={classes.wrapper}>
@@ -90,17 +94,17 @@ const CoApplicantsTable = ({id, editable, coApplicantsData, titleAlign, getExper
               <TableCell align="center">
                 {row.aadhar_f_file_url && <TableCell style={{ border: 0 }} align="center">
                   <a className={classes.document}
-                    href={row.aadhar_f_file_url} target="_blank" title={'Aadhar Front'}>{'Aadhar Front'}</a>
+                    href={row.aadhar_f_file_url} target="_blank" title={'Aadhar Front'} rel="noreferrer">{'Aadhar Front'}</a>
 
                 </TableCell>}
                 {row.aadhar_b_file_url && <TableCell style={{ border: 0 }} align="center">
                   <a className={classes.document}
-                    href={row.aadhar_b_file_url} target="_blank" title={'Aadhar Back'}>{'Aadhar Back'}</a>
+                    href={row.aadhar_b_file_url} target="_blank" title={'Aadhar Back'} rel="noreferrer">{'Aadhar Back'}</a>
 
                 </TableCell>}
                 {row.pan_file_url && <TableCell style={{ border: 0 }} align="center">
                   <a className={classes.document}
-                    href={row.pan_file_url} target="_blank" title={'PAN'}>{'PAN'}</a>
+                    href={row.pan_file_url} target="_blank" title={'PAN'} rel="noreferrer">{'PAN'}</a>
                 </TableCell>}
                 {!row.pan_file_url && !row.aadhar_b_file_url && !row.aadhar_f_file_url &&
                   <TableCell style={{ border: 0 }} align="center">

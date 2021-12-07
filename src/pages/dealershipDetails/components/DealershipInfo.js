@@ -1,31 +1,31 @@
-import React, { useEffect, useState } from 'react';
-import { useMount } from 'react-use';
-import clsx from 'clsx';
-import { makeStyles } from '@material-ui/styles';
+import { Typography } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
-// import CardHeader from '@material-ui/core/CardHeader';
 import CardActions from '@material-ui/core/CardActions';
-import Divider from '@material-ui/core/Divider';
-import Grid from '@material-ui/core/Grid';
-import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { URL } from '../../../config/serverUrls';
-import { logger } from '../../../config/logger';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { permissionCheck } from '../../../components/UserCan/UserCan';
-import { rulesList } from '../../../config/userRules';
-import Button from '../../../components/CommonComponents/Button/Button';
-import { cryptoEncrypt, encrypt } from '../../../services/crypto.service';
+import { grey } from '@material-ui/core/colors';
+import Grid from '@material-ui/core/Grid';
+import Tooltip from '@material-ui/core/Tooltip';
 import CloudUploadOutlinedIcon from '@material-ui/icons/CloudUploadOutlined';
 import DeleteIcon from '@material-ui/icons/DeleteOutlineOutlined';
-import { getBusinessTypes, getRegionById, getStates, getActiveStates, getAllRegion } from '../../../services/common.service';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
+import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
+import React, { useEffect, useState } from 'react';
+import { useMount } from 'react-use';
+// import CardHeader from '@material-ui/core/CardHeader';
+import * as Yup from 'yup';
+import AccountStatement from './AccountStatement';
+import Button from '../../../components/CommonComponents/Button/Button';
 import { AvatarCard, ViewData } from '../../../components/CommonComponents/FilePreview';
-import { Typography } from '@material-ui/core';
-import Tooltip from '@material-ui/core/Tooltip';
 import FileUpload from '../../../components/FileUpload';
-import { grey } from '@material-ui/core/colors';
+import TextInput from '../../../components/TextInput/TextInput';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { logger } from '../../../config/logger';
+import { URL } from '../../../config/serverUrls';
+import { rulesList } from '../../../config/userRules';
+import { getBusinessTypes, getRegionById, getActiveStates } from '../../../services/common.service';
+import { cryptoEncrypt } from '../../../services/crypto.service';
 import { deleteDealershipDocument, downloadAccountStatement } from '../../../services/dealerships.service';
 import { compareObject } from '../../../utils/compareObject.util';
 import { useMutation, useQuery } from 'react-query';
@@ -39,7 +39,9 @@ const useStyles = makeStyles(theme => ({
     // paddingBottom: theme.spacing(1)
   },
   actionFooter: {
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-start',
+    padding: 0,
+    marginTop: 20,
   },
   readOnlyWrapper: {
     margin: '8px 4px',
@@ -78,7 +80,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      name: Yup.string().nullable('Please enter dealership name').required('Please enter Dealership name').matches(/^[aA-zZ.,&/-\s]+$/, "Only alphabets are allowed for this field ").max(50),
+      name: Yup.string().nullable('Please enter dealership name').required('Please enter Dealership name').matches(/^[aA-zZ.,&/-\s]+$/, 'Only alphabets are allowed for this field ').max(50),
       address: Yup.string().nullable('Please enter address').required('Please enter address'),
       state: Yup.string().nullable('Please choose state').required('Please choose state'),
       district: Yup.string().nullable('Please enter district').required('Please enter district'),
@@ -88,7 +90,8 @@ const DealershipInfo = ({ data, className, currentUser }) => {
         .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
         .required('Enter PAN')
         .uppercase(),
-      gst: Yup.string().nullable('Enter GST').matches(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/, "Invalid GST").required("Enter GST").uppercase(),
+      gst: Yup.string().nullable('Enter GST').matches(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/, 'Invalid GST').required('Enter GST').uppercase(),
+
     }),
     onSubmit: values => {
       values.name = values.name.toUpperCase();
@@ -208,7 +211,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
     fileType === 'PAN'
       ? setFieldValue('pan_file_url', value[0])
       : setFieldValue('gst_file_url', value[0]);
-    handleSubmit(values);
+    // handleSubmit(values);
     onCloseUploader();
   };
   const onDocDelete = (value) => {
@@ -251,7 +254,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
   }
 
   const fieldProps = {
-    direction: "column",
+    direction: 'column',
     alignTop: true,
     readOnly,
     onChange
@@ -269,7 +272,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
         </Tooltip>
         <Tooltip title={'Click to delete'}>
           <DeleteIcon
-            onClick={() => onDocDelete({ gst_file_url: "" })}
+            onClick={() => onDocDelete({ gst_file_url: '' })}
             style={{ color: grey[800] }}
             padding={2}
             className={classes.icons}
@@ -290,7 +293,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
         </Tooltip>
         <Tooltip title={'Click to delete'}>
           <DeleteIcon
-            onClick={() => onDocDelete({ pan_file_url: "" })}
+            onClick={() => onDocDelete({ pan_file_url: '' })}
             style={{ color: grey[800] }}
             padding={2}
           />
@@ -300,11 +303,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
   };
   return (
     <Card className={clsx(classes.root, className)}>
-      <form
-        onSubmit={handleSubmit}
-        autoComplete="off"
-        noValidate
-      >
+      <div style={{ marginBottom: 20 }}>
         {
           readOnly ? (
             <>
@@ -332,37 +331,37 @@ const DealershipInfo = ({ data, className, currentUser }) => {
               {
                 values?.pan_file_url ||
                   values?.gst_file_url ? (
-                  <div className={classes.readOnlyWrapper}>
-                    <Typography variant='h4'>Attachments</Typography>
-                    <div style={{ marginTop: 16, display: 'flex' }}>
-                      {values.pan_file_url && (
-                        <AvatarCard
-                          tooltip='View PAN'
-                          file={values?.pan_file_url}
-                          title='PAN'
-                        />
-                      )}
-                      {values.gst_file_url && (
-                        <AvatarCard
-                          tooltip='View GST'
-                          file={values?.gst_file_url}
-                          title='GST'
-                        />
-                      )}
+                    <div className={classes.readOnlyWrapper}>
+                      <Typography variant='h4'>Attachments</Typography>
+                      <div style={{ marginTop: 16, display: 'flex' }}>
+                        {values.pan_file_url && (
+                          <AvatarCard
+                            tooltip='View PAN'
+                            file={values?.pan_file_url}
+                            title='PAN'
+                          />
+                        )}
+                        {values.gst_file_url && (
+                          <AvatarCard
+                            tooltip='View GST'
+                            file={values?.gst_file_url}
+                            title='GST'
+                          />
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ) : (
-                  <div className={classes.readOnlyWrapper}>
-                    <Typography variant='h4'>Attachments</Typography>
-                    <div
-                      style={{
-                        marginTop: '20px',
-                      }}
-                    >
-                      <Typography variant='h7'>No Attachments Found</Typography>
+                  ) : (
+                    <div className={classes.readOnlyWrapper}>
+                      <Typography variant='h4'>Attachments</Typography>
+                      <div
+                        style={{
+                          marginTop: '20px',
+                        }}
+                      >
+                        <Typography variant='h7'>No Attachments Found</Typography>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
             </>
           ) : (
             <>
@@ -492,7 +491,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                     </Grid>
                   ) : null}
                 </Grid>
-                <Divider />
+                {/* <Divider /> */}
                 <Grid {...gridProps} sm={6} md={6}>
                   <TextInput
                     select
@@ -564,7 +563,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
             </>
           )
         }
-        <Divider />
+        {/* <Divider /> */}
 
         {showUpload && (
           <FileUpload
@@ -588,7 +587,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
             !loading ? (
               <>
                 <Button variant="contained" size="small" onClick={() => { setReadOnly(true); }}>Cancel</Button>
-                <Button type="submit" color="primary" variant="contained" size="small">Save</Button>
+                <Button type="submit" color="primary" onClick={handleSubmit} variant="contained" size="small">Save</Button>
               </>
             ) : <CircularProgress size={20} />
           ) : (
@@ -600,8 +599,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
               onClick={() => { setReadOnly(false); }}>Edit Details</Button>
           )}
         </CardActions>
-      </form >
-      <Divider />
+      </div >
       <AccountStatement id={values.id} currentUser={currentUser} />
     </Card >
   );

@@ -1,23 +1,21 @@
-import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
+import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import TextInput from '../../../components/TextInput/TextInput';
-import Button from '../../../components/CommonComponents/Button/Button';
-import * as Yup from 'yup';
-import clsx from 'clsx';
-import { useFormik } from 'formik';
-import Divider from '@material-ui/core/Divider';
 import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
-import { makeStyles } from "@material-ui/styles";
 import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
+import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
-import AsyncSelect from 'react-select/async';
-import { addReferenceDetails, deleteReferenceDetailsByID, updateReferenceById } from '../../../services/PDReport.services';
-import { ViewData } from '../../../components/CommonComponents/FilePreview';
+import React, { useState } from 'react';
+import * as Yup from 'yup';
+import Button from '../../../components/CommonComponents/Button/Button';
 import PreviewCard from '../../../components/CommonComponents/Cards/PreviewCard';
-import { getDealershipForSearch } from '../../../services/common.service';
+import { ViewData } from '../../../components/CommonComponents/FilePreview';
+import TextInput from '../../../components/TextInput/TextInput';
+import { addReferenceDetails, deleteReferenceDetailsByID, updateReferenceById } from '../../../services/PDReport.services';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -103,8 +101,8 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center'
   },
   input: {
-    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
+    '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+      '-webkit-appearance': 'none',
       margin: 0,
     }
   }
@@ -186,7 +184,7 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
     }
   });
   const inputProps = {
-    direction: "column",
+    direction: 'column',
     alignTop: true,
     onChange: handleChange,
   }

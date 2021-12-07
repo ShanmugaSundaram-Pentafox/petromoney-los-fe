@@ -1,6 +1,3 @@
-import React, { useState, Fragment } from 'react';
-import { useMount } from 'react-use';
-import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
 // import Grid from '@material-ui/core/Grid';
 import Table from '@material-ui/core/Table';
@@ -8,19 +5,22 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import clsx from 'clsx';
 // import Dialog from '@material-ui/core/Dialog';
 // import DialogActions from '@material-ui/core/DialogActions';
 // import DialogContent from '@material-ui/core/DialogContent';
 // import DialogTitle from '@material-ui/core/DialogTitle';
-import TextInput from '../../../components/TextInput/TextInput';
-import Currency from '../../../components/Number/Currency';
 import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
 import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
-import { getDealershipIncomeById, postDealershipIncomeById, updateDealershipIncomeById } from '../../../services/dealerships.service';
-import { getDealersWithCoapplicants } from '../../../services/dealers.service';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
 import { useFormik } from 'formik';
+import React, { useState, Fragment } from 'react';
+import { useMount } from 'react-use';
+import Currency from '../../../components/Number/Currency';
+import TextInput from '../../../components/TextInput/TextInput';
 import { getBusinessTypes } from '../../../services/common.service';
+import { getDealersWithCoapplicants } from '../../../services/dealers.service';
+import { getDealershipIncomeById, postDealershipIncomeById, updateDealershipIncomeById } from '../../../services/dealerships.service';
 import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles(theme => ({
@@ -44,8 +44,8 @@ const useStyles = makeStyles(theme => ({
     }
   },
   btnEdit: {
-    '&.MuiButton-root': { color: "#2196f3" },
-    border: "1px #2196f3 solid",
+    '&.MuiButton-root': { color: '#2196f3' },
+    border: '1px #2196f3 solid',
     marginLeft: 2
   },
 }));
@@ -199,7 +199,7 @@ const IncomeTable = ({ id, editable, currentUser }) => {
                     onChange={onEditTextChange}
                   />
                 </TableCell>
-                <TableCell align={"right"}>
+                <TableCell align={'right'}>
                   <TextInput
                     money
                     label="FY Income"
@@ -209,7 +209,7 @@ const IncomeTable = ({ id, editable, currentUser }) => {
                     onChange={onEditTextChange}
                   />
                 </TableCell>
-                <TableCell align={"right"}>
+                <TableCell align={'right'}>
                   <Button
                     size="small"
                     variant="outlined"
@@ -224,10 +224,10 @@ const IncomeTable = ({ id, editable, currentUser }) => {
               <TableRow key={i}>
                 <TableCell>{item.business_name}</TableCell>
                 <TableCell>{item.business_age}</TableCell>
-                <TableCell align={"right"}>
+                <TableCell align={'right'}>
                   <Currency value={item.cur_fy_income} />
                 </TableCell>
-                <TableCell align={"right"}>
+                <TableCell align={'right'}>
                   <Button
                     size="small"
                     variant="outlined"
@@ -242,7 +242,7 @@ const IncomeTable = ({ id, editable, currentUser }) => {
           }
           {
             addNewRow && (
-              <TableRow key={"new-row"}>
+              <TableRow key={'new-row'}>
                 <TableCell>
                   <TextInput
                     label="Business Name"
@@ -251,8 +251,9 @@ const IncomeTable = ({ id, editable, currentUser }) => {
                     onChange={onTextChange}
                   />
                 </TableCell>
-                <TableCell align={"right"}>
+                <TableCell align={'right'}>
                   <TextInput
+                    number
                     label="Business Age"
                     name="business_age"
                     type="number"
@@ -260,21 +261,21 @@ const IncomeTable = ({ id, editable, currentUser }) => {
                     onChange={onTextChange}
                   />
                 </TableCell>
-                <TableCell align={"right"}>
+                <TableCell align={'right'}>
                   <TextInput
                     money
+                    number
                     label="FY Income"
                     name="cur_fy_income"
-                    type="number"
                     value={apiData.cur_fy_income}
                     onChange={onTextChange}
                   />
                 </TableCell>
-                <TableCell align={"right"}></TableCell>
+                <TableCell align={'right'}></TableCell>
               </TableRow>
             )
           }
-          <TableRow key={"add-row"}>
+          <TableRow key={'add-row'}>
             <TableCell align="right" colSpan={4}>
               {
                 addNewRow ? (

@@ -1,38 +1,38 @@
 import React from 'react';
-import { Route, Switch, Redirect } from "react-router-dom";
 import { connect } from 'react-redux';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
-import { selectCurrentUser } from '../store/user/user.selector';
 import ProtectedRoute from './ProtectedRoute';
-import TransportsDetails from '../pages/transportsDetails/transportsDetails'
-import Survey from '../pages/survey/survey';
-import Login from '../pages/login/login';
-import Dashboard from '../pages/dashboard/dashboard';
-import Dealership from '../pages/dealership/dealership';
-import Settings from '../pages/settings/settings';
-import DealershipDetails from '../pages/dealershipDetails/dealershipDetails';
-import Loans from '../pages/loanspage/loans'
-import CreditForm from '../pages/creditForm/creditForm';
-import Transport from '../pages/transports/transports';
-import Solar from '../pages/solar/solar';
-import Users from '../pages/users/users';
+import EnvTag from '../components/CommonComponents/EnvTag/EnvTag';
 import { permissionCheck } from '../components/UserCan/UserCan';
 import { rulesList } from '../config/userRules';
+import CreditForm from '../pages/creditForm/creditForm';
+import OwnerDetails from '../pages/dashboard/components/OwnerDetails';
+import Dashboard from '../pages/dashboard/dashboard';
+import Dealership from '../pages/dealership/dealership';
+import DealershipDetails from '../pages/dealershipDetails/dealershipDetails';
+import BlacklistTable from '../pages/loanspage/BlacklistTable';
+import LmsLos from '../pages/loanspage/lmsLosTable';
+import Loans from '../pages/loanspage/loans'
+import Login from '../pages/login/login';
+import NotFound from '../pages/NotFound/NotFound';
+import Profile from '../pages/profile/Profile';
+import CreditReload from '../pages/reports/CreditReload';
+import DealersDueReport from '../pages/reports/DealersDueReport';
 import Due from '../pages/reports/DueReport';
 import OverDue from '../pages/reports/OverDueReport';
-import LmsLos from '../pages/loanspage/lmsLosTable';
-import PassbookDetails from '../pages/users/dealer/PassbookDetails';
-import EnvTag from '../components/CommonComponents/EnvTag/EnvTag';
-import VehiclesLoanTable from '../pages/transports/components/VehiclesLoanTable';
-import OwnerDetails from '../pages/dashboard/components/OwnerDetails';
-import Profile from '../pages/profile/Profile';
+import Settings from '../pages/settings/settings';
+import Solar from '../pages/solar/solar';
+import Survey from '../pages/survey/survey';
 import TransportException from '../pages/transports/components/TransportException';
-import BlacklistTable from '../pages/loanspage/BlacklistTable';
-import CreditReload from '../pages/reports/CreditReload';
 import FastTagPassbook from '../pages/transports/components/TransportsPassbook';
-import DealersDueReport from '../pages/reports/DealersDueReport';
+import VehiclesLoanTable from '../pages/transports/components/VehiclesLoanTable';
+import Transport from '../pages/transports/transports';
 import TransportsPortal from '../pages/transports/TransportsPortal';
-import NotFound from '../pages/NotFound/NotFound';
+import TransportsDetails from '../pages/transportsDetails/transportsDetails'
+import PassbookDetails from '../pages/users/dealer/PassbookDetails';
+import Users from '../pages/users/users';
+import { selectCurrentUser } from '../store/user/user.selector';
 
 const Routes = ({ currentUser }) => {
   return (<>
@@ -84,7 +84,7 @@ const Routes = ({ currentUser }) => {
         const authUrl = window.sessionStorage.getItem('pm-login-url');
         if (currentUser) {
           window.sessionStorage.setItem('pm-login-url', undefined);
-          return <Redirect to={authUrl || "/"} />
+          return <Redirect to={authUrl || '/'} />
         }
 
         return <Login {...props} />

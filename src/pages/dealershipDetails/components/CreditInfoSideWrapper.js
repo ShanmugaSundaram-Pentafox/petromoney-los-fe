@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/styles';
-import Stepper from '@material-ui/core/Stepper';
-import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
-import StepContent from '@material-ui/core/StepContent';
-import Typography from '@material-ui/core/Typography';
-import DealerCreditInfoForm from './DealerCreditInfoForm';
-import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
-import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import { useFormik } from 'formik';
-import clsx from 'clsx';
-import Snackbar from '@material-ui/core/Snackbar';
-import Alert from '@material-ui/lab/Alert';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { URL } from '../../../config/serverUrls';
-import { logger } from '../../../config/logger';
-import apiCall from '../../../utils/api.util';
+import Divider from '@material-ui/core/Divider';
+import Snackbar from '@material-ui/core/Snackbar';
+import Step from '@material-ui/core/Step';
+import StepContent from '@material-ui/core/StepContent';
+import StepLabel from '@material-ui/core/StepLabel';
+import Stepper from '@material-ui/core/Stepper';
+import Typography from '@material-ui/core/Typography';
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
+import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import Alert from '@material-ui/lab/Alert';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
+import { useFormik } from 'formik';
+import React, { useState } from 'react';
+import DealerCreditInfoForm from './DealerCreditInfoForm';
+import { logger } from '../../../config/logger';
+import { URL } from '../../../config/serverUrls';
+import apiCall from '../../../utils/api.util';
 
 
 
@@ -93,7 +93,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
     return new Promise((resolve, reject) => {
       apiCall(`${URL.dealership}/${dealershipId}/credit/info`)
         .then(({ status, data, message }) => {
-          if (status === "SUCCESS") {
+          if (status === 'SUCCESS') {
             resolve(data);
           } else {
             reject(message);
@@ -199,19 +199,19 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
           {
             !loading ? (
               <>
-              <Button
-              variant="contained"
-              color="secondary"
-              startIcon={<NavigateBeforeRoundedIcon />}
-              disabled={loading}
-              onClick={onClose}>Close</Button>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  startIcon={<NavigateBeforeRoundedIcon />}
+                  disabled={loading}
+                  onClick={onClose}>Close</Button>
 
-              <Button
-              variant="contained"
-              className={clsx(classes.btn, classes.btnSuccess)}
-              // startIcon={<NavigateNextRoundedIcon />}
-              disabled={loading}
-              onClick={loading ? () => null : handleSubmit}>Save</Button>
+                <Button
+                  variant="contained"
+                  className={clsx(classes.btn, classes.btnSuccess)}
+                  // startIcon={<NavigateNextRoundedIcon />}
+                  disabled={loading}
+                  onClick={loading ? () => null : handleSubmit}>Save</Button>
               </>
             ) : (
               <div style={{display: 'flex', justifyContent: 'flex-end', width: '90%', margin: '0 auto'}}>

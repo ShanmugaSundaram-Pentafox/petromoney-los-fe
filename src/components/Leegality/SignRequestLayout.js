@@ -1,31 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { makeStyles, withStyles } from '@material-ui/styles';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import Button from "@material-ui/core/Button";
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Dialog from "@material-ui/core/Dialog";
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
-import Typography from '@material-ui/core/Typography';
-import PdfViewer from '../CommonComponents/PdfViewer/PdfViewer';
-import { getCoApplicantByDealershipId, getDealersByDealershipId, getSanctionLetterPdf } from '../../services/dealers.service';
-import CardsCheckList from './components/CardsCheckList';
-import apiCall from '../../utils/api.util';
-import { getDealershipLoansById } from '../../services/dealerships.service';
-import { CompassCalibrationOutlined } from '@material-ui/icons';
-import LeegalityLayout from './LeegalityLayout';
 import { TableContainer } from '@material-ui/core';
 import { Table } from '@material-ui/core';
 import { TableBody } from '@material-ui/core';
 import { TableRow } from '@material-ui/core';
 import { TableCell as TableCellComp } from '@material-ui/core';
-import { getLoanById, getLoanDocumentHistoryById } from '../../services/loans.service';
-import { getAllGuarantor, getPdfContent } from '../../services/leegality.service';
+import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
+import Typography from '@material-ui/core/Typography';
+import CloseIcon from '@material-ui/icons/Close';
+import { makeStyles, withStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
+import React, { useState, useEffect } from 'react';
+import CardsCheckList from './components/CardsCheckList';
+import LeegalityLayout from './LeegalityLayout';
+import { getCoApplicantByDealershipId, getDealersByDealershipId } from '../../services/dealers.service';
+import { getAllGuarantor, getPdfContent } from '../../services/leegality.service';
+import { getLoanDocumentHistoryById } from '../../services/loans.service';
+import apiCall from '../../utils/api.util';
+import PdfViewer from '../CommonComponents/PdfViewer/PdfViewer';
 
 
 const useStyles = makeStyles(theme => ({
@@ -44,10 +42,10 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.grey[500],
   },
   sendButton: {
-    padding: "10px 20px",
+    padding: '10px 20px',
   },
   content: {
-    overflowY: "auto",
+    overflowY: 'auto',
   },
   table: {
   
@@ -57,7 +55,7 @@ const useStyles = makeStyles(theme => ({
 
 const TableCell = withStyles(theme => ({
   root: {
-    border: "1px solid #eeeeee",
+    border: '1px solid #eeeeee',
   },
 }))(TableCellComp)
 
@@ -170,7 +168,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
   const sendInvitees = () => {
     setHideSend(true);
     if (selectedCoAppicants.length !== 0 && selectedDealers.length !== 0) {
-      apiCall(`document/sign`, {
+      apiCall('document/sign', {
         body: {
           dealer: selectedDealers,
           coapplicants: selectedCoAppicants,
@@ -179,10 +177,10 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
           type: type,
           loanId: loanId,
         },
-        method: "POST",
+        method: 'POST',
       })
         .then(res => {
-          if (res.status === "SUCCESS") {
+          if (res.status === 'SUCCESS') {
             enqueueSnackbar(res.message, {
               anchorOrigin: {
                 vertical: 'top',
@@ -223,7 +221,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
   return (
     <Dialog
       fullWidth
-      maxWidth={"md"}
+      maxWidth={'md'}
       open={open}
       onClose={() => {
         setLoansData({});
@@ -265,7 +263,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
               ) : (
                 <Grid container spacing={2}>
                   {
-                    type === "sanction" || type == "application" ? (
+                    type === 'sanction' || type == 'application' ? (
                       <Grid item sm={8} md={7} >
                         {
                           pdfUrl ?
@@ -278,161 +276,161 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
                         }
                       </Grid>) : (
                       <Grid item md={8} >
-                        <Grid container spacing={2}>
+                          <Grid container spacing={2}>
                           <Grid item md={12} >
-                            <Box pt={2}>
+                              <Box pt={2}>
                               <TableContainer>
-                                <Table>
+                                  <Table>
                                   <TableBody>
-                                    <TableRow>
+                                      <TableRow>
                                       <TableCell>Date of Agreement</TableCell>
                                       <TableCell></TableCell>
                                     </TableRow>
-                                    <TableRow>
+                                      <TableRow>
                                       <TableCell>Place of execution of Agreement</TableCell>
                                       <TableCell>Chennai</TableCell>
                                     </TableRow>
-                                    <TableRow>
+                                      <TableRow>
                                       <TableCell>Name of the borrower</TableCell>
                                       <TableCell>
-                                        {
+                                          {
                                           dealers.map(item => {
                                             return item.first_name
                                           }).join(', ')
                                         }
-                                      </TableCell>
+                                        </TableCell>
                                     </TableRow>
-                                    <TableRow>
+                                      <TableRow>
                                       <TableCell>Dealership Address</TableCell>
                                       <TableCell>
-                                        {
+                                          {
                                           dealers?.map(item => {
                                             return item.address
                                           }).join(', ')
                                         }
-                                      </TableCell>
+                                        </TableCell>
                                     </TableRow>
-                                    <TableRow>
+                                      <TableRow>
                                       <TableCell>Residence Address</TableCell>
                                       <TableCell>
-                                        {
+                                          {
                                           dealers?.map(item => {
                                             return item.address
                                           }).join(', ')
                                         }
-                                      </TableCell>
+                                        </TableCell>
                                     </TableRow>
-                                    <TableRow>
+                                      <TableRow>
                                       <TableCell>Name of Co-borrower</TableCell>
                                       <TableCell>
-                                        {
+                                          {
                                           applicants.map(item => {
                                             return item.first_name
                                           }).join(', ')
                                         }
-                                      </TableCell>
+                                        </TableCell>
                                     </TableRow>
-                                    <TableRow>
+                                      <TableRow>
                                       <TableCell>E-mail Address of Co-borrower</TableCell>
                                       <TableCell>
-                                        {
+                                          {
                                           applicants.map(item => {
                                             return item.email
                                           }).join(', ')
                                         }
-                                      </TableCell>
+                                        </TableCell>
                                     </TableRow>
-                                    <TableRow>
+                                      <TableRow>
                                       <TableCell>Contact Number of Co-borrower</TableCell>
                                       <TableCell>
-                                        {
+                                          {
                                           applicants.map(item => {
                                             return item.mobile
                                           }).join(', ')
                                         }
-                                      </TableCell>
+                                        </TableCell>
                                     </TableRow>
-                                    <TableRow>
+                                      <TableRow>
                                       <TableCell>Office/Residential Address of Co-borrower</TableCell>
                                       <TableCell>
-                                        {
+                                          {
                                           applicants.map(item => {
                                             return item.address
                                           }).join(', ')
                                         }
-                                      </TableCell>
+                                        </TableCell>
                                     </TableRow>
-                                    <TableRow>
+                                      <TableRow>
                                       <TableCell>Name of Guarantor</TableCell>
                                       <TableCell>
-                                        {
+                                          {
                                           guarantor?.map(item => {
                                             return item.first_name
                                           }).join(', ')
                                         }
-                                      </TableCell>
+                                        </TableCell>
                                     </TableRow>
-                                    <TableRow>
+                                      <TableRow>
                                       <TableCell>E-mail Address of Guarantor</TableCell>
                                       <TableCell>
-                                        {
+                                          {
                                           guarantor?.map(item => {
                                             return item.email
                                           }).join(', ')
                                         }
-                                      </TableCell>
+                                        </TableCell>
                                     </TableRow>
-                                    <TableRow>
+                                      <TableRow>
                                       <TableCell>Contact Number of Guarantor</TableCell>
                                       <TableCell>
-                                        {
+                                          {
                                           guarantor?.map(item => {
                                             return item.mobile
                                           }).join(', ')
                                         }
-                                      </TableCell>
+                                        </TableCell>
                                     </TableRow>
-                                    <TableRow>
+                                      <TableRow>
                                       <TableCell>Loan Amount</TableCell>
                                       <TableCell></TableCell>
                                     </TableRow>
-                                    <TableRow>
+                                      <TableRow>
                                       <TableCell>Loan Amount (In Words)</TableCell>
                                       <TableCell></TableCell>
                                     </TableRow>
-                                    <TableRow>
+                                      <TableRow>
                                       <TableCell>Office/ Residential Address of Guarantor</TableCell>
                                       <TableCell>
-                                        {
+                                          {
                                           guarantor?.map(item => {
                                             return item.address
                                           }).join(', ')
                                         }
-                                      </TableCell>
+                                        </TableCell>
                                     </TableRow>
-                                    <TableRow>
+                                      <TableRow>
                                       <TableCell>Loan Cycle</TableCell>
                                       <TableCell>15 Days - Revolving Credit</TableCell>
                                     </TableRow>
-                                    <TableRow>
+                                      <TableRow>
                                       <TableCell>Interest rate</TableCell>
                                       <TableCell>18 % P.A.</TableCell>
                                     </TableRow>
-                                    <TableRow>
+                                      <TableRow>
                                       <TableCell>Overdue Interest</TableCell>
                                       <TableCell>30 % P.A.</TableCell>
                                     </TableRow>
-                                    <TableRow>
+                                      <TableRow>
                                       <TableCell>Facility of Tenor</TableCell>
                                       <TableCell>12 Months</TableCell>
                                     </TableRow>
-                                  </TableBody>
+                                    </TableBody>
                                 </Table>
-                              </TableContainer>
+                                </TableContainer>
                             </Box>
-                          </Grid>
+                            </Grid>
                         </Grid>
-                      </Grid>
+                        </Grid>
                     )
                   }
                   <Grid item sm={3} md={4}>
@@ -459,15 +457,15 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
                     </Box>
                     {
                       type === 'agreement' && guarantor.length !== 0 &&
-                      <Box pt={2}>
-                        <p>Guarantors</p>
-                        <Box pt={1}>
-                          <CardsCheckList
-                            data={guarantor}
-                            onChange={updateSelectedGuarantors}
-                          />
+                        <Box pt={2}>
+                          <p>Guarantors</p>
+                          <Box pt={1}>
+                            <CardsCheckList
+                              data={guarantor}
+                              onChange={updateSelectedGuarantors}
+                            />
+                          </Box>
                         </Box>
-                      </Box>
                     }
                   </Grid>
                 </Grid>
@@ -477,7 +475,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
         )
       }
       <DialogActions>
-        <Box pl={2} pr={2} style={{ display: "flex" }}>
+        <Box pl={2} pr={2} style={{ display: 'flex' }}>
           {/* <Button onClick={onClose} color="primary">
             Cancel
           </Button> */}
@@ -487,7 +485,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
                 Send
               </Button>) : null
           } */}
-          <div style={{ marginRight: "20px" }}>
+          <div style={{ marginRight: '20px' }}>
 
             {
               status && (

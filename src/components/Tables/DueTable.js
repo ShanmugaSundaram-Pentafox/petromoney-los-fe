@@ -1,12 +1,12 @@
-import React, { useMemo, useState } from 'react';
-import MUIDataTable from "mui-datatables";
-import { useMount } from 'react-use';
-import Paper from '@material-ui/core/Paper';
-import Currency from '../../components/Number/Currency';
-import { getTestReport } from '../../services/users.service';
-import usePageTitle from '../../hooks/usePageTitle';
-import Skeleton from '@material-ui/lab/Skeleton';
 import { Grid } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
+import Skeleton from '@material-ui/lab/Skeleton';
+import MUIDataTable from 'mui-datatables';
+import React, { useMemo, useState } from 'react';
+import { useMount } from 'react-use';
+import Currency from '../../components/Number/Currency';
+import usePageTitle from '../../hooks/usePageTitle';
+import { getTestReport } from '../../services/users.service';
 
 const DueTable = ({ id, onRowClick }) => {
   const [loans, setLoans] = useState({})
@@ -86,7 +86,7 @@ const DueTable = ({ id, onRowClick }) => {
             </Grid>
           ) : Array.isArray(loans) ? (
             <MUIDataTable
-              title={"Due Reports"}
+              title={'Due Reports'}
               data={loans}
               columns={columns}
               options={options}

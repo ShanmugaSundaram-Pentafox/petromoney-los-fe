@@ -1,6 +1,3 @@
-import React, { useState, Fragment } from 'react';
-import { makeStyles } from '@material-ui/styles';
-import { useMount } from 'react-use';
 import Button from '@material-ui/core/Button';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -9,10 +6,13 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
 import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
-import TextInput from '../../../components/TextInput/TextInput';
-import Currency from '../../../components/Number/Currency';
-import { getDealershipExpensesById, postDealershipExpensesById, updateDealershipExpenseById } from '../../../services/dealerships.service';
+import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
+import React, { useState, Fragment } from 'react';
+import { useMount } from 'react-use';
+import Currency from '../../../components/Number/Currency';
+import TextInput from '../../../components/TextInput/TextInput';
+import { getDealershipExpensesById, postDealershipExpensesById, updateDealershipExpenseById } from '../../../services/dealerships.service';
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -28,8 +28,8 @@ const useStyles = makeStyles(theme => ({
     }
   },
   btnEdit: {
-    '&.MuiButton-root': { color: "#2196f3" },
-    border: "1px #2196f3 solid",
+    '&.MuiButton-root': { color: '#2196f3' },
+    border: '1px #2196f3 solid',
     marginLeft: 2
   },
 }));
@@ -127,7 +127,7 @@ const ExpensesTable = ({ id, editable, values = [], currentUser }) => {
                   onChange={onEditTextChange}
                 />
               </TableCell>
-              <TableCell align={"right"}>
+              <TableCell align={'right'}>
                 <TextInput
                   money
                   label="Expense Amount"
@@ -137,7 +137,7 @@ const ExpensesTable = ({ id, editable, values = [], currentUser }) => {
                   onChange={onEditTextChange}
                 />
               </TableCell>
-              <TableCell align={"right"}>
+              <TableCell align={'right'}>
                 <Button
                   size="small"
                   variant="outlined"
@@ -151,10 +151,10 @@ const ExpensesTable = ({ id, editable, values = [], currentUser }) => {
           ) : (
             <TableRow key={i}>
               <TableCell>{item.expense_type}</TableCell>
-              <TableCell align={"right"}>
+              <TableCell align={'right'}>
                 <Currency value={item.expense_amount} />
               </TableCell>
-              <TableCell align={"right"}>
+              <TableCell align={'right'}>
                 <Button
                   size="small"
                   variant="outlined"
@@ -169,7 +169,7 @@ const ExpensesTable = ({ id, editable, values = [], currentUser }) => {
         }
         {
           addNewRow && (
-            <TableRow key={"new-row"}>
+            <TableRow key={'new-row'}>
               <TableCell>
                 <TextInput
                   label="Expense Type"
@@ -178,7 +178,7 @@ const ExpensesTable = ({ id, editable, values = [], currentUser }) => {
                   onChange={onTextChange}
                 />
               </TableCell>
-              <TableCell align={"right"}>
+              <TableCell align={'right'}>
                 <TextInput
                   money
                   label="Expense Amount"
@@ -188,11 +188,11 @@ const ExpensesTable = ({ id, editable, values = [], currentUser }) => {
                   onChange={onTextChange}
                 />
               </TableCell>
-              <TableCell align={"right"}></TableCell>
+              <TableCell align={'right'}></TableCell>
             </TableRow>
           )
         }
-        <TableRow key={"add-row"}>
+        <TableRow key={'add-row'}>
           <TableCell align="right" colSpan={3}>
             {
               addNewRow ? (

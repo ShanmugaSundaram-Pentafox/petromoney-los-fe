@@ -1,16 +1,16 @@
-import { URL } from "../config/serverUrls"
-import { getDealershipLoansById } from "./dealerships.service";
-import apiCall from "../utils/api.util";
+import { getDealershipLoansById } from './dealerships.service';
+import { URL } from '../config/serverUrls'
+import apiCall from '../utils/api.util';
 
 export const getLoanStats = (qryStr = {}) => {
   return new Promise((resolve, reject) => {
     const { region, from, to } = qryStr;
-    let apiUrl = `metrics/loan/stats`;
+    let apiUrl = 'metrics/loan/stats';
     if (region) apiUrl = `metrics/loan/stats?region=${region}`;
     if (from && to) apiUrl = `metrics/loan/stats?region=${region}&from=${from}&to=${to}`;
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data[0]);
         } else {
           reject(message);
@@ -26,7 +26,7 @@ export const getAllLoans = () => {
   return new Promise((resolve, reject) => {
     apiCall(URL.loans)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
         } else {
           reject(message);
@@ -44,7 +44,7 @@ export const getAll_ls1_Metrices = () => {
     // return;
     apiCall(URL.ls1_metrices)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
         } else {
           reject(message);
@@ -62,7 +62,7 @@ export const getAll_ls2_Metrices = () => {
     // return;
     apiCall(URL.ls2_metrices)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
         } else {
           reject(message);
@@ -78,7 +78,7 @@ export const getAllOmcDpd = () => {
   return new Promise((resolve, reject) => {
     apiCall('app/dpd/omc')
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
         } else {
           reject(message);
@@ -94,7 +94,7 @@ export const getAllRegionDpd = () => {
   return new Promise((resolve, reject) => {
     apiCall('app/dpd/region')
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
         } else {
           reject(message);
@@ -112,7 +112,7 @@ export const getLoanBookData = () => {
     // return;
     apiCall(URL.loanBook)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
         } else {
           reject(message);
@@ -133,7 +133,7 @@ export const getLoansByStatus = (status, filterQry) => {
     }
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
         } else {
           reject(message);
@@ -149,7 +149,7 @@ export const getLoanById = (dealershipId, loanId) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.dealership}/${dealershipId}/loans/${loanId}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data[0] || {});
         } else {
           reject(message);
@@ -165,7 +165,7 @@ export const getLoanDocumentHistoryById = (loanId, type) => {
   return new Promise((resolve, reject) => {
     apiCall(`document/history/${loanId}?document_type=${type}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data[0] || {});
         } else {
           reject(message);
@@ -177,15 +177,17 @@ export const getLoanDocumentHistoryById = (loanId, type) => {
   });
 }
 
-export const updateLoanApprovalStatusById = (dealershipId, loanId, body) => {
+export const updateLoanApprovalStatusById = (dealershipId, loanId, status, body) => {
   return new Promise((resolve, reject) => {
-    apiCall(`${URL.dealership}/${dealershipId}/loan/${loanId}/approval`, {
-      method: "POST",
+    apiCall(`${URL.dealership}/${dealershipId}/loan/${loanId}/${status}`, {
+      method: 'POST',
       body,
     })
       .then(async ({ status, data, message }) => {
-        if (status === "SUCCESS") {
-          resolve({ message });
+        if (status === 'SUCCESS') {
+          const res = await getDealershipLoansById(dealershipId);
+          const updatedLoanData = await getLoanById(dealershipId, loanId);
+          resolve({ loans: res, data: updatedLoanData, message });
         } else {
           reject(message);
         }
@@ -199,13 +201,14 @@ export const updateLoanApprovalStatusById = (dealershipId, loanId, body) => {
 export const deleteLoanDisbursementRecord = (dealershipId, loanId, body) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.dealership}/${dealershipId}/loan/${loanId}/approval`, {
-      method: "DELETE",
+      method: 'DELETE',
       body,
     })
       .then(async ({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           const res = await getDealershipLoansById(dealershipId);
-          resolve({ data: res, message });
+          const updatedLoanData = await getLoanById(dealershipId, loanId);
+          resolve({ loans: res, data: updatedLoanData, message });
         } else {
           reject(message);
         }
@@ -220,7 +223,7 @@ export const getAllExceptions = () => {
   return new Promise((resolve, reject) => {
     apiCall(URL.exceptions)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
         } else {
           reject(message);
@@ -235,7 +238,7 @@ export const getTransportsExceptions = () => {
   return new Promise((resolve, reject) => {
     apiCall(URL.transport_exceptions)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
         } else {
           reject(message);
@@ -250,10 +253,10 @@ export const getTransportsExceptions = () => {
 export const updateLoanStats = (dealershipId, loanId) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.dealership}/${dealershipId}/loan/${loanId}/resubmit`, {
-      method: "POST",
+      method: 'POST',
     })
       .then(async ({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message);
         } else {
           reject(message);
@@ -266,9 +269,9 @@ export const updateLoanStats = (dealershipId, loanId) => {
 }
 export const getApplicationStatusById = () => {
   return new Promise((resolve, reject) => {
-    apiCall(`application/state`)
+    apiCall('application/state')
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
         } else {
           reject(message);
@@ -282,9 +285,9 @@ export const getApplicationStatusById = () => {
 
 export const getLoanRejectReason = () => {
   return new Promise((resolve, reject) => {
-    apiCall(`loans/reason`)
+    apiCall('loans/reason')
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
         } else {
           reject(message);

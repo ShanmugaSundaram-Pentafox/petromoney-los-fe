@@ -1,6 +1,6 @@
-import React from 'react';
-import styled from "styled-components";
 import moment from 'moment';
+import React from 'react';
+import styled from 'styled-components';
 
 const ActivityBoxWrapper = styled.div`
   display: flex;
@@ -105,11 +105,11 @@ const ActivityBoxWrapper = styled.div`
 const ActivityBox = ({ dateCreated, username, activity }) => {
   return (
     <ActivityBoxWrapper>
-      <div class="activity-time">{moment(dateCreated).format('DD/MM/YYYY HH:MM A')}</div>
-      <div class="activity-box">
-        <div class="activity-info">
-          <div class="activity-role">{username}</div>
-          <strong class="activity-title">{activity}</strong>
+      <div className="activity-time">{moment(dateCreated).format('DD/MM/YYYY HH:MM A')}</div>
+      <div className="activity-box">
+        <div className="activity-info">
+          <div className="activity-role">{username}</div>
+          <strong className="activity-title">{activity}</strong>
         </div>
       </div>
     </ActivityBoxWrapper>

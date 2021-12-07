@@ -1,7 +1,7 @@
-import styled from "styled-components";
-import { InfoBoxStyle } from "../../../theme/styled-components/utils";
-import { InfoWrapper } from "../../../components/CommonComponents/Cards/InfoCard";
-import { InfoCardWrapper } from "../../../components/CommonComponents/Cards/EnquiryInfoCard";
+import styled from 'styled-components';
+import { InfoCardWrapper } from '../../../components/CommonComponents/Cards/EnquiryInfoCard';
+import { InfoWrapper } from '../../../components/CommonComponents/Cards/InfoCard';
+import { InfoBoxStyle } from '../../../theme/styled-components/utils';
 
 export const UserInfoWrapper = styled(InfoBoxStyle)`
   ${InfoCardWrapper} {

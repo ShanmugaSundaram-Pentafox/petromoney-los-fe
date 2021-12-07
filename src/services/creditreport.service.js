@@ -1,6 +1,5 @@
-import { API } from "../config/api"
-import { URL } from "../config/serverUrls"
-import apiCall from "../utils/api.util";
+import { URL } from '../config/serverUrls'
+import apiCall from '../utils/api.util';
 
 export const saveDealerCreditInfo = (dealership_id, data) => {
   return new Promise((resolve, reject) => {
@@ -10,7 +9,7 @@ export const saveDealerCreditInfo = (dealership_id, data) => {
       body: data
     })
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
         } else {
           reject(message);
@@ -26,7 +25,7 @@ export const getDealersCreditInfo = dealership_id => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.dealership}/${dealership_id}/${URL.creditInfo}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data);
         } else {
           reject(message);
@@ -42,7 +41,7 @@ export const getDealershipCreditReportData = dealership_id => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.dealership}/${dealership_id}/${URL.creditReport}`)
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(data[0] || {});
         } else {
           reject(message);
@@ -66,7 +65,7 @@ export const saveDealershipCreditReportData = (dealership_id, data) => {
       body: data
     })
       .then(({ status, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(true);
         } else {
           reject(message);
@@ -85,7 +84,7 @@ export const creditReloadById = (dealership_id, data) => {
       body: data
     })
       .then(({ status, data, message }) => {
-        if (status === "SUCCESS") {
+        if (status === 'SUCCESS') {
           resolve(message);
         } else {
           reject(message);
@@ -99,7 +98,7 @@ export const creditReloadById = (dealership_id, data) => {
 export const addCreditReport = (data, currentUser, id) => {
   return new Promise((resolve, reject) => {
     fetch(`${URL.base}credit/reload/${id}`, {
-      method: "POST",
+      method: 'POST',
       body: data,
       headers: {
         Authorization: `Bearer ${currentUser.token}`,
@@ -109,7 +108,7 @@ export const addCreditReport = (data, currentUser, id) => {
         return res.json();
       })
       .then(res => {
-        if (res.status === "SUCCESS") {
+        if (res.status === 'SUCCESS') {
           resolve(res);
         } else {
           reject(res);

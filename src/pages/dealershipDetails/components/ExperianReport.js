@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import RefreshIcon from '@material-ui/icons/Refresh';
-import { useMount } from 'react-use';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { getExperianReportById, refreshExperianReportById } from '../../../services/common.service';
+import Divider from '@material-ui/core/Divider';
+import Grid from '@material-ui/core/Grid';
+import { makeStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import RefreshIcon from '@material-ui/icons/Refresh';
+import React, { useState } from 'react';
+import { useMount } from 'react-use';
 import Currency from '../../../components/Number/Currency';
+import { getExperianReportById, refreshExperianReportById } from '../../../services/common.service';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -149,45 +149,45 @@ const ExperianReport = ({ id, type, onClose }) => {
       <Typography className={classes.panelTitle} variant="h4">Experian Report</Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <Grid container>
-          <Text label={"Name"} value={`${data.first_name} ${data.last_name}`} />
-          <Text label={"PAN"} value={data.pan} />
-          <Text label={"Date of Birth"} value={data.dob} />
-          <Text show={data.telephone} label={"Telephone"} value={data.telephone} />
-          <Text show={data.mobile} label={"Mobile"} value={data.mobile} />
-          <Text show={data.email} label={"Email"} value={data.email} />
+          <Text label={'Name'} value={`${data.first_name} ${data.last_name}`} />
+          <Text label={'PAN'} value={data.pan} />
+          <Text label={'Date of Birth'} value={data.dob} />
+          <Text show={data.telephone} label={'Telephone'} value={data.telephone} />
+          <Text show={data.mobile} label={'Mobile'} value={data.mobile} />
+          <Text show={data.email} label={'Email'} value={data.email} />
 
           <Grid {...gridItem}>
             <Typography className={classes.sidePanelTitle} variant="h4">Score</Typography>
           </Grid>
-          <Text label={"Bureau Score"} value={data.bureau_score} />
-          <Text label={"Bureau Score Confidence"} value={data.bureau_score_confidence} />
-          <Text show={data.credit_rating} label={"Credit Rating"} value={data.credit_rating} />
+          <Text label={'Bureau Score'} value={data.bureau_score} />
+          <Text label={'Bureau Score Confidence'} value={data.bureau_score_confidence} />
+          <Text show={data.credit_rating} label={'Credit Rating'} value={data.credit_rating} />
 
           <Grid {...gridItem}>
             <Typography className={classes.sidePanelTitle} variant="h4">Credit Account</Typography>
           </Grid>
-          <Text label={"Total"} value={data.ca_total} />
-          <Text label={"Active"} value={data.ca_active} />
-          <Text label={"Default"} value={data.ca_default} />
-          <Text label={"Closed"} value={data.ca_closed} />
-          <Text label={"CAD Suit Filed Current Balance"} value={data.ca_suit_file_current_balance} />
+          <Text label={'Total'} value={data.ca_total} />
+          <Text label={'Active'} value={data.ca_active} />
+          <Text label={'Default'} value={data.ca_default} />
+          <Text label={'Closed'} value={data.ca_closed} />
+          <Text label={'CAD Suit Filed Current Balance'} value={data.ca_suit_file_current_balance} />
 
           <Grid {...gridItem}>
             <Typography className={classes.sidePanelTitle} variant="h4">Total Outstanding Balance</Typography>
           </Grid>
-          <Text label={"Balance Secured"} value={<Currency value={data.os_balance_secured} />} />
-          <Text label={"Balance Secured Percentage"} value={data.os_balance_secured_percentage} />
-          <Text label={"Balance Unsecured"} value={<Currency value={data.os_balance_unsecured} />} />
-          <Text label={"Balance Unsecured Percentage"} value={data.os_balance_unsecured_percentage} />
-          <Text label={"Balance All"} value={<Currency value={data.os_balance_all} />} />
+          <Text label={'Balance Secured'} value={<Currency value={data.os_balance_secured} />} />
+          <Text label={'Balance Secured Percentage'} value={data.os_balance_secured_percentage} />
+          <Text label={'Balance Unsecured'} value={<Currency value={data.os_balance_unsecured} />} />
+          <Text label={'Balance Unsecured Percentage'} value={data.os_balance_unsecured_percentage} />
+          <Text label={'Balance All'} value={<Currency value={data.os_balance_all} />} />
 
           <Grid {...gridItem}>
             <Typography className={classes.sidePanelTitle} variant="h4">CAIS Account Details</Typography>
           </Grid>
-          <Text label={"Account Type"} value={data.account_type} />
-          <Text label={"Open Date"} value={data.open_date} />
-          <Text label={"Credit Limit Amount"} value={<Currency value={data.credit_limit} />} />
-          <Text label={"Highest Credit or Original Loan Amount"} value={<Currency value={data.highest_credit} />} />
+          <Text label={'Account Type'} value={data.account_type} />
+          <Text label={'Open Date'} value={data.open_date} />
+          <Text label={'Credit Limit Amount'} value={<Currency value={data.credit_limit} />} />
+          <Text label={'Highest Credit or Original Loan Amount'} value={<Currency value={data.highest_credit} />} />
 
         </Grid>
       </div>

@@ -1,26 +1,26 @@
-import React, { useState } from 'react';
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import TextInput from '../../../components/TextInput/TextInput';
-import Button from '../../../components/CommonComponents/Button/Button';
-import * as Yup from 'yup';
-import { useFormik } from 'formik';
-import clsx from 'clsx';
-import Divider from '@material-ui/core/Divider';
-import { makeStyles } from "@material-ui/styles";
-import CloseIcon from '@material-ui/icons/Close';
-import EditIcon from '@material-ui/icons/Edit';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
-import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import { useSnackbar } from 'notistack';
-import { updateBusinessDetailsByID } from '../../../services/PDReport.services';
 import { FormControl } from '@material-ui/core';
 import { RadioGroup } from '@material-ui/core';
 import { FormControlLabel } from '@material-ui/core';
 import { Radio } from '@material-ui/core';
 import { FormGroup } from '@material-ui/core';
+import Box from '@material-ui/core/Box';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Divider from '@material-ui/core/Divider';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import CloseIcon from '@material-ui/icons/Close';
+import EditIcon from '@material-ui/icons/Edit';
+import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
+import { useFormik } from 'formik';
+import { useSnackbar } from 'notistack';
+import React, { useState } from 'react';
+import * as Yup from 'yup';
+import Button from '../../../components/CommonComponents/Button/Button';
+import TextInput from '../../../components/TextInput/TextInput';
+import { updateBusinessDetailsByID } from '../../../services/PDReport.services';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -80,20 +80,6 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.success.dark
     }
   },
-  number: {
-    backgroundColor: 'white',
-    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0,
-    }
-  },
-  input: {
-    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0,
-    }
-  }
-
 }))
 
 const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) => {
@@ -125,7 +111,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
       monthly_avg_sale_lpg: Yup.number().nullable('Enter monthly average sale').required('Enter monthly average sale'),
     }),
     onSubmit: values => {
-      let data = { ...values, has_atm: values.has_atm === "Yes" ? 1 : 0, is_pep: values.is_pep === "Yes" ? 1 : 0 }
+      let data = { ...values, has_atm: values.has_atm === 'Yes' ? 1 : 0, is_pep: values.is_pep === 'Yes' ? 1 : 0 }
       updateBusinessDetailsByID(data, dealer_id)
         .then(res => {
           console.log(res)
@@ -152,7 +138,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
     }
   });
   const inputProps = {
-    direction: "column",
+    direction: 'column',
     alignTop: true,
     onChange: handleChange,
   }
@@ -169,22 +155,18 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
+                  number
                   labelText="No. of years in fuel business"
                   name="business_age"
                   value={values.business_age}
                   readOnly={readOnly}
                   error={errors.business_age}
                   helperText={errors.business_age}
-                  className={classes.number}
-                  inputProps={{ className: classes.input }}
-                  type='number'
                 />
               </Grid>
               <Grid item md={6}>
                 <TextInput
-                  className={classes.number}
-                  inputProps={{ className: classes.input }}
-                  type='number'
+                  number
                   {...inputProps}
                   labelText="No. of HSD Dispensers"
                   name="hsd_count"
@@ -196,9 +178,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               </Grid>
               <Grid item md={6}>
                 <TextInput
-                  className={classes.number}
-                  inputProps={{ className: classes.input }}
-                  type='number'
+                  number
                   {...inputProps}
                   labelText="No. of MS Dispensers"
                   name="ms_count"
@@ -212,7 +192,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
-                  className={classes.number}
+                  number
                   labelText="Area of fuel station (in Sq. ft)"
                   name="fuel_station_area"
                   value={values.fuel_station_area}
@@ -223,9 +203,8 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               </Grid>
               <Grid item md={6}>
                 <TextInput
-                  className={classes.number}
-                  type='number'
                   {...inputProps}
+                  number
                   labelText="Electricity units (per month)"
                   name="electricity_units_month"
                   value={values.electricity_units_month}
@@ -238,7 +217,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                 <TextInput
                   {...inputProps}
                   money
-                  className={classes.number}
+                  number
                   labelText="Electricity bill per month"
                   name="electricity_bill_month"
                   value={values.electricity_bill_month}
@@ -251,7 +230,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                 <TextInput
                   {...inputProps}
                   money
-                  className={classes.number}
+                  number
                   labelText="Insurance premium for pump"
                   name="insurance_pump"
                   value={values.insurance_pump}
@@ -264,7 +243,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
                 <TextInput
                   {...inputProps}
                   money
-                  className={classes.number}
+                  number
                   labelText="Total Insurance premium"
                   name="insurance_all"
                   value={values.insurance_all}
@@ -276,7 +255,6 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
-                  className={classes.number}
                   labelText="Monthly average HSD sale(in KL)"
                   name="monthly_avg_sale_hsd"
                   value={values.monthly_avg_sale_hsd}
@@ -288,7 +266,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
-                  className={classes.number}
+                  number
                   labelText="Monthly average MS sale(in KL)"
                   name="monthly_avg_sale_ms"
                   value={values.monthly_avg_sale_ms}
@@ -300,7 +278,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
-                  className={classes.number}
+                  number
                   labelText="Monthly average LPG sale(in KL)"
                   name="monthly_avg_sale_lpg"
                   value={values.monthly_avg_sale_lpg}
@@ -312,7 +290,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
-                  className={classes.number}
+                  number
                   labelText="LPG count"
                   name="lpg_count"
                   value={values.lpg_count}
@@ -323,11 +301,9 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               </Grid>
               <Grid item md={6}>
                 <TextInput
-                  className={classes.number}
-                  inputProps={{ className: classes.input }}
-                  type='number'
                   {...inputProps}
                   money
+                  number
                   labelText="Credit sales per day"
                   name="credit_sales_day"
                   value={values.credit_sales_day}
@@ -339,8 +315,8 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
-                  className={classes.number}
                   money
+                  number
                   labelText="Credit sales per month"
                   name="credit_sales_month"
                   value={values.credit_sales_month}
@@ -364,7 +340,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               <Grid item md={6}>
                 <TextInput
                   {...inputProps}
-                  className={classes.number}
+                  number
                   money
                   labelText="Outstanding any given time"
                   name="credit_outstanding"
@@ -428,7 +404,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
               startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
               onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
             >
-              {loading ? <CircularProgress size={20} /> : readOnly ? `Edit` :
+              {loading ? <CircularProgress size={20} /> : readOnly ? 'Edit' :
                 'Save'}
             </Button>
           </div>

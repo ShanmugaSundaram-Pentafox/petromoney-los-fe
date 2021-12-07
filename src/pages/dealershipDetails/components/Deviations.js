@@ -1,4 +1,5 @@
 import { Table, TableBody, TableHead, TableRow, TableCell, Typography, makeStyles, TextField, Button, CircularProgress } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import { useSnackbar } from 'notistack';
 import React, {useState} from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -38,24 +39,19 @@ const useStyles = makeStyles(theme => ({
 const Deviations = ({id}) => {
   const classes = useStyles()
   const queryClient = useQueryClient()
+  const [errorStatus, setErrorStatus] = useState()
   const [deviationData, setDeviationData] = useState([])
   const [manualDeviationData, setManualDeviationData] = useState([])
   const { enqueueSnackbar } = useSnackbar();
   
   const deviationsTable = useQuery(['deviations', id], () => {return getDeviations(id)}, {
     onError: (error) => {
-      console.log(error);
-      enqueueSnackbar(error, {
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-        variant: 'error',
-      });
+      setErrorStatus(error)
     },
     onSuccess: (data) => {
       setDeviationData(data.data)
       setManualDeviationData(data.others)
+      setErrorStatus()
     },
     refetchOnWindowFocus: false
   })
@@ -107,7 +103,6 @@ const Deviations = ({id}) => {
       .then((data) => {
         setDeviationData(data.data)
         setManualDeviationData(data.others)
-        // window.location.reload(false)
       })
       .catch(e => console.log(e))
   }
@@ -237,6 +232,10 @@ const Deviations = ({id}) => {
                 </TableBody>
               </Table>
             </div>
+            {
+              errorStatus && 
+                <Alert severity='error' style={{marginTop: 20}}>{errorStatus}</Alert>
+            }
             <div className={classes.footer}>
               <Button variant="contained" color="primary" onClick={handleSubmit}>Save</Button>
             </div>

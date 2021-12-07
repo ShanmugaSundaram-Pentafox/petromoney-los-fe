@@ -10,7 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components';
 import MonthlySalesInfo from './MonthlySalesInfo';
 import TextInput from '../../../components/TextInput/TextInput';
@@ -67,6 +67,7 @@ const SalesInfo = ({
 }) => {
   // const [info, setInfo] = useState([]);
   const classes = useStyles();
+  const queryClient = useQueryClient()
   const [addNewRow, setAddNewRow] = useState();
   const [apiData, setApiData] = useState({});
   const [anchorEl, setAnchorEl] = useState(null);
@@ -115,6 +116,7 @@ const SalesInfo = ({
       postDealershipSalesById(id, objBody)
         .then(res => {
           // setInfo(res);
+          queryClient.invalidateQueries(['sales', id])
           setAddNewRow(false);
         })
         .catch(err => {
@@ -139,6 +141,7 @@ const SalesInfo = ({
       }
       postDealershipSalesById(id, objBody)
         .then(res => {
+          queryClient.invalidateQueries(['sales', id])
           // setInfo(res);
           setEditRow({});
         })

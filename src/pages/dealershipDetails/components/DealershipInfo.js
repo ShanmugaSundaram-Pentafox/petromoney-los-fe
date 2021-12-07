@@ -307,9 +307,9 @@ const DealershipInfo = ({ data, className, currentUser }) => {
             <>
               <Grid container spacing={2} className={classes.readOnlyWrapper}>
                 <Grid md={4}>
-                  <ViewData title='Name' value={values.name} />
+                  <ViewData title='Name' value={values?.name} />
                   <ViewData title='Address' value={values?.address ? values.address + '' : '' + (values.pincode ? values.pincode : '')} />
-                  <ViewData title='PAN' value={values.pan} />
+                  <ViewData title='PAN' value={values?.pan} />
                 </Grid>
                 <Grid md={4}>
                   <ViewData title='State' value={(states.data?.find(function (state, index) {

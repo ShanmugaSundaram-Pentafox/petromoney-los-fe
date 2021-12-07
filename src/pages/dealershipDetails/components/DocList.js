@@ -1,4 +1,4 @@
-import { Checkbox, FormControlLabel, FormGroup, Paper, Typography, Table, TableBody, TableRow, TableHead, Button, ButtonComp, makeStyles, withStyles } from '@material-ui/core';
+import { Checkbox, FormControlLabel, FormGroup, Paper, Typography, Table, TableBody, TableRow, TableHead, Button, makeStyles, withStyles } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
@@ -32,7 +32,7 @@ const DeleteButton = withStyles(theme => ({
 
     },
   }
-}))(ButtonComp)
+}))(Button)
 
 
 const useStyles = makeStyles((theme) => ({
@@ -86,7 +86,7 @@ const Docs = ({ data }) => {
           return file.file_url ? (
             <div>
               <Button onClick={() => setImageModal({ open: true, image: file.file_url, type: file.file_url.endsWith('.pdf') })}>
-                <a style={{ display: 'inline-block', borderRadius: 4, lineHeight: 1, marginRight: 8, marginBottom: 8, padding: 8, backgroundColor: '#f0f0f0' }}>{getFileNameFromUrl(file?.file_url)} </a>
+                <a href={file?.file_url} style={{ display: 'inline-block', borderRadius: 4, lineHeight: 1, marginRight: 8, marginBottom: 8, padding: 8, backgroundColor: '#f0f0f0' }}>{getFileNameFromUrl(file?.file_url)} </a>
               </Button>
             </div>
 

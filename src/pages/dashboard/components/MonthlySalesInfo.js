@@ -9,7 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components';
 import TextInput from '../../../components/TextInput/TextInput';
 import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
@@ -73,6 +73,7 @@ const getPastFiveYears = () => {
 const MonthlySalesInfo = ({ id, titleAlign, column, currentUser, readOnly }) => {
   // const [info, setInfo] = useState([]);
   const classes = useStyles();
+  const queryClient = useQueryClient()
   const [addNewRow, setAddNewRow] = useState();
   const [apiData, setApiData] = useState({});
   const [editRow, setEditRow] = useState({});
@@ -101,6 +102,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser, readOnly }) => 
     deleteDealershipMonthlySalesById(id, rowData, rowIndex)
       .then((res) => {
         // setInfo(res);
+        queryClient.invalidateQueries(['monthly-sales', id])
         console.log(res)
       })
       .catch(err => {
@@ -119,6 +121,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser, readOnly }) => 
     postDealershipMonthlySalesById(id, apiData)
       .then(res => {
         // setInfo(res);
+        queryClient.invalidateQueries(['monthly-sales', id])
         setAddNewRow(false);
       })
       .catch(err => {
@@ -138,6 +141,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser, readOnly }) => 
     updateDealershipMonthlySalesById(id, data)
       .then(res => {
         // setInfo(res);
+        queryClient.invalidateQueries(['monthly-sales', id])
         setEditRow({});
       })
       .catch(err => {

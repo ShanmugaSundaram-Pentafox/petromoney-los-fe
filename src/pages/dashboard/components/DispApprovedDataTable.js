@@ -115,7 +115,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
     }),
     onSubmit: values => {
       const date = moment(selectedDate).format('YYYY/MM/DD')
-      const data = values.applicant_code ? { ...values, disbursement_date: date } : { ...values, applicant_code: dispHistory.applicant_code, disbursement_date: date };
+      const data = values.applicant_code ? { ...values, disbursement_date: date, amount: values.amount?.trim() } : { ...values, applicant_code: dispHistory.applicant_code, disbursement_date: date, amount: values.amount?.trim() };
       // alert(JSON.stringify(data, null, 2));
       setLoading(true);
       updateLoanApprovalStatusById(id, loanData.id, 'approval', data)

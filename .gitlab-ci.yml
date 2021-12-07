@@ -97,4 +97,46 @@ deploy-portal:
     - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
     - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
     - aws configure set default.region $AWS_DEFAULT_REGION
-    - aws s3 sync ./build/ s3://$S3_BUCKET_NAME_PORTAL --delete
+    - aws s3 sync ./build/ s3://$S3_BUCKET_NAME_PROD --delete
+
+build-prod:
+  image: node:14
+  stage: build
+  only:
+    - prod
+  cache:
+    key:
+      files:
+        - yarn.lock
+    paths:
+      - node_modules
+  variables:
+    CI: ''
+  script:
+    - yarn install
+    - export REACT_APP_ENV=$REACT_APP_ENV_PROD
+    - export REACT_APP_CRYPT_KEY=$REACT_APP_CRYPT_KEY
+    - export REACT_APP_API_BASE=$REACT_APP_API_BASE_PROD
+    - export REACT_APP_OTP_ONLY_DOMAINS=$REACT_APP_OTP_ONLY_DOMAINS
+    - CI=''
+    - yarn build
+  artifacts:
+    paths:
+      - build
+    expire_in: 1 hour
+
+deploy-prod:
+  stage: deploy
+  environment:
+    name: production
+  image:
+    name: amazon/aws-cli
+    entrypoint: [""]
+  only:
+    - prod
+  script:
+    - aws --version
+    - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+    - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+    - aws configure set default.region $AWS_DEFAULT_REGION
+    - aws s3 sync ./build/ s3://$S3_BUCKET_NAME_PROD --delete

@@ -12,8 +12,8 @@ import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
-import { useMount } from 'react-use';
 // import CardHeader from '@material-ui/core/CardHeader';
+import { useQuery } from 'react-query';
 import * as Yup from 'yup';
 import AccountStatement from './AccountStatement';
 import Button from '../../../components/CommonComponents/Button/Button';
@@ -26,7 +26,7 @@ import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
 import { getBusinessTypes, getRegionById, getActiveStates } from '../../../services/common.service';
 import { cryptoEncrypt } from '../../../services/crypto.service';
-import { deleteDealershipDocument, downloadAccountStatement } from '../../../services/dealerships.service';
+import { deleteDealershipDocument } from '../../../services/dealerships.service';
 import { compareObject } from '../../../utils/compareObject.util';
 
 
@@ -67,17 +67,13 @@ const DealershipInfo = ({ data, className, currentUser }) => {
   const [loading, setLoading] = useState();
   const [showUpload, setShowUpload] = useState(false);
   const [fileType, setFileType] = useState('');
-  const [businessTypes, setBusinessTypes] = useState([{}, {}, {}, {}, {}]);
-  const [states, setStates] = useState([]);
-  const [regionList, setRegionList] = useState([]);
-  const [selectedDate, setSelectedDate] = useState();
-  const [fileCode, setFileCode] = useState();
-  const [openDialog, setOpenDialog] = useState(false)
+  const businessTypes = useQuery('business-types', getBusinessTypes, { cacheTime: 300000 })
+  const states = useQuery('state', getActiveStates, { cacheTime: 300000 })
   const { enqueueSnackbar } = useSnackbar();
-  const classes = useStyles();
-
-
-  const { values, errors, handleChange: onChange, handleSubmit, setFieldValue } = useFormik({
+  useEffect(() => {
+    setValues(data)
+  }, [data])
+  const { values, errors, handleChange: onChange, handleSubmit, setFieldValue, setValues } = useFormik({
     initialValues: { ...data },
     validateOnChange: false,
     validateOnBlur: true,
@@ -96,18 +92,12 @@ const DealershipInfo = ({ data, className, currentUser }) => {
 
     }),
     onSubmit: values => {
-      // console.log('Form Values >> ', values.id);
-      // let gst = values?.gst ? encrypt(values.gst) : values?.gst;
       values.name = values.name.toUpperCase();
       values.gst = values.gst.toUpperCase();
       values.pan = values.pan.toUpperCase();
-      // let eDate = values.agreement_executed_on ? format(parse(values.agreement_executed_on, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : null;
-      // let vDate = values.agreement_valid_till ? format(parse(values.agreement_valid_till, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd') : null;
       const date_values = {
         ...values,
         name: values.name.toUpperCase(),
-        // agreement_valid_till: vDate,
-        // agreement_executed_on: eDate,
         gst: values.gst?.toUpperCase(),
         pan: values.pan?.toUpperCase()
       };
@@ -180,53 +170,33 @@ const DealershipInfo = ({ data, className, currentUser }) => {
         })
     }
   });
-  useMount(() => {
-    getBusinessTypes()
-      .then(setBusinessTypes)
-      .catch(err => {
-        console.log('BusinessTypes fetch error - ', err)
-      })
-    getActiveStates()
-      .then(d => {
-        setStates([{ id: '', name: 'Choose State' }, ...d])
-        return d;
-      })
-      .then(d => {
-        let res = d.find(({ id }) => id === parseInt(values.state));
-
-        if (res) {
-          fetchRegions(parseInt(res.id));
-        }
-      })
-      .catch(err => {
-        console.log('BusinessTypes fetch error - ', err)
-      })
-
-  });
-  useEffect(() => {
-    if (values.state) {
-      fetchRegions(parseInt(values.state));
-    }
-  }, [values.state])
-
-  const handleDownload = () => {
-    setLoading(true)
-    downloadAccountStatement(values.id)
-      .then(res => {
-        setFileCode(res.base64)
-        setOpenDialog(true)
-        setLoading(false)
-      })
-      .catch((e) => {
-        enqueueSnackbar('Something went wrong please try again.', {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        });
-      })
-  }
+  const getRegion = useQuery(['region', values?.state], () => getRegionById(parseInt(values?.state || 1)))
+  // useEffect(() => {
+  //   if (values.state) {
+  //     fetchRegions(parseInt(values.state));
+  //   }
+  // }, [values.state])
+  // useMount(() => {
+  //   getBusinessTypes()
+  //     .then(setBusinessTypes)
+  //     .catch(err => {
+  //       console.log('BusinessTypes fetch error - ', err)
+  //     })
+  //   getActiveStates()
+  //     .then(d => {
+  //       setStates([{ id: '', name: 'Choose State' }, ...d])
+  //       return d;
+  //     })
+  //     .then(d => {
+  //       let res = d.find(({ id }) => id === parseInt(values.state));
+  //       if (res) {
+  //         fetchRegions(parseInt(res.id));
+  //       }
+  //     })
+  //     .catch(err => {
+  //       console.log('BusinessTypes fetch error - ', err)
+  //     })
+  // });
 
   const docUpload = (val) => {
     setShowUpload(true);
@@ -266,20 +236,20 @@ const DealershipInfo = ({ data, className, currentUser }) => {
         });
       })
   }
-  const fetchRegions = (res) => {
-    getRegionById(res)
-      .then(res => {
-        setRegionList(res)
-      })
-      .catch(err => {
-        console.log(err)
-      })
-  }
+  // const fetchRegions = (res) => {
+  //   getRegionById(res)
+  //     .then(res => {
+  //       setRegionList(res)
+  //     })
+  //     .catch(err => {
+  //       console.log(err)
+  //     })
+  // }
+  const classes = useStyles();
   const gridProps = {
     item: true,
     className: classes.gridItemStyle
   }
-
 
   const fieldProps = {
     direction: 'column',
@@ -337,19 +307,19 @@ const DealershipInfo = ({ data, className, currentUser }) => {
             <>
               <Grid container spacing={2} className={classes.readOnlyWrapper}>
                 <Grid md={4}>
-                  <ViewData title='Name' value={values.name} />
+                  <ViewData title='Name' value={values?.name} />
                   <ViewData title='Address' value={values?.address ? values.address + '' : '' + (values.pincode ? values.pincode : '')} />
-                  <ViewData title='PAN' value={values.pan} />
+                  <ViewData title='PAN' value={values?.pan} />
                 </Grid>
                 <Grid md={4}>
-                  <ViewData title='State' value={(states.find(function (state, index) {
+                  <ViewData title='State' value={(states.data?.find(function (state, index) {
                     if (state.id == values.state)
                       return true;
                   }))?.name} />
                   <ViewData title='GST' value={values.gst} />
                 </Grid>
                 <Grid md={4}>
-                  <ViewData title='Business type' value={businessTypes.find(function (type, index) {
+                  <ViewData title='Business type' value={businessTypes.data?.find(function (type, index) {
                     if (type.id == values.business_type)
                       return true;
                   })?.name} />
@@ -432,7 +402,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                   >
                     {/* <option value="">{businessTypes[values.business_type]?.name}</option> */}
                     {
-                      businessTypes?.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
+                      businessTypes.data?.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
                     }
                   </TextInput>
                 </Grid>
@@ -533,7 +503,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                     {...fieldProps}
                   >
                     {
-                      states.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
+                      states.data?.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
                     }
                   </TextInput>
                 </Grid>
@@ -551,7 +521,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                       {...fieldProps}
                     >
                       {
-                        regionList?.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))
+                        getRegion?.data?.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))
                       }
                     </TextInput>
                   }

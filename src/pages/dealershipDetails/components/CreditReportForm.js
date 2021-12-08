@@ -100,10 +100,10 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
     <Grid container>
       <Grid {...gridItem}>
         <Grid item md={6}>
+          <label>Business Vintage with OMC</label>
           <TextInput
             number
             readOnly={!editable}
-            label="Business Vintage with OMC"
             name="business_vintage"
             value={values.business_vintage}
             onChange={onChange}

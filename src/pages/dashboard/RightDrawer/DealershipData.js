@@ -31,7 +31,7 @@ const DealershipData = ({ data }) => {
               <ViewData title='PAN' value={data.pan || '-'} />
             </Grid>
             <Grid {...gridProps}>
-              <ViewData title='Region' value={data.region_value || '-'} />
+              <ViewData title='Region' value={data.region_name || '-'} />
               <ViewData title='Pincode' value={data.pincode || '-'} />
               <ViewData title='GST' value={data.gst || '-'} />
             </Grid>

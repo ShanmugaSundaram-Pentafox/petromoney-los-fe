@@ -384,7 +384,7 @@ export const getOwnerDetailsById = (id) => {
             aadhar: item?.aadhar ? cryptoDecrypt(item.aadhar) : item.aadhar,
           }));
 
-          resolve(result);
+          resolve(result[0]);
         } else {
           reject(message);
         }

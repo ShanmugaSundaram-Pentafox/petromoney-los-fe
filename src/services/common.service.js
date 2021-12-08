@@ -299,7 +299,21 @@ export const getActiveStates = () => {
       })
   })
 }
-
+export const getMenuItemsCount = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('count')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data || {});
+        } else {
+          reject(message);
+        }
+      })
+      .catch(err => {
+        reject(err.message);
+      })
+  })
+}
 // export const getMasterRegionById = (res) => {
 //   return new Promise((resolve, reject) => {
 //     apiCall(`master/regions/${res}`)

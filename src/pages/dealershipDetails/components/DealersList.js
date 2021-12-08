@@ -2,7 +2,7 @@ import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState } from 'react';
-import { useMount } from 'react-use';
+import { useQuery } from 'react-query';
 import AddIconButon from './AddIcon';
 import CoApplicantsTable from './CoApplicantsTable';
 import CreditInfoSideWrapper from './CreditInfoSideWrapper';
@@ -73,41 +73,33 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   const [formType, setFormType] = useState('');
   const [modelType, setModelType] = useState('');
   const [rowData, setRowData] = useState({});
-  const [dealerData, setDealersData] = useState([]);
-  const [coApplicantsData, setCoApplicantsData] = useState([]);
-  const [guarantorsData, setGuarantorsData] = useState([]);
-  const [dealerCoApplicantData, setDealerCoApplicantData] = useState([]);
+  const { data: coApplicantsData, refetch: getCoApplicantApiCall } = useQuery(['co-applicants', id], () => getCoApplicantByDealershipId(id))
+  const { data: dealerData, refetch: getDealerApiCall } = useQuery(['dealers-coapplicant', id], () => getDealersByDealershipId(id))
+  const { data: guarantorsData, refetch: getGuarantorApiCall } = useQuery(['guarantors', id], () => getAllGuarantor(id))
 
-  const getCoApplicantApiCall = (id) => {
-    getCoApplicantByDealershipId(id)
-      .then(data => {
-        setCoApplicantsData(data);
-        setDealerCoApplicantData(prevArray => [...prevArray, ...data]);
-      })
-      .catch(e => null)
-  }
 
-  const getDealerApiCall = (id) => {
-    getDealersByDealershipId(id)
-      .then(data => {
-        setDealersData(data);
-        setDealerCoApplicantData(prevArray => [...prevArray, ...data]);
-      })
-      .catch(e => null)
-  }
-  const getGuarantorApiCall = () => {
-    getAllGuarantor(id)
-      .then(data => {
-        setGuarantorsData(data);
-      })
-  }
-
-  useMount(() => {
-    getDealerApiCall(id);
-    getCoApplicantApiCall(id);
-    getGuarantorApiCall(id);
-  });
-
+  // const getCoApplicantApiCall = (id) => {
+  //   getCoApplicantByDealershipId(id)
+  //     .then(data => {
+  //       setCoApplicantsData(data);
+  //       setDealerCoApplicantData(prevArray => [...prevArray]);
+  //     })
+  //     .catch(e => null)
+  // }
+  // const getDealerApiCall = (id) => {
+  // getDealersByDealershipId(id)
+  // .then(data => {
+  //   setDealersData(data);
+  //   setDealerCoApplicantData(prevArray => [...prevArray]);
+  // })
+  // .catch(e => null)
+  // }
+  // const getGuarantorApiCall = () => {
+  //   getAllGuarantor(id)
+  //     .then(data => {
+  //       setGuarantorsData(data);
+  //     })
+  // }
   const openCloseCreditForm = () => {
     setShowCreditForm(!showCreditForm);
   }
@@ -177,7 +169,6 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         coApplicantsData={coApplicantsData}
         formType={formType}
         rowData={rowData}
-        titleAlign={titleAlign}
         showCreditForm={showCreditForm}
         openCloseCreditForm={openCloseCreditForm}
         editFormClose={editFormClose}
@@ -193,7 +184,6 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         guarantorsData={guarantorsData}
         formType={formType}
         rowData={rowData}
-        titleAlign={titleAlign}
         showCreditForm={showCreditForm}
         openCloseCreditForm={openCloseCreditForm}
         editFormClose={editFormClose}
@@ -228,7 +218,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         <div className={classes.sidePanelWrapper}>
           <DealerEditSideWrapper
             getDealerApiCall={getDealerApiCall}
-            dealersList={dealerData}
+            dealersList={dealerData?.data}
             getCoApplicantApiCall={getCoApplicantApiCall}
             isAdd={formType}
             modelType={modelType}
@@ -240,7 +230,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
       </Drawer>
 
       {
-        editable && ((dealerData || []).length != 0 || (coApplicantsData || []).length != 0 || (guarantorsData || []).length != 0) && (
+        editable && ((dealerData?.data || []).length != 0 || (coApplicantsData?.data || []).length != 0 || (guarantorsData?.data || []).length != 0) && (
           <div className={classes.footer}>
             <div className={classes.actionButtons}>
               <Button color="primary" variant="contained" size="small" onClick={() => openCloseCreditForm()}>View/Edit Credit Information</Button>
@@ -251,7 +241,10 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
               variant="temporary"
             >
               <div className={classes.sidePanelWrapper}>
-                <CreditInfoSideWrapper dealershipId={id} data={dealerCoApplicantData} currentUser={currentUser} onClose={() => openCloseCreditForm()} />
+                {
+                  !dealerData?.isLoading && !coApplicantsData?.isLoading &&
+                    <CreditInfoSideWrapper dealershipId={id} data={[...dealerData.data, ...coApplicantsData.data]} currentUser={currentUser} onClose={() => openCloseCreditForm()} />
+                }
               </div>
             </Drawer>
           </div>

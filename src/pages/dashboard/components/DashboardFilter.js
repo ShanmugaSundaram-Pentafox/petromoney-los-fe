@@ -4,32 +4,58 @@ import { subDays, format } from 'date-fns'
 import React, { useEffect, useState } from 'react';
 import { DateRange } from 'react-date-range';
 import { useQuery } from 'react-query';
-import Select from 'react-select'
+import Select, { components } from 'react-select'
 import { useMount } from 'react-use';
 import { getAllRegions, getProducts, getZones } from '../../../services/common.service';
 import { getLoanStats } from '../../../services/loans.service';
 
-export const Selector = ({ options, value, setValue, title, isMulti, width }) => {
+const Option = (props) => {
+  return (
+    <components.Option {...props} >
+      <div style={{display: 'flex', alignItems: 'center'}}>
+        <input
+          type="checkbox"
+          checked={props.isSelected}
+          onChange={() => null}
+        />
+        <label>&nbsp;{props.label}</label>
+      </div>
+    </components.Option>
+  );
+};
+
+const multiValueContainer = ({ selectProps, data }) => {
+  const label = data.label;
+  const allSelected = selectProps.value;
+  const index = allSelected?.findIndex(selected => selected?.label === label);
+  const isLastSelected = index === allSelected?.length - 1;
+  const labelSuffix = isLastSelected ? "" : ", ";
+  const val = `${label}${labelSuffix}`;
+  return val;
+};
+
+export const Selector = ({ options, value, setValue, title }) => {
   return(
     <>
-      <Box pr={1} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <div style={{ color: 'hsl(0,0%,75%)' }}>{title}</div>
-      </Box>
-      <Box style={{ width: width }}>
+      <Box style={{ width: 180 }}>
+        <label style={{ color: 'hsl(0,0%,75%)' }}>{title}</label>
         <Select
           options={options}
-          isMulti = {isMulti}
+          isMulti = {true}
+          closeMenuOnSelect={false}
+          hideSelectedOptions={false}
           isClearable
           value={value}
+          isSearchable={false}
+          components={{
+            MultiValueContainer: multiValueContainer,
+            Option,
+          }}
           onChange={(selectedOption, triggeredAction) => {
             if(triggeredAction?.action === 'clear'){
-              if(isMulti){
-                setValue([{value:0, label: 'ALL'}])
-              }else{
-                setValue({value:0, label: 'ALL'})
-              }
+              setValue([{value:0, label: 'ALL'}])
             } else {
-              setValue(selectedOption)
+              setValue(selectedOption.filter(item => item.label !== 'ALL'))
             }
           }}
           styles={{
@@ -45,9 +71,12 @@ export const Selector = ({ options, value, setValue, title, isMulti, width }) =>
             }),
             valueContainer: (provided, state) => ({
               ...provided,
-              maxHeight: '50px',
+              maxHeight: '29px',
               padding: '0 6px',
-              overflow: 'auto'
+              overflow: 'hidden',
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              display: "initial"
             }),
             menu: (provided) => ({
               ...provided,
@@ -55,7 +84,7 @@ export const Selector = ({ options, value, setValue, title, isMulti, width }) =>
             }),
             indicatorsContainer: (provided) => ({
               ...provided,
-              maxHeight: '50px',
+              maxHeight: '29px',
               '> div': {
                 padding: 5
               }
@@ -127,7 +156,7 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans }) => {
   const classes = useStyles();
   const [regions, setRegions] = useState([]);
   const [products, setProducts] = useState([]);
-  const [selectedRegion, setSelectedRegion] = useState({ label: 'ALL', value: 0 });
+  const [selectedRegion, setSelectedRegion] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedProducts, setSelectedProducts] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedZones, setSelectedZones] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedPeriodType, setSelectedPeriodType] = useState('UTD');
@@ -208,7 +237,7 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans }) => {
     let productId = []
     selectedProducts.forEach(item => productId.push(item.value))
     let qry = {
-      region: selectedRegion.value,
+      region: selectedRegion.value || 0,
       products: productId.toString() || 0,
       zone: zoneId.toString() || 0
     }
@@ -258,11 +287,12 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans }) => {
     <Box p={3} borderRadius={4} bgcolor="background.paper" style={{padding: 10}}>
       <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
         <Box style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
-          <Selector title="Zone" options={zones} value={selectedZones} setValue={setSelectedZones} isMulti={true} width='300px' />
-          <Selector title="Region" options={regions} value={selectedRegion} setValue={setSelectedRegion} width='150px' />
-          <Selector title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} isMulti={true} width='300px' />
+          <Selector title="Zone" options={zones} value={selectedZones} setValue={setSelectedZones} />
+          <Selector title="Region" options={regions} value={selectedRegion} setValue={setSelectedRegion} />
+          <Selector title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} />
         </Box>
         <Box>
+          <label style={{ color: 'hsl(0,0%,75%)' }}>Period</label>
           <div className={classes.filterWrapper}>
             <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
             <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>

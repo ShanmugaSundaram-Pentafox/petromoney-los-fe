@@ -11,9 +11,10 @@ import Routes from './routes/routes';
 import { store, persistor } from './store';
 import theme from './theme';
 
-const queryClient = new QueryClient();
 
 
+
+const queryClient = new QueryClient()
 function App() {
   return (
     <QueryClientProvider client={queryClient}>

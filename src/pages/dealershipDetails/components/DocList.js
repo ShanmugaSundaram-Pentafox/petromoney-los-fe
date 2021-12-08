@@ -1,17 +1,7 @@
-import { Checkbox, FormControlLabel, FormGroup, Paper, Typography } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import ButtonComp from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
-import { withStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-// import Typography from "@material-ui/core/Typography";
+import { Checkbox, FormControlLabel, FormGroup, Paper, Typography, Table, TableBody, TableRow, TableHead, Button, makeStyles, withStyles } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
-import { useMount } from 'react-use';
-// import Chip from '@material-ui/core/Chip';
+import { useQuery } from 'react-query';
 import DocListPreview from './DocListPreview';
 import FilePreview from '../../../components/CommonComponents/FilePreview';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
@@ -42,7 +32,7 @@ const DeleteButton = withStyles(theme => ({
 
     },
   }
-}))(ButtonComp)
+}))(Button)
 
 
 const useStyles = makeStyles((theme) => ({
@@ -96,7 +86,7 @@ const Docs = ({ data }) => {
           return file.file_url ? (
             <div>
               <Button onClick={() => setImageModal({ open: true, image: file.file_url, type: file.file_url.endsWith('.pdf') })}>
-                <a style={{ display: 'inline-block', borderRadius: 4, lineHeight: 1, marginRight: 8, marginBottom: 8, padding: 8, backgroundColor: '#f0f0f0' }}>{getFileNameFromUrl(file?.file_url)} </a>
+                <a href={file?.file_url} style={{ display: 'inline-block', borderRadius: 4, lineHeight: 1, marginRight: 8, marginBottom: 8, padding: 8, backgroundColor: '#f0f0f0' }}>{getFileNameFromUrl(file?.file_url)} </a>
               </Button>
             </div>
 
@@ -113,15 +103,16 @@ const Docs = ({ data }) => {
 
 const DocList = ({ id }) => {
   const classes = useStyles();
-  const [checkListData, setCheckListData] = useState();
+  // const [checkListData, setCheckListData] = useState();
   const [showUpload, setShowUpload] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [modalData, setModalData] = useState([]);
   const [rowData, setRowData] = useState();
   const [value, setValue] = useState();
-  const [imageModal, setImageModal] = useState({})
+  // const [imageModal, setImageModal] = useState({})
   const [array, setArray] = useState([]);
   const [description, setDescription] = useState();
+  const { data: checkListData = [] } = useQuery(['doc-checklist', id], () => getDealershipCheckList(id))
 
   const getValue = (e) => {
     const val = e?.target?.value;
@@ -158,20 +149,20 @@ const DocList = ({ id }) => {
     setRowData(row);
   };
 
-  useMount(() => {
-    getDealershipCheckList(id)
-      .then((data) => setCheckListData(data))
-      .catch((e) => null);
-  });
+  // useMount(() => {
+  //   getDealershipCheckList(id)
+  //     .then((data) => setCheckListData(data))
+  //     .catch((e) => null);
+  // });
   const DeleteDocs = () => {
     deleteDocsImage(array, id)
       .then((res) => {
         setOpenModal(false)
         setModalData([])
         setArray([])
-        getDealershipCheckList(id)
-          .then((data) => setCheckListData(data))
-          .catch((e) => null);
+        // getDealershipCheckList(id)
+        //   .then((data) => setCheckListData(data))
+        //   .catch((e) => null);
       })
       .catch((err) => {
         alert(err?.message)
@@ -231,8 +222,8 @@ const DocList = ({ id }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {Array.isArray(checkListData) && checkListData.map((row, i) =>  row.doc_type !== 'dealer' && (
-            <DocListPreview docName={row.description} upload={() => onDocUpload(row)} deleteDocs={() => handleModal(row.file_data, row.description)} file={row.file_data} id={i+1}/>
+          {Array.isArray(checkListData) && checkListData.map((row, i) => row.doc_type !== 'dealer' && (
+            <DocListPreview docName={row.description} upload={() => onDocUpload(row)} deleteDocs={() => handleModal(row.file_data, row.description)} file={row.file_data} id={i + 1} />
             // <TableRow key={row.doc_id}>
             //   {/* <TableCell align="center">{row.doc_id}</TableCell> */}
             //   <TableCell>{row.description}</TableCell>
@@ -268,7 +259,7 @@ const DocList = ({ id }) => {
               {
                 modalData.map(item => {
                   return (
-                    <Paper key={item.file_id} style={{minWidth: '350px'}}>
+                    <Paper key={item.file_id} style={{ minWidth: '350px' }}>
                       <FormGroup>
                         <FormControlLabel
                           key={item.file_id}
@@ -285,7 +276,7 @@ const DocList = ({ id }) => {
             </div>
           </div>
         </div>
-      </FormDialog> 
+      </FormDialog>
 
       {/* <Modal
         className={classes.modal}

@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Alert from '@material-ui/lab/Alert';
 import { useFormik } from 'formik';
-import { toString } from 'lodash-es/toString';
+import { toString } from 'lodash/toString';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';

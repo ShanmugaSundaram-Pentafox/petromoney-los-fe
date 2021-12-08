@@ -1,6 +1,7 @@
 import { Dialog, DialogActions, DialogContent, DialogContentText, Button, CircularProgress } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/CloseRounded';
+import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
@@ -23,6 +24,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     height: '100vh',
+  },
+  dialog: {
+    minWidth: '30vw'
   },
   contentWrapper: {
     padding: 12,
@@ -70,7 +74,8 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
   const [approvalModal, setApprovalModal] = useState(false)
   const [info, setInfo] = useState({})
   const [loading, setLoading] = useState(false)
-  const [user, setUser] = useState([])
+  const [user, setUser] = useState()
+  const [errorStatus, setErrorStatus] = useState()
   const [userRole, setUserRole] = useState([]);
   const [remarks, setRemarks] = useState();
   const { enqueueSnackbar } = useSnackbar();
@@ -95,37 +100,41 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
     setApprovalModal(!approvalModal)
   }
   const updateLoanStatus = () => {
-    setLoading(true)
-    let reqBody = {
-      user_id: currentUser.id,
-      approver_id: user.value,
-      product_id: info?.product_id,
-      approval_remarks: remarks,
-    }
-    updateLoanApprovalStatusById(id, loanData?.id, 'approval', reqBody)
-      .then(res => {
-        enqueueSnackbar(res.message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
+    if(user && remarks){
+      setLoading(true)
+      let reqBody = {
+        user_id: currentUser.id,
+        approver_id: user.value,
+        product_id: info?.product_id,
+        approval_remarks: remarks,
+      }
+      updateLoanApprovalStatusById(id, loanData?.id, 'approval', reqBody)
+        .then(res => {
+          enqueueSnackbar(res.message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
+          setTimeout(() => {
+            window.location.reload();
+            setLoading(false)
+          }, 1500)
         })
-        setTimeout(() => {
-          window.location.reload();
+        .catch(err => {
           setLoading(false)
-        }, 1500)
-      })
-      .catch(err => {
-        setLoading(false)
-        enqueueSnackbar(err, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
+          enqueueSnackbar(err, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
         })
-      })
+    } else {
+      setErrorStatus('Please select approver and enter remarks.')
+    }
   }
   const updateNewLoanInfo = (d) => {
     setInfo({
@@ -174,7 +183,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
               <Select
                 isClearable
                 name='user_approve'
-                onChange={setUser}
+                onChange={(data) => {setUser(data); setErrorStatus();}}
                 options={userRole}
                 menuPlacement='bottom'
                 menuPosition='fixed'
@@ -194,9 +203,13 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
               placeholder="Enter your remarks here."
               value={remarks}
               onChange={e => {
-                setRemarks(e.target.value);
+                setRemarks(e.target.value); setErrorStatus();
               }}
             />
+            {
+              errorStatus && 
+                <Alert severity="error" style={{padding: '0px 16px'}}>{errorStatus}</Alert>
+            }
           </div>
         </DialogContent>
         <DialogActions>

@@ -1,6 +1,7 @@
 import { Dialog, DialogActions, DialogContent, DialogContentText, Button, CircularProgress } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/CloseRounded';
+import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
@@ -28,6 +29,9 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
     overflow: 'auto',
     overflowX: 'hidden'
+  },
+  dialog: {
+    minWidth: '25vw'
   },
   wrapperTitle: {
     display: 'flex',
@@ -71,6 +75,7 @@ const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, 
   const [openModal, setOpenModal] = useState(false)
   const [loading, setLoading] = useState(false)
   const [remarks, setRemarks] = useState();
+  const [errorStatus, setErrorStatus] = useState()
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -84,36 +89,40 @@ const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, 
     setOpenModal(!openModal)
   }
   const updateLoanStatus = () => {
-    setLoading(true)
-    let reqBody = {
-      user_id: currentUser.id,
-      amount_disbursed: info?.amount_disbursed ? info?.amount_disbursed : info?.amount_approved,
-      disbursement_approval_remarks: remarks
-    }
-    updateLoanApprovalStatusById(id, loanData.id, 'approval', reqBody)
-      .then(res => {
-        enqueueSnackbar(res.message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
+    if(remarks){
+      setLoading(true)
+      let reqBody = {
+        user_id: currentUser.id,
+        amount_disbursed: info?.amount_disbursed ? info?.amount_disbursed : info?.amount_approved,
+        disbursement_approval_remarks: remarks
+      }
+      updateLoanApprovalStatusById(id, loanData.id, 'approval', reqBody)
+        .then(res => {
+          enqueueSnackbar(res.message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
+          setTimeout(() => {
+            window.location.reload();
+            setLoading(false)
+          }, 1500)
         })
-        setTimeout(() => {
-          window.location.reload();
+        .catch(err => {
           setLoading(false)
-        }, 1500)
-      })
-      .catch(err => {
-        setLoading(false)
-        enqueueSnackbar(err, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
+          enqueueSnackbar(err, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
         })
-      })
+    } else {
+      setErrorStatus('Please enter remarks for approval')
+    }
 
   }
   return (
@@ -145,7 +154,7 @@ const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, 
         <DialogContent>
           <div className={classes.dialog}>
             <DialogContentText id="approval-remarks-desc">
-              Please enter your remarks for sending this for approval.
+              Please enter remarks for approval.
             </DialogContentText>
             <TextInput
               multiline
@@ -157,9 +166,13 @@ const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, 
               placeholder="Enter your remarks here."
               value={remarks}
               onChange={e => {
-                setRemarks(e.target.value);
+                setRemarks(e.target.value); setErrorStatus();
               }}
             />
+            {
+              errorStatus && 
+                <Alert severity="error" style={{padding: '0px 16px'}}>{errorStatus}</Alert>
+            }
           </div>
         </DialogContent>
         <DialogActions>

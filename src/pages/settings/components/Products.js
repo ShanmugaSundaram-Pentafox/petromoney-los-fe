@@ -5,9 +5,12 @@ import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import PhoneAndroidIcon from '@material-ui/icons/PhoneAndroid';
 import { useFormik } from 'formik';
+import { useSnackbar } from 'notistack';
 import React, { useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import TextInput from '../../../components/TextInput/TextInput';
+import { getProductsMaster, updateProductbyId, insertNewProduct } from '../../../services/common.service';
 
 
 const useStyles = makeStyles(() => ({
@@ -72,9 +75,63 @@ const useStyles = makeStyles(() => ({
 
 const Products = ({title, callback}) => {
   const classes = useStyles()
-  const [data, setData] = useState([])
+  const queryClient = useQueryClient()
   const [addNewProduct, setAddNewProduct] = useState()
-  // console.log(data);
+  const [action, setAction] = useState()
+  const { enqueueSnackbar } = useSnackbar();
+
+  const { data: products = [] } = useQuery(['products'], () => getProductsMaster())
+
+  const { mutate: updateProduct, mutate: addProduct } = useMutation(data =>  action === 'update' ? updateProductbyId(data.product_id, data) : insertNewProduct(data) , {
+    onSuccess: (message) => {
+      queryClient.invalidateQueries(['products'])
+      setAddNewProduct(false);
+      setValues({});
+      setAction()
+      enqueueSnackbar(message, {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'success',
+      });
+    },
+    onError: (message) => {
+      console.log(message);
+      setAction()
+      enqueueSnackbar(message, {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'error',
+      });
+    }
+  })
+
+  const activate = (id, data) => {
+    updateProductbyId(id, data)
+      .then(res => {
+        queryClient.invalidateQueries(['products'])
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        });
+      })
+      .catch(e => {
+        console.log(e)
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      })
+  }
 
   const { values, errors, handleChange, handleSubmit, setValues } = useFormik({
     validateOnChange: false,
@@ -82,26 +139,40 @@ const Products = ({title, callback}) => {
     initialValues: {},
     validationSchema: Yup.object().shape({
       product_name: Yup.string().nullable().required('Enter Product Name'),
-      roi: Yup.string().nullable().required('Enter Rate of Interest'),
-      penal_intrest: Yup.string().nullable().required('Enter Penal Interest'),
-      processing_fee: Yup.string().nullable().required('Enter Processing Fee'),
-      tenure: Yup.string().nullable().required('Enter Tenure'),
+      interest: Yup.number().nullable().required('Enter Rate of Interest').max(100, 'ROI Should be less than 100%'),
+      penal_interest: Yup.number().nullable().required('Enter Penal Interest').max(100, 'Penal Interest Should be less than 100%'),
+      processing_fee: Yup.number().nullable().required('Enter Processing Fee').max(50, 'Processing Fee Should be less than 50%'),
+      tenure: Yup.number().nullable().required('Enter Tenure').max(365, 'Tenure Should be less than 365 days'),
     }),
     onSubmit: values => {
-      console.log(values);
+      if(action === 'update'){
+        updateProduct(values)
+      } else {
+        addProduct(values)
+      }
     }
   });
 
-  // useMount(() => {
-  //     fetch('http://localhost:3334/data')
-  //     .then(res => res.json())
-  //     .then(setData)
-  //     .catch(e => console.log(e))
-  // })
-
   const EditItem = (data) => {
     setValues({...data})
+    setAction('update')
     setAddNewProduct(true)
+  }
+
+  const handleActive = (i, id) => {
+    const activeData = i === 0 ? '1' : '0';
+    if(activeData === '0'){
+      const data = {is_active: activeData, is_show: '0'}
+      activate(id, data)
+    } else {
+      const data = {is_active: activeData}
+      activate(id, data)
+    }
+  }
+
+  const handleShow = (i, id) => {
+    const data = {is_show: i === 0 ? '1' : '0'}
+    activate(id, data)
   }
 
   return (
@@ -130,29 +201,29 @@ const Products = ({title, callback}) => {
                 <Grid item md={6}>
                   <label>Rate of Interest</label>
                   <TextInput
-                    number
-                    name='roi'
-                    value={values.roi}
+                    type="number"
+                    name='interest'
+                    value={values.interest}
                     onChange={handleChange}
-                    error={errors.roi}
-                    helperText={errors.roi}
+                    error={errors.interest}
+                    helperText={errors.interest}
                   />
                 </Grid>
                 <Grid item md={6}>
                   <label>Penal Interest</label>
                   <TextInput 
-                    number
+                    type="number"
                     name='penal_interest'
-                    value={values.penal_intrest}
+                    value={values.penal_interest}
                     onChange={handleChange}
-                    error={errors.penal_intrest}
-                    helperText={errors.penal_intrest}
+                    error={errors.penal_interest}
+                    helperText={errors.penal_interest}
                   />
                 </Grid>
                 <Grid item md={6}>
                   <label>Processing Fee</label>
                   <TextInput 
-                    number
+                    type="number"
                     name='processing_fee'
                     value={values.processing_fee}
                     onChange={handleChange}
@@ -163,7 +234,7 @@ const Products = ({title, callback}) => {
                 <Grid item md={6}>
                   <label>Tenure</label>
                   <TextInput 
-                    number
+                    type="number"
                     name='tenure'
                     value={values.tenure}
                     onChange={handleChange}
@@ -187,17 +258,17 @@ const Products = ({title, callback}) => {
                     <TableCell>Penal Interest</TableCell>
                     <TableCell>Processing Fee</TableCell>
                     <TableCell>Tenure<br/>(days)</TableCell>
-                    <TableCell>Actions</TableCell>
+                    <TableCell align="center">Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {
-                                        data?.map((item,i) => {
+                                        products?.map((item,i) => {
                                           return(
                                             <TableRow className={classes.rowItem} key={i}>
                                               <TableCell>{item.product_name}</TableCell>
-                                              <TableCell>{`${item.roi}%`}</TableCell>
-                                              <TableCell>{`${item.penal_intrest}%`}</TableCell>
+                                              <TableCell>{`${item.interest}%`}</TableCell>
+                                              <TableCell>{`${item.penal_interest}%`}</TableCell>
                                               <TableCell>{`${item.processing_fee}%`}</TableCell>
                                               <TableCell>{`${item.tenure}`}</TableCell>
                                               <TableCell>
@@ -208,14 +279,16 @@ const Products = ({title, callback}) => {
                                                 </IconButton>
                                                 {
                                                   item.is_active === 1 && (
-                                                    <IconButton size="small" className={classes.btn}>
-                                                      <Tooltip title={ item.app_show !== 0 ? 'Disable on App' : 'Show on App'}>
-                                                        <PhoneAndroidIcon fontSize="small" style={item.app_show === 0 ? { color: '#C9CCD5'} : {color: '#93D9A3'}}></PhoneAndroidIcon>
+                                                    <IconButton size="small" className={classes.btn} onClick={() => handleShow(item.is_show, item.product_id)} >
+                                                      <Tooltip title={ item.is_show !== 0 ? 'Disable on App' : 'Show on App'}>
+                                                        <PhoneAndroidIcon fontSize="small" style={item.is_show === 0 ? { color: '#C9CCD5'} : {color: '#93D9A3'}}></PhoneAndroidIcon>
                                                       </Tooltip>
                                                     </IconButton>
                                                   )
                                                 }
-                                                <IconButton size="small" className={classes.btn}>
+                                                <IconButton size="small" className={classes.btn} onClick={() => {
+                                                  handleActive(item.is_active, item.product_id);
+                                                }}>
                                                   <Tooltip title={item.is_active === 0 ? 'Activate' : 'Deactivate'}>
                                                     <CheckCircleTwoTone style={item.is_active === 0 ? { color: '#C9CCD5'} :{ color: '#93D9A3' }}/>
                                                   </Tooltip>

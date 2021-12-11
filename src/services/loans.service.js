@@ -5,13 +5,15 @@ import apiCall from '../utils/api.util';
 export const getLoanStats = (qryStr = {}) => {
   return new Promise((resolve, reject) => {
     const { region, from, to, products, zone } = qryStr;
-    let apiUrl = `metrics/loan/stats?product=${products}&zone=${zone}`;
-    if (region) apiUrl = `metrics/loan/stats?region=${region}&product=${products}&zone=${zone}`;
-    if (from && to) apiUrl = `metrics/loan/stats?region=${region}&from=${from}&to=${to}&product=${products}&zone=${zone}`;
+    let apiUrl = 'metrics/loan/stats';
+    if (zone !== '0') apiUrl += apiUrl.split('?').length === 1 ?  '?' + `zone=${zone}` : '&' + `zone=${zone}`;
+    if (region !== '0') apiUrl += apiUrl.split('?').length === 1 ? '?' + `region=${region}` : '&' + `region=${region}`;
+    if (products !== '0') apiUrl += apiUrl.split('?').length === 1 ? '?' + `product=${products}` : '&' + `product=${products}`;
+    if (from && to) apiUrl = apiUrl += apiUrl.split('?').length === 1 ? '?' + `from=${from}&to=${to}` : '&' + `from=${from}&to=${to}`;
     apiCall(apiUrl)
-      .then(({ status, data, message, region }) => {
+      .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
-          resolve({data: data[0], region: region});
+          resolve({data: data[0]});
         } else {
           reject(message);
         }

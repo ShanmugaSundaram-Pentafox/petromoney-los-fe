@@ -84,9 +84,14 @@ export const downloadPDF = ({ file, isBase64, name }) => {
   downloadLink.click();
 }
 
-export const getAllRegions = () => {
+export const getAllRegions = (zone) => {
+  let arg = []
+  zone.forEach(item => arg.push(item.value))
   return new Promise((resolve, reject) => {
-    apiCall('regions', {}, 'GET')
+    let apiUrl = 'regions'
+    if (arg.toString() !== '0') apiUrl += `?zone=${arg.toString()}`
+    console.log(apiUrl);
+    apiCall(apiUrl)
       .then(response => {
         if (response?.status === 'SUCCESS') {
           const result = response?.data.map(item => ({
@@ -736,7 +741,7 @@ export const getUserRoleForReview = (status) => {
 
 export const getProducts = () => {
   return new Promise((resolve, reject) => {
-    apiCall('business/products')
+    apiCall('business/products/valid')
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data);

@@ -29,7 +29,7 @@ const multiValueContainer = ({ selectProps, data }) => {
   const allSelected = selectProps.value;
   const index = allSelected?.findIndex(selected => selected?.label === label);
   const isLastSelected = index === allSelected?.length - 1;
-  const labelSuffix = isLastSelected ? "" : ", ";
+  const labelSuffix = isLastSelected ? '' : ', ';
   const val = `${label}${labelSuffix}`;
   return val;
 };
@@ -74,9 +74,9 @@ export const Selector = ({ options, value, setValue, title }) => {
               maxHeight: '29px',
               padding: '0 6px',
               overflow: 'hidden',
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              display: "initial"
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              display: 'initial'
             }),
             menu: (provided) => ({
               ...provided,
@@ -212,22 +212,17 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans }) => {
     }
   }
 
-  useMount(() => {
-    getAllRegions()
+  useEffect(() => {
+    getAllRegions(selectedZones)
       .then(data => {
         setRegions(data);
       })
       .catch(() => null);
-    
+  }, [selectedZones])
+
+  useMount(() => {
     getProducts()
-      .then(data => {
-        let prod = []
-        data.forEach(item => {
-          let buffer = {label: item.product_name, value: item.product_id}
-          prod.push(buffer)
-        })
-        setProducts(prod)
-      })
+      .then(setProducts)
       .catch(() => null)
   })
 
@@ -236,10 +231,12 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans }) => {
     selectedZones.forEach(item => zoneId.push(item.value))
     let productId = []
     selectedProducts.forEach(item => productId.push(item.value))
+    let regionId = []
+    selectedRegion.forEach(item => regionId.push(item.value))
     let qry = {
-      region: selectedRegion.value || 0,
-      products: productId.toString() || 0,
-      zone: zoneId.toString() || 0
+      region: regionId.toString(),
+      products: productId.toString(),
+      zone: zoneId.toString()
     }
     if (selectedPeriod?.from) {
       qry.from = format(selectedPeriod?.from || new Date(), 'yyyy-MM-dd');
@@ -263,7 +260,6 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans }) => {
           { name: 'Rejected', count: data?.data?.rejected_count },
         ];
         setChartData(cdata);
-        setRegions(data?.region)
         let s = 0;
         for (let i = 0; i < cdata.length; i++) {
           s += cdata[i].count;

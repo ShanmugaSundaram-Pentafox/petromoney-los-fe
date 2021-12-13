@@ -6,9 +6,9 @@ export const getLoanStats = (qryStr = {}) => {
   return new Promise((resolve, reject) => {
     const { region, from, to, products, zone } = qryStr;
     let apiUrl = 'metrics/loan/stats';
-    if (zone !== '0') apiUrl += apiUrl.split('?').length === 1 ?  '?' + `zone=${zone}` : '&' + `zone=${zone}`;
-    if (region !== '0') apiUrl += apiUrl.split('?').length === 1 ? '?' + `region=${region}` : '&' + `region=${region}`;
-    if (products !== '0') apiUrl += apiUrl.split('?').length === 1 ? '?' + `product=${products}` : '&' + `product=${products}`;
+    if (zone !== '0' && zone !=='') apiUrl += apiUrl.split('?').length === 1 ?  '?' + `zone=${zone}` : '&' + `zone=${zone}`;
+    if (region !== '0' && region !=='') apiUrl += apiUrl.split('?').length === 1 ? '?' + `region=${region}` : '&' + `region=${region}`;
+    if (products !== '0' && products !=='') apiUrl += apiUrl.split('?').length === 1 ? '?' + `product=${products}` : '&' + `product=${products}`;
     if (from && to) apiUrl = apiUrl += apiUrl.split('?').length === 1 ? '?' + `from=${from}&to=${to}` : '&' + `from=${from}&to=${to}`;
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
@@ -129,10 +129,11 @@ export const getLoanBookData = () => {
 export const getLoansByStatus = (status, filterQry) => {
   return new Promise((resolve, reject) => {
     const { region, from, to, products, zone } = filterQry;
-    let apiUrl = `${URL.loans}?status=${status}&region=${region}&product=${products}&zone=${zone}`;
-    if (from && to) {
-      apiUrl = `${URL.loans}?status=${status}&region=${region}&from=${from}&to=${to}&product=${products}&zone=${zone}`;
-    }
+    let apiUrl = `${URL.loans}?status=${status}`;
+    if (zone !== '0' && zone !== '') apiUrl += apiUrl.split('?').length === 1 ?  '?' + `zone=${zone}` : '&' + `zone=${zone}`;
+    if (region !== '0' && region !== '') apiUrl += apiUrl.split('?').length === 1 ? '?' + `region=${region}` : '&' + `region=${region}`;
+    if (products !== '0' && products !== '') apiUrl += apiUrl.split('?').length === 1 ? '?' + `product=${products}` : '&' + `product=${products}`;
+    if (from && to) apiUrl = apiUrl += apiUrl.split('?').length === 1 ? '?' + `from=${from}&to=${to}` : '&' + `from=${from}&to=${to}`;
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {

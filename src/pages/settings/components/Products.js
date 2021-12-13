@@ -145,10 +145,12 @@ const Products = ({title, callback}) => {
       tenure: Yup.number().nullable().required('Enter Tenure').max(365, 'Tenure Should be less than 365 days'),
     }),
     onSubmit: values => {
+      let data = {...values, roi: values.interest}
+      delete data['interest']
       if(action === 'update'){
-        updateProduct(values)
+        updateProduct(data)
       } else {
-        addProduct(values)
+        addProduct(data)
       }
     }
   });

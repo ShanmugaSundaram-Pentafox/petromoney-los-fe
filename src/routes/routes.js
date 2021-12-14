@@ -7,6 +7,7 @@ import EnvTag from '../components/CommonComponents/EnvTag/EnvTag';
 import { permissionCheck } from '../components/UserCan/UserCan';
 import { rulesList } from '../config/userRules';
 import CreditForm from '../pages/creditForm/creditForm';
+import DealersAccountStatement from '../pages/dashboard/components/DealersAccountStatement';
 import OwnerDetails from '../pages/dashboard/components/OwnerDetails';
 import Dashboard from '../pages/dashboard/dashboard';
 import Dealership from '../pages/dealership/dealership';
@@ -76,6 +77,12 @@ const Routes = ({ currentUser }) => {
         exact
         path="/passbook"
         component={PassbookDetails}
+        allow={permissionCheck(currentUser?.role_name, rulesList.dealer_view)}
+      />
+      <ProtectedRoute
+        exact
+        path="/statements"
+        component={DealersAccountStatement}
         allow={permissionCheck(currentUser?.role_name, rulesList.dealer_view)}
       />
       <Route exact path="/survey" render={props => <Survey {...props} />} />

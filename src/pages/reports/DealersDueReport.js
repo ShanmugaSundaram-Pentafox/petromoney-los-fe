@@ -67,12 +67,13 @@ const DealersDueReport = ({ currentUser }) => {
           tot_count += tot.tot_due
         })
         let dData = [
+          { name: 'Applicant Code', string: data?.due[0]?.applicant_code, },
+          { name: 'Applicant Name', string: data?.due[0]?.applicant_name },
           { name: 'Active Loans', count: data.due.length + data.overdue.length },
           { name: 'Total Due Amount', count: tot_count }
         ]
         setDealerChartData(dData)
       })
-
       .catch((e) => {
         console.log(e);
       });
@@ -89,13 +90,15 @@ const DealersDueReport = ({ currentUser }) => {
         currentUser.role_name === 'DEALER' && (
           <>
             <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={12}>
                 <Box mb={2} p={2} borderRadius={4} bgcolor="background.paper">
                   <Typography variant="h5">Sanctioned Loan : {dealerDetail.sanctioned_loan_amount ? <Currency value={dealerDetail.sanctioned_loan_amount[0]} /> : 0} </Typography>
                   <Box className={classes.card} borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="nowrap">
                     {
                       dealerChartData.map((item, i) => (
-                        <DashCard key={i} noBorder={i === dealerChartData.length - 1} value={item.name != 'Active Loans' ? (<Currency value={item.count} />) : item.count} text={item.name} />
+                        <DashCard key={i} noBorder={i === dealerChartData.length - 1} value={
+                          item.name != 'Active Loans' ? (!item.string && <Currency value={item.count} />) : item.count
+                        } text={item.name} string={item.string}/>
                       ))
                     }
                   </Box>
@@ -104,10 +107,10 @@ const DealersDueReport = ({ currentUser }) => {
             </Grid>
             <Grid container spacing={2}>
               <Grid item md={6}>
-                <OverDueTable id={currentUser.dealership_id} onRowClick={showReportsInfo} />
+                <OverDueTable id={currentUser.dealership_id} onRowClick={showReportsInfo} style='red'/>
               </Grid>
               <Grid item md={6}>
-                <DueTable id={currentUser.dealership_id} onRowClick={showReportsInfo} />
+                <DueTable id={currentUser.dealership_id} onRowClick={showReportsInfo} style='green'/>
               </Grid>
             </Grid>
           </>

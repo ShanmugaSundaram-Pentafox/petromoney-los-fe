@@ -17,6 +17,7 @@ import Loans from '../pages/loanspage/loans'
 import Login from '../pages/login/login';
 import NotFound from '../pages/NotFound/NotFound';
 import Profile from '../pages/profile/Profile';
+import CollectionRemarks from '../pages/reports/CollectionRemarks';
 import CreditReload from '../pages/reports/CreditReload';
 import DealersDueReport from '../pages/reports/DealersDueReport';
 import Due from '../pages/reports/DueReport';
@@ -65,6 +66,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/profile" component={Profile} />
       <ProtectedRoute allow exact path="/withheld" component={BlacklistTable} />
       <ProtectedRoute allow exact path="/reports" component={DealersDueReport} />
+      <ProtectedRoute allow exact path="/reports/remarks" component={CollectionRemarks} />
 
       <ProtectedRoute
         exact

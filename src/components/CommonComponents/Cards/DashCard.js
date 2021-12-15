@@ -75,13 +75,7 @@ const DashCardWrapper = styled.div`
       font-weight: 600;
       flex: 1;
     }
-
-    .stat-string {
-      font-size: 18px;
-      font-weight: 600;
-      flex: 1;
-    }
-    
+  
     .stat-icon {
 
     }
@@ -104,24 +98,15 @@ const DashCard = ({
   icon,
   amount,
   noBorder,
-  string,
   action = () => null
 }) => {
   return (
     <DashCardWrapper noBorder={noBorder} style={styles} onClick={action}>
       <div  className={selected ? 'active' : ' '}>
         <div className="stat-number-block">
-          {
-            string ? (
-              <div className="stat-string">
-                {string || '-'}
-              </div>
-            ) : (
-              <div className="stat-number">
-                {value || '-'}
-              </div>
-            )
-          }
+          <div className="stat-number">
+            {value || '-'}
+          </div>
           {/* <div className="stat-icon">
           {icon}
         </div> */}

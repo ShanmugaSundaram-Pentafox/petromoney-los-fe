@@ -96,10 +96,8 @@ const DealersDueReport = ({ currentUser }) => {
                   <Box className={classes.card} borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="nowrap">
                     {
                       dealerChartData.map((item, i) => (
-                        <DashCard key={i} noBorder={i === dealerChartData.length - 1} value={
-                          item.name != 'Active Loans' ? (!item.string && <Currency value={item.count} />) : item.count
-                        } text={item.name} string={item.string}/>
-                      ))
+                        <DashCard key={i} noBorder={i === dealerChartData.length - 1} value={ item.name === 'Total Due Amount' ? <Currency value={item.count} /> :item.count || item.string
+                        } text={item.name}/>))
                     }
                   </Box>
                 </Box>

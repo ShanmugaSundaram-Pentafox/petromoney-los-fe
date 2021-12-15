@@ -57,7 +57,7 @@ const useStyles = makeStyles(theme => ({
   },
   stepTitle: {
     '& .MuiStepLabel-label.MuiStepLabel-active': {
-      fontSize: 15,
+      fontSize: 14,
       fontWeight: 600
     }
   },
@@ -175,7 +175,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
               const dealerData = { ...(resData || {}), ...values };
               return (
                 <Step key={item.id}>
-                  <StepLabel className={classes.stepTitle} onClick={() => setActiveStep(i)}>{item.first_name}  {dealerData.cibil_score ? <b>({dealerData.cibil_score})</b> : null}</StepLabel>
+                  <StepLabel className={classes.stepTitle} onClick={() => setActiveStep(i)}>{item.first_name}  {dealerData.cibil_score ? <b>({dealerData.cibil_score})</b> : null} <small style={{ color: '#acacac', float: 'right', fontSize: 11 }}>{item?.userType}</small></StepLabel>
                   <StepContent>
                     <DealerCreditInfoForm data={item} values={dealerData} errors={errors} onChange={handleChange} />
                   </StepContent>

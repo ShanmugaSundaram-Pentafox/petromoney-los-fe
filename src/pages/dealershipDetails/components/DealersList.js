@@ -77,7 +77,6 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   const { data: dealerData, refetch: getDealerApiCall } = useQuery(['dealers-coapplicant', id], () => getDealersByDealershipId(id))
   const { data: guarantorsData, refetch: getGuarantorApiCall } = useQuery(['guarantors', id], () => getAllGuarantor(id))
 
-
   // const getCoApplicantApiCall = (id) => {
   //   getCoApplicantByDealershipId(id)
   //     .then(data => {
@@ -218,7 +217,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         <div className={classes.sidePanelWrapper}>
           <DealerEditSideWrapper
             getDealerApiCall={getDealerApiCall}
-            dealersList={dealerData?.data}
+            dealersList={dealerData}
             getCoApplicantApiCall={getCoApplicantApiCall}
             isAdd={formType}
             modelType={modelType}

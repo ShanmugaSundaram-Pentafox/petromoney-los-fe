@@ -61,10 +61,10 @@ function MasterData() {
         <div style={{marginLeft: 20, width: '95%'}}>
           <Grid container spacing={1} className={classes.root}>
             <Grid item md={2}>
-              <Tooltip title="OMC details">
-                <div className={classes.content} onClick={() => setOpenForm('OMCs')}>
-                  <BunkIcon width={35} className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title} >OMCs</Typography>
+              <Tooltip title="Zone">
+                <div className={classes.content} onClick={() => setCustomForm('Zone')}>
+                  <ZoneIcon width={35} className={classes.icons} />
+                  <Typography variant="h5" align='center' className={classes.title} >Zones</Typography>
                 </div>
               </Tooltip>
             </Grid>
@@ -81,6 +81,14 @@ function MasterData() {
                 <div className={classes.content} onClick={() => setOpenForm('State')}>
                   <InfrastructureIcon width={35} className={classes.icons} />
                   <Typography variant="h5" align='center' className={classes.title}>States</Typography>
+                </div>
+              </Tooltip>
+            </Grid>
+            <Grid item md={2}>
+              <Tooltip title="OMC details">
+                <div className={classes.content} onClick={() => setOpenForm('OMCs')}>
+                  <BunkIcon width={35} className={classes.icons} />
+                  <Typography variant="h5" align='center' className={classes.title} >OMCs</Typography>
                 </div>
               </Tooltip>
             </Grid>
@@ -105,14 +113,6 @@ function MasterData() {
                 <div className={classes.content} onClick={() => setOpenForm('Asset Type')}>
                   <AssetIcon width={35} className={classes.icons} />
                   <Typography variant="h5" align='center' className={classes.title} >Asset</Typography>
-                </div>
-              </Tooltip>
-            </Grid>
-            <Grid item md={2}>
-              <Tooltip title="Zone">
-                <div className={classes.content} onClick={() => setCustomForm('Zone')}>
-                  <ZoneIcon width={35} className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title} >Zones</Typography>
                 </div>
               </Tooltip>
             </Grid>

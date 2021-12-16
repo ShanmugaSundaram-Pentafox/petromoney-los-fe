@@ -1,9 +1,10 @@
-import { makeStyles, IconButton, Typography } from '@material-ui/core'
+import { makeStyles, IconButton, Typography, Divider, Button, Grid, TextField, Tooltip } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
-import KeyboardArrowDOwnIcon from '@material-ui/icons/KeyboardArrowDown';
+import EditIcon from '@material-ui/icons/Edit';
+import { useSnackbar } from 'notistack';
 import React, { useState } from 'react'
-import { useMount } from 'react-use';
-import { getStates } from '../../../services/common.service';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { addZones, editZones, getZones } from '../../../services/common.service';
 
 const useStyles = makeStyles(() => ({
   sidePanelFormWrapper: {
@@ -30,7 +31,7 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'space-between',
     padding: 9,
     margin: '0px 10px',
-    borderBottom: '1px solid hsl(0,0%,75%)',
+    borderBottom: '1px solid hsl(0,0%,90%)',
     alignItems: 'center',
     '&:hover': {
       backgroundColor: 'hsl(0,0%,96%)',
@@ -39,54 +40,162 @@ const useStyles = makeStyles(() => ({
       },
     },
   },
+  actionButtonsWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '12px 16px'
+  },
+  addForm: {
+    margin: 10,
+    padding: 25,
+    borderRadius: 6,
+    boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px',
+  },
+  formFooter :{
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginTop: 10
+  },
+  btn: {
+    visibility: 'hidden',
+    color: '#687980',
+  },
 }))
 
-const ZoneGroup = ({data}) => {
+const ZoneGroup = ({data, setAddForm}) => {
   const classes = useStyles()
 
   return(
     <div className={classes.label}>
-      <Typography variant="body1" style={{ paddingLeft: 10 }}>{data.zone_name}</Typography>
-      <KeyboardArrowDOwnIcon />
+      <Typography variant="body1" style={{ paddingLeft: 10 }}>{data.label}</Typography>
+      <Tooltip title='Edit'>
+        <IconButton size='small' className={classes.btn} onClick={() => setAddForm({action: 'Edit', name: data.label, id: data.value})}>
+          <EditIcon fontSize='small' />
+        </IconButton>
+      </Tooltip>
+      {/* <KeyboardArrowDOwnIcon /> */}
     </div>
   )
 }
 
 const Zones = ({ callback, title }) => {
   const classes = useStyles()
-  const [zones, setZones] = useState([])
-  const [states, setStates] = useState([])
-  console.log(zones, states);
+  const queryClient = useQueryClient()
+  const { enqueueSnackbar } = useSnackbar();
+  const [addForm, setAddForm] = useState()
+  const [addData, setAddData] = useState()
 
-  useMount(() => {
-    fetch('http://localhost:3334/data')
-      .then(res => res.json())
-      .then(setZones)
-      .catch(e => console.log(e))
-        
-    getStates()
-      .then(setStates)
-      .catch(e => console.log(e))
+  const { data: zones = [] } = useQuery('zones', () => getZones(), {refetchOnWindowFocus: false})
+
+  const { mutate: addZone } = useMutation(data =>!addForm.id ? addZones(data) : editZones(addForm.id, data), {
+    onSuccess: (message) => {
+      queryClient.invalidateQueries('zones')
+      setAddForm()
+      setAddData()
+      enqueueSnackbar(message, {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'success',
+      });
+    },
+    onError: (message) => {
+      console.log(message);
+      enqueueSnackbar(message, {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'error',
+      });
+    },
   })
 
+  const handleAdd = (event) => {
+    setAddData({...addData, name: event.target.value.toUpperCase()});
+    setAddForm({...addForm, name: event.target.value.toUpperCase()})
+  };
+
+  const handleSubmit = () => {
+    addData && addZone(addData)
+  }
+
   return (
-    <div className={classes.sidePanelFormWrapper}>
+    <>
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>{title}</div>
         <IconButton onClick={() => callback(false)} size='small'>
           <CloseIcon fontSize='size' />
         </IconButton>
       </Typography>
-      <div className={classes.content}>
-        {
-          zones.map((item, i) => {
-            return(
-              <ZoneGroup data={item} key={i} />
-            )
-          })
-        }
+      <div className={classes.sidePanelFormWrapper}>
+        <div className={classes.content}>
+          {
+            zones.map((item, i) => {
+              return(<ZoneGroup data={item} key={i} setAddForm={setAddForm}/>)
+            })
+          }
+        </div>
       </div>
-    </div>
+      {
+        addForm && (
+          <div className={classes.addForm}>
+            <Typography variant='h5'>{addForm.action} {title}</Typography>
+            <Grid item md={12} style={{marginTop: 15}}>
+              <label style={{marginBottom: 8}}>{title}</label>
+              <TextField
+                id={addForm.action}
+                fullWidth
+                variant='outlined'
+                value={addForm?.name}
+                onChange={handleAdd}
+              />
+            </Grid>
+            <div className={classes.formFooter}>
+              <Button
+                onClick={() => setAddForm()}
+                // style={{marginTop: 15}}
+                size='small'
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSubmit}
+                style={{ color: '#1EAE98', borderColor: '#1EAE98'}}
+                variant='outlined'
+                size='small'
+              >
+                Save
+              </Button>
+            </div>
+          </div>
+        )
+      }
+      <div className={classes.actionFooter}>
+        <Divider />
+        <div className={classes.actionButtonsWrapper}>
+          <div>
+            <Button variant='outlined' onClick={() => callback(false)}>
+              Back
+            </Button>
+          </div>
+          <div>
+            <Button
+              variant='contained'
+              type='submit'
+              onClick={() => {
+                setAddForm({action:'Add'})
+              }}
+              color='primary'
+            >
+              Add
+            </Button>
+          </div>
+        </div>
+      </div>
+    </>
   )
 }
 

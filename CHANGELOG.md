@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.7.4](https://gitlab.com/vignesh3/petromall-fe/compare/v2.7.3...v2.7.4) (2021-12-14)
+
+
+### Bug Fixes
+
+* **docs:** add timestamp to document item ([aed41fb](https://gitlab.com/vignesh3/petromall-fe/commit/aed41fb35d5cc560c43ab119d0dfd72c47930828))
+
+### [2.7.3](https://gitlab.com/vignesh3/petromall-fe/compare/v2.7.2...v2.7.3) (2021-12-13)
+
 ### [2.7.2](https://gitlab.com/vignesh3/petromall-fe/compare/v2.7.1...v2.7.2) (2021-12-07)
 
 

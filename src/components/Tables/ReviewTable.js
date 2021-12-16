@@ -88,7 +88,7 @@ const ReviewerTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
         options: {
           filter: true,
           sort: true,
-          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value.charAt(0)}</span>
+          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
         }
       },
       {

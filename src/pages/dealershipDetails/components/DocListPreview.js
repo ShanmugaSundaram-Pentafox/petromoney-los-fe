@@ -5,6 +5,7 @@ import AddIcon from '@material-ui/icons/Add';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
+import { format } from 'date-fns';
 import React, { useState } from 'react';
 import FilePreview from '../../../components/CommonComponents/FilePreview';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
@@ -33,46 +34,56 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 
-const DocPreview = ({ fileType, url, DocName }) => {
-  const useStyles = makeStyles((theme) => ({
-    container: {
-      transition: 'all .2s ease-in-out',
-      cursor: 'pointer',
-      '&:hover': {
-        backgroundColor: '#fcfcfc'
-      },
-      border: '1px dashed grey',
-      width: 100,
-      height: 75,
-      borderRadius: 6,
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      margin: '8px 0px 8px 15px'
-    }
-  }))
-
+const usePreviewStyles = makeStyles((theme) => ({
+  container: {
+    transition: 'all .2s ease-in-out',
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: '#fcfcfc'
+    },
+    border: '1px dashed grey',
+    width: 100,
+    height: 75,
+    borderRadius: 6,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: '8px 0px 8px 15px'
+  },
+  smallText: {
+    width: 100,
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    marginTop: 2,
+    overflow: 'hidden',
+    marginLeft: 15,
+    fontSize: 10,
+    color: '#999'
+  }
+}))
+const DocPreview = ({ fileType, url, DocName, updatedDateTime }) => {
   const [imageModal, setImageModal] = useState({});
-  const classes = useStyles();
+  const classes = usePreviewStyles();
   const fileName = url?.split('/')[5]
   return (
     <>
       {
         url ? (
-          <Tooltip title={fileName}>
+          <Tooltip title={`${fileName} (${updatedDateTime})`}>
             <span>
               <div className={classes.container}
                 onClick={() => csvFileTypes.includes(fileType) ? window.open(url) : setImageModal({ open: true, image: url, type: fileType })}
               >
                 {
                   imgFileTypes.includes(fileType) ?
-                    <img src={url} height="100%" width="100%" style={{ borderRadius: 6, padding: 1, objectFit: 'cover' }} />
+                    <img src={url} height="100%" width="100%" style={{ borderRadius: 6, padding: 1, objectFit: 'cover' }} alt={url} />
                     : fileType === 'pdf' ?
                       <PictureAsPdfIcon style={{ color: '#63686E' }} />
                       : <ListAltIcon style={{ color: '#63686E' }} />
                 }
               </div>
               <h5 style={{ width: 100, whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden', marginLeft: 15 }}>{fileName}</h5>
+              <span className={classes.smallText}>{updatedDateTime}</span>
             </span>
           </Tooltip>
 
@@ -80,7 +91,7 @@ const DocPreview = ({ fileType, url, DocName }) => {
           <Typography variant='h7' style={{ color: '#b5b5b5', marginLeft: 15 }}>No Documents!</Typography>
         )
       }
-      <FormDialog title={DocName} onDownload={imageModal?.image} open={imageModal?.open} onClose={() => setImageModal({ open: false })}>
+      <FormDialog maxWidth={'xl'} title={DocName} onDownload={imageModal?.image} open={imageModal?.open} onClose={() => setImageModal({ open: false })}>
         <FilePreview data={imageModal} />
       </FormDialog>
     </>
@@ -117,7 +128,7 @@ const DocListPreview = ({ docName, upload, deleteDocs, file, id }) => {
           file.map((data, i) => {
             return (
               !collapse ? (
-                <DocPreview fileType={data.file_type} url={data.file_url} DocName={docName} />
+                <DocPreview fileType={data.file_type} url={data.file_url} DocName={docName} updatedDateTime={format(new Date(data?.created_date || data?.modified_date), 'dd/MM/yyyy hh:mm a')} />
               ) : (
                 null
               )

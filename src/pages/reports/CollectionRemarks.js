@@ -1,4 +1,4 @@
-import { Badge, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, makeStyles } from '@material-ui/core';
+import { Badge, Grid, makeStyles } from '@material-ui/core';
 import ChatIcon from '@material-ui/icons/Chat';
 import { Skeleton } from '@material-ui/lab';
 import MUIDataTable from 'mui-datatables';
@@ -23,7 +23,6 @@ const CollectionRemarks = () => {
   usePageTitle('Collection Remarks');
   const classes = useStyles();
   const [loans, setLoans] = useState([])
-  const [remarksModal, setRemarksModal] = useState({open: false})
 
   const { isFetching } = useQuery('remarksData', () => getReport(), {
     onSuccess: (data) => {
@@ -60,35 +59,12 @@ const CollectionRemarks = () => {
         label: 'Disbursed Amount',
         options: {
           filter: false,
-          display: false
+          customBodyRender: value => {
+            return <Currency value={value} />
+          }
         }
       },
-      {
-        name: 'disb_date',
-        label: 'Disbursed Date',
-        options: {
-          filter: false,
-          display: false
-        }
-      },
-      {
-        name: 'prin_overdue',
-        label: 'Print Due',
-        options: {
-          filter: false,
-          display: false
-        }
-      },
-      { name: 'cust_code', label: 'Customer Code' },
       { name: 'cust_region', label: 'Customer Region' },
-      {
-        name: 'int_overdue',
-        label: 'Int Overdue',
-        options: {
-          filter: false,
-          display: false
-        }
-      },
       {
         name: 'duedate',
         label: 'Due Date',
@@ -113,11 +89,21 @@ const CollectionRemarks = () => {
         options: {
           filter: false,
           sort: true,
+          display: false
+        }
+      },
+      {
+        name: 'remarks',
+        label: 'Remarks',
+        options: {
+          filter: false,
+          sort: true,
+          // display: false,
           customBodyRender: value => {
             return (
               value && (
                 <div style={{display: 'flex', alignItems: 'center'}}>
-                  <Badge classes={{ badge: classes.badge }} color="secondary" badgeContent={value?.length} max={99} onClick={() => value?.length && (setRemarksModal({open:true, data: value}))}>
+                  <Badge classes={{ badge: classes.badge }} color="secondary" badgeContent={value?.length} max={99} >
                     <ChatIcon className={classes.icon} fontSize="small" />
                   </Badge>
                 </div>
@@ -155,6 +141,30 @@ const CollectionRemarks = () => {
         return array
       }
       return '\uFEFF' + buildHead(columns) + buildBody(Data())
+    },
+    expandableRows: true,
+    expandableRowsOnClick: true,
+    renderExpandableRow: (rowData, rowMeta) => {
+      console.log(rowData, rowMeta);
+      return(
+        <React.Fragment>
+          <tr>
+            <td colSpan={6}>
+              <div style={{margin: 7, marginLeft: 60}}>
+                <label><strong>Remarks</strong></label>
+                <div style={{width: '25rem', marginTop: 5}}>
+                  {
+                    rowData[7].map((data, i) => {
+                      const rem = remarks?.find(d => d.id === data.id)
+                      return(<p key={i}><span style={{color:'rgb(0,0,0,0.4)'}}>{i+1}. </span>{rem?.remarks} {data?.options?.map((item,i) => {return(<span key={i}>{`${Object.values(item)},`}</span>)})}</p>)
+                    })
+                  }
+                </div>
+              </div>
+            </td>
+          </tr>
+        </React.Fragment>
+      )
     }
   };
 
@@ -167,38 +177,13 @@ const CollectionRemarks = () => {
           </Grid>
         ) : (
           <MUIDataTable 
-            title="Remarks Table"
+            title="Remarks"
             columns={columns}
             options={options}
             data={loans}
           />
         )
       }
-      <Dialog
-        open={remarksModal?.open}
-        onClose={() => setRemarksModal({open: false})}
-      >
-        <DialogTitle>Remarks</DialogTitle>
-        <DialogContent style={{width: 400}}>
-          {
-            <ol style={{marginLeft: 15}}>
-              {
-                            remarksModal?.data?.map((data, i) => {
-                              const rem = remarks?.find(d => d.id === data.id)
-                              return(
-                                <li key={i}>{rem?.remarks} {data?.options?.map((item, i)=> {return(<span key={i}>{`${Object.values(item)}, `}</span>)})}</li>
-                              )
-                            })
-              }
-            </ol>
-          }
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setRemarksModal({open: false})} variant='outlined' size='small'>
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
     </div>
   )
 }

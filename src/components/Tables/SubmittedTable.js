@@ -178,7 +178,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
       }
     ]
   }, [loans]);
-
+ 
   const options = {
     selectableRowsHeader: false,
     selectableRows: 'none',

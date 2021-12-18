@@ -2,10 +2,12 @@ import { Drawer, Grid, Paper, Tooltip, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import React, {useState} from 'react';
 import Contain from './MasterDataTable';
+import Products from './Products';
 import Zones from './Zones';
 import { ReactComponent as AssetIcon } from '../../../icons/assets.svg';
 import { ReactComponent as BunkIcon } from '../../../icons/bunk.svg';
 import { ReactComponent as BusinessIcon } from '../../../icons/business.svg';
+import { ReactComponent as FuelIcon } from '../../../icons/fuelIcon.svg';
 import { ReactComponent as InfrastructureIcon } from '../../../icons/infrastructure.svg';
 import { ReactComponent as LoanIcon } from '../../../icons/loan.svg';
 import { ReactComponent as OtherIcon } from '../../../icons/other_icons.svg';
@@ -116,6 +118,14 @@ function MasterData() {
                 </div>
               </Tooltip>
             </Grid>
+            <Grid item md={2}>
+              <Tooltip title="Products">
+                <div className={classes.content} onClick={() => setCustomForm('Products')}>
+                  <FuelIcon width={35} className={classes.icons} />
+                  <Typography variant="h5" align='center' className={classes.title} >Products</Typography>
+                </div>
+              </Tooltip>
+            </Grid>
           </Grid>
         </div>
         
@@ -127,7 +137,14 @@ function MasterData() {
         >
           <Contain title={openForm} label={'name'} setStateBtn={openForm === 'State' ? true : false} regionForm={openForm === 'Region' ? true : false} assetForm={openForm === 'Asset Type' ? true : false} callback={() => setOpenForm()}/>
         </Drawer>
-
+        <Drawer
+          anchor="right"
+          open={customForm === 'Products'}
+          onClose={() => setCustomForm()}
+          variant="temporary"
+        >
+          <Products title={customForm} callback={setCustomForm}/>
+        </Drawer>
         <Drawer
           anchor="right"
           open={customForm === 'Zone'}

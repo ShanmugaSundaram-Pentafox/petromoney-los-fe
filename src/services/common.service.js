@@ -84,13 +84,9 @@ export const downloadPDF = ({ file, isBase64, name }) => {
   downloadLink.click();
 }
 
-export const getAllRegions = (zone) => {
-  let arg = []
-  zone.forEach(item => arg.push(item.value))
+export const getAllRegions = () => {
   return new Promise((resolve, reject) => {
-    let apiUrl = 'regions'
-    if (arg.toString() !== '0' && arg.toString() !=='') apiUrl += `?zone=${arg.toString()}`
-    apiCall(apiUrl)
+    apiCall('regions', {}, 'GET')
       .then(response => {
         if (response?.status === 'SUCCESS') {
           const result = response?.data.map(item => ({
@@ -743,11 +739,7 @@ export const getProducts = () => {
     apiCall('business/products/valid')
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
-          const result = data.map(item => ({
-            label: item.product_name,
-            value: item.product_id,
-          }))
-          resolve(result || [])
+          resolve(data || []);
         } else {
           reject(message);
         }
@@ -758,6 +750,21 @@ export const getProducts = () => {
   })
 }
 
+export const getProductsMaster = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('business/products')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data || []);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(err => {
+        reject(err.message);
+      })
+  })
+}
 
 export const getZones = () => {
   return new Promise((resolve, reject) => {
@@ -775,9 +782,48 @@ export const getZones = () => {
   })
 }
 
+export const insertNewProduct = (data) => {
+  return new Promise((resolve, reject) => {
+    apiCall('business/products', {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+
 export const addZones = (data) => {
   return new Promise((resolve, reject) => {
     apiCall('zones', {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const updateProductbyId = (id, data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`business/products/${id}`, {
       method: 'POST',
       body: data
     })

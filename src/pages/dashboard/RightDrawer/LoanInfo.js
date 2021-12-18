@@ -10,7 +10,7 @@ import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
 import UserCan from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-import apiCall from '../../../utils/api.util';
+import { getProducts } from '../../../services/common.service';
 
 
 const LoanInfoWrapper = styled.div`
@@ -48,14 +48,12 @@ const LoanInfo = ({
   const [selectedProduct, setSelectedProduct] = useState({ amount_approved: newInfo?.amount_approved });
 
   useEffect(() => {
-    apiCall('business/products')
-      .then(res => {
-        if (res.status === 'SUCCESS') {
-          setProducts(res.data || testProducts);
-          if (row.product_id) {
-            const re = res.data.find(d => d.product_id == row.product_id)
-            setSelectedProduct({ ...re, disabled: status !== 'loan_approval' && status !== 'submitted' && status !== 'loan_review' } || {})
-          }
+    getProducts()
+      .then((data) => {
+        setProducts(data)
+        if (row.product_id) {
+          const re = data.find(d => d.product_id == row.product_id)
+          setSelectedProduct({ ...re, disabled: status !== 'loan_approval' && status !== 'submitted' && status !== 'loan_review' } || {})
         }
       })
       .catch(() => null)

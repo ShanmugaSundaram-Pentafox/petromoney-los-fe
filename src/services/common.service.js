@@ -734,6 +734,22 @@ export const getUserRoleForReview = (status) => {
   })
 }
 
+export const getProducts = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('business/products/valid')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data || []);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(err => {
+        reject(err.message);
+      })
+  })
+}
+
 export const getProductsMaster = () => {
   return new Promise((resolve, reject) => {
     apiCall('business/products')
@@ -785,6 +801,7 @@ export const insertNewProduct = (data) => {
   })
 }
 
+
 export const addZones = (data) => {
   return new Promise((resolve, reject) => {
     apiCall('zones', {
@@ -822,7 +839,6 @@ export const updateProductbyId = (id, data) => {
       })
   })
 }
-
 
 export const editZones = (id, data) => {
   return new Promise((resolve, reject) => {

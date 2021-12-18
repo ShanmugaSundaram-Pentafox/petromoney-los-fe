@@ -8,6 +8,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { useMount } from 'react-use';
 import styled from 'styled-components';
+import DashboardFilter from './components/DashboardFilter';
 import LoansTable from './components/LoansTable';
 import LoanStats from './components/LoanStats';
 import { PieChartData, BarChartData, GroupChartData } from './components/MetricsComponents';
@@ -93,7 +94,8 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   usePageTitle('Dashboard');
   const classes = useStyles();
 
-  // const [chartData, setChartData] = useState([{}, {}, {}, {}, {}, {}]);
+  const [chartData, setChartData] = useState([{}, {}, {}, {}, {}, {}]);
+  const [totalLoans, setTotalLoans] = useState()
   const [ls1_metrices, setLs1Metrices] = useState({});
   const [ls2_metrices, setLs2Metrices] = useState([]);
   const [daysChartData, setdaysChartData] = useState(['Days', 'Amount']);
@@ -252,10 +254,22 @@ const Dashboard = ({ currentUser, dashboardView }) => {
               <Grid item xs={12}>
                 {
                   dashboardView === 'LOS' && (
+                    <DashboardFilter 
+                      filterQry={setFilterQry}
+                      setChartData={setChartData}
+                      setTotalLoans={setTotalLoans}
+                    />
+                  )
+                }
+              </Grid>
+              <Grid item xs={12}>
+                {
+                  dashboardView === 'LOS' && (
                     <LoanStats
                       selectedStatsCard={selectedStatsCard}
                       handleClick={handleClick}
-                      filterQry={setFilterQry}
+                      chartData={chartData}
+                      totalLoans={totalLoans}
                     />
                   )
                 }

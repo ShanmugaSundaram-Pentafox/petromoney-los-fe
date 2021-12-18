@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Alert from '@material-ui/lab/Alert';
 import { useFormik } from 'formik';
-import { toString } from 'lodash-es';
+import { toString } from 'lodash/toString';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
@@ -69,6 +69,19 @@ const useStyles = makeStyles(() => ({
     '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
       '-webkit-appearance': 'none',
       margin: 0
+    },
+    marginBottom: '32px',
+
+    '& .MuiInputLabel-formControl': {
+      fontSize: '18px',
+      lineHeight: '140%',
+      color: '#909191',
+      top: '-6px'
+    },
+    '& .MuiInputBase-input': {
+      fontWeight: '500',
+      fontSize: '18px',
+      lineHeight: '140%'
     }
   },
   input: {
@@ -232,7 +245,6 @@ const Login = ({ setCurrentUser }) => {
             label="Mobile Number"
             type='number'
             fullWidth
-            className={classes.textFieldStyle}
             onChange={handleChange}
             value={values.mobile}
             error={helperText ? 'Enter mobile number' : errors.mobile}
@@ -253,10 +265,9 @@ const Login = ({ setCurrentUser }) => {
                     value={values.otp}
                     error={errors.otp}
                     helperText={errors.otp}
-                    className={classes.textFieldStyle}
                   />
-                  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', alignItems: 'flex-start'}}>
-                    <div style={{display: 'flex', flexDirection: 'column',}}>
+                  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <div style={{display: 'flex', flexDirection: 'column'}}>
                       <Button
                         variant="contained"
                         size="medium"

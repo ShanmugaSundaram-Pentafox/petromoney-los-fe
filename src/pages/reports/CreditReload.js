@@ -1,13 +1,12 @@
-import { Grid } from '@material-ui/core';
-import { Badge } from '@material-ui/core';
-import { Box } from '@material-ui/core';
+import { Grid, Badge, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useMount } from 'react-use';
 import styled from 'styled-components';
 import CreditNewRequestTable from './CreditNewRequestTable';
 import CreditProcessedTable from './CreditProcessedTable';
+import { permissionCheck } from '../../components/UserCan/UserCan';
+import { rulesList } from '../../config/userRules';
 import {
   getCreditReport
 } from '../../services/users.service';
@@ -41,11 +40,19 @@ const CreditReload = ({ currentUser }) => {
   const [loading, setLoading] = useState(false);
   const [selectedTab, setSelectedTab] = useState('new');
 
+  const view = permissionCheck(currentUser.role_name, rulesList.dealer_view)
+
   useMount(async () => {
     setLoading(true)
     getCreditReport(0)
       .then((data) => {
-        setTableData(data);
+        let buffer = []
+        if(view){
+          data.forEach((item) => item.dealership_id === currentUser.dealership_id && buffer.push(item))
+          setTableData(buffer)
+        } else {
+          setTableData(data);
+        }
         setLoading(false);
       })
       .catch((e) => {
@@ -54,7 +61,13 @@ const CreditReload = ({ currentUser }) => {
       });
     getCreditReport(1)
       .then((data) => {
-        setProcessedData(data);
+        let buffer = []
+        if(view){
+          data.forEach((item) => item.dealership_id === currentUser.dealership_id && buffer.push(item))
+          setProcessedData(buffer)
+        } else {
+          setProcessedData(data)
+        }
         setLoading(false);
       })
       .catch((e) => {
@@ -79,7 +92,7 @@ const CreditReload = ({ currentUser }) => {
         </Box>
       </PaperWrapper>
       {
-        selectedTab === 'processed' ? <CreditProcessedTable data={processedData} currentUser={currentUser} /> : <CreditNewRequestTable data={tableData} currentUser={currentUser} />
+        selectedTab === 'processed' ? <CreditProcessedTable data={processedData} currentUser={currentUser} view={view}/> : <CreditNewRequestTable data={tableData} currentUser={currentUser} view={view}/>
       }
     </>
   );

@@ -29,7 +29,7 @@ module.exports = {
   root: true, // For configuration cascading.
   rules: {
     // "prettier/prettier": "warn",
-    indent: ['error', 2],
+    indent: ['warn', 2],
     quotes: ['warn', 'single'],
     'react/prop-types': 'off',
     'no-console': 'warn',
@@ -82,7 +82,7 @@ module.exports = {
       ]
     }
     ],
-    'react/jsx-indent': ['error', 2, {
+    'react/jsx-indent': ['warn', 2, {
       checkAttributes: true,
       indentLogicalExpressions: true
     }

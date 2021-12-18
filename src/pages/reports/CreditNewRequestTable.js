@@ -1,12 +1,8 @@
-import { Button } from '@material-ui/core';
-import { Grid } from '@material-ui/core';
-import { Tooltip } from '@material-ui/core';
-import { Drawer } from '@material-ui/core';
+import { Button, Grid, Tooltip, Drawer  } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { classes } from 'istanbul-lib-coverage';
 import MUIDataTable from 'mui-datatables';
-import { useMemo } from 'react';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useMount } from 'react-use';
 import CreditReloadForm from './CreditReloadForm';
 import CreditReloadRemarks from './CreditReloadRemarks';
@@ -17,7 +13,7 @@ import {
 } from '../../services/users.service';
 
 
-const CreditNewRequestTable = ({ data, currentUser }) => {
+const CreditNewRequestTable = ({ data, currentUser, view }) => {
   const [tableData, setTableData] = useState([]);
   const [processedData, setProcessedData] = useState([]);
   const [accountType, setAccountType] = useState();
@@ -154,7 +150,7 @@ const CreditNewRequestTable = ({ data, currentUser }) => {
         let d = [];
         d.push({
           ...data[cellMeta.dataIndex],
-          payment_proof_attachment: typeof (data[cellMeta.dataIndex].payment_proof_attachment) === 'string' ? JSON.parse(data[cellMeta.dataIndex].payment_proof_attachment) : (data[cellMeta.dataIndex].payment_proof_attachment || [])
+          payment_proof_attachment: typeof (data[cellMeta.dataIndex]?.payment_proof_attachment) === 'string' ? JSON.parse(data[cellMeta.dataIndex]?.payment_proof_attachment) : (data[cellMeta.dataIndex]?.payment_proof_attachment || [])
         })
         setRowData(d[0])
         setStatusModal(true)
@@ -182,7 +178,7 @@ const CreditNewRequestTable = ({ data, currentUser }) => {
         variant='temporary'
       >
         {
-          <CreditReloadRemarks callback={() => setStatusModal(false)} rowData={rowData} currentUser={currentUser} />
+          <CreditReloadRemarks callback={() => setStatusModal(false)} rowData={rowData} currentUser={currentUser} view={view}/>
         }
       </Drawer>
       <Drawer
@@ -197,6 +193,7 @@ const CreditNewRequestTable = ({ data, currentUser }) => {
             data={accountType}
             dealershipData={dealershipData}
             currentUser={currentUser}
+            view={view}
           />
         }
       </Drawer>

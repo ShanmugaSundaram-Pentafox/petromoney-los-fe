@@ -75,7 +75,7 @@ const DashCardWrapper = styled.div`
       font-weight: 600;
       flex: 1;
     }
-    
+  
     .stat-icon {
 
     }

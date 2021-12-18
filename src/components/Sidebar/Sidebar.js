@@ -3,6 +3,7 @@ import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import CachedIcon from '@material-ui/icons/Cached';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ListIcon from '@material-ui/icons/List';
+import ListAltIcon from '@material-ui/icons/ListAlt';
 import LocalShippingIcon from '@material-ui/icons/LocalShipping';
 import PeopleIcon from '@material-ui/icons/People';
 import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
@@ -12,15 +13,9 @@ import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import React from 'react';
-// import SettingsIcon from '@material-ui/icons/Settings';
-// import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
-// import Profile from './components/Profile';
 import SidebarNav from './components/SidebarNav';
-// import { resetCurrentUser } from '../../store/user/user.actions';
 import { rulesList } from '../../config/userRules';
 import { permissionCheck } from '../UserCan/UserCan';
-// import { ExitToApp } from '@material-ui/icons';
-// import { connect } from 'formik';
 const packageJSON = require('../../../package.json');
 
 const useStyles = makeStyles(theme => ({
@@ -144,11 +139,11 @@ const Sidebar = props => {
   if (permissionCheck(currentUser.role_name, rulesList.dealer_view)) {
     pages.splice(1, pages.length + 1)
     pages.push(
-      {
-        title: 'Loan Report',
-        href: '/reports',
-        icon: <LocalShippingIcon />
-      },
+      // {
+      //   title: 'Loan Report',
+      //   href: '/reports',
+      //   icon: <LocalShippingIcon />
+      // },
       {
         title: 'Profile',
         href: `/dealership/${currentUser.dealership_id}`,
@@ -158,6 +153,16 @@ const Sidebar = props => {
         title: 'Passbook',
         href: '/passbook',
         icon: <ListIcon />
+      },
+      {
+        title: 'Credit Reload',
+        href: '/reports/credit/reload',
+        icon: <CachedIcon />
+      },
+      {
+        title: 'Account Statement',
+        href: '/statements',
+        icon: <ListAltIcon />
       },
       // {
       //   title: 'Transports',

@@ -1,4 +1,4 @@
-import { Grid } from '@material-ui/core';
+import { Grid, makeStyles } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import Skeleton from '@material-ui/lab/Skeleton';
 import MUIDataTable from 'mui-datatables';
@@ -8,12 +8,26 @@ import Currency from '../../components/Number/Currency';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getTestReport } from '../../services/users.service';
 
-const DueTable = ({ id, onRowClick }) => {
+const useStyles = makeStyles(theme => ({
+  style: {
+    '&.MuiPaper-root': {
+      backgroundColor: '#d4ffdf',
+      border: '2px solid #a5e8a4'
+    },
+    '& .MuiTableCell-head': {
+      color: 'white',
+      backgroundColor: '#a5e8a4'
+    }
+  }
+}))
+
+const DueTable = ({ id, onRowClick, style }) => {
+  const classes = useStyles();
   const [loans, setLoans] = useState({})
   const [loading, setLoading] = useState(false);
   let cardData = [
-    { label: 'Applicant code', value: loans[0]?.applicant_code },
-    { label: 'Applicant name', value: loans[0]?.applicant_name },
+    // { label: 'Applicant code', value: loans[0]?.applicant_code },
+    // { label: 'Applicant name', value: loans[0]?.applicant_name },
     { label: 'Dealership ID', value: loans[0]?.cust_code },
     { label: 'Customer Region', value: loans[0]?.cust_region },
   ]
@@ -90,6 +104,7 @@ const DueTable = ({ id, onRowClick }) => {
               data={loans}
               columns={columns}
               options={options}
+              className={style === 'green' && classes.style}
             />
           ) : <Paper style={{ marginTop: 10, padding: 10 }}>No due Reports found</Paper>
         }

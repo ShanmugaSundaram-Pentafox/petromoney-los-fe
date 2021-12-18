@@ -101,7 +101,6 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
     }
   })
 
-
   // const getCoApplicantApiCall = (id) => {
   //   getCoApplicantByDealershipId(id)
   //     .then(data => {

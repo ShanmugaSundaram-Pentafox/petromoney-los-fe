@@ -1,5 +1,4 @@
-import { Divider, Switch } from '@material-ui/core';
-import { Typography } from '@material-ui/core';
+import { Divider, Switch, Typography } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import { green } from '@material-ui/core/colors';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
@@ -8,7 +7,7 @@ import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   container:{
     border: '1px dashed #ccc',
     borderRadius: 4,
@@ -56,7 +55,7 @@ const CardItem = ({ onChange, data }) => {
   const classes = useStyles();
   const [checked, setChecked] = useState(false);
   const [aadharSign, setAadharSign] = useState(true);
-  const [virtualSign, setVirtualSign] = useState(true);
+  const [virtualSign, setVirtualSign] = useState(false);
   const onPressItem = () => {
     onChange(!checked, data);
     setChecked(!checked);

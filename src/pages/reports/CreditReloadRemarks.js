@@ -80,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
+const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
   const classes = useStyles();
   const [status, setStatus] = useState('');
   const [remarks, setRemarks] = useState();
@@ -217,7 +217,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
                             !rowData?.payment_proof_attachment.proof_1_url?.endsWith('.pdf') ? (
                               rowData?.payment_proof_attachment?.proof_1_url && (
                                 <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_1_url, type: rowData?.payment_proof_attachment.proof_1_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', width: 120, height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                  <img src={`${rowData?.payment_proof_attachment.proof_1_url}`} height="100%" width="100%" className={classes.image} />
+                                  <img alt="document" src={`${rowData?.payment_proof_attachment.proof_1_url}`} height="100%" width="100%" className={classes.image} />
                                 </div> )
                             ) : (
                               rowData?.payment_proof_attachment?.proof_1_url && (
@@ -240,7 +240,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
                             !rowData?.payment_proof_attachment.proof_2_url?.endsWith('.pdf') ? (
                               rowData?.payment_proof_attachment?.proof_2_url && (
                                 <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_2_url, type: rowData?.payment_proof_attachment.proof_2_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', width: 120, height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                  <img src={`${rowData?.payment_proof_attachment.proof_2_url}`} height="100%" width="100%" className={classes.image} />
+                                  <img alt="document" src={`${rowData?.payment_proof_attachment.proof_2_url}`} height="100%" width="100%" className={classes.image} />
                                 </div>
                               )
                             ) : (
@@ -264,7 +264,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
                             !rowData?.payment_proof_attachment.proof_3_url?.endsWith('.pdf') ? (
                               rowData?.payment_proof_attachment?.proof_3_url && (
                                 <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_3_url, type: rowData?.payment_proof_attachment.proof_3_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', width: 120, height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                  <img src={`${rowData?.payment_proof_attachment.proof_3_url}`} height="100%" width="100%" className={classes.image} />
+                                  <img alt="document" src={`${rowData?.payment_proof_attachment.proof_3_url}`} height="100%" width="100%" className={classes.image} />
                                 </div>
                               )
                             ) : (
@@ -288,21 +288,23 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
               </Grid>
             </>
             {
-              rowData.status == 'Disbursed' || rowData.status == 'Declined' ? null : (
-                <>
-                  <Grid container spacing={2}>
-                    <Grid item md={8} style={{ display: 'flex', flexDirection: 'column' }}>
-                      <label style={{ marginBottom: 8, marginTop: 25 }}>Remarks</label>
-                      <CreatableSelect
-                        name='remarks'
-                        isClearable
-                        onChange={handleRemarkChange}
-                        options={remarks}
-                      />
-                      <FormHelperText style={{ color: '#FF5C58', marginLeft: 5 }}>{!newRemarks && status === 'decline' ? 'Need a Remark to Proceed!' : null}</FormHelperText>
+              !view && (
+                rowData.status == 'Disbursed' || rowData.status == 'Declined' ? null : (
+                  <>
+                    <Grid container spacing={2}>
+                      <Grid item md={8} style={{ display: 'flex', flexDirection: 'column' }}>
+                        <label style={{ marginBottom: 8, marginTop: 25 }}>Remarks</label>
+                        <CreatableSelect
+                          name='remarks'
+                          isClearable
+                          onChange={handleRemarkChange}
+                          options={remarks}
+                        />
+                        <FormHelperText style={{ color: '#FF5C58', marginLeft: 5 }}>{!newRemarks && status === 'decline' ? 'Need a Remark to Proceed!' : null}</FormHelperText>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </>
+                  </>
+                )
               )
             }
           </Box>
@@ -321,32 +323,34 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser }) => {
             </Button>
           </div>
           {
-            (rowData.status != 'Disbursed' && rowData.status != 'Declined') && (
-              <div style={{ display: 'flex', justifyContent: 'center'}}>
-                <Button
-                  variant='contained'
-                  type='submit'
-                  onClick={declineSubmit}
-                  className={clsx(classes.btn, classes.declineButton)}
-                >
-                  Decline
-                </Button>
-                <Button
-                  variant='contained'
-                  type='submit'
-                  color='primary'
-                  onClick={disburseSubmit}
-                  className={clsx(classes.btn, classes.editButton)}
-                >
-                  Disburse
-                </Button>
-                {/* {
-                  disburseLoading ? (
-                    <CircularProgress size={20} />
-                  ) : (
-                  )
-                } */}
-              </div>
+            !view && (
+              (rowData.status != 'Disbursed' && rowData.status != 'Declined') && (
+                <div style={{ display: 'flex', justifyContent: 'center'}}>
+                  <Button
+                    variant='contained'
+                    type='submit'
+                    onClick={declineSubmit}
+                    className={clsx(classes.btn, classes.declineButton)}
+                  >
+                    Decline
+                  </Button>
+                  <Button
+                    variant='contained'
+                    type='submit'
+                    color='primary'
+                    onClick={disburseSubmit}
+                    className={clsx(classes.btn, classes.editButton)}
+                  >
+                    Disburse
+                  </Button>
+                  {/* {
+                    disburseLoading ? (
+                      <CircularProgress size={20} />
+                    ) : (
+                    )
+                  } */}
+                </div>
+              )
             )
           }
           {

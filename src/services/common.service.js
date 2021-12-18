@@ -733,3 +733,57 @@ export const getUserRoleForReview = (status) => {
       })
   })
 }
+
+export const getZones = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('zones')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(err => {
+        reject(err.message);
+      })
+  })
+}
+
+export const addZones = (data) => {
+  return new Promise((resolve, reject) => {
+    apiCall('zones', {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const editZones = (id, data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`zones/${id}`, {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}

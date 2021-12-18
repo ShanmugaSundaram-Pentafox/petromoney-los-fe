@@ -72,10 +72,11 @@ const FormDialog = (props) => {
     open,
     onClose,
     onDownload,
+    maxWidth,
   } = props;
 
   return (
-    <Dialog onClose={onClose} aria-labelledby="form-dialog-title" open={open}>
+    <Dialog onClose={onClose} aria-labelledby="form-dialog-title" open={open} maxWidth={maxWidth}>
       <DialogTitle id="form-dialog-title" onDownload={onDownload} onClose={onClose}>
         {title}
       </DialogTitle>

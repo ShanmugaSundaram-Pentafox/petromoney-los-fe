@@ -7,6 +7,7 @@ import EnvTag from '../components/CommonComponents/EnvTag/EnvTag';
 import { permissionCheck } from '../components/UserCan/UserCan';
 import { rulesList } from '../config/userRules';
 import CreditForm from '../pages/creditForm/creditForm';
+import DealersAccountStatement from '../pages/dashboard/components/DealersAccountStatement';
 import OwnerDetails from '../pages/dashboard/components/OwnerDetails';
 import Dashboard from '../pages/dashboard/dashboard';
 import Dealership from '../pages/dealership/dealership';
@@ -17,6 +18,7 @@ import Loans from '../pages/loanspage/loans'
 import Login from '../pages/login/login';
 import NotFound from '../pages/NotFound/NotFound';
 import Profile from '../pages/profile/Profile';
+import CollectionRemarks from '../pages/reports/CollectionRemarks';
 import CreditReload from '../pages/reports/CreditReload';
 import DealersDueReport from '../pages/reports/DealersDueReport';
 import Due from '../pages/reports/DueReport';
@@ -65,6 +67,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/profile" component={Profile} />
       <ProtectedRoute allow exact path="/withheld" component={BlacklistTable} />
       <ProtectedRoute allow exact path="/reports" component={DealersDueReport} />
+      <ProtectedRoute allow exact path="/reports/remarks" component={CollectionRemarks} />
 
       <ProtectedRoute
         exact
@@ -76,6 +79,12 @@ const Routes = ({ currentUser }) => {
         exact
         path="/passbook"
         component={PassbookDetails}
+        allow={permissionCheck(currentUser?.role_name, rulesList.dealer_view)}
+      />
+      <ProtectedRoute
+        exact
+        path="/statements"
+        component={DealersAccountStatement}
         allow={permissionCheck(currentUser?.role_name, rulesList.dealer_view)}
       />
       <Route exact path="/survey" render={props => <Survey {...props} />} />

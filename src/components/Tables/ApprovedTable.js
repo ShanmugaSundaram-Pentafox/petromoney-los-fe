@@ -55,6 +55,7 @@ const useStyles = makeStyles(theme => ({
 
 const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) => {
   const classes = useStyles();
+  const [loanAmount, setLoanAmount] = useState();
   const [dealershipId, setDealershipId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -130,7 +131,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
         options: {
           filter: true,
           sort: true,
-          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value.charAt(0)}</span>
+          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
         }
       },
       {
@@ -201,7 +202,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Loan Agreement">
-                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType('agreement'); setModalVisible(true); }}>
+                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['amount_approved'])}}>
                     <LoanAgreementIcon width={14} />
                   </IconButton>
                 </Tooltip>
@@ -224,7 +225,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
     selectableRows: 'none',
     isRowSelectable: () => false,
     onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex !== 6) {
+      if (cellMeta.colIndex !== 7) {
         onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'approved')
       }
     },
@@ -252,6 +253,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
         open={modalVisible}
         dealershipId={dealershipId}
         loanId={loanId}
+        loanAmount={loanAmount}
         type={type}
         title={'Sanction Letter'}
         onClose={() => setModalVisible(false)}

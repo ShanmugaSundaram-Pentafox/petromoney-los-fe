@@ -1,8 +1,4 @@
-import { TableContainer } from '@material-ui/core';
-import { Table } from '@material-ui/core';
-import { TableBody } from '@material-ui/core';
-import { TableRow } from '@material-ui/core';
-import { TableCell as TableCellComp } from '@material-ui/core';
+import { TableContainer, Table, TableBody, TableRow, TableCell as TableCellComp } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -15,6 +11,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles, withStyles } from '@material-ui/styles';
+import { format } from 'date-fns';
 import { useSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
 import CardsCheckList from './components/CardsCheckList';
@@ -23,7 +20,9 @@ import { getCoApplicantByDealershipId, getDealersByDealershipId } from '../../se
 import { getAllGuarantor, getPdfContent } from '../../services/leegality.service';
 import { getLoanDocumentHistoryById } from '../../services/loans.service';
 import apiCall from '../../utils/api.util';
+import { numInWords } from '../../utils/commonFunctions.util';
 import PdfViewer from '../CommonComponents/PdfViewer/PdfViewer';
+import Currency from '../Number/Currency';
 
 
 const useStyles = makeStyles(theme => ({
@@ -47,19 +46,20 @@ const useStyles = makeStyles(theme => ({
   content: {
     overflowY: 'auto',
   },
-  table: {
-  
-  },
+  info: {
+    color: 'rgb(0,0,0,0.4)',
+    marginTop:8
+  }
 
 }));
 
-const TableCell = withStyles(theme => ({
+const TableCell = withStyles(() => ({
   root: {
     border: '1px solid #eeeeee',
   },
 }))(TableCellComp)
 
-const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, callback }) => {
+const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, callback, loanAmount }) => {
   const classes = useStyles();
   const [dealers, setDealers] = useState([])
   const [applicants, setApplicants] = useState([])
@@ -284,7 +284,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
                                   <TableBody>
                                       <TableRow>
                                       <TableCell>Date of Agreement</TableCell>
-                                      <TableCell></TableCell>
+                                      <TableCell>{format(new Date(), 'dd-MM-yyyy')}</TableCell>
                                     </TableRow>
                                       <TableRow>
                                       <TableCell>Place of execution of Agreement</TableCell>
@@ -391,14 +391,6 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
                                         </TableCell>
                                     </TableRow>
                                       <TableRow>
-                                      <TableCell>Loan Amount</TableCell>
-                                      <TableCell></TableCell>
-                                    </TableRow>
-                                      <TableRow>
-                                      <TableCell>Loan Amount (In Words)</TableCell>
-                                      <TableCell></TableCell>
-                                    </TableRow>
-                                      <TableRow>
                                       <TableCell>Office/ Residential Address of Guarantor</TableCell>
                                       <TableCell>
                                           {
@@ -407,6 +399,22 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
                                           }).join(', ')
                                         }
                                         </TableCell>
+                                    </TableRow>
+                                      <TableRow>
+                                      <TableCell>Loan Amount</TableCell>
+                                      <TableCell><Currency value={loanAmount} /></TableCell>
+                                    </TableRow>
+                                      <TableRow>
+                                      <TableCell>Loan Amount (In Words)</TableCell>
+                                      <TableCell>{numInWords(loanAmount)}</TableCell>
+                                    </TableRow>
+                                      <TableRow>
+                                      <TableCell>DPN Date</TableCell>
+                                      <TableCell>{format(new Date(), 'dd-MM-yyyy')}</TableCell>
+                                    </TableRow>
+                                      <TableRow>
+                                      <TableCell>DPN Amount</TableCell>
+                                      <TableCell><Currency value={loanAmount} /></TableCell>
                                     </TableRow>
                                       <TableRow>
                                       <TableCell>Loan Cycle</TableCell>
@@ -437,36 +445,47 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
                     <Box>
                       <Typography variant="h4">Select Invitees</Typography>
                     </Box>
+
                     <Box pt={2}>
-                      <p>Dealers</p>
-                      <Box pt={1}>
-                        <CardsCheckList
-                          data={dealers}
-                          onChange={updateSelectedDealers}
-                        />
-                      </Box>
+                      <Typography variant='body1'>Dealers</Typography>
+                      {
+                        dealers.length !==0 ?
+                          <Box pt={1}>
+                            <CardsCheckList
+                              data={dealers}
+                              onChange={updateSelectedDealers}
+                            />
+                          </Box>
+                          : <Typography variant='body1' className={classes.info}>No Dealers Found!</Typography>
+                      }
                     </Box>
+
                     <Box pt={2}>
-                      <p>Co-applicants</p>
-                      <Box pt={1}>
-                        <CardsCheckList
-                          data={applicants}
-                          onChange={updateSelectedCoAppicants}
-                        />
-                      </Box>
-                    </Box>
-                    {
-                      type === 'agreement' && guarantor.length !== 0 &&
-                        <Box pt={2}>
-                          <p>Guarantors</p>
+                      <Typography variant='body1'>Co-applicants</Typography>
+                      {
+                        applicants.length !==0 ?
+                          <Box pt={1}> 
+                            <CardsCheckList
+                              data={applicants}
+                              onChange={updateSelectedCoAppicants}
+                            />
+                          </Box>
+                          : <Typography variant='body1' className={classes.info}>No Applicants Found!</Typography>
+                      }
+                    </Box> 
+                    <Box pt={2}>
+                      <Typography variant='body1'>Guarantors</Typography>
+                      {
+                        guarantor.length !== 0 ?
                           <Box pt={1}>
                             <CardsCheckList
                               data={guarantor}
                               onChange={updateSelectedGuarantors}
                             />
                           </Box>
-                        </Box>
-                    }
+                          : <Typography variant='body1' className={classes.info}>No Guarantors Found!</Typography>
+                      }
+                    </Box>
                   </Grid>
                 </Grid>
               ))

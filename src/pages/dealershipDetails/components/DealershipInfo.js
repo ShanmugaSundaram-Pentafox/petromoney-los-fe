@@ -70,6 +70,8 @@ const DealershipInfo = ({ data, className, currentUser }) => {
   const businessTypes = useQuery('business-types', getBusinessTypes, { cacheTime: 300000 })
   const states = useQuery('state', getActiveStates, { cacheTime: 300000 })
   const { enqueueSnackbar } = useSnackbar();
+  const view = permissionCheck(currentUser.role_name, rulesList.dealer_view)
+
   useEffect(() => {
     setValues(data)
   }, [data])
@@ -598,7 +600,10 @@ const DealershipInfo = ({ data, className, currentUser }) => {
           )}
         </CardActions>
       </div >
-      <AccountStatement id={values.id} currentUser={currentUser} />
+      {
+        !view && 
+          <AccountStatement id={values.id} currentUser={currentUser} />
+      }
     </Card >
   );
 };

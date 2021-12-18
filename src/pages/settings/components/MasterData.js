@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/styles';
 import React, {useState} from 'react';
 import Contain from './MasterDataTable';
 import Products from './Products';
+import Zones from './Zones';
 import { ReactComponent as AssetIcon } from '../../../icons/assets.svg';
 import { ReactComponent as BunkIcon } from '../../../icons/bunk.svg';
 import { ReactComponent as BusinessIcon } from '../../../icons/business.svg';
@@ -10,6 +11,7 @@ import { ReactComponent as FuelIcon } from '../../../icons/fuelIcon.svg';
 import { ReactComponent as InfrastructureIcon } from '../../../icons/infrastructure.svg';
 import { ReactComponent as LoanIcon } from '../../../icons/loan.svg';
 import { ReactComponent as OtherIcon } from '../../../icons/other_icons.svg';
+import { ReactComponent as ZoneIcon } from '../../../icons/zoneIcon.svg';
 
 const useStyles = makeStyles({
   root: {
@@ -61,10 +63,10 @@ function MasterData() {
         <div style={{marginLeft: 20, width: '95%'}}>
           <Grid container spacing={1} className={classes.root}>
             <Grid item md={2}>
-              <Tooltip title="OMC details">
-                <div className={classes.content} onClick={() => setOpenForm('OMCs')}>
-                  <BunkIcon width={35} className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title} >OMCs</Typography>
+              <Tooltip title="Zone">
+                <div className={classes.content} onClick={() => setCustomForm('Zone')}>
+                  <ZoneIcon width={35} className={classes.icons} />
+                  <Typography variant="h5" align='center' className={classes.title} >Zones</Typography>
                 </div>
               </Tooltip>
             </Grid>
@@ -81,6 +83,14 @@ function MasterData() {
                 <div className={classes.content} onClick={() => setOpenForm('State')}>
                   <InfrastructureIcon width={35} className={classes.icons} />
                   <Typography variant="h5" align='center' className={classes.title}>States</Typography>
+                </div>
+              </Tooltip>
+            </Grid>
+            <Grid item md={2}>
+              <Tooltip title="OMC details">
+                <div className={classes.content} onClick={() => setOpenForm('OMCs')}>
+                  <BunkIcon width={35} className={classes.icons} />
+                  <Typography variant="h5" align='center' className={classes.title} >OMCs</Typography>
                 </div>
               </Tooltip>
             </Grid>
@@ -134,6 +144,14 @@ function MasterData() {
           variant="temporary"
         >
           <Products title={customForm} callback={setCustomForm}/>
+        </Drawer>
+        <Drawer
+          anchor="right"
+          open={customForm === 'Zone'}
+          onClose={() => setCustomForm()}
+          variant="temporary"
+        >
+          <Zones title={customForm} callback={setCustomForm}/>
         </Drawer>
       </Paper>
 

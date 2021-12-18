@@ -6,6 +6,7 @@ import AssessmentIcon from '@material-ui/icons/Assessment';
 import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
 import BookIcon from '@material-ui/icons/Book';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
+import ChatIcon from '@material-ui/icons/Chat';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import InputIcon from '@material-ui/icons/Input';
@@ -336,6 +337,22 @@ const SidebarNav = props => {
                   >
                     <div className={classes.icon}><ReportProblemIcon /></div>
                     {'Loan Overdue'}
+                  </Button>
+                </ListItem>
+                <ListItem
+                  className={classes.itemSub}
+                  disableGutters
+                  key={'Collection'}
+                >
+                  <Button
+                    className={classes.button}
+                    activeClassName={classes.active}
+                    component={CustomRouterLink}
+                    to={'/reports/remarks'}
+                    exact
+                  >
+                    <div className={classes.icon}><ChatIcon /></div>
+                    {'Collection Remarks'}
                   </Button>
                 </ListItem>
               </Collapse>

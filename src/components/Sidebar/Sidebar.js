@@ -6,6 +6,7 @@ import ListIcon from '@material-ui/icons/List';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import LocalShippingIcon from '@material-ui/icons/LocalShipping';
 import PeopleIcon from '@material-ui/icons/People';
+import PermPhoneMsgIcon from '@material-ui/icons/PermPhoneMsg';
 import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
 import PersonOutlineRoundedIcon from '@material-ui/icons/PersonOutlineRounded';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -197,6 +198,14 @@ const Sidebar = props => {
       title: 'Users',
       href: '/users',
       icon: <AccountBoxIcon />
+    })
+  }
+
+  if (permissionCheck(currentUser.role_name, rulesList.users_view)) {
+    pages.push({
+      title: 'Call Reques',
+      href: '/callreq',
+      icon: <PermPhoneMsgIcon />
     })
   }
 

@@ -3,7 +3,7 @@ import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
-import moment from 'moment';
+import { format } from 'date-fns';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { useMount } from 'react-use';
@@ -278,7 +278,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                     <Box p={2} borderRadius={4} bgcolor="background.paper">
                       <Typography variant="h5">Credit Book</Typography>
                       <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">
-                        <DashCard text="Date (Opening)" value={ls1_metrices.opening ? moment(new Date(ls1_metrices.opening)).format('DD MMM, YYYY') : '-'} />
+                        <DashCard text="Date (Opening)" value={ls1_metrices.opening ? format(new Date(ls1_metrices.opening?.split(' ')?.[0]), 'dd MMM, yyyy') : '-'} />
                         <DashCard text="Loan Book (in Crs)" value={Number(ls1_metrices.loan_book)?.toFixed(2)} />
                         <DashCard text="Overdue (in Crs)" value={Number(ls1_metrices.overdue)?.toFixed(2)} />
                         <DashCard text="Due (in Crs)" value={Number(ls1_metrices.due)?.toFixed(2)} />

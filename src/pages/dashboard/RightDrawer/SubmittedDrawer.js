@@ -11,7 +11,7 @@ import { useMount } from 'react-use';
 import DealershipData from './DealershipData';
 import DrawerFooter from './DrawerFooter';
 import LoanInfo from './LoanInfo';
-import TextInput from '../../../components/TextInput/TextInput';
+import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { getUserRoleForReview } from '../../../services/common.service';
 import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import SalesInfo from '../components/SalesInfo';
@@ -183,7 +183,8 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
             <DialogContentText id="approval-remarks-desc">
               Please enter your remarks for sending this to review.
             </DialogContentText>
-            <TextInput
+            <TextEditor setJSON={setRemarks} toolBar={true} />
+            {/* <TextInput
               multiline
               alignTop
               direction='column'
@@ -195,7 +196,7 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
               onChange={e => {
                 setRemarks(e.target.value); setErrorStatus();
               }}
-            />
+            /> */}
             {
               errorStatus && 
                 <Alert severity="error" style={{padding: '0px 16px'}}>{errorStatus}</Alert>

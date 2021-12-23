@@ -19,7 +19,7 @@ import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import Select from 'react-select';
 import Currency from '../../../components/Number/Currency';
-import TextInput from '../../../components/TextInput/TextInput';
+import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { getUserRoleForReview } from '../../../services/common.service';
@@ -40,6 +40,10 @@ const useStyles = makeStyles({
     // minWidth: 650,
     padding: 8
   },
+  editor: {
+    border: '1px solid gray',
+    minHeight: '6em'
+  }
 });
 
 const LoansList = ({ id, currentUser, titleAlign }) => {
@@ -56,6 +60,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { data: loanData, refetch: refetchData, isLoading } = useQuery(['dealership-loans', id], () => getDealershipLoansById(id))
   const { data: status } = useQuery(['dealership-status', id], () => getApplicationStatusById(id))
+
   useEffect(() => {
     if (!isLoading) {
       if (loanData.length) {
@@ -315,7 +320,8 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
             <DialogContentText id="approval-remarks-desc">
               Please enter your remarks for sending this for {dialogState.data?.status?.toLowerCase() === 'submitted' ? 'review' : dialogState.data?.status?.toLowerCase() === 'loan_review' ? 'Approval' : 'Disbursement Approval'}.
             </DialogContentText>
-            <TextInput
+            <TextEditor setJSON={setRemarks} toolBar={true}/>
+            {/* <TextInput
               multiline
               alignTop
               direction='column'
@@ -327,7 +333,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
               onChange={e => {
                 setRemarks(e.target.value);
               }}
-            />
+            /> */}
           </div>
         </DialogContent>
         <DialogActions>

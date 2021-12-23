@@ -10,7 +10,7 @@ import DealershipData from './DealershipData';
 import DrawerFooter from './DrawerFooter';
 import DrawerRemarks from './DrawerRemarks';
 import LoanInfo from './LoanInfo';
-import TextInput from '../../../components/TextInput/TextInput';
+import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import SalesInfo from '../components/SalesInfo';
 
@@ -156,7 +156,8 @@ const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, 
             <DialogContentText id="approval-remarks-desc">
               Please enter remarks for approval.
             </DialogContentText>
-            <TextInput
+            <TextEditor setJSON={setRemarks} toolBar={true}/>
+            {/* <TextInput
               multiline
               alignTop
               direction='column'
@@ -168,7 +169,7 @@ const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, 
               onChange={e => {
                 setRemarks(e.target.value); setErrorStatus();
               }}
-            />
+            /> */}
             {
               errorStatus && 
                 <Alert severity="error" style={{padding: '0px 16px'}}>{errorStatus}</Alert>

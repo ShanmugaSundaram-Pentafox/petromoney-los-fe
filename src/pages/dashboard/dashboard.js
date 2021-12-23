@@ -278,7 +278,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                     <Box p={2} borderRadius={4} bgcolor="background.paper">
                       <Typography variant="h5">Credit Book</Typography>
                       <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">
-                        <DashCard text="Date (Opening)" value={ls1_metrices.opening ? format(new Date(ls1_metrices.opening), 'dd MMM, yyyy') : '-'} />
+                        <DashCard text="Date (Opening)" value={ls1_metrices.opening ? format(new Date(ls1_metrices.opening?.split(' ')?.[0]), 'dd MMM, yyyy') : '-'} />
                         <DashCard text="Loan Book (in Crs)" value={Number(ls1_metrices.loan_book)?.toFixed(2)} />
                         <DashCard text="Overdue (in Crs)" value={Number(ls1_metrices.overdue)?.toFixed(2)} />
                         <DashCard text="Due (in Crs)" value={Number(ls1_metrices.due)?.toFixed(2)} />

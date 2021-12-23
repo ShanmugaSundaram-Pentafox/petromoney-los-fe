@@ -739,7 +739,11 @@ export const getProducts = () => {
     apiCall('business/products/valid')
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
-          resolve(data || []);
+          const result = data?.map(item => ({
+            label: item.product_name,
+            value: item.product_id,
+          }))
+          resolve(result || []);
         } else {
           reject(message);
         }

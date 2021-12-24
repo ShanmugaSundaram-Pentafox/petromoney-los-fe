@@ -151,6 +151,23 @@ const ReviewerTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
     isRowSelectable: () => false,
     onRowClick: (rowData, { dataIndex }) => {
       onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'loan_review')
+    },
+    customSort: (data, dataIndex, rowIndex) => {
+      if (dataIndex === 5) {
+        return data.sort((a, b) => {
+          const dateA = new Date(a.data[dataIndex]).getTime();
+          const dateB = new Date(b.data[dataIndex]).getTime();
+          return (dateA < dateB ? -1 : 1) * (rowIndex === 'desc' ? 1 : -1);
+        });
+      } 
+      else {
+        return data.sort((a, b) => {
+          return (
+            (a.data[dataIndex] < b.data[dataIndex] ? -1 : 1) *
+            (rowIndex === 'desc' ? 1 : -1)
+          );
+        });
+      }
     }
   };
 

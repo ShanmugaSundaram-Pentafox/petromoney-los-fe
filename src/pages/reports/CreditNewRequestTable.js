@@ -3,11 +3,13 @@ import Skeleton from '@material-ui/lab/Skeleton';
 import { classes } from 'istanbul-lib-coverage';
 import MUIDataTable from 'mui-datatables';
 import React, { useState, useMemo } from 'react';
+import { useQuery } from 'react-query';
 import { useMount } from 'react-use';
 import CreditReloadForm from './CreditReloadForm';
 import CreditReloadRemarks from './CreditReloadRemarks';
 import Currency from '../../components/Number/Currency';
 import usePageTitle from '../../hooks/usePageTitle';
+import { getZones } from '../../services/common.service';
 import {
   getTypeOfAccount,
 } from '../../services/users.service';
@@ -23,7 +25,9 @@ const CreditNewRequestTable = ({ data, currentUser, view }) => {
   const [statusModal, setStatusModal] = useState(false);
   const [selectedTab, setSelectedTab] = useState('processed');
   const [dealershipData, setDealershipData] = useState();
+  const [selectedZone, setSelectedZone] = useState({label: 'ALL', value: 0});
 
+  const { data: zones = []} = useQuery('zones', () => {return getZones()}, {refetchOnWindowFocus: false})
 
   useMount(() => {
     getTypeOfAccount()

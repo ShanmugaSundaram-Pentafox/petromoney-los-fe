@@ -187,24 +187,27 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
               </TableCell>
               <TableCell align="center">{row.status}</TableCell>
               <TableCell align="center">
-                <MSelect
-                  fullWidth
-                  native
-                  placeholder={'Select status'}
-                  value={selectedStatus?.id}
-                  onChange={e => {
-                    const d = status.find(i => i.id == e.target.value)
-                    setSelectedStatus(d)
-                    updateApplicationStatus({
-                      application_state: e.target.value
-                    })
-                  }}
-                >
-                  <option value={selectedStatus}>{row.application_state}</option>
-                  {
-                    status?.map(item => item.application_state !== row.application_state && <option value={item.id}>{item.application_state}</option>)
-                  }
-                </MSelect>
+                {
+                  row?.status?.toLowerCase() !== 'disbursed' && row?.status?.toLowerCase() !== 'rejected' &&
+                    <MSelect
+                      fullWidth
+                      native
+                      placeholder={'Select status'}
+                      value={selectedStatus?.id}
+                      onChange={e => {
+                        const d = status.find(i => i.id == e.target.value)
+                        setSelectedStatus(d)
+                        updateApplicationStatus({
+                          application_state: e.target.value
+                        })
+                      }}
+                    >
+                      <option value=''>-</option>
+                      {
+                      status?.map(item => item.application_state !== row.application_state && <option value={item.id}>{item.application_state}</option>)
+                      }
+                    </MSelect>
+                }
               </TableCell>
               <TableCell align="center">
                 {

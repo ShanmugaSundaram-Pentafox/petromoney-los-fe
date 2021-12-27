@@ -86,7 +86,7 @@ export const downloadPDF = ({ file, isBase64, name }) => {
 
 export const getAllRegions = () => {
   return new Promise((resolve, reject) => {
-    apiCall('regions', {}, 'GET')
+    apiCall('regions/los', {}, 'GET')
       .then(response => {
         if (response?.status === 'SUCCESS') {
           const result = response?.data.map(item => ({
@@ -772,7 +772,7 @@ export const getProductsMaster = () => {
 
 export const getZones = () => {
   return new Promise((resolve, reject) => {
-    apiCall('zones')
+    apiCall('zones?filter=1')
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data);

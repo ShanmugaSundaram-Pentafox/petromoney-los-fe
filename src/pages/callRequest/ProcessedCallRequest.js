@@ -1,24 +1,14 @@
 import MUIDataTable from 'mui-datatables';
-import React, { useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import usePageTitle from '../../hooks/usePageTitle';
 
-
-const ProcessedCallRequest = () => {
-  // const classes = useStyles()
+const ProcessedCallRequest = ({callbackProcessed}) => {
   usePageTitle('Call Request');
-  const [tableData, setTableData] = useState()
-
-  // useMount(() => {
-  //   fetch('http://localhost:3333/data')
-  //   .then(res => res.json())
-  //   .then(setTableData)
-  // })
-
 
   const columns = useMemo(() => {
     return [
       {
-        name: 'dealership_id',
+        name: 'dealer_id',
         label: 'Cust Code',
         options: {
           customBodyRender: (value) => {
@@ -27,7 +17,7 @@ const ProcessedCallRequest = () => {
         }
       },
       {
-        name: 'f_name',
+        name: 'dealer_name',
         label: 'Cust Name',
         options: {
           customBodyRender: (value, tableMeta, updateValue) => {
@@ -36,19 +26,18 @@ const ProcessedCallRequest = () => {
         }
       },
       {
-        name: 'l_name',
-        options: {
-          display: false
-        }
-      },
-      {
-        name: 'region',
+        name: 'region_value',
         label: 'Region',
         options: { filter: false }
       },
       {
         name: 'mobile',
         label: 'Mobile',
+        options: { filter: false }
+      },
+      {
+        name: 'remark',
+        label: 'Remarks',
         options: { filter: false }
       }
     ];
@@ -62,16 +51,13 @@ const ProcessedCallRequest = () => {
     rowsPerPageOptions: [15, 20, 30],
   };
 
-
-
   return (
     <div>
-      {/* // <div className={classes.root}> */}
       <MUIDataTable
         title={'Processed'}
         columns={columns}
         options={options}
-        data={tableData}
+        data={callbackProcessed}
       />
     </div>
   )

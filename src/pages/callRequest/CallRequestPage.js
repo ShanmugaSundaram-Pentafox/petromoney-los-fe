@@ -1,8 +1,10 @@
 import { Box, Grid, Badge } from '@material-ui/core';
 import React, { useState } from 'react';
+import { useQuery } from 'react-query';
 import styled from 'styled-components';
 import NewCallRequest from './NewCallRequest';
 import ProcessedCallRequest from './ProcessedCallRequest';
+import { getCallbackRequest } from '../../services/callrequest.service';
 
 const PaperWrapper = styled.div`
 margin-bottom:10px;
@@ -26,13 +28,9 @@ background-color: #f1f1f1;
 
 const CallRequestPage = () => {
   const [selectedTab, setSelectedTab] = useState('new');
-  const [NewRequestData, setNewRequestData] = useState()
 
-  // useMount(() => {
-  //   fetch('http://localhost:3333/data')
-  //   .then(res => res.json())
-  //   .then(setNewRequestData)
-  // })
+  const { data: callbackData = [] } = useQuery('new-request', () => getCallbackRequest(0), {refetchOnWindowFocus: false})
+  const { data: callbackProcessed = [] } = useQuery('processed-request', () => getCallbackRequest(1), {refetchOnWindowFocus: false})
 
   return (
     <>
@@ -40,7 +38,7 @@ const CallRequestPage = () => {
         <Box borderRadius={4} bgcolor="background.paper">
           <Grid container>
             <Grid onClick={() => { setSelectedTab('new') }} className={selectedTab === 'new' ? 'inactive' : 'active'} style={{ textAlign: 'center', padding: 16 }} item md={6}>
-              <Badge badgeContent={NewRequestData?.length || 0} style={{ paddingTop: 4, paddingRight: 8 }} color="primary">
+              <Badge badgeContent={callbackData?.length || 0} style={{ paddingTop: 4, paddingRight: 8 }} color="primary">
                 <div>New Requests</div>
               </Badge>
             </Grid>
@@ -52,9 +50,9 @@ const CallRequestPage = () => {
       </PaperWrapper>
       {
         selectedTab === 'new' ? (
-          <NewCallRequest />
+          <NewCallRequest callbackData={callbackData} />
         ) : (
-          <ProcessedCallRequest />
+          <ProcessedCallRequest callbackProcessed={callbackProcessed} />
         )
       }
     </>

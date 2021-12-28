@@ -1,25 +1,52 @@
-import { Button } from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogContent } from '@material-ui/core';
 import MUIDataTable from 'mui-datatables';
+import { useSnackbar } from 'notistack';
 import React, { useMemo, useState } from 'react'
+import { useMutation, useQueryClient } from 'react-query';
+import TextInput from '../../components/TextInput/TextInput';
 import usePageTitle from '../../hooks/usePageTitle';
+import { resolveCallbackRequest } from '../../services/callrequest.service';
 
-
-const NewCallRequest = () => {
-  // const classes = useStyles()
+const NewCallRequest = ({callbackData}) => {
   usePageTitle('Call Request');
-  const [tableData, setTableData] = useState()
+  const queryClient = useQueryClient()
+  const { enqueueSnackbar } = useSnackbar();
+  const [rowData, setRowData] = useState()
+  const [remark, setRemark] = useState()
 
-  // useMount(() => {
-  //   fetch('http://localhost:3333/data')
-  //   .then(res => res.json())
-  //   .then(setTableData)
-  // })
+  const { mutate: resolve } = useMutation(data => resolveCallbackRequest(data, rowData[4]) , {
+    onSuccess: (message) => {
+      setRowData()
+      queryClient.invalidateQueries('new-request')
+      queryClient.invalidateQueries('processed-request')
+      enqueueSnackbar(message, {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'success',
+      });
+    },
+    onError: (message) => {
+      enqueueSnackbar(message, {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'error',
+      });
+    }
+  })
 
+  const handleResolve = () => {
+    let body = {is_processed: 1, remarks: remark}
+    resolve(body)
+  }
 
   const columns = useMemo(() => {
     return [
       {
-        name: 'dealership_id',
+        name: 'dealer_id',
         label: 'Cust Code',
         options: {
           customBodyRender: (value) => {
@@ -28,22 +55,16 @@ const NewCallRequest = () => {
         }
       },
       {
-        name: 'f_name',
+        name: 'dealer_name',
         label: 'Cust Name',
         options: {
-          customBodyRender: (value, tableMeta, updateValue) => {
+          customBodyRender: (value, tableMeta) => {
             return <div>{value?.toUpperCase()} {tableMeta.rowData[2]?.toUpperCase()}</div>
           }
         }
       },
       {
-        name: 'l_name',
-        options: {
-          display: false
-        }
-      },
-      {
-        name: 'region',
+        name: 'region_value',
         label: 'Region',
         options: { filter: false }
       },
@@ -53,6 +74,14 @@ const NewCallRequest = () => {
         options: { filter: false }
       },
       {
+        name: 'request_id',
+        label: 'Request ID',
+        options: { 
+          filter: false,
+          display: false
+        }
+      },
+      {
         name: 'call',
         label: 'Action',
         setCellProps: () => ({
@@ -60,8 +89,8 @@ const NewCallRequest = () => {
         }),
         options: { 
           filter: false,
-          customBodyRender: () => {
-            return <Button variant='outlined' size='small' color='secondary'>Resolve</Button>
+          customBodyRender: (value, tableValue) => {
+            return <Button variant='outlined' size='small' color='secondary' onClick={() => setRowData(tableValue?.rowData)}>Resolve</Button>
           }
         }
       }
@@ -76,17 +105,29 @@ const NewCallRequest = () => {
     rowsPerPageOptions: [15, 20, 30],
   };
 
-
-
   return (
     <div>
-      {/* // <div className={classes.root}> */}
       <MUIDataTable
         title={'New Request'}
         columns={columns}
         options={options}
-        data={tableData}
+        data={callbackData}
       />
+      <Dialog onClose={() => setRowData()} open={rowData}>
+        <DialogContent style={{minWidth: '300px'}}>
+          <label>Remark</label>
+          <TextInput
+            fullWidth
+            name="remarks"
+            value={remark}
+            onChange={e => setRemark(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button size="small" onClick={() => setRowData()}>Cancel</Button>
+          <Button onClick={handleResolve} variant="outlined" color="primary" size="small">Resolve</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   )
 }

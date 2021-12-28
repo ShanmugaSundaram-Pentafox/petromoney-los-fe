@@ -95,7 +95,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
     Object.keys(submitData).forEach((key) => {
       formData.append(key, submitData[key]);
     });
-    addCreditReport(formData, currentUser, rowData?.dealership_id)
+    addCreditReport(formData, currentUser, rowData?.request_id)
       .then((res) => {
         setDisburseLoading(false)
         callback()

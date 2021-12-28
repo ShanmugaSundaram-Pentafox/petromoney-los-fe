@@ -61,6 +61,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
   const [loading, setLoading] = useState(false);
   const [loanId, setloanId] = useState();
   const [type, setType] = useState('');
+  const [productTypeId, setProductTypeId] = useState();
 
   useEffect(() => {
     setLoading(true);
@@ -202,7 +203,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Loan Agreement">
-                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['amount_approved'])}}>
+                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['amount_approved']); setProductTypeId(loans?.[r.rowIndex]['product_id'])}}>
                     <LoanAgreementIcon width={14} />
                   </IconButton>
                 </Tooltip>
@@ -254,6 +255,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
         dealershipId={dealershipId}
         loanId={loanId}
         loanAmount={loanAmount}
+        productId={productTypeId}
         type={type}
         title={'Sanction Letter'}
         onClose={() => setModalVisible(false)}

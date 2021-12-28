@@ -36,7 +36,7 @@ const ProcessedCallRequest = ({callbackProcessed}) => {
         options: { filter: false }
       },
       {
-        name: 'remark',
+        name: 'remarks',
         label: 'Remarks',
         options: { filter: false }
       }

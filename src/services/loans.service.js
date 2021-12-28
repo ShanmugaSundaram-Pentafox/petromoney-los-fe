@@ -13,7 +13,7 @@ export const getLoanStats = (qryStr = {}) => {
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
-          resolve(data[0]);
+          resolve(data[0] || []);
         } else {
           reject(message);
         }

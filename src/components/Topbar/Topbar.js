@@ -1,8 +1,9 @@
-import { AppBar, Toolbar, Hidden, Tooltip, IconButton, RadioGroup, Radio, FormControlLabel } from '@material-ui/core';
+import { AppBar, Toolbar, Hidden, Tooltip, IconButton, RadioGroup, Radio, FormControlLabel, Button } from '@material-ui/core';
 import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 import MenuIcon from '@material-ui/icons/Menu';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
+import { useSnackbar } from 'notistack';
 import PropTypes from 'prop-types';
 import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
@@ -13,6 +14,7 @@ import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import { rulesList } from '../../config/userRules';
 import SendEmailAction from '../../pages/reports/SendEmailAction';
+import { refreshRedis } from '../../services/common.service';
 import { setDashboardView } from '../../store/common/common.actions';
 import { resetCurrentUser } from '../../store/user/user.actions';
 // import NotificationsBell from '../CommonComponents/NotificationsBell';
@@ -25,9 +27,7 @@ import { permissionCheck } from '../UserCan/UserCan';
 const useStyles = makeStyles(theme => {
   return ({
     root: {
-      boxShadow: 'none',
       color: theme.palette.primary.dark,
-      backgroundColor: 'transparent',
       boxShadow: '0 0 0 1px rgba(63,63,68,0.05), 0 1px 2px 0 rgba(63,63,68,0.15)',
       backgroundColor: theme.palette.white,
       borderBottomColor: theme.palette.grey
@@ -105,12 +105,34 @@ const CardWrapper = styled.div`
 const Topbar = (props) => {
   const { className, onSidebarOpen, pageTitle, user, logout, match, history, goBackIcon, appBarProps, dashboardView, updateDashboardView } = props;
   const classes = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
   // const [notifications] = useState([]);
   const [showNotificationSidebar, setShowNotificationSidebar] = useState(false);
   useEffect(() => {
 
   }, [dashboardView])
   const editable = permissionCheck(user.role_name, rulesList.dealer_edit)
+  const handleRefresh = () => {
+    refreshRedis()
+      .then(message => {
+        enqueueSnackbar(message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        });
+      })
+      .catch(e => {
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      })
+  }
   return (
     <Fragment>
       <AppBar
@@ -141,7 +163,7 @@ const Topbar = (props) => {
                 {/* <pageTitle /> */}
                 {
                   Array.isArray(pageTitle) && pageTitle.map((item, i) => (
-                    <CardWrapper>
+                    <CardWrapper key={i}>
                       <div>
                         <div className="stat-number-block">
                           <div className="stat-number">
@@ -176,6 +198,11 @@ const Topbar = (props) => {
                   </RadioGroup>
                 </span>
               ) : null
+            }
+            {
+              typeof pageTitle === 'string' && pageTitle?.toLowerCase() == 'dashboard' && user.role_name === 'ADMIN' && dashboardView === 'LMS' && (
+                <Button size='small' variant='contained' color='secondary' style={{marginLeft: 12}} onClick={handleRefresh}>Refresh</Button>
+              )
             }
 
             {

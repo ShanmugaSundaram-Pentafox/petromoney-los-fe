@@ -12,8 +12,10 @@ import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
+import { useMount } from 'react-use';
 import * as Yup from 'yup';
 import Button from '../../../components/CommonComponents/Button/Button';
+import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
 import {
   addNewVehicle,
@@ -59,6 +61,11 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.success.dark,
     },
   },
+  // items: {
+  //   // paddingTop: 0,
+  //   // paddingBottom: 0
+  //   padding: 0
+  // }
 }));
 
 const AddNewVehicleForm = ({
@@ -73,7 +80,17 @@ const AddNewVehicleForm = ({
   const [readOnly, setReadOnly] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
+  const [testData, setTestData] = useState()
+  const [vehNo, setVehNo] = useState()
   const classes = useStyles();
+
+  useMount(() => {
+    fetch('http://localhost:3333/data')
+    .then(res => res.json())
+    .then(data => {
+      setTestData(data[0]);
+    })
+  })
 
   const handleEdit = () => {
     setReadOnly(!readOnly);
@@ -99,6 +116,7 @@ const AddNewVehicleForm = ({
       if (isAdd === 'Edit') {
         updateVehicle(formData, id, trans_id)
           .then((message) => {
+            setVehNo(formData)
             setLoading(false);
             enqueueSnackbar(message, {
               anchorOrigin: {
@@ -125,6 +143,7 @@ const AddNewVehicleForm = ({
       } else {
         addNewVehicle(formData, id)
           .then((message) => {
+            setVehNo(formData)
             enqueueSnackbar(message, {
               anchorOrigin: {
                 vertical: 'top',
@@ -132,9 +151,9 @@ const AddNewVehicleForm = ({
               },
               variant: 'success',
             });
-            setTimeout(() => {
-              window.location.reload();
-            }, 2000);
+            // setTimeout(() => {
+            //   window.location.reload();
+            // }, 2000);
           })
           .catch((e) => {
             enqueueSnackbar(e, {
@@ -185,12 +204,101 @@ const AddNewVehicleForm = ({
                     />
                   )}
                 </Grid>
+                <Grid item md={6}>
+                  <Button style={{marginTop: 21}} variant='contained' type='submit' className={clsx(classes.btn, classes.editButton)} onClick={handleSubmit}>Save</Button>
+                </Grid>
               </Grid>
+              <Divider style={{marginTop: 8}} />
             </form>
+            {
+              vehNo &&
+              <Grid container spacing={2} style={{marginTop: 15}}>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="Vehicle Description" value={testData?.vehicle_details.vehicleClassDescription} />
+                </Grid>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="Registration Date" value={testData?.vehicle_details.registrationDate} />
+                </Grid>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="Vehicle Category" value={testData?.vehicle_details.vehicleCatgory} />
+                </Grid>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="Registration No" value={testData?.vehicle_details.registrationNumber} />
+                </Grid>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="Engine No" value={testData?.vehicle_details.engineNumber} />
+                </Grid>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="Chassis No" value={testData?.vehicle_details.chassisNumber} />
+                </Grid>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="No.of Cylinders" value={testData?.vehicle_details.numberOfCylinders} />
+                </Grid>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="Maker Description" value={testData?.vehicle_details.makerDescription} />
+                </Grid>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="Fuel Type" value={testData?.vehicle_details.fuelDescription} />
+                </Grid>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="Model" value={testData?.vehicle_details.makerModel} />
+                </Grid>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="Capacity" value={testData?.vehicle_details.cubicCapacity} />
+                </Grid>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="Color" value={testData?.vehicle_details.color} />
+                </Grid>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="Owner Name" value={testData?.vehicle_details.ownerName} />
+                </Grid>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="Insurance Upto" value={testData?.vehicle_details.insuranceUpto} />
+                </Grid>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="Insurance Policy No" value={testData?.vehicle_details.insurancePolicyNumber} />
+                </Grid>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="Fitness Upto" value={testData?.vehicle_details.fitnessUpto} />
+                </Grid>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="Manufactured Month Year" value={testData?.vehicle_details.manufacturedMonthYear} />
+                </Grid>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="Insurance Company" value={testData?.vehicle_details.insuranceCompany} />
+                </Grid>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="PUC No" value={testData?.vehicle_details.pucNumber} />
+                </Grid>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="PUC Exp Date" value={testData?.vehicle_details.pucExpiryDate} />
+                </Grid>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="Blacklist Status" value={testData?.vehicle_details.blackListStatus} />
+                </Grid>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="Rc Status" value={testData?.vehicle_details.rcStatus} />
+                </Grid>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="Rc Mob No" value={testData?.vehicle_details.rcMobileNo} />
+                </Grid>
+                <Grid item md={6} className={classes.items}>
+                  <ViewData title="Blacklist Info" value={testData?.vehicle_details.blackListInfo} />
+                </Grid>
+              </Grid>
+            }
           </Box>
+          <Button
+            variant='outlined'
+            startIcon={<NavigateBeforeRoundedIcon />}
+            disabled={loading}
+            onClick={callback}
+          >
+            Back
+          </Button>
         </div>
       </div>
-      <div className={classes.actionFooter}>
+      {/* <div className={classes.actionFooter}>
         <Divider />
         <div className={classes.actionButtonsWrapper}>
           <Button
@@ -244,7 +352,7 @@ const AddNewVehicleForm = ({
             </>
           )}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

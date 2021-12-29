@@ -434,11 +434,11 @@ export default function VehicleInfo({ id, data, currentUser }) {
                   {
                     !permissionCheck(currentUser.role_name, rulesList.transporter_view) ? (
                       <>
-                        <Tooltip title="Edit vehicle">
+                        {/* <Tooltip title="Edit vehicle">
                           <Typography style={{ marginRight: '7px', color: '#4770C1' }} onClick={() => { modalOpen(vehicleInfo.tt_no, vehicleInfo.vehicle_id) }}>
                             <EditOutlinedIcon fontSize="medium" />
                           </Typography>
-                        </Tooltip>
+                        </Tooltip> */}
                         <Tooltip title="Delete vehicle">
                           <Typography style={{ color: '#ff6666' }}>
                             <DeleteOutlineOutlinedIcon fontSize="medium" onClick={() => handleClickOpen(vehicleInfo.tt_no, vehicleInfo.vehicle_id)} />
@@ -462,8 +462,8 @@ export default function VehicleInfo({ id, data, currentUser }) {
                     </TableHead>
                     <TableBody>
                       {
-                        Array.isArray(docs[expanded]) && docs[expanded].map(row => (
-                          <TableRow>
+                        Array.isArray(docs[expanded]) && docs[expanded].map((row, i) => (
+                          <TableRow key={i}>
                             <TableCell>{row.description}</TableCell>
                             <TableCell>
                               <Button onClick={() => setImageModal({ open: true, image: row.file_path, type: row.file_path.endsWith('.pdf') })} >
@@ -504,8 +504,8 @@ export default function VehicleInfo({ id, data, currentUser }) {
                     </TableHead>
                     <TableBody>
                       {
-                        Array.isArray(loans[expanded]) && loans[expanded].map(row => (
-                          <TableRow>
+                        Array.isArray(loans[expanded]) && loans[expanded].map((row, i) => (
+                          <TableRow key={i}>
                             <TableCell>{row.credit_head}</TableCell>
                             <TableCell>
                               <Currency value={row.loan_amount} />
@@ -529,8 +529,8 @@ export default function VehicleInfo({ id, data, currentUser }) {
                   }
 
                   {
-                    Array.isArray(services[expanded]) && services[expanded].map(row => (
-                      <Box mt={2} flexDirection="column">
+                    Array.isArray(services[expanded]) && services[expanded].map((row, i) => (
+                      <Box mt={2} flexDirection="column" key={i}>
                         <Box display="flex" flexDirection="row" justifyContent="space-between">
                           <strong><small>{row.credit_head}</small></strong>
                           <Button size="small" variant="outlined" onClick={() => getServiceStatus(row)}>Check status</Button>
@@ -599,7 +599,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
                 <Button onClick={handleClose} color="primary">
                   No
                 </Button>
-                <Button onClick={() => deleteVehicle()} color="primary" autoFocus>
+                <Button onClick={() => deleteVehicle()} color="primary">
                   Yes
                 </Button>
               </DialogActions>

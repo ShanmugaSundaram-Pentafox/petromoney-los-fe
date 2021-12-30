@@ -1,6 +1,7 @@
 import { AppBar, Toolbar, Hidden, Tooltip, IconButton, RadioGroup, Radio, FormControlLabel, Button } from '@material-ui/core';
 import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 import MenuIcon from '@material-ui/icons/Menu';
+import RefreshIcon from '@material-ui/icons/Refresh';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
@@ -65,6 +66,27 @@ const useStyles = makeStyles(theme => {
     },
     goback: {
       marginRight: theme.spacing(1)
+    },
+    // refresh: {
+    //   borderRadius: 5,
+    //   cursor: 'pointer',
+    //   display: 'flex',
+    //   alignItems: 'center',
+    //   color: 'gray',
+    //   marginLeft: 12,
+    //   transition: '.2s',
+    //   // padding: 2
+    //   '&:hover': {
+    //   border: '1px solid gray',
+    //   }
+    // }
+    refresh: {
+      // transition: 'all .2s ease-in-out',
+      borderRadius: 4,
+      '&:hover': {
+        // border: '1px solid gray'
+        backgroundColor: '#f4f4f4'
+      }
     }
   })
 });
@@ -201,7 +223,11 @@ const Topbar = (props) => {
             }
             {
               typeof pageTitle === 'string' && pageTitle?.toLowerCase() == 'dashboard' && user.role_name === 'ADMIN' && dashboardView === 'LMS' && (
-                <Button size='small' variant='contained' color='secondary' style={{marginLeft: 12}} onClick={handleRefresh}>Refresh</Button>
+                // <div className={classes.refresh}>
+                //   <RefreshIcon fontSize='small'/>
+                //   <label>Refresh</label>
+                // </div>
+                <Button className={classes.refresh} size='small' style={{marginLeft: 12}} onClick={handleRefresh} startIcon={<RefreshIcon fontSize='small'/>}><span style={{color: 'hsl(0,0%,65%)', fontWeight: 500}}>Refresh</span></Button>
               )
             }
 

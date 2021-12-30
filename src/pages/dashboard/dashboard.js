@@ -162,44 +162,42 @@ const Dashboard = ({ currentUser, dashboardView }) => {
     //   })
 
 
-    setTimeout(() => {
-      getAll_ls1_Metrices()
-        .then(res => {
-          const result = res[0] || {};
-          setLs1Metrices(result);
-          let overallData = [
-            ['Days', 'Amount', { role: 'tooltip', type: 'string', p: { html: true } }, { role: 'style' }, { role: 'annotation' }],
-            ['<=3 Days', result.lt3_days, currencyFormat(result.lt3_days), '#81B214', currencyFormat(result.lt3_days)],
-            ['4-15 Days', result.gt4lt15_days, currencyFormat(result.gt4lt15_days), '#5C7AEA', currencyFormat(result.gt4lt15_days)],
-            ['15-30 Days', result.gt15lt30_days, currencyFormat(result.gt15lt30_days), '#8236CB', currencyFormat(result.gt15lt30_days)],
-            ['30-60 Days', result.gt30lt60_days, currencyFormat(result.gt30lt60_days), '#FF9300', currencyFormat(result.gt30lt60_days)],
-            ['60-90 Days', result.gt60lt90_days, currencyFormat(result.gt60lt90_days), '#FF6767', currencyFormat(result.gt60lt90_days)],
-            ['>=90 Days', result.gt90_days, currencyFormat(result.gt90_days), '#E02401', currencyFormat(result.gt90_days)],
-          ]
-          setdaysChartData(overallData);
-        })
-        .catch(err => {
-          console.log(err)
-        })
+    getAll_ls1_Metrices()
+      .then(res => {
+        const result = res[0] || {};
+        setLs1Metrices(result);
+        let overallData = [
+          ['Days', 'Amount', { role: 'tooltip', type: 'string', p: { html: true } }, { role: 'style' }, { role: 'annotation' }],
+          ['<=3 Days', result.lt3_days, currencyFormat(result.lt3_days), '#81B214', currencyFormat(result.lt3_days)],
+          ['4-15 Days', result.gt4lt15_days, currencyFormat(result.gt4lt15_days), '#5C7AEA', currencyFormat(result.gt4lt15_days)],
+          ['15-30 Days', result.gt15lt30_days, currencyFormat(result.gt15lt30_days), '#8236CB', currencyFormat(result.gt15lt30_days)],
+          ['30-60 Days', result.gt30lt60_days, currencyFormat(result.gt30lt60_days), '#FF9300', currencyFormat(result.gt30lt60_days)],
+          ['60-90 Days', result.gt60lt90_days, currencyFormat(result.gt60lt90_days), '#FF6767', currencyFormat(result.gt60lt90_days)],
+          ['>=90 Days', result.gt90_days, currencyFormat(result.gt90_days), '#E02401', currencyFormat(result.gt90_days)],
+        ]
+        setdaysChartData(overallData);
+      })
+      .catch(err => {
+        console.log(err)
+      })
 
-      getAll_ls2_Metrices()
-        .then(res => {
-          const result = res;
-          let total = 0;
-          const colors = ['#4cba6b', '#5899DA', '#E8743B', '#19A979', '#ED4A7B', '#945ECF', '#13A4B4', '#525DF4', '#BF399E', '#6C8893', '#EE6868', '#2F6497', '#f5b04d', '#8a3800', '#008B73', '#42C1AA', '#00A8D2', '#6929c4', '#4589ff']
-          const dataSource = result.map((item, index) => {
-            total += item.od_amount;
-            // createCustomHTMLContentforPie(item.od_amount)
-            return [item.cust_region, item.od_amount, colors[index], currencyFormat(item.od_amount)]
-          });
-          dataSource.length && dataSource.unshift(['Region', 'Amount', { role: 'style' }, { role: 'annotation' },]);
-          setTotalForRegion(currencyFormat(total));
-          setLs2Metrices(dataSource);
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    }, 4000)
+    getAll_ls2_Metrices()
+      .then(res => {
+        const result = res;
+        let total = 0;
+        const colors = ['#4cba6b', '#5899DA', '#E8743B', '#19A979', '#ED4A7B', '#945ECF', '#13A4B4', '#525DF4', '#BF399E', '#6C8893', '#EE6868', '#2F6497', '#f5b04d', '#8a3800', '#008B73', '#42C1AA', '#00A8D2', '#6929c4', '#4589ff']
+        const dataSource = result.map((item, index) => {
+          total += item.od_amount;
+          // createCustomHTMLContentforPie(item.od_amount)
+          return [item.cust_region, item.od_amount, colors[index], currencyFormat(item.od_amount)]
+        });
+        dataSource.length && dataSource.unshift(['Region', 'Amount', { role: 'style' }, { role: 'annotation' },]);
+        setTotalForRegion(currencyFormat(total));
+        setLs2Metrices(dataSource);
+      })
+      .catch(err => {
+        console.log(err)
+      })
   });
   useMount(() => {
     getDealerDetails()
@@ -251,17 +249,17 @@ const Dashboard = ({ currentUser, dashboardView }) => {
         ) : (
           <>
             <Grid container spacing={2}>
-              <Grid item xs={12}>
-                {
-                  dashboardView === 'LOS' && (
+              {
+                dashboardView === 'LOS' && (
+                  <Grid item xs={12}>
                     <DashboardFilter 
                       filterQry={setFilterQry}
                       setChartData={setChartData}
                       setTotalLoans={setTotalLoans}
                     />
-                  )
-                }
-              </Grid>
+                  </Grid>
+                )
+              }
               <Grid item xs={12}>
                 {
                   dashboardView === 'LOS' && (

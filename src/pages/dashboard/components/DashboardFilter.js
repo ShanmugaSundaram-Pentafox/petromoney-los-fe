@@ -213,7 +213,9 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans }) => {
   }
 
   useEffect(() => {
-    getAllRegions(selectedZones)
+    let zoneId = []
+    selectedZones.forEach(item => zoneId.push(item.value))
+    getAllRegions(zoneId.toString())
       .then(data => {
         setRegions(data);
       })

@@ -258,6 +258,8 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                       filterQry={setFilterQry}
                       setChartData={setChartData}
                       setTotalLoans={setTotalLoans}
+                      filterType='Dashboard'
+                      filters={['zone', 'region', 'product', 'period']}
                     />
                   )
                 }

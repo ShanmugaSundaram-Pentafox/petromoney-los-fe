@@ -15,6 +15,7 @@ import { NavLink as RouterLink } from 'react-router-dom';
 import { ReactComponent as LoanAgreementIcon } from '../../icons/loan_agreement.svg';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
+import { dateCustomSort } from '../../utils/commonFunctions.util';
 import SignRequestLayout from '../Leegality/SignRequestLayout';
 import Currency from '../Number/Currency';
 // import { URL } from '../../config/serverUrls';
@@ -230,10 +231,10 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
         onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'approved')
       }
     },
-    // onRowClick: (rowData, { dataIndex }) => {
-    //   // console.log(rowData, rowMeta);
-    //   onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'approved')
-    // }
+    customSort: (data, dataIndex, rowIndex) => {
+      let dateIndex = 5
+      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
+    }
   };
   return (
     <div className={classes.root}>

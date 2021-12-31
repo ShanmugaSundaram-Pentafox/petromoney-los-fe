@@ -50,8 +50,8 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
   const [userRole, setUserRole] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState();
   const { enqueueSnackbar } = useSnackbar();
-  const { data: loanData = [], isLoading } = useQuery(['dealership-loans', id], () => getDealershipLoansById(id))
-  const { data: status } = useQuery(['dealership-status', id], () => getApplicationStatusById(id))
+  const { data: loanData = [], isLoading } = useQuery(['dealership-loans', id], () => getDealershipLoansById(id), {refetchOnWindowFocus: false})
+  const { data: status } = useQuery(['dealership-status', id], () => getApplicationStatusById(id), {refetchOnWindowFocus: false})
   useEffect(() => {
     if (!isLoading) {
       let val = loanData[0].status === 'submitted' ? 'is_review=1' : 'is_approve=1'

@@ -81,12 +81,8 @@ const AddNewVehicleForm = ({
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
   const [vehicleDetails, setVehicleDetails] = useState()
-  // const [vehNo, setVehNo] = useState()
   const classes = useStyles();
 
-  // const handleEdit = () => {
-  //   setReadOnly(!readOnly);
-  // };
   const {
     values,
     errors,
@@ -105,38 +101,9 @@ const AddNewVehicleForm = ({
     }),
     onSubmit: (formData) => {
       setLoading(true);
-      // if (isAdd === 'Edit') {
-      //   updateVehicle(formData, id, trans_id)
-      //     .then((message) => {
-      //       setVehNo(formData)
-      //       setLoading(false);
-      //       enqueueSnackbar(message, {
-      //         anchorOrigin: {
-      //           vertical: 'top',
-      //           horizontal: 'right',
-      //         },
-      //         variant: 'success',
-      //       });
-
-      //       setTimeout(() => {
-      //         window.location.reload();
-      //       }, 2000);
-      //     })
-      //     .catch((e) => {
-      //       setLoading(false);
-      //       enqueueSnackbar(e, {
-      //         anchorOrigin: {
-      //           vertical: 'top',
-      //           horizontal: 'right',
-      //         },
-      //         variant: 'error',
-      //       });
-      //     });
-      // } else {
       addNewVehicle(formData, id)
         .then((message) => {
           setLoading(false)
-          // setVehNo(formData)
           enqueueSnackbar(message, {
             anchorOrigin: {
               vertical: 'top',
@@ -144,9 +111,6 @@ const AddNewVehicleForm = ({
             },
             variant: 'success',
           });
-          // setTimeout(() => {
-          //   window.location.reload();
-          // }, 2000);
           getVehicleInfoFromID(id)
             .then((data) => {
               setVehicleDetails(JSON.parse(data?.find(item => item.tt_no === formData.tt_no)?.vehicle_details))
@@ -301,61 +265,6 @@ const AddNewVehicleForm = ({
           </Button>
         </div>
       </div>
-      {/* <div className={classes.actionFooter}>
-        <Divider />
-        <div className={classes.actionButtonsWrapper}>
-          <Button
-            variant='outlined'
-            startIcon={<NavigateBeforeRoundedIcon />}
-            disabled={loading}
-            onClick={callback}
-          >
-            Back
-          </Button>
-          {!readOnly ? (
-            !loading ? (
-              <>
-                <Button
-                  variant='contained'
-                  type='submit'
-                  className={clsx(classes.btn, classes.editButton)}
-                  startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                  disabled={loading}
-                  onClick={loading ? () => null : handleSubmit}
-                >
-                  Save
-                </Button>
-              </>
-            ) : (
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                  width: '90%',
-                  margin: '0 auto',
-                }}
-              >
-                <CircularProgress size={30} />
-              </div>
-            )
-          ) : (
-            <>
-              <div>
-                <Button
-                  variant='contained'
-                  type='submit'
-                  className={clsx(classes.btn, classes.editButton)}
-                  startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                  disabled={loading}
-                  onClick={loading ? () => null : handleEdit}
-                >
-                  Edit
-                </Button>
-              </div>
-            </>
-          )}
-        </div>
-      </div> */}
     </div>
   );
 };

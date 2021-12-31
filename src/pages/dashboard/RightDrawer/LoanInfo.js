@@ -151,7 +151,7 @@ const LoanInfo = ({
                           onChange={e => {
                             updateNewLoanInfo({
                               ...newInfo,
-                              amount_disbursed: e.target.value
+                              amount_disbursed: e.target.value || row?.amount_approved
                             })
                           }}
                         />

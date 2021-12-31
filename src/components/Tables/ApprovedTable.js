@@ -15,6 +15,7 @@ import { NavLink as RouterLink } from 'react-router-dom';
 import { ReactComponent as LoanAgreementIcon } from '../../icons/loan_agreement.svg';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
+import { dateCustomSort } from '../../utils/commonFunctions.util';
 import SignRequestLayout from '../Leegality/SignRequestLayout';
 import Currency from '../Number/Currency';
 // import { URL } from '../../config/serverUrls';
@@ -61,6 +62,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
   const [loading, setLoading] = useState(false);
   const [loanId, setloanId] = useState();
   const [type, setType] = useState('');
+  const [productTypeId, setProductTypeId] = useState();
 
   useEffect(() => {
     setLoading(true);
@@ -202,7 +204,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Loan Agreement">
-                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['amount_approved'])}}>
+                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['amount_approved']); setProductTypeId(loans?.[r.rowIndex]['product_id'])}}>
                     <LoanAgreementIcon width={14} />
                   </IconButton>
                 </Tooltip>
@@ -230,26 +232,9 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
       }
     },
     customSort: (data, dataIndex, rowIndex) => {
-      if (dataIndex === 5) {
-        return data.sort((a, b) => {
-          const dateA = new Date(a.data[dataIndex]).getTime();
-          const dateB = new Date(b.data[dataIndex]).getTime();
-          return (dateA < dateB ? -1 : 1) * (rowIndex === 'desc' ? 1 : -1);
-        });
-      } 
-      else {
-        return data.sort((a, b) => {
-          return (
-            (a.data[dataIndex] < b.data[dataIndex] ? -1 : 1) *
-            (rowIndex === 'desc' ? 1 : -1)
-          );
-        });
-      }
+      let dateIndex = 5
+      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
     }
-    // onRowClick: (rowData, { dataIndex }) => {
-    //   // console.log(rowData, rowMeta);
-    //   onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'approved')
-    // }
   };
   return (
     <div className={classes.root}>
@@ -271,6 +256,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
         dealershipId={dealershipId}
         loanId={loanId}
         loanAmount={loanAmount}
+        productId={productTypeId}
         type={type}
         title={'Sanction Letter'}
         onClose={() => setModalVisible(false)}

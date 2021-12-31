@@ -16,11 +16,8 @@ import Currency from '../../../src/components/Number/Currency';
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import LoanBookTable from '../../components/Tables/LoanBookTable';
 import usePageTitle from '../../hooks/usePageTitle';
-// import { InfoBoxContainer, InfoBoxWrapper } from '../../components/CommonComponents/InfoBox';
-// import { Tooltip, LabelList,Legend, BarChart, CartesianGrid, XAxis, YAxis, Bar, Text } from 'recharts';
 import { getDealerDetails } from '../../services/dealers.service';
 import { getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd } from '../../services/loans.service';
-// import { yellow } from '@material-ui/core/colors';
 
 const currencyFormat = (value) => {
   const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumSignificantDigits: 8 }).format(value)
@@ -37,19 +34,6 @@ function createCustomHTMLContent({ label, data }) {
     </div>
   `;
 }
-
-// function createCustomHTMLContentforPie(data) {
-//   return `
-//     <div style='padding: 5px; width: 220px'>
-//       <p style='font-size: 12px;'><strong>${data.cust_region}</strong></p>
-//       <table>
-//          <tr><td>Amount</td><td>: <strong> ${currencyFormat(data.od_amount)}</strong></td></tr>
-//       </table>
-//     </div>
-//   `;
-// }
-
-
 
 const arrangeData = (res) => {
   const result = res.reduce((temp, item, i) => {
@@ -93,7 +77,6 @@ const DataCharts = styled.div`
 const Dashboard = ({ currentUser, dashboardView }) => {
   usePageTitle('Dashboard');
   const classes = useStyles();
-
   const [chartData, setChartData] = useState([{}, {}, {}, {}, {}, {}]);
   const [totalLoans, setTotalLoans] = useState()
   const [ls1_metrices, setLs1Metrices] = useState({});
@@ -125,15 +108,6 @@ const Dashboard = ({ currentUser, dashboardView }) => {
 
     getAllRegionDpd()
       .then((res) => {
-        // let dataRow = []
-        // let dataColumn = []
-        /**
-         * [
-         *  ['', 'x-label 1', 'x-label 2'],
-         *  ['y-label-1', 'x-label-1-value', 'x-label-2-value'],
-         *  ['y-label-2', 'x-label-1-value', 'x-label-2-value']
-         * ]
-         */
         const result = arrangeData(res)
         setRegionData(result)
       })
@@ -141,65 +115,41 @@ const Dashboard = ({ currentUser, dashboardView }) => {
         console.log(e);
       })
 
-    // getLoanStats()
-    //   .then(data => {
-    //     // const data = _countBy(res, item => {
-    //     //   return item.status?.toLowerCase()
-    //     // });
-    //     let cdata = [
-    //       { name: 'Submitted', count: data.submitted_count },
-    //       { name: 'Pending Approval', count: data.loan_approval_count || 0 },
-    //       { name: 'Approved', count: data.approved_count },
-    //       { name: 'Pending Disbursement Approval', count: data.disbursement_approval_count || 0 },
-    //       { name: 'Disbursement Approved',count:data.disbursement_approved_count || 0 },
-    //       { name: 'Disbursed', count: data.disbursed_count },
-    //       { name: 'Rejected', count: data.rejected_count },
-    //     ];
-    //     setChartData(cdata);
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //   })
+    getAll_ls1_Metrices()
+      .then(res => {
+        const result = res[0] || {};
+        setLs1Metrices(result);
+        let overallData = [
+          ['Days', 'Amount', { role: 'tooltip', type: 'string', p: { html: true } }, { role: 'style' }, { role: 'annotation' }],
+          ['<=3 Days', result.lt3_days, currencyFormat(result.lt3_days), '#81B214', currencyFormat(result.lt3_days)],
+          ['4-15 Days', result.gt4lt15_days, currencyFormat(result.gt4lt15_days), '#5C7AEA', currencyFormat(result.gt4lt15_days)],
+          ['15-30 Days', result.gt15lt30_days, currencyFormat(result.gt15lt30_days), '#8236CB', currencyFormat(result.gt15lt30_days)],
+          ['30-60 Days', result.gt30lt60_days, currencyFormat(result.gt30lt60_days), '#FF9300', currencyFormat(result.gt30lt60_days)],
+          ['60-90 Days', result.gt60lt90_days, currencyFormat(result.gt60lt90_days), '#FF6767', currencyFormat(result.gt60lt90_days)],
+          ['>=90 Days', result.gt90_days, currencyFormat(result.gt90_days), '#E02401', currencyFormat(result.gt90_days)],
+        ]
+        setdaysChartData(overallData);
+      })
+      .catch(err => {
+        console.log(err)
+      })
 
-
-    setTimeout(() => {
-      getAll_ls1_Metrices()
-        .then(res => {
-          const result = res[0] || {};
-          setLs1Metrices(result);
-          let overallData = [
-            ['Days', 'Amount', { role: 'tooltip', type: 'string', p: { html: true } }, { role: 'style' }, { role: 'annotation' }],
-            ['<=3 Days', result.lt3_days, currencyFormat(result.lt3_days), '#81B214', currencyFormat(result.lt3_days)],
-            ['4-15 Days', result.gt4lt15_days, currencyFormat(result.gt4lt15_days), '#5C7AEA', currencyFormat(result.gt4lt15_days)],
-            ['15-30 Days', result.gt15lt30_days, currencyFormat(result.gt15lt30_days), '#8236CB', currencyFormat(result.gt15lt30_days)],
-            ['30-60 Days', result.gt30lt60_days, currencyFormat(result.gt30lt60_days), '#FF9300', currencyFormat(result.gt30lt60_days)],
-            ['60-90 Days', result.gt60lt90_days, currencyFormat(result.gt60lt90_days), '#FF6767', currencyFormat(result.gt60lt90_days)],
-            ['>=90 Days', result.gt90_days, currencyFormat(result.gt90_days), '#E02401', currencyFormat(result.gt90_days)],
-          ]
-          setdaysChartData(overallData);
-        })
-        .catch(err => {
-          console.log(err)
-        })
-
-      getAll_ls2_Metrices()
-        .then(res => {
-          const result = res;
-          let total = 0;
-          const colors = ['#4cba6b', '#5899DA', '#E8743B', '#19A979', '#ED4A7B', '#945ECF', '#13A4B4', '#525DF4', '#BF399E', '#6C8893', '#EE6868', '#2F6497', '#f5b04d', '#8a3800', '#008B73', '#42C1AA', '#00A8D2', '#6929c4', '#4589ff']
-          const dataSource = result.map((item, index) => {
-            total += item.od_amount;
-            // createCustomHTMLContentforPie(item.od_amount)
-            return [item.cust_region, item.od_amount, colors[index], currencyFormat(item.od_amount)]
-          });
-          dataSource.length && dataSource.unshift(['Region', 'Amount', { role: 'style' }, { role: 'annotation' },]);
-          setTotalForRegion(currencyFormat(total));
-          setLs2Metrices(dataSource);
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    }, 4000)
+    getAll_ls2_Metrices()
+      .then(res => {
+        const result = res;
+        let total = 0;
+        const colors = ['#4cba6b', '#5899DA', '#E8743B', '#19A979', '#ED4A7B', '#945ECF', '#13A4B4', '#525DF4', '#BF399E', '#6C8893', '#EE6868', '#2F6497', '#f5b04d', '#8a3800', '#008B73', '#42C1AA', '#00A8D2', '#6929c4', '#4589ff']
+        const dataSource = result.map((item, index) => {
+          total += item.od_amount;
+          return [item.cust_region, item.od_amount, colors[index], currencyFormat(item.od_amount)]
+        });
+        dataSource.length && dataSource.unshift(['Region', 'Amount', { role: 'style' }, { role: 'annotation' },]);
+        setTotalForRegion(currencyFormat(total));
+        setLs2Metrices(dataSource);
+      })
+      .catch(err => {
+        console.log(err)
+      })
   });
   useMount(() => {
     getDealerDetails()
@@ -215,18 +165,11 @@ const Dashboard = ({ currentUser, dashboardView }) => {
         ]
         setDealerChartData(dData)
       })
-
       .catch((e) => {
         console.log(e);
       });
   });
 
-
-  // const CustomizedAxisTick = ({ x, y, payload }) => {
-  //   return (
-  //     <Text x={x} y={y} fill='#666' width={70} fontSize='12' fontWeight='bold' textAnchor="middle" verticalAnchor="start">{payload.value}</Text>
-  //   )
-  // }
   return (
     <div style={{ flexGrow: 1 }}>
       {
@@ -251,17 +194,17 @@ const Dashboard = ({ currentUser, dashboardView }) => {
         ) : (
           <>
             <Grid container spacing={2}>
-              <Grid item xs={12}>
-                {
-                  dashboardView === 'LOS' && (
+              {
+                dashboardView === 'LOS' && (
+                  <Grid item xs={12}>
                     <DashboardFilter 
                       filterQry={setFilterQry}
                       setChartData={setChartData}
                       setTotalLoans={setTotalLoans}
                     />
-                  )
-                }
-              </Grid>
+                  </Grid>
+                )
+              }
               <Grid item xs={12}>
                 {
                   dashboardView === 'LOS' && (

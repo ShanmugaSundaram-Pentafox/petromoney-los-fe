@@ -13,6 +13,7 @@ import { NavLink as RouterLink } from 'react-router-dom';
 import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
+import { dateCustomSort } from '../../utils/commonFunctions.util';
 import SignRequestLayout from '../Leegality/SignRequestLayout';
 import Currency from '../Number/Currency';
 
@@ -189,21 +190,8 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
       }
     },
     customSort: (data, dataIndex, rowIndex) => {
-      if (dataIndex === 5) {
-        return data.sort((a, b) => {
-          const dateA = new Date(a.data[dataIndex]).getTime();
-          const dateB = new Date(b.data[dataIndex]).getTime();
-          return (dateA < dateB ? -1 : 1) * (rowIndex === 'desc' ? 1 : -1);
-        });
-      } 
-      else {
-        return data.sort((a, b) => {
-          return (
-            (a.data[dataIndex] < b.data[dataIndex] ? -1 : 1) *
-            (rowIndex === 'desc' ? 1 : -1)
-          );
-        });
-      }
+      let dateIndex = 5
+      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
     }
   };
 

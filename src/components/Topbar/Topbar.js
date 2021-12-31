@@ -1,33 +1,29 @@
-import { AppBar, Toolbar, Hidden, Tooltip, IconButton, RadioGroup, Radio, FormControlLabel } from '@material-ui/core';
+import { AppBar, Toolbar, Hidden, Tooltip, IconButton, RadioGroup, Radio, FormControlLabel, Button } from '@material-ui/core';
 import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 import MenuIcon from '@material-ui/icons/Menu';
+import RefreshIcon from '@material-ui/icons/Refresh';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
+import { useSnackbar } from 'notistack';
 import PropTypes from 'prop-types';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-// import { Link as RouterLink } from 'react-router-dom';
-// import ToggleButton from '@material-ui/lab/ToggleButton';
-// import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import styled from 'styled-components';
 import { rulesList } from '../../config/userRules';
 import SendEmailAction from '../../pages/reports/SendEmailAction';
+import { refreshRedis } from '../../services/common.service';
 import { setDashboardView } from '../../store/common/common.actions';
 import { resetCurrentUser } from '../../store/user/user.actions';
-// import NotificationsBell from '../CommonComponents/NotificationsBell';
 import AddNewUserAction from '../AddNewUser/AddNewUserAction';
 import LoginUserInfo from '../CommonComponents/LoginUserInfo';
 import NotificationSidebar from '../CommonComponents/NotificationSidebar';
 import { permissionCheck } from '../UserCan/UserCan';
-// import Searchbox from '../CommonComponents/Searchbox';
 
 const useStyles = makeStyles(theme => {
   return ({
     root: {
-      boxShadow: 'none',
       color: theme.palette.primary.dark,
-      backgroundColor: 'transparent',
       boxShadow: '0 0 0 1px rgba(63,63,68,0.05), 0 1px 2px 0 rgba(63,63,68,0.15)',
       backgroundColor: theme.palette.white,
       borderBottomColor: theme.palette.grey
@@ -65,6 +61,12 @@ const useStyles = makeStyles(theme => {
     },
     goback: {
       marginRight: theme.spacing(1)
+    },
+    refresh: {
+      borderRadius: 4,
+      '&:hover': {
+        backgroundColor: '#f4f4f4'
+      }
     }
   })
 });
@@ -101,16 +103,33 @@ const CardWrapper = styled.div`
   }
 `;
 
-
 const Topbar = (props) => {
   const { className, onSidebarOpen, pageTitle, user, logout, match, history, goBackIcon, appBarProps, dashboardView, updateDashboardView } = props;
   const classes = useStyles();
-  // const [notifications] = useState([]);
+  const { enqueueSnackbar } = useSnackbar();
   const [showNotificationSidebar, setShowNotificationSidebar] = useState(false);
-  useEffect(() => {
-
-  }, [dashboardView])
   const editable = permissionCheck(user.role_name, rulesList.dealer_edit)
+  const handleRefresh = () => {
+    refreshRedis()
+      .then(message => {
+        enqueueSnackbar(message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        });
+      })
+      .catch(e => {
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      })
+  }
   return (
     <Fragment>
       <AppBar
@@ -118,15 +137,7 @@ const Topbar = (props) => {
         className={clsx(classes.root, className)}
       >
         <Toolbar className={classes.topbarStyle}>
-          {/* <RouterLink to="/" className={classes.logoLink}>
-            <img
-              alt="Logo"
-              src="/images/logo.png"
-              height="48px"
-            />
-          </RouterLink> */}
           {
-
             goBackIcon && editable && (
               <Tooltip title="Go Back">
                 <IconButton edge="start" className={classes.goback} color="inherit" aria-label="goback" onClick={history.goBack}>
@@ -138,10 +149,9 @@ const Topbar = (props) => {
           <h2 className={classes.title}>
             {typeof pageTitle === 'string' ? pageTitle : (
               <>
-                {/* <pageTitle /> */}
                 {
                   Array.isArray(pageTitle) && pageTitle.map((item, i) => (
-                    <CardWrapper>
+                    <CardWrapper key={i}>
                       <div>
                         <div className="stat-number-block">
                           <div className="stat-number">
@@ -177,6 +187,11 @@ const Topbar = (props) => {
                 </span>
               ) : null
             }
+            {
+              typeof pageTitle === 'string' && pageTitle?.toLowerCase() == 'dashboard' && user.role_name === 'ADMIN' && dashboardView === 'LMS' && (
+                <Button className={classes.refresh} size='small' style={{marginLeft: 12}} onClick={handleRefresh} startIcon={<RefreshIcon fontSize='small'/>}><span style={{color: 'hsl(0,0%,65%)', fontWeight: 500}}>Refresh</span></Button>
+              )
+            }
 
             {
               match?.path?.toLowerCase() == '/users' && (
@@ -205,34 +220,8 @@ const Topbar = (props) => {
           </h2>
           <div className={classes.flexGrow} />
           <Hidden mdDown>
-            {/* <Searchbox /> */}
-            {/* <NotificationsBell action={() => setShowNotificationSidebar(true)} /> */}
             <LoginUserInfo user={user} logout={logout} />
-
-            {/* <Tooltip title="Logout">
-              <IconButton
-                className={classes.signOutButton}
-                color="inherit"
-                onClick={logout}
-              >
-                <InputIcon />
-              </IconButton>
-            </Tooltip> */}
           </Hidden>
-          {/* <Hidden lgUp>
-            <Searchbox />
-            <NotificationsBell action={() => setShowNotificationSidebar(true)} />
-            <LoginUserInfo user={user} logout={logout} />
-            <Tooltip title="Logout">
-              <IconButton
-                className={classes.signOutButton}
-                color="inherit"
-                onClick={logout}
-              >
-                <InputIcon />
-              </IconButton>
-            </Tooltip>
-          </Hidden> */}
           <Hidden lgUp>
             <IconButton
               color="inherit"

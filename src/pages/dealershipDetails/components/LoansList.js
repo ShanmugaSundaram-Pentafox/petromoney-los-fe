@@ -1,6 +1,5 @@
 import { Select as MSelect } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-// import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -16,7 +15,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import Select from 'react-select';
 import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
@@ -37,50 +36,45 @@ const useStyles = makeStyles({
     marginBottom: 8
   },
   table: {
-    // minWidth: 650,
     padding: 8
   },
 });
 
 const LoansList = ({ id, currentUser, titleAlign }) => {
+  const queryClient = useQueryClient()
   const classes = useStyles();
-  // const [data, setLoansData] = useState();
   const [loading, setLoading] = useState(false);
   const [remarks, setRemarks] = useState();
   const [dialogState, setDialogState] = useState({});
-  // const [status, setStatus] = useState([]);
   const [user, setUser] = useState([]);
   const [userRole, setUserRole] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState();
-  const [optionsLoading, setOptionsLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
-  const { data: loanData, refetch: refetchData, isLoading } = useQuery(['dealership-loans', id], () => getDealershipLoansById(id))
-  const { data: status } = useQuery(['dealership-status', id], () => getApplicationStatusById(id))
+  const { data: loanData = [], isLoading } = useQuery(['dealership-loans', id], () => getDealershipLoansById(id), {refetchOnWindowFocus: false})
+  const { data: status } = useQuery(['dealership-status', id], () => getApplicationStatusById(id), {refetchOnWindowFocus: false})
   useEffect(() => {
     if (!isLoading) {
-      if (loanData.length) {
-        let val = loanData[0]?.status === 'submitted' ? 'is_review=1' : 'is_approve=1'
-        getUserRoleForReview(val)
-          .then(res => {
-            let d = [];
-            res.forEach((item, i) => {
-              d.push({
-                label: <div>{item.first_name} {item.last_name}</div>,
-                value: item.id
-              })
+      let val = loanData[0].status === 'submitted' ? 'is_review=1' : 'is_approve=1'
+      getUserRoleForReview(val)
+        .then(res => {
+          let d = [];
+          res.forEach((item, i) => {
+            d.push({
+              label: <div>{item.first_name} {item.last_name}</div>,
+              value: item.id
             })
-            setUserRole(d);
           })
-          .catch(e => {
-            console.log(e);
-          })
-      }
-      if (loanData[0]?.application_state_id) {
-        const re = status.find(d => d.id == loanData[0]?.application_state_id)
-        setSelectedStatus({ ...re, disabled: status !== 'loan_approval' } || {})
-      }
+          setUserRole(d);
+        })
+        .catch(e => {
+          console.log(e);
+        })
     }
-  }, [status])
+    if (loanData[0]?.application_state_id) {
+      const re = status.find(d => d.id == loanData[0]?.application_state_id)
+      setSelectedStatus({ ...re, disabled: status !== 'loan_approval' } || {})
+    }
+  }, [status, loanData])
 
   const processLoan = loan => {
     let status, remarksObj = {};
@@ -103,7 +97,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
 
     status && updateLoanApprovalStatusById(id, loan.id, 'approval', { user_id: currentUser.id, ...remarksObj })
       .then(res => {
-        refetchData();
+        queryClient.invalidateQueries(['dealership-loans', id])
         setLoading(false);
         setDialogState({});
       })
@@ -130,10 +124,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
     })
       .then(res => {
         if (res.status === 'SUCCESS') {
-          refetchData();
-          // getDealershipLoansById(id)
-          //   .then(data => setLoansData(data))
-          //   .catch(e => null)
+          queryClient.invalidateQueries(['dealership-loans', id])
           enqueueSnackbar(res.message, {
             anchorOrigin: {
               vertical: 'top',
@@ -215,7 +206,6 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
                     <Button
                       variant="outlined"
                       color="primary"
-                      // fontSize="small"
                       size='small'
                       disabled={loading}
                       className={classes.btnSuccess}
@@ -231,7 +221,6 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
                     <Button
                       variant="outlined"
                       color="primary"
-                      // fontSize="small"
                       size='small'
                       disabled={loading}
                       className={classes.btnSuccess}

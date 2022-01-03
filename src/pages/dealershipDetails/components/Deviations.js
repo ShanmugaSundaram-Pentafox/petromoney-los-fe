@@ -1,4 +1,4 @@
-import { Table, TableBody, TableHead, TableRow, TableCell, Typography, makeStyles, TextField, Button, CircularProgress } from '@material-ui/core';
+import { Table, TableBody, TableHead, TableRow, TableCell, Typography, makeStyles, TextField, Button, CircularProgress, FormControlLabel, Checkbox } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { useSnackbar } from 'notistack';
 import React, {useState} from 'react'
@@ -43,7 +43,7 @@ const Deviations = ({id}) => {
   const [deviationData, setDeviationData] = useState([])
   const [manualDeviationData, setManualDeviationData] = useState([])
   const { enqueueSnackbar } = useSnackbar();
-  
+
   const deviationsTable = useQuery(['deviations', id], () => {return getDeviations(id)}, {
     onError: (error) => {
       setErrorStatus(error)
@@ -80,16 +80,17 @@ const Deviations = ({id}) => {
   })
 
   const onChange = (e, i) => {
-    const {name, value} = e.target
+    const {name, value, checked} = e.target
     const newData = [...deviationData]
-    newData[i] = {...newData[i], [name]: value}
+    newData[i] = {...newData[i], [name]: checked ? checked : value}
     setDeviationData(newData)
+    console.log(newData);
   }
 
   const onManualChange = (e, i) => {
-    const {name, value} = e.target
+    const {name, value, checked} = e.target
     const newData = [...manualDeviationData]
-    newData[i] = {...newData[i], [name]: value}
+    newData[i] = {...newData[i], [name]: checked ? checked : value}
     setManualDeviationData(newData)
   }
 
@@ -128,7 +129,8 @@ const Deviations = ({id}) => {
                     <TableCell>Policy</TableCell>
                     <TableCell>Actual</TableCell>
                     <TableCell>Deviation</TableCell>
-                    <TableCell>Deviation Review</TableCell>
+                    <TableCell>Deviation Remarks</TableCell>
+                    <TableCell>Status</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -174,6 +176,22 @@ const Deviations = ({id}) => {
                                           fullWidth
                                         />
                                       </TableCell>
+                                      <TableCell>
+                                        <FormControlLabel
+                                          control={
+                                            <Checkbox
+                                              checked={item?.status}
+                                              disabled={item.deviation_review.length <= 3}
+                                              name="status"
+                                              onChange={(e) => {
+                                                if(item.deviation_review.length !== 1){
+                                                  onChange(e, i)
+                                                }
+                                              }}
+                                            />
+                                          }
+                                        />
+                                      </TableCell>
                                     </TableRow>
                                   )
                                 })
@@ -192,7 +210,8 @@ const Deviations = ({id}) => {
                 <TableHead>
                   <TableRow>
                     <TableCell>Deviation Description</TableCell>
-                    <TableCell>Deviation Review</TableCell>
+                    <TableCell>Deviation Remarks</TableCell>
+                    <TableCell>Status</TableCell>
                     <TableCell align="right">Action</TableCell>
                   </TableRow>
                 </TableHead>
@@ -217,6 +236,22 @@ const Deviations = ({id}) => {
                                               placeholder="Review..."
                                               value={item.deviation_review}
                                               onChange={e => onManualChange(e, i)}
+                                            />
+                                          </TableCell>
+                                          <TableCell>
+                                            <FormControlLabel
+                                              control={
+                                                <Checkbox
+                                                  checked={item?.status}
+                                                  disabled={item.deviation_review.length <= 3}
+                                                  name="status"
+                                                  onChange={(e) => {
+                                                    if(item.deviation_review.length !== 1){
+                                                      onManualChange(e, i)
+                                                    }
+                                                  }}
+                                                />
+                                              }
                                             />
                                           </TableCell>
                                           <TableCell align="right">
@@ -251,7 +286,7 @@ export default Deviations;
 export const DeviationsTable = ({id}) => {
   const classes = useStyles()
 
-  const deviationsTable = useQuery(['deviations', id], () => {return getDeviations(id)}, {
+  const { data: deviationsTable=[] } = useQuery(['deviations', id], () => {return getDeviations(id)}, {
     onError: (error) => {
       console.log(error);
     },
@@ -264,7 +299,7 @@ export const DeviationsTable = ({id}) => {
       </div>
       <div className={classes.tableContainer}>
         {
-          deviationsTable?.data?.data?.length ? (
+          deviationsTable?.data?.length ? (
             <Table>
               <TableHead>
                 <TableRow>
@@ -272,12 +307,13 @@ export const DeviationsTable = ({id}) => {
                   <TableCell>Policy</TableCell>
                   <TableCell>Actual</TableCell>
                   <TableCell>Deviation</TableCell>
-                  <TableCell>Deviation Review</TableCell>
+                  <TableCell>Deviation Remarks</TableCell>
+                  <TableCell>Status</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {
-                                deviationsTable?.data?.data?.map((item, i)=> {
+                                deviationsTable?.data?.map((item, i)=> {
                                   return(
                                     <TableRow key={i}>
                                       <TableCell>{item.particulars}</TableCell>
@@ -285,6 +321,7 @@ export const DeviationsTable = ({id}) => {
                                       <TableCell>{item.actual}</TableCell>
                                       <TableCell>{item?.deviation}</TableCell>
                                       <TableCell>{item?.deviation_review}</TableCell>
+                                      <TableCell>{item?.status === true ? 'Reviewed' : '-'}</TableCell>
                                     </TableRow>
                                   )
                                 })
@@ -299,12 +336,13 @@ export const DeviationsTable = ({id}) => {
           <Typography variant="h5">Manual Deviations</Typography>
         </div>
         {
-          deviationsTable?.data?.others?.length ? (
+          deviationsTable?.others?.length ? (
             <Table>
               <TableHead>
                 <TableRow>
                   <TableCell>Deviation Description</TableCell>
-                  <TableCell>Deviation Review</TableCell>
+                  <TableCell>Deviation Remarks</TableCell>
+                  <TableCell>Status</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -314,6 +352,7 @@ export const DeviationsTable = ({id}) => {
                                     <TableRow key={i}>
                                       <TableCell>{item.deviation_description}</TableCell>
                                       <TableCell>{item.deviation_review}</TableCell>
+                                      <TableCell>{item.status === true ? 'Reviewed' : '-'}</TableCell>
                                     </TableRow>
                                   )
                                 })

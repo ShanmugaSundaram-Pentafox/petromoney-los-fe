@@ -38,3 +38,20 @@ export const numInWords = (num) => {
   return str = str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+export const dateCustomSort = (data, dataIndex, rowIndex, dateIndex) => {
+  if (dataIndex === dateIndex) {
+    return data.sort((a, b) => {
+      const dateA = new Date(a.data[dataIndex]).getTime();
+      const dateB = new Date(b.data[dataIndex]).getTime();
+      return (dateA < dateB ? -1 : 1) * (rowIndex === 'desc' ? 1 : -1);
+    });
+  } 
+  else {
+    return data.sort((a, b) => {
+      return (
+        (a.data[dataIndex] < b.data[dataIndex] ? -1 : 1) *
+        (rowIndex === 'desc' ? 1 : -1)
+      );
+    });
+  }
+}

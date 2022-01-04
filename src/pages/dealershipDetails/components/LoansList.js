@@ -73,7 +73,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
       }
     }
     if (loanData[0]?.application_state_id) {
-      const re = status.find(d => d.id == loanData[0]?.application_state_id)
+      const re = status?.find(d => d.id == loanData[0]?.application_state_id)
       setSelectedStatus({ ...re, disabled: status !== 'loan_approval' } || {})
     }
   }, [status, loanData])
@@ -188,7 +188,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
                       placeholder={'Select status'}
                       value={selectedStatus?.id}
                       onChange={e => {
-                        const d = status.find(i => i.id == e.target.value)
+                        const d = status?.find(i => i.id == e.target.value)
                         setSelectedStatus(d)
                         updateApplicationStatus({
                           application_state: e.target.value

@@ -168,7 +168,7 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans }) => {
     key: 'range'
   });
 
-  const { data: zones = []} = useQuery('zones', () => {return getZones()}, {refetchOnWindowFocus: false})
+  const { data: zones = []} = useQuery('zones', () => {return getZones(1)}, {refetchOnWindowFocus: false})
 
   const onDatePickerChange = ({ range }) => {
     setDateRange(range)

@@ -90,6 +90,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   const [omcData, setOmcData] = useState([]);
   const [RegionData, setRegionData] = useState([]);
   const [filterQry, setFilterQry] = useState();
+  const [opportunity, setOpportunity] = useState({})
 
   const handleClick = (name) => {
     setSelectedStatsCard(name)
@@ -97,6 +98,17 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   }
 
   useMount(() => {
+    fetch('http://localhost:3333/data')
+      .then(res => res.json())
+      .then(data => {
+        setOpportunity({
+          approved_amount:[['','Current','Projection'],['Approved Amount', parseFloat(data?.current?.amount_approved), parseFloat(data?.projection?.amount_approved)]],
+          average_amount:[['','Current','Projection'],['Avg. Amount', parseFloat(data?.current?.average_amount), parseFloat(data?.projection?.average_amount)]],
+          count:[['','Current','Projection'],['Leads', parseInt(data?.current?.leads), parseInt(data?.projection?.leads)],['Convertion', parseInt(data?.current?.convertion_count), parseInt(data?.projection?.convertion_count)],['Rejection', parseInt(data?.current?.rejection_count), parseInt(data?.projection?.rejection_count)]],
+          average_time_taken:[['','Current','Projection'],['Avg. Time Taken *(Convertion Count Considering 10 Employees)', parseInt(data?.current?.average_time_taken), parseInt(data?.projection?.average_time_taken)]],
+        })
+      })
+    
     getAllOmcDpd()
       .then((res) => {
         const result = arrangeData(res)
@@ -238,10 +250,20 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                       {ls2_metrices.length ? <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion} /> : <Paper className={classes.noData}>No Data Found. Check if EOD has been completed</Paper>}
                     </DataCharts>
                   </Grid>
+                  <Grid item md={12} style={{display: 'flex'}}>
+                    <Grid item md={6}>
+                      <BarChartData daysChartData={opportunity?.approved_amount} height='150px' title="Opportunies" />
+                      <BarChartData daysChartData={opportunity?.average_amount} height='160px' yAxis='Amount(in Rupees)' title=""/>
+                    </Grid>
+                    <Grid item md={6}>
+                      <BarChartData daysChartData={opportunity?.count} height='220px' legend={true} />
+                      <BarChartData daysChartData={opportunity?.average_time_taken} height='130px' />
+                    </Grid>
+                  </Grid>
                   <div style={{ width: '50%' }}>
                     <Grid item md={12} style={{ margin: '10px' }}>
                       <DataCharts>
-                        <BarChartData daysChartData={daysChartData} />
+                        <BarChartData daysChartData={daysChartData} title='DPD Wise' yAxis='Amount' />
                       </DataCharts>
                     </Grid>
                     <Grid item md={12} style={{ margin: '10px' }}>

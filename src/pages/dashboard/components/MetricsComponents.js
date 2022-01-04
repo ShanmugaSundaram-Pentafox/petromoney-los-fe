@@ -96,15 +96,7 @@ export const PieChartData = ({
       <Chart
         chartType="ColumnChart"
         width="100%"
-        // loader={<div>Loading Chart</div>}
         height="300px"
-
-        // toolbarItems={[
-        //     {
-        //       type: 'csv',
-        //       datasource: 'https://spreadsheets.google.com/tq?key=1jN0iw0usssnsG1_oi-NXtuKfsUsGme09GsFidbqxFYA',
-        //     },
-        //   ]}
         data={ls2Data}
         options={options}
       />
@@ -112,32 +104,24 @@ export const PieChartData = ({
   )
 }
 
-export const BarChartData = ({
-  daysChartData
-}) => {
+export const BarChartData = ({daysChartData, height='290px', title, yAxis, legend}) => {
   const classes = useStyles();
   return (
     <Paper>
-      <Typography variant="h5" className={classes.title}>DPD Wise</Typography>
+      {
+        title &&
+          <Typography variant="h5" className={classes.title}>{title}</Typography>
+      }
       <Chart
-        height={'290px'}
+        height={height}
         chartType="BarChart"
-        // loader={<div>Loading Chart</div>}
         data={daysChartData}
-        // toolbarItems={[
-        //     {
-        //       type: 'csv',
-        //       datasource: 'https://spreadsheets.google.com/tq?key=1jN0iw0usssnsG1_oi-NXtuKfsUsGme09GsFidbqxFYA',
-        //     },
-        //   ]}
         options={{
-          legend: { position: 'none' },
-          // colors: ['rgb(66, 133, 244)'],
-          // tooltip: { isHtml: true },
+          legend: { position: legend ? 'top' : 'none' },
           focusTarget: 'category',
           chartArea: { width: '70%' },
           hAxis: {
-            title: 'Amount',
+            title: yAxis,
             minValue: 0,
           },
         }}
@@ -154,14 +138,7 @@ export const GroupChartData = ({ chartData, title, height, xAxis, yAxis }) => {
       <Chart
         height={height}
         chartType="BarChart"
-        // loader={<div>Loading Chart</div>}
         data={chartData}
-        // toolbarItems={[
-        //     {
-        //       type: 'csv',
-        //       datasource: 'https://spreadsheets.google.com/tq?key=1jN0iw0usssnsG1_oi-NXtuKfsUsGme09GsFidbqxFYA',
-        //     },
-        //   ]}
         options={{
           chartArea: { width: '60%', height: '85%' },
           tooltip: { isHtml: true },

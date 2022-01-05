@@ -11,6 +11,7 @@ import { NavLink as RouterLink } from 'react-router-dom';
 // import { createStructuredSelector } from 'reselect';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
+import { dateCustomSort } from '../../utils/commonFunctions.util';
 import Currency from '../Number/Currency';
 
 const useStyles = makeStyles(theme => ({
@@ -153,6 +154,10 @@ const DisbursementReqestTable = ({ title, loans, setLoansData, onRowClick, filte
     onRowClick: (rowData, { dataIndex }) => {
       // console.log(rowData, rowMeta);
       onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'disbursement_approval')
+    },
+    customSort: (data, dataIndex, rowIndex) => {
+      let dateIndex = 5
+      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
     }
   };
 

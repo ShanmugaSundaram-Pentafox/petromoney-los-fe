@@ -17,7 +17,7 @@ import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import LoanBookTable from '../../components/Tables/LoanBookTable';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getDealerDetails } from '../../services/dealers.service';
-import { getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd } from '../../services/loans.service';
+import { getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd, getOpportunities } from '../../services/loans.service';
 
 const currencyFormat = (value) => {
   const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumSignificantDigits: 8 }).format(value)
@@ -98,8 +98,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   }
 
   useMount(() => {
-    fetch('http://localhost:3333/data')
-      .then(res => res.json())
+    getOpportunities()
       .then(data => {
         setOpportunity({
           approved_amount:[['','Current','Projection'],['Approved Amount', parseFloat(data?.current?.amount_approved), parseFloat(data?.projection?.amount_approved)]],
@@ -108,6 +107,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
           average_time_taken:[['','Current','Projection'],['Avg. Time Taken *(Convertion Count Considering 10 Employees)', parseInt(data?.current?.average_time_taken), parseInt(data?.projection?.average_time_taken)]],
         })
       })
+      .catch(e => console.log(e))
     
     getAllOmcDpd()
       .then((res) => {

@@ -301,3 +301,19 @@ export const getLoanRejectReason = () => {
       });
   });
 };
+
+export const getOpportunities = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('business/projection')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data[0] || {});
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

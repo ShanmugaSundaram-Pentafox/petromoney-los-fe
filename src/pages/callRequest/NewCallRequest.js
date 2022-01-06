@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent } from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogContent, makeStyles, Typography } from '@material-ui/core';
 import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
 import React, { useMemo, useState } from 'react'
@@ -7,8 +7,21 @@ import TextInput from '../../components/TextInput/TextInput';
 import usePageTitle from '../../hooks/usePageTitle';
 import { resolveCallbackRequest } from '../../services/callrequest.service';
 
+const useStyles = makeStyles({
+  pill: {
+    border: '1px solid #feaa82f2',
+    marginLeft: 15,
+    paddingRight: 8,
+    paddingLeft: 8,
+    borderRadius: 3,
+    backgroundColor: '#feaa82f2',
+    color: 'white'
+  }
+})
+
 const NewCallRequest = ({callbackData}) => {
   usePageTitle('Call Request');
+  const classes = useStyles();
   const queryClient = useQueryClient()
   const { enqueueSnackbar } = useSnackbar();
   const [rowData, setRowData] = useState()
@@ -56,10 +69,18 @@ const NewCallRequest = ({callbackData}) => {
       },
       {
         name: 'dealer_name',
-        label: 'Cust Name',
+        label: 'Cust Name / Requestes',
         options: {
           customBodyRender: (value, tableMeta) => {
-            return <div>{value?.toUpperCase()} {tableMeta.rowData[2]?.toUpperCase()}</div>
+            return (
+              <div style={{display: 'flex'}}>
+                <Typography variant='body1'>{value?.toUpperCase()}</Typography>
+                {
+                  tableMeta.rowData[6] > 1 &&
+                    <Typography variant='body2' className={classes.pill}><strong>{tableMeta.rowData[6]}</strong></Typography>
+                }
+              </div>
+            )
           }
         }
       },
@@ -93,7 +114,15 @@ const NewCallRequest = ({callbackData}) => {
             return <Button variant='outlined' size='small' color='secondary' onClick={() => setRowData(tableValue?.rowData)}>Resolve</Button>
           }
         }
-      }
+      },
+      {
+        name: 'count',
+        label: 'Count',
+        options: { 
+          filter: false,
+          display: false
+        }
+      },
     ];
   });
 

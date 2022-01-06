@@ -50,10 +50,10 @@ const PreviewWrapper = styled.div`
     }
 `;
 
-export const ViewData = ({ title, value }) => {
+export const ViewData = ({ title, value, style={marginBottom: 8} }) => {
   const classes = useStyles()
   return (
-    <Box className={classes.details}>
+    <Box className={classes.details} style={style}>
       <p className={classes.title}>{title}</p>
       <strong className={classes.text}>{value ? value : '-'}</strong>
     </Box >

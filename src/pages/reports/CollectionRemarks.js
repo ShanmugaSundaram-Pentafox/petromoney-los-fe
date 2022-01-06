@@ -1,9 +1,12 @@
-import { Drawer, makeStyles } from '@material-ui/core';
+import { Drawer, Grid, makeStyles } from '@material-ui/core';
+import { Skeleton } from '@material-ui/lab';
 import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState } from 'react'
+import { useQuery } from 'react-query';
 import { CollectionRemarksDrawer } from './CollectionRemarksDrawer';
 import Currency from '../../components/Number/Currency';
 import usePageTitle from '../../hooks/usePageTitle';
+import { getCollectionRemarkData } from '../../services/users.service';
 
 const useStyles = makeStyles(theme => ({
   badge: {
@@ -19,32 +22,14 @@ const useStyles = makeStyles(theme => ({
 const CollectionRemarks = () => {
   usePageTitle('Collection Remarks');
   const classes = useStyles();
-  const [loans, setLoans] = useState([])
-  const [testData, setTestData] = useState()
   const [rowData, setRowData] = useState()
 
-  // useMount(() => {
-  //   fetch('http://localhost:3333/data')
-  //   .then(res => res.json())
-  //   .then(setTestData)
-  // })
-
-  // const { isFetching } = useQuery('remarksData', () => getReport(), {
-  //   onSuccess: (data) => {
-  //     let buffer = []
-  //     data.due.map(item => item.remarks?.length !==0 && buffer.push(item))
-  //     data.overdue.map(item => item.remarks?.length !==0 && buffer.push(item))
-  //     setLoans(buffer)
-  //   },
-  //   refetchOnWindowFocus: false
-  // })
-
-  // const { data: remarks=[] } = useQuery('remarks', () => getCollectionRemark(), {refetchOnWindowFocus: false})
+  const { data: testData=[], isFetching } = useQuery('remark-Data', () => getCollectionRemarkData(), {refetchOnWindowFocus: false})
 
   const columns = useMemo(() => {
     return [
       {
-        name: 'dealership_id',
+        name: 'cust_code',
         label: 'Dealership ID',
         options: {
           filter: false,
@@ -52,11 +37,10 @@ const CollectionRemarks = () => {
       },
       { name: 'applicant_name', label: 'Applicant Name' },
       {
-        name: 'region',
+        name: 'cust_region',
         label: 'Region',
         options: {
           filter: false,
-          // display: false
         }
       },
       {
@@ -64,7 +48,6 @@ const CollectionRemarks = () => {
         label: 'OMC',
         options: {
           filter: false,
-          // display: false
         }
       },
       {
@@ -78,7 +61,7 @@ const CollectionRemarks = () => {
         }
       },
       {
-        name: 'total_due',
+        name: 'tot_due',
         label: 'Total Due',
         options: {
           filter: false,
@@ -88,7 +71,7 @@ const CollectionRemarks = () => {
         }
       },
       {
-        name: 'total_overdue',
+        name: 'tot_overdue',
         label: 'Total Overdue',
         options: {
           filter: false,
@@ -98,7 +81,7 @@ const CollectionRemarks = () => {
         }
       },
       {
-        name: 'details',
+        name: 'loan_data',
         label: 'Details',
         options: {
           filter: false,
@@ -106,7 +89,7 @@ const CollectionRemarks = () => {
         }
       },
       {
-        name: 'total_prin_due',
+        name: 'tot_prin_due',
         label: 'Total Prin Due',
         options: {
           filter: false,
@@ -114,7 +97,7 @@ const CollectionRemarks = () => {
         }
       },
       {
-        name: 'total_prin_overdue',
+        name: 'tot_prin_overdue',
         label: 'Total Prin Overdue',
         options: {
           filter: false,
@@ -122,7 +105,7 @@ const CollectionRemarks = () => {
         }
       },
       {
-        name: 'total_int_overdue',
+        name: 'tot_int_overdue',
         label: 'Total Int Overdue',
         options: {
           filter: false,
@@ -130,59 +113,13 @@ const CollectionRemarks = () => {
         }
       },
       {
-        name: 'total_penal_overdue',
+        name: 'tot_penal_overdue',
         label: 'Total Penal Overdue',
         options: {
           filter: false,
           display: false
         }
-      },
-      // {
-      //   name: 'duedate',
-      //   label: 'Due Date',
-      //   options: {
-      //     filter: false,
-      //   }
-      // },
-      // {
-      //   name: 'tot_due',
-      //   label: 'Total Due',
-      //   options: {
-      //     filter: false,
-      //     sort: true,
-      //     customBodyRender: value => {
-      //       return <Currency value={value} />
-      //     }
-      //   }
-      // },
-      // {
-      //   name: 'remarks',
-      //   label: 'Remarks',
-      //   options: {
-      //     filter: false,
-      //     sort: true,
-      //     display: false
-      //   }
-      // },
-      // {
-      //   name: 'remarks',
-      //   label: 'Remarks',
-      //   options: {
-      //     filter: false,
-      //     sort: true,
-      //     customBodyRender: value => {
-      //       return (
-      //         value && (
-      //           <div style={{display: 'flex', alignItems: 'center'}}>
-      //             <Badge classes={{ badge: classes.badge }} color="secondary" badgeContent={value?.length} max={99} >
-      //               <ChatIcon className={classes.icon} fontSize="small" />
-      //             </Badge>
-      //           </div>
-      //         )
-      //       )
-      //     }
-      //   }
-      // },
+      }
     ]
   }, []);
 
@@ -194,69 +131,23 @@ const CollectionRemarks = () => {
     onRowClick: (value) => {
       setRowData(value)
     }
-    // onDownload: (buildHead, buildBody, columns, data) => {
-    //   let Data = () => {
-    //     let array = []
-    //     data.map((item, index) => {
-    //       let buffer = []
-    //       item.data.map((data, i) => {
-    //         if(typeof(data) !== 'object'){
-    //           buffer.push(data)
-    //         } else {
-    //           let est = data.map((obj, num) => {
-    //             const rem = remarks?.find(d => d.id === obj.id)
-    //             return(obj.options ? (rem.remarks+': '+obj?.options?.map(item => {return(`${Object.values(item)}, `)})) : (rem.remarks))
-    //           })
-    //           buffer.push(est.toString())
-    //         }
-    //       })
-    //       array.push({index: index, data: buffer})
-    //     })
-    //     return array
-    //   }
-    //   return '\uFEFF' + buildHead(columns) + buildBody(Data())
-    // },
-    // expandableRows: true,
-    // expandableRowsOnClick: true,
-    // renderExpandableRow: (rowData, rowMeta) => {
-    //   console.log(rowData, rowMeta);
-    //   return(
-    //     <React.Fragment>
-    //       <tr>
-    //         <td colSpan={6}>
-    //           <div style={{margin: 7, marginLeft: 60}}>
-    //             <label><strong>Remarks</strong></label>
-    //             <div style={{width: '25rem', marginTop: 5}}>
-    //               {
-    //                 rowData[7].map((data, i) => {
-    //                   const rem = remarks?.find(d => d.id === data.id)
-    //                   return(<p key={i}><span style={{color:'rgb(0,0,0,0.4)'}}>{i+1}. </span>{rem?.remarks} {data?.options?.map((item,i) => {return(<span key={i}>{`${Object.values(item)},`}</span>)})}</p>)
-    //                 })
-    //               }
-    //             </div>
-    //           </div>
-    //         </td>
-    //       </tr>
-    //     </React.Fragment>
-    //   )
-    // }
   };
 
   return (
     <div>
       {
-        // isFetching ? (
-        //   <Grid item xs={12}>
-        //     <Skeleton variant='rect' width='100%' height={400} />
-        //   </Grid>
-        // ) : (
-        <MUIDataTable 
-          title="Remarks"
-          columns={columns}
-          options={options}
-          data={testData}
-        />
-        // )
+        isFetching ? (
+          <Grid item xs={12}>
+            <Skeleton variant='rect' width='100%' height={400} />
+          </Grid>
+        ) : (
+          <MUIDataTable 
+            title="Remarks"
+            columns={columns}
+            options={options}
+            data={testData}
+          />
+        )
       }
       <Drawer
         anchor="right"

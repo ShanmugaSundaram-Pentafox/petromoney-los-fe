@@ -73,7 +73,7 @@ export const CollectionRemarksDrawer = ({callback, rowData = []}) => {
           <Box>
             <Grid container spacing={1}>
               <Grid item md={3}>
-                <ViewData title='Dealerspid ID' value={rowData[0]} />
+                <ViewData title='Dealership ID' value={rowData[0]} />
               </Grid>
               <Grid item md={3}>
                 <ViewData title='Applicant Name' value={rowData[1]} />
@@ -95,8 +95,6 @@ export const CollectionRemarksDrawer = ({callback, rowData = []}) => {
               </Grid>
             </Grid>
           </Box>
-          {/* <div style={{margin: 9}}> */}
-          {/* </div> */}
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5, padding: 5 }}>
             <Typography variant="h6">Due & Overdue</Typography>
           </div>
@@ -120,10 +118,10 @@ export const CollectionRemarksDrawer = ({callback, rowData = []}) => {
                                   // console.log(item);
                                   return(
                                     <TableRow key={i}>
-                                      <TableCell>{item.prospect_code}</TableCell>
+                                      <TableCell>{item.prospectcode}</TableCell>
                                       <TableCell><Currency value={item.disb_amt} /></TableCell>
                                       <TableCell>{item.disb_date}</TableCell>
-                                      <TableCell>{item.due_date}</TableCell>
+                                      <TableCell>{item.duedate}</TableCell>
                                       <TableCell><Currency value={item.prin_due} /></TableCell>
                                       <TableCell><Currency value={item.prin_overdue} /></TableCell>
                                       <TableCell><Currency value={item.int_overdue} /></TableCell>
@@ -163,10 +161,10 @@ export const CollectionRemarksDrawer = ({callback, rowData = []}) => {
                                 rowData[7]?.map((item, i) => {
                                   return(
                                     <TableRow key={i}>
-                                      <TableCell>{item.prospect_code}</TableCell>
+                                      <TableCell>{item.prospectcode}</TableCell>
                                       <TableCell>
                                         {
-                                                item?.remark?.map((item, i) => {
+                                                item?.remarks?.map((item, i) => {
                                                   const rem = remarks?.find(d => d.id === item.id)
                                                   return(
                                                     <p style={{paddingTop: 3}} key={i}>{rem?.remarks} {item?.options?.map((item,i) => {return(<span key={i}>{`${Object.values(item)}`}</span>)})}</p>

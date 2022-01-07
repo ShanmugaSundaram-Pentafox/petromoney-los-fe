@@ -286,8 +286,7 @@ export const updateVehicle = (data, transId, vehicleId) => {
 export const deleteVehicleStatus = (id, vehicleId) => {
   return new Promise((resolve, reject) => {
     apiCall(`transporters/${id}/vehicles/${vehicleId}`, {
-      method: 'POST',
-      body: { status: 0 }
+      method: 'DELETE',
     })
       .then(({ status, message }) => {
         if (status === 'SUCCESS') {

@@ -84,9 +84,11 @@ export const downloadPDF = ({ file, isBase64, name }) => {
   downloadLink.click();
 }
 
-export const getAllRegions = () => {
+export const getAllRegions = (id) => {
   return new Promise((resolve, reject) => {
-    apiCall('regions', {}, 'GET')
+    let apiUrl = 'regions/los'
+    if(id !== '0' && id !=='' && id) apiUrl += `?zone=${id}`
+    apiCall(apiUrl, {}, 'GET')
       .then(response => {
         if (response?.status === 'SUCCESS') {
           const result = response?.data.map(item => ({
@@ -772,7 +774,7 @@ export const getProductsMaster = () => {
 
 export const getZones = () => {
   return new Promise((resolve, reject) => {
-    apiCall('zones')
+    apiCall('zones?filter=1')
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data);

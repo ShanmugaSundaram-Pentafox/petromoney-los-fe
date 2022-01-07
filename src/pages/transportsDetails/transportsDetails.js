@@ -3,6 +3,7 @@ import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/styles'
 import React, { useState } from 'react'
+import { useQuery, useQueryClient } from 'react-query';
 import { useMount } from 'react-use'
 import VehicleInfo from './components/VehicleInfo'
 import usePageTitle from '../../hooks/usePageTitle'
@@ -22,18 +23,20 @@ const useStyles = makeStyles((theme) => ({
 
 
 const TransportsDetails = ({ currentUser, match }) => {
+  const queryClient = useQueryClient()
   const [ownerInfo, setOwnerInfo] = useState()
   const [openModal, setOpenModal] = useState(false);
   const [transportsData, setTransportsData] = useState()
-  const [vehicleData, setVehicleData] = useState()
+  // const [vehicleData, setVehicleData] = useState()
   const [showModal, setShowModal] = useState(false)
   const [formType, setFormType] = useState('');
-
+  
   const classes = useStyles()
   const {
     url,
     params: { id },
   } = match
+  const { data: vehicleData = [] } = useQuery(['vehicleData', id], () => getVehicleInfoFromID(id), {refetchOnWindowFocus: false})
   useMount(() => {
     getTransporterInfoFromID(id)
       .then(data => {
@@ -46,11 +49,11 @@ const TransportsDetails = ({ currentUser, match }) => {
       })
       .catch((e) => null)
 
-    getVehicleInfoFromID(id)
-      .then((data) => {
-        setVehicleData(data)
-      })
-      .catch((e) => null)
+    // getVehicleInfoFromID(id) 
+    //   .then((data) => {
+    //     setVehicleData(data)
+    //   })
+    //   .catch((e) => null)
   })
   let cardData = [
     { label: 'Dealership ID', value: ownerInfo?.dealership_id },
@@ -127,7 +130,7 @@ const TransportsDetails = ({ currentUser, match }) => {
       <Drawer
         anchor="right"
         open={openModal}
-        onClose={() => setOpenModal(false)}
+        onClose={() => {setOpenModal(false); queryClient.invalidateQueries(['vehicleData', id]);}}
         variant="temporary"
       >
         <AddNewVehicleForm callback={() => setOpenModal(false)} data={transportsData} isAdd={formType} id={id} />

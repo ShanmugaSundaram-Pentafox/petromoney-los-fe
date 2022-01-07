@@ -51,7 +51,7 @@ const CollectionRemarks = () => {
         }
       },
       {
-        name: 'total_disb_amt',
+        name: 'tot_disb_amt',
         label: 'Total Disbursed Amount',
         options: {
           filter: false,

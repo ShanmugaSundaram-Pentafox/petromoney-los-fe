@@ -204,7 +204,7 @@ const Sidebar = props => {
   if (permissionCheck(currentUser.role_name, rulesList.users_view)) {
     pages.push({
       title: 'Call Request',
-      href: '/callreq',
+      href: '/customer/callback',
       icon: <PermPhoneMsgIcon />
     })
   }

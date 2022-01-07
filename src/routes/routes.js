@@ -72,7 +72,7 @@ const Routes = ({ currentUser }) => {
 
       <ProtectedRoute
         exact
-        path="/callreq"
+        path="/customer/callback"
         component={CallRequestPage}
         allow={permissionCheck(currentUser?.role_name, rulesList.users_view)}
       />

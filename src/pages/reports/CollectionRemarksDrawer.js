@@ -56,7 +56,6 @@ const useStyles = makeStyles(() => ({
 }))
 
 export const CollectionRemarksDrawer = ({callback, rowData = []}) => {
-  console.log(rowData);
   const classes = useStyles();
   const { data: remarks=[] } = useQuery('remarks', () => getCollectionRemark(), {refetchOnWindowFocus: false})
 

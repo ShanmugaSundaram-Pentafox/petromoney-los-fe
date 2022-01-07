@@ -82,7 +82,7 @@ const Deviations = ({id}) => {
   const onChange = (e, i) => {
     const {name, value, checked} = e.target
     const newData = [...deviationData]
-    newData[i] = {...newData[i], [name]: checked ? checked : value}
+    newData[i] = {...newData[i], [name]: name === 'review_status' ? checked : value}
     setDeviationData(newData)
     console.log(newData);
   }
@@ -90,7 +90,7 @@ const Deviations = ({id}) => {
   const onManualChange = (e, i) => {
     const {name, value, checked} = e.target
     const newData = [...manualDeviationData]
-    newData[i] = {...newData[i], [name]: checked ? checked : value}
+    newData[i] = {...newData[i], [name]: name === 'review_status' ? checked : value}
     setManualDeviationData(newData)
   }
 
@@ -129,7 +129,7 @@ const Deviations = ({id}) => {
                     <TableCell>Policy</TableCell>
                     <TableCell>Actual</TableCell>
                     <TableCell>Deviation</TableCell>
-                    <TableCell>Deviation Remarks</TableCell>
+                    <TableCell>Remarks</TableCell>
                     <TableCell>Status</TableCell>
                   </TableRow>
                 </TableHead>
@@ -180,9 +180,9 @@ const Deviations = ({id}) => {
                                         <FormControlLabel
                                           control={
                                             <Checkbox
-                                              checked={item?.status}
+                                              checked={item?.review_status}
                                               disabled={item.deviation_review.length <= 3}
-                                              name="status"
+                                              name="review_status"
                                               onChange={(e) => {
                                                 if(item.deviation_review.length !== 1){
                                                   onChange(e, i)
@@ -210,7 +210,7 @@ const Deviations = ({id}) => {
                 <TableHead>
                   <TableRow>
                     <TableCell>Deviation Description</TableCell>
-                    <TableCell>Deviation Remarks</TableCell>
+                    <TableCell>Remarks</TableCell>
                     <TableCell>Status</TableCell>
                     <TableCell align="right">Action</TableCell>
                   </TableRow>
@@ -242,9 +242,9 @@ const Deviations = ({id}) => {
                                             <FormControlLabel
                                               control={
                                                 <Checkbox
-                                                  checked={item?.status}
+                                                  checked={item?.review_status}
                                                   disabled={item.deviation_review.length <= 3}
-                                                  name="status"
+                                                  name="review_status"
                                                   onChange={(e) => {
                                                     if(item.deviation_review.length !== 1){
                                                       onManualChange(e, i)
@@ -291,7 +291,6 @@ export const DeviationsTable = ({id}) => {
       console.log(error);
     },
   })
-
   return(
     <>
       <div className={classes.title}>
@@ -307,7 +306,7 @@ export const DeviationsTable = ({id}) => {
                   <TableCell>Policy</TableCell>
                   <TableCell>Actual</TableCell>
                   <TableCell>Deviation</TableCell>
-                  <TableCell>Deviation Remarks</TableCell>
+                  <TableCell>Remarks</TableCell>
                   <TableCell>Status</TableCell>
                 </TableRow>
               </TableHead>
@@ -321,7 +320,7 @@ export const DeviationsTable = ({id}) => {
                                       <TableCell>{item.actual}</TableCell>
                                       <TableCell>{item?.deviation}</TableCell>
                                       <TableCell>{item?.deviation_review}</TableCell>
-                                      <TableCell>{item?.status === true ? 'Reviewed' : '-'}</TableCell>
+                                      <TableCell>{item.review_status === true || item.review_status === 1 ? 'Reviewed' : '-'}</TableCell>
                                     </TableRow>
                                   )
                                 })
@@ -341,18 +340,18 @@ export const DeviationsTable = ({id}) => {
               <TableHead>
                 <TableRow>
                   <TableCell>Deviation Description</TableCell>
-                  <TableCell>Deviation Remarks</TableCell>
+                  <TableCell>Remarks</TableCell>
                   <TableCell>Status</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {
-                                deviationsTable?.data?.others.map((item, i) => {
+                                deviationsTable?.others?.map((item, i) => {
                                   return(
                                     <TableRow key={i}>
                                       <TableCell>{item.deviation_description}</TableCell>
                                       <TableCell>{item.deviation_review}</TableCell>
-                                      <TableCell>{item.status === true ? 'Reviewed' : '-'}</TableCell>
+                                      <TableCell>{item.review_status === true || item.review_status === 1 ? 'Reviewed' : '-'}</TableCell>
                                     </TableRow>
                                   )
                                 })

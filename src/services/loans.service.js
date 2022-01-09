@@ -305,3 +305,19 @@ export const getLoanRejectReason = () => {
       });
   });
 };
+
+export const getProjectionReport = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('projection')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

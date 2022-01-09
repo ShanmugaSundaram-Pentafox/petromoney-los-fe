@@ -1,6 +1,7 @@
 import { Divider, Drawer, List, ListItem, Button } from '@material-ui/core';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import CachedIcon from '@material-ui/icons/Cached';
+import ChatIcon from '@material-ui/icons/Chat';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ListIcon from '@material-ui/icons/List';
 import ListAltIcon from '@material-ui/icons/ListAlt';
@@ -115,6 +116,11 @@ const Sidebar = props => {
       title: 'Transports',
       href: '/transports',
       icon: <LocalShippingIcon />
+    },
+    {
+      title: 'Collection Remarks',
+      href: '/reports/remarks',
+      icon: <ChatIcon />
     },
     {
       title: 'Report',

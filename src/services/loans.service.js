@@ -137,7 +137,7 @@ export const getLoansByStatus = (status, filterQry) => {
     if (region && region !=='0') qry.push(`region=${region}`)
     if (products && products !=='0') qry.push(`product=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
-    if(qry.length) apiUrl += '?' + qry.join('&')
+    if(qry.length) apiUrl += '&'+ qry.join('&')
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {

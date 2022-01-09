@@ -177,3 +177,30 @@ export const GroupChartData = ({ chartData, title, height, xAxis, yAxis }) => {
     </Paper>
   )
 }
+
+export const LineChart = ({ chartData, title, height, xAxis, yAxis }) => {
+  const classes = useStyles();
+  const options = {
+    curveType: 'function',
+    legend: { position: 'top' },
+    tooltip: { isHtml: true },
+    hAxis: {
+      title: xAxis,
+    },
+    fontSize: 11,
+    pointSize: 3,
+  };
+
+  return(
+    <>
+      <Typography variant="h5" className={classes.title}>{title}</Typography>
+      <Chart
+        chartType="LineChart"
+        width="100%"
+        height="280px"
+        data={chartData}
+        options={options}
+      />
+    </>
+  )
+}

@@ -772,9 +772,11 @@ export const getProductsMaster = () => {
   })
 }
 
-export const getZones = () => {
+export const getZones = (filter) => {
   return new Promise((resolve, reject) => {
-    apiCall('zones?filter=1')
+    let apiUrl = 'zones'
+    if(filter === 1) apiUrl+='?filter=1'
+    apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data);

@@ -1,0 +1,193 @@
+import { Box, Button, Divider, Grid, IconButton, makeStyles, Table, TableBody, TableCell, TableFooter, TableHead, TableRow, Typography } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
+import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import React from 'react';
+import { useQuery } from 'react-query';
+import { ViewData } from '../../components/CommonComponents/FilePreview';
+import Currency from '../../components/Number/Currency';
+import { getCollectionRemark } from '../../services/users.service';
+
+const useStyles = makeStyles(() => ({
+  sidePanelFormWrapper: {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    width: '60vw'
+  },
+  sidePanelTitle: {
+    padding: '15px 16px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    zIndex: 0,
+    boxShadow: '0 1px 4px -3px #333'
+  },
+  sidePanelFormContentWrapper: {
+    flex: 1,
+    overflow: 'auto',
+  },
+  stepperRoot: {
+    padding: 16,
+    paddingTop: 8,
+  },
+  actionButtonsWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '12px 16px'
+  },
+  btnDelete: {
+    '&.MuiButton-root': { color: '#ef5350' },
+    border: '1px #ef5350 solid',
+    margin: 2
+  },
+  btnEdit: {
+    '&.MuiButton-root': { color: '#2196f3' },
+    border: '1px #2196f3 solid',
+    margin: 2
+  },
+  sidePanelWrapper: {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    width: '40vw'
+  },
+}))
+
+export const CollectionRemarksDrawer = ({callback, rowData = []}) => {
+  const classes = useStyles();
+  const { data: remarks=[] } = useQuery('remarks', () => getCollectionRemark(), {refetchOnWindowFocus: false})
+
+  return (
+    <div className={classes.sidePanelFormWrapper}>
+      <Typography className={classes.sidePanelTitle} variant="h4">
+        <div>Remarks</div>
+        <IconButton onClick={callback} size='small'>
+          <CloseIcon fontSize='size' />
+        </IconButton>
+      </Typography>
+      <div className={classes.sidePanelFormContentWrapper}>
+        <div className={classes.stepperRoot}>
+          <Box>
+            <Grid container spacing={1}>
+              <Grid item md={3}>
+                <ViewData title='Dealership ID' value={rowData[0]} />
+              </Grid>
+              <Grid item md={3}>
+                <ViewData title='Applicant Name' value={rowData[1]} />
+              </Grid>
+              <Grid item md={3}>
+                <ViewData title='Region' value={rowData[2]} />
+              </Grid>
+              <Grid item md={3}>
+                <ViewData title='OMC' value={rowData[3]} />
+              </Grid>
+              <Grid item md={3}>
+                <ViewData title='Total Disbursed Amount' value={rowData[4]} />
+              </Grid>
+              <Grid item md={3}>
+                <ViewData title='Total Due' value={rowData[5]} />
+              </Grid>
+              <Grid item md={3}>
+                <ViewData title='Total Overdue' value={rowData[6]} />
+              </Grid>
+            </Grid>
+          </Box>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5, padding: 5 }}>
+            <Typography variant="h6">Due & Overdue</Typography>
+          </div>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Prospect Code</TableCell>
+                <TableCell>Disb Amount</TableCell>
+                <TableCell>Disb Date</TableCell>
+                <TableCell>Due Date</TableCell>
+                <TableCell>Prin Due</TableCell>
+                <TableCell>Prin Overdue</TableCell>
+                <TableCell>Int Overdue</TableCell>
+                <TableCell>Penal Overdue</TableCell>
+                <TableCell>DPD</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {
+                                rowData[7]?.map((item, i) => {
+                                  // console.log(item);
+                                  return(
+                                    <TableRow key={i}>
+                                      <TableCell>{item.prospectcode}</TableCell>
+                                      <TableCell><Currency value={item.disb_amt} /></TableCell>
+                                      <TableCell>{item.disb_date}</TableCell>
+                                      <TableCell>{item.duedate}</TableCell>
+                                      <TableCell><Currency value={item.prin_due} /></TableCell>
+                                      <TableCell><Currency value={item.prin_overdue} /></TableCell>
+                                      <TableCell><Currency value={item.int_overdue} /></TableCell>
+                                      <TableCell><Currency value={item.penal_overdue} /></TableCell>
+                                      <TableCell>{item.dpd}</TableCell>
+                                    </TableRow>
+                                  )
+                                })
+              }
+            </TableBody>
+            <TableFooter>
+              <TableRow style={{ backgroundColor: '#f2f2f0' }}>
+                <TableCell><strong>Total</strong></TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+                <TableCell><Currency value={rowData[8]} /></TableCell>
+                <TableCell><Currency value={rowData[9]} /></TableCell>
+                <TableCell><Currency value={rowData[10]} /></TableCell>
+                <TableCell><Currency value={rowData[11]} /></TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            </TableFooter>
+          </Table>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 30, padding: 7 }}>
+            <Typography variant="h6">Remarks</Typography>
+          </div>
+          <Table style={{width: '35vw'}}>
+            <TableHead>
+              <TableRow>
+                <TableCell>Prospect Code</TableCell>
+                <TableCell>Remark</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {
+                                rowData[7]?.map((item, i) => {
+                                  return(
+                                    <TableRow key={i}>
+                                      <TableCell>{item.prospectcode}</TableCell>
+                                      <TableCell>
+                                        {
+                                                item?.remarks?.map((item, i) => {
+                                                  const rem = remarks?.find(d => d.id === item.id)
+                                                  return(
+                                                    <p style={{paddingTop: 3}} key={i}>{rem?.remarks} {item?.options?.map((item,i) => {return(<span key={i}>{`${Object.values(item)}`}</span>)})}</p>
+                                                  )
+                                                })
+                                        }
+                                      </TableCell>
+                                    </TableRow>
+                                  )
+                                })
+              }
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+      <div className={classes.actionFooter}>
+        <Divider />
+        <div className={classes.actionButtonsWrapper}>
+          <div>
+            <Button variant="outlined" startIcon={<NavigateBeforeRoundedIcon />} onClick={callback}>Back</Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+

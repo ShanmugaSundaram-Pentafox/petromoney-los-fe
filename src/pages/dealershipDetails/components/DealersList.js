@@ -11,7 +11,6 @@ import DealersTable from './DealersTable';
 import GuarantorsTable from './GuarantorsTable';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-// import ExperianReport from './ExperianReport';
 import { getDealersByDealershipId, getCoApplicantByDealershipId } from '../../../services/dealers.service';
 import { getAllGuarantor } from '../../../services/leegality.service';
 
@@ -30,7 +29,6 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 8
   },
   table: {
-    // minWidth: 650,
     padding: 8
   },
   header: {
@@ -44,13 +42,6 @@ const useStyles = makeStyles(theme => ({
   sidePanelWrapper: {
     width: '40vw',
     minWidth: 300
-  },
-  // experianWrapper: {
-  //   width: '50vw',
-  //   minWidth: 300
-  // },
-  actionButtons: {
-    // paddingTop: 8
   },
   tableRow: {
     cursor: 'pointer'
@@ -73,56 +64,37 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   const [formType, setFormType] = useState('');
   const [modelType, setModelType] = useState('');
   const [rowData, setRowData] = useState({});
-  const { data: coApplicantsData, refetch: getCoApplicantApiCall } = useQuery(['co-applicants', id], () => getCoApplicantByDealershipId(id), {
+  const { data: coApplicantsData } = useQuery(['co-applicants', id], () => getCoApplicantByDealershipId(id), {
     initialData: [],
     select: res => {
       return res.map(d => ({
         ...d,
         userType: 'Co-Applicant'
       }))
-    }
+    },
+    refetchOnWindowFocus: false
   })
-  const { data: dealerData, refetch: getDealerApiCall } = useQuery(['dealers-coapplicant', id], () => getDealersByDealershipId(id), {
+  const { data: dealerData } = useQuery(['dealers-coapplicant', id], () => getDealersByDealershipId(id), {
     initialData: [],
     select: res => {
       return res.map(d => ({
         ...d,
         userType: 'Dealer'
       }))
-    }
+    },
+    refetchOnWindowFocus: false
   })
-  const { data: guarantorsData, refetch: getGuarantorApiCall } = useQuery(['guarantors', id], () => getAllGuarantor(id), {
+  const { data: guarantorsData } = useQuery(['guarantors', id], () => getAllGuarantor(id), {
     initialData: [],
     select: res => {
       return res.map(d => ({
         ...d,
         userType: 'Guarantor'
       }))
-    }
+    },
+    refetchOnWindowFocus: false
   })
 
-  // const getCoApplicantApiCall = (id) => {
-  //   getCoApplicantByDealershipId(id)
-  //     .then(data => {
-  //       setCoApplicantsData(data);
-  //       setDealerCoApplicantData(prevArray => [...prevArray]);
-  //     })
-  //     .catch(e => null)
-  // }
-  // const getDealerApiCall = (id) => {
-  // getDealersByDealershipId(id)
-  // .then(data => {
-  //   setDealersData(data);
-  //   setDealerCoApplicantData(prevArray => [...prevArray]);
-  // })
-  // .catch(e => null)
-  // }
-  // const getGuarantorApiCall = () => {
-  //   getAllGuarantor(id)
-  //     .then(data => {
-  //       setGuarantorsData(data);
-  //     })
-  // }
   const openCloseCreditForm = () => {
     setShowCreditForm(!showCreditForm);
   }
@@ -155,19 +127,12 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
     setShowDealerEditForm(false)
   }
 
-  // const getExperianData = type => (event, id) => {
-  //   event.preventDefault();
-  //   event.stopPropagation()
-  //   setExperianData({ show: true, id, type });
-  // }
-
   const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit);
   return (
     <>
       {
         editable && <div className={classes.addButton}>
           <AddIconButon onClickAddMenu={onClickAddMenu} />
-          {/* <Button color="primary" variant="contained" size="small" onClick={() => onClickAddMenu()}>Add Dealer</Button> */}
         </div>
       }
       <DealersTable
@@ -182,7 +147,6 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         editFormClose={editFormClose}
         dealersClickRow={dealersClickRow}
         onClickAddMenu={onClickAddMenu}
-        // getExperianData={getExperianData("dealer")}
         showDealerEditForm={showDealerEditForm} />
 
       <CoApplicantsTable
@@ -197,7 +161,6 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         editFormClose={editFormClose}
         dealersClickRow={dealersClickRow}
         onClickAddMenu={onClickAddMenu}
-        // getExperianData={getExperianData("coapplicant")}
         showDealerEditForm={showDealerEditForm} />
 
       <GuarantorsTable
@@ -212,26 +175,8 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         editFormClose={editFormClose}
         dealersClickRow={dealersClickRow}
         onClickAddMenu={onClickAddMenu}
-        // getExperianData={getExperianData("guarantor")}
         showDealerEditForm={showDealerEditForm} />
-      {/* <Drawer
-        anchor="right"
-        open={experianData.show}
-        onBackdropClick={() => setExperianData({ show: false })}
-        variant="temporary"
-      >
-        <div className={classes.experianWrapper}>
-          {
-            experianData.id ? (
-              <ExperianReport
-                id={experianData.id}
-                type={experianData.type}
-                onClose={() => setExperianData({ show: false })}
-              />
-            ) : null
-          }
-        </div>
-      </Drawer> */}
+      
       <Drawer
         anchor="right"
         open={showDealerEditForm}
@@ -240,9 +185,8 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
       >
         <div className={classes.sidePanelWrapper}>
           <DealerEditSideWrapper
-            getDealerApiCall={getDealerApiCall}
+            id={id}
             dealersList={dealerData}
-            getCoApplicantApiCall={getCoApplicantApiCall}
             isAdd={formType}
             modelType={modelType}
             dealershipId={id}

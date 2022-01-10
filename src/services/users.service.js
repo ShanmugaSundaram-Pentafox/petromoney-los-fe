@@ -301,6 +301,22 @@ export const getCollectionRemark = () => {
   })
 }
 
+export const getCollectionRemarkData = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('loan/collection/remarks')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
 export const getCollectionRemarkOptions = () => {
   return new Promise((resolve, reject) => {
     apiCall('collection/remarks/options')

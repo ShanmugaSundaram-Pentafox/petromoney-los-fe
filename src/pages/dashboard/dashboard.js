@@ -294,7 +294,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                   </Grid>
                   <Grid item md={12} style={{display: 'flex'}}>
                     <Grid item md={6}>
-                      <BarChartData daysChartData={opportunity?.approved_amount} height='150px' title="Opportunies" />
+                      <BarChartData daysChartData={opportunity?.approved_amount} height='150px' title="Opportunities" />
                       <BarChartData daysChartData={opportunity?.average_amount} height='160px' yAxis='Amount(in Rupees)' title=""/>
                     </Grid>
                     <Grid item md={6}>

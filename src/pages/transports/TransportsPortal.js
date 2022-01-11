@@ -9,7 +9,6 @@ import usePageTitle from '../../hooks/usePageTitle';
 import TransportTable from '../transports/components/TransportsTable';
 
 const TransportsPortal = ({ currentUser }) => {
-  console.log(currentUser);
   usePageTitle('Transports');
   const [openModal, setOpenModal] = useState(false);
   const [rowData, setRowData] = useState({})

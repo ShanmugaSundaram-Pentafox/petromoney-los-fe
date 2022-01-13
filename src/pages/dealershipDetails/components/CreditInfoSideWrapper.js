@@ -145,7 +145,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
   return (
     <div className={classes.sidePanelFormWrapper}>
       <div className={classes.sidePanelTitle}>
-        <Typography  variant="h4">Credit Information: All Applicants</Typography>
+        <Typography  variant="h4">Credit Information</Typography>
         <CloseRoundedIcon onClick={onClose} />
       </div>
       <div className={classes.sidePanelFormContentWrapper}>
@@ -219,17 +219,10 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
               <>
                 <Button
                   variant="contained"
-                  color="secondary"
+                  className={clsx(classes.btn, classes.btnSuccess)}
                   startIcon={<NavigateBeforeRoundedIcon />}
                   disabled={loading}
-                  onClick={onClose}>Close</Button>
-
-                <Button
-                  variant="contained"
-                  className={clsx(classes.btn, classes.btnSuccess)}
-                  // startIcon={<NavigateNextRoundedIcon />}
-                  disabled={loading}
-                  onClick={editMode === true ? handleSubmit : handleEdit}>{editMode === true ? 'save' : 'edit'}</Button>
+                  onClick={editMode === true ? handleSubmit : handleEdit}>{editMode === true ? 'Save' : 'Edit'}</Button>
               </>
             ) : (
               <div style={{display: 'flex', justifyContent: 'flex-end', width: '90%', margin: '0 auto'}}>

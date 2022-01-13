@@ -30,7 +30,7 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange, editMode, dealer
           <Typography variant='body2' style={{color: 'rgb(0,0,0,0.4)'}}>{dealerData?.userType}</Typography>
         </div>
       </Grid>
-      <Grid {...gridItem}>
+      <Grid {...gridItem} md={6}>
         <TextInput
           number
           label="CIBIL Score"
@@ -86,7 +86,7 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange, editMode, dealer
           onChange={onChange}
         />
       </Grid>
-      <Grid {...gridItem}>
+      <Grid {...gridItem} md={6}>
         <TextInput
           number
           label="Current O/S amount"
@@ -97,7 +97,7 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange, editMode, dealer
           onChange={onChange}
         />
       </Grid>
-      <Grid {...gridItem}>
+      <Grid {...gridItem} md={6}>
         <TextInput
           number
           label="Vintage with CIBIL bureau"
@@ -108,7 +108,7 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange, editMode, dealer
           onChange={onChange}
         />
       </Grid>
-      <Grid {...gridItem}>
+      <Grid {...gridItem} md={6}>
         <TextInput
           number
           label="No of enquiries last 6 months"
@@ -119,24 +119,24 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange, editMode, dealer
           onChange={onChange}
         />
       </Grid>
-      <Grid {...gridItem}>
-        <Grid item md={6}>
-          <TextInput
-            select
-            label="Loans in Bureau Report"
-            name="is_loan_in_bureau"
-            value={values?.is_loan_in_bureau || ''}
-            onChange={onChange}
-            SelectProps={{
-              native: true,
-            }}
-          >
-            <option value="NA">Select</option>
-            <option value="1">Yes</option>
-            <option value="0">No</option>
-          </TextInput>
-        </Grid>
+      {/* <Grid  md={6}> */}
+      <Grid {...gridItem} md={6}>
+        <TextInput
+          select
+          label="Loans in Bureau Report"
+          name="is_loan_in_bureau"
+          value={values?.is_loan_in_bureau || ''}
+          onChange={onChange}
+          SelectProps={{
+            native: true,
+          }}
+        >
+          <option value="NA">Select</option>
+          <option value="1">Yes</option>
+          <option value="0">No</option>
+        </TextInput>
       </Grid>
+      {/* </Grid> */}
       <Grid {...gridItem} md={6}>
         <TextInput
           select
@@ -176,25 +176,25 @@ const DealerCreditInfoForm = ({ data, values, errors, onChange, editMode, dealer
           <option value="90+">90+</option>
         </TextInput>
       </Grid>
-      <Grid {...gridItem}>
-        <Grid item md={6}>
-          <TextInput
-            select
-            label="Credit Card in Bureau Report"
-            name="is_cc_in_cibil"
-            value={values?.is_cc_in_cibil || ''}
-            onChange={onChange}
-            SelectProps={{
-              native: true,
-            }}
-          >
-            <option value="NA">Select</option>
-            <option value="1">Yes</option>
-            <option value="0">No</option>
-          </TextInput>
-        </Grid>
+      {/* <Grid > */}
+      <Grid {...gridItem} md={6}>
+        <TextInput
+          select
+          label="Credit Card in Bureau Report"
+          name="is_cc_in_cibil"
+          value={values?.is_cc_in_cibil || ''}
+          onChange={onChange}
+          SelectProps={{
+            native: true,
+          }}
+        >
+          <option value="NA">Select</option>
+          <option value="1">Yes</option>
+          <option value="0">No</option>
+        </TextInput>
       </Grid>
-      <Grid {...gridItem}>
+      {/* </Grid> */}
+      <Grid {...gridItem} md={6}>
         <TextInput
           select
           label="Status - For Loans &amp; Credit Cards"

@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.7.4...v2.8.0) (2022-01-09)
+
+
+### Features
+
+* **call-req:** WhatsApp Call Request UI ([428ecd0](https://gitlab.com/vignesh3/petromall-fe/commit/428ecd0c25bd100632547ba0b91da65e7d42ef0e))
+* **lms:** Add Projection report table ([a50e1b4](https://gitlab.com/vignesh3/petromall-fe/commit/a50e1b42b44174076f633f5dc45f2f0c20779876))
+* **product-master:** Add Products Master on settings ([70a01c4](https://gitlab.com/vignesh3/petromall-fe/commit/70a01c4fb578f1fc804e63ab105415520c14bba2))
+* **zone-master:** Add Zone Master on settings ([5d1c5bf](https://gitlab.com/vignesh3/petromall-fe/commit/5d1c5bf74e0a6548d62da3109f43a934adc122e5))
+
+
+### Bug Fixes
+
+* conflict fix ([25fb2ed](https://gitlab.com/vignesh3/petromall-fe/commit/25fb2ededfdca5902e2912c4048c1013dbfb7c97))
+* conflict Fix ([6e7636c](https://gitlab.com/vignesh3/petromall-fe/commit/6e7636cfea8efec9efe20d8e20505cf1d4436f6d))
+* Conflict fix ([cc1e228](https://gitlab.com/vignesh3/petromall-fe/commit/cc1e228a91fa1f3b149c222debcbdcc99e038d0a))
+* Conflict fix zone filter ([af5e50b](https://gitlab.com/vignesh3/petromall-fe/commit/af5e50be687c06e757f54d34afef2f2f54cf607b))
+* **Conflict:** Conflict fix zone and products master ([3a7859f](https://gitlab.com/vignesh3/petromall-fe/commit/3a7859fde09d920a9ffc53ff69064a20b206fddf))
+* **dashboard-date:** Safari support for newDate ([54c3c5e](https://gitlab.com/vignesh3/petromall-fe/commit/54c3c5ef8562afbcf363e9a0a1d588fc58bb57d7))
+* **Dashcard:** disp value fix ([500210a](https://gitlab.com/vignesh3/petromall-fe/commit/500210a34c53b0e0ed51f9c763d542d9d984cc7d))
+* Dealership bug fixes ([acd76ef](https://gitlab.com/vignesh3/petromall-fe/commit/acd76efb6c71bfc5a32564bda96a1488e49bf480))
+* **disb:** disbursement amount field ([8703783](https://gitlab.com/vignesh3/petromall-fe/commit/8703783422ea1f21243e5ff7a1d634313383c62b))
+* disbursed loan amount value ([2024f11](https://gitlab.com/vignesh3/petromall-fe/commit/2024f115c8684ac5c9965a98eebf3f50a4746b08))
+* **LMS:** moment remove and format ([03349e7](https://gitlab.com/vignesh3/petromall-fe/commit/03349e79f36450fcc8302853fab9449d90842a13))
+* **Loan-info:** products list data fix ([e832c2d](https://gitlab.com/vignesh3/petromall-fe/commit/e832c2d1eea13bb9a465a82d6421f900fccf73b3))
+* **loans-list:** Reviewer and approver user data list fix ([f00129a](https://gitlab.com/vignesh3/petromall-fe/commit/f00129ac5603f632a1113d994c5d3cb058496f9e))
+* **los-filter:** fuel loans stats fix ([0791f93](https://gitlab.com/vignesh3/petromall-fe/commit/0791f932552e812712c44906de83943621fd0916))
+* merge message ([c271412](https://gitlab.com/vignesh3/petromall-fe/commit/c271412304481e05b413d0a313cbe9f883915323))
+* merge message ([562b3bb](https://gitlab.com/vignesh3/petromall-fe/commit/562b3bb92d366ab045a8f8d13b2758383ae2786c))
+* merge message ([2f013db](https://gitlab.com/vignesh3/petromall-fe/commit/2f013db3f9d4851820d263bb3c5167a5b1781e2b))
+* Merge Message ([ff12abc](https://gitlab.com/vignesh3/petromall-fe/commit/ff12abca0f0ae8a31e47a94d9b2df5c9cc088dc2))
+* **merge-msg:** conflict fix ([90e6e30](https://gitlab.com/vignesh3/petromall-fe/commit/90e6e307324ca6a86d82d5db2297c04f48ec5172))
+* **Prod-filter:** correct data access key from api ([06c4bd6](https://gitlab.com/vignesh3/petromall-fe/commit/06c4bd6090695ce940a939626df24306accf0ef3))
+* Redis Merge Message ([19b4fa1](https://gitlab.com/vignesh3/petromall-fe/commit/19b4fa1ba2dad5d64519093865e1931e32da1f26))
+* **yarn.lock:** conflict fix ([bc636dc](https://gitlab.com/vignesh3/petromall-fe/commit/bc636dcf6bd23647a0f535c8b3825099140a084b))
+* **yarn.lock:** Conflict fix ([aa54726](https://gitlab.com/vignesh3/petromall-fe/commit/aa5472662517e9fed341214e9580fe3e9bce3d48))
+* **zone-filter:** filter fixed height ([347a057](https://gitlab.com/vignesh3/petromall-fe/commit/347a0578765cc2a064b7e1d57b9a8f8e9f3550fd))
+* **zone-fltr:** Conflict fix ([8bf50eb](https://gitlab.com/vignesh3/petromall-fe/commit/8bf50eb3d90106028e2a5d8f0aca9caeffd8b6f8))
+* **zone:** conflict fix ([371e9c5](https://gitlab.com/vignesh3/petromall-fe/commit/371e9c5d337469fe23b84841b21bb23905c9aad7))
+
 ### [2.7.4](https://gitlab.com/vignesh3/petromall-fe/compare/v2.7.3...v2.7.4) (2021-12-14)
 
 

@@ -6,7 +6,7 @@ import AssessmentIcon from '@material-ui/icons/Assessment';
 import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
 import BookIcon from '@material-ui/icons/Book';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
-import ChatIcon from '@material-ui/icons/Chat';
+// import ChatIcon from '@material-ui/icons/Chat';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import InputIcon from '@material-ui/icons/Input';
@@ -339,7 +339,7 @@ const SidebarNav = props => {
                     {'Loan Overdue'}
                   </Button>
                 </ListItem>
-                <ListItem
+                {/* <ListItem
                   className={classes.itemSub}
                   disableGutters
                   key={'Collection'}
@@ -354,7 +354,7 @@ const SidebarNav = props => {
                     <div className={classes.icon}><ChatIcon /></div>
                     {'Collection Remarks'}
                   </Button>
-                </ListItem>
+                </ListItem> */}
               </Collapse>
 
             </Fragment>

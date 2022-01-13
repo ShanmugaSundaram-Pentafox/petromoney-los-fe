@@ -11,6 +11,7 @@ import { NavLink as RouterLink } from 'react-router-dom';
 // import { createStructuredSelector } from 'reselect';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
+import { dateCustomSort } from '../../utils/commonFunctions.util';
 import Currency from '../Number/Currency';
 
 const useStyles = makeStyles(theme => ({
@@ -172,6 +173,10 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
     isRowSelectable: () => false,
     onRowClick: (rowData, { dataIndex }) => {
       onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'loan_approval')
+    },
+    customSort: (data, dataIndex, rowIndex) => {
+      let dateIndex = 5
+      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
     }
   };
 

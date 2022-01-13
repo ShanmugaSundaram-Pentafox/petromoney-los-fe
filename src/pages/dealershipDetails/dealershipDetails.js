@@ -104,12 +104,13 @@ const DealershipDetails = ({ currentUser, match }) => {
     url,
     params: { id },
   } = match;
-  const dealershipData = useQuery(['dealership-info', id], () => getDealershipById(id))
+  const dealershipData = useQuery(['dealership-info', id], () => getDealershipById(id), {refetchOnWindowFocus: false})
   const mainApplicant = useQuery(['main-applicant-data', id], () => getDealersByDealershipId(id), {
     select: (data) => {
       const ap = data.find(item => item.is_main_applicant);
       return ap;
-    }
+    }, 
+    refetchOnWindowFocus: false
   })
   const onChangeTab = (e, newTab) => {
     setActiveTab(newTab);

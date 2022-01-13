@@ -15,7 +15,8 @@ export const rulesList = {
   'credit_view': 'credit:view',
   'pdr_view': 'sales:view',
   'financial_view': 'financial:view',
-  'upload_statement': 'upload:statement'
+  'upload_statement': 'upload:statement',
+  'projection_report': 'projection:report'
 }
 
 export const rulesForUserRoles = {
@@ -29,6 +30,7 @@ export const rulesForUserRoles = {
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
+      rulesList.projection_report,
     ]
   },
   CDO: {
@@ -41,6 +43,7 @@ export const rulesForUserRoles = {
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
+      rulesList.projection_report,
     ]
   },
   CFO: {
@@ -55,6 +58,7 @@ export const rulesForUserRoles = {
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
+      rulesList.projection_report,
     ]
   },
   CREDIT_HEAD: {
@@ -85,6 +89,7 @@ export const rulesForUserRoles = {
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
+      rulesList.projection_report,
     ]
   },
   CREDIT_EXEC: {

@@ -15,6 +15,7 @@ import { format } from 'date-fns';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
+import { useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import DealerEditForm from './DealerEditForm';
 import { API } from '../../../config/api';
@@ -26,7 +27,6 @@ import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
-    // textAlign: 'center',
     padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
@@ -43,16 +43,10 @@ const useStyles = makeStyles((theme) => ({
     flex: 1,
     overflow: 'auto',
   },
-  actionFooter: {
-    // justifyContent: 'flex-end',
-  },
   actionButtonsWrapper: {
     display: 'flex',
     justifyContent: 'space-between',
     padding: '12px 16px',
-  },
-  actionButtons: {
-    // paddingTop: 8
   },
   stepperRoot: {
     padding: 16,
@@ -83,12 +77,13 @@ const DealerEditSideWrapper = ({
   isAdd,
   dealershipId,
   getDealerApiCall,
-  getCoApplicantApiCall,
   data,
   currentUser,
   onClose,
+  id,
 }) => {
   const classes = useStyles();
+  const queryClient = useQueryClient()
   const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -158,7 +153,7 @@ const DealerEditSideWrapper = ({
     API.delete(url, { type, file })
       .then((res) => {
         onClose();
-        getDealerApiCall(dealershipId);
+        queryClient.invalidateQueries(['dealers-coapplicant', id])
       })
       .catch((err) => {
         setReadOnly(true);
@@ -176,7 +171,6 @@ const DealerEditSideWrapper = ({
       setFieldValue('profile_image_url', value[0]);
     }
     handleSubmit(values);
-    // onCloseUploader();
   };
   const {
     values,
@@ -255,15 +249,12 @@ const DealerEditSideWrapper = ({
             },
             variant: 'success',
           });
-
-          // setTimeout(() => {
-          //   window.location.reload();
-          // }, 1000);
-          // setApiCallMessage(isAdd ? 'Dealer Added' : 'Dealer Updated');
           onClose();
-          modelType === 'DEALER'
-            ? getDealerApiCall(dealershipId)
-            : getCoApplicantApiCall(dealershipId);
+          modelType === 'DEALER' &&
+          queryClient.invalidateQueries(['dealers-coapplicant', id])
+
+          modelType === 'COAPPLICANT' ?
+            queryClient.invalidateQueries(['co-applicants', id]) : queryClient.invalidateQueries(['guarantors', id])
         })
         .catch((err) => {
           setReadOnly(false);
@@ -275,8 +266,6 @@ const DealerEditSideWrapper = ({
             },
             variant: 'error',
           });
-          // setApicallStatus('error');
-          // setApiCallMessage('Sorry! Unable to add or Update. Try again later.');
           logger(err);
         });
     },
@@ -306,7 +295,6 @@ const DealerEditSideWrapper = ({
           className={classes.stepperRoot}
         >
           <Step key={data.id}>
-            {/* <StepContent> */}
             <DealerEditForm
               dealersList={dealersList}
               deleteFile={deleteFile}
@@ -320,7 +308,6 @@ const DealerEditSideWrapper = ({
               onChange={handleChange}
               handleSave={handleSave}
             />
-            {/* </StepContent> */}
           </Step>
         </Stepper>
         {apicallStatus ? (

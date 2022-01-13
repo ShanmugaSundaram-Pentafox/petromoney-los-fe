@@ -7,7 +7,7 @@ import { useQuery } from 'react-query';
 import Select, { components } from 'react-select'
 import { useMount } from 'react-use';
 import { getAllRegions, getProducts, getZones } from '../../../services/common.service';
-import { getLoanStats } from '../../../services/loans.service';
+import { getCreditStats, getLoanStats } from '../../../services/loans.service';
 import { getTypeOfAccount } from '../../../services/users.service';
 
 const Option = (props) => {
@@ -216,13 +216,13 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans, filterType, f
   }
 
   useEffect(() => {
-    if(filters.includes('zone')){
-      getAllRegions(selectedZones)
-        .then(data => {
-          setRegions(data);
-        })
-        .catch(() => null);
-    }
+    let zoneId = []
+    selectedZones.forEach(item => zoneId.push(item.value))
+    getAllRegions(zoneId.toString())
+      .then(data => {
+        setRegions(data);
+      })
+      .catch(() => null);
   }, [selectedZones])
 
   useMount(() => {
@@ -279,6 +279,7 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans, filterType, f
     }
     if (filterType === 'Credit Reload') {
       getCreditReloadStats(qry)
+      filterQry(qry)
     }
   }, [selectedRegion, selectedPeriod, filterQry, selectedProducts, selectedZones, selectedAccountType])
 
@@ -308,13 +309,17 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans, filterType, f
   }
 
   const getCreditReloadStats = (qry) => {
-    let cdata = [
-      { name: 'Zone', count: selectedZones },
-      { name: 'No.of. New Request', count: 12 },
-      { name: 'No.of. Processed Request', count: 26 },
-      { name: 'Total.Req. Amount', amount: 265000 }
-    ]
-    setChartData(cdata)
+    getCreditStats(qry)
+      .then(data => {
+        let cdata = [
+          { name: 'Zone', count: selectedZones },
+          { name: 'No.of. New Request', count: data?.new_request?.count},
+          { name: 'No.of. Processed Request', count: data?.processed?.count},
+          { name: 'Total.Req. Amount', amount: data?.new_request?.amount}
+        ]
+        setChartData(cdata)
+      })
+      .catch(e => console.log(e))
   }
 
   const onDateRangeClose = () => {

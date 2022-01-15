@@ -58,9 +58,7 @@ const MapRegion = (data) => {
       });
   });
   const getValue = (e, list) => {
-    console.log(e);
     const val = parseInt(e?.target?.value);
-    // if (!val) return;
     if(val === 0) {
       if(region.includes(val)) {
         setRegion([])
@@ -135,11 +133,9 @@ const MapRegion = (data) => {
   };
 
   const regionList = (allRegion || []).filter((r) => {
-    // console.log(mappedRegion, r.region, await !mappedRegion.find(rg => rg.region_id === r.region))
     if (!mappedRegion.find(rg => rg.region_id === r.region))
       return true
     else return false;
-    // return !mappedRegion.find(rg => rg.region_id === r.region);
   })
   return (
     <Box mt={2} mb={2} bgcolor={'#fafafa'} position={'relative'}>

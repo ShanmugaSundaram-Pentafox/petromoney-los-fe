@@ -13,7 +13,7 @@ const useStyles = makeStyles(() => ({
   details: {
     borderColor: 'grey',
     minWidth: 80,
-    minHeight: 45,
+    // minHeight: 45,
     maxWidth: 250,
     textAlign: 'left',
     marginBottom: 8,

@@ -340,3 +340,20 @@ export const getCollectionRemarkOptions = () => {
       })
   })
 }
+
+export const getCollectionRemarkByLoanId = (loan_id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${loan_id}/collection/remarks`)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+

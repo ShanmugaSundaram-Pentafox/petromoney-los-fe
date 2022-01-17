@@ -3,32 +3,24 @@ import Skeleton from '@material-ui/lab/Skeleton';
 import { classes } from 'istanbul-lib-coverage';
 import MUIDataTable from 'mui-datatables';
 import React, { useState, useMemo } from 'react';
-import { useQuery } from 'react-query';
 import { useMount } from 'react-use';
 import CreditReloadForm from './CreditReloadForm';
 import CreditReloadRemarks from './CreditReloadRemarks';
 import Currency from '../../components/Number/Currency';
 import usePageTitle from '../../hooks/usePageTitle';
-import { getZones } from '../../services/common.service';
 import {
   getTypeOfAccount,
 } from '../../services/users.service';
 
 
 const CreditProcessedTable = ({ data, currentUser, view }) => {
-  const [tableData, setTableData] = useState([]);
-  const [processedData, setProcessedData] = useState([]);
   const [accountType, setAccountType] = useState();
   const [rowData, setRowData] = useState();
   const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [statusModal, setStatusModal] = useState(false);
-  const [selectedTab, setSelectedTab] = useState('processed');
-  const [dealershipData, setDealershipData] = useState();
-  const [selectedZone, setSelectedZone] = useState({label: 'ALL', value: 0});
 
-  const { data: zones = []} = useQuery('zones', () => {return getZones()}, {refetchOnWindowFocus: false})
-
+  usePageTitle('Credit Reload');
 
   useMount(() => {
     getTypeOfAccount()
@@ -46,7 +38,7 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
         console.log(e);
       })
   });
-  usePageTitle('Credit Report');
+  
   const columns = useMemo(() => {
     return [
       {
@@ -203,7 +195,6 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
           <CreditReloadForm
             callback={() => setOpenModal(false)}
             data={accountType}
-            dealershipData={dealershipData}
             currentUser={currentUser}
             view={view}
           />

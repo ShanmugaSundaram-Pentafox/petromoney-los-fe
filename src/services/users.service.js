@@ -236,8 +236,16 @@ export const passReset = (password, userId) => {
   });
 }
 
-export const getCreditReport = (tab) => {
-  const apiUrl = `credit/reload?processed=${tab}`
+export const getCreditReport = (tab, filterQry={region: '0', account: '0', zone: '0'}) => {
+  // const apiUrl = `credit/reload?processed=${tab}`
+  const { region, from, to, account, zone } = filterQry;
+  let qry = []
+  let apiUrl = `credit/reload?processed=${tab}`;
+  if (zone && zone !=='0') qry.push(`zone=${zone}`)
+  if (region && region !=='0') qry.push(`region=${region}`)
+  if (account && account !=='0') qry.push(`account_type=${account}`)
+  if (from && to) qry.push(`from=${from}&to=${to}`)
+  if(qry.length) apiUrl += '&'+ qry.join('&')
   return new Promise((resolve, reject) => {
     apiCall(apiUrl)
       .then(({ status, data, message }) => {

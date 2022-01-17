@@ -9,7 +9,7 @@ import Currency from '../../components/Number/Currency';
 import { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import {
-  getCreditReport
+  getCreditReload
 } from '../../services/users.service';
 import DashboardFilter from '../dashboard/components/DashboardFilter';
 
@@ -39,8 +39,8 @@ const CreditReload = ({ currentUser }) => {
 
   const view = permissionCheck(currentUser.role_name, rulesList.dealer_view)
 
-  const { data: tableData = [] } = useQuery(['new-request', filterQry], () => getCreditReport(0, filterQry), {refetchOnWindowFocus: false})
-  const { data: processedData = [] } = useQuery(['processed-request', filterQry], () => getCreditReport(1, filterQry), {refetchOnWindowFocus: false})
+  const { data: tableData = [] } = useQuery(['new-request', filterQry], () => getCreditReload(0, filterQry), {refetchOnWindowFocus: false})
+  const { data: processedData = [] } = useQuery(['processed-request', filterQry], () => getCreditReload(1, filterQry), {refetchOnWindowFocus: false})
 
   return (
     <>

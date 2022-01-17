@@ -236,7 +236,7 @@ export const passReset = (password, userId) => {
   });
 }
 
-export const getCreditReport = (tab, filterQry={region: '0', account: '0', zone: '0'}) => {
+export const getCreditReload = (tab, filterQry={region: '0', account: '0', zone: '0'}) => {
   // const apiUrl = `credit/reload?processed=${tab}`
   const { region, from, to, account, zone } = filterQry;
   let qry = []
@@ -261,7 +261,7 @@ export const getCreditReport = (tab, filterQry={region: '0', account: '0', zone:
   })
 }
 
-export const getCreditReportById = (id) => {
+export const getCreditReloadById = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`credit/reload/${id}`)
       .then(({ status, data, message }) => {

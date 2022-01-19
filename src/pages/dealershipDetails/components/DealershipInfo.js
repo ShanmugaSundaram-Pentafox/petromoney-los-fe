@@ -12,7 +12,6 @@ import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
-// import CardHeader from '@material-ui/core/CardHeader';
 import { useQuery } from 'react-query';
 import * as Yup from 'yup';
 import AccountStatement from './AccountStatement';
@@ -32,10 +31,6 @@ import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles(theme => ({
   root: {},
-  gridItemStyle: {
-    // paddingTop: theme.spacing(1),
-    // paddingBottom: theme.spacing(1)
-  },
   actionFooter: {
     justifyContent: 'flex-start',
     padding: 0,
@@ -142,7 +137,6 @@ const DealershipInfo = ({ data, className, currentUser }) => {
               window.location.reload()
             }, 1500);
             setLoading(false);
-            // setReadOnly(true);
           }
           else {
             enqueueSnackbar(message, {
@@ -173,32 +167,6 @@ const DealershipInfo = ({ data, className, currentUser }) => {
     }
   });
   const getRegion = useQuery(['region', values?.state], () => getRegionById(parseInt(values?.state || 1)))
-  // useEffect(() => {
-  //   if (values.state) {
-  //     fetchRegions(parseInt(values.state));
-  //   }
-  // }, [values.state])
-  // useMount(() => {
-  //   getBusinessTypes()
-  //     .then(setBusinessTypes)
-  //     .catch(err => {
-  //       console.log('BusinessTypes fetch error - ', err)
-  //     })
-  //   getActiveStates()
-  //     .then(d => {
-  //       setStates([{ id: '', name: 'Choose State' }, ...d])
-  //       return d;
-  //     })
-  //     .then(d => {
-  //       let res = d.find(({ id }) => id === parseInt(values.state));
-  //       if (res) {
-  //         fetchRegions(parseInt(res.id));
-  //       }
-  //     })
-  //     .catch(err => {
-  //       console.log('BusinessTypes fetch error - ', err)
-  //     })
-  // });
 
   const docUpload = (val) => {
     setShowUpload(true);
@@ -211,7 +179,6 @@ const DealershipInfo = ({ data, className, currentUser }) => {
     fileType === 'PAN'
       ? setFieldValue('pan_file_url', value[0])
       : setFieldValue('gst_file_url', value[0]);
-    // handleSubmit(values);
     onCloseUploader();
   };
   const onDocDelete = (value) => {
@@ -238,15 +205,6 @@ const DealershipInfo = ({ data, className, currentUser }) => {
         });
       })
   }
-  // const fetchRegions = (res) => {
-  //   getRegionById(res)
-  //     .then(res => {
-  //       setRegionList(res)
-  //     })
-  //     .catch(err => {
-  //       console.log(err)
-  //     })
-  // }
   const classes = useStyles();
   const gridProps = {
     item: true,
@@ -310,22 +268,22 @@ const DealershipInfo = ({ data, className, currentUser }) => {
               <Grid container spacing={2} className={classes.readOnlyWrapper}>
                 <Grid md={4}>
                   <ViewData title='Name' value={values?.name} />
-                  <ViewData title='Address' value={values?.address ? values.address + '' : '' + (values.pincode ? values.pincode : '')} />
+                  <ViewData title='Address' value={values?.address ? values.address + '' : '' + (values?.pincode ? values?.pincode : '')} />
                   <ViewData title='PAN' value={values?.pan} />
                 </Grid>
                 <Grid md={4}>
-                  <ViewData title='State' value={(states.data?.find(function (state, index) {
-                    if (state.id == values.state)
+                  <ViewData title='State' value={(states?.data?.find(function (state, index) {
+                    if (state.id == values?.state)
                       return true;
                   }))?.name} />
-                  <ViewData title='GST' value={values.gst} />
+                  <ViewData title='GST' value={values?.gst} />
                 </Grid>
                 <Grid md={4}>
                   <ViewData title='Business type' value={businessTypes.data?.find(function (type, index) {
-                    if (type.id == values.business_type)
+                    if (type.id == values?.business_type)
                       return true;
                   })?.name} />
-                  <ViewData title='Region' value={values.region_name} />
+                  <ViewData title='Region' value={values?.region_name} />
                 </Grid>
               </Grid>
               {
@@ -371,7 +329,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                     labelText="Name"
                     name="name"
                     readOnly={readOnly}
-                    value={values.name?.toUpperCase()}
+                    value={values?.name?.toUpperCase()}
                     error={errors.name}
                     helperText={errors.name}
                     {...fieldProps}
@@ -414,7 +372,6 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                     name="gst"
                     readOnly={readOnly}
                     // disabled={readOnly}
-                    // defaultValue={values?.gst?.toUpperCase()}
                     value={values?.gst?.toUpperCase()}
                     error={errors.gst}
                     helperText={errors.gst}
@@ -439,7 +396,6 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                                   className={classes.icons}
                                   disabled={readOnly}
                                 />
-                                {/* <Typography className={classes.typography}>Attach GST</Typography> */}
                               </>
                             </Tooltip>
                           </div>
@@ -575,14 +531,6 @@ const DealershipInfo = ({ data, className, currentUser }) => {
           />
         )}
         <CardActions className={classes.actionFooter}>
-          {/* <Button
-            color="primary"
-            size="small"
-            variant="contained"
-            onClick={toggleCreditReport}
-          >
-            View/Edit Financial Report
-          </Button> */}
           {!readOnly ? (
             !loading ? (
               <>

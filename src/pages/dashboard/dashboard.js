@@ -52,7 +52,7 @@ const arrangeData = (res) => {
       const firstRow = item.data?.map(r => r.label);
       temp[i] = ['', { role: 'tooltip', type: 'string', p: { html: true } }, ...firstRow];
     }
-    const dataRow = item.data.map(r => r.value);
+    const dataRow = item.data.map(r => r.value || 0);
     temp[i + 1] = [item.label, createCustomHTMLContent(item), ...dataRow];
     return temp;
   }, [])
@@ -243,6 +243,8 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                       filterQry={setFilterQry}
                       setChartData={setChartData}
                       setTotalLoans={setTotalLoans}
+                      filterType='Dashboard'
+                      filters={['zone', 'region', 'product', 'period']}
                     />
                   </Grid>
                 )

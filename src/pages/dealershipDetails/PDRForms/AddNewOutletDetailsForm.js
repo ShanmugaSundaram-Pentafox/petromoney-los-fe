@@ -130,15 +130,12 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
       outlet_category: Yup.string().nullable('Choose outlet category').required('Choose outlet category'),
       distance_from_headquarters: Yup.string().nullable('Please enter fuel transported from area').required('Please enter fuel transported from area'),
       terminal_name: Yup.string().nullable('Please enter terminal name').required('Please enter terminal name'),
-      size_of_outlet: Yup.number().nullable('Please enter outlet size').required('Please enter outlet size'),
       land_type: Yup.string().nullable('Enter land type').required('Enter land type'),
       outlet_operated_by: Yup.string().nullable('Enter operator name').required('Enter operator name'),
       land_owner_name: Yup.string().nullable('Enter land owner name').required('Enter land owner name')
-
     }),
     onSubmit: values => {
       const data = { ...values }
-
       addOutletDetails(data, dealer_id)
         .then(res => {
           enqueueSnackbar(res, {
@@ -239,21 +236,6 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                 <Grid item md={6}>
                   <TextInput
                     {...inputProps}
-                    className={classes.number}
-                    inputProps={{ className: classes.input }}
-                    labelText="Size of the Outlet (in Sq. ft)"
-                    name="size_of_outlet"
-                    value={values.size_of_outlet}
-                    readOnly={readOnly}
-                    error={errors.size_of_outlet}
-                    helperText={errors.size_of_outlet}
-                    className={classes.number}
-                    inputProps={{ className: classes.input }}
-                    type='number'
-                  />
-                </Grid><Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
                     select
                     labelText="Land Type"
                     name="land_type"
@@ -327,7 +309,7 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
                     {
                       relationShipOptions.map((item, i) => {
                         return (
-                          <option value={item.value}>{item.label}</option>
+                          <option value={item.value} key={i}>{item.label}</option>
                         )
                       })
                     }

@@ -14,16 +14,13 @@ import {
 
 
 const CreditProcessedTable = ({ data, currentUser, view }) => {
-  const [tableData, setTableData] = useState([]);
-  const [processedData, setProcessedData] = useState([]);
   const [accountType, setAccountType] = useState();
   const [rowData, setRowData] = useState();
   const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [statusModal, setStatusModal] = useState(false);
-  const [selectedTab, setSelectedTab] = useState('processed');
-  const [dealershipData, setDealershipData] = useState();
 
+  usePageTitle('Credit Reload');
 
   useMount(() => {
     getTypeOfAccount()
@@ -41,7 +38,7 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
         console.log(e);
       })
   });
-  usePageTitle('Credit Report');
+  
   const columns = useMemo(() => {
     return [
       {
@@ -198,7 +195,6 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
           <CreditReloadForm
             callback={() => setOpenModal(false)}
             data={accountType}
-            dealershipData={dealershipData}
             currentUser={currentUser}
             view={view}
           />

@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.8.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.8.0...v2.8.1) (2022-01-17)
+
+
+### Bug Fixes
+
+* conflict fix ([71365b4](https://gitlab.com/vignesh3/petromall-fe/commit/71365b42a223d40e873e9048cc44918e58dfb3ef))
+* dashboard filter conflict fix ([457a3f4](https://gitlab.com/vignesh3/petromall-fe/commit/457a3f4d5f2ff4ea7e49ea1ea3669de2bce35b1e))
+* **Dealer:** Value check error in dealer login ([8cf8f84](https://gitlab.com/vignesh3/petromall-fe/commit/8cf8f841a179d3e579616324e7e2fefd5c5f3813))
+* **lms:** change chart default value to 0 ([287a117](https://gitlab.com/vignesh3/petromall-fe/commit/287a117bc54222e46fc85234d9e8304fdfefe35a))
+* **pd:** show all modules ([0e5b735](https://gitlab.com/vignesh3/petromall-fe/commit/0e5b735cca69424c39463b06c3172d33c7925a4c))
+
 ## [2.8.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.7.4...v2.8.0) (2022-01-09)
 
 

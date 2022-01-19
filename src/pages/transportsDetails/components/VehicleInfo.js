@@ -1,4 +1,4 @@
-import { Drawer } from '@material-ui/core';
+import { Divider, Drawer, IconButton } from '@material-ui/core';
 import MuiAccordion from '@material-ui/core/Accordion'
 import MuiAccordionDetails from '@material-ui/core/AccordionDetails'
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary'
@@ -18,9 +18,11 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography'
-import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
-import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import CloseIcon from '@material-ui/icons/Close';
+import DeleteTwoToneIcon from '@material-ui/icons/DeleteTwoTone';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import InfoTwoToneIcon from '@material-ui/icons/InfoTwoTone';
+import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react'
@@ -37,6 +39,7 @@ import { URL } from '../../../config/serverUrls'
 import { rulesList } from '../../../config/userRules';
 import { getVehicleDocuments, getVehicleLoans, getVehicleServiceDetails, deleteVehicleStatus, deleteVehicleDoc, deleteVehicleLoan } from '../../../services/transports.service'
 import AddNewVehicleForm from '../../transports/components/AddNewVehicleForm';
+import { VehicleDetails } from '../../transports/components/VehicleDetails';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -46,7 +49,6 @@ const useStyles = makeStyles((theme) => ({
     color: '#9e9e9e'
   },
   sidePanelTitle: {
-    // textAlign: 'center',
     padding: '24px 16px',
     display: 'flex',
     justifyContent: 'space-between',
@@ -101,7 +103,6 @@ const Accordion = withStyles({
     borderRadius: 4,
     marginBottom: 8,
     minWidth: '52vw',
-    // boxShadow: "none",
     '&:not(:last-child)': {
       borderBottom: 0,
     },
@@ -120,9 +121,6 @@ const Accordion = withStyles({
 
 const AccordionSummary = withStyles({
   root: {
-    // backgroundColor: "rgba(0, 0, 0, .03)",
-    // borderBottom: "1px solid rgba(0, 0, 0, .125)",
-    // marginBottom: -1,
     minHeight: 56,
     '&$expanded': {
       minHeight: 56,
@@ -163,6 +161,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
   const [vehicleId, setVehicleId] = useState();
   const [vehicleDetails, setVehicleDetails] = useState();
   const [formType, setFormType] = useState('');
+  const [vehicleDetailsForm, setVehicleDetailsForm] = useState()
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles()
 
@@ -226,11 +225,9 @@ export default function VehicleInfo({ id, data, currentUser }) {
       }
     })
       .then(res => {
-        // console.log("res",res)
         return res.json()
       })
       .then(res => {
-        // enqueueSnackbar('File Upload Success', { variant: "success" });
         enqueueSnackbar(res.message, {
           anchorOrigin: {
             vertical: 'top',
@@ -243,20 +240,8 @@ export default function VehicleInfo({ id, data, currentUser }) {
         setTimeout(() => {
           window.location.reload();
         }, 2000)
-        // console.log("data",res)
-        // updateVehicleServiceDetails(id, serviceData.vehicle_id, serviceData.credit_head_id, serviceData.loan_id, { status_id: status, details: { file_url: res?.file_url?.split(" ") } })
-        //   .then(res => {
-        //     console.log('postServiceStatus >> ', res);
-        //     // onCloseModal(true, serviceData);
-        //   })
-        //   .catch(e => {
-        //     console.log(e);
-        //   });
-        // onCloseUploader();
       })
       .catch(error => {
-        // enqueueSnackbar('File Upload Failed', { variant: "error" });
-
       })
 
   }
@@ -434,14 +419,14 @@ export default function VehicleInfo({ id, data, currentUser }) {
                   {
                     !permissionCheck(currentUser.role_name, rulesList.transporter_view) ? (
                       <>
-                        {/* <Tooltip title="Edit vehicle">
-                          <Typography style={{ marginRight: '7px', color: '#4770C1' }} onClick={() => { modalOpen(vehicleInfo.tt_no, vehicleInfo.vehicle_id) }}>
-                            <EditOutlinedIcon fontSize="medium" />
+                        <Tooltip title="Vehicle Details">
+                          <Typography style={{ marginRight: '7px', color: '#137ec1' }}>
+                            <InfoTwoToneIcon fontSize="medium" onClick={(e) => {setVehicleDetailsForm(JSON.parse(vehicleInfo.vehicle_details || {})); e.stopPropagation();}} />
                           </Typography>
-                        </Tooltip> */}
+                        </Tooltip>
                         <Tooltip title="Delete vehicle">
                           <Typography style={{ color: '#ff6666' }}>
-                            <DeleteOutlineOutlinedIcon fontSize="medium" onClick={() => handleClickOpen(vehicleInfo.tt_no, vehicleInfo.vehicle_id)} />
+                            <DeleteTwoToneIcon fontSize="medium" onClick={(e) => {handleClickOpen(vehicleInfo.tt_no, vehicleInfo.vehicle_id); e.stopPropagation();}} />
                           </Typography>
                         </Tooltip>
                       </>
@@ -467,7 +452,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
                             <TableCell>{row.description}</TableCell>
                             <TableCell>
                               <Button onClick={() => setImageModal({ open: true, image: row.file_path, type: row.file_path.endsWith('.pdf') })} >
-                                <a>{row.file_path?.split('/')[row.file_path?.split('/').length - 1] || '-'}</a>
+                                <Typography variant='body1'><strong>{row.file_path?.split('/')[row.file_path?.split('/').length - 1] || '-'}</strong></Typography>
                               </Button>
                             </TableCell>
                             <TableCell>
@@ -542,11 +527,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
                                 completed: false
                               };
                               const buttonProps = {
-                                // optional: <Typography variant="caption">{item.description}</Typography>
                               };
-                              // if (isStepOptional(index)) {
-                              //   buttonProps.optional = <Typography variant="caption">Optional</Typography>;
-                              // }
                               if (serviceData[`${row.vehicle_id}_${row.credit_head_id}_${row.id}`]?.tracking_details[index]) {
                                 stepProps.completed = true;
                               }
@@ -563,13 +544,10 @@ export default function VehicleInfo({ id, data, currentUser }) {
 
                                       }
                                     }}
-                                    // completed={isStepComplete(index)}
                                     {...buttonProps}
                                     title={item.description}
                                   >
                                     {item.status}
-                                    {/* <Tooltip title={item.description}>
-                                      </Tooltip> */}
                                   </StepButton>
                                 </Step>
                               );
@@ -583,44 +561,39 @@ export default function VehicleInfo({ id, data, currentUser }) {
                 <NewVehicleLoanAction vehicleId={vehicleInfo.vehicle_id} currentUser={currentUser} callback={saveAndCloseNewLoan} />
               </AccordionDetails>
             </Accordion>
-            <Dialog
-              open={open}
-              onClose={handleClose}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-            >
-              {/* <DialogTitle id="alert-dialog-title">{"Are you sure...?"}</DialogTitle> */}
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                  Did you want to delete the vehicle with vehicle number {vehicleNumber} ?
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleClose} color="primary">
-                  No
-                </Button>
-                <Button onClick={() => deleteVehicle()} color="primary">
-                  Yes
-                </Button>
-              </DialogActions>
-            </Dialog>
           </div>
         )
       })}
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Did you want to delete the vehicle with vehicle number {vehicleNumber} ?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            No
+          </Button>
+          <Button onClick={() => deleteVehicle()} color="primary">
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+      
       <FormDialog title={'File Preview'} onDownload={imageModal.image} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
         <FilePreview data={imageModal} />
       </FormDialog>
       {
-        // const d = JSON.parse((serviceData?.tracking_details?.[4]?.details || "{}").replace(/\'/g,'\"'));
         fileUpload &&
           <div style={{ minWidth: '40vw' }}>
             {<FileUpload handleSave={handleSave} id={id} data={rowData} open={fileUpload} onCloseUploader={() => setFileUpload(false)} />}
           </div>
       }
-
-      {/* <FormDialog title={"Update Service Status"} open={serviceModal.open} onClose={() => setServiceModal({ open: false })}>
-        <UpdateServiceForm data={serviceData} callback={() => null} />
-      </FormDialog> */}
 
       <TrackerUpdateModal id={id} currentUser={currentUser} statusId={serviceModal?.data?.item?.status_id} data={serviceModal.data?.item} serviceData={serviceModal.data?.serviceData} completed={serviceModal.data?.completed} onClose={closeTrackingStatusModal} />
       <Drawer
@@ -630,6 +603,24 @@ export default function VehicleInfo({ id, data, currentUser }) {
         variant="temporary"
       >
         <AddNewVehicleForm id={id} isAdd={formType} callback={() => setOpenModal(false)} number={vehicleNumber} trans_id={vehicleId} />
+      </Drawer>
+      <Drawer
+        anchor="right"
+        open={vehicleDetailsForm}
+        onClose={() => setVehicleDetailsForm()}
+        variant="temporary"
+      >
+        <div style={{padding: '15px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 1px 4px -3px #333'}}>
+          <Typography variant='h5'>Vehicle Details</Typography>
+          <IconButton size='small' onClick={() => setVehicleDetailsForm()}><CloseIcon size='small' /></IconButton>
+        </div>
+        <div style={{width: '40vw', height: '100vh', padding: 10, paddingLeft: 17}}>
+          <VehicleDetails vehicleDetails={vehicleDetailsForm} />
+        </div>
+        <Divider />
+        <div style={{display: 'flex', justifyContent: 'space-between', padding: '12px 16px'}}>
+          <Button onClick={() => setVehicleDetailsForm()} variant='outlined' startIcon={<NavigateBeforeRoundedIcon />}>Close</Button>
+        </div>
       </Drawer>
     </div>
   )

@@ -124,7 +124,6 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
       
       updateCreditInfo(body, dealershipId)
         .then(res => {
-          console.log(res);
           setLoading(false)
           enqueueSnackbar(res, {
             anchorOrigin: {
@@ -163,7 +162,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
                   <ViewData title='User Type' value={data?.userType} style={{marginBottom: 0}} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='CIBIL' value={apiData?.cibil_score} style={{marginBottom: 0}} />
+                  <ViewData title='CIBIL Score' value={apiData?.cibil_score} style={{marginBottom: 0}} />
                 </Grid>
                 <Grid item md={6}>
                   <ViewData title='No. of Loans' value={apiData?.loans_count} style={{marginBottom: 0}} />
@@ -187,16 +186,16 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
                   <ViewData title='No of enquiries last 6 months' value={apiData?.no_of_enquiries} style={{marginBottom: 0}} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='Loans in Bureau Report' value={apiData?.is_loan_in_bureau} style={{marginBottom: 0}} />
+                  <ViewData title='Loans in Bureau Report' value={apiData?.is_loan_in_bureau === 1 ? 'Yes' : 'No'} style={{marginBottom: 0}} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='No of times of highest DPD' value={apiData?.highest_dpd} style={{marginBottom: 0}} />
+                  <ViewData title='No of times of highest DPD' value={apiData?.highest_dpd === 4 ? '>3 times' : apiData?.highest_dpd === 1 ? `${apiData?.highest_dpd} time` : `${apiData?.highest_dpd} times`} style={{marginBottom: 0}} />
                 </Grid>
                 <Grid item md={6}>
                   <ViewData title='Highest DPD bracket' value={apiData?.highest_dpd_bracket} style={{marginBottom: 0}} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='Credit Card in Bureau Report' value={apiData?.is_cc_in_cibil} style={{marginBottom: 0}} />
+                  <ViewData title='Credit Card in Bureau Report' value={apiData?.is_cc_in_cibil === 1 ? 'Yes' : 'No'} style={{marginBottom: 0}} />
                 </Grid>
                 <Grid item md={6}>
                   <ViewData title='Status - For Loans &amp; Credit Cards' value={apiData?.status} style={{marginBottom: 0}} />
@@ -225,7 +224,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
                   onClick={editMode === true ? handleSubmit : handleEdit}>{editMode === true ? 'Save' : 'Edit'}</Button>
               </>
             ) : (
-              <div style={{display: 'flex', justifyContent: 'flex-end', width: '90%', margin: '0 auto'}}>
+              <div style={{display: 'flex', justifyContent: 'flex-start', width: '90%', margin: '0 auto'}}>
                 <CircularProgress size={30}/>
               </div>
             )

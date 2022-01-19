@@ -1,3 +1,4 @@
+import { Drawer } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -6,7 +7,8 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
-import React from 'react';
+import React, { useState } from 'react';
+import CreditInfoSideWrapper from './CreditInfoSideWrapper';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -45,8 +47,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExperianData, onClickAddMenu, formType, openCloseCreditForm, rowData, currentUser, showDealerEditForm, dealersClickRow, editFormClose }) => {
+const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExperianData, onClickAddMenu, formType, openCloseCreditForm, currentUser, showDealerEditForm, dealersClickRow, editFormClose }) => {
   const classes = useStyles();
+  const [rowData, setRowData] = useState()
 
   if (!data || !data.length)
     return (
@@ -72,17 +75,21 @@ const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExper
             <TableCell>Dealer Name</TableCell>
             <TableCell align="center">Mobile</TableCell>
             <TableCell align="center">Documents</TableCell>
+            {
+              editable &&
+                <TableCell align="center">Action</TableCell>
+            }
           </TableRow>
         </TableHead>
         <TableBody>
           {data.map(row => (
-            <TableRow className={classes.tableRow} key={row.id} onClick={e => editable && dealersClickRow(e, row, 'DEALER')}>
-              <TableCell>
+            <TableRow className={classes.tableRow} key={row.id}>
+              <TableCell onClick={e => editable && dealersClickRow(e, row, 'DEALER')}>
                 {row.first_name}&nbsp;&nbsp;
                 {/* <Chip size="small" label="Experian Report" onClick={(e) => getExperianData(e, row.id)} /> */}
               </TableCell>
-              <TableCell align="center">{row.mobile}</TableCell>
-              <TableCell align="center">
+              <TableCell align="center" onClick={e => editable && dealersClickRow(e, row, 'DEALER')}>{row.mobile}</TableCell>
+              <TableCell align="center" onClick={e => editable && dealersClickRow(e, row, 'DEALER')}>
                 {row.aadhar_f_file_url && <TableCell style={{ border: 0 }} align="center">
                   <a className={classes.document}
                     href={row.aadhar_f_file_url} target="_blank" title={'Aadhar Front'} rel="noreferrer">{'Aadhar Front'}</a>
@@ -102,10 +109,27 @@ const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExper
                     -
                   </TableCell>}
               </TableCell>
+              {
+                editable &&
+                  <TableCell align="right">
+                    <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>
+                  </TableCell>
+              }
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      <Drawer
+        anchor="right"
+        open={rowData}
+        variant="temporary"
+      >
+        <div className={classes.sidePanelWrapper}>
+          {
+            <CreditInfoSideWrapper dealershipId={id} data={rowData} currentUser={currentUser} onClose={() => setRowData()} />
+          }
+        </div>
+      </Drawer>
     </div>
   )
 }

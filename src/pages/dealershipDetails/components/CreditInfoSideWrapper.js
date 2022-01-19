@@ -5,7 +5,6 @@ import Divider from '@material-ui/core/Divider';
 import Snackbar from '@material-ui/core/Snackbar';
 import Typography from '@material-ui/core/Typography';
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
-import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import Alert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
@@ -41,7 +40,7 @@ const useStyles = makeStyles(theme => ({
   },
   actionButtonsWrapper: {
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     padding: '12px 16px'
   },
   stepperRoot: {
@@ -88,7 +87,6 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
       .then(res => {
         setApiData(res?.find(item => item?.dealer_id === data?.id));
         setEditMode(res?.find(item => item?.dealer_id === data?.id)?.cibil_score ? false : true);
-        // setValues(res?.find(item => item?.dealer_id === data?.id))
       })
       .catch(e => null)
   }, []);
@@ -217,14 +215,12 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
             !loading ? (
               <>
                 <Button
-                  variant="contained"
                   className={clsx(classes.btn, classes.btnSuccess)}
-                  startIcon={<NavigateBeforeRoundedIcon />}
-                  disabled={loading}
-                  onClick={editMode === true ? handleSubmit : handleEdit}>{editMode === true ? 'Save' : 'Edit'}</Button>
+                  variant={editMode ? 'contained' : 'outlined'}
+                  onClick={editMode ? handleSubmit : handleEdit}>{editMode === true ? 'Save' : 'Edit'}</Button>
               </>
             ) : (
-              <div style={{display: 'flex', justifyContent: 'flex-start', width: '90%', margin: '0 auto'}}>
+              <div style={{display: 'flex', justifyContent: 'flex-end', width: '90%', margin: '0 auto'}}>
                 <CircularProgress size={30}/>
               </div>
             )

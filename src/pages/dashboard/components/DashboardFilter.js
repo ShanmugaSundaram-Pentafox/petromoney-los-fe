@@ -314,7 +314,6 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans, filterType, f
         let cdata = [
           { name: 'Zone', count: selectedZones },
           { name: 'No.of. New Request', count: data?.new_request?.count},
-          { name: 'No.of. Processed Request', count: data?.processed?.count},
           { name: 'Total.Req. Amount', amount: data?.new_request?.amount}
         ]
         setChartData(cdata)

@@ -20,6 +20,8 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import WhatsAppIcon from '@material-ui/icons/WhatsApp';
+import ToggleButton from '@material-ui/lab/ToggleButton';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack'
 import React, { useState } from 'react';
@@ -161,6 +163,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
   const [editProfile, setEditProfile] = useState(false)
   const [editPassword, setEditPassword] = useState(false)
   const [submitType, setSubmitType] = useState();
+  const [selected, setSelected] = useState(true);
   const { enqueueSnackbar } = useSnackbar();
 
 
@@ -380,7 +383,8 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                             labelText="Mobile"
                             value={values.mobile}
                             error={errors.mobile}
-                            helperText={errors.mobile}
+                            helperText={errors.mobile ? errors.mobile : '*please enable to recieve whatsapp notifications.'}
+                            InputProps={{endAdornment: <ToggleButton value="check" size='small' selected={selected} onChange={() => setSelected(!selected)}><WhatsAppIcon fontSize='small' /></ToggleButton>}}
                           />
                         </Grid>
                         <Grid item md={6}>

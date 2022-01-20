@@ -5,6 +5,7 @@ import { useQuery } from 'react-query';
 import styled from 'styled-components';
 import NewCallRequest from './NewCallRequest';
 import ProcessedCallRequest from './ProcessedCallRequest';
+import usePageTitle from '../../hooks/usePageTitle';
 import { getCallbackRequest } from '../../services/callrequest.service';
 
 const PaperWrapper = styled.div`
@@ -28,6 +29,7 @@ background-color: #f1f1f1;
 
 
 const CallRequestPage = () => {
+  usePageTitle('Call Request');
   const [selectedTab, setSelectedTab] = useState('new');
 
   const { data: callbackData = [], isLoading } = useQuery('new-request', () => getCallbackRequest(0), {refetchOnWindowFocus: false})

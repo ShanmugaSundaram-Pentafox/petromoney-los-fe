@@ -1,4 +1,5 @@
 import { Box, Grid, Badge } from '@material-ui/core';
+import Skeleton from '@material-ui/lab/Skeleton';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
@@ -29,31 +30,48 @@ background-color: #f1f1f1;
 const CallRequestPage = () => {
   const [selectedTab, setSelectedTab] = useState('new');
 
-  const { data: callbackData = [] } = useQuery('new-request', () => getCallbackRequest(0), {refetchOnWindowFocus: false})
+  const { data: callbackData = [], isLoading } = useQuery('new-request', () => getCallbackRequest(0), {refetchOnWindowFocus: false})
   const { data: callbackProcessed = [] } = useQuery('processed-request', () => getCallbackRequest(1), {refetchOnWindowFocus: false})
 
   return (
     <>
-      <PaperWrapper>
-        <Box borderRadius={4} bgcolor="background.paper">
-          <Grid container>
-            <Grid onClick={() => { setSelectedTab('new') }} className={selectedTab === 'new' ? 'inactive' : 'active'} style={{ textAlign: 'center', padding: 16 }} item md={6}>
-              <Badge badgeContent={callbackData?.length || 0} style={{ paddingTop: 4, paddingRight: 8 }} color="primary">
-                <div>New Requests</div>
-              </Badge>
+      {
+        isLoading ?
+          <Grid container spacing={2}>
+            <Grid item md={6}>
+              <Skeleton variant='rectangular' height={60} />
             </Grid>
-            <Grid onClick={() => { setSelectedTab('processed') }} style={{ textAlign: 'center', padding: 16 }} className={selectedTab === 'processed' ? 'inactive' : 'active'} item md={6}>
-              <div>Processed</div>
+            <Grid item md={6}>
+              <Skeleton variant='rectangular' height={60} />
+            </Grid>
+            <Grid item md={12}>
+              <Skeleton variant='rectangular' height={400} />
             </Grid>
           </Grid>
-        </Box>
-      </PaperWrapper>
-      {
-        selectedTab === 'new' ? (
-          <NewCallRequest callbackData={callbackData} />
-        ) : (
-          <ProcessedCallRequest callbackProcessed={callbackProcessed} />
-        )
+          :
+          <>
+            <PaperWrapper>
+              <Box borderRadius={4} bgcolor="background.paper">
+                <Grid container>
+                  <Grid onClick={() => { setSelectedTab('new') }} className={selectedTab === 'new' ? 'inactive' : 'active'} style={{ textAlign: 'center', padding: 16 }} item md={6}>
+                    <Badge badgeContent={callbackData?.length || 0} style={{ paddingTop: 4, paddingRight: 8 }} color="primary">
+                      <div>New Requests</div>
+                    </Badge>
+                  </Grid>
+                  <Grid onClick={() => { setSelectedTab('processed') }} style={{ textAlign: 'center', padding: 16 }} className={selectedTab === 'processed' ? 'inactive' : 'active'} item md={6}>
+                    <div>Processed</div>
+                  </Grid>
+                </Grid>
+              </Box>
+            </PaperWrapper>
+            {
+              selectedTab === 'new' ? (
+                <NewCallRequest callbackData={callbackData} />
+              ) : (
+                <ProcessedCallRequest callbackProcessed={callbackProcessed} />
+              )
+            }
+          </>
       }
     </>
   )

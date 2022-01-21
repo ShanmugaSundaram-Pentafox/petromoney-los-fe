@@ -84,7 +84,6 @@ const Deviations = ({id}) => {
     const newData = [...deviationData]
     newData[i] = {...newData[i], [name]: name === 'review_status' ? checked : value}
     setDeviationData(newData)
-    console.log(newData);
   }
 
   const onManualChange = (e, i) => {

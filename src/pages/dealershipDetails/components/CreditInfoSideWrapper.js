@@ -1,23 +1,20 @@
+import { Grid } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
 import Snackbar from '@material-ui/core/Snackbar';
-import Step from '@material-ui/core/Step';
-import StepContent from '@material-ui/core/StepContent';
-import StepLabel from '@material-ui/core/StepLabel';
-import Stepper from '@material-ui/core/Stepper';
 import Typography from '@material-ui/core/Typography';
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
-import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import Alert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { useFormik } from 'formik';
+import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
+import * as Yup from 'yup';
 import DealerCreditInfoForm from './DealerCreditInfoForm';
-import { logger } from '../../../config/logger';
-import { URL } from '../../../config/serverUrls';
-import apiCall from '../../../utils/api.util';
+import { ViewData } from '../../../components/CommonComponents/FilePreview';
+import { getCreditInfo, updateCreditInfo } from '../../../services/dealers.service';
 
 
 
@@ -38,18 +35,13 @@ const useStyles = makeStyles(theme => ({
   },
   sidePanelFormContentWrapper: {
     flex: 1,
-    overflow: 'auto'
-  },
-  actionFooter: {
-    // justifyContent: 'flex-end',
+    overflow: 'auto',
+    padding: 9
   },
   actionButtonsWrapper: {
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     padding: '12px 16px'
-  },
-  actionButtons: {
-    // paddingTop: 8
   },
   stepperRoot: {
     padding: 16,
@@ -64,7 +56,6 @@ const useStyles = makeStyles(theme => ({
   btnBack: {
     '&.MuiButton-contained': {
       backgroundColor: theme.palette.blueGreyLight,
-      // color: theme.palette.white
     },
     '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.blueGreyLight
@@ -88,73 +79,62 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
   const [loading, setLoading] = useState(false);
   const [apiStatus, setApiStatus] = useState({});
   const [apiData, setApiData] = useState([]);
-
-  const getCreditInfo = () => {
-    return new Promise((resolve, reject) => {
-      apiCall(`${URL.dealership}/${dealershipId}/credit/info`)
-        .then(({ status, data, message }) => {
-          if (status === 'SUCCESS') {
-            resolve(data);
-          } else {
-            reject(message);
-          }
-        })
-        .catch(e => {
-          reject(e.message);
-        })
-    });
-  }
+  const [editMode, setEditMode] = useState();
+  const { enqueueSnackbar } = useSnackbar();
 
   React.useEffect(() => {
-    getCreditInfo()
+    getCreditInfo(dealershipId)
       .then(res => {
-        setApiData(res);
+        setApiData(res?.find(item => item?.dealer_id === data?.id));
+        setEditMode(res?.find(item => item?.dealer_id === data?.id)?.cibil_score ? false : true);
       })
       .catch(e => null)
   }, []);
 
+  const handleEdit = () => {
+    setValues(apiData)
+    setEditMode(!editMode)
+  }
+
   const { values, errors, handleChange, handleSubmit, handleReset, setValues } = useFormik({
     initialValues: {},
+    validateOnChange: false,
+    validationSchema: Yup.object().shape({
+      cibil_score: Yup.number().nullable().required('Please Enter CIBIL Score'),
+      loans_count: Yup.number().nullable().required('Please Enter Total Loans'),
+      closed_loans_count: Yup.number().nullable().required('Please Enter Total Closed Loans'),
+      od_accounts_count: Yup.number().nullable().required('Please Enter CIBIL Score'),
+      od_amount: Yup.number().nullable().required('Please Enter No of OD Accounts'),
+      current_os_amount: Yup.number().nullable().required('Please Enter OD Amount'),
+      cibil_vintage: Yup.number().nullable().required('Please Enter CIBIL Vintage'),
+      no_of_enquiries: Yup.number().nullable().required('Please Enter No of Enquiries'),
+    }),
     onSubmit: values => {
-      // console.log('Form Values >> ', values);
       setLoading(true);
       setApiStatus({});
-      // setActiveStep(activeStep+1);
-      // dealership/<int:dealership_id>/credit/info
-      // return null;
-      const resData = apiData.find(n => n.dealer_id === data[activeStep].id) || {};
 
-      apiCall(`${URL.dealership}/${dealershipId}/credit/info`, {
-        method: 'POST',
-        body: {
-          ...values,
-          id: resData.id || undefined,
-          user_id:
-            currentUser.id,
-          dealer_id: data[activeStep].id
-        },
-      })
-        .then(({ status, resData, message }) => {
-          // console.log(data, data.status, data.status == 'SUCCESS')
-          if (status == 'SUCCESS') {
-            // setApiStatus({ type: 'success', message: message || `Credit Info updated for ${data[activeStep].id}` })
-            setLoading(false);
-            handleReset();
-            setActiveStep(activeStep + 1);
-            if(activeStep + 1 === data.length){
-              onClose()
-            }
-          }
-          else {
-            setApiStatus({ show: true, type: 'error', message: message || 'Unable to save the details. Please try again later' })
-            setLoading(false);
-          }
+      const body = {
+        ...values,
+        id: apiData?.id || undefined,
+        user_id: currentUser?.id,
+        dealer_id: data?.id
+      }
+      
+      updateCreditInfo(body, dealershipId)
+        .then(res => {
+          setLoading(false)
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          });
+          onClose()
         })
         .catch(e => {
-          setApiStatus({ show: true, type: 'error', message: 'Unable to save the details. Please contact admin.' })
-          setLoading(false);
-          setReadOnly(true);
-          logger(e);
+          console.log(e);
+          setLoading(false)
         })
     }
   });
@@ -162,34 +142,69 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
   return (
     <div className={classes.sidePanelFormWrapper}>
       <div className={classes.sidePanelTitle}>
-        <Typography  variant="h4">Credit Information: All Applicants</Typography>
+        <Typography  variant="h4">Credit Information</Typography>
         <CloseRoundedIcon onClick={onClose} />
       </div>
-
       <div className={classes.sidePanelFormContentWrapper}>
-        <Stepper activeStep={activeStep} orientation="vertical" className={classes.stepperRoot}>
-          {
-            Array.isArray(data) && data.map((item, i) => {
-              const resData = apiData.find(n => n.dealer_id === item.id);
-              // console.log('REs >> ', apiData, item);
-              const dealerData = { ...(resData || {}), ...values };
-              return (
-                <Step key={item.id}>
-                  <StepLabel className={classes.stepTitle} onClick={() => setActiveStep(i)}>{item.first_name}  {dealerData.cibil_score ? <b>({dealerData.cibil_score})</b> : null} <small style={{ color: '#acacac', float: 'right', fontSize: 11 }}>{item?.userType}</small></StepLabel>
-                  <StepContent>
-                    <DealerCreditInfoForm data={item} values={dealerData} errors={errors} onChange={handleChange} />
-                  </StepContent>
-                </Step>
-              );
-            })
-          }
-        </Stepper>
-        {/* {
-          Array.isArray(data) && activeStep+1 === data.length ? (
-            <Alert severity={'success'}>Thanks for submitting credit info for dealers</Alert>
-          ) : null
-        } */}
+        {
+          !editMode ? 
+            <div style={{margin: 10}}>
+              <Grid container spacing={2}>
+                <Grid item md={6}>
+                  <ViewData title='Name' value={data?.first_name +' '+ data?.last_name} style={{marginBottom: 0}} />
+                </Grid>
+                <Grid item md={6}>
+                  <ViewData title='Mobile' value={data?.mobile} style={{marginBottom: 0}} />
+                </Grid>
+                <Grid item md={6}>
+                  <ViewData title='User Type' value={data?.userType} style={{marginBottom: 0}} />
+                </Grid>
+                <Grid item md={6}>
+                  <ViewData title='CIBIL Score' value={apiData?.cibil_score} style={{marginBottom: 0}} />
+                </Grid>
+                <Grid item md={6}>
+                  <ViewData title='No. of Loans' value={apiData?.loans_count} style={{marginBottom: 0}} />
+                </Grid>
+                <Grid item md={6}>
+                  <ViewData title='Closed Loans' value={apiData?.closed_loans_count} style={{marginBottom: 0}} />
+                </Grid>
+                <Grid item md={6}>
+                  <ViewData title='Overdue Count' value={apiData?.od_accounts_count} style={{marginBottom: 0}} />
+                </Grid>
+                <Grid item md={6}>
+                  <ViewData title='Overdue Amount' value={apiData?.od_amount} style={{marginBottom: 0}} />
+                </Grid>
+                <Grid item md={6}>
+                  <ViewData title='Current O/S amount' value={apiData?.current_os_amount} style={{marginBottom: 0}} />
+                </Grid>
+                <Grid item md={6}>
+                  <ViewData title='Vintage with CIBIL bureau' value={apiData?.cibil_vintage} style={{marginBottom: 0}} />
+                </Grid>
+                <Grid item md={6}>
+                  <ViewData title='No of enquiries last 6 months' value={apiData?.no_of_enquiries} style={{marginBottom: 0}} />
+                </Grid>
+                <Grid item md={6}>
+                  <ViewData title='Loans in Bureau Report' value={apiData?.is_loan_in_bureau === 1 ? 'Yes' : 'No'} style={{marginBottom: 0}} />
+                </Grid>
+                <Grid item md={6}>
+                  <ViewData title='No of times of highest DPD' value={apiData?.highest_dpd === 4 ? '>3 times' : apiData?.highest_dpd === 1 ? `${apiData?.highest_dpd} time` : `${apiData?.highest_dpd} times`} style={{marginBottom: 0}} />
+                </Grid>
+                <Grid item md={6}>
+                  <ViewData title='Highest DPD bracket' value={apiData?.highest_dpd_bracket} style={{marginBottom: 0}} />
+                </Grid>
+                <Grid item md={6}>
+                  <ViewData title='Credit Card in Bureau Report' value={apiData?.is_cc_in_cibil === 1 ? 'Yes' : 'No'} style={{marginBottom: 0}} />
+                </Grid>
+                <Grid item md={6}>
+                  <ViewData title='Status - For Loans &amp; Credit Cards' value={apiData?.status} style={{marginBottom: 0}} />
+                </Grid>
+              </Grid>
+            </div>
+            :
+            <DealerCreditInfoForm values={values} errors={errors} onChange={handleChange} dealerData={data} />
+        }
       </div>
+
       <div className={classes.actionFooter}>
         <Divider />
         <Snackbar open={apiStatus.show} autoHideDuration={2000} onClose={() => setApiStatus({ show: false })}>
@@ -200,18 +215,9 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
             !loading ? (
               <>
                 <Button
-                  variant="contained"
-                  color="secondary"
-                  startIcon={<NavigateBeforeRoundedIcon />}
-                  disabled={loading}
-                  onClick={onClose}>Close</Button>
-
-                <Button
-                  variant="contained"
                   className={clsx(classes.btn, classes.btnSuccess)}
-                  // startIcon={<NavigateNextRoundedIcon />}
-                  disabled={loading}
-                  onClick={loading ? () => null : handleSubmit}>Save</Button>
+                  variant={editMode ? 'contained' : 'outlined'}
+                  onClick={editMode ? handleSubmit : handleEdit}>{editMode === true ? 'Save' : 'Edit'}</Button>
               </>
             ) : (
               <div style={{display: 'flex', justifyContent: 'flex-end', width: '90%', margin: '0 auto'}}>

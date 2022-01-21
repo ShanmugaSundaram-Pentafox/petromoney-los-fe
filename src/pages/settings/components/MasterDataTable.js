@@ -45,6 +45,7 @@ import {
   updateRegionById,
   updateStateById,
 } from '../../../services/common.service';
+import { RegionStateMap } from './RegionStateMap';
 
 const useStyles = makeStyles((theme) => ({
   '@global': {
@@ -1152,6 +1153,10 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                 onChange={handleChange}
               />
             </Grid>
+            {
+              status === 'State' &&
+              <RegionStateMap />
+            }
             <div className={classes.formFooter}>
               <Button
                 onClick={handleClose}

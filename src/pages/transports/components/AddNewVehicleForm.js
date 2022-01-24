@@ -112,7 +112,7 @@ const AddNewVehicleForm = ({
           });
           getVehicleInfoFromID(id)
             .then((data) => {
-              setVehicleDetails(JSON.parse(data?.find(item => item.tt_no === formData.tt_no)?.vehicle_details))
+              setVehicleDetails(data?.find(item => item.tt_no === formData.tt_no)?.vehicle_details)
             })
             .catch(e => console.log(e))
         })
@@ -177,7 +177,7 @@ const AddNewVehicleForm = ({
             </form>
             {
               vehicleDetails &&
-                <VehicleDetails vehicleDetails={vehicleDetails} />
+                <VehicleDetails vehicleTestDet={vehicleDetails} />
             }
           </Box>
           <Button

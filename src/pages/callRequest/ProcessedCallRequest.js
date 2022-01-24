@@ -1,9 +1,7 @@
 import MUIDataTable from 'mui-datatables';
 import React, { useMemo } from 'react'
-import usePageTitle from '../../hooks/usePageTitle';
 
 const ProcessedCallRequest = ({callbackProcessed}) => {
-  usePageTitle('Call Request');
 
   const columns = useMemo(() => {
     return [

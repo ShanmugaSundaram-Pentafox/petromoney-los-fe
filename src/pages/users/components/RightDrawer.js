@@ -1,16 +1,5 @@
-// import Button from '@material-ui/core/Button';
-// import IconButton from '@material-ui/core/IconButton';
-// import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
-import { CircularProgress, Typography } from '@material-ui/core';
+import { CircularProgress, IconButton, Typography } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
-// import Snackbar from '@material-ui/core/Snackbar';
-// import MuiAlert from '@material-ui/lab/Alert';
-// import clsx from 'clsx';
-// import CircularProgress from '@material-ui/core/CircularProgress';
-// import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
-// import EditIcon from '@material-ui/icons/Edit';
-// import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
-// import Skeleton from '@material-ui/lab/Skeleton';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -49,7 +38,7 @@ const useStyles = makeStyles(theme => ({
     overflowX: 'hidden'
   },
   sidePanelTitle: {
-    padding: '24px 16px',
+    padding: '14px 16px',
     marginBottom: 6,
     display: 'flex',
     justifyContent: 'space-between',
@@ -67,8 +56,6 @@ const useStyles = makeStyles(theme => ({
   button: {
     display: 'flex',
     justifyContent: 'flex-end',
-    // marginRight: 12
-
   },
 
   sidePanelFormContentWrapper: {
@@ -155,14 +142,12 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
   const [loading, setLoading] = useState(false);
   const [userLoading, setuserLoading] = useState(false);
   const [passLoading, setpassLoading] = useState(false);
-  // const [showUserEditDrawer, setShowUserEditDrawer] = useState(false);
   const [roleList, setRoleList] = useState([])
   const [readOnly, setReadOnly] = useState(true)
   const [editProfile, setEditProfile] = useState(false)
   const [editPassword, setEditPassword] = useState(false)
   const [submitType, setSubmitType] = useState();
   const { enqueueSnackbar } = useSnackbar();
-
 
   useMount(() => {
     getAllUserRoles()
@@ -172,8 +157,8 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
       .catch(e => {
         console.log(e)
       })
-
   })
+
   const handleClickOpen = (value) => {
     setOpen(true);
   };
@@ -199,7 +184,6 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
         setuserLoading(false)
         console.log(err)
       })
-
   }
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -223,7 +207,6 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
         }
         )
         setTimeout(() => {
-          // setConfirmDelete(userId)
           window.location.reload()
         }, 700);
       })
@@ -306,14 +289,15 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>{editProfile ? 'Edit Profile Information' : editPassword ? 'Edit Password' : 'Profile Information'}</div>
-        <CloseIcon onClick={callback} />
+        <IconButton size='small'>
+          <CloseIcon onClick={callback} fontSize='small' />
+        </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
           {
             !editProfile && (
               <Box className={classes.button}>
-                {/* <Button variant="contained" className={classes.btnStyle} color="primary" size="small" onClick={() => handleClickOpen(data.id)}>Delete</Button> */}
                 {
                   <Button
                     variant="contained"
@@ -321,8 +305,6 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                     size="small"
                     onClick={() => {
                       setReadOnly(false);
-                      // setEditProfile(true);
-                      // activationAlert();
                       setEditPassword(false);
                       data.status === 'Active' ? setEditProfile(true) : activationAlert()
 
@@ -419,19 +401,6 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                             }
                           </TextInput>
                         </Grid>
-                        {/* <Grid item md={6}>
-                          <TextInput
-                            select
-                            label="Role"
-                            value={userRole}
-                            InputLabelProps={{ shrink: true }}
-                            onChange={e => setUserRole(e.target.value)}
-                          >
-                            {
-                              roleList.map(roleList => <option key={roleList.role_name} value={roleList.id}>({roleList.role_name}) - {roleList.name}</option>)
-                            }
-                          </TextInput>
-                        </Grid> */}
                       </Grid>
                     </form>
                   </Box>
@@ -442,7 +411,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                     role={currentUser.role_name}
                     perform={rulesList.region_map}
                     yes={() => (
-                      [1, 6, 7, 12].includes(data.role_id) ? <MapRegion data={data} /> : null
+                      [1, 6, 7, 10, 11, 12].includes(data.role_id) ? <MapRegion data={data} /> : null
                     )}
                     no={() => null}
                   />
@@ -472,7 +441,6 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                           size="small"
                           onClick={() => {
                             setReadOnly(false);
-                            // setEditPassword(true);
                             data.status === 'Active' ? setEditPassword(true) : activationAlert()
                           }}>Change password</Button>
                       </Box>
@@ -484,15 +452,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
               )
             }
           </>
-          {/* } */}
-
-          {/* <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-            <Alert onClose={handleClose} severity="warning">
-              Password does not match
-            </Alert>
-          </Snackbar> */}
-
-          {/* </Drawer> */}
+          
           <Dialog
             open={open}
             onClose={handleClose}
@@ -539,7 +499,6 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                   <Button
                     variant="contained"
                     className={classes.btnError}
-                    // color="primary"
                     onClick={() => ActivateUser(1)}
                   >
                     Activate

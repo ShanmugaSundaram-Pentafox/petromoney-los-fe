@@ -286,7 +286,13 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
           })
           .catch(err => {
             setLoading(false);
-            console.log(err)
+            enqueueSnackbar(err, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            })
           })
       }
     }

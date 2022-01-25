@@ -17,6 +17,7 @@ const NewVehicleLoanAction = ({ vehicleId, callback, currentUser }) => {
         color="primary"
         variant="contained"
         onClick={() => setOpenModal(true)}
+        style={{marginLeft: 8}}
       >
         Reqeust Loan/Service
       </Button>

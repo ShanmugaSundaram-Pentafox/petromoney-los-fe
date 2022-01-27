@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.8.2](https://gitlab.com/vignesh3/petromall-fe/compare/v2.8.1...v2.8.2) (2022-01-26)
+
+
+### Bug Fixes
+
+* **credit-reload:** remove unused code ([399304a](https://gitlab.com/vignesh3/petromall-fe/commit/399304ad2cc7f56460aede014bc9061fc6c5b3c2))
+* Merge Message ([678ab4b](https://gitlab.com/vignesh3/petromall-fe/commit/678ab4b5c83056233129677af146dca19060cc46))
+* merge msg ([2fcfea5](https://gitlab.com/vignesh3/petromall-fe/commit/2fcfea582ed37b9818f19ae9f8213d4763faf654))
+* merge msg ([2c393d3](https://gitlab.com/vignesh3/petromall-fe/commit/2c393d352846a24711dae83c3ee73a55d371e154))
+* **pd:** add rule to credit head ([155beeb](https://gitlab.com/vignesh3/petromall-fe/commit/155beeb9fd71a6ce99aafb697afa10b495bad3f5))
+
 ### [2.8.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.8.0...v2.8.1) (2022-01-17)
 
 

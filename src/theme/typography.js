@@ -2,7 +2,7 @@ import { colors } from '@material-ui/core';
 import palette from './palette';
 
 export default {
-  fontFamily:'\'Open Sans\', Roboto, sans-serif',
+  fontFamily: '\'Nunito Sans\', \'Open Sans\', Roboto, sans-serif',
   fontWeightMedium: 600,
   h1: {
     color: palette.text.primary,

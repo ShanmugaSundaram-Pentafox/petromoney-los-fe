@@ -105,6 +105,7 @@ export const rulesForUserRoles = {
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
+      rulesList.region_map,
     ]
   },
   OPS_EXEC: {
@@ -140,6 +141,7 @@ export const rulesForUserRoles = {
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
+      rulesList.region_map,
     ]
   },
   SALES_HEAD_STATE: {

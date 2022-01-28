@@ -170,7 +170,6 @@ const DealerEditSideWrapper = ({
     } else {
       setFieldValue('profile_image_url', value[0]);
     }
-    handleSubmit(values);
   };
   const {
     values,

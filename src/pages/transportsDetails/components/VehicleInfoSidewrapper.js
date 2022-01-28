@@ -113,7 +113,7 @@ export const VehicleInfoSidewrapper = ({currentUser, callbackClose, vehicleInfo,
                     <TableCell>{row.description}</TableCell>
                     <TableCell>
                       <Button onClick={() => setImageModal({ open: true, image: row.file_path, type: row.file_path.endsWith('.pdf') })} >
-                        <Typography variant='body1'><strong>{row.file_path?.split('/')[row.file_path?.split('/').length - 1] || '-'}</strong></Typography>
+                        <Typography variant='body1'><strong>{row?.file_name || row.file_path?.split('/')[row.file_path?.split('/').length - 1] || '-'}</strong></Typography>
                       </Button>
                     </TableCell>
                     <TableCell>

@@ -1,21 +1,23 @@
-import Box from '@material-ui/core/Box';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Divider from '@material-ui/core/Divider';
-import Grid from '@material-ui/core/Grid';
-import Switch from '@material-ui/core/Switch';
-import Tooltip from '@material-ui/core/Tooltip';
-import Typography from '@material-ui/core/Typography';
+import DateFnsUtils from '@date-io/date-fns';
+import { Box, CircularProgress, Divider, Grid, Switch, Tooltip, Typography, } from '@material-ui/core';
+import { grey } from '@material-ui/core/colors';
 import UploadIcon from '@material-ui/icons/Backup';
 import CloseIcon from '@material-ui/icons/Close';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
+import { format, parse } from 'date-fns';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
+import { useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import Button from '../../../components/CommonComponents/Button/Button';
 import {
@@ -25,16 +27,9 @@ import {
 import FileUpload from '../../../components/FileUpload';
 import TextInput from '../../../components/TextInput/TextInput';
 import { URL } from '../../../config/serverUrls';
-import 'date-fns';
-import DateFnsUtils from '@date-io/date-fns';
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from '@material-ui/pickers';
-import { grey } from '@material-ui/core/colors';
 import { cryptoEncrypt } from '../../../services/crypto.service';
 import { deleteTransportOwnerProfileDoc } from '../../../services/transports.service';
-import { format, parse } from 'date-fns';
+import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -114,10 +109,6 @@ const useStyles = makeStyles((theme) => ({
     margin: '8px 4px',
     maxWidth: '100%',
   },
-  // avatar: {
-  //     backgroundImage: ''
-
-  // },
   editButton: {
     marginRight: '8px',
     '&.MuiButton-contained': {
@@ -152,7 +143,6 @@ const AddNewTransportsOwnerForm = ({
   callback,
 }) => {
   const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
-  const [checked, setChecked] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
   const [fileType, setFileType] = useState('');
@@ -175,6 +165,7 @@ const AddNewTransportsOwnerForm = ({
   };
   const { enqueueSnackbar } = useSnackbar();
   const date = new Date();
+  const queryClient = useQueryClient()
   const currentYear = date.getFullYear();
   const currentYearDiff = date.getFullYear() - 1970;
   const classes = useStyles();
@@ -210,17 +201,26 @@ const AddNewTransportsOwnerForm = ({
         is_whatsapp: state.checkedA === true ? 1 : 0,
         is_aadhar_linked: state.checkedB === true ? 1 : 0,
       };
+
+      let obj = {};
+      if (values.t_owner_id) {
+        obj = compareObject(rowData, date_values)
+      }
+      else {
+        obj = { ...date_values }
+      }
+
       const data = new FormData();
-      Object.keys(date_values).forEach((key) => {
+      Object.keys(obj).forEach((key) => {
         if( key === 'pan' ){
-          let pan = date_values?.pan ? cryptoEncrypt(date_values.pan) : date_values?.pan;
+          let pan = obj?.pan ? cryptoEncrypt(obj.pan) : obj?.pan;
           data.append(key, pan);
         }
         else if( key === 'aadhar' ){
-          let aadhar = date_values?.aadhar ? cryptoEncrypt(date_values.aadhar) : date_values?.aadhar;
+          let aadhar = obj?.aadhar ? cryptoEncrypt(obj.aadhar) : obj?.aadhar;
           data.append(key, aadhar);
         } else {
-          data.append(key, date_values[key]);
+          data.append(key, obj[key]);
         }
       });
 
@@ -246,9 +246,8 @@ const AddNewTransportsOwnerForm = ({
                 },
                 variant: 'success',
               });
-              setTimeout(() => {
-                window.location.reload();
-              }, 2000);
+              queryClient.invalidateQueries(['owner-info', dealer_id])
+              callback();
             } else {
               setLoading(false);
               enqueueSnackbar(res.message, {
@@ -294,9 +293,8 @@ const AddNewTransportsOwnerForm = ({
                 },
                 variant: 'success',
               });
-              setTimeout(() => {
-                window.location.reload();
-              }, 2000);
+              queryClient.invalidateQueries(['owner-info', dealer_id])
+              callback();
             } else {
               enqueueSnackbar(res.message, {
                 anchorOrigin: {
@@ -334,8 +332,6 @@ const AddNewTransportsOwnerForm = ({
     } else {
       setFieldValue('profile_image_url', value[0]);
     }
-    // fileType === 'PAN' ? setFieldValue('pan_file_url', value[0]) : fileType === 'Front' ? setFieldValue('aadhar_f_file_url', value[0]) : fileType = 'Back' ? setFieldValue('aadhar_b_file_url', value[0]) : setFieldValue('profile_image_url', value[0])
-    handleSubmit(values);
     onCloseUploader();
   };
   const docUpload = (val) => {
@@ -352,6 +348,8 @@ const AddNewTransportsOwnerForm = ({
           },
           variant: 'success',
         });
+        queryClient.invalidateQueries(['owner-info', dealer_id])
+        callback();
       })
       .catch(err => {
         enqueueSnackbar('Something went wrong, Please try Again!', {
@@ -648,7 +646,7 @@ const AddNewTransportsOwnerForm = ({
                           <option value='null'>Residing Since</option>
                           {[...Array(currentYearDiff)].map((_, i) => {
                             return (
-                              <option value={currentYear - i}>
+                              <option key={i} value={currentYear - i}>
                                 {currentYear - i}
                               </option>
                             );
@@ -775,7 +773,7 @@ const AddNewTransportsOwnerForm = ({
                   <Grid item md={5}>
                     <>
                       {
-                        rowData.profile_image_url ? (
+                        rowData.profile_image_url || values?.profile_image_url ? (
                           profileAttachment()
                         ) : (
                           <div
@@ -784,7 +782,7 @@ const AddNewTransportsOwnerForm = ({
                               justifyContent: 'flex-start',
                               alignItems: 'center',
                             }}
-                            onClick={() => docUpload('PAN')}
+                            onClick={() => docUpload('profile_image_url')}
                           >
                             <Tooltip title={'Click to attach profile'}>
                               <>
@@ -796,20 +794,6 @@ const AddNewTransportsOwnerForm = ({
                             </Tooltip>
                           </div>
                         )
-                        // <>
-                        //     <TextInput
-                        //         type="file"
-                        //         accept="image/*"
-                        //         name="pan_file_url"
-                        //         value={rowData.profile_image_url}
-                        //         readOnly={readOnly}
-                        //         disabled={readOnly}
-                        //         onChange={(event) => {
-                        //             values[event.target.name] = event.currentTarget.files[0];
-                        //         }}
-                        //         InputLabelProps={{ shrink: true }}
-                        //     ></TextInput>
-                        // </>
                       }
                     </>
                   </Grid>
@@ -827,7 +811,7 @@ const AddNewTransportsOwnerForm = ({
                   </Grid>
                   {values.pan ? (
                     <Grid item md={6}>
-                      {rowData.pan_file_url ? (
+                      {rowData.pan_file_url || values?.pan_file_url ? (
                         panAttachment()
                       ) : (
                         <div
@@ -840,7 +824,6 @@ const AddNewTransportsOwnerForm = ({
                                 className={classes.icon}
                                 disabled={readOnly}
                               />
-                              {/* <Typography className={classes.typography}>PAN</Typography> */}
                             </>
                           </Tooltip>
                         </div>
@@ -862,7 +845,7 @@ const AddNewTransportsOwnerForm = ({
                   {values.aadhar ? (
                     <>
                       <Grid item md={3}>
-                        {rowData.aadhar_f_file_url ? (
+                        {rowData.aadhar_f_file_url || values?.aadhar_f_file_url ? (
                           aadharFront()
                         ) : (
                           <div
@@ -875,14 +858,13 @@ const AddNewTransportsOwnerForm = ({
                                   className={classes.icon}
                                   disabled={readOnly}
                                 />
-                                {/* <Typography className={classes.typography}>Front</Typography> */}
                               </>
                             </Tooltip>
                           </div>
                         )}
                       </Grid>
                       <Grid item md={3}>
-                        {rowData.aadhar_b_file_url ? (
+                        {rowData.aadhar_b_file_url || values?.aadhar_b_file_url ? (
                           aadharBack()
                         ) : (
                           <div
@@ -891,12 +873,10 @@ const AddNewTransportsOwnerForm = ({
                           >
                             <Tooltip title={'Click to attach aadhar back'}>
                               <>
-                                {/* <AttachmentOutlinedIcon className={classes.icon} /> */}
                                 <UploadIcon
                                   className={classes.icon}
                                   disabled={readOnly}
                                 />
-                                {/* <Typography className={classes.typography}>Back</Typography> */}
                               </>
                             </Tooltip>
                           </div>

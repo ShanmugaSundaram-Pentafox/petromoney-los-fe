@@ -32,8 +32,6 @@ import {
 } from '../../../components/CommonComponents/FilePreview';
 import FileUpload from '../../../components/FileUpload';
 import TextInput from '../../../components/TextInput/TextInput';
-// import { URL } from '../../../config/serverUrls';
-// import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
@@ -45,8 +43,8 @@ import {
 } from '../../../services/common.service';
 import { cryptoEncrypt } from '../../../services/crypto.service';
 import { deleteTransportProfileDoc } from '../../../services/transports.service';
+import { compareObject } from '../../../utils/compareObject.util';
 import { getDistricts } from '../../../utils/indianStates.util';
-// import { addNewTransport, updateTransport } from '../../../services/transports.service';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -243,16 +241,24 @@ const AddNewTransportsForm = ({
       setLoading(true);
       values.name = values.name.toUpperCase();
       const doi = selectedDate ? format(selectedDate, 'dd-MM-yyyy') : values?.doi
-      const data = { ...values, doi: doi, t_owner_id: id, pan: values.pan?.toUpperCase(), gst: values.gst?.toUpperCase(), omc: omcs.find(item => {return item.name === values.omc})?.id };
-      // let apiURL = isAdd === 'Add' ? `transporters` : `tranporters/${data.transporter_id}`
+      const data_values = { ...values, doi: doi, t_owner_id: id, pan: values.pan?.toUpperCase(), gst: values.gst?.toUpperCase(), omc: omcs.find(item => {return item.name === values.omc})?.id };
+
+      let obj = {};
+      if (values.transporter_id) {
+        obj = compareObject(data, data_values)
+      }
+      else {
+        obj = { ...data_values }
+      }
+
       const formData = new FormData();
-      Object.keys(data).forEach((key) => {
+      Object.keys(obj).forEach((key) => {
         if (key === 'pan') {
           let pan = values?.pan ? cryptoEncrypt(values.pan) : values?.pan;
           formData.append(key, pan)
         }
         else
-          formData.append(key, data[key]);
+          formData.append(key, obj[key]);
       });
       if (isAdd === 'Add') {
         fetch(`${URL.base}${URL.vehicleInfo}`, {
@@ -357,7 +363,6 @@ const AddNewTransportsForm = ({
 
   useEffect(() => {
     if (values.state) {
-      // let res = states.find(({ name }) => name === values.state);
       fetchRegions(parseInt(values.state));
     }
   }, [values.state]);
@@ -368,7 +373,6 @@ const AddNewTransportsForm = ({
     fileType === 'PAN'
       ? setFieldValue('pan_file_url', value[0])
       : setFieldValue('gst_file_url', value[0]);
-    handleSubmit(values);
     onCloseUploader();
   };
   const docUpload = (val) => {
@@ -482,7 +486,7 @@ const AddNewTransportsForm = ({
                       value={values.transporter_id}
                     />
                     <ViewData title='Mobile' value={values.mobile} />
-                    <ViewData title='OMC' value={omcs.find(item => {return item.name === values.omc})?.name} />
+                    <ViewData title='OMC' value={values?.omc_value || omcs.find(item => {return item.name === values.omc})?.name} />
                     <ViewData title='Date of Incoporation' value={values?.doi} />
                     <ViewData title='Region' value={(regionList.find(function (region) {
                       if (region.id == values.region)
@@ -619,7 +623,7 @@ const AddNewTransportsForm = ({
                         select
                         labelText="OMC"
                         name="omc"
-                        value={omcs.find(item => {return item.name === values.omc})?.name}
+                        value={values?.omc || omcs.find(item => {return item.name === values.omc})?.name}
                         readOnly={readOnly}
                         disabled={readOnly}
                         error={errors.omc}
@@ -769,7 +773,7 @@ const AddNewTransportsForm = ({
                     <Grid item md={6}>
                       <>
                         {
-                          data.pan_file_url ? (
+                          data.pan_file_url || values?.pan_file_url ? (
                             panAttachment()
                           ) : (
                             <div
@@ -782,7 +786,6 @@ const AddNewTransportsForm = ({
                                     className={classes.icon}
                                     disabled={readOnly}
                                   />
-                                  {/* <Typography className={classes.typography}>Attach PAN</Typography> */}
                                 </>
                               </Tooltip>
                             </div>
@@ -806,7 +809,7 @@ const AddNewTransportsForm = ({
                   {values.gst ? (
                     <Grid item md={6}>
                       <>
-                        {data.gst_file_url ? (
+                        {data.gst_file_url || values?.gst_file_url ? (
                           gstAttachment()
                         ) : (
                           <div
@@ -819,7 +822,6 @@ const AddNewTransportsForm = ({
                                   className={classes.icon}
                                   disabled={readOnly}
                                 />
-                                {/* <Typography className={classes.typography}>Attach GST</Typography> */}
                               </>
                             </Tooltip>
                           </div>

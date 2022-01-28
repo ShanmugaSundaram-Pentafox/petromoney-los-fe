@@ -1,7 +1,7 @@
 import { Checkbox, FormControlLabel, FormGroup, Paper, Typography, Table, TableBody, Button, makeStyles, withStyles } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import DocListPreview from './DocListPreview';
 import FilePreview from '../../../components/CommonComponents/FilePreview';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
@@ -102,6 +102,7 @@ const Docs = ({ data }) => {
 }
 
 const DocList = ({ id }) => {
+  const queryClient = useQueryClient()
   const classes = useStyles();
   const [showUpload, setShowUpload] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -109,7 +110,7 @@ const DocList = ({ id }) => {
   const [rowData, setRowData] = useState();
   const [array, setArray] = useState([]);
   const [description, setDescription] = useState();
-  const { data: checkListData = [] } = useQuery(['doc-checklist', id], () => getDealershipCheckList(id))
+  const { data: checkListData = [] } = useQuery(['doc-checklist', id], () => getDealershipCheckList(id), {refetchOnWindowFocus: false})
 
   const getValue = (e) => {
     const val = e?.target?.value;
@@ -147,6 +148,7 @@ const DocList = ({ id }) => {
   const DeleteDocs = () => {
     deleteDocsImage(array, id)
       .then((res) => {
+        queryClient.invalidateQueries(['doc-checklist', id])
         setOpenModal(false)
         setModalData([])
         setArray([])
@@ -155,9 +157,7 @@ const DocList = ({ id }) => {
         alert(err?.message)
         console.log(err);
       });
-
   }
-
 
   const handleSave = (files) => {
     const formData = new FormData();
@@ -169,6 +169,7 @@ const DocList = ({ id }) => {
       formData.append('fileName', fileName);
       formData.append('id', rowData.doc_id);
     });
+    
     fetch(`${URL.base}${URL.checklist}/${dealerShipId}/doc/${docID}`, {
       method: 'POST',
       body: formData
@@ -176,7 +177,7 @@ const DocList = ({ id }) => {
       .then(data => {
         enqueueSnackbar('File Upload Success', { variant: 'success' });
         onCloseUploader();
-        window.location.reload();
+        queryClient.invalidateQueries(['doc-checklist', id])
       })
       .catch(error => {
         enqueueSnackbar('File Upload Failed', { variant: 'error' });
@@ -218,8 +219,8 @@ const DocList = ({ id }) => {
                         <FormControlLabel
                           key={item.file_id}
                           control={<Checkbox key={item.region} color="primary" value={item.file_id} onChange={(e) => getValue(e)} />}
-                          label={getFileNameFromUrl(item?.file_url)}
-                          value={getFileNameFromUrl(item?.file_url)}
+                          label={item?.file_name}
+                          value={item?.file_name}
                         />
                       </FormGroup>
                     </Paper>

@@ -55,7 +55,7 @@ const TransportsDetails = ({ currentUser, match }) => {
   return (
     <>
       <Grid container spacing={2}>
-        <Grid item md={7} xs={12}>
+        <Grid item md={5} xs={12}>
           {vehicleData && (
             <VehicleInfo id={id} data={vehicleData} currentUser={currentUser} />
           )}

@@ -10,8 +10,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography'
-import DeleteTwoToneIcon from '@material-ui/icons/DeleteTwoTone';
-import InfoTwoToneIcon from '@material-ui/icons/InfoTwoTone';
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react'
@@ -80,7 +79,13 @@ const useStyles = makeStyles((theme) => ({
     width: 500,
     height: 400,
     objectFit: 'cover'
-  }
+  },
+  rowItem: {
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: '#f7f7f7',
+    },
+  },
 }))
 
 export default function VehicleInfo({ id, data, currentUser }) {
@@ -276,7 +281,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
               <TableRow>
                 <TableCell>Vehicle No</TableCell>
                 <TableCell>Credit Limit</TableCell>
-                <TableCell>Action</TableCell>
+                <TableCell align="right">Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -284,20 +289,15 @@ export default function VehicleInfo({ id, data, currentUser }) {
                 data.length ?
                   data.map((vehicleInfo, i) => {
                     return(
-                      <TableRow key={i}>
-                        <TableCell>{vehicleInfo.tt_no}</TableCell>
-                        <TableCell><Currency value={vehicleInfo.credit_limit} /></TableCell>
+                      <TableRow key={i} className={classes.rowItem}>
+                        <TableCell onClick={(e) => {setVehicleDetailsForm({ open: true, vehicleInfo: vehicleInfo })}}>{vehicleInfo.tt_no}</TableCell>
+                        <TableCell onClick={(e) => {setVehicleDetailsForm({ open: true, vehicleInfo: vehicleInfo })}}><Currency value={vehicleInfo.credit_limit} /></TableCell>
                         {
                           !permissionCheck(currentUser.role_name, rulesList.transporter_view) ? (
-                            <TableCell style={{display: 'flex'}} align='center'>
-                              <Tooltip title="Vehicle Details">
-                                <Typography style={{ marginRight: '7px', color: '#329de0f5' }}>
-                                  <InfoTwoToneIcon fontSize="medium" onClick={(e) => {setVehicleDetailsForm({ open: true, vehicleInfo: vehicleInfo })}} />
-                                </Typography>
-                              </Tooltip>
+                            <TableCell style={{display: 'flex'}} align='right'>
                               <Tooltip title="Delete vehicle">
                                 <Typography style={{ color: '#ff6666' }}>
-                                  <DeleteTwoToneIcon fontSize="medium" onClick={(e) => {handleClickOpen(vehicleInfo.tt_no, vehicleInfo.vehicle_id)}} />
+                                  <DeleteOutlineIcon fontSize="medium" onClick={(e) => {handleClickOpen(vehicleInfo.tt_no, vehicleInfo.vehicle_id)}} />
                                 </Typography>
                               </Tooltip>
                             </TableCell>

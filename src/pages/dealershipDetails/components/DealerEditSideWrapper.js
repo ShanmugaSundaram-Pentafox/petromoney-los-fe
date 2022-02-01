@@ -320,7 +320,7 @@ const DealerEditSideWrapper = ({
             !loading ? (
               <>
                 <Button
-                  variant='contained'
+                  variant='outlined'
                   startIcon={<NavigateBeforeRoundedIcon />}
                   disabled={loading}
                   onClick={onClose}
@@ -358,7 +358,7 @@ const DealerEditSideWrapper = ({
             <>
               <div>
                 <Button
-                  variant='contained'
+                  variant='outlined'
                   startIcon={<NavigateBeforeRoundedIcon />}
                   disabled={loading}
                   onClick={onClose}

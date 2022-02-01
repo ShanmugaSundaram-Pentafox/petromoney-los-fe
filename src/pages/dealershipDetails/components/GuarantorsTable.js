@@ -28,7 +28,10 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 8
   },
   tableRow: {
-    cursor: 'pointer'
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: '#fafafa',
+    }
   },
   sidePanelWrapper: {
     width: '40vw',

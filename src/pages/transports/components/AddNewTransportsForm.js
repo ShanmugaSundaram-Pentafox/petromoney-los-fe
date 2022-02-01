@@ -5,11 +5,8 @@ import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import Switch from '@material-ui/core/Switch';
-import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
-import UploadIcon from '@material-ui/icons/Backup';
 import CloseIcon from '@material-ui/icons/Close';
-import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
@@ -25,9 +22,9 @@ import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import { useMount } from 'react-use';
 import * as Yup from 'yup';
+import { DocAttachment } from '../../../components/Attachment/DocAttachment';
 import Button from '../../../components/CommonComponents/Button/Button';
 import {
-  AvatarCard,
   ViewData,
 } from '../../../components/CommonComponents/FilePreview';
 import FileUpload from '../../../components/FileUpload';
@@ -140,6 +137,9 @@ const useStyles = makeStyles((theme) => ({
     padding: 4,
     backgroundColor: '#dedede',
     color: '#43a047',
+  },
+  attachmentContainer: {
+    display: 'flex', width: '39vw', paddingRight: 12, flexWrap: 'wrap', marginLeft: 8
   }
 }));
 
@@ -428,46 +428,6 @@ const AddNewTransportsForm = ({
     checked: {},
   }))(Switch);
 
-  const gstAttachment = () => {
-    return (
-      <div className={classes.fileStyle}>
-        <Button
-          onClick={() =>
-            setImageModal({ open: true, image: data.gst_file_url })
-          }
-        >
-          <span className={classes.profileLink} target='_blank' title={'GST Attachment'}>{'GST Attachment'}</span>
-        </Button>
-        <Tooltip title={'Click to edit'}>
-          <UploadIcon
-            fontSize='small'
-            padding={2}
-            onClick={() => docUpload('GST')}
-          />
-        </Tooltip>
-        <Tooltip title={'Click to delete'}>
-          <DeleteIcon onClick={() => onDocDelete({ gst_file_url: '' })} fontSize="small" padding={2} />
-        </Tooltip>
-      </div>
-    );
-  };
-  const panAttachment = () => {
-    return (
-      <div className={classes.fileStyle}>
-        <a className={classes.profileLink} href={data.pan_file_url} target='_blank' title={'PAN Attachment'} rel="noreferrer">{'PAN Attachment'}</a>
-        <Tooltip title={'Click to edit'}>
-          <UploadIcon
-            fontSize='small'
-            padding={2}
-            onClick={() => docUpload('PAN')}
-          />
-        </Tooltip>
-        <Tooltip title={'Click to delete'}>
-          <DeleteIcon onClick={() => onDocDelete({ pan_file_url: '' })} fontSize="small" padding={2} />
-        </Tooltip>
-      </div>
-    );
-  };
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant='h4'>
@@ -511,33 +471,13 @@ const AddNewTransportsForm = ({
                 </Grid>
               </Grid>
               <Divider />
-              {values?.profile_image_url ||
-                values?.pan_file_url ||
-                values?.aadhar_f_file_url ||
-                values?.aadhar_b_file_url ? (
+              {values?.gst_file_url ||
+                values?.pan_file_url ? (
                   <div className={classes.readOnlyWrapper}>
                     <Typography variant='h4'>Attachments</Typography>
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-around',
-                        marginTop: 16,
-                      }}
-                    >
-                      {values.pan_file_url && (
-                        <AvatarCard
-                          tooltip='View PAN'
-                          file={values?.pan_file_url}
-                          title='PAN'
-                        />
-                      )}
-                      {values.gst_file_url && (
-                        <AvatarCard
-                          tooltip='View GST'
-                          file={values?.gst_file_url}
-                          title='GST'
-                        />
-                      )}
+                    <div style={{ display: 'flex', justifyContent: 'space-evenly', marginTop: 16 }}>
+                      {values.pan_file_url && <DocAttachment tooltip='View PAN' imgUrl={values?.pan_file_url} docName='PAN' />}
+                      {values.gst_file_url && <DocAttachment tooltip='View GST' imgUrl={values?.gst_file_url} docName='GST' />}
                     </div>
                   </div>
                 ) : (
@@ -614,6 +554,18 @@ const AddNewTransportsForm = ({
                       readOnly={readOnly}
                       error={errors.mobile}
                       helperText={errors.mobile}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      name='address'
+                      labelText='Address'
+                      value={values?.address}
+                      readOnly={readOnly}
+                      disabled={readOnly}
+                      error={errors.address}
+                      helperText={errors.address}
                     />
                   </Grid>
                   <Grid item md={6}>
@@ -714,17 +666,17 @@ const AddNewTransportsForm = ({
                   </Grid>
                   <Grid item md={6}>
                     <TextInput
+                      number
                       {...inputProps}
-                      name='address'
-                      labelText='Address'
-                      value={values?.address}
-                      readOnly={readOnly}
+                      name='pincode'
+                      labelText='Pincode'
+                      value={values?.pincode}
                       disabled={readOnly}
-                      error={errors.address}
-                      helperText={errors.address}
+                      readOnly={readOnly}
+                      error={errors.pincode}
+                      helperText={errors.pincode}
                     />
                   </Grid>
-
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
@@ -738,19 +690,6 @@ const AddNewTransportsForm = ({
                     >
                       {getDistricts(values.state).map((item) => (<option key={item} value={item}>{item}</option>))}
                     </TextInput>
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      number
-                      {...inputProps}
-                      name='pincode'
-                      labelText='Pincode'
-                      value={values?.pincode}
-                      disabled={readOnly}
-                      readOnly={readOnly}
-                      error={errors.pincode}
-                      helperText={errors.pincode}
-                    />
                   </Grid>
                   <Grid md={12} item>
                     <Typography variant='subtitle1' component='subtitle1'>
@@ -769,31 +708,6 @@ const AddNewTransportsForm = ({
                       helperText={errors.pan}
                     />
                   </Grid>
-                  {values.pan ? (
-                    <Grid item md={6}>
-                      <>
-                        {
-                          data.pan_file_url || values?.pan_file_url ? (
-                            panAttachment()
-                          ) : (
-                            <div
-                              className={classes.fileAttachement}
-                              onClick={() => docUpload('PAN')}
-                            >
-                              <Tooltip title={'Click and attach'}>
-                                <>
-                                  <UploadIcon
-                                    className={classes.icon}
-                                    disabled={readOnly}
-                                  />
-                                </>
-                              </Tooltip>
-                            </div>
-                          )
-                        }
-                      </>
-                    </Grid>
-                  ) : null}
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
@@ -806,29 +720,15 @@ const AddNewTransportsForm = ({
                       helperText={errors.gst}
                     />
                   </Grid>
-                  {values.gst ? (
-                    <Grid item md={6}>
-                      <>
-                        {data.gst_file_url || values?.gst_file_url ? (
-                          gstAttachment()
-                        ) : (
-                          <div
-                            className={classes.fileAttachement}
-                            onClick={() => docUpload('GST')}
-                          >
-                            <Tooltip title={'Click and attach'}>
-                              <>
-                                <UploadIcon
-                                  className={classes.icon}
-                                  disabled={readOnly}
-                                />
-                              </>
-                            </Tooltip>
-                          </div>
-                        )}
-                      </>
-                    </Grid>
-                  ) : null}
+                  <Grid md={12} item>
+                    <Typography variant='subtitle1' component='subtitle1'>
+                      Attachments
+                    </Typography>
+                  </Grid>
+                  <div className={classes.attachmentContainer}>
+                    <DocAttachment action={true} imgUrl={values?.pan_file_url} docName='PAN Card' onUpload={() => docUpload('PAN')} onDelete={() => onDocDelete({pan_file_url:''})} disabled={!values?.pan_file_url} style={{marginRight: 25}} />
+                    <DocAttachment action={true} imgUrl={values?.gst_file_url} docName='GST' onUpload={() => docUpload('GST')} onDelete={() => onDocDelete({gst_file_url:''})} disabled={!values?.gst_file_url} style={{marginRight: 25}} />
+                  </div>
                 </Grid>
               </form>
             </Box>

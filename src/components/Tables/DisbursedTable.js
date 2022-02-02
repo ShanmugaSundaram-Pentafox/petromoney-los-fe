@@ -115,7 +115,7 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
       },
       {
         label: 'Sanctioned Amount',
-        name: 'amount_disbursed',
+        name: 'amount_approved',
         options: {
           filter: false,
           sort: true,

@@ -104,7 +104,6 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
     validateOnChange: false,
     validateOnBlur: false,
     initialValues: {
-      disbursement_status: 1,
       disbursement_date: selectedDate,
     },
     validationSchema: Yup.object().shape({
@@ -115,7 +114,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
     }),
     onSubmit: values => {
       const date = moment(selectedDate).format('YYYY/MM/DD')
-      const data = values.applicant_code ? { ...values, disbursement_date: date, amount: values.amount?.trim() } : { ...values, applicant_code: dispHistory.applicant_code, disbursement_date: date, amount: values.amount?.trim() };
+      const data = values.applicant_code ? { ...values, disbursement_date: date, amount: values?.amount, disbursement_status: 1 } : { ...values, applicant_code: dispHistory.applicant_code, disbursement_date: date, amount: values?.amount, disbursement_status: 1 };
       // alert(JSON.stringify(data, null, 2));
       setLoading(true);
       updateLoanApprovalStatusById(id, loanData.id, 'approval', data)
@@ -128,6 +127,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
           setApiStatus({ status: 'success', message });
           setTimeout(() => {
             setModalData({ open: false })
+            setValues({})
           }, 500);
         })
         .catch(e => {
@@ -243,7 +243,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                           labelText="Applicant Code"
                           error={errors.applicant_code}
                           helperText={errors.applicant_code}
-                          defaultValue={values.applicant_code}
+                          value={values.applicant_code}
                           onChange={handleChange}
                         />
                       )
@@ -258,7 +258,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                       labelText="Prospect Code"
                       error={errors.prospect_code}
                       helperText={errors.prospect_code}
-                      defaultValue={values.prospect_code}
+                      value={values.prospect_code}
                       onChange={handleChange}
                     />
                   </Grid>
@@ -271,9 +271,10 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                       <MuiPickersUtilsProvider utils={DateFnsUtils}>
                         <KeyboardDatePicker
                           hideTabs={true}
+                          disableFuture={true}
                           variant='inline'
                           inputVariant='outlined'
-                          format='MM/dd/yyyy'
+                          format='dd/MM/yyyy'
                           animateYearScrolling={true}
                           invalidDateMessage='Invalid Date Format'
                           margin='normal'

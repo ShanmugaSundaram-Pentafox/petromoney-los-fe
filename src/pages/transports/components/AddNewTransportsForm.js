@@ -475,9 +475,9 @@ const AddNewTransportsForm = ({
                 values?.pan_file_url ? (
                   <div className={classes.readOnlyWrapper}>
                     <Typography variant='h4'>Attachments</Typography>
-                    <div style={{ display: 'flex', justifyContent: 'space-evenly', marginTop: 16 }}>
-                      {values.pan_file_url && <DocAttachment tooltip='View PAN' imgUrl={values?.pan_file_url} docName='PAN' />}
-                      {values.gst_file_url && <DocAttachment tooltip='View GST' imgUrl={values?.gst_file_url} docName='GST' />}
+                    <div style={{ display: 'flex', marginTop: 16 }}>
+                      {values.pan_file_url && <DocAttachment tooltip='View PAN' imgUrl={values?.pan_file_url} docName='PAN' style={{marginRight: 20}} />}
+                      {values.gst_file_url && <DocAttachment tooltip='View GST' imgUrl={values?.gst_file_url} docName='GST' style={{marginRight: 20}} />}
                     </div>
                   </div>
                 ) : (

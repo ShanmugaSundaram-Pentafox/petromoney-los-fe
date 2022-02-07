@@ -2,11 +2,7 @@ import { Typography } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { grey } from '@material-ui/core/colors';
 import Grid from '@material-ui/core/Grid';
-import Tooltip from '@material-ui/core/Tooltip';
-import CloudUploadOutlinedIcon from '@material-ui/icons/CloudUploadOutlined';
-import DeleteIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { useFormik } from 'formik';
@@ -15,8 +11,9 @@ import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import * as Yup from 'yup';
 import AccountStatement from './AccountStatement';
+import { DocAttachment } from '../../../components/Attachment/DocAttachment';
 import Button from '../../../components/CommonComponents/Button/Button';
-import { AvatarCard, ViewData } from '../../../components/CommonComponents/FilePreview';
+import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import FileUpload from '../../../components/FileUpload';
 import TextInput from '../../../components/TextInput/TextInput';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
@@ -52,9 +49,10 @@ const useStyles = makeStyles(theme => ({
   icons: {
     marginRight: 16,
   },
+  attachmentContainer: {
+    display: 'flex', width: '39vw',marginLeft: 8, paddingRight: 12, flexWrap: 'wrap'
+  },
 }));
-
-
 
 
 const DealershipInfo = ({ data, className, currentUser }) => {
@@ -217,48 +215,6 @@ const DealershipInfo = ({ data, className, currentUser }) => {
     readOnly,
     onChange
   }
-  const gstAttachment = () => {
-    return (
-      <div className={classes.fileStyle}>
-        <Tooltip title={'Click to edit'}>
-          <CloudUploadOutlinedIcon
-            padding={2}
-            style={{ color: grey[800] }}
-            className={classes.icons}
-            onClick={() => docUpload('GST')}
-          />
-        </Tooltip>
-        <Tooltip title={'Click to delete'}>
-          <DeleteIcon
-            onClick={() => onDocDelete({ gst_file_url: '' })}
-            style={{ color: grey[800] }}
-            padding={2}
-            className={classes.icons}
-          />
-        </Tooltip>
-      </div>
-    );
-  };
-  const panAttachment = () => {
-    return (
-      <div className={classes.fileStyle}>
-        <Tooltip title={'Click to edit'}>
-          <CloudUploadOutlinedIcon
-            padding={2}
-            className={classes.icons}
-            onClick={() => docUpload('PAN')}
-          />
-        </Tooltip>
-        <Tooltip title={'Click to delete'}>
-          <DeleteIcon
-            onClick={() => onDocDelete({ pan_file_url: '' })}
-            style={{ color: grey[800] }}
-            padding={2}
-          />
-        </Tooltip>
-      </div>
-    );
-  };
   return (
     <Card className={clsx(classes.root, className)}>
       <div style={{ marginBottom: 20 }}>
@@ -291,21 +247,9 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                   values?.gst_file_url ? (
                     <div className={classes.readOnlyWrapper}>
                       <Typography variant='h4'>Attachments</Typography>
-                      <div style={{ marginTop: 16, display: 'flex' }}>
-                        {values.pan_file_url && (
-                          <AvatarCard
-                            tooltip='View PAN'
-                            file={values?.pan_file_url}
-                            title='PAN'
-                          />
-                        )}
-                        {values.gst_file_url && (
-                          <AvatarCard
-                            tooltip='View GST'
-                            file={values?.gst_file_url}
-                            title='GST'
-                          />
-                        )}
+                      <div style={{ marginTop: 16, display: 'flex', width: '39vw' }}>
+                        {values.pan_file_url && <DocAttachment tooltip='View PAN' imgUrl={values?.pan_file_url} docName='PAN Card' style={{marginRight: 10}} />}
+                        {values.gst_file_url && <DocAttachment tooltip='View GST' imgUrl={values?.gst_file_url} docName='GST' style={{marginRight: 10}} />}
                       </div>
                     </div>
                   ) : (
@@ -366,7 +310,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                     }
                   </TextInput>
                 </Grid>
-                <Grid {...gridProps} md={4}>
+                <Grid {...gridProps} md={6}>
                   <TextInput
                     labelText="GST"
                     name="gst"
@@ -378,34 +322,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                     {...fieldProps}
                   />
                 </Grid>
-                <Grid {...gridProps} md={2}>
-                  {values.gst ? (
-                    <Grid item md={6}>
-                      <>
-                        {data.gst_file_url ? (
-                          gstAttachment()
-                        ) : (
-                          <div
-                            className={classes.fileStyle}
-                            onClick={() => docUpload('GST')}
-                          >
-                            <Tooltip title={'Click and attach'}>
-                              <>
-                                <CloudUploadOutlinedIcon
-                                  padding={2}
-                                  className={classes.icons}
-                                  disabled={readOnly}
-                                />
-                              </>
-                            </Tooltip>
-                          </div>
-                        )}
-                      </>
-                    </Grid>
-                  ) : null}
-
-                </Grid>
-                <Grid {...gridProps} md={4}>
+                <Grid {...gridProps} md={6}>
                   <TextInput
                     labelText="PAN"
                     name="pan"
@@ -417,35 +334,6 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                     helperText={errors.pan}
                     {...fieldProps}
                   />
-                </Grid>
-                <Grid {...gridProps} md={2}>
-                  {values.pan ? (
-                    <Grid item md={2}>
-                      <>
-                        {
-                          data.pan_file_url ? (
-                            panAttachment()
-                          ) : (
-                            <div
-                              className={classes.fileStyle}
-                              onClick={() => docUpload('PAN')}
-                            >
-                              <Tooltip title={'Click and attach'}>
-                                <>
-                                  <CloudUploadOutlinedIcon
-                                    padding={2}
-                                    style={{ color: grey[800] }}
-                                    className={classes.icons}
-                                    disabled={readOnly}
-                                  />
-                                </>
-                              </Tooltip>
-                            </div>
-                          )
-                        }
-                      </>
-                    </Grid>
-                  ) : null}
                 </Grid>
                 {/* <Divider /> */}
                 <Grid {...gridProps} sm={6} md={6}>
@@ -515,6 +403,13 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                     {...fieldProps}
                   />
                 </Grid>
+                <Grid {...gridProps} md={12} >
+                  <Typography variant="title"><strong>Attachments</strong></Typography>
+                </Grid>
+                <div className={classes.attachmentContainer}>
+                  <DocAttachment action={true} imgUrl={values?.pan_file_url} docName='PAN Card' onUpload={() => docUpload('PAN')} onDelete={() => onDocDelete({pan_file_url:''})} disabled={!values?.pan_file_url} style={{marginRight: 15}} />
+                  <DocAttachment action={true} imgUrl={values?.gst_file_url} docName='GST' onUpload={() => docUpload('GST')} onDelete={() => onDocDelete({gst_file_url:''})} disabled={!values?.gst_file_url} style={{marginRight: 15}} />
+                </div>
               </Grid>
             </>
           )

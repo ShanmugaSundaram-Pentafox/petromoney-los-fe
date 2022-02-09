@@ -11,6 +11,7 @@ import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { NavLink as RouterLink } from 'react-router-dom';
+import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
 // import { createStructuredSelector } from 'reselect';
 import { ReactComponent as LoanAgreementIcon } from '../../icons/loan_agreement.svg';
 import { getLoansByStatus } from '../../services/loans.service';
@@ -208,6 +209,11 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
                     <LoanAgreementIcon width={14} />
                   </IconButton>
                 </Tooltip>
+                <Tooltip title="eSign Application">
+                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setType('application'); setDealershipId(value); setModalVisible(true); }}>
+                    <ESignIcon width={24} />
+                  </IconButton>
+                </Tooltip>
               </>
               // <a className={classes.anchorTag} href={`${URL.base}loans/sanction/${tableMeta.rowData[0]}`} download={'Sanction_Letter'}>
               //   <Tooltip title='Sanction Letter'>
@@ -258,7 +264,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
         loanAmount={loanAmount}
         productId={productTypeId}
         type={type}
-        title={'Sanction Letter'}
+        title={type === 'application' ? 'eSign Application Form' : 'Sanction Letter'}
         onClose={() => setModalVisible(false)}
         callback={getLoansTable}
       />

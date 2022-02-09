@@ -177,9 +177,6 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
           filter: false,
           sort: false,
           customBodyRender: (value, r) => {
-            {
-              console.log(loans)
-            }
             return (
               <Tooltip title="eSign Application">
                 <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setType('application'); setDealershipId(value); setModalVisible(true); }}>

@@ -19,7 +19,9 @@ const useStyles = makeStyles(() => ({
     marginBottom: 8,
   },
   text: {
-    fontSize: 12
+    fontSize: 12,
+    display: 'flex',
+    alignItems: 'center'
   },
   avatarCard: {
     display: 'flex',
@@ -50,12 +52,17 @@ const PreviewWrapper = styled.div`
     }
 `;
 
-export const ViewData = ({ title, value, style={marginBottom: 8} }) => {
+export const ViewData = ({ title, value, style={marginBottom: 8}, endIcon }) => {
   const classes = useStyles()
   return (
     <Box className={classes.details} style={style}>
       <p className={classes.title}>{title}</p>
-      <strong className={classes.text}>{value ? value : '-'}</strong>
+      <strong className={classes.text}>
+        {value ? value : '-'}
+        {
+          endIcon && endIcon
+        }
+      </strong>
     </Box >
   )
 }

@@ -1,4 +1,5 @@
 import DateFnsUtils from '@date-io/date-fns';
+import { Tooltip } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
@@ -6,6 +7,8 @@ import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import Switch from '@material-ui/core/Switch';
 import Typography from '@material-ui/core/Typography';
+import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
+import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
@@ -24,6 +27,7 @@ import { useMount } from 'react-use';
 import * as Yup from 'yup';
 import { DocAttachment } from '../../../components/Attachment/DocAttachment';
 import Button from '../../../components/CommonComponents/Button/Button';
+import CustomToken from '../../../components/CommonComponents/CustomToken';
 import {
   ViewData,
 } from '../../../components/CommonComponents/FilePreview';
@@ -39,6 +43,7 @@ import {
   getStates,
 } from '../../../services/common.service';
 import { cryptoEncrypt } from '../../../services/crypto.service';
+import { validateId } from '../../../services/dealerships.service';
 import { deleteTransportProfileDoc } from '../../../services/transports.service';
 import { compareObject } from '../../../utils/compareObject.util';
 import { getDistricts } from '../../../utils/indianStates.util';
@@ -160,13 +165,17 @@ const AddNewTransportsForm = ({
   const [showUpload, setShowUpload] = useState(false);
   const [regionList, setRegionList] = useState([]);
   const [fileType, setFileType] = useState('');
-  // const [regions, setRegions] = useState([]);
+  const [gstDetails, setGstDetails] = useState({})
   const [checked, setChecked] = useState(false);
-  const [imageModal, setImageModal] = useState({});
   const [selectedDate, setSelectedDate] = useState(data?.doi && parse(data?.doi, 'dd-MM-yyyy', new Date()));
+  const [panValidateData, setPanValidateData] = useState({icon: false})
+  const [gstValidateData, setGstValidateData] = useState({icon: false})
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
+  useEffect(() => {
+    setGstDetails(data?.gst_verified ? JSON.parse(data?.gst_details) || {} : {})
+  },[])
   const handleEdit = () => {
     setReadOnly(!readOnly);
   };
@@ -179,6 +188,25 @@ const AddNewTransportsForm = ({
   const handleDateChange = (e) => {
     setSelectedDate(e);
   };
+  const handleValidate = (action, id) => {
+    action === 'pan' ? setPanValidateData({icon:true, loading: true}) : setGstValidateData({icon:true, loading: true})
+    validateId(action, id)
+      .then((res) => {
+        action === 'pan' ?
+          setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}}) :
+          setGstValidateData({icon: true, loading: false, idType: 'GST', details: res?.details || {}})
+        !values?.name && setFieldValue('name', res?.details?.tradeNam)
+        setFieldValue('address', res?.details?.pradr?.adr)
+        !values?.business_type && setFieldValue('business_type', res?.details?.ctb)
+      })
+      .catch(e => {
+        console.log(e);
+        action === 'pan' ?
+          setPanValidateData({icon: true, idType: 'PAN'}) :
+          setGstValidateData({icon: true, idType: 'GST'})
+      })
+  }
+
   const onDocDelete = (data) => {
     deleteTransportProfileDoc(data, values.transporter_id)
       .then(res => {
@@ -238,6 +266,10 @@ const AddNewTransportsForm = ({
       gst: Yup.string().nullable('Enter GST').matches(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/, 'Invalid GST').required('Enter GST').uppercase(),
     }),
     onSubmit: (values) => {
+      if(isAdd === 'Add'){
+        handleValidate('pan', values?.pan)
+        handleValidate('gst', values?.gst)
+      }
       setLoading(true);
       values.name = values.name.toUpperCase();
       const doi = selectedDate ? format(selectedDate, 'dd-MM-yyyy') : values?.doi
@@ -393,6 +425,18 @@ const AddNewTransportsForm = ({
     alignTop: true,
     onChange: handleChange,
   };
+  const ValidateProps = (valid) => {
+    return({
+      endAdornment: <div style={{marginRight: 6, marginTop: 4, cursor: 'pointer'}}>
+        {
+        valid?.icon ?
+        valid?.loading ? <CircularProgress size={15}/> :
+        valid?.details ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{color:'#4caf50'}} /></Tooltip> :
+        <Tooltip title={`Invalid ${valid.idType}`} ><CancelOutlinedIcon fontSize='small' color='error' /></Tooltip> : null
+        }
+      </div>
+    })
+  }
   const AntSwitch = withStyles((theme) => ({
     root: {
       width: 28,
@@ -453,7 +497,10 @@ const AddNewTransportsForm = ({
                         return true;
                     }))?.name} />
                     <ViewData title='District' value={values.district} />
-                    <ViewData title='GST' value={values.gst} />
+                    <ViewData title='GST' value={values.gst} endIcon={<CustomToken variant={values?.gst_verified ? 'success': 'error'} label={values?.gst_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.gst_verified ? 'tick' : 'cross'}/>} />
+                    {values?.gst_verified ? <ViewData title='Legal Trade Name' value={gstDetails?.tradeNam} /> : null}
+                    {values?.gst_verified ? <ViewData title='GSTIN Status' value={gstDetails?.sts} /> : null}
+
                   </Box>
                 </Grid>
                 <Grid item md={6}>
@@ -466,7 +513,11 @@ const AddNewTransportsForm = ({
                         return true;
                     }))?.name} />
                     <ViewData title='Pincode' value={values.pincode} />
-                    <ViewData title='PAN' value={values.pan} />
+                    <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success': 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'}/>} />
+                    {values?.gst_verified ? <ViewData title='Legal Business Name' value={gstDetails?.mbr} /> : null}
+                    {values?.gst_verified ? <ViewData title='Effective Date of registration' value={gstDetails?.rgdt}/> : null}
+                    {values?.gst_verified ? <ViewData title='Taxpayer Type' value={gstDetails?.dty} /> : null}
+
                   </Box>
                 </Grid>
               </Grid>
@@ -548,6 +599,40 @@ const AddNewTransportsForm = ({
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
+                      name='gst'
+                      labelText='GST'
+                      value={values.gst?.toUpperCase()}
+                      readOnly={readOnly || gstValidateData?.loading}
+                      disabled={readOnly || values?.gst_verified}
+                      error={errors.gst}
+                      helperText={errors.gst}
+                      InputProps={ValidateProps(gstValidateData)}
+                    />
+                    {
+                      !values?.gst_verified || values?.gst !== data?.gst?
+                        <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={()=> values?.gst && handleValidate('gst', values?.gst)}>Validate GST</Typography> : null
+                    }
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      name='pan'
+                      labelText='PAN'
+                      value={values.pan?.toUpperCase()}
+                      readOnly={readOnly}
+                      disabled={readOnly || panValidateData?.loading || values?.pan_verified}
+                      error={errors.pan}
+                      helperText={errors.pan}
+                      InputProps={ValidateProps(panValidateData)}
+                    />
+                    {
+                      !values?.pan_verified || values?.pan !== data?.pan ?
+                        <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={()=> values?.pan && handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
+                    }
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
                       name='mobile'
                       labelText='Mobile'
                       value={values?.mobile}
@@ -561,6 +646,7 @@ const AddNewTransportsForm = ({
                       {...inputProps}
                       name='address'
                       labelText='Address'
+                      multiline
                       value={values?.address}
                       readOnly={readOnly}
                       disabled={readOnly}
@@ -607,11 +693,11 @@ const AddNewTransportsForm = ({
                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                       <label>Date of Incoporation</label>
                       <KeyboardDatePicker
-                        // disableToolbar
-                        // hideTabs={true}
                         variant='inline'
                         inputVariant='outlined'
                         format='dd-MM-yyyy'
+                        fullWidth
+                        disableFuture={true}
                         animateYearScrolling={true}
                         invalidDateMessage='Invalid Date Format'
                         error={errors.dob}
@@ -690,35 +776,6 @@ const AddNewTransportsForm = ({
                     >
                       {getDistricts(values.state).map((item) => (<option key={item} value={item}>{item}</option>))}
                     </TextInput>
-                  </Grid>
-                  <Grid md={12} item>
-                    <Typography variant='subtitle1' component='subtitle1'>
-                      Documents
-                    </Typography>
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      {...inputProps}
-                      name='pan'
-                      labelText='PAN'
-                      value={values.pan?.toUpperCase()}
-                      readOnly={readOnly}
-                      disabled={readOnly}
-                      error={errors.pan}
-                      helperText={errors.pan}
-                    />
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      {...inputProps}
-                      name='gst'
-                      labelText='GST'
-                      value={values.gst?.toUpperCase()}
-                      readOnly={readOnly}
-                      disabled={readOnly}
-                      error={errors.gst}
-                      helperText={errors.gst}
-                    />
                   </Grid>
                   <Grid md={12} item>
                     <Typography variant='subtitle1' component='subtitle1'>

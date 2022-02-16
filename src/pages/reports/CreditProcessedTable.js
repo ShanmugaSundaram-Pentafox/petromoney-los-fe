@@ -6,6 +6,7 @@ import React, { useState, useMemo } from 'react';
 import { useMount } from 'react-use';
 import CreditReloadForm from './CreditReloadForm';
 import CreditReloadRemarks from './CreditReloadRemarks';
+import CustomToken from '../../components/CommonComponents/CustomToken';
 import Currency from '../../components/Number/Currency';
 import usePageTitle from '../../hooks/usePageTitle';
 import {
@@ -105,10 +106,10 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
               return (
                 tableMeta?.rowData[9] ? (
                   <Tooltip title={tableMeta.rowData[9]}>
-                    <div style={{ color: '#FF5C58' }}>{value}</div>
+                    <div><CustomToken label={value} variant='error' icon='cross' /></div>
                   </Tooltip>
                 ) : (
-                  <div style={{ color: '#FF5C58'}}>{value}</div>
+                  <CustomToken label={value} variant='error' icon='cross' />
                 )
               )
             }
@@ -116,15 +117,15 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
               return (
                 tableMeta?.rowData[9] ? (
                   <Tooltip title={tableMeta.rowData[9]}>
-                    <div>{value}</div>
+                    <div><CustomToken label={value} variant='success' icon='tick' /></div>
                   </Tooltip>
                 ) : (
-                  <div>{value}</div>
+                  <CustomToken label={value} variant='success' icon='tick' />
                 )
               )
             }
             else
-              return value
+              return <CustomToken label={value} variant='warn' />
           }
         }
       },

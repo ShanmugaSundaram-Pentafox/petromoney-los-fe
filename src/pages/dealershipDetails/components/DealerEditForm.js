@@ -554,7 +554,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                     </Typography>
                   </Grid>
                 </Grid>
-              </Grid>    
+              </Grid>
               <Grid {...gridItem} md={12} >
                 <Typography variant="title"><strong>Attachments</strong></Typography>
               </Grid>

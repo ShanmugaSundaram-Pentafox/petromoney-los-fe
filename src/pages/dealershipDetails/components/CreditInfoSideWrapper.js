@@ -74,12 +74,10 @@ const useStyles = makeStyles(theme => ({
 
 const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => {
   const classes = useStyles();
-  const [readOnly, setReadOnly] = useState(true);
-  const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [apiStatus, setApiStatus] = useState({});
   const [apiData, setApiData] = useState([]);
-  const [editMode, setEditMode] = useState();
+  const [editMode, setEditMode] = useState(true);
   const { enqueueSnackbar } = useSnackbar();
 
   React.useEffect(() => {
@@ -96,18 +94,13 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
     setEditMode(!editMode)
   }
 
-  const { values, errors, handleChange, handleSubmit, handleReset, setValues } = useFormik({
+  const { values, errors, handleChange, handleSubmit, handleReset, setValues, setFieldValue } = useFormik({
     initialValues: {},
     validateOnChange: false,
     validationSchema: Yup.object().shape({
-      cibil_score: Yup.number().nullable().required('Please Enter CIBIL Score'),
-      loans_count: Yup.number().nullable().required('Please Enter Total Loans'),
-      closed_loans_count: Yup.number().nullable().required('Please Enter Total Closed Loans'),
-      od_accounts_count: Yup.number().nullable().required('Please Enter CIBIL Score'),
-      od_amount: Yup.number().nullable().required('Please Enter No of OD Accounts'),
-      current_os_amount: Yup.number().nullable().required('Please Enter OD Amount'),
-      cibil_vintage: Yup.number().nullable().required('Please Enter CIBIL Vintage'),
-      no_of_enquiries: Yup.number().nullable().required('Please Enter No of Enquiries'),
+      highest_dpd: Yup.string().nullable().required('Please Select highest DPD'),
+      highest_dpd_bracket: Yup.string().nullable().required('Please Select highest DPD Bracket'),
+      status: Yup.string().nullable().required('Please Select Status'),
     }),
     onSubmit: values => {
       setLoading(true);
@@ -142,7 +135,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
   return (
     <div className={classes.sidePanelFormWrapper}>
       <div className={classes.sidePanelTitle}>
-        <Typography  variant="h4">Credit Information</Typography>
+        <Typography  variant="h4">Credit Information ({data?.pan || '-'})</Typography>
         <CloseRoundedIcon onClick={onClose} />
       </div>
       <div className={classes.sidePanelFormContentWrapper}>
@@ -159,8 +152,16 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
                 <Grid item md={6}>
                   <ViewData title='User Type' value={data?.userType} style={{marginBottom: 0}} />
                 </Grid>
+              </Grid>
+              <Grid container spacing={2} style={{marginTop: 10}}>
+                <Grid item md={12}>
+                  <Typography variant='h6'>CIBIL Extract</Typography>
+                </Grid>
                 <Grid item md={6}>
                   <ViewData title='CIBIL Score' value={apiData?.cibil_score} style={{marginBottom: 0}} />
+                </Grid>
+                <Grid item md={6}>
+                  <ViewData title='Updated on' value={apiData?.modified_date} style={{marginBottom: 0}} />
                 </Grid>
                 <Grid item md={6}>
                   <ViewData title='No. of Loans' value={apiData?.loans_count} style={{marginBottom: 0}} />
@@ -201,7 +202,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
               </Grid>
             </div>
             :
-            <DealerCreditInfoForm values={values} errors={errors} onChange={handleChange} dealerData={data} />
+            <DealerCreditInfoForm values={values} errors={errors} onChange={handleChange} dealerData={data} currentUser={currentUser} setFieldValue={setFieldValue} />
         }
       </div>
 

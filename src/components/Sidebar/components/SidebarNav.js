@@ -197,22 +197,6 @@ const SidebarNav = props => {
                   {'Vehicle Loans'}
                 </Button>
               </ListItem>
-              <ListItem
-                className={classes.itemSub}
-                disableGutters
-                key={'All'}
-              >
-                <Button
-                  activeClassName={classes.active}
-                  className={classes.button}
-                  component={CustomRouterLink}
-                  to={'/withheld'}
-                  exact
-                >
-                  <div className={classes.icon}><BookmarkBorderIcon /></div>
-                  {'Withheld'}
-                </Button>
-              </ListItem>
             </Collapse>
           </Fragment>
         ) : page.title === 'Transports' ? (

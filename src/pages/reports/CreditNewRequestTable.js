@@ -114,14 +114,16 @@ const CreditNewRequestTable = ({ data, currentUser, view }) => {
                 </Tooltip>
               )
             }
-            else
-              return <CustomToken label={value} variant='success' />
+            else if(tableMeta?.rowData[11])
+              return <CustomToken label="Withheld" variant='warn' />
+            else return <CustomToken label={value} variant='success' /> 
           },
           filter: false
         }
       },
-      { name: 'remarks', options: { display: 'excluded', filter: false } },
-      { name: 'role_name', options: { display: 'excluded', filter: false } }
+      { name: 'remarks', options: { display: 'excluded', filter: false }},
+      { name: 'role_name', options: { display: 'excluded', filter: false }},
+      { name: 'is_withheld', options: { display: 'excluded', filter: false}}
     ];
   }, [data]);
   const options = {
@@ -130,6 +132,11 @@ const CreditNewRequestTable = ({ data, currentUser, view }) => {
     selectableRows: 'none',
     rowsPerPage: 15,
     rowsPerPageOptions: [15, 20, 30],
+    setRowProps: (row, dataIndex) => {
+      if(row[11]){
+        return{ style: {backgroundColor: '#ffec9bba'}}
+      }
+    },
     customToolbar: () => {
       return (
         <Button

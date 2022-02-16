@@ -756,4 +756,19 @@ export const deleteOtherDetailsByID = (data, id) => {
       });
   });
 }
+export const bankAccValidate = (AccId=1175155000148626, IFSC='KVBL0001175') => {
+  return new Promise((resolve, reject) => {
+    apiCall(`bank/${AccId}/${IFSC}`)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data[0])
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  });
+}
 

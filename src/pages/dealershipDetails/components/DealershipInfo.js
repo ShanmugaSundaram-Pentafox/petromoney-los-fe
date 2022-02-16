@@ -1,8 +1,10 @@
-import { Typography } from '@material-ui/core';
+import { Tooltip, Typography } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
+import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
+import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { useFormik } from 'formik';
@@ -13,6 +15,7 @@ import * as Yup from 'yup';
 import AccountStatement from './AccountStatement';
 import { DocAttachment } from '../../../components/Attachment/DocAttachment';
 import Button from '../../../components/CommonComponents/Button/Button';
+import CustomToken from '../../../components/CommonComponents/CustomToken';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import FileUpload from '../../../components/FileUpload';
 import TextInput from '../../../components/TextInput/TextInput';
@@ -22,7 +25,7 @@ import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
 import { getBusinessTypes, getRegionById, getActiveStates } from '../../../services/common.service';
 import { cryptoEncrypt } from '../../../services/crypto.service';
-import { deleteDealershipDocument } from '../../../services/dealerships.service';
+import { deleteDealershipDocument, validateId } from '../../../services/dealerships.service';
 import { compareObject } from '../../../utils/compareObject.util';
 
 
@@ -51,22 +54,42 @@ const useStyles = makeStyles(theme => ({
   },
   attachmentContainer: {
     display: 'flex', width: '39vw',marginLeft: 8, paddingRight: 12, flexWrap: 'wrap'
-  },
+  }
 }));
-
 
 const DealershipInfo = ({ data, className, currentUser }) => {
   const [readOnly, setReadOnly] = useState(true);
   const [loading, setLoading] = useState();
   const [showUpload, setShowUpload] = useState(false);
+  const [panValidateData, setPanValidateData] = useState({icon: false})
+  const [gstValidateData, setGstValidateData] = useState({icon: false})
+  const [gstDetails, setGstDetails] = useState({})
   const [fileType, setFileType] = useState('');
   const businessTypes = useQuery('business-types', getBusinessTypes, { cacheTime: 300000 })
   const states = useQuery('state', getActiveStates, { cacheTime: 300000 })
   const { enqueueSnackbar } = useSnackbar();
   const view = permissionCheck(currentUser.role_name, rulesList.dealer_view)
 
+  const handleValidate = (action, id) => {
+    action === 'pan' ? setPanValidateData({icon:true, loading: true}) : setGstValidateData({icon:true, loading: true})
+    validateId(action, id)
+      .then((res) => {
+        action === 'pan' ?
+          setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}}) :
+          setGstValidateData({icon: true, loading: false, idType: 'GST', details: res?.details || {}})
+        !values?.name && setFieldValue('name', res?.details?.tradeNam);
+        setFieldValue('address', res?.details?.pradr.adr);
+      })
+      .catch(e => {
+        console.log(e);
+        action === 'pan' ?
+          setPanValidateData({icon: true, idType: 'PAN'}) :
+          setGstValidateData({icon: true, idType: 'GST'})
+      })
+  }
   useEffect(() => {
     setValues(data)
+    setGstDetails(data?.gst_verified ? JSON.parse(data?.gst_details) || {} : {})
   }, [data])
   const { values, errors, handleChange: onChange, handleSubmit, setFieldValue, setValues } = useFormik({
     initialValues: { ...data },
@@ -215,6 +238,19 @@ const DealershipInfo = ({ data, className, currentUser }) => {
     readOnly,
     onChange
   }
+
+  const ValidateProps = (valid, key) => {
+    return({
+      endAdornment: <div style={{marginRight: 6, marginTop: 4, cursor: 'pointer'}}>
+        {
+        valid?.icon ?
+        valid?.loading ? <CircularProgress size={15}/> :
+        valid?.details ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{color:'#4caf50'}} /></Tooltip> :
+        <Tooltip title={`Invalid ${valid.idType}`} ><CancelOutlinedIcon fontSize='small' color='error' /></Tooltip> : null
+        }
+      </div>
+    })
+  }
   return (
     <Card className={clsx(classes.root, className)}>
       <div style={{ marginBottom: 20 }}>
@@ -225,21 +261,26 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                 <Grid md={4}>
                   <ViewData title='Name' value={values?.name} />
                   <ViewData title='Address' value={values?.address ? values.address + '' : '' + (values?.pincode ? values?.pincode : '')} />
-                  <ViewData title='PAN' value={values?.pan} />
+                  <ViewData title='PAN' value={values?.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success': 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'}/>} />
+                  {values?.gst_verified ? <ViewData title='Effective Date of registration' value={gstDetails?.rgdt}/> : null}
                 </Grid>
                 <Grid md={4}>
                   <ViewData title='State' value={(states?.data?.find(function (state, index) {
                     if (state.id == values?.state)
                       return true;
                   }))?.name} />
-                  <ViewData title='GST' value={values?.gst} />
+                  <ViewData title='Region' value={values?.region_name} />
+                  <ViewData title='GST' value={values?.gst} endIcon={<CustomToken variant={values?.gst_verified ? 'success': 'error'} label={values?.gst_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.gst_verified ? 'tick' : 'cross'} />} />
+                  {values?.gst_verified ? <ViewData title='Taxpayer Type' value={gstDetails?.dty} /> : null}
                 </Grid>
                 <Grid md={4}>
                   <ViewData title='Business type' value={businessTypes.data?.find(function (type, index) {
                     if (type.id == values?.business_type)
                       return true;
                   })?.name} />
-                  <ViewData title='Region' value={values?.region_name} />
+                  {values?.gst_verified ? <ViewData title='Legal Business Name' value={gstDetails?.mbr} /> : null}
+                  {values?.gst_verified ? <ViewData title='GSTIN Status' value={gstDetails?.sts} /> : null}
+                  {values?.gst_verified ? <ViewData title='Legal Trade Name' value={gstDetails?.tradeNam} /> : null}
                 </Grid>
               </Grid>
               {
@@ -281,6 +322,40 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                 </Grid>
                 <Grid {...gridProps} md={6}>
                   <TextInput
+                    labelText="GST"
+                    name="gst"
+                    readOnly={readOnly}
+                    disabled={gstValidateData?.loading || values?.gst_verified}
+                    value={values?.gst?.toUpperCase()}
+                    error={errors.gst}
+                    helperText={errors.gst}
+                    InputProps={ValidateProps(gstValidateData, values?.gst_verified)}
+                    {...fieldProps}
+                  />
+                  {
+                    !values?.gst_verified || values?.gst !== data?.gst?
+                      <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={()=> values?.gst && handleValidate('gst', values?.gst)}>Validate GST</Typography> : null
+                  }
+                </Grid>
+                <Grid {...gridProps} md={6}>
+                  <TextInput
+                    labelText="PAN"
+                    name="pan"
+                    readOnly={readOnly}
+                    disabled={panValidateData?.loading || values?.pan_verified}
+                    value={values?.pan?.toUpperCase()}
+                    error={errors.pan}
+                    helperText={errors.pan}
+                    InputProps={ValidateProps(panValidateData, values?.pan_verified)}
+                    {...fieldProps}
+                  />
+                  {
+                    !values?.pan_verified || values?.pan !== data?.pan ?
+                      <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={()=> values?.pan && handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
+                  }
+                </Grid>
+                <Grid {...gridProps} md={6}>
+                  <TextInput
                     multiline
                     labelText="Address"
                     name="address"
@@ -304,38 +379,11 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                     helperText={errors.business_typeF}
                     {...fieldProps}
                   >
-                    {/* <option value="">{businessTypes[values.business_type]?.name}</option> */}
                     {
                       businessTypes.data?.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
                     }
                   </TextInput>
                 </Grid>
-                <Grid {...gridProps} md={6}>
-                  <TextInput
-                    labelText="GST"
-                    name="gst"
-                    readOnly={readOnly}
-                    // disabled={readOnly}
-                    value={values?.gst?.toUpperCase()}
-                    error={errors.gst}
-                    helperText={errors.gst}
-                    {...fieldProps}
-                  />
-                </Grid>
-                <Grid {...gridProps} md={6}>
-                  <TextInput
-                    labelText="PAN"
-                    name="pan"
-                    readOnly={readOnly}
-                    // disabled={readOnly}
-                    // defaultValue={values.pan?.toUpperCase()}
-                    value={values?.pan?.toUpperCase()}
-                    error={errors.pan}
-                    helperText={errors.pan}
-                    {...fieldProps}
-                  />
-                </Grid>
-                {/* <Divider /> */}
                 <Grid {...gridProps} sm={6} md={6}>
                   <TextInput
                     select

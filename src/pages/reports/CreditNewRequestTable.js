@@ -6,6 +6,7 @@ import React, { useState, useMemo } from 'react';
 import { useMount } from 'react-use';
 import CreditReloadForm from './CreditReloadForm';
 import CreditReloadRemarks from './CreditReloadRemarks';
+import CustomToken from '../../components/CommonComponents/CustomToken';
 import Currency from '../../components/Number/Currency';
 import usePageTitle from '../../hooks/usePageTitle';
 import {
@@ -102,19 +103,19 @@ const CreditNewRequestTable = ({ data, currentUser, view }) => {
             if (value === 'Declined') {
               return (
                 <Tooltip title={tableMeta.rowData[7]}>
-                  <div style={{ color: '#FF5C58' }}>{value}</div>
+                  <div><CustomToken label={value} variant='error' icon='cross' /></div>
                 </Tooltip>
               )
             }
             else if (value === 'Disbursed') {
               return (
                 <Tooltip title={tableMeta.rowData[7]}>
-                  <div>{value}</div>
+                  <div><CustomToken label={value} variant='success' icon='tick' /></div>
                 </Tooltip>
               )
             }
             else
-              return value
+              return <CustomToken label={value} variant='success' />
           },
           filter: false
         }

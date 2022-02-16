@@ -11,7 +11,7 @@ import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
 import Alert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
@@ -22,6 +22,7 @@ import { API } from '../../../config/api';
 import { logger } from '../../../config/logger';
 import { URL } from '../../../config/serverUrls';
 import { cryptoEncrypt } from '../../../services/crypto.service';
+import { validateId } from '../../../services/dealerships.service';
 import { compareObject } from '../../../utils/compareObject.util';
 
 
@@ -91,6 +92,7 @@ const DealerEditSideWrapper = ({
   const [apiCallMessage, setApiCallMessage] = useState('');
   const [selectedDate, setSelectedDate] = useState();
   const [selectedState, setSelectedState] = useState();
+  const [panValidateData, setPanValidateData] = useState({icon: false})
   const { enqueueSnackbar } = useSnackbar();
 
   const handleEdit = () => {
@@ -191,6 +193,22 @@ const DealerEditSideWrapper = ({
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: (values) => {
+      if(isAdd === 'Add'){
+        validateId('pan', values?.pan)
+          .then((res) => {
+            setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}})
+            !values?.first_name && setFieldValue('first_name', res?.details?.firstName)
+            !values?.last_name && setFieldValue('last_name', res?.details?.lastName)
+            !values?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
+            !values?.gender && setFieldValue('gender', res?.details?.gender?.toUpperCase())
+            !values?.pincode && setFieldValue('pincode', res?.details?.address?.pinCode)
+            !values?.address && setFieldValue('address', `${res?.details?.address?.buildingName}, ${res?.details?.address?.streetName}, ${res?.details?.address?.city}, ${res?.details?.address?.state} - ${res?.details?.address?.pinCode}`)
+          })
+          .catch(e => {
+            console.log(e);
+            setPanValidateData({icon: true, idType: 'PAN'})
+          })
+      }
       values.first_name = values.first_name.toUpperCase();
       values.last_name = values.last_name.toUpperCase();
       setLoading(true);
@@ -306,6 +324,9 @@ const DealerEditSideWrapper = ({
               errors={errors}
               onChange={handleChange}
               handleSave={handleSave}
+              setFieldValue={setFieldValue}
+              setPanValidateData={setPanValidateData}
+              panValidateData={panValidateData}
             />
           </Step>
         </Stepper>

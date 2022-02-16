@@ -1,9 +1,13 @@
 import DateFnsUtils from '@date-io/date-fns';
-import { Divider } from '@material-ui/core';
+import { CircularProgress, Divider, Tooltip } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Switch from '@material-ui/core/Switch';
 import Typography from '@material-ui/core/Typography';
+// import UploadIcon from '@material-ui/icons/CloudUploadOutlined';
+// import DeleteIcon from '@material-ui/icons/DeleteOutlineOutlined';
+import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
+import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker
@@ -13,10 +17,12 @@ import { parse } from 'date-fns';
 import { useSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
 import { DocAttachment } from '../../../components/Attachment/DocAttachment';
+import CustomToken from '../../../components/CommonComponents/CustomToken';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import FileUpload from '../../../components/FileUpload';
 import TextInput from '../../../components/TextInput/TextInput';
 import { deleteProfileDoc } from '../../../services/dealers.service';
+import { validateId } from '../../../services/dealerships.service';
 
 
 const useStyles = makeStyles({
@@ -71,7 +77,7 @@ const useStyles = makeStyles({
   },
 });
 
-const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave }) => {
+const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave, setFieldValue, setPanValidateData, panValidateData }) => {
   const readOnly = readOnlyProps;
   const classes = useStyles();
   const [showUpload, setShowUpload] = useState(false);
@@ -83,7 +89,6 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
   const { enqueueSnackbar } = useSnackbar();
   const [selectedDate, setSelectedDate] = useState(data?.dob && parse(data?.dob, 'dd-MM-yyyy', new Date()))
   const handleDateChange = (date) => {
-    // const d = format(new Date(date), "dd-MM-yyyy")
     setSelectedDate(date)
     handleDate(date)
   }
@@ -119,11 +124,44 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
       })
   }
 
+  const handleValidate = (action, id) => {
+    action === 'pan' && setPanValidateData({icon:true, loading: true})
+    validateId(action, id)
+      .then((res) => {
+        action === 'pan' &&
+      setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}})
+        !values?.first_name && setFieldValue('first_name', res?.details?.firstName)
+        !values?.last_name && setFieldValue('last_name', res?.details?.lastName)
+        !values?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
+        !values?.gender && setFieldValue('gender', res?.details?.gender?.toUpperCase())
+        !values?.pincode && setFieldValue('pincode', res?.details?.address?.pinCode)
+        !values?.address && setFieldValue('address', `${res?.details?.address?.buildingName}, ${res?.details?.address?.streetName}, ${res?.details?.address?.city}, ${res?.details?.address?.state} - ${res?.details?.address?.pinCode}`)
+      })
+      .catch(e => {
+        console.log(e);
+        action === 'pan' &&
+      setPanValidateData({icon: true, idType: 'PAN'})
+      })
+  }
+
   const gridItem = {
     md: 12,
     item: true,
     className: classes.row
   };
+
+  const ValidateProps = (valid) => {
+    return({
+      endAdornment: <div style={{marginRight: 6, marginTop: 4, cursor: 'pointer'}}>
+        {
+        valid?.icon ?
+        valid?.loading ? <CircularProgress size={15}/> :
+        valid?.details ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{color:'#4caf50'}} /></Tooltip> :
+        <Tooltip title={`Invalid ${valid.idType}`} ><CancelOutlinedIcon fontSize='small' color='error' /></Tooltip> : null
+        }
+      </div>
+    })
+  }
   const date = new Date();
   const currentYear = date.getFullYear();
   const currentYearDiff = date.getFullYear() - 1970;
@@ -181,7 +219,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   <ViewData title='Pincode' value={values.pincode} />
                   <ViewData title='Residing since' value={values.residing_since} />
                   <ViewData title='Email' value={values.email} />
-                  <ViewData title='PAN' value={values.pan} />
+                  <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success': 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'}/>} />
                 </Box>
               </Grid>
             </Grid>
@@ -239,10 +277,12 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   <KeyboardDatePicker
                     variant='inline'
                     name='dob'
+                    fullWidth
                     inputVariant='outlined'
                     label="Date of Birth"
                     format='dd-MM-yyyy'
                     animateYearScrolling={true}
+                    disableFuture={true}
                     invalidDateMessage='Invalid Date Format'
                     error={errors.dob}
                     helperText={errors.dob}
@@ -285,6 +325,38 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   <option value="null">Select Gender</option>
                   <option value={'MALE'}>Male</option>
                   <option value={'FEMALE'}>Female</option>
+                </TextInput>
+              </Grid>
+              <Grid {...gridItem} md={6}>
+                <TextInput
+                  label="PAN Number"
+                  name="pan"
+                  value={values.pan?.toUpperCase()}
+                  disabled={panValidateData?.loading || values?.pan_verified}
+                  error={errors.pan}
+                  helperText={errors.pan}
+                  readOnly={readOnly}
+                  onChange={onChange}
+                  InputLabelProps={{ shrink: true }}
+                  InputProps={ValidateProps(panValidateData)}
+                />
+                {
+                  !values?.pan_verified || values?.pan !== data?.pan ?
+                    <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={()=> values?.pan && handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
+                }
+              </Grid>
+              <Grid {...gridItem} md={6}>
+                <TextInput
+                  number
+                  label="Aadhar"
+                  name="aadhar"
+                  value={values.aadhar}
+                  helperText={errors.aadhar}
+                  readOnly={readOnly}
+                  error={errors.aadhar}
+                  onChange={onChange}
+                  InputLabelProps={{ shrink: true }}
+                >
                 </TextInput>
               </Grid>
               <Grid {...gridItem} md={6}>
@@ -482,38 +554,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                     </Typography>
                   </Grid>
                 </Grid>
-              </Grid>
-              <Grid {...gridItem} md={12} >
-                <Typography variant="h6">Documents</Typography>
-              </Grid>
-              <Grid {...gridItem} md={6}>
-                <TextInput
-                  label="PAN Number"
-                  name="pan"
-                  value={values.pan?.toUpperCase()}
-                  error={errors.pan}
-                  helperText={errors.pan}
-                  readOnly={readOnly}
-                  onChange={onChange}
-                  InputLabelProps={{ shrink: true }}
-
-                >
-                </TextInput>
-              </Grid>
-              <Grid {...gridItem} md={6}>
-                <TextInput
-                  number
-                  label="Aadhar"
-                  name="aadhar"
-                  value={values.aadhar}
-                  helperText={errors.aadhar}
-                  readOnly={readOnly}
-                  error={errors.aadhar}
-                  onChange={onChange}
-                  InputLabelProps={{ shrink: true }}
-                >
-                </TextInput>
-              </Grid>
+              </Grid>    
               <Grid {...gridItem} md={12} >
                 <Typography variant="title"><strong>Attachments</strong></Typography>
               </Grid>

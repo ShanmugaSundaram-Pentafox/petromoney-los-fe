@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.9.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.8.3...v2.9.0) (2022-02-16)
+
+
+### Features
+
+* **credit-withheld:** highlight withheld loans ([2106355](https://gitlab.com/vignesh3/petromall-fe/commit/210635510cf8c8b7117c07b828f7e3a2c5384ae3))
+
+
+### Bug Fixes
+
+* **dealer-passbook:** invalid date format ([dfb9668](https://gitlab.com/vignesh3/petromall-fe/commit/dfb9668d34cd70016b9ab8877fda5efc9439f750))
+* **disb-details:** date format and prefilled data ([0de4625](https://gitlab.com/vignesh3/petromall-fe/commit/0de4625c5941161a318fc2048d76517184301d72))
+* **name-regex:** allow spaces in name ([00f86c2](https://gitlab.com/vignesh3/petromall-fe/commit/00f86c2a918957dc215ab25f49cb026344991853))
+* **styles:** update table style ([87c863b](https://gitlab.com/vignesh3/petromall-fe/commit/87c863bf89767f947265cfc828585a38c208ed43))
+
 ### [2.8.3](https://gitlab.com/vignesh3/petromall-fe/compare/v2.8.2...v2.8.3) (2022-01-28)
 
 

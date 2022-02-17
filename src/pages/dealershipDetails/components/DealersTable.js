@@ -1,4 +1,4 @@
-import { Drawer } from '@material-ui/core';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Drawer } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -58,12 +58,14 @@ const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExper
   const classes = useStyles();
   const queryClient = useQueryClient()
   const { enqueueSnackbar } = useSnackbar();
-  const [rowData, setRowData] = useState()
+  const [rowData, setRowData] = useState();
+  const [deleteModal, setDeleteModal] = useState({open:false});
 
   const DeleteApplicant = (row_data) => {
-    deleteApplicantById (row_data, id, row_data?.id, row_data?.userType)
+    deleteApplicantById (id, row_data?.id, row_data?.userType)
       .then(res => {
         queryClient.invalidateQueries(['dealers-coapplicant', id])
+        setDeleteModal({})
         enqueueSnackbar(res.message, {
           anchorOrigin: {
             vertical: 'top',
@@ -139,7 +141,7 @@ const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExper
                 editable &&
                   <TableCell align="right">
                     <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>
-                    <Button size='small' variant='outlined' style={{color: '#f05454e6', marginLeft: 8, borderColor: '#f05454e6'}} onClick={() => DeleteApplicant(row)}>Delete</Button>
+                    <Button size='small' variant='outlined' style={{color: '#f05454e6', marginLeft: 8, borderColor: '#f05454e6'}} onClick={() => setDeleteModal({open: true, data: row})}>Delete</Button>
                   </TableCell>
               }
             </TableRow>
@@ -157,6 +159,27 @@ const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExper
           }
         </div>
       </Drawer>
+      <Dialog
+        open={deleteModal?.open}
+        onClose={() => setDeleteModal({})}
+        maxWidth='sm'
+        fullWidth
+      >
+        <DialogTitle>
+          Are you sure?
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Do you really want to delete this dealer named {deleteModal?.data?.first_name}?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button size='small' onClick={() => setDeleteModal({})}>Cancel</Button>
+          <Button variant='contained' size='small' style={{backgroundColor: '#f05454e6', color: 'white'}} onClick={() => DeleteApplicant(deleteModal?.data)}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   )
 }

@@ -192,7 +192,11 @@ export const deleteApplicantById = (dealership_id, dealer_id, type) => {
       method: 'DELETE'
     })
       .then(async ({ res, status, message }) => {
-        resolve({ res, message });
+        if(status === 'SUCCESS') {
+          resolve({ res, message });
+        } else {
+          reject(message)
+        }
       })
       .catch(e => {
         reject(e.message);

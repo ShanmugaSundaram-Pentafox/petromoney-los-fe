@@ -1,4 +1,4 @@
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Drawer } from '@material-ui/core';
+import { Drawer } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -11,6 +11,7 @@ import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import CreditInfoSideWrapper from './CreditInfoSideWrapper';
+import DeleteButton from '../../../components/CommonComponents/Button/DeleteButton';
 import { logger } from '../../../config/logger';
 import { deleteApplicantById } from '../../../services/dealers.service';
 
@@ -59,13 +60,13 @@ const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExper
   const queryClient = useQueryClient()
   const { enqueueSnackbar } = useSnackbar();
   const [rowData, setRowData] = useState();
-  const [deleteModal, setDeleteModal] = useState({open:false});
+  const [deleteModal, setDeleteModal] = useState(false);
 
   const DeleteApplicant = (row_data) => {
     deleteApplicantById (id, row_data?.id, row_data?.userType)
       .then(res => {
         queryClient.invalidateQueries(['dealers-coapplicant', id])
-        setDeleteModal({})
+        setDeleteModal(false)
         enqueueSnackbar(res.message, {
           anchorOrigin: {
             vertical: 'top',
@@ -75,6 +76,13 @@ const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExper
         })
       })
       .catch(e => {
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
         logger(e)
       })
   }
@@ -110,7 +118,7 @@ const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExper
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map(row => (
+          {data.map((row, index) => (
             <TableRow className={classes.tableRow} key={row.id}>
               <TableCell onClick={e => editable && dealersClickRow(e, row, 'DEALER')}>
                 {row.first_name}&nbsp;&nbsp;
@@ -141,7 +149,7 @@ const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExper
                 editable &&
                   <TableCell align="right">
                     <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>
-                    <Button size='small' variant='outlined' style={{color: '#f05454e6', marginLeft: 8, borderColor: '#f05454e6'}} onClick={() => setDeleteModal({open: true, data: row})}>Delete</Button>
+                    <DeleteButton alertText={`Do you really want to delete this dealer named ${row?.first_name}?`} deleteAction={() => DeleteApplicant(row)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={index} />
                   </TableCell>
               }
             </TableRow>
@@ -159,27 +167,6 @@ const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExper
           }
         </div>
       </Drawer>
-      <Dialog
-        open={deleteModal?.open}
-        onClose={() => setDeleteModal({})}
-        maxWidth='sm'
-        fullWidth
-      >
-        <DialogTitle>
-          Are you sure?
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Do you really want to delete this dealer named {deleteModal?.data?.first_name}?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button size='small' onClick={() => setDeleteModal({})}>Cancel</Button>
-          <Button variant='contained' size='small' style={{backgroundColor: '#f05454e6', color: 'white'}} onClick={() => DeleteApplicant(deleteModal?.data)}>
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
     </div>
   )
 }

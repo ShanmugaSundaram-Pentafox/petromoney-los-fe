@@ -8,8 +8,12 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
+import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
+import { useQueryClient } from 'react-query';
 import CreditInfoSideWrapper from './CreditInfoSideWrapper';
+import { logger } from '../../../config/logger';
+import { deleteApplicantById } from '../../../services/dealers.service';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -41,7 +45,26 @@ const useStyles = makeStyles(theme => ({
 
 const GuarantorsTable = ({ id, editable, guarantorsData, titleAlign, getExperianData, onClickAddMenu, formType, openCloseCreditForm, currentUser, showDealerEditForm, dealersClickRow, editFormClose }) => {
   const classes = useStyles();
+  const queryClient = useQueryClient()
+  const { enqueueSnackbar } = useSnackbar();
   const [rowData, setRowData] = useState()
+  
+  const DeleteApplicant = (row_data) => {
+    deleteApplicantById(row_data, id, row_data?.id, row_data?.userType)
+      .then(res => {
+        queryClient.invalidateQueries(['guarantors', id])
+        enqueueSnackbar(res.message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
+      })
+      .catch(e => {
+        logger(e)
+      })
+  }
 
   if (!guarantorsData || !guarantorsData.length)
     return (
@@ -85,6 +108,7 @@ const GuarantorsTable = ({ id, editable, guarantorsData, titleAlign, getExperian
                 editable &&
                   <TableCell align="right">
                     <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>
+                    <Button size='small' variant='outlined' style={{color: '#f05454e6', marginLeft: 8, borderColor: '#f05454e6'}} onClick={() => DeleteApplicant(row)}>Delete</Button>
                   </TableCell>
               }
             </TableRow>

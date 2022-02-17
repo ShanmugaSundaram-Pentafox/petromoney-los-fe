@@ -74,13 +74,18 @@ const NewCallRequest = ({callbackData}) => {
               <div style={{display: 'flex'}}>
                 <Typography variant='body1'>{value?.toUpperCase()}</Typography>
                 {
-                  tableMeta.rowData[6] > 1 &&
-                    <Typography variant='body2' className={classes.pill}><strong>{tableMeta.rowData[6]}</strong></Typography>
+                  tableMeta.rowData[7] > 1 &&
+                    <Typography variant='body2' className={classes.pill}><strong>{tableMeta.rowData[7]}</strong></Typography>
                 }
               </div>
             )
           }
         }
+      },
+      {
+        name: 'created_date',
+        label: 'Requested On',
+        options: { filter: false }
       },
       {
         name: 'region_value',

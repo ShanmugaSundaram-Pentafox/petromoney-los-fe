@@ -210,16 +210,17 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   <ViewData title='Marital Status' value={values.marital_status} />
                   <ViewData title='Mobile' value={values.mobile} />
                   <ViewData title='Aadhar' value={values.aadhar} />
+                  <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success': 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'}/>} />
                 </Box>
               </Grid>
               <Grid item md={6}>
                 <Box className={classes.box} >
                   <ViewData title='Name' value={`${values.first_name} ${values.last_name}`} />
                   <ViewData title='Gender' value={values.gender} />
+                  <ViewData title='City' value={values.city} />
                   <ViewData title='Pincode' value={values.pincode} />
                   <ViewData title='Residing since' value={values.residing_since} />
                   <ViewData title='Email' value={values.email} />
-                  <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success': 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'}/>} />
                 </Box>
               </Grid>
             </Grid>
@@ -370,6 +371,18 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   onChange={onChange}
                   rows={3}
                   // multiline={true}
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid>
+              <Grid {...gridItem} md={6}>
+                <TextInput
+                  label="City"
+                  name="city"
+                  readOnly={readOnly}
+                  value={values.city}
+                  error={errors.city}
+                  helperText={errors.city}
+                  onChange={onChange}
                   InputLabelProps={{ shrink: true }}
                 />
               </Grid>

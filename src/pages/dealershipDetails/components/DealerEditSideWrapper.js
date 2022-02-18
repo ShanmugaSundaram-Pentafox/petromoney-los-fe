@@ -112,6 +112,7 @@ const DealerEditSideWrapper = ({
     last_name: Yup.string().nullable('Enter last name').required('Enter last name'),
     gender: Yup.string().nullable('Choose gender').required('Enter gender'),
     email: Yup.string().nullable('Enter email').email('Invalid email').required('Enter email'),
+    city: Yup.string().nullable('Enter City').required('Enter City'),
     address: Yup.string()
       .nullable('Enter address')
       .min(6, 'address must be atleast 6 characters')

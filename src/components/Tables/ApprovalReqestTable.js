@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry }) => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); 
   const [loanId, setloanId] = useState();
   const [type, setType] = useState('');
   const [dealershipId, setDealershipId] = useState();
@@ -199,7 +199,7 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
     isRowSelectable: () => false,
     onCellClick: (colData, cellMeta) => {
       if (cellMeta.colIndex !== 8) {
-        onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'submitted')
+        onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'loan_approval')
       }
     },
     customSort: (data, dataIndex, rowIndex) => {

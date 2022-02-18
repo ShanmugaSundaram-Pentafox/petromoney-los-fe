@@ -25,7 +25,7 @@ const NewCallRequest = ({callbackData}) => {
   const [rowData, setRowData] = useState()
   const [remark, setRemark] = useState()
 
-  const { mutate: resolve } = useMutation(data => resolveCallbackRequest(data, rowData[4]) , {
+  const { mutate: resolve } = useMutation(data => resolveCallbackRequest(data, rowData[5]) , {
     onSuccess: (message) => {
       setRowData()
       queryClient.invalidateQueries('new-request')

@@ -49,7 +49,7 @@ const ProcessedCallRequest = ({callbackProcessed}) => {
         options: { filter: false }
       },
       {
-        name: 'peocessed_by',
+        name: 'processed_by',
         label: 'Processed By',
         options: { filter: false }
       },

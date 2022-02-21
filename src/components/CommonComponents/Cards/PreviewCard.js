@@ -1,10 +1,10 @@
 import { Button } from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import { makeStyles } from '@material-ui/styles';
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components'
+import DeleteButton from '../Button/DeleteButton';
 
 const Card = styled.div`
   background-color: #fff;
@@ -45,6 +45,7 @@ const useStyles = makeStyles((theme) => ({
 
 const PreviewCard = ({ children, onEdit, onDelete, onCustom, customButton = false, customIcon, token=false, tokenLabel, tokenIcon, variant }) => {
   const classes = useStyles()
+  const [deleteModal, setDeleteModal] = useState(false)
   return (
     <Card style={{marginBottom:0}}>
       <div className="card-body">
@@ -79,15 +80,7 @@ const PreviewCard = ({ children, onEdit, onDelete, onCustom, customButton = fals
           >
             Edit
           </Button>
-          <Button
-            size="small"
-            variant="outlined"
-            style={{ margin: 4 }}
-            startIcon={<DeleteIcon color="error" />}
-            onClick={onDelete}
-          >
-            Delete
-          </Button>
+          <DeleteButton deleteModal={deleteModal} deleteAction={onDelete} setDeleteModal={setDeleteModal} />
         </div>
       </div>
     </Card>

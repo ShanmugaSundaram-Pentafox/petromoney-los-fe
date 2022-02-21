@@ -189,7 +189,8 @@ export const deleteApplicantById = (dealership_id, dealer_id, type) => {
   let apiURL = type === 'Dealer' ? 'dealers' : type === 'Co-Applicant' ? 'coapplicants': 'guarantors'
   return new Promise((resolve, reject) => {
     apiCall(`${apiURL}/${dealership_id}/${dealer_id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      body: {is_active: 0}
     })
       .then(async ({ res, status, message }) => {
         if(status === 'SUCCESS') {

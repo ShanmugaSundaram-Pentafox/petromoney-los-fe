@@ -118,7 +118,7 @@ const GuarantorsTable = ({ id, editable, guarantorsData, titleAlign, getExperian
                 editable &&
                   <TableCell align="right">
                     <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>
-                    <DeleteButton alertText={`Do you really want to delete this guarantor named ${row?.first_name}?`} deleteAction={() => DeleteApplicant(row)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={index} />
+                    <DeleteButton alertText={`Do you really want to delete this guarantor named ${row?.first_name}?`} deleteAction={() => DeleteApplicant(row)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={index} buttonType='icon' />
                   </TableCell>
               }
             </TableRow>

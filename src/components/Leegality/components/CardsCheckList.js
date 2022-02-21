@@ -57,7 +57,7 @@ const CardItem = ({ onChange, data }) => {
   const [aadharSign, setAadharSign] = useState(true);
   const [virtualSign, setVirtualSign] = useState(false);
   const onPressItem = () => {
-    onChange(!checked, {...data, signatures:['AADHAAR', virtualSign ? 'VIRTUAL_SIGN': null]});
+    onChange(!checked, {...data, signatures:['AADHAAR']});
     setChecked(!checked);
   }
   const handleAadharSign = (event) => {
@@ -65,6 +65,7 @@ const CardItem = ({ onChange, data }) => {
   };
   const handleVirtualSign = (event) => {
     setVirtualSign(event.target.checked);
+    onChange(true, {...data, signatures:['AADHAAR', 'VIRTUAL_SIGN']})
   }
 
   return (

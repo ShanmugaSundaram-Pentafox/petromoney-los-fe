@@ -57,14 +57,14 @@ const CardItem = ({ onChange, data }) => {
   const [aadharSign, setAadharSign] = useState(true);
   const [virtualSign, setVirtualSign] = useState(false);
   const onPressItem = () => {
-    onChange(!checked, data);
+    onChange(!checked, {...data, signatures:['AADHAAR', virtualSign ? 'VIRTUAL_SIGN': null]});
     setChecked(!checked);
   }
   const handleAadharSign = (event) => {
     setAadharSign(event.target.checked);
   };
   const handleVirtualSign = (event) => {
-    setVirtualSign(event.target.checked)
+    setVirtualSign(event.target.checked);
   }
 
   return (
@@ -96,6 +96,7 @@ const CardItem = ({ onChange, data }) => {
                   size="small"
                   color="primary"
                   name="state"
+                  disabled
                   inputProps={{ 'aria-label': 'secondary checkbox' }}
                 />
                 <Typography style={{fontSize:'10px'}}>Aadhar Sign</Typography>
@@ -116,35 +117,6 @@ const CardItem = ({ onChange, data }) => {
           )
         }
       </div>
-      {/* {
-        checked && (
-          <div style={{ margin: '4px', border: '2px solid red'}}>
-            <div className="toogle" style={{display:'flex',margin:'10px'}}>
-              <Switch
-                checked={aadharSign}
-                onChange={handleAadharSign}
-                size="small"
-                color="primary"
-                name="state"
-                inputProps={{ 'aria-label': 'secondary checkbox' }}
-              />
-              <Typography style={{marginLeft:'8px',fontSize:'13px'}}>Aadhar Sign</Typography>
-            </div>
-            <div style={{display:'flex',margin:'10px'}}>
-              <Switch
-                checked={virtualSign}
-                onChange={handleVirtualSign}
-                size="small"
-                color="primary"
-                name="state"
-                inputProps={{ 'aria-label': 'secondary checkbox' }}
-              />
-              <Typography style={{marginLeft:'8px',fontSize:'13px'}} >Virtual Sign</Typography>
-            </div>
-          </div>
-
-        )
-      } */}
     </div>
   )
 }

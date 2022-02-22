@@ -14,6 +14,7 @@ import LoanStats from './components/LoanStats';
 import { PieChartData, BarChartData, GroupChartData, LineChart } from './components/MetricsComponents';
 import Currency from '../../../src/components/Number/Currency';
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
+import DpdReport from '../../components/Tables/DpdReport';
 import LoanBookTable from '../../components/Tables/LoanBookTable';
 import { permissionCheck } from '../../components/UserCan/UserCan'
 import { rulesList } from '../../config/userRules'
@@ -363,6 +364,9 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                   }
                   <Grid item xs={12}>
                     <LoanBookTable title={'Loan Book'} currentUser={currentUser} />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <DpdReport title={'DPD Report'} currentUser={currentUser} />
                   </Grid>
                 </>
                 )

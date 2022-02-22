@@ -6,6 +6,7 @@ import React, { useState, useMemo } from 'react';
 import { useMount } from 'react-use';
 import CreditReloadForm from './CreditReloadForm';
 import CreditReloadRemarks from './CreditReloadRemarks';
+import CustomToken from '../../components/CommonComponents/CustomToken';
 import Currency from '../../components/Number/Currency';
 import usePageTitle from '../../hooks/usePageTitle';
 import {
@@ -102,25 +103,27 @@ const CreditNewRequestTable = ({ data, currentUser, view }) => {
             if (value === 'Declined') {
               return (
                 <Tooltip title={tableMeta.rowData[7]}>
-                  <div style={{ color: '#FF5C58' }}>{value}</div>
+                  <div><CustomToken label={value} variant='error' icon='cross' /></div>
                 </Tooltip>
               )
             }
             else if (value === 'Disbursed') {
               return (
                 <Tooltip title={tableMeta.rowData[7]}>
-                  <div>{value}</div>
+                  <div><CustomToken label={value} variant='success' icon='tick' /></div>
                 </Tooltip>
               )
             }
-            else
-              return value
+            else if(tableMeta?.rowData[11])
+              return <CustomToken label="Withheld" variant='warn' />
+            else return <CustomToken label={value} variant='success' /> 
           },
           filter: false
         }
       },
-      { name: 'remarks', options: { display: 'excluded', filter: false } },
-      { name: 'role_name', options: { display: 'excluded', filter: false } }
+      { name: 'remarks', options: { display: 'excluded', filter: false }},
+      { name: 'role_name', options: { display: 'excluded', filter: false }},
+      { name: 'is_withheld', options: { display: 'excluded', filter: false}}
     ];
   }, [data]);
   const options = {
@@ -129,6 +132,11 @@ const CreditNewRequestTable = ({ data, currentUser, view }) => {
     selectableRows: 'none',
     rowsPerPage: 15,
     rowsPerPageOptions: [15, 20, 30],
+    setRowProps: (row, dataIndex) => {
+      if(row[11]){
+        return{ style: {backgroundColor: '#ffec9bba'}}
+      }
+    },
     customToolbar: () => {
       return (
         <Button

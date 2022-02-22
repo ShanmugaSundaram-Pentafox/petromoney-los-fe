@@ -38,7 +38,10 @@ const useStyles = makeStyles(theme => ({
     // paddingTop: 8
   },
   tableRow: {
-    cursor: 'pointer'
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: '#fafafa',
+    }
   },
   document: {
     display: 'inline-block',

@@ -4,7 +4,6 @@ import { useSnackbar } from 'notistack';
 import React, { useMemo, useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query';
 import TextInput from '../../components/TextInput/TextInput';
-import usePageTitle from '../../hooks/usePageTitle';
 import { resolveCallbackRequest } from '../../services/callrequest.service';
 
 const useStyles = makeStyles({
@@ -20,7 +19,6 @@ const useStyles = makeStyles({
 })
 
 const NewCallRequest = ({callbackData}) => {
-  usePageTitle('Call Request');
   const classes = useStyles();
   const queryClient = useQueryClient()
   const { enqueueSnackbar } = useSnackbar();

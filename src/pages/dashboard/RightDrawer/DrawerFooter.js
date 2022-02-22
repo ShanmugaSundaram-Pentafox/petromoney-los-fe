@@ -259,7 +259,7 @@ const DrawerFooter = ({
                       editable && status && ['loan_review', 'loan_approval', 'disbursement_approval'].includes(status.toLowerCase()) &&
                         <>
                           {
-                            (currentUser.id == loanData?.reviewer_id || currentUser.role_id == 1) &&
+                            (currentUser.id == loanData?.approver_id || currentUser.id == loanData?.reviewer_id || [1,2,3,4].includes(currentUser.role_id)) &&
                               <Button
                                 variant="contained"
                                 disabled={loanData?.loading}
@@ -285,7 +285,7 @@ const DrawerFooter = ({
                         </Button>
                     }
                     {
-                      status && status.toLowerCase() === 'loan_approval' && (currentUser.id == loanData?.approver_id || currentUser.role_id == 1) &&
+                      status && status.toLowerCase() === 'loan_approval' && (currentUser.id == loanData?.approver_id || [1,2,3,4].includes(currentUser.role_id)) &&
                         <Button
                           variant="contained"
                           disabled={loanData?.loading}
@@ -301,7 +301,7 @@ const DrawerFooter = ({
               />
           }
           {
-            editable && status && ['loan_review'].includes(status.toLowerCase()) && (currentUser.id == loanData?.reviewer_id || currentUser.role_id == 1) &&
+            editable && status && ['loan_review'].includes(status.toLowerCase()) && (currentUser.id == loanData?.reviewer_id || [1,2,3,4].includes(currentUser.role_id)) &&
               < UserCan
                 role={currentUser.role_name}
                 perform={rulesList.loan_approval}

@@ -27,20 +27,8 @@ const useStyles = makeStyles(theme => ({
 
 const TransportOwnerTable = ({ id, onRowClick }) => {
   const classes = useStyles();
-  const { data: ownerData = [], isLoading } = useQuery(['owner-info', id], () => getOwnersById(id))
-  // useMount(() => {
-  //     if (!ownerData || !ownerData.length) {
-  //         setLoading(true);
-  //         getOwnersById(id)
-  //             .then(data => {
-  //                 setOwnerData(data);
-  //                 setLoading(false);
-  //             })
-  //             .catch(e => {
-  //                 setLoading(false);
-  //             })
-  //     }
-  // });
+  const { data: ownerData = [], isLoading } = useQuery(['owner-info', id], () => getOwnersById(id), {refetchOnWindowFocus: false})
+
   const columns = useMemo(() => {
     return [
       {
@@ -106,7 +94,6 @@ const TransportOwnerTable = ({ id, onRowClick }) => {
         Array.isArray(ownerData) && ownerData.length ? (
 
           <MUIDataTable
-            // title={title ? <Typography className={classes.title} variant="h4" component="h4">{title} </Typography> : null}
             data={ownerData}
             columns={columns}
             options={options}

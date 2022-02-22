@@ -1,14 +1,13 @@
 import DateFnsUtils from '@date-io/date-fns';
-import { Divider } from '@material-ui/core';
+import { CircularProgress, Divider, Tooltip } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
-import { grey } from '@material-ui/core/colors';
 import Grid from '@material-ui/core/Grid';
 import Switch from '@material-ui/core/Switch';
-import Tooltip from '@material-ui/core/Tooltip';
-// import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
 import Typography from '@material-ui/core/Typography';
-import UploadIcon from '@material-ui/icons/CloudUploadOutlined';
-import DeleteIcon from '@material-ui/icons/DeleteOutlineOutlined';
+// import UploadIcon from '@material-ui/icons/CloudUploadOutlined';
+// import DeleteIcon from '@material-ui/icons/DeleteOutlineOutlined';
+import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
+import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker
@@ -17,10 +16,13 @@ import { makeStyles } from '@material-ui/styles';
 import { parse } from 'date-fns';
 import { useSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
-import { AvatarCard, ViewData } from '../../../components/CommonComponents/FilePreview';
+import { DocAttachment } from '../../../components/Attachment/DocAttachment';
+import CustomToken from '../../../components/CommonComponents/CustomToken';
+import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import FileUpload from '../../../components/FileUpload';
 import TextInput from '../../../components/TextInput/TextInput';
 import { deleteProfileDoc } from '../../../services/dealers.service';
+import { validateId } from '../../../services/dealerships.service';
 
 
 const useStyles = makeStyles({
@@ -43,7 +45,7 @@ const useStyles = makeStyles({
   },
   readOnlyWrapper: {
     margin: '2px 4px',
-    maxWidth: '100%',
+    maxWidth: '98%',
   },
 
   fileStyle: {
@@ -70,10 +72,12 @@ const useStyles = makeStyles({
   title: {
     fontSize: 11,
   },
+  attachmentContainer: {
+    display: 'flex', justifyContent: 'space-between', width: '39vw', paddingRight: 12, flexWrap: 'wrap'
+  },
 });
 
-
-const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave }) => {
+const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave, setFieldValue, setPanValidateData, panValidateData }) => {
   const readOnly = readOnlyProps;
   const classes = useStyles();
   const [showUpload, setShowUpload] = useState(false);
@@ -85,7 +89,6 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
   const { enqueueSnackbar } = useSnackbar();
   const [selectedDate, setSelectedDate] = useState(data?.dob && parse(data?.dob, 'dd-MM-yyyy', new Date()))
   const handleDateChange = (date) => {
-    // const d = format(new Date(date), "dd-MM-yyyy")
     setSelectedDate(date)
     handleDate(date)
   }
@@ -121,11 +124,44 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
       })
   }
 
+  const handleValidate = (action, id) => {
+    action === 'pan' && setPanValidateData({icon:true, loading: true})
+    validateId(action, id)
+      .then((res) => {
+        action === 'pan' &&
+      setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}})
+        !values?.first_name && setFieldValue('first_name', res?.details?.firstName)
+        !values?.last_name && setFieldValue('last_name', res?.details?.lastName)
+        !values?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
+        !values?.gender && setFieldValue('gender', res?.details?.gender?.toUpperCase())
+        !values?.pincode && setFieldValue('pincode', res?.details?.address?.pinCode)
+        !values?.address && setFieldValue('address', `${res?.details?.address?.buildingName}, ${res?.details?.address?.streetName}, ${res?.details?.address?.city}, ${res?.details?.address?.state} - ${res?.details?.address?.pinCode}`)
+      })
+      .catch(e => {
+        console.log(e);
+        action === 'pan' &&
+      setPanValidateData({icon: true, idType: 'PAN'})
+      })
+  }
+
   const gridItem = {
     md: 12,
     item: true,
     className: classes.row
   };
+
+  const ValidateProps = (valid) => {
+    return({
+      endAdornment: <div style={{marginRight: 6, marginTop: 4, cursor: 'pointer'}}>
+        {
+        valid?.icon ?
+        valid?.loading ? <CircularProgress size={15}/> :
+        valid?.details ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{color:'#4caf50'}} /></Tooltip> :
+        <Tooltip title={`Invalid ${valid.idType}`} ><CancelOutlinedIcon fontSize='small' color='error' /></Tooltip> : null
+        }
+      </div>
+    })
+  }
   const date = new Date();
   const currentYear = date.getFullYear();
   const currentYearDiff = date.getFullYear() - 1970;
@@ -160,64 +196,6 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
     { label: 'Principal', value: 'PRINCIPAL' },
     { label: 'Others', value: 'OTHERS' }
   ]
-
-  const aadharBack = () => {
-    return (
-      <div className={classes.fileStyle}>
-        <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#eeeeee', color: '#43a047' }}
-          href={data.aadhar_b_file_url} target="_blank" title={'Aadhar Back'} rel="noreferrer">{'Back'}</a>
-        <Tooltip title={'Click to edit'}>
-          <UploadIcon fontSize="small" padding={2} onClick={() => docUpload('Back')} />
-        </Tooltip>
-        <Tooltip title={'Click to delete'}>
-          <DeleteIcon onClick={() => onDocDelete({ aadhar_b_file_url: '' })} fontSize="small" padding={2} />
-        </Tooltip>
-      </div>
-    )
-  }
-  const profileAttachment = () => {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#eeeeee', color: '#43a047' }}
-          href={data.profile_image_url} target="_blank" title={'Profile Attachment'} rel="noreferrer">{'Profile Attachment'}</a>
-        <Tooltip title={'Click to edit'}>
-          <UploadIcon fontSize="small" style={{ color: grey[800] }} padding={2} onClick={() => docUpload('Profile')} />
-        </Tooltip>
-        <Tooltip title={'Click to delete'}>
-          <DeleteIcon onClick={() => onDocDelete({ profile_image_url: '' })} fontSize="small" style={{ color: grey[800] }} padding={2} />
-        </Tooltip>
-      </div>
-    )
-  }
-
-  const aadharFront = () => {
-    return (
-      <div className={classes.fileStyle} >
-        <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#eeeeee', color: '#43a047' }}
-          href={data.aadhar_f_file_url} target="_blank" title={'Aadhar Front'} rel="noreferrer">{'Front'}</a>
-        <Tooltip title={'Click to edit'}>
-          <UploadIcon fontSize="small" style={{ color: grey[800] }} padding={2} onClick={() => docUpload('Front')} />
-        </Tooltip>
-        <Tooltip title={'Click to delete'}>
-          <DeleteIcon onClick={() => onDocDelete({ aadhar_f_file_url: '' })} fontSize="small" style={{ color: grey[800] }} padding={2} />
-        </Tooltip>
-      </div>
-    )
-  }
-  const panAttachment = () => {
-    return (
-      <div className={classes.fileStyle}>
-        <a style={{ display: 'inline-block', borderRadius: 2, lineHeight: 1, marginRight: 4, marginBottom: 4, padding: 4, backgroundColor: '#eeeeee', color: '#43a047' }}
-          href={data.pan_file_url} target="_blank" title={'PAN Attachment'} rel="noreferrer">{'PAN Attachment'}</a>
-        <Tooltip title={'Click to edit'}>
-          <UploadIcon fontSize="small" padding={2} style={{ color: grey[800] }} onClick={() => docUpload('PAN')} />
-        </Tooltip>
-        <Tooltip title={'Click to delete'}>
-          <DeleteIcon onClick={() => onDocDelete({ pan_file_url: '' })} fontSize="small" style={{ color: grey[800] }} padding={2} />
-        </Tooltip>
-      </div>
-    )
-  }
   return (
     <>
       {
@@ -241,7 +219,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   <ViewData title='Pincode' value={values.pincode} />
                   <ViewData title='Residing since' value={values.residing_since} />
                   <ViewData title='Email' value={values.email} />
-                  <ViewData title='PAN' value={values.pan} />
+                  <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success': 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'}/>} />
                 </Box>
               </Grid>
             </Grid>
@@ -250,14 +228,13 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
               values?.profile_image_url || values?.pan_file_url || values?.aadhar_f_file_url || values?.aadhar_b_file_url ? (
                 <div className={classes.readOnlyWrapper}>
                   <Typography variant="h4">Attachments</Typography>
-                  <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: 16 }}>
-                    {values.profile_image_url && <AvatarCard tooltip='View profile' file={values?.profile_image_url} title='Profile' />}
-                    {values.pan_file_url && <AvatarCard tooltip='View PAN' file={values?.pan_file_url} title='PAN' />}
-                    {values.aadhar_f_file_url && <AvatarCard tooltip='View Aadhar Front' file={values?.aadhar_f_file_url} title='Aadhar front' />}
-                    {values.aadhar_b_file_url && < AvatarCard tooltip='View Aadhar back' file={values?.aadhar_b_file_url} title='Aadhar back' />}
+                  <div style={{ display: 'flex', marginTop: 16 }}>
+                    {values.profile_image_url && <DocAttachment tooltip='View Profile' imgUrl={values?.profile_image_url} docName='Profile' style={{marginRight: 20}} />}
+                    {values.pan_file_url && <DocAttachment tooltip='View PAN' imgUrl={values?.pan_file_url} docName='PAN' style={{marginRight: 20}} />}
+                    {values.aadhar_f_file_url && <DocAttachment tooltip='View Aadhar Front' imgUrl={values?.aadhar_f_file_url} docName='Aadhar front' style={{marginRight: 20}} />}
+                    {values.aadhar_b_file_url && <DocAttachment tooltip='View Aadhar Back' imgUrl={values?.aadhar_b_file_url} docName='Aadhar back' style={{marginRight: 20}} />}
                   </div>
                 </div>
-
               ) : (
                 <div className={classes.readOnlyWrapper}>
                   <Typography variant="h4">Attachments</Typography>
@@ -269,7 +246,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
             }
           </>
         ) : (
-          <Grid container>
+          <Grid container style={{marginTop: 10}}>
             <>
               <Grid {...gridItem} md={6}>
                 <TextInput
@@ -296,34 +273,16 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 />
               </Grid>
               <Grid {...gridItem} md={6}>
-                <TextInput
-                  select
-                  label="Gender"
-                  name="gender"
-                  error={errors.gender}
-                  helperText={errors.gender}
-                  value={values.gender}
-                  disabled={readOnly}
-                  onChange={onChange}
-                  SelectProps={{
-                    native: true,
-                  }}
-                  InputLabelProps={{ shrink: true }}
-                >
-                  <option value="null">Select Gender</option>
-                  <option value={'MALE'}>Male</option>
-                  <option value={'FEMALE'}>Female</option>
-                </TextInput>
-              </Grid>
-              <Grid {...gridItem} md={6}>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                   <KeyboardDatePicker
                     variant='inline'
                     name='dob'
+                    fullWidth
                     inputVariant='outlined'
                     label="Date of Birth"
                     format='dd-MM-yyyy'
                     animateYearScrolling={true}
+                    disableFuture={true}
                     invalidDateMessage='Invalid Date Format'
                     error={errors.dob}
                     helperText={errors.dob}
@@ -347,6 +306,159 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
 
                   />
                 </MuiPickersUtilsProvider>
+              </Grid>
+              <Grid {...gridItem} md={6}>
+                <TextInput
+                  select
+                  label="Gender"
+                  name="gender"
+                  error={errors.gender}
+                  helperText={errors.gender}
+                  value={values.gender}
+                  disabled={readOnly}
+                  onChange={onChange}
+                  SelectProps={{
+                    native: true,
+                  }}
+                  InputLabelProps={{ shrink: true }}
+                >
+                  <option value="null">Select Gender</option>
+                  <option value={'MALE'}>Male</option>
+                  <option value={'FEMALE'}>Female</option>
+                </TextInput>
+              </Grid>
+              <Grid {...gridItem} md={6}>
+                <TextInput
+                  label="PAN Number"
+                  name="pan"
+                  value={values.pan?.toUpperCase()}
+                  disabled={panValidateData?.loading || values?.pan_verified}
+                  error={errors.pan}
+                  helperText={errors.pan}
+                  readOnly={readOnly}
+                  onChange={onChange}
+                  InputLabelProps={{ shrink: true }}
+                  InputProps={ValidateProps(panValidateData)}
+                />
+                {
+                  !values?.pan_verified || values?.pan !== data?.pan ?
+                    <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={()=> values?.pan && handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
+                }
+              </Grid>
+              <Grid {...gridItem} md={6}>
+                <TextInput
+                  number
+                  label="Aadhar"
+                  name="aadhar"
+                  value={values.aadhar}
+                  helperText={errors.aadhar}
+                  readOnly={readOnly}
+                  error={errors.aadhar}
+                  onChange={onChange}
+                  InputLabelProps={{ shrink: true }}
+                >
+                </TextInput>
+              </Grid>
+              <Grid {...gridItem} md={6}>
+                <TextInput
+                  label="Address"
+                  name="address"
+                  readOnly={readOnly}
+                  value={values.address}
+                  error={errors.address}
+                  helperText={errors.address}
+                  onChange={onChange}
+                  rows={3}
+                  // multiline={true}
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid>
+              <Grid {...gridItem} md={6}>
+                <TextInput
+                  number
+                  label="Pincode"
+                  name="pincode"
+                  readOnly={readOnly}
+                  value={values.pincode}
+                  error={errors.pincode}
+                  helperText={errors.pincode}
+                  onChange={onChange}
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid>
+              <Grid {...gridItem} md={6}>
+                <TextInput
+                  select
+                  label="Marital Status"
+                  name="marital_status"
+                  error={errors.marital_status}
+                  helperText={errors.marital_status}
+                  readOnly={readOnly}
+                  value={values.marital_status}
+                  onChange={onChange}
+                  disabled={readOnly}
+                  SelectProps={{
+                    native: true,
+                  }}
+                  InputLabelProps={{ shrink: true }}
+                >
+                  <option value="null">Choose Marital Status</option>
+                  <option value="Single">Single</option>
+                  <option value="Married">Married</option>
+                  <option value="Divorced">Divorced</option>
+                  <option value="Widowed">Widowed</option>
+                </TextInput>
+              </Grid>
+              <Grid {...gridItem} md={6}>
+                <TextInput
+                  select
+                  label="Residing Since"
+                  name="residing_since"
+                  value={values.residing_since}
+                  error={errors.residing_since}
+                  onChange={onChange}
+                  disabled={readOnly}
+                  SelectProps={{
+                    native: true,
+                  }}
+                  InputLabelProps={{ shrink: true }}
+                >
+                  {
+                    <>
+                      <option value="null">Residing Since</option>
+                      {[...Array(currentYearDiff)].map((_, i) => {
+                        return (
+                          <option key={i} value={currentYear - i}>{currentYear - i}</option>
+                        )
+                      })}
+                    </>
+                  }
+                </TextInput>
+              </Grid>
+              <Grid {...gridItem} md={6}>
+                <TextInput
+                  number
+                  label="Mobile"
+                  name="mobile"
+                  readOnly={readOnly}
+                  value={values.mobile}
+                  onChange={onChange}
+                  error={errors.mobile}
+                  helperText={errors.mobile}
+                  InputLabelProps={{ shrink: true }}
+                ></TextInput>
+              </Grid>
+              <Grid {...gridItem} md={6}>
+                <TextInput
+                  label="Email"
+                  name="email"
+                  readOnly={readOnly}
+                  error={errors.email}
+                  helperText={errors.email}
+                  defaultValue={values.email}
+                  onChange={onChange}
+                  InputLabelProps={{ shrink: true }}
+                />
               </Grid>
               {modelType === 'COAPPLICANT' || modelType === 'GUARANTOR' ?
                 <>
@@ -403,107 +515,6 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   </Grid>
                 </> : null}
               <Grid {...gridItem}>
-                <TextInput
-                  label="Address"
-                  name="address"
-                  readOnly={readOnly}
-                  value={values.address}
-                  error={errors.address}
-                  helperText={errors.address}
-                  onChange={onChange}
-                  rows={3}
-                  multiline={true}
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Grid>
-              <Grid {...gridItem} md={6}>
-                <TextInput
-                  number
-                  label="Pincode"
-                  name="pincode"
-                  readOnly={readOnly}
-                  value={values.pincode}
-                  error={errors.pincode}
-                  helperText={errors.pincode}
-                  onChange={onChange}
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Grid>
-              <Grid {...gridItem} md={6}>
-                <TextInput
-                  select
-                  label="Residing Since"
-                  name="residing_since"
-                  value={values.residing_since}
-                  error={errors.residing_since}
-                  onChange={onChange}
-                  disabled={readOnly}
-                  SelectProps={{
-                    native: true,
-                  }}
-                  InputLabelProps={{ shrink: true }}
-                >
-                  {
-                    <>
-                      <option value="null">Residing Since</option>
-                      {[...Array(currentYearDiff)].map((_, i) => {
-                        return (
-                          <option key={i} value={currentYear - i}>{currentYear - i}</option>
-                        )
-                      })}
-                    </>
-                  }
-                </TextInput>
-              </Grid>
-              <Grid {...gridItem} md={6}>
-                <TextInput
-                  select
-                  label="Marital Status"
-                  name="marital_status"
-                  error={errors.marital_status}
-                  helperText={errors.marital_status}
-                  readOnly={readOnly}
-                  value={values.marital_status}
-                  onChange={onChange}
-                  disabled={readOnly}
-                  SelectProps={{
-                    native: true,
-                  }}
-                  InputLabelProps={{ shrink: true }}
-                >
-                  <option value="null">Choose Marital Status</option>
-                  <option value="Single">Single</option>
-                  <option value="Married">Married</option>
-                  <option value="Divorced">Divorced</option>
-                  <option value="Widowed">Widowed</option>
-                </TextInput>
-              </Grid>
-              <Grid {...gridItem} md={6}>
-                <TextInput
-                  number
-                  label="Mobile"
-                  name="mobile"
-                  readOnly={readOnly}
-                  value={values.mobile}
-                  onChange={onChange}
-                  error={errors.mobile}
-                  helperText={errors.mobile}
-                  InputLabelProps={{ shrink: true }}
-                ></TextInput>
-              </Grid>
-              <Grid {...gridItem} md={6}>
-                <TextInput
-                  label="Email"
-                  name="email"
-                  readOnly={readOnly}
-                  error={errors.email}
-                  helperText={errors.email}
-                  defaultValue={values.email}
-                  onChange={onChange}
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Grid>
-              <Grid {...gridItem}>
                 <Grid container spacing={2}>
                   <Grid {...gridItem} md={6}>
                     <Typography component="div">
@@ -545,102 +556,14 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 </Grid>
               </Grid>
               <Grid {...gridItem} md={12} >
-                <Typography variant="title">Documents </Typography>
+                <Typography variant="title"><strong>Attachments</strong></Typography>
               </Grid>
-              <Grid {...gridItem} md={3}>
-                <Typography style={{ display: 'contents' }} variant="title" >Profile</Typography>
-              </Grid>
-              <Grid {...gridItem} md={5}>
-                <>
-                  {
-                    data.profile_image_url ? profileAttachment() :
-                      <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }} onClick={() => docUpload('Profile')}>
-                      <Tooltip title={'Click to attach Profile'}>
-                          <>
-                          <UploadIcon fontSize='small' />
-                          <Typography style={{ marginLeft: 12 }}>Attach profile</Typography>
-                        </>
-                        </Tooltip>
-                    </div>
-                  }
-                </>
-              </Grid>
-              <Grid {...gridItem} md={6}>
-                <TextInput
-                  label="PAN Number"
-                  name="pan"
-                  value={values.pan?.toUpperCase()}
-                  error={errors.pan}
-                  helperText={errors.pan}
-                  readOnly={readOnly}
-                  onChange={onChange}
-                  InputLabelProps={{ shrink: true }}
-
-                >
-                </TextInput>
-              </Grid>
-              {
-                values.pan ? (
-                  <Grid {...gridItem} md={6}>
-                    {data.pan_file_url ? panAttachment() :
-                      <div className={classes.fileAttachement} onClick={() => docUpload('PAN')}>
-                      <Tooltip title={'Click to attach PAN'}>
-                          <>
-                          <UploadIcon className={classes.icon} disabled={readOnly} />
-                        </>
-                        </Tooltip>
-                    </div>
-                    }
-                  </Grid>
-                ) : null
-              }
-
-              <Grid {...gridItem} md={6}>
-                <TextInput
-                  number
-                  label="Aadhar"
-                  name="aadhar"
-                  value={values.aadhar}
-                  helperText={errors.aadhar}
-                  readOnly={readOnly}
-                  error={errors.aadhar}
-                  onChange={onChange}
-                  InputLabelProps={{ shrink: true }}
-
-                >
-                </TextInput>
-              </Grid>
-              {
-                values.aadhar ? (
-                  <>
-                    <Grid {...gridItem} md={3}>
-                      {data.aadhar_f_file_url ? aadharFront() :
-                        <div className={classes.fileAttachement} onClick={() => docUpload('Front')}>
-                        <Tooltip title={'Click to attach aadhar front'}>
-                            <>
-                            <UploadIcon className={classes.icon} disabled={readOnly} />
-                            <Typography className={classes.typography}>Front</Typography>
-                          </>
-                          </Tooltip>
-                      </div>
-                      }
-                    </Grid>
-                    <Grid {...gridItem} md={3}>
-                      {data.aadhar_b_file_url ?
-                        aadharBack() :
-                        <div className={classes.fileAttachement} onClick={() => docUpload('Back')}>
-                          <Tooltip title={'Click to attach aadhar back'}>
-                            <>
-                              <UploadIcon className={classes.icon} disabled={readOnly} />
-                              <Typography className={classes.typography}>Back</Typography>
-                            </>
-                          </Tooltip>
-                        </div>
-                      }
-                    </Grid>
-                  </>
-                ) : null
-              }
+              <div className={classes.attachmentContainer}>
+                <DocAttachment action={true} imgUrl={values?.profile_image_url} docName='Profile' onUpload={() => docUpload('Profile')} onDelete={() => onDocDelete({profile_image_url:''})} disabled={!values?.profile_image_url}/>
+                <DocAttachment action={true} imgUrl={values?.pan_file_url} docName='PAN Card' onUpload={() => docUpload('PAN')} onDelete={() => onDocDelete({pan_file_url:''})} disabled={!values?.pan_file_url} />
+                <DocAttachment action={true} imgUrl={values?.aadhar_f_file_url} docName='Aadhar Front' onUpload={() => docUpload('Front')} onDelete={() => onDocDelete({aadhar_f_file_url:''})} disabled={!values?.aadhar_f_file_url} />
+                <DocAttachment action={true} imgUrl={values?.aadhar_b_file_url} docName='Aadhar Back' onUpload={() => docUpload('Back')} onDelete={() => onDocDelete({aadhar_b_file_url:''})} disabled={!values?.aadhar_b_file_url} />
+              </div>
               {
                 showUpload && <FileUpload
                   handleSave={(value) => {

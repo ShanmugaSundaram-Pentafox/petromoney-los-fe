@@ -260,14 +260,13 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
               </Grid>
             </Grid>
           </DialogContent>
-
         ) : (
           <DialogContent dividers className={classes.content}>
             {
               loading ? (
                 <CircularProgress className="circular-progress-color" variant="determinate" color="green" />
               ) : (loansData?.document_id ? (
-                <LeegalityLayout docId={loansData.document_id} />
+                <LeegalityLayout docId={loansData?.document_id} />
               ) : (
                 <Grid container spacing={2}>
                   {
@@ -453,7 +452,6 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
                     <Box>
                       <Typography variant="h4">Select Invitees</Typography>
                     </Box>
-
                     <Box pt={2}>
                       <Typography variant='body1'>Dealers</Typography>
                       {

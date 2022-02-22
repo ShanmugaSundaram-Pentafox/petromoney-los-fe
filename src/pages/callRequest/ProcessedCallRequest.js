@@ -37,7 +37,22 @@ const ProcessedCallRequest = ({callbackProcessed}) => {
         name: 'remarks',
         label: 'Remarks',
         options: { filter: false }
-      }
+      },
+      {
+        name: 'created_date',
+        label: 'Requested On',
+        options: { filter: false }
+      },
+      {
+        name: 'processed_date',
+        label: 'Processed On',
+        options: { filter: false }
+      },
+      {
+        name: 'processed_by',
+        label: 'Processed By',
+        options: { filter: false }
+      },
     ];
   });
 

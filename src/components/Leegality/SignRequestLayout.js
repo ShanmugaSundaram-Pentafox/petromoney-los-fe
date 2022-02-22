@@ -231,9 +231,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
       fullWidth
       maxWidth={'md'}
       open={open}
-      onClose={() => {
-        setLoansData({});
-      }}
+      onClose={onClose}
     >
       <DialogTitle disableTypography className={classes.dTitle}>
         {

@@ -1,4 +1,4 @@
-import { CircularProgress, IconButton, Typography } from '@material-ui/core';
+import { CircularProgress, IconButton, Tooltip, Typography } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -9,6 +9,8 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import WhatsAppIcon from '@material-ui/icons/WhatsApp';
+import ToggleButton from '@material-ui/lab/ToggleButton';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack'
 import React, { useState } from 'react';
@@ -133,6 +135,9 @@ const useStyles = makeStyles(theme => ({
     '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.error.dark
     }
+  },
+  activeBtn: {
+    color: '#128C7E'
   }
 }));
 
@@ -147,6 +152,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
   const [editProfile, setEditProfile] = useState(false)
   const [editPassword, setEditPassword] = useState(false)
   const [submitType, setSubmitType] = useState();
+  const [selected, setSelected] = useState(data?.is_whatsapp);
   const { enqueueSnackbar } = useSnackbar();
 
   useMount(() => {
@@ -247,6 +253,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
       const { status, ...d } = values;
       d.first_name = d.first_name.toUpperCase()
       d.last_name = d.last_name.toUpperCase()
+      d.is_whatsapp = selected ? 1 : 0
 
       if (submitType === 'Profile') {
         setLoading(true);
@@ -368,7 +375,8 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                             labelText="Mobile"
                             value={values.mobile}
                             error={errors.mobile}
-                            helperText={errors.mobile}
+                            helperText={errors.mobile ? errors.mobile : '*please enable to recieve whatsapp notifications.'}
+                            InputProps={{endAdornment: <Tooltip title={selected ? 'Notification Enabled' : 'Notification Disabled'}><ToggleButton value="check" size='small' selected={selected} onChange={() => setSelected(!selected)}><WhatsAppIcon fontSize='small' className={selected && classes.activeBtn} /></ToggleButton></Tooltip>}}
                           />
                         </Grid>
                         <Grid item md={6}>

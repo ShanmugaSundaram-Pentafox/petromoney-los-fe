@@ -12,7 +12,6 @@ import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import * as Yup from 'yup';
-import AccountStatement from './AccountStatement';
 import { DocAttachment } from '../../../components/Attachment/DocAttachment';
 import Button from '../../../components/CommonComponents/Button/Button';
 import CustomToken from '../../../components/CommonComponents/CustomToken';
@@ -490,11 +489,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
               onClick={() => { setReadOnly(false); }}>Edit Details</Button>
           )}
         </CardActions>
-      </div >
-      {
-        !view && 
-          <AccountStatement id={values.id} currentUser={currentUser} />
-      }
+      </div>
     </Card >
   );
 };

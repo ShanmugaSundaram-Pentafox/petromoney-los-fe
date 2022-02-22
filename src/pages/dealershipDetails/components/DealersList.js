@@ -126,6 +126,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   }
 
   const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit);
+  const deletable = permissionCheck(currentUser.role_name, rulesList.applicant_delete)
   return (
     <>
       {
@@ -136,6 +137,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
       <DealersTable
         id={id}
         editable={editable}
+        deletable={deletable}
         data={dealerData}
         formType={formType}
         rowData={rowData}

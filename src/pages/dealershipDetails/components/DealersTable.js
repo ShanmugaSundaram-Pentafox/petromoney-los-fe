@@ -7,8 +7,13 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
+import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
+import { useQueryClient } from 'react-query';
 import CreditInfoSideWrapper from './CreditInfoSideWrapper';
+import DeleteButton from '../../../components/CommonComponents/Button/DeleteButton';
+import { logger } from '../../../config/logger';
+import { deleteApplicantById } from '../../../services/dealers.service';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -50,9 +55,37 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExperianData, onClickAddMenu, formType, openCloseCreditForm, currentUser, showDealerEditForm, dealersClickRow, editFormClose }) => {
+const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExperianData, onClickAddMenu, formType, openCloseCreditForm, currentUser, showDealerEditForm, dealersClickRow, editFormClose, deletable }) => {
   const classes = useStyles();
-  const [rowData, setRowData] = useState()
+  const queryClient = useQueryClient()
+  const { enqueueSnackbar } = useSnackbar();
+  const [rowData, setRowData] = useState();
+  const [deleteModal, setDeleteModal] = useState(false);
+
+  const DeleteApplicant = (row_data) => {
+    deleteApplicantById (id, row_data?.id, row_data?.userType)
+      .then(res => {
+        queryClient.invalidateQueries(['dealers-coapplicant', id])
+        setDeleteModal(false)
+        enqueueSnackbar(res.message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
+      })
+      .catch(e => {
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+        logger(e)
+      })
+  }
 
   if (!data || !data.length)
     return (
@@ -85,7 +118,7 @@ const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExper
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map(row => (
+          {data.map((row, index) => (
             <TableRow className={classes.tableRow} key={row.id}>
               <TableCell onClick={e => editable && dealersClickRow(e, row, 'DEALER')}>
                 {row.first_name}&nbsp;&nbsp;
@@ -116,6 +149,7 @@ const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExper
                 editable &&
                   <TableCell align="right">
                     <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>
+                    {deletable && <DeleteButton alertText={`Do you really want to delete this dealer named ${row?.first_name}?`} deleteAction={() => DeleteApplicant(row)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={index} buttonType='icon' />}
                   </TableCell>
               }
             </TableRow>

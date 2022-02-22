@@ -11,6 +11,7 @@ import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components';
+import DeleteButton from '../../../components/CommonComponents/Button/DeleteButton';
 import TextInput from '../../../components/TextInput/TextInput';
 import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
@@ -77,6 +78,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser, readOnly }) => 
   const [addNewRow, setAddNewRow] = useState();
   const [apiData, setApiData] = useState({});
   const [editRow, setEditRow] = useState({});
+  const [deleteModal, setDeleteModal] = useState(false)
   const { enqueueSnackbar } = useSnackbar();
   const LastFiveYear = getPastFiveYears()
   const { data: info = [] } = useQuery(['monthly-sales', id], () => getDealershipMonthlySalesById(id))
@@ -292,14 +294,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser, readOnly }) => 
                       }
                       {
                         editable ? (
-                          <Button
-                            size="small"
-                            variant="outlined"
-                            color="success"
-                            className={clsx(classes.btnSuccess, classes.btnDelete)}
-                            onClick={() => deleteSalesRow(row, i)}>
-                            Delete
-                          </Button>
+                          <DeleteButton deleteAction={() => deleteSalesRow(row, i)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={i} />
                         ) : null
                       }
 

@@ -3,6 +3,7 @@ import { Alert } from '@material-ui/lab';
 import { useSnackbar } from 'notistack';
 import React, {useState} from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import DeleteButton from '../../../components/CommonComponents/Button/DeleteButton';
 import TextInput from '../../../components/TextInput/TextInput';
 import { deleteDeviationsById, getCalculateDeviation, getDeviations, updateDeviationsById } from '../../../services/dealerships.service';
 
@@ -42,6 +43,7 @@ const Deviations = ({id}) => {
   const [errorStatus, setErrorStatus] = useState()
   const [deviationData, setDeviationData] = useState([])
   const [manualDeviationData, setManualDeviationData] = useState([])
+  const [deleteModal, setDeleteModal] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   const deviationsTable = useQuery(['deviations', id], () => {return getDeviations(id)}, {
@@ -254,7 +256,7 @@ const Deviations = ({id}) => {
                                             />
                                           </TableCell>
                                           <TableCell align="right">
-                                            <Button variant='outlined' size="small" className={classes.delBtn} onClick={() => item.id && (deleteDeviation({id: item.id, type: 'delete'}))}>Delete</Button>
+                                            <DeleteButton alertText='Do you really want to delete this deviation? This process cannot be undone.' deleteAction={() => item.id && (deleteDeviation({id: item.id, type: 'delete'}))} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={i} />
                                           </TableCell>
                                         </TableRow>
                                       )

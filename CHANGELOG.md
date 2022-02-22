@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.10.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.9.0...v2.10.0) (2022-02-22)
+
+
+### Features
+
+* **delete-applicant:** option to delete applicants in dealership ([060e419](https://gitlab.com/vignesh3/petromall-fe/commit/060e4197e7ea0e89238ebf6108c93b89032d29d6))
+
+
+### Bug Fixes
+
+* **pending-approval:** submitted form in pending approval ([973c2a7](https://gitlab.com/vignesh3/petromall-fe/commit/973c2a7e4e453b22cff5099e510d21114a835887))
+* **sign-form:** sign form close issue ([a78a9c7](https://gitlab.com/vignesh3/petromall-fe/commit/a78a9c7cbc8fff5953c7c33dd1ad697097911a47))
+
 ## [2.9.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.8.3...v2.9.0) (2022-02-16)
 
 

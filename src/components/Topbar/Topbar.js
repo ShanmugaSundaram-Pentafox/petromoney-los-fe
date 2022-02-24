@@ -2,6 +2,7 @@ import { AppBar, Toolbar, Hidden, Tooltip, IconButton, RadioGroup, Radio, FormCo
 import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 import MenuIcon from '@material-ui/icons/Menu';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import ShareIcon from '@material-ui/icons/Share';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
@@ -11,6 +12,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import { rulesList } from '../../config/userRules';
+import { ReactComponent as DownloadIcon } from '../../icons/downloadIcon.svg';
 import SendEmailAction from '../../pages/reports/SendEmailAction';
 import { refreshRedis } from '../../services/common.service';
 import { setDashboardView } from '../../store/common/common.actions';
@@ -213,7 +215,18 @@ const Topbar = (props) => {
                   <SendEmailAction />
                 </span>
               )
-
+            }
+            {
+              match?.path?.toLowerCase() == '/passbook' && (
+                <span className={classes.actionsContainer}>
+                  <Tooltip title="Download">
+                    <Button className={classes.refresh} size='small' startIcon={<DownloadIcon style={{width:18, height:18}} />}>Download</Button>
+                  </Tooltip>
+                  <Tooltip title="Share">
+                    <Button className={classes.refresh} size='small' style={{marginLeft:9}} startIcon={<ShareIcon fontSize='small'/>}>Share</Button>
+                  </Tooltip>
+                </span>
+              )
             }
 
 

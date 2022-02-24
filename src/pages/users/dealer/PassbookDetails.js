@@ -91,6 +91,7 @@ const PassbookDetails = ({ CurrentUser }) => {
   }, []);
   const options = {
     selectableRowsHeader: false,
+    download: false,
     selectableRows: 'none',
     rowsPerPage: 15,
     rowsPerPageOptions: [15, 20, 30],

@@ -17,6 +17,7 @@ import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import Select from 'react-select';
+import AccountStatement from './AccountStatement';
 import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
@@ -259,6 +260,12 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
           ))}
         </TableBody>
       </Table>
+      {
+        loanData[0]?.status === 'disbursed' &&
+          <div style={{marginTop: 18}}>
+            <AccountStatement id={id} currentUser={currentUser} />
+          </div>
+      }
 
       <Dialog
         open={dialogState.open}

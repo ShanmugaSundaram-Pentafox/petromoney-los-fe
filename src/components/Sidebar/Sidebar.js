@@ -1,5 +1,6 @@
 import { Divider, Drawer, List, ListItem, Button } from '@material-ui/core';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
+import AssignmentLateRoundedIcon from '@material-ui/icons/AssignmentLateRounded';
 import CachedIcon from '@material-ui/icons/Cached';
 import ChatIcon from '@material-ui/icons/Chat';
 import DashboardIcon from '@material-ui/icons/Dashboard';
@@ -106,6 +107,11 @@ const Sidebar = props => {
       title: 'Credit Reload',
       href: '/reports/credit/reload',
       icon: <CachedIcon />
+    },
+    {
+      title: 'Withheld',
+      href: '/withheld',
+      icon: <AssignmentLateRoundedIcon />
     },
     {
       title: 'Dealerships',

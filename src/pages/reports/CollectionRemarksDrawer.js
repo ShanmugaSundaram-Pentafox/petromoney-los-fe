@@ -156,6 +156,7 @@ export const CollectionRemarksDrawer = ({ callback, rowData = [] }) => {
                     <TableHead>
                       <TableRow>
                         <TableCell>Remark</TableCell>
+                        <TableCell>Created By</TableCell>
                         <TableCell>Created date</TableCell>
                       </TableRow>
                     </TableHead>
@@ -165,6 +166,7 @@ export const CollectionRemarksDrawer = ({ callback, rowData = [] }) => {
                           return (
                             <TableRow key={j}>
                               <TableCell><p key={j}>{item?.remarks_value} <span>{Object.values(item?.details)}</span></p></TableCell>
+                              <TableCell>{item?.last_modified_by_value}</TableCell>
                               <TableCell>{item?.created_date}</TableCell>
                             </TableRow>
                           )

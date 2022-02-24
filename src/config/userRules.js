@@ -16,7 +16,8 @@ export const rulesList = {
   'pdr_view': 'sales:view',
   'financial_view': 'financial:view',
   'upload_statement': 'upload:statement',
-  'projection_report': 'projection:report'
+  'projection_report': 'projection:report',
+  'applicant_delete': 'applicant:delete'
 }
 
 export const rulesForUserRoles = {
@@ -91,6 +92,7 @@ export const rulesForUserRoles = {
       rulesList.financial_view,
       rulesList.upload_statement,
       rulesList.projection_report,
+      rulesList.applicant_delete
     ]
   },
   CREDIT_EXEC: {
@@ -105,6 +107,7 @@ export const rulesForUserRoles = {
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
+      rulesList.region_map,
     ]
   },
   OPS_EXEC: {
@@ -140,6 +143,7 @@ export const rulesForUserRoles = {
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
+      rulesList.region_map,
     ]
   },
   SALES_HEAD_STATE: {

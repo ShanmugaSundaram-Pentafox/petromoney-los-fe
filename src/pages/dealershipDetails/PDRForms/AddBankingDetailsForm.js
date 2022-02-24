@@ -9,13 +9,13 @@ import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
-import { useMount } from 'react-use';
 import * as Yup from 'yup';
 import BankDetailsCard from './Components/BankDetailsCard';
 import Button from '../../../components/CommonComponents/Button/Button';
 import TextInput from '../../../components/TextInput/TextInput';
 import { URL } from '../../../config/serverUrls';
 import { getBankDetailsbyID, updateBankDetailsByID } from '../../../services/PDReport.services';
+import { useQuery, useQueryClient } from 'react-query';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -106,20 +106,12 @@ const useStyles = makeStyles((theme) => ({
 
 const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => {
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient()
   const classes = useStyles()
-  const [bankData, setBankData] = useState([])
   const [addNewRow, setAddNewRow] = useState(false);
   const [editRow, setEditRow] = useState(false);
+  const { data: bankData = [] } = useQuery('bank-data', () => getBankDetailsbyID(dealer_id), {refetchOnWindowFocus: false})
 
-  useMount(() => {
-    getBankDetailsbyID(dealer_id)
-      .then(data => {
-        setBankData(data)
-      })
-      .catch((e) => {
-        console.log(e);
-      })
-  })
   const editBankRow = (rowData, rowIndex) => {
     // setEditRow({ ...rowData, rowIndex });
     setEditRow(true)
@@ -144,7 +136,6 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
     onSubmit: values => {
       updateBankDetailsByID(values, dealer_id)
         .then(res => {
-          console.log(res)
           enqueueSnackbar(res, {
             anchorOrigin: {
               vertical: 'top',
@@ -153,9 +144,9 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
             variant: 'success',
           }
           )
-          setTimeout(() => {
-            window.location.reload()
-          }, 1500);
+          queryClient.invalidateQueries('bank-data')
+          setAddNewRow(false)
+          setEditRow(false)
 
         })
         .catch(e => {

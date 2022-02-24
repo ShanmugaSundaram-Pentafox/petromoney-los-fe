@@ -4,7 +4,6 @@ import { useSnackbar } from 'notistack';
 import React, { useMemo, useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query';
 import TextInput from '../../components/TextInput/TextInput';
-import usePageTitle from '../../hooks/usePageTitle';
 import { resolveCallbackRequest } from '../../services/callrequest.service';
 
 const useStyles = makeStyles({
@@ -20,14 +19,13 @@ const useStyles = makeStyles({
 })
 
 const NewCallRequest = ({callbackData}) => {
-  usePageTitle('Call Request');
   const classes = useStyles();
   const queryClient = useQueryClient()
   const { enqueueSnackbar } = useSnackbar();
   const [rowData, setRowData] = useState()
   const [remark, setRemark] = useState()
 
-  const { mutate: resolve } = useMutation(data => resolveCallbackRequest(data, rowData[4]) , {
+  const { mutate: resolve } = useMutation(data => resolveCallbackRequest(data, rowData[5]) , {
     onSuccess: (message) => {
       setRowData()
       queryClient.invalidateQueries('new-request')
@@ -76,13 +74,18 @@ const NewCallRequest = ({callbackData}) => {
               <div style={{display: 'flex'}}>
                 <Typography variant='body1'>{value?.toUpperCase()}</Typography>
                 {
-                  tableMeta.rowData[6] > 1 &&
-                    <Typography variant='body2' className={classes.pill}><strong>{tableMeta.rowData[6]}</strong></Typography>
+                  tableMeta.rowData[7] > 1 &&
+                    <Typography variant='body2' className={classes.pill}><strong>{tableMeta.rowData[7]}</strong></Typography>
                 }
               </div>
             )
           }
         }
+      },
+      {
+        name: 'created_date',
+        label: 'Requested On',
+        options: { filter: false }
       },
       {
         name: 'region_value',

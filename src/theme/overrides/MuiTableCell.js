@@ -11,7 +11,7 @@ export default {
     '&.MuiTableCell-head': {
       fontWeight: 600,
       color: colors.grey[900],
-      backgroundColor: colors.grey[200],
+      backgroundColor: colors.grey[100],
       padding: '6px 10px',
     },
     '&.MuiTableCell-body': {

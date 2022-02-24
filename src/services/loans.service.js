@@ -112,8 +112,6 @@ export const getAllRegionDpd = () => {
 
 export const getLoanBookData = () => {
   return new Promise((resolve, reject) => {
-    // reject("");
-    // return;
     apiCall(URL.loanBook)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
@@ -336,6 +334,22 @@ export const getCreditStats = (qryStr = {}) => {
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data[0] || []);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const getDpdReportData = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('app/dpd/report')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
         } else {
           reject(message);
         }

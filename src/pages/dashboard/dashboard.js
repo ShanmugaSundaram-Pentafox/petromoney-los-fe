@@ -365,9 +365,6 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                   <Grid item xs={12}>
                     <LoanBookTable title={'Loan Book'} currentUser={currentUser} />
                   </Grid>
-                  <Grid item xs={12}>
-                    <DpdReport title={'DPD Report'} currentUser={currentUser} />
-                  </Grid>
                 </>
                 )
               }

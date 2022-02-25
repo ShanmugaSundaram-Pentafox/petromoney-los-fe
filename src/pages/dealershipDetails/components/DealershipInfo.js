@@ -77,7 +77,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
           setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}}) :
           setGstValidateData({icon: true, loading: false, idType: 'GST', details: res?.details || {}})
         !values?.name && setFieldValue('name', res?.details?.tradeNam);
-        setFieldValue('address', res?.details?.pradr.adr);
+        setFieldValue('address', res?.details?.pradr?.adr);
       })
       .catch(e => {
         console.log(e);

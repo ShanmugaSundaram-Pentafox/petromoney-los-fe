@@ -9,10 +9,11 @@ import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 // import ChatIcon from '@material-ui/icons/Chat';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ReportIcon from '@material-ui/icons/Report';
+import AssignmentIcon from '@material-ui/icons/Assignment';
 import InputIcon from '@material-ui/icons/Input';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import LocalShippingIcon from '@material-ui/icons/LocalShipping';
-import ReportIcon from '@material-ui/icons/Report';
 import ReportProblemIcon from '@material-ui/icons/ReportProblem';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
@@ -323,22 +324,22 @@ const SidebarNav = props => {
                     {'Loan Overdue'}
                   </Button>
                 </ListItem>
-                {/* <ListItem
+                <ListItem
                   className={classes.itemSub}
                   disableGutters
-                  key={'Collection'}
+                  key={'Overdue'}
                 >
                   <Button
                     className={classes.button}
                     activeClassName={classes.active}
                     component={CustomRouterLink}
-                    to={'/reports/remarks'}
+                    to={'/reports/dpd'}
                     exact
                   >
-                    <div className={classes.icon}><ChatIcon /></div>
-                    {'Collection Remarks'}
+                    <div className={classes.icon}><AssignmentIcon /></div>
+                    {'DPD Report'}
                   </Button>
-                </ListItem> */}
+                </ListItem>
               </Collapse>
 
             </Fragment>

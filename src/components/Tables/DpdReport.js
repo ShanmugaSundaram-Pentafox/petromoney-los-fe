@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState } from 'react';
 import { useMount } from 'react-use';
+import usePageTitle from '../../hooks/usePageTitle';
 import { getDpdReportData } from '../../services/loans.service';
 import Currency from '../Number/Currency';
 
@@ -18,6 +19,7 @@ const DpdReport = ({ title, currentUser }) => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
   const [dpdReportData, setDpdReportData] = useState()
+  usePageTitle("Report")
 
   useMount(() => {
     setLoading(true);
@@ -127,7 +129,7 @@ const DpdReport = ({ title, currentUser }) => {
       {
         Array.isArray(dpdReportData) && dpdReportData.length ? (
           <MUIDataTable
-            title={title ? <Typography className={classes.title} variant="h4" component="h4">{title} ({dpdReportData.length})</Typography> : null}
+            title={<Typography className={classes.title} variant="h4" component="h4">Dpd Report ({dpdReportData.length})</Typography>}
             data={dpdReportData}
             columns={columns}
             options={options}

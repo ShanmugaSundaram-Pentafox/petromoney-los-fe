@@ -175,7 +175,7 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
   return (
     <div className={classes.sidePanelFormWrapper}>
       <div className={classes.title}>
-        <Typography variant="h4">Dealership credit report</Typography>
+        <Typography variant="h4">Financial Report</Typography>
         {/* <CloseRoundedIcon onClick={onClose} /> */}
       </div>
 

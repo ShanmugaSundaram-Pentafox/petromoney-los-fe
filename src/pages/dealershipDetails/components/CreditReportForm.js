@@ -13,6 +13,7 @@ import ExpensesTable from './ExpensesTable';
 import IncomeTable from './IncomeTable';
 import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
+import SettingsIcon from '@material-ui/icons/Settings';
 import { postDealershipFinancialsById, getDealershipFinancialsById } from '../../../services/dealerships.service';
 
 const useStyles = makeStyles(theme => ({
@@ -466,10 +467,10 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
           editable && (
             <Button
               variant="contained"
-              className={clsx(classes.btn, classes.btnSuccess)}
-              // startIcon={<NavigateNextRoundedIcon />}
+              color='secondary'
               disabled={loading}
-              onClick={loading ? () => null : onSubmit}>{loading ? <CircularProgress size={20} /> : 'Save'}</Button>
+              startIcon={<SettingsIcon fontSize='small' />}
+              onClick={loading ? () => null : onSubmit}>{loading ? <CircularProgress size={20} /> : 'Compute'}</Button>
           )
         }
       </Grid>

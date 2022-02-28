@@ -107,6 +107,12 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
     )
   }
 
+  const handleDownload = () => {
+    if(cibilData?.cibil_file_url){
+      window.location.href = cibilData?.cibil_file_url
+    }
+  }
+
   return (
     <>
       <Grid container style={{marginLeft: 6}}>
@@ -125,6 +131,12 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
             <Grid {...gridItem} md={2}style={{marginTop:15}}>
               {ValidateProps(cibilLoading)}
             </Grid>
+            {
+              cibilData?.cibil_file_report &&
+                <Grid {...gridItem} md={6}>
+                  <Button variant='outlined' color ='primary' size='small' onClick={handleDownload}>Download Report</Button>
+                </Grid>
+            }
           </>
         }
         <Collapse in={collapseOpen} style={{width: '100%'}}>

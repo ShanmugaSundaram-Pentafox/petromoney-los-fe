@@ -1,6 +1,5 @@
 import { Grid } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
 import Snackbar from '@material-ui/core/Snackbar';
 import Typography from '@material-ui/core/Typography';
@@ -78,6 +77,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
   const [apiStatus, setApiStatus] = useState({});
   const [apiData, setApiData] = useState([]);
   const [editMode, setEditMode] = useState(true);
+  const [cibilEditMode, setCibilEditMode] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   React.useEffect(() => {
@@ -91,7 +91,8 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
 
   const handleEdit = () => {
     setValues(apiData)
-    setEditMode(!editMode)
+    setEditMode(true)
+    setCibilEditMode(true)
   }
 
   const { values, errors, handleChange, handleSubmit, handleReset, setValues, setFieldValue } = useFormik({
@@ -132,6 +133,12 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
     }
   });
 
+  const handleDownload = () => {
+    if(apiData?.cibil_file_url){
+      window.location.href = apiData?.cibil_file_url
+    }
+  }
+
   return (
     <div className={classes.sidePanelFormWrapper}>
       <div className={classes.sidePanelTitle}>
@@ -154,8 +161,9 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
                 </Grid>
               </Grid>
               <Grid container spacing={2} style={{marginTop: 10}}>
-                <Grid item md={12}>
+                <Grid item md={12} style={{display: 'flex', justifyContent: 'space-between'}}>
                   <Typography variant='h6'>CIBIL Extract</Typography>
+                  <Button size='small' variant='outlined' color='primary' onClick={handleDownload}>Download Report</Button>
                 </Grid>
                 <Grid item md={6}>
                   <ViewData title='CIBIL Score' value={apiData?.cibil_score} style={{marginBottom: 0}} />
@@ -164,16 +172,16 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
                   <ViewData title='Updated on' value={apiData?.modified_date} style={{marginBottom: 0}} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='No. of Loans' value={apiData?.loans_count} style={{marginBottom: 0}} />
+                  <ViewData title='Total no.of loans' value={apiData?.loans_count} style={{marginBottom: 0}} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='Closed Loans' value={apiData?.closed_loans_count} style={{marginBottom: 0}} />
+                  <ViewData title='No of closed loans' value={apiData?.closed_loans_count} style={{marginBottom: 0}} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='Overdue Count' value={apiData?.od_accounts_count} style={{marginBottom: 0}} />
+                  <ViewData title='No of overdue accounts' value={apiData?.od_accounts_count} style={{marginBottom: 0}} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='Overdue Amount' value={apiData?.od_amount} style={{marginBottom: 0}} />
+                  <ViewData title='Overdue amount' value={apiData?.od_amount} style={{marginBottom: 0}} />
                 </Grid>
                 <Grid item md={6}>
                   <ViewData title='Current O/S amount' value={apiData?.current_os_amount} style={{marginBottom: 0}} />
@@ -202,7 +210,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
               </Grid>
             </div>
             :
-            <DealerCreditInfoForm values={values} errors={errors} onChange={handleChange} dealerData={data} currentUser={currentUser} setFieldValue={setFieldValue} />
+            <DealerCreditInfoForm values={values} errors={errors} onChange={handleChange} dealerData={data} cibilEditMode={cibilEditMode} currentUser={currentUser} setFieldValue={setFieldValue} />
         }
       </div>
 
@@ -213,6 +221,13 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
         </Snackbar>
         <div className={classes.actionButtonsWrapper}>
           {
+            apiData?.cibil_score &&
+              <Button
+                className={clsx(classes.btn, classes.btnSuccess)}
+                variant={cibilEditMode ? 'contained' : 'outlined'}
+                onClick={cibilEditMode ? handleSubmit : handleEdit}>{cibilEditMode === true ? 'Save' : 'Edit'}</Button>
+          }
+          {/* {
             !loading ? (
               <>
                 <Button
@@ -225,7 +240,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
                 <CircularProgress size={30}/>
               </div>
             )
-          }
+          } */}
         </div>
       </div>
     </div>

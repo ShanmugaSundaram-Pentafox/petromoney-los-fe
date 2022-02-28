@@ -132,7 +132,7 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
               {ValidateProps(cibilLoading)}
             </Grid>
             {
-              cibilData?.cibil_file_report &&
+              cibilData?.cibil_file_url &&
                 <Grid {...gridItem} md={6}>
                   <Button variant='outlined' color ='primary' size='small' onClick={handleDownload}>Download Report</Button>
                 </Grid>
@@ -353,7 +353,7 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
                   <ViewData title='No of enquiries last 6 months' value={cibilData?.no_of_enquiries || values?.no_of_enquiries} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='Loans in Bureau Report' value={cibilData?.is_loan_in_bureau || values?.is_loan_in_bureau} />
+                  <ViewData title='Loans in Bureau Report' value={cibilData?.is_loan_in_bureau === 1 ? 'Yes' : 'No'} />
                 </Grid>
                 <Grid item md={6}>
                   <ViewData title='No of times of highest DPD' value={cibilData?.highest_dpd} />

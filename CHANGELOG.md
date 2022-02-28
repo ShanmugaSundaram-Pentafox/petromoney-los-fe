@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.10.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.10.0...v2.10.1) (2022-02-28)
+
+
+### Bug Fixes
+
+* **delete:** auto close model on delete success ([832bd87](https://gitlab.com/vignesh3/petromall-fe/commit/832bd8750e6a541f45dc446e2ba32a5e74f7f30f))
+* disb amt editable ([d604202](https://gitlab.com/vignesh3/petromall-fe/commit/d60420285e982740220571fb2da37a2e87a1ccac))
+* **OTP-login:** user OTP login ([d23d54d](https://gitlab.com/vignesh3/petromall-fe/commit/d23d54deb43b998798a3981922c725abe4ca4557))
+* Validation Fixes and leegality icon fixes ([198d6d5](https://gitlab.com/vignesh3/petromall-fe/commit/198d6d528373d57d9295e1b7ef989612d94f9bed))
+
 ## [2.10.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.9.0...v2.10.0) (2022-02-22)
 
 

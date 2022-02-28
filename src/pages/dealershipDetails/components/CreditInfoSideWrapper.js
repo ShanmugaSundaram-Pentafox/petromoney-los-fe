@@ -134,8 +134,8 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
   });
 
   const handleDownload = () => {
-    if(apiData?.cibi_file_url){
-      window.location.href = apiData?.cibi_file_url
+    if(apiData?.cibil_file_url){
+      window.location.href = apiData?.cibil_file_url
     }
   }
 

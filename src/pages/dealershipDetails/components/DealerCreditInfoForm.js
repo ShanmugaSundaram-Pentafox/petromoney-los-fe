@@ -133,7 +133,7 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
             </Grid>
             {
               cibilData?.cibil_file_url &&
-                <Grid {...gridItem} md={6}>
+                <Grid {...gridItem} md={6} style={{display: 'flex', justifyContent: 'flex-end'}}>
                   <Button variant='outlined' color ='primary' size='small' onClick={handleDownload}>Download Report</Button>
                 </Grid>
             }
@@ -178,7 +178,6 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
                     name='loans_count'
                     value={cibilData?.loans_count || values?.loans_count}
                     onChange={onChange}
-                  // disabled={cibilEdit}
                   />
                 </Grid>
                 <Grid {...gridItem} md={6}>
@@ -187,7 +186,6 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
                     name='closed_loans_count'
                     value={cibilData?.closed_loans_count || values?.closed_loans_count}
                     onChange={onChange}
-                  // disabled={cibilEdit}
                   />
                 </Grid>
                 <Grid {...gridItem} md={6}>
@@ -196,7 +194,6 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
                     name='od_accounts_count'
                     value={cibilData?.od_accounts_count || values?.od_accounts_count}
                     onChange={onChange}
-                  // disabled={cibilEdit}
                   />
                 </Grid>
                 <Grid {...gridItem} md={6}>
@@ -205,7 +202,6 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
                     name='od_amount'
                     value={cibilData?.od_amount || values?.od_amount}
                     onChange={onChange}
-                  // disabled={cibilEdit}
                   />
                 </Grid>
                 <Grid {...gridItem} md={6}>
@@ -214,7 +210,6 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
                     name='current_os_amount'
                     value={cibilData?.current_os_amount || values?.current_os_amount}
                     onChange={onChange}
-                  // disabled={cibilEdit}
                   />
                 </Grid>
                 <Grid {...gridItem} md={6}>
@@ -223,7 +218,6 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
                     name='cibil_vintage'
                     value={cibilData?.cibil_vintage || values?.cibil_vintage}
                     onChange={onChange}
-                  // disabled={cibilEdit}
                   />
                 </Grid>
                 <Grid {...gridItem} md={6}>
@@ -232,7 +226,6 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
                     name='no_of_enquiries'
                     value={cibilData?.no_of_enquiries || values?.no_of_enquiries}
                     onChange={onChange}
-                  // disabled={cibilEdit}
                   />
                 </Grid>
                 <Grid {...gridItem} md={6}>
@@ -242,7 +235,6 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
                     name='is_loan_in_bureau'
                     value={cibilData?.is_loan_in_bureau || values?.is_loan_in_bureau}
                     onChange={onChange}
-                  // disabled={cibilEdit}
                   >
                     <option value="0">No</option>
                     <option value="1">Yes</option>
@@ -255,7 +247,6 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
                     name='is_cc_in_cibil'
                     value={cibilData?.is_cc_in_cibil || values?.is_cc_in_cibil}
                     onChange={onChange}
-                  // disabled={cibilEdit}
                   >
                     <option value="0">No</option>
                     <option value="1">Yes</option>
@@ -270,7 +261,6 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
                     error={errors.highest_dpd}
                     helperText={errors.highest_dpd}
                     onChange={onChange}
-                    // disabled={cibilEdit}
                     SelectProps={{
                       native: true,
                     }}
@@ -291,7 +281,6 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
                     error={errors.highest_dpd_bracket}
                     helperText={errors.highest_dpd_bracket}
                     onChange={onChange}
-                    // disabled={cibilEdit}
                     SelectProps={{
                       native: true,
                     }}
@@ -315,7 +304,6 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
                     error={errors.status}
                     helperText={errors.status}
                     onChange={onChange}
-                    // disabled={cibilEdit}
                     SelectProps={{
                       native: true,
                     }}

@@ -777,6 +777,26 @@ const AddNewTransportsForm = ({
                       {getDistricts(values.state).map((item) => (<option key={item} value={item}>{item}</option>))}
                     </TextInput>
                   </Grid>
+                  {
+                    gstDetails?.gstin || gstValidateData?.details ?
+                      <>
+                        <Grid item md={3}>
+                          <ViewData title='Effective Date of registration' value={gstDetails?.rgdt || gstValidateData?.details?.rgdt}/>
+                        </Grid>
+                        <Grid item md={3}>
+                          <ViewData title='Taxpayer Type' value={gstDetails?.dty || gstValidateData?.details?.dty} />
+                        </Grid>
+                        <Grid item md={3}>
+                          <ViewData title='Legal Business Name' value={gstDetails?.mbr || gstValidateData?.details?.mbr} />
+                        </Grid>
+                        <Grid item md={3}>
+                          <ViewData title='GSTIN Status' value={gstDetails?.sts || gstValidateData?.details?.sts} />
+                        </Grid>
+                        <Grid item md={3}>
+                          <ViewData title='Legal Trade Name' value={gstDetails?.tradeNam || gstValidateData?.details?.tradeNam} />
+                        </Grid>
+                      </> : null
+                  }
                   <Grid md={12} item>
                     <Typography variant='subtitle1' component='subtitle1'>
                       Attachments

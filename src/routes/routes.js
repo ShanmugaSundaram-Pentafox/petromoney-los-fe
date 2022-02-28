@@ -36,6 +36,7 @@ import TransportsDetails from '../pages/transportsDetails/transportsDetails'
 import PassbookDetails from '../pages/users/dealer/PassbookDetails';
 import Users from '../pages/users/users';
 import { selectCurrentUser } from '../store/user/user.selector';
+import DpdReport from '../components/Tables/DpdReport';
 
 const Routes = ({ currentUser }) => {
   return (<>
@@ -69,6 +70,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/withheld" component={BlacklistTable} />
       <ProtectedRoute allow exact path="/reports" component={DealersDueReport} />
       <ProtectedRoute allow exact path="/reports/remarks" component={CollectionRemarks} />
+      <ProtectedRoute allow exact path="/reports/dpd" component={DpdReport} />
 
       <ProtectedRoute
         exact

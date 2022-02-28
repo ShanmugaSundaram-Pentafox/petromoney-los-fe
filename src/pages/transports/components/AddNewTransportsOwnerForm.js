@@ -321,6 +321,7 @@ const AddNewTransportsOwnerForm = ({
             return res.json();
           })
           .then((res) => {
+            setLoading(false)
             if (res.status === 'SUCCESS') {
               setLoading(false);
               enqueueSnackbar(res.message, {
@@ -333,6 +334,7 @@ const AddNewTransportsOwnerForm = ({
               queryClient.invalidateQueries(['owner-info', dealer_id])
               callback();
             } else {
+              setLoading(false)
               enqueueSnackbar(res.message, {
                 anchorOrigin: {
                   vertical: 'top',

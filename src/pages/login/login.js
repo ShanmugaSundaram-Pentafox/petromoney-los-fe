@@ -14,6 +14,7 @@ import { URL } from '../../config/serverUrls';
 import { getOTP, resendOTP } from '../../services/login.service';
 import { setCurrentUser } from '../../store/user/user.actions';
 import apiCall from '../../utils/api.util';
+import { Typography } from '@material-ui/core';
 
 const packageJSON = require('../../../package.json');
 
@@ -105,11 +106,14 @@ const useStyles = makeStyles(() => ({
 
 const Login = ({ setCurrentUser }) => {
   const classes = useStyles();
-  const [otpLogin, setOtpLogin] = useState(true);
+  // const [otpLogin, setOtpLogin] = useState(true);
+  const [forgetPass, setForgetPass] = useState(false);
+  console.log(forgetPass);
   const [loginWithOTP, setLoginWithOTP] = useState(true);
   const [isShowOTP, setShowOTPState] = useState(false);
   const [apiStatus, setApiStatus] = useState({});
   const [helperText, setHelperText] = useState(false)
+  const [showResetPass, setShowResetPass] = useState(false)
   const { enqueueSnackbar } = useSnackbar();
 
   let validFields = {}
@@ -131,28 +135,32 @@ const Login = ({ setCurrentUser }) => {
       ...validFields
     }),
     onSubmit: values => {
-      apiCall(URL.login, {
-        method: 'POST',
-        body: values
-      })
-        .then(({ status, data, message }) => {
-          // logger(status, data);
-          if (status == 'SUCCESS') {
-            setCurrentUser(data);
-          }
-          setApiStatus({ type: status, message })
+      if(forgetPass){
+        setShowResetPass(true)
+      } else {
+        apiCall(URL.login, {
+          method: 'POST',
+          body: values
         })
-        .catch(e => {
-          logger(e);
-          setApiStatus({ type: 'ERROR', message: e?.message })
-        });
+          .then(({ status, data, message }) => {
+            // logger(status, data);
+            if (status == 'SUCCESS') {
+              setCurrentUser(data);
+            }
+            setApiStatus({ type: status, message })
+          })
+          .catch(e => {
+            logger(e);
+            setApiStatus({ type: 'ERROR', message: e?.message })
+          });
+      }
     }
   });
 
   const generateOTP = () => {
     if(values?.mobile){
       setHelperText(false)
-      getOTP(values?.mobile?.toString())
+      getOTP(values.mobile?.toString())
         .then((status, message) => {
           if (status === 'SUCCESS') {
             enqueueSnackbar(`OTP Sent to ${values.mobile}`, {
@@ -163,7 +171,7 @@ const Login = ({ setCurrentUser }) => {
               variant: 'success',
             });
             setShowOTPState(st => !st)
-            setOtpLogin(false)
+            // setOtpLogin(false)
             setApiStatus({})      
           } else {
             enqueueSnackbar('Unable to send OTP', {
@@ -223,7 +231,6 @@ const Login = ({ setCurrentUser }) => {
         <img alt="Logo" src="/images/logo-white.png" />
 
         <h1>
-          {/* <span>Welcome to</span> */}
           Master Data Management
         </h1>
       </aside>
@@ -231,10 +238,20 @@ const Login = ({ setCurrentUser }) => {
       <div className="right-content">
         <img alt="Logo" src="/images/logo.png" height="112" className="mbl-img" />
 
-        <p className="section-title">
-          <span>Login</span>
-          Please login to your account
-        </p>
+        {
+          !forgetPass ?
+          <p className="section-title">
+            <span>Login</span>
+            Please login to your account
+          </p> :
+          <p className="section-title">
+            <span>Reset Password</span>
+            <Typography variant='body1' style={{fontSize: '1rem'}}>
+            Please enter your mobile number to request a password reset.
+            </Typography>
+          </p>
+        }
+
 
         <form className={classes.form} onSubmit={handleSubmit}>
           <TextField
@@ -274,13 +291,15 @@ const Login = ({ setCurrentUser }) => {
                         className={classes.buttonStyle}
                         type="submit"
                       >
-                        Login
+                        {
+                          !forgetPass ? 'Login' : 'Verify OTP'
+                        }
                       </Button>
                       {
-                        showOtpLogin() ? null : (
+                        showOtpLogin() || forgetPass ? null : (
                           <label style={{color: '#1E88E5', cursor: 'pointer', marginTop: 25, fontSize: '1rem'}} onClick={() => {
                             setLoginWithOTP(false)
-                            setOtpLogin(false)
+                            // setOtpLogin(false)
                             setFieldValue('otp', undefined)
                           }}>Login with password</label>
                         )
@@ -300,14 +319,25 @@ const Login = ({ setCurrentUser }) => {
                   >
                     Send OTP
                   </Button>
+
                   {
-                    showOtpLogin() ? null : (
-                      <label style={{color: '#1E88E5', cursor: 'pointer', marginTop: 25, fontSize: '1rem'}} onClick={() => {
-                        setLoginWithOTP(false)
-                        setOtpLogin(false)
-                        setFieldValue('otp', undefined)
-                      }}>Login with password</label>                      
-                    )
+                    !forgetPass ?
+                    <div style={{display: 'flex', justifyContent: 'space-between', width: '100%'}}>
+                      {
+                        showOtpLogin() ? null : (
+                          <label style={{color: '#1E88E5', cursor: 'pointer', marginTop: 25, fontSize: '1rem'}} onClick={() => {
+                            setLoginWithOTP(false)
+                            // setOtpLogin(false)
+                            setFieldValue('otp', undefined)
+                          }}>Login with password</label>                      
+                        )
+                      }
+                      <label style={{color: 'rgb(0,0,0,0.4)', cursor: 'pointer', marginTop: 25, fontSize: '1rem'}} onClick={() => {
+                        setLoginWithOTP(true)
+                        setForgetPass(true)
+                      }}>Forget Password ?</label>
+                    </div> :
+                    <label style={{cursor: 'pointer', marginTop: 25, fontSize: '1rem'}}>Return to <span style={{color: '#1E88E5'}} onClick={() => setForgetPass(false)}>Login Page</span></label>
                   }
                 </div>
               )
@@ -334,53 +364,21 @@ const Login = ({ setCurrentUser }) => {
                   >
                     Login
                   </Button>
-                  <label style={{color: '#1E88E5', cursor: 'pointer', marginTop: 25, fontSize: '1rem'}} onClick={() => {
-                    setLoginWithOTP(true)
-                    setOtpLogin(true)
-                    setFieldValue('password', undefined)
-                  }}>Login with OTP</label>
+                  <div style={{display: 'flex', justifyContent: 'space-between', width: '100%'}}>
+                    <label style={{color: '#1E88E5', cursor: 'pointer', marginTop: 25, fontSize: '1rem'}} onClick={() => {
+                      setLoginWithOTP(true)
+                      // setOtpLogin(true)
+                      setFieldValue('password', undefined)
+                    }}>Login with OTP</label>
+                    <label style={{color: 'rgb(0,0,0,0.4)', cursor: 'pointer', marginTop: 25, fontSize: '1rem'}} onClick={() => {
+                      setLoginWithOTP(!loginWithOTP)
+                      setForgetPass(true)
+                    }}>Forget Password ?</label>
+                  </div>
                 </div>
               </>
             )
           }
-          {/* {
-            isShowOTP ? (
-              <>
-                <TextField
-                  name="otp"
-                  label="OTP"
-                  type="number"
-                  fullWidth
-                  className={classes.textFieldStyle}
-                />
-                <Button
-                  variant="contained"
-                  size="medium"
-                  color="primary"
-                  hidden={!isShowOTP}
-                  className={classes.buttonStyle}
-                  onClick={() => null}
-                >
-                  Send OTP
-                </Button>
-              </>
-            ) : (
-              <>
-                <TextField
-                  name="password"
-                  label="Password"
-                  type="password"
-                  fullWidth
-                  className={classes.textFieldStyle}
-                  onChange={handleChange}
-                  value={values.password}
-                  error={errors.password}
-                  helperText={errors.password}
-                />
-
-              </>
-            )
-          } */}
         </form>
 
         <Box pt={2}>
@@ -389,12 +387,6 @@ const Login = ({ setCurrentUser }) => {
               <Alert severity={apiStatus.type.toLowerCase()}>{apiStatus.message}</Alert>
             )
           }
-          {/* <Button
-            size="small"
-            onClick={() => setShowOTPState(!isShowOTP)}
-          >
-            {isShowOTP ? 'Login with Password' : 'Login with OTP'}
-          </Button> */}
         </Box>
 
         <Box pt={2}>

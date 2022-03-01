@@ -64,6 +64,8 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
               horizontal: 'right',
             },
             variant: 'error',
+            autoHideDuration: 1500,
+            style:{marginTop: 22, marginRight: 15}
           })
           setCibilLoading({icon:true, loading:false, success:false,error:true})
         })
@@ -109,7 +111,7 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
 
   const handleDownload = () => {
     if(cibilData?.cibil_file_url){
-      window.location.href = cibilData?.cibil_file_url
+      window.open(cibilData?.cibil_file_url, '_blank')
     }
   }
 
@@ -133,7 +135,7 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
             </Grid>
             {
               cibilData?.cibil_file_url &&
-                <Grid {...gridItem} md={6} style={{display: 'flex', justifyContent: 'flex-end'}}>
+                <Grid {...gridItem} md={6} style={{display: 'flex', justifyContent: 'flex-end', alignText: 'center'}}>
                   <Button variant='outlined' color ='primary' size='small' onClick={handleDownload}>Download Report</Button>
                 </Grid>
             }

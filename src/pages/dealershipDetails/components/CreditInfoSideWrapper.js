@@ -135,7 +135,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
 
   const handleDownload = () => {
     if(apiData?.cibil_file_url){
-      window.location.href = apiData?.cibil_file_url
+      window.open(apiData?.cibil_file_url, '_blank')
     }
   }
 
@@ -163,7 +163,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
               <Grid container spacing={2} style={{marginTop: 10}}>
                 <Grid item md={12} style={{display: 'flex', justifyContent: 'space-between'}}>
                   <Typography variant='h6'>CIBIL Extract</Typography>
-                  <Button size='small' variant='outlined' color='primary' onClick={handleDownload}>Download Report</Button>
+                  {apiData?.cibil_file_url && <Button size='small' variant='outlined' color='primary' onClick={handleDownload}>Download Report</Button>}
                 </Grid>
                 <Grid item md={6}>
                   <ViewData title='CIBIL Score' value={apiData?.cibil_score} style={{marginBottom: 0}} />

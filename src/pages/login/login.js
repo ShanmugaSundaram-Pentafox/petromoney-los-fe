@@ -161,7 +161,7 @@ const Login = ({ setCurrentUser }) => {
             setApiStatus({ type: 'SUCCESS', message: 'Password Successfully Reset!' })
             setTimeout(() => {
               goBackLogin();
-              setApiStatus();
+              setApiStatus({});
             }, 2000);
           } else {
             setApiStatus({ type: 'ERROR', message: res?.message })

@@ -45,11 +45,11 @@ const DeleteButton = ({style, label='Delete', alertText='Do you really want to d
         <DialogContent>
           <DialogContentText>{alertText}</DialogContentText>
         </DialogContent>
-        <div style={{display: 'flex', justifyContent: 'flex-start', alignItems: 'center',marginBottom: 15, marginLeft: 20}}>
+        <div style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center',marginBottom: 15, marginRight: 18}}>
+          <Button size='small' onClick={() => setDeleteModal(false)}>Cancel</Button>
           <Button variant='contained' size='small' style={{backgroundColor: '#f05454e6', color: 'white'}} onClick={deleteAction}>
             Delete
           </Button>
-          <Button size='small' onClick={() => setDeleteModal(false)}>Cancel</Button>
         </div>
       </Dialog>
     </>

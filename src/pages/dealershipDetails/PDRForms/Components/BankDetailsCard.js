@@ -158,7 +158,7 @@ const BankDetailsCard = ({ id, data, editBankDetails }) => {
           </Collapse>
           <Collapse in={verifiedDetails}>
             {
-              verifiedDetails?.details?.bankTxnStatus ? 
+              verifiedDetails?.details ? 
               <Typography variant='h5' className={classNames(classes.text, classes.success)} >
                 <CheckCircleOutlinedIcon style={{marginRight: 8}} />
                 Account Verified Successfully

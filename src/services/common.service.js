@@ -239,12 +239,15 @@ export const SendReports = () => {
       })
   });
 }
-export const getPassbookDetails = (id) => {
+export const getPassbookDetails = (id, action) => {
+  let apiUrl = `dealership/${id}/passbook`
+  if (action === 'download') apiUrl+='?send=1&download=1'
+  if (action === 'share') apiUrl+='?send=1'
   return new Promise((resolve, reject) => {
-    apiCall(`passbook/dealership/${id}`)
+    apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
-          resolve(data);
+          resolve({data, message});
         } else {
           reject(message);
         }
@@ -254,6 +257,7 @@ export const getPassbookDetails = (id) => {
       })
   });
 }
+
 export const getStates = () => {
   return new Promise((resolve, reject) => {
     apiCall('master/states')

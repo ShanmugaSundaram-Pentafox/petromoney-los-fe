@@ -33,8 +33,8 @@ const PassbookDetails = ({ CurrentUser }) => {
       .then((data) => {
         const id = data.cust_details[0].cust_code
         getPassbookDetails(id)
-          .then((data) => {
-            setData(data)
+          .then((res) => {
+            setData(res?.data)
             setLoading(false)
           })
           .catch((e) => {

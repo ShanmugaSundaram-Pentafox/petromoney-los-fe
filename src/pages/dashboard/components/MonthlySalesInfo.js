@@ -104,6 +104,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser, readOnly }) => 
     deleteDealershipMonthlySalesById(id, rowData, rowIndex)
       .then((res) => {
         // setInfo(res);
+        setDeleteModal(false)
         queryClient.invalidateQueries(['monthly-sales', id])
         console.log(res)
       })

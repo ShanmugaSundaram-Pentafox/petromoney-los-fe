@@ -4,6 +4,8 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 import ProtectedRoute from './ProtectedRoute';
 import EnvTag from '../components/CommonComponents/EnvTag/EnvTag';
+import DpdReport from '../components/Tables/DpdReport';
+import ProjectionReport from '../components/Tables/ProjectionReport';
 import { permissionCheck } from '../components/UserCan/UserCan';
 import { rulesList } from '../config/userRules';
 import CallRequestPage from '../pages/callRequest/CallRequestPage';
@@ -69,6 +71,8 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/withheld" component={BlacklistTable} />
       <ProtectedRoute allow exact path="/reports" component={DealersDueReport} />
       <ProtectedRoute allow exact path="/reports/remarks" component={CollectionRemarks} />
+      <ProtectedRoute allow exact path="/reports/dpd" component={DpdReport} />
+      <ProtectedRoute allow exact path="/reports/projection" component={ProjectionReport} />
 
       <ProtectedRoute
         exact

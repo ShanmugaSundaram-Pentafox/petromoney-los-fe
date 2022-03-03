@@ -61,6 +61,7 @@ const Deviations = ({id}) => {
   const { mutate: deleteDeviation, mutate: updateDeviation } = useMutation(data => data.type === 'delete' ? deleteDeviationsById(id, data.id) : updateDeviationsById(id, data) , {
     onSuccess: (message) => {
       queryClient.invalidateQueries(['deviations', id])
+      setDeleteModal(false)
       enqueueSnackbar(message.message, {
         anchorOrigin: {
           vertical: 'top',

@@ -9,13 +9,13 @@ import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
-import { useMount } from 'react-use';
 import * as Yup from 'yup';
 import BankDetailsCard from './Components/BankDetailsCard';
 import Button from '../../../components/CommonComponents/Button/Button';
 import TextInput from '../../../components/TextInput/TextInput';
 import { URL } from '../../../config/serverUrls';
 import { getBankDetailsbyID, updateBankDetailsByID } from '../../../services/PDReport.services';
+import { useQuery, useQueryClient } from 'react-query';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -106,20 +106,12 @@ const useStyles = makeStyles((theme) => ({
 
 const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => {
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient()
   const classes = useStyles()
-  const [bankData, setBankData] = useState([])
   const [addNewRow, setAddNewRow] = useState(false);
   const [editRow, setEditRow] = useState(false);
+  const { data: bankData = [] } = useQuery('bank-data', () => getBankDetailsbyID(dealer_id), {refetchOnWindowFocus: false})
 
-  useMount(() => {
-    getBankDetailsbyID(dealer_id)
-      .then(data => {
-        setBankData(data)
-      })
-      .catch((e) => {
-        console.log(e);
-      })
-  })
   const editBankRow = (rowData, rowIndex) => {
     // setEditRow({ ...rowData, rowIndex });
     setEditRow(true)
@@ -140,12 +132,10 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
       account_no: Yup.number().nullable('Enter account number').required('Enter account number'),
       bank_branch: Yup.string('Enter valid branch name').nullable('Enter branch name').required('Enter branch name'),
       account_type: Yup.string('Enter valid type').nullable('Enter account type').required('Enter account type'),
-      transaction_limit: Yup.number('Enter valid amount').nullable('Enter transaction limit').required('Enter transaction limit')
     }),
     onSubmit: values => {
       updateBankDetailsByID(values, dealer_id)
         .then(res => {
-          console.log(res)
           enqueueSnackbar(res, {
             anchorOrigin: {
               vertical: 'top',
@@ -154,9 +144,9 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
             variant: 'success',
           }
           )
-          setTimeout(() => {
-            window.location.reload()
-          }, 1500);
+          queryClient.invalidateQueries('bank-data')
+          setAddNewRow(false)
+          setEditRow(false)
 
         })
         .catch(e => {
@@ -204,18 +194,6 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
           console.log('GET IFSC DATA ERR >> ', err)
         })
     }
-    // else 
-    // {
-    //   if (value.length >= 10){
-    //     enqueueSnackbar("please enter valid IFSC code", {
-    //       anchorOrigin: {
-    //         vertical: 'top',
-    //         horizontal: 'right',
-    //       },
-    //       variant: 'warning',
-    //     })
-    //   }
-    // }
   }
   return (
     <div className={classes.sidePanelFormWrapper}>
@@ -227,7 +205,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
         <div className={classes.stepperRoot}>
           {
             bankData.length || addNewRow ? null :
-              <Typography className={classes.typography}>No bank found,Click 'Add Bank' to add new bank.</Typography>
+              <Typography className={classes.typography}>No bank found,Click &apos;Add Bank&apos; to add new bank.</Typography>
           }
           {
             addNewRow || editRow ? (
@@ -326,39 +304,11 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
                           <option value="null">Vintage with bank</option>
                           {[...Array(currentYearDiff)].map((_, i) => {
                             return (
-                              <option value={currentYear - i}>{currentYear - i}</option>
+                              <option value={currentYear - i} key={i}>{currentYear - i}</option>
                             )
                           })}
                         </>
                       }
-                    </TextInput>
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      {...inputProps}
-                      money
-                      number
-                      labelText="Transaction Limit"
-                      name="transaction_limit"
-                      type="number"
-                      value={values.transaction_limit}
-                      error={errors.transaction_limit}
-                      helperText={errors.transaction_limit}
-                    />
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      {...inputProps}
-                      select
-                      labelText="Is Secured"
-                      name="security"
-                      value={values.security}
-                      error={errors.security}
-                      helperText={errors.security}
-                    >
-                      <option value="">Choose security type</option>
-                      <option values="Secured">Secured</option>
-                      <option values="Unsecured">Unsecured</option>
                     </TextInput>
                   </Grid>
                 </Grid>

@@ -1,15 +1,15 @@
 import DateFnsUtils from '@date-io/date-fns';
+import { Tooltip } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import Switch from '@material-ui/core/Switch';
-import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
-import UploadIcon from '@material-ui/icons/Backup';
+import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
+import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
 import CloseIcon from '@material-ui/icons/Close';
-import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
@@ -25,15 +25,14 @@ import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import { useMount } from 'react-use';
 import * as Yup from 'yup';
+import { DocAttachment } from '../../../components/Attachment/DocAttachment';
 import Button from '../../../components/CommonComponents/Button/Button';
+import CustomToken from '../../../components/CommonComponents/CustomToken';
 import {
-  AvatarCard,
   ViewData,
 } from '../../../components/CommonComponents/FilePreview';
 import FileUpload from '../../../components/FileUpload';
 import TextInput from '../../../components/TextInput/TextInput';
-// import { URL } from '../../../config/serverUrls';
-// import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
@@ -44,9 +43,10 @@ import {
   getStates,
 } from '../../../services/common.service';
 import { cryptoEncrypt } from '../../../services/crypto.service';
+import { validateId } from '../../../services/dealerships.service';
 import { deleteTransportProfileDoc } from '../../../services/transports.service';
+import { compareObject } from '../../../utils/compareObject.util';
 import { getDistricts } from '../../../utils/indianStates.util';
-// import { addNewTransport, updateTransport } from '../../../services/transports.service';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -142,6 +142,9 @@ const useStyles = makeStyles((theme) => ({
     padding: 4,
     backgroundColor: '#dedede',
     color: '#43a047',
+  },
+  attachmentContainer: {
+    display: 'flex', width: '39vw', paddingRight: 12, flexWrap: 'wrap', marginLeft: 8
   }
 }));
 
@@ -162,13 +165,17 @@ const AddNewTransportsForm = ({
   const [showUpload, setShowUpload] = useState(false);
   const [regionList, setRegionList] = useState([]);
   const [fileType, setFileType] = useState('');
-  // const [regions, setRegions] = useState([]);
+  const [gstDetails, setGstDetails] = useState({})
   const [checked, setChecked] = useState(false);
-  const [imageModal, setImageModal] = useState({});
   const [selectedDate, setSelectedDate] = useState(data?.doi && parse(data?.doi, 'dd-MM-yyyy', new Date()));
+  const [panValidateData, setPanValidateData] = useState({icon: false})
+  const [gstValidateData, setGstValidateData] = useState({icon: false})
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
+  useEffect(() => {
+    setGstDetails(data?.gst_verified ? JSON.parse(data?.gst_details) || {} : {})
+  },[])
   const handleEdit = () => {
     setReadOnly(!readOnly);
   };
@@ -181,6 +188,25 @@ const AddNewTransportsForm = ({
   const handleDateChange = (e) => {
     setSelectedDate(e);
   };
+  const handleValidate = (action, id) => {
+    action === 'pan' ? setPanValidateData({icon:true, loading: true}) : setGstValidateData({icon:true, loading: true})
+    validateId(action, id)
+      .then((res) => {
+        action === 'pan' ?
+          setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}}) :
+          setGstValidateData({icon: true, loading: false, idType: 'GST', details: res?.details || {}})
+        !values?.name && setFieldValue('name', res?.details?.tradeNam)
+        setFieldValue('address', res?.details?.pradr?.adr)
+        !values?.business_type && setFieldValue('business_type', res?.details?.ctb)
+      })
+      .catch(e => {
+        console.log(e);
+        action === 'pan' ?
+          setPanValidateData({icon: true, idType: 'PAN'}) :
+          setGstValidateData({icon: true, idType: 'GST'})
+      })
+  }
+
   const onDocDelete = (data) => {
     deleteTransportProfileDoc(data, values.transporter_id)
       .then(res => {
@@ -240,19 +266,31 @@ const AddNewTransportsForm = ({
       gst: Yup.string().nullable('Enter GST').matches(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/, 'Invalid GST').required('Enter GST').uppercase(),
     }),
     onSubmit: (values) => {
+      if(isAdd === 'Add'){
+        handleValidate('pan', values?.pan)
+        handleValidate('gst', values?.gst)
+      }
       setLoading(true);
       values.name = values.name.toUpperCase();
       const doi = selectedDate ? format(selectedDate, 'dd-MM-yyyy') : values?.doi
-      const data = { ...values, doi: doi, t_owner_id: id, pan: values.pan?.toUpperCase(), gst: values.gst?.toUpperCase(), omc: omcs.find(item => {return item.name === values.omc})?.id };
-      // let apiURL = isAdd === 'Add' ? `transporters` : `tranporters/${data.transporter_id}`
+      const data_values = { ...values, doi: doi, t_owner_id: id, pan: values.pan?.toUpperCase(), gst: values.gst?.toUpperCase(), omc: omcs.find(item => {return item.name === values.omc})?.id };
+
+      let obj = {};
+      if (values.transporter_id) {
+        obj = compareObject(data, data_values)
+      }
+      else {
+        obj = { ...data_values }
+      }
+
       const formData = new FormData();
-      Object.keys(data).forEach((key) => {
+      Object.keys(obj).forEach((key) => {
         if (key === 'pan') {
           let pan = values?.pan ? cryptoEncrypt(values.pan) : values?.pan;
           formData.append(key, pan)
         }
         else
-          formData.append(key, data[key]);
+          formData.append(key, obj[key]);
       });
       if (isAdd === 'Add') {
         fetch(`${URL.base}${URL.vehicleInfo}`, {
@@ -357,7 +395,6 @@ const AddNewTransportsForm = ({
 
   useEffect(() => {
     if (values.state) {
-      // let res = states.find(({ name }) => name === values.state);
       fetchRegions(parseInt(values.state));
     }
   }, [values.state]);
@@ -368,7 +405,6 @@ const AddNewTransportsForm = ({
     fileType === 'PAN'
       ? setFieldValue('pan_file_url', value[0])
       : setFieldValue('gst_file_url', value[0]);
-    handleSubmit(values);
     onCloseUploader();
   };
   const docUpload = (val) => {
@@ -389,6 +425,18 @@ const AddNewTransportsForm = ({
     alignTop: true,
     onChange: handleChange,
   };
+  const ValidateProps = (valid) => {
+    return({
+      endAdornment: <div style={{marginRight: 6, marginTop: 4, cursor: 'pointer'}}>
+        {
+        valid?.icon ?
+        valid?.loading ? <CircularProgress size={15}/> :
+        valid?.details ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{color:'#4caf50'}} /></Tooltip> :
+        <Tooltip title={`Invalid ${valid.idType}`} ><CancelOutlinedIcon fontSize='small' color='error' /></Tooltip> : null
+        }
+      </div>
+    })
+  }
   const AntSwitch = withStyles((theme) => ({
     root: {
       width: 28,
@@ -424,46 +472,6 @@ const AddNewTransportsForm = ({
     checked: {},
   }))(Switch);
 
-  const gstAttachment = () => {
-    return (
-      <div className={classes.fileStyle}>
-        <Button
-          onClick={() =>
-            setImageModal({ open: true, image: data.gst_file_url })
-          }
-        >
-          <span className={classes.profileLink} target='_blank' title={'GST Attachment'}>{'GST Attachment'}</span>
-        </Button>
-        <Tooltip title={'Click to edit'}>
-          <UploadIcon
-            fontSize='small'
-            padding={2}
-            onClick={() => docUpload('GST')}
-          />
-        </Tooltip>
-        <Tooltip title={'Click to delete'}>
-          <DeleteIcon onClick={() => onDocDelete({ gst_file_url: '' })} fontSize="small" padding={2} />
-        </Tooltip>
-      </div>
-    );
-  };
-  const panAttachment = () => {
-    return (
-      <div className={classes.fileStyle}>
-        <a className={classes.profileLink} href={data.pan_file_url} target='_blank' title={'PAN Attachment'} rel="noreferrer">{'PAN Attachment'}</a>
-        <Tooltip title={'Click to edit'}>
-          <UploadIcon
-            fontSize='small'
-            padding={2}
-            onClick={() => docUpload('PAN')}
-          />
-        </Tooltip>
-        <Tooltip title={'Click to delete'}>
-          <DeleteIcon onClick={() => onDocDelete({ pan_file_url: '' })} fontSize="small" padding={2} />
-        </Tooltip>
-      </div>
-    );
-  };
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant='h4'>
@@ -482,14 +490,17 @@ const AddNewTransportsForm = ({
                       value={values.transporter_id}
                     />
                     <ViewData title='Mobile' value={values.mobile} />
-                    <ViewData title='OMC' value={omcs.find(item => {return item.name === values.omc})?.name} />
+                    <ViewData title='OMC' value={values?.omc_value || omcs.find(item => {return item.name === values.omc})?.name} />
                     <ViewData title='Date of Incoporation' value={values?.doi} />
                     <ViewData title='Region' value={(regionList.find(function (region) {
                       if (region.id == values.region)
                         return true;
                     }))?.name} />
                     <ViewData title='District' value={values.district} />
-                    <ViewData title='GST' value={values.gst} />
+                    <ViewData title='GST' value={values.gst} endIcon={<CustomToken variant={values?.gst_verified ? 'success': 'error'} label={values?.gst_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.gst_verified ? 'tick' : 'cross'}/>} />
+                    {values?.gst_verified ? <ViewData title='Legal Trade Name' value={gstDetails?.tradeNam} /> : null}
+                    {values?.gst_verified ? <ViewData title='GSTIN Status' value={gstDetails?.sts} /> : null}
+
                   </Box>
                 </Grid>
                 <Grid item md={6}>
@@ -502,38 +513,22 @@ const AddNewTransportsForm = ({
                         return true;
                     }))?.name} />
                     <ViewData title='Pincode' value={values.pincode} />
-                    <ViewData title='PAN' value={values.pan} />
+                    <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success': 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'}/>} />
+                    {values?.gst_verified ? <ViewData title='Legal Business Name' value={gstDetails?.mbr} /> : null}
+                    {values?.gst_verified ? <ViewData title='Effective Date of registration' value={gstDetails?.rgdt}/> : null}
+                    {values?.gst_verified ? <ViewData title='Taxpayer Type' value={gstDetails?.dty} /> : null}
+
                   </Box>
                 </Grid>
               </Grid>
               <Divider />
-              {values?.profile_image_url ||
-                values?.pan_file_url ||
-                values?.aadhar_f_file_url ||
-                values?.aadhar_b_file_url ? (
+              {values?.gst_file_url ||
+                values?.pan_file_url ? (
                   <div className={classes.readOnlyWrapper}>
                     <Typography variant='h4'>Attachments</Typography>
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-around',
-                        marginTop: 16,
-                      }}
-                    >
-                      {values.pan_file_url && (
-                        <AvatarCard
-                          tooltip='View PAN'
-                          file={values?.pan_file_url}
-                          title='PAN'
-                        />
-                      )}
-                      {values.gst_file_url && (
-                        <AvatarCard
-                          tooltip='View GST'
-                          file={values?.gst_file_url}
-                          title='GST'
-                        />
-                      )}
+                    <div style={{ display: 'flex', marginTop: 16 }}>
+                      {values.pan_file_url && <DocAttachment tooltip='View PAN' imgUrl={values?.pan_file_url} docName='PAN' style={{marginRight: 20}} />}
+                      {values.gst_file_url && <DocAttachment tooltip='View GST' imgUrl={values?.gst_file_url} docName='GST' style={{marginRight: 20}} />}
                     </div>
                   </div>
                 ) : (
@@ -604,6 +599,40 @@ const AddNewTransportsForm = ({
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
+                      name='gst'
+                      labelText='GST'
+                      value={values.gst?.toUpperCase()}
+                      readOnly={readOnly || gstValidateData?.loading}
+                      disabled={readOnly || values?.gst_verified}
+                      error={errors.gst}
+                      helperText={errors.gst}
+                      InputProps={ValidateProps(gstValidateData)}
+                    />
+                    {
+                      !values?.gst_verified || values?.gst !== data?.gst?
+                        <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={()=> values?.gst && handleValidate('gst', values?.gst)}>Validate GST</Typography> : null
+                    }
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      name='pan'
+                      labelText='PAN'
+                      value={values.pan?.toUpperCase()}
+                      readOnly={readOnly}
+                      disabled={readOnly || panValidateData?.loading || values?.pan_verified}
+                      error={errors.pan}
+                      helperText={errors.pan}
+                      InputProps={ValidateProps(panValidateData)}
+                    />
+                    {
+                      !values?.pan_verified || values?.pan !== data?.pan ?
+                        <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={()=> values?.pan && handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
+                    }
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
                       name='mobile'
                       labelText='Mobile'
                       value={values?.mobile}
@@ -613,13 +642,26 @@ const AddNewTransportsForm = ({
                     />
                   </Grid>
                   <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      name='address'
+                      labelText='Address'
+                      multiline
+                      value={values?.address}
+                      readOnly={readOnly}
+                      disabled={readOnly}
+                      error={errors.address}
+                      helperText={errors.address}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
                     {
                       <TextInput
                         {...inputProps}
                         select
                         labelText="OMC"
                         name="omc"
-                        value={omcs.find(item => {return item.name === values.omc})?.name}
+                        value={values?.omc || omcs.find(item => {return item.name === values.omc})?.name}
                         readOnly={readOnly}
                         disabled={readOnly}
                         error={errors.omc}
@@ -651,11 +693,11 @@ const AddNewTransportsForm = ({
                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                       <label>Date of Incoporation</label>
                       <KeyboardDatePicker
-                        // disableToolbar
-                        // hideTabs={true}
                         variant='inline'
                         inputVariant='outlined'
                         format='dd-MM-yyyy'
+                        fullWidth
+                        disableFuture={true}
                         animateYearScrolling={true}
                         invalidDateMessage='Invalid Date Format'
                         error={errors.dob}
@@ -710,17 +752,17 @@ const AddNewTransportsForm = ({
                   </Grid>
                   <Grid item md={6}>
                     <TextInput
+                      number
                       {...inputProps}
-                      name='address'
-                      labelText='Address'
-                      value={values?.address}
-                      readOnly={readOnly}
+                      name='pincode'
+                      labelText='Pincode'
+                      value={values?.pincode}
                       disabled={readOnly}
-                      error={errors.address}
-                      helperText={errors.address}
+                      readOnly={readOnly}
+                      error={errors.pincode}
+                      helperText={errors.pincode}
                     />
                   </Grid>
-
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
@@ -735,98 +777,35 @@ const AddNewTransportsForm = ({
                       {getDistricts(values.state).map((item) => (<option key={item} value={item}>{item}</option>))}
                     </TextInput>
                   </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      number
-                      {...inputProps}
-                      name='pincode'
-                      labelText='Pincode'
-                      value={values?.pincode}
-                      disabled={readOnly}
-                      readOnly={readOnly}
-                      error={errors.pincode}
-                      helperText={errors.pincode}
-                    />
-                  </Grid>
+                  {
+                    gstDetails?.gstin || gstValidateData?.details ?
+                      <>
+                        <Grid item md={3}>
+                          <ViewData title='Effective Date of registration' value={gstDetails?.rgdt || gstValidateData?.details?.rgdt}/>
+                        </Grid>
+                        <Grid item md={3}>
+                          <ViewData title='Taxpayer Type' value={gstDetails?.dty || gstValidateData?.details?.dty} />
+                        </Grid>
+                        <Grid item md={3}>
+                          <ViewData title='Legal Business Name' value={gstDetails?.mbr || gstValidateData?.details?.mbr} />
+                        </Grid>
+                        <Grid item md={3}>
+                          <ViewData title='GSTIN Status' value={gstDetails?.sts || gstValidateData?.details?.sts} />
+                        </Grid>
+                        <Grid item md={3}>
+                          <ViewData title='Legal Trade Name' value={gstDetails?.tradeNam || gstValidateData?.details?.tradeNam} />
+                        </Grid>
+                      </> : null
+                  }
                   <Grid md={12} item>
                     <Typography variant='subtitle1' component='subtitle1'>
-                      Documents
+                      Attachments
                     </Typography>
                   </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      {...inputProps}
-                      name='pan'
-                      labelText='PAN'
-                      value={values.pan?.toUpperCase()}
-                      readOnly={readOnly}
-                      disabled={readOnly}
-                      error={errors.pan}
-                      helperText={errors.pan}
-                    />
-                  </Grid>
-                  {values.pan ? (
-                    <Grid item md={6}>
-                      <>
-                        {
-                          data.pan_file_url ? (
-                            panAttachment()
-                          ) : (
-                            <div
-                              className={classes.fileAttachement}
-                              onClick={() => docUpload('PAN')}
-                            >
-                              <Tooltip title={'Click and attach'}>
-                                <>
-                                  <UploadIcon
-                                    className={classes.icon}
-                                    disabled={readOnly}
-                                  />
-                                  {/* <Typography className={classes.typography}>Attach PAN</Typography> */}
-                                </>
-                              </Tooltip>
-                            </div>
-                          )
-                        }
-                      </>
-                    </Grid>
-                  ) : null}
-                  <Grid item md={6}>
-                    <TextInput
-                      {...inputProps}
-                      name='gst'
-                      labelText='GST'
-                      value={values.gst?.toUpperCase()}
-                      readOnly={readOnly}
-                      disabled={readOnly}
-                      error={errors.gst}
-                      helperText={errors.gst}
-                    />
-                  </Grid>
-                  {values.gst ? (
-                    <Grid item md={6}>
-                      <>
-                        {data.gst_file_url ? (
-                          gstAttachment()
-                        ) : (
-                          <div
-                            className={classes.fileAttachement}
-                            onClick={() => docUpload('GST')}
-                          >
-                            <Tooltip title={'Click and attach'}>
-                              <>
-                                <UploadIcon
-                                  className={classes.icon}
-                                  disabled={readOnly}
-                                />
-                                {/* <Typography className={classes.typography}>Attach GST</Typography> */}
-                              </>
-                            </Tooltip>
-                          </div>
-                        )}
-                      </>
-                    </Grid>
-                  ) : null}
+                  <div className={classes.attachmentContainer}>
+                    <DocAttachment action={true} imgUrl={values?.pan_file_url} docName='PAN Card' onUpload={() => docUpload('PAN')} onDelete={() => onDocDelete({pan_file_url:''})} disabled={!values?.pan_file_url} style={{marginRight: 25}} />
+                    <DocAttachment action={true} imgUrl={values?.gst_file_url} docName='GST' onUpload={() => docUpload('GST')} onDelete={() => onDocDelete({gst_file_url:''})} disabled={!values?.gst_file_url} style={{marginRight: 25}} />
+                  </div>
                 </Grid>
               </form>
             </Box>

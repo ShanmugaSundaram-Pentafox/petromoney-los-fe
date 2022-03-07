@@ -61,15 +61,14 @@ const usePreviewStyles = makeStyles((theme) => ({
     color: '#999'
   }
 }))
-const DocPreview = ({ fileType, url, DocName, updatedDateTime }) => {
+const DocPreview = ({ fileType, url, DocName, updatedDateTime, file_name }) => {
   const [imageModal, setImageModal] = useState({});
   const classes = usePreviewStyles();
-  const fileName = url?.split('/')[5]
   return (
     <>
       {
         url ? (
-          <Tooltip title={`${fileName} (${updatedDateTime})`}>
+          <Tooltip title={`${file_name} (${updatedDateTime})`}>
             <span>
               <div className={classes.container}
                 onClick={() => csvFileTypes.includes(fileType) ? window.open(url) : setImageModal({ open: true, image: url, type: fileType })}
@@ -82,7 +81,7 @@ const DocPreview = ({ fileType, url, DocName, updatedDateTime }) => {
                       : <ListAltIcon style={{ color: '#63686E' }} />
                 }
               </div>
-              <h5 style={{ width: 100, whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden', marginLeft: 15 }}>{fileName}</h5>
+              <h5 style={{ width: 100, whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden', marginLeft: 15 }}>{file_name}</h5>
               <span className={classes.smallText}>{updatedDateTime}</span>
             </span>
           </Tooltip>
@@ -128,7 +127,7 @@ const DocListPreview = ({ docName, upload, deleteDocs, file, id }) => {
           file.map((data, i) => {
             return (
               !collapse ? (
-                <DocPreview fileType={data.file_type} url={data.file_url} DocName={docName} updatedDateTime={format(new Date(data?.created_date || data?.modified_date), 'dd/MM/yyyy hh:mm a')} />
+                <DocPreview fileType={data.file_type} file_name={data.file_name} url={data.file_url} DocName={docName} updatedDateTime={format(new Date(data?.created_date || data?.modified_date), 'dd/MM/yyyy hh:mm a')} />
               ) : (
                 null
               )

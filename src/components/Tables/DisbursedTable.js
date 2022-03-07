@@ -11,6 +11,7 @@ import { NavLink as RouterLink } from 'react-router-dom';
 // import { createStructuredSelector } from 'reselect';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
+import { dateCustomSort } from '../../utils/commonFunctions.util';
 import Currency from '../Number/Currency';
 
 const useStyles = makeStyles(theme => ({
@@ -114,7 +115,7 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
       },
       {
         label: 'Sanctioned Amount',
-        name: 'amount_disbursed',
+        name: 'amount_approved',
         options: {
           filter: false,
           sort: true,
@@ -161,6 +162,10 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
     onRowClick: (rowData, { dataIndex }) => {
       // console.log(rowData, rowMeta);
       onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'disbursed')
+    },
+    customSort: (data, dataIndex, rowIndex) => {
+      let dateIndex = 6
+      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
     }
   };
 

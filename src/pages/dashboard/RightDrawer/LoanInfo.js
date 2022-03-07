@@ -10,7 +10,7 @@ import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
 import UserCan from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-import { getProducts } from '../../../services/common.service';
+import { getProductsMaster } from '../../../services/common.service';
 
 
 const LoanInfoWrapper = styled.div`
@@ -48,7 +48,7 @@ const LoanInfo = ({
   const [selectedProduct, setSelectedProduct] = useState({ amount_approved: newInfo?.amount_approved });
 
   useEffect(() => {
-    getProducts()
+    getProductsMaster()
       .then((data) => {
         setProducts(data)
         if (row.product_id) {
@@ -147,11 +147,11 @@ const LoanInfo = ({
                           money
                           number
                           fullWidth={false}
-                          value={row?.amount_approved}
+                          defaultValue={row?.amount_approved}
                           onChange={e => {
                             updateNewLoanInfo({
                               ...newInfo,
-                              amount_disbursed: e.target.value
+                              amount_disbursed: e.target.value || row?.amount_approved
                             })
                           }}
                         />

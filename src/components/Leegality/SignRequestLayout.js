@@ -14,8 +14,10 @@ import { makeStyles, withStyles } from '@material-ui/styles';
 import { format } from 'date-fns';
 import { useSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
+import { useQuery } from 'react-query';
 import CardsCheckList from './components/CardsCheckList';
 import LeegalityLayout from './LeegalityLayout';
+import { getProductsMaster } from '../../services/common.service';
 import { getCoApplicantByDealershipId, getDealersByDealershipId } from '../../services/dealers.service';
 import { getAllGuarantor, getPdfContent } from '../../services/leegality.service';
 import { getLoanDocumentHistoryById } from '../../services/loans.service';
@@ -59,7 +61,7 @@ const TableCell = withStyles(() => ({
   },
 }))(TableCellComp)
 
-const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, callback, loanAmount }) => {
+const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, callback, loanAmount, productId }) => {
   const classes = useStyles();
   const [dealers, setDealers] = useState([])
   const [applicants, setApplicants] = useState([])
@@ -76,6 +78,12 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
   const [loading, setLoading] = useState(true);
   const [hideSend, setHideSend] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const [product, setProduct] = useState();
+  const { data: products = [] } = useQuery(['products'], () => getProductsMaster(), {refetchOnWindowFocus: false})
+
+  useEffect(() => {
+    setProduct(products.find(item => item.product_id === productId))
+  }, [productId])
 
 
   useEffect(() => {
@@ -132,7 +140,13 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
   }, [dealershipId, loanId, type]);
   const updateSelectedDealers = (selectedStatus, inviteeData) => {
     if (selectedStatus) {
-      setSelectedDealers([...selectedDealers, inviteeData])
+      if(inviteeData?.signatures?.length === 2){
+        let buffer = [...selectedDealers, inviteeData]
+        const result = buffer.filter(d => d?.id !== inviteeData?.id)
+        setSelectedDealers([...result, inviteeData]);
+      } else {
+        setSelectedDealers([...selectedDealers, inviteeData])
+      }
     } else {
       const result = selectedDealers.filter(d => d.id !== inviteeData.id)
       setSelectedDealers(result)
@@ -140,7 +154,13 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
   }
   const updateSelectedCoAppicants = (selectedStatus, inviteeData) => {
     if (selectedStatus) {
-      setSelectedCoAppicants([...selectedCoAppicants, inviteeData])
+      if(inviteeData?.signatures?.length === 2){
+        let buffer = [...selectedCoAppicants, inviteeData]
+        const result = buffer.filter(d=> d?.id !== inviteeData?.id)
+        setSelectedCoAppicants([...result, inviteeData])
+      } else {
+        setSelectedCoAppicants([...selectedCoAppicants, inviteeData])
+      }
     } else {
       const result = selectedCoAppicants.filter(d => d.id !== inviteeData.id)
       setSelectedCoAppicants(result)
@@ -148,7 +168,13 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
   }
   const updateSelectedGuarantors = (selectedStatus, inviteeData) => {
     if (selectedStatus) {
-      setSelectedGuarantors([...selectedGuarantors, inviteeData])
+      if(inviteeData?.signatures?.length === 2){
+        let buffer = [...selectedGuarantors, inviteeData]
+        const result = buffer.filter(d=> d?.id !== inviteeData?.id)
+        setSelectedGuarantors([...result, inviteeData])
+      } else {
+        setSelectedGuarantors([...selectedGuarantors, inviteeData])
+      }
     } else {
       const result = selectedGuarantors.filter(d => d.id !== inviteeData.id)
       setSelectedGuarantors(result)
@@ -223,9 +249,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
       fullWidth
       maxWidth={'md'}
       open={open}
-      onClose={() => {
-        setLoansData({});
-      }}
+      onClose={onClose}
     >
       <DialogTitle disableTypography className={classes.dTitle}>
         {
@@ -252,18 +276,17 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
               </Grid>
             </Grid>
           </DialogContent>
-
         ) : (
           <DialogContent dividers className={classes.content}>
             {
               loading ? (
                 <CircularProgress className="circular-progress-color" variant="determinate" color="green" />
               ) : (loansData?.document_id ? (
-                <LeegalityLayout docId={loansData.document_id} />
+                <LeegalityLayout docId={loansData?.document_id} />
               ) : (
                 <Grid container spacing={2}>
                   {
-                    type === 'sanction' || type == 'application' ? (
+                    type === 'sanction' || type === 'application' ? (
                       <Grid item sm={8} md={7} >
                         {
                           pdfUrl ?
@@ -418,15 +441,15 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
                                     </TableRow>
                                       <TableRow>
                                       <TableCell>Loan Cycle</TableCell>
-                                      <TableCell>15 Days - Revolving Credit</TableCell>
+                                      <TableCell>{product?.tenure} days</TableCell>
                                     </TableRow>
                                       <TableRow>
                                       <TableCell>Interest rate</TableCell>
-                                      <TableCell>18 % P.A.</TableCell>
+                                      <TableCell>{product?.interest} %</TableCell>
                                     </TableRow>
                                       <TableRow>
                                       <TableCell>Overdue Interest</TableCell>
-                                      <TableCell>30 % P.A.</TableCell>
+                                      <TableCell>{product?.penal_interest} %</TableCell>
                                     </TableRow>
                                       <TableRow>
                                       <TableCell>Facility of Tenor</TableCell>
@@ -445,7 +468,6 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId, loanId, c
                     <Box>
                       <Typography variant="h4">Select Invitees</Typography>
                     </Box>
-
                     <Box pt={2}>
                       <Typography variant='body1'>Dealers</Typography>
                       {

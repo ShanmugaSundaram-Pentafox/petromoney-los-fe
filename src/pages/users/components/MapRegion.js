@@ -23,6 +23,9 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '15vw',
     maxHeight: 300,
     overflowY: 'auto',
+    border: '1px solid rgb(0,0,0,0.2)',
+    boxShadow: 'rgba(27, 31, 35, 0.04) 0px 1px 0px, rgba(255, 255, 255, 0.25) 0px 1px 0px inset',
+    borderRadius: 3
   },
   paper: {
     width: 'auto',
@@ -40,6 +43,9 @@ const MapRegion = (data) => {
   const [mappedRegion, setMappedRegion] = useState([]);
   const [region, setRegion] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [allReg, setAllReg] = useState(false);
+  const [mapReg, setMapReg] = useState(false)
+
   useMount(() => {
     const id = data.data.id;
     setLoading(true);
@@ -49,18 +55,39 @@ const MapRegion = (data) => {
         return getAllRegion()
       })
       .then((d) => {
+        if(d.filter(item => item.region_name === 'All' || item.region_id === 0)) {
+          let reg = d
+          reg.splice(0,1)
+          setAllRegion(reg)
+        } else {
+          setAllRegion(d);
+        }
         setLoading(false);
-        setAllRegion(d);
       })
       .catch((e) => {
         console.log(e);
         setLoading(false);
       });
   });
+
+  const handleSelectAllRegion = (list, action, func) => {
+    if(func){
+      if(action === 'allRegion'){
+        setRegion(list.map(r => r.region_name ? r.region_id : r.region))
+        setAllReg(true)
+      } else {
+        setRegion(list.map(r => r.region_name ? r.region_id : r.region))
+        setMapReg(true)
+      }
+    } else {
+      setRegion([])
+      setAllReg(false)
+      setMapReg(false)
+    }
+  }
+
   const getValue = (e, list) => {
-    console.log(e);
     const val = parseInt(e?.target?.value);
-    // if (!val) return;
     if(val === 0) {
       if(region.includes(val)) {
         setRegion([])
@@ -135,14 +162,12 @@ const MapRegion = (data) => {
   };
 
   const regionList = (allRegion || []).filter((r) => {
-    // console.log(mappedRegion, r.region, await !mappedRegion.find(rg => rg.region_id === r.region))
     if (!mappedRegion.find(rg => rg.region_id === r.region))
       return true
     else return false;
-    // return !mappedRegion.find(rg => rg.region_id === r.region);
   })
   return (
-    <Box mt={2} mb={2} bgcolor={'#fafafa'} position={'relative'}>
+    <Box mt={2} mb={2} position={'relative'}>
       {
         loading && (
           <Box p={2} pt={10} mx={'auto'} bgcolor={'rgba(207, 216, 220, .25)'} textAlign={'center'} position={'absolute'} zIndex={10} top={0} bottom={0} width={'100%'}>
@@ -151,62 +176,80 @@ const MapRegion = (data) => {
         )
       }
       <Typography variant="h4" component="h3">
-        Regions Mapped
+        Regions Map
       </Typography>
-      <Grid container spacing={2}>
-        <Grid item xs={5} className={classes.root}>
-          {regionList.map((item) => {
-            return (
-              <Paper key={item.region}>
-                <FormGroup>
-                  <FormControlLabel
-                    key={item.region}
-                    control={<Checkbox key={item.region} checked={region.includes(item.region)} color="primary" value={item.region} onChange={(e) => getValue(e, regionList)} />}
-                    label={item.name}
-                    value={item.region}
-                  />
-                </FormGroup>
-              </Paper>
-            );
-          })}
-        </Grid>
-        <Grid item xs={2}>
-          <Grid container direction="column" alignItems="center" justify={'center'}>
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              aria-label="move selected right"
-              onClick={() => updateValue()}
-              style={{ marginTop: 60, marginBottom: 20 }}
-            >
-              &gt;
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              aria-label="move selected left"
-              onClick={() => deleteValue()}
-            >
-              &lt;
-            </Button>
+      <Grid container spacing={2} style={{padding: 10}}>
+        <Grid container style={{display: 'flex', justifyContent: 'space-between', marginTop: 10}}>
+          <Grid item md={5}>
+            {
+              regionList.length != 0 &&
+                <Button variant='outlined' size='small' onClick={() => handleSelectAllRegion(regionList, 'allRegion' , !allReg)}>{allReg ? 'Deselect All' : 'Select All'}</Button>
+            }
+          </Grid>
+          <Grid item md={5}>
+            {
+              mappedRegion.length != 0 &&
+                <Button variant='outlined' size='small' onClick={() => handleSelectAllRegion(mappedRegion, 'mappedRegion', !mapReg)}>{mapReg ? 'Deselect All' : 'Select All'}</Button>
+            }
           </Grid>
         </Grid>
         <Grid item xs={5} className={classes.root}>
+          {
+            regionList.length != 0 ?
+              regionList.map((item) => {
+                return (
+                  <Paper key={item.region}>
+                    <FormGroup>
+                      <FormControlLabel
+                        key={item.region}
+                        control={<Checkbox key={item.region} checked={region.includes(item.region)} color="primary" value={item.region} onChange={(e) => getValue(e, regionList)} />}
+                        label={item.name}
+                        value={item.region}
+                      />
+                    </FormGroup>
+                  </Paper>
+                );
+              }) : <Typography variant='body1' style={{color: 'rgb(0,0,0,0.4)'}}>All Regions are Mapped!</Typography>
+          }
+        </Grid>
+        <Grid item xs={2} style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 15}}>
+          <Button
+            variant="outlined"
+            color="secondary"
+            size="small"
+            aria-label="move selected right"
+            onClick={() => updateValue()}
+            style={{ marginBottom: 15 }}
+          >
+            &gt;
+          </Button>
+          <Button
+            variant="outlined"
+            color="secondary"
+            size="small"
+            aria-label="move selected left"
+            onClick={() => deleteValue()}
+          >
+            &lt;
+          </Button>
+        </Grid>
+        <Grid item xs={5} className={classes.root}>
           <Paper direction="column">
-            {mappedRegion.map((item) => {
-              return (
-                <FormGroup key={item.region_id}>
-                  <FormControlLabel
-                    key={item.region_id}
-                    control={<Checkbox color="primary" key={item.region_id} checked={region.includes(item.region_id)} value={item.region_id} onChange={(e) => getValue(e, mappedRegion)} />}
-                    label={item.region_name}
-                    value={item.region_id}
-                  />
-                </FormGroup>
-              );
-            })}
+            {
+              mappedRegion.length != 0 ?
+                mappedRegion.map((item) => {
+                  return (
+                    <FormGroup key={item.region_id}>
+                      <FormControlLabel
+                        key={item.region_id}
+                        control={<Checkbox color="primary" key={item.region_id} checked={region.includes(item.region_id)} value={item.region_id} onChange={(e) => getValue(e, mappedRegion)} />}
+                        label={item.region_name}
+                        value={item.region_id}
+                      />
+                    </FormGroup>
+                  );
+                }) : <Typography variant='body1' style={{color: 'rgb(0,0,0,0.4)'}}>No Regions are Mapped!</Typography>
+            }
           </Paper>
         </Grid>
       </Grid>

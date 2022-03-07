@@ -1,11 +1,14 @@
 import { Divider, Drawer, List, ListItem, Button } from '@material-ui/core';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
+import AssignmentLateRoundedIcon from '@material-ui/icons/AssignmentLateRounded';
 import CachedIcon from '@material-ui/icons/Cached';
+import ChatIcon from '@material-ui/icons/Chat';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ListIcon from '@material-ui/icons/List';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import LocalShippingIcon from '@material-ui/icons/LocalShipping';
 import PeopleIcon from '@material-ui/icons/People';
+import PermPhoneMsgIcon from '@material-ui/icons/PermPhoneMsg';
 import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
 import PersonOutlineRoundedIcon from '@material-ui/icons/PersonOutlineRounded';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -106,6 +109,11 @@ const Sidebar = props => {
       icon: <CachedIcon />
     },
     {
+      title: 'Withheld',
+      href: '/withheld',
+      icon: <AssignmentLateRoundedIcon />
+    },
+    {
       title: 'Dealerships',
       href: '/dealership',
       icon: <PeopleIcon />
@@ -114,6 +122,11 @@ const Sidebar = props => {
       title: 'Transports',
       href: '/transports',
       icon: <LocalShippingIcon />
+    },
+    {
+      title: 'Collection Remarks',
+      href: '/reports/remarks',
+      icon: <ChatIcon />
     },
     {
       title: 'Report',
@@ -197,6 +210,14 @@ const Sidebar = props => {
       title: 'Users',
       href: '/users',
       icon: <AccountBoxIcon />
+    })
+  }
+
+  if (permissionCheck(currentUser.role_name, rulesList.users_view)) {
+    pages.push({
+      title: 'Call Request',
+      href: '/customer/callback',
+      icon: <PermPhoneMsgIcon />
     })
   }
 

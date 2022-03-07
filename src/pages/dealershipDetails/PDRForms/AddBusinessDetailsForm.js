@@ -1,8 +1,4 @@
-import { FormControl } from '@material-ui/core';
-import { RadioGroup } from '@material-ui/core';
-import { FormControlLabel } from '@material-ui/core';
-import { Radio } from '@material-ui/core';
-import { FormGroup } from '@material-ui/core';
+import { FormControl, RadioGroup, FormControlLabel, Radio, FormGroup } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
@@ -106,9 +102,6 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
       ms_count: Yup.number().nullable('Enter MSD count').required('Enter count'),
       electricity_units_month: Yup.number().nullable('Enter Electricity details').required('Enter Electricity details'),
       credit_sales_month: Yup.number().nullable('Enter sales details').required('Enter sales details'),
-      monthly_avg_sale_ms: Yup.number().nullable('Enter monthly average sale').required('Enter monthly average sale'),
-      monthly_avg_sale_hsd: Yup.number().nullable('Enter monthly average sale').required('Enter monthly average sale'),
-      monthly_avg_sale_lpg: Yup.number().nullable('Enter monthly average sale').required('Enter monthly average sale'),
     }),
     onSubmit: values => {
       let data = { ...values, has_atm: values.has_atm === 'Yes' ? 1 : 0, is_pep: values.is_pep === 'Yes' ? 1 : 0 }

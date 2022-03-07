@@ -75,20 +75,9 @@ const DrawerRemarks = ({ loanData, readOnly, label }) => {
           <label>{label}</label>
           {
             loanData ?
-              <TextEditor toolBar={false} remarkData={loanData} editable={false}/> :
+              <TextEditor toolBar={false} remarkData={loanData} editable={false} style={{height: '20vh'}} /> :
               <Typography variant='body1' style={{color: 'rgb(0,0,0,0.3)', marginTop: 8}}>No Remarks</Typography>
           }
-          {/* <div style={{border: '2px solid gray', padding: 20}}>{ReactHtmlParser(loanData)}</div> */}
-          {/* <TextInput
-            multiline
-            rows={4}
-            rowsMax={8}
-            labelText={`${label}`}
-            alignTop
-            value={loanData}
-            disabled
-            {...fieldProps}
-          /> */}
           {
             loanData?.length >= 300 ? (
               <ViewMoreBtn
@@ -102,14 +91,6 @@ const DrawerRemarks = ({ loanData, readOnly, label }) => {
       </>
       <FormDialog open={showRemarksModal} title="Remarks" onClose={() => setShowRemarksModal(false)}>
         <div style={{padding: 8, paddingLeft: 15}}>{ReactHtmlParser(showRemarksModal)}</div>
-        {/* <TextInput
-          disabled
-          alignTop
-          multiline
-          readOnly
-          value={showRemarksModal}
-          style={{ width: '40vw', minWidth: 400 }}
-        /> */}
       </FormDialog>
     </div>
   )

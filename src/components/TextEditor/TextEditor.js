@@ -15,7 +15,9 @@ const useStyles = makeStyles({
     borderRadius: 4,
     padding: 6,
     minHeight: '13vh',
-    minWidth: '30vw'
+    minWidth: '30vw',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
   },
   actions: {
     paddingBottom: 6,
@@ -62,14 +64,14 @@ const useStyles = makeStyles({
   }
 })
 
-export const TextEditor = ({ setJSON, toolBar, remarkData, editable }) => {
+export const TextEditor = ({ setJSON, toolBar, remarkData, editable, style }) => {
   const classes = useStyles();
   const editor = useEditor({
     extensions: [
       StarterKit, Placeholder, Underline
     ],
     onUpdate({ editor }) {
-      setJSON(JSON.stringify(editor.getJSON()))
+      setJSON(editor.getHTML())
     },
     content: remarkData,
     editable: editable
@@ -102,20 +104,20 @@ export const TextEditor = ({ setJSON, toolBar, remarkData, editable }) => {
         </Tooltip>
         <Tooltip title='Large'>
           <button
-            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-            className={editor.isActive('heading', { level: 1 }) ? classes.active : classes.btn}
+            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+            className={editor.isActive('heading', { level: 2 }) ? classes.active : classes.btn}
           >H1</button>
         </Tooltip>
         <Tooltip title='Medium'>
           <button
-            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-            className={editor.isActive('heading', { level: 2 }) ? classes.active : classes.btn}
+            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+            className={editor.isActive('heading', { level: 3 }) ? classes.active : classes.btn}
           >H2</button>
         </Tooltip>
         <Tooltip title='Small'>
           <button
-            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-            className={editor.isActive('heading', { level: 3 }) ? classes.active : classes.btn}
+            onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
+            className={editor.isActive('heading', { level: 4 }) ? classes.active : classes.btn}
           >H3</button>
         </Tooltip>
         <Tooltip title='Bullet'>
@@ -135,7 +137,7 @@ export const TextEditor = ({ setJSON, toolBar, remarkData, editable }) => {
   }
 
   return (
-    <div className={classes.root} id='rooter'>
+    <div className={classes.root} id='rooter' style={style}>
       {
         toolBar &&
           <MenuBar editor={editor} />

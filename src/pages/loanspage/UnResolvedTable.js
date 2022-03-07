@@ -1,6 +1,4 @@
-import { Grid } from '@material-ui/core';
-import { Paper } from '@material-ui/core';import { Tooltip } from '@material-ui/core';
-import { Drawer } from '@material-ui/core';
+import { Grid, Drawer, Paper, Tooltip } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { green } from '@material-ui/core/colors';
 import Typography from '@material-ui/core/Typography';
@@ -10,6 +8,7 @@ import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
 import React, { useMemo, useState } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
 import { useMount } from 'react-use';
 import AddBlackListForm from './AddBlackListForm';
 import Button from '../../components/CommonComponents/Button/Button';
@@ -25,22 +24,15 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const UnresolvedTable = () => {
+  const queryClient = useQueryClient()
   const [openModal, setOpenModal] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState([])
   const [dealershipData, setDealershipData] = useState([]);
   const classes = useStyles()
   const { enqueueSnackbar } = useSnackbar();
+  const {data=[], isLoading} = useQuery('withheld-loans', () => getAllWithheldLoans(0), {refetchOnWindowFocus: false})
+
 
   useMount(() => {
-    getAllWithheldLoans(0)
-      .then((data) => {
-        setData(data)
-      })
-      .catch((e) => {
-        setLoading(false)
-        console.log(e);
-      })
     getAllDealership()
       .then((data) => {
         setDealershipData(data.map(({ id }) => ({
@@ -62,11 +54,8 @@ const UnresolvedTable = () => {
             horizontal: 'right',
           },
           variant: 'success',
-        }
-        )
-        setTimeout(() => {
-          window.location.reload()
-        }, 1500);
+        })
+        queryClient.invalidateQueries('withheld-loans')
       })
       .catch(e => {
         console.log(e);
@@ -76,8 +65,7 @@ const UnresolvedTable = () => {
             horizontal: 'right',
           },
           variant: 'error',
-        }
-        )
+        })
       })
   }
   const handleDelete = (id) => {
@@ -89,11 +77,8 @@ const UnresolvedTable = () => {
             horizontal: 'right',
           },
           variant: 'success',
-        }
-        )
-        setTimeout(() => {
-          window.location.reload()
-        }, 1500);
+        })
+        queryClient.invalidateQueries('withheld-loans')
       })
       .catch((e) => {
         console.log(e);
@@ -103,11 +88,7 @@ const UnresolvedTable = () => {
             horizontal: 'right',
           },
           variant: 'error',
-        }
-        )
-        setTimeout(() => {
-          window.location.reload()
-        }, 1500);
+        })
       })
   }
 
@@ -154,10 +135,10 @@ const UnresolvedTable = () => {
           }),
           customBodyRender: (value, tableMeta) => {
             return (
-              value?.map((remark) => {
+              value?.map((remark, i) => {
                 return (
-                  <div style={{ marginBottom: 12, display: 'flex' }}>
-                    <div style={{ minWidth: 250, maxWidth: 250 }}>{remark.remarks}</div>
+                  <div style={{ marginBottom: 12, display: 'flex' }} key={i}>
+                    <div style={{ minWidth: 250, maxWidth: 250 }}>{remark.remarks} {remark.comment && '- ' + remark.comment}</div>
                     <div onClick={() => handleResolve(remark.id)} style={{ marginLeft: 12 }}>
                       <Tooltip title="Click to resolve">
                         <CheckOutlinedIcon style={{ color: green[200] }} fontSize={'small'} />
@@ -178,7 +159,6 @@ const UnresolvedTable = () => {
     ]
   }, [])
   const options = {
-    // filterType: 'checkbox',
     selectableRowsHeader: false,
     selectableRows: 'none',
     rowsPerPage: 10,
@@ -233,10 +213,10 @@ const UnresolvedTable = () => {
             columns={columns}
             options={options}
           />
-        ) : (!loading && <Paper style={{ padding: 10 }}>No unresolved withheld loans found</Paper>)
+        ) : (!isLoading && <Paper style={{ padding: 10 }}>No unresolved withheld loans found</Paper>)
         }
         {
-          loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
+          isLoading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
         }
       </Grid>
       <Drawer

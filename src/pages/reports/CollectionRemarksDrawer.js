@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { useMount } from 'react-use';
 import { useQuery } from 'react-query';
 import { ViewData } from '../../components/CommonComponents/FilePreview';
+import ChatOutlinedIcon from '@material-ui/icons/ChatOutlined';
 import Currency from '../../components/Number/Currency';
 import { sumBy } from 'lodash';
 import { getCollectionRemarkByLoanId, getLoanReportByDealershipId } from '../../services/users.service';
@@ -132,7 +133,14 @@ export const CollectionRemarksDrawer = ({ callback, rowData = [] }) => {
                 loanReport.due?.map((item, i) => {
                   return(
                     <TableRow key={i} style={{backgroundColor: '#ffec9b69'}}>
-                      <TableCell>{item.prospectcode}</TableCell>
+                      <TableCell style={{display: 'flex', alignItems: 'center'}}>
+                        {item.prospectcode}
+                        {
+                          rowData[7].map((row) => {
+                            return(row.prospectcode === item.prospectcode && <ChatOutlinedIcon style={{fontSize:13, marginLeft: 5, color: 'rgb(0,0,0,0.4)'}} />)
+                          })
+                        }
+                      </TableCell>
                       <TableCell><Currency value={item.disb_amt} /></TableCell>
                       <TableCell>{item.disb_date}</TableCell>
                       <TableCell>{item.duedate}</TableCell>
@@ -149,7 +157,14 @@ export const CollectionRemarksDrawer = ({ callback, rowData = [] }) => {
                 loanReport?.overdue?.map((item, i) => {
                   return(
                     <TableRow key={i} style={{backgroundColor: '#ffb99b69'}}>
-                      <TableCell>{item.prospectcode}</TableCell>
+                      <TableCell style={{display: 'flex', alignItems: 'center'}}>
+                        {item.prospectcode}
+                        {
+                          rowData[7].map((row) => {
+                            return(row.prospectcode === item.prospectcode && <ChatOutlinedIcon style={{fontSize:13, marginLeft: 5, color: 'rgb(0,0,0,0.3)'}} />)
+                          })
+                        }
+                      </TableCell>
                       <TableCell><Currency value={item.disb_amt} /></TableCell>
                       <TableCell>{item.disb_date}</TableCell>
                       <TableCell>{item.duedate}</TableCell>
@@ -164,7 +179,7 @@ export const CollectionRemarksDrawer = ({ callback, rowData = [] }) => {
               }
             </TableBody>
             <TableFooter>
-              <TableRow style={{ backgroundColor: '#f2f2f0' }}>
+              <TableRow style={{ backgroundColor: '#fff' }}>
                 <TableCell><strong>Total</strong></TableCell>
                 <TableCell></TableCell>
                 <TableCell></TableCell>

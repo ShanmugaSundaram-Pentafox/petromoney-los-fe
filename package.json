@@ -3,6 +3,8 @@
   "version": "2.10.1",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^4.7.0",
+    "@ant-design/icons-react": "^2.0.1",
     "@date-io/date-fns": "1.x",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",

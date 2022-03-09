@@ -1,7 +1,6 @@
 import { Grid, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react';
-import ReactHtmlParser from 'react-html-parser';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { ViewMoreBtn } from '../../../theme/styled-components/utils'
@@ -90,7 +89,7 @@ const DrawerRemarks = ({ loanData, readOnly, label }) => {
         </Grid>
       </>
       <FormDialog open={showRemarksModal} title="Remarks" onClose={() => setShowRemarksModal(false)}>
-        <div style={{padding: 8, paddingLeft: 15}}>{ReactHtmlParser(showRemarksModal)}</div>
+        <TextEditor toolBar={false} remarkData={loanData} editable={false} />
       </FormDialog>
     </div>
   )

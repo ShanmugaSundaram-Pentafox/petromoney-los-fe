@@ -1,6 +1,7 @@
 import { makeStyles, Tooltip } from '@material-ui/core';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered';
+import HardBreak from '@tiptap/extension-hard-break';
 import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
 import { useEditor, EditorContent } from '@tiptap/react'
@@ -68,7 +69,7 @@ export const TextEditor = ({ setJSON, toolBar, remarkData, editable, style }) =>
   const classes = useStyles();
   const editor = useEditor({
     extensions: [
-      StarterKit, Placeholder, Underline
+      StarterKit, Placeholder, Underline, HardBreak
     ],
     onUpdate({ editor }) {
       setJSON(editor.getHTML())
@@ -84,6 +85,12 @@ export const TextEditor = ({ setJSON, toolBar, remarkData, editable, style }) =>
 
     return(
       <div className={classes.actions}>
+        <Tooltip title='Paragraph'>
+          <button
+            onClick={() => editor.chain().focus().setParagraph().run()}
+            className={editor.isActive('paragraph') ? classes.active : classes.btn}
+          ><strong>P</strong></button>
+        </Tooltip>
         <Tooltip title='Bold'>
           <button
             onClick={() => editor.chain().focus().toggleBold().run()}
@@ -131,6 +138,12 @@ export const TextEditor = ({ setJSON, toolBar, remarkData, editable, style }) =>
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
             className={editor.isActive('orderedList') ? classes.active : classes.btn}
           ><FormatListNumberedIcon fontSize='small' /></button>
+        </Tooltip>
+        <Tooltip title='Break'>
+          <button
+            onClick={() => editor.chain().focus().setHardBreak().run()}
+            className={editor.isActive('hardBreak') ? classes.active : classes.btn}
+          >Br</button>
         </Tooltip>
       </div>
     )

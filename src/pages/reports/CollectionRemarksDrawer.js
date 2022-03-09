@@ -166,7 +166,7 @@ export const CollectionRemarksDrawer = ({ callback, rowData = [] }) => {
             <TableFooter>
               <TableRow style={{ backgroundColor: '#f2f2f0' }}>
                 <TableCell><strong>Total</strong></TableCell>
-                <TableCell><Currency value={sumBy(combined, 'disb_amt')} /></TableCell>
+                <TableCell></TableCell>
                 <TableCell></TableCell>
                 <TableCell></TableCell>
                 <TableCell><Currency value={sumBy(combined, 'prin_due')} /></TableCell>

@@ -1,11 +1,13 @@
 import { Box, Button, Divider, Grid, IconButton, makeStyles, Table, TableBody, TableCell, TableFooter, TableHead, TableRow, Typography } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import React from 'react';
+import React, { useState } from 'react';
+import { useMount } from 'react-use';
 import { useQuery } from 'react-query';
 import { ViewData } from '../../components/CommonComponents/FilePreview';
 import Currency from '../../components/Number/Currency';
-import { getCollectionRemarkByLoanId } from '../../services/users.service';
+import { sumBy } from 'lodash';
+import { getCollectionRemarkByLoanId, getLoanReportByDealershipId } from '../../services/users.service';
 
 const useStyles = makeStyles(() => ({
   sidePanelFormWrapper: {
@@ -57,10 +59,22 @@ const useStyles = makeStyles(() => ({
 
 export const CollectionRemarksDrawer = ({ callback, rowData = [] }) => {
   const classes = useStyles();
+  const [loanReport, setLoanReport] = useState({})
+  let combined = loanReport?.due && loanReport?.overdue && [...loanReport?.due, ...loanReport?.overdue]
+
   const FetchRemarks = (loan_id) => {
     const dealershipRemarks = useQuery(['remarks-by-loan-id', loan_id], () => getCollectionRemarkByLoanId(loan_id), { refetchOnWindowFocus: false })
     return dealershipRemarks;
   }
+  
+  useMount(() => {
+    getLoanReportByDealershipId(rowData[0])
+    .then(setLoanReport)
+    .catch(e => {
+      console.log(e);
+    })
+  })
+
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
@@ -115,9 +129,26 @@ export const CollectionRemarksDrawer = ({ callback, rowData = [] }) => {
             </TableHead>
             <TableBody>
               {
-                rowData[7]?.map((item, i) => {
-                  return (
-                    <TableRow key={i}>
+                loanReport.due?.map((item, i) => {
+                  return(
+                    <TableRow key={i} style={{backgroundColor: '#ffec9b69'}}>
+                      <TableCell>{item.prospectcode}</TableCell>
+                      <TableCell><Currency value={item.disb_amt} /></TableCell>
+                      <TableCell>{item.disb_date}</TableCell>
+                      <TableCell>{item.duedate}</TableCell>
+                      <TableCell><Currency value={item.prin_due} /></TableCell>
+                      <TableCell><Currency value={item.prin_overdue} /></TableCell>
+                      <TableCell><Currency value={item.int_overdue} /></TableCell>
+                      <TableCell><Currency value={item.penal_overdue} /></TableCell>
+                      <TableCell>{item.dpd}</TableCell>
+                    </TableRow>
+                  )
+                })
+              }
+              {
+                loanReport?.overdue?.map((item, i) => {
+                  return(
+                    <TableRow key={i} style={{backgroundColor: '#ffb99b69'}}>
                       <TableCell>{item.prospectcode}</TableCell>
                       <TableCell><Currency value={item.disb_amt} /></TableCell>
                       <TableCell>{item.disb_date}</TableCell>
@@ -135,13 +166,13 @@ export const CollectionRemarksDrawer = ({ callback, rowData = [] }) => {
             <TableFooter>
               <TableRow style={{ backgroundColor: '#f2f2f0' }}>
                 <TableCell><strong>Total</strong></TableCell>
+                <TableCell><Currency value={sumBy(combined, 'disb_amt')} /></TableCell>
                 <TableCell></TableCell>
                 <TableCell></TableCell>
-                <TableCell></TableCell>
-                <TableCell><Currency value={rowData[8]} /></TableCell>
-                <TableCell><Currency value={rowData[9]} /></TableCell>
-                <TableCell><Currency value={rowData[10]} /></TableCell>
-                <TableCell><Currency value={rowData[11]} /></TableCell>
+                <TableCell><Currency value={sumBy(combined, 'prin_due')} /></TableCell>
+                <TableCell><Currency value={sumBy(combined, 'prin_overdue')} /></TableCell>
+                <TableCell><Currency value={sumBy(combined, 'int_overdue')} /></TableCell>
+                <TableCell><Currency value={sumBy(combined, 'penal_overdue')} /></TableCell>
                 <TableCell></TableCell>
               </TableRow>
             </TableFooter>

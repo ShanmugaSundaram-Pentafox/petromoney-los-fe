@@ -1,15 +1,17 @@
 import { Grid, Badge, Box } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react';
-import { useMount } from 'react-use';
+import { useQuery } from 'react-query';
 import styled from 'styled-components';
 import CreditNewRequestTable from './CreditNewRequestTable';
 import CreditProcessedTable from './CreditProcessedTable';
+import DashCard from '../../components/CommonComponents/Cards/DashCard';
+import Currency from '../../components/Number/Currency';
 import { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import {
-  getCreditReport
+  getCreditReload
 } from '../../services/users.service';
+import DashboardFilter from '../dashboard/components/DashboardFilter';
 
 const PaperWrapper = styled.div`
 margin-bottom:10px;
@@ -30,53 +32,33 @@ background-color: #f1f1f1;
   }
 `;
 
-const useStyes = makeStyles((theme) => ({
-  root: {},
-}));
-
 const CreditReload = ({ currentUser }) => {
-  const [tableData, setTableData] = useState([]);
-  const [processedData, setProcessedData] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [selectedTab, setSelectedTab] = useState('new');
+  const [chartData, setChartData] = useState([])
+  const [filterQry, setFilterQry] = useState()
 
   const view = permissionCheck(currentUser.role_name, rulesList.dealer_view)
 
-  useMount(async () => {
-    setLoading(true)
-    getCreditReport(0)
-      .then((data) => {
-        let buffer = []
-        if(view){
-          data.forEach((item) => item.dealership_id === currentUser.dealership_id && buffer.push(item))
-          setTableData(buffer)
-        } else {
-          setTableData(data);
-        }
-        setLoading(false);
-      })
-      .catch((e) => {
-        setLoading(false);
-        console.log(e);
-      });
-    getCreditReport(1)
-      .then((data) => {
-        let buffer = []
-        if(view){
-          data.forEach((item) => item.dealership_id === currentUser.dealership_id && buffer.push(item))
-          setProcessedData(buffer)
-        } else {
-          setProcessedData(data)
-        }
-        setLoading(false);
-      })
-      .catch((e) => {
-        setLoading(false);
-        console.log(e);
-      });
-  });
+  const { data: tableData = [] } = useQuery(['new-request', filterQry], () => getCreditReload(0, filterQry), {refetchOnWindowFocus: false})
+  const { data: processedData = [] } = useQuery(['processed-request', filterQry], () => getCreditReload(1, filterQry), {refetchOnWindowFocus: false})
+
   return (
     <>
+      <DashboardFilter filterQry={setFilterQry} filterType='Credit Reload' setChartData={setChartData} filters={['zone', 'region', 'account', 'period']}/>
+      <Box p={2} borderRadius={4} bgcolor="background.paper" style={{marginBottom: 10, marginTop: 10}}>
+        <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">
+          <DashCard text="Zone" value={chartData[0]?.count?.length === 1 ? chartData[0]?.count[0]?.label : `${chartData[0]?.count[0]?.label} & ${chartData[0]?.count?.length - 1} more` || '-'} />
+          {
+            chartData?.map((item, i) => {
+              if(item.name !== 'Zone'){
+                return(
+                  <DashCard key={i} noBorder={i === chartData.length - 1} text={item.name} value={item.name === 'Total.Req. Amount' ? <Currency value={item.amount}/> : item.count || '-'} />
+                )
+              }
+            })
+          }
+        </Box>
+      </Box>
       <PaperWrapper>
         <Box borderRadius={4} bgcolor="background.paper">
           <Grid container>

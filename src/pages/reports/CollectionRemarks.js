@@ -23,8 +23,9 @@ const CollectionRemarks = () => {
   usePageTitle('Collection Remarks');
   const classes = useStyles();
   const [rowData, setRowData] = useState()
+  const [openModal, setOpenModal]= useState(false)
 
-  const { data: testData=[], isFetching } = useQuery('remark-Data', () => getCollectionRemarkData(), {refetchOnWindowFocus: false})
+  const { data: testData = [], isFetching } = useQuery('remark-Data', () => getCollectionRemarkData(), { refetchOnWindowFocus: false })
 
   const columns = useMemo(() => {
     return [
@@ -130,6 +131,7 @@ const CollectionRemarks = () => {
     rowsPerPageOptions: [15, 20, 30],
     onRowClick: (value) => {
       setRowData(value)
+      setOpenModal(true)
     }
   };
 
@@ -141,7 +143,7 @@ const CollectionRemarks = () => {
             <Skeleton variant='rect' width='100%' height={400} />
           </Grid>
         ) : (
-          <MUIDataTable 
+          <MUIDataTable
             title="Remarks"
             columns={columns}
             options={options}
@@ -151,12 +153,12 @@ const CollectionRemarks = () => {
       }
       <Drawer
         anchor="right"
-        open={rowData}
-        onClose={() => setRowData()}
+        open={openModal}
+        onClose={() => setOpenModal(false)}
         variant="temporary"
       >
-        <CollectionRemarksDrawer callback={() => setRowData()} rowData={rowData} />
-      </Drawer> 
+        <CollectionRemarksDrawer callback={() => setOpenModal(false)} rowData={rowData} />
+      </Drawer>
     </div>
   )
 }

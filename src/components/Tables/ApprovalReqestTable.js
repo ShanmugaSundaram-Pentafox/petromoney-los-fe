@@ -1,4 +1,4 @@
-import { Paper } from '@material-ui/core';
+import { IconButton, Paper, Tooltip } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
@@ -8,10 +8,12 @@ import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { NavLink as RouterLink } from 'react-router-dom';
+import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
 // import { createStructuredSelector } from 'reselect';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
+import SignRequestLayout from '../Leegality/SignRequestLayout';
 import Currency from '../Number/Currency';
 
 const useStyles = makeStyles(theme => ({
@@ -42,7 +44,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry }) => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); 
+  const [loanId, setloanId] = useState();
+  const [type, setType] = useState('');
+  const [dealershipId, setDealershipId] = useState();
+  const [modalVisible, setModalVisible] = useState(false);
+
   const classes = useStyles();
   useEffect(() => {
     setLoading(true);
@@ -55,7 +62,7 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
         setLoading(false);
       })
   }, [filterQry])
-
+  
   // useMount(() => {
   //   if (!loans || !loans.length) {
   //     setLoading(true);
@@ -163,16 +170,37 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
           },
         }
       },
+      {
+        label: 'Documents',
+        name: 'dealership_id',
+        options: {
+          filter: false,
+          sort: false,
+          customBodyRender: (value, r) => {
+            return (
+              <Tooltip title="eSign Application">
+                <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setType('application'); setDealershipId(value); setModalVisible(true); }}>
+                  <div>
+                    <ESignIcon width={24} />
+                  </div>
+                </IconButton>
+              </Tooltip>
+            )
+          }
+        }
+      }
     ]
-  }, []);
+  }, [loans]);
 
   const options = {
     // filterType: 'checkbox',
     selectableRowsHeader: false,
     selectableRows: 'none',
     isRowSelectable: () => false,
-    onRowClick: (rowData, { dataIndex }) => {
-      onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'loan_approval')
+    onCellClick: (colData, cellMeta) => {
+      if (cellMeta.colIndex !== 8) {
+        onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'loan_approval')
+      }
     },
     customSort: (data, dataIndex, rowIndex) => {
       let dateIndex = 5
@@ -195,6 +223,14 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
       }
+      <SignRequestLayout
+        open={modalVisible}
+        dealershipId={dealershipId}
+        loanId={loanId}
+        type={type}
+        title={'eSign Application Form'}
+        onClose={() => setModalVisible(false)}
+      />
     </div>
   )
 }

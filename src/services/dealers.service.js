@@ -149,6 +149,62 @@ export const deleteProfileDoc = (data, dealership_id, dealer_id, type) => {
       })
   });
 }
+
+export const getCreditInfo = (dealershipId) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${URL.dealership}/${dealershipId}/credit/info`)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const updateCreditInfo = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${URL.dealership}/${id}/credit/info`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, data, profile_status }) => {
+        if (status === 'SUCCESS') {
+          resolve(profile_status);
+        } else {
+          reject(profile_status);
+        }
+      })
+      .catch(e => {
+        reject(e.profile_status);
+      })
+  });
+}
+
+export const deleteApplicantById = (dealership_id, dealer_id, type) => {
+  let apiURL = type === 'Dealer' ? 'dealers' : type === 'Co-Applicant' ? 'coapplicants': 'guarantors'
+  return new Promise((resolve, reject) => {
+    apiCall(`${apiURL}/${dealership_id}/${dealer_id}`, {
+      method: 'DELETE',
+      body: {is_active: 0}
+    })
+      .then(async ({ res, status, message }) => {
+        if(status === 'SUCCESS') {
+          resolve({ res, message });
+        } else {
+          reject(message)
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
 // export const getSanctionLetterPdf = (loan_id,id) => {
 //   return new Promise((resolve, reject) => {
 //     apiCall(`loans/${loan_id}/${id}/sanction`)

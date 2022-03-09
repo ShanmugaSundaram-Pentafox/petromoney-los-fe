@@ -4,7 +4,6 @@ import CallMadeIcon from '@material-ui/icons/CallMade';
 import CallReceivedIcon from '@material-ui/icons/CallReceived';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { makeStyles } from '@material-ui/styles';
-import moment from 'moment';
 import MUIDataTable from 'mui-datatables';
 import React, { useState, useMemo } from 'react'
 import { useMount } from 'react-use';
@@ -57,11 +56,6 @@ const PassbookDetails = ({ CurrentUser }) => {
         label: 'Date',
         options: {
           filter: false,
-          customBodyRender: value => {
-            return <div style={{ width: 80 }}>
-              {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
-            </div>
-          }
         }
       },
       {

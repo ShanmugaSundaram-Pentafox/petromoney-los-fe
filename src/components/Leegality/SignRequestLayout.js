@@ -140,7 +140,13 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
   }, [dealershipId, loanId, type]);
   const updateSelectedDealers = (selectedStatus, inviteeData) => {
     if (selectedStatus) {
-      setSelectedDealers([...selectedDealers, inviteeData])
+      if(inviteeData?.signatures?.length === 2){
+        let buffer = [...selectedDealers, inviteeData]
+        const result = buffer.filter(d => d?.id !== inviteeData?.id)
+        setSelectedDealers([...result, inviteeData]);
+      } else {
+        setSelectedDealers([...selectedDealers, inviteeData])
+      }
     } else {
       const result = selectedDealers.filter(d => d.id !== inviteeData.id)
       setSelectedDealers(result)
@@ -148,7 +154,13 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
   }
   const updateSelectedCoAppicants = (selectedStatus, inviteeData) => {
     if (selectedStatus) {
-      setSelectedCoAppicants([...selectedCoAppicants, inviteeData])
+      if(inviteeData?.signatures?.length === 2){
+        let buffer = [...selectedCoAppicants, inviteeData]
+        const result = buffer.filter(d=> d?.id !== inviteeData?.id)
+        setSelectedCoAppicants([...result, inviteeData])
+      } else {
+        setSelectedCoAppicants([...selectedCoAppicants, inviteeData])
+      }
     } else {
       const result = selectedCoAppicants.filter(d => d.id !== inviteeData.id)
       setSelectedCoAppicants(result)
@@ -156,7 +168,13 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
   }
   const updateSelectedGuarantors = (selectedStatus, inviteeData) => {
     if (selectedStatus) {
-      setSelectedGuarantors([...selectedGuarantors, inviteeData])
+      if(inviteeData?.signatures?.length === 2){
+        let buffer = [...selectedGuarantors, inviteeData]
+        const result = buffer.filter(d=> d?.id !== inviteeData?.id)
+        setSelectedGuarantors([...result, inviteeData])
+      } else {
+        setSelectedGuarantors([...selectedGuarantors, inviteeData])
+      }
     } else {
       const result = selectedGuarantors.filter(d => d.id !== inviteeData.id)
       setSelectedGuarantors(result)
@@ -231,9 +249,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
       fullWidth
       maxWidth={'md'}
       open={open}
-      onClose={() => {
-        setLoansData({});
-      }}
+      onClose={onClose}
     >
       <DialogTitle disableTypography className={classes.dTitle}>
         {
@@ -260,14 +276,13 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
               </Grid>
             </Grid>
           </DialogContent>
-
         ) : (
           <DialogContent dividers className={classes.content}>
             {
               loading ? (
                 <CircularProgress className="circular-progress-color" variant="determinate" color="green" />
               ) : (loansData?.document_id ? (
-                <LeegalityLayout docId={loansData.document_id} />
+                <LeegalityLayout docId={loansData?.document_id} />
               ) : (
                 <Grid container spacing={2}>
                   {
@@ -453,7 +468,6 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
                     <Box>
                       <Typography variant="h4">Select Invitees</Typography>
                     </Box>
-
                     <Box pt={2}>
                       <Typography variant='body1'>Dealers</Typography>
                       {

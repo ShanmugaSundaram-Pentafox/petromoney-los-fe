@@ -5,7 +5,7 @@ import React from 'react';
 import { useQuery } from 'react-query';
 import { ViewData } from '../../components/CommonComponents/FilePreview';
 import Currency from '../../components/Number/Currency';
-import { getCollectionRemark } from '../../services/users.service';
+import { getCollectionRemarkByLoanId } from '../../services/users.service';
 
 const useStyles = makeStyles(() => ({
   sidePanelFormWrapper: {
@@ -55,10 +55,12 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
-export const CollectionRemarksDrawer = ({callback, rowData = []}) => {
+export const CollectionRemarksDrawer = ({ callback, rowData = [] }) => {
   const classes = useStyles();
-  const { data: remarks=[] } = useQuery('remarks', () => getCollectionRemark(), {refetchOnWindowFocus: false})
-
+  const FetchRemarks = (loan_id) => {
+    const dealershipRemarks = useQuery(['remarks-by-loan-id', loan_id], () => getCollectionRemarkByLoanId(loan_id), { refetchOnWindowFocus: false })
+    return dealershipRemarks;
+  }
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
@@ -94,7 +96,7 @@ export const CollectionRemarksDrawer = ({callback, rowData = []}) => {
               </Grid>
             </Grid>
           </Box>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5, padding: 5 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 16, marginBottom: 8 }}>
             <Typography variant="h6">Due & Overdue</Typography>
           </div>
           <Table>
@@ -113,22 +115,21 @@ export const CollectionRemarksDrawer = ({callback, rowData = []}) => {
             </TableHead>
             <TableBody>
               {
-                                rowData[7]?.map((item, i) => {
-                                  // console.log(item);
-                                  return(
-                                    <TableRow key={i}>
-                                      <TableCell>{item.prospectcode}</TableCell>
-                                      <TableCell><Currency value={item.disb_amt} /></TableCell>
-                                      <TableCell>{item.disb_date}</TableCell>
-                                      <TableCell>{item.duedate}</TableCell>
-                                      <TableCell><Currency value={item.prin_due} /></TableCell>
-                                      <TableCell><Currency value={item.prin_overdue} /></TableCell>
-                                      <TableCell><Currency value={item.int_overdue} /></TableCell>
-                                      <TableCell><Currency value={item.penal_overdue} /></TableCell>
-                                      <TableCell>{item.dpd}</TableCell>
-                                    </TableRow>
-                                  )
-                                })
+                rowData[7]?.map((item, i) => {
+                  return (
+                    <TableRow key={i}>
+                      <TableCell>{item.prospectcode}</TableCell>
+                      <TableCell><Currency value={item.disb_amt} /></TableCell>
+                      <TableCell>{item.disb_date}</TableCell>
+                      <TableCell>{item.duedate}</TableCell>
+                      <TableCell><Currency value={item.prin_due} /></TableCell>
+                      <TableCell><Currency value={item.prin_overdue} /></TableCell>
+                      <TableCell><Currency value={item.int_overdue} /></TableCell>
+                      <TableCell><Currency value={item.penal_overdue} /></TableCell>
+                      <TableCell>{item.dpd}</TableCell>
+                    </TableRow>
+                  )
+                })
               }
             </TableBody>
             <TableFooter>
@@ -145,38 +146,38 @@ export const CollectionRemarksDrawer = ({callback, rowData = []}) => {
               </TableRow>
             </TableFooter>
           </Table>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 30, padding: 7 }}>
-            <Typography variant="h6">Remarks</Typography>
-          </div>
-          <Table style={{width: '35vw'}}>
-            <TableHead>
-              <TableRow>
-                <TableCell>Prospect Code</TableCell>
-                <TableCell>Remark</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {
-                                rowData[7]?.map((item, i) => {
-                                  return(
-                                    <TableRow key={i}>
-                                      <TableCell>{item.prospectcode}</TableCell>
-                                      <TableCell>
-                                        {
-                                                item?.remarks?.map((item, i) => {
-                                                  const rem = remarks?.find(d => d.id === item.id)
-                                                  return(
-                                                    <p style={{paddingTop: 3}} key={i}>{rem?.remarks} {item?.options?.map((item,i) => {return(<span key={i}>{`${Object.values(item)}`}</span>)})}</p>
-                                                  )
-                                                })
-                                        }
-                                      </TableCell>
-                                    </TableRow>
-                                  )
-                                })
-              }
-            </TableBody>
-          </Table>
+          {
+            rowData[7]?.map((item, i) => {
+              const { data, isLoading } = item?.prospectcode && FetchRemarks(item.prospectcode)
+              return (
+                <div key={i} style={{ marginBottom: 20,marginTop:16 }}>
+                  <h4 style={{ marginBottom: 8 }}>Prospect code : {item?.prospectcode}</h4>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Remark</TableCell>
+                        <TableCell>Created By</TableCell>
+                        <TableCell>Created date</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {
+                        !isLoading && data?.map((item, j) => {
+                          return (
+                            <TableRow key={j}>
+                              <TableCell><p key={j}>{item?.remarks_value} <span>{Object.values(item?.details)}</span></p></TableCell>
+                              <TableCell>{item?.last_modified_by_value}</TableCell>
+                              <TableCell>{item?.created_date}</TableCell>
+                            </TableRow>
+                          )
+                        })
+                      }
+                    </TableBody>
+                  </Table>
+                </div>
+              )
+            })
+          }
         </div>
       </div>
       <div className={classes.actionFooter}>

@@ -4,7 +4,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Alert from '@material-ui/lab/Alert';
 import { useFormik } from 'formik';
-import { toString } from 'lodash/toString';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
@@ -153,7 +152,7 @@ const Login = ({ setCurrentUser }) => {
   const generateOTP = () => {
     if(values?.mobile){
       setHelperText(false)
-      getOTP(toString(values.mobile))
+      getOTP(values?.mobile?.toString())
         .then((status, message) => {
           if (status === 'SUCCESS') {
             enqueueSnackbar(`OTP Sent to ${values.mobile}`, {

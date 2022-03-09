@@ -7,7 +7,8 @@ import { useQuery } from 'react-query';
 import Select, { components } from 'react-select'
 import { useMount } from 'react-use';
 import { getAllRegions, getProducts, getZones } from '../../../services/common.service';
-import { getLoanStats } from '../../../services/loans.service';
+import { getCreditStats, getLoanStats } from '../../../services/loans.service';
+import { getTypeOfAccount } from '../../../services/users.service';
 
 const Option = (props) => {
   return (
@@ -152,13 +153,15 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const DashboardFilter = ({ filterQry, setChartData, setTotalLoans }) => {
+const DashboardFilter = ({ filterQry, setChartData, setTotalLoans, filterType, filters }) => {
   const classes = useStyles();
   const [regions, setRegions] = useState([]);
   const [products, setProducts] = useState([]);
   const [selectedRegion, setSelectedRegion] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedProducts, setSelectedProducts] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedZones, setSelectedZones] = useState([{ label: 'ALL', value: 0 }]);
+  const [selectedAccountType, setSelectedAccountType] = useState([{ label: 'ALL', value: 0 }]);
+  const [accountType, setAccountType] = useState();
   const [selectedPeriodType, setSelectedPeriodType] = useState('UTD');
   const [selectedPeriod, setSelectedPeriod] = useState({});
   const [showPicker, setShowPicker] = useState();
@@ -223,30 +226,62 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans }) => {
   }, [selectedZones])
 
   useMount(() => {
-    getProducts()
-      .then(setProducts)
-      .catch(() => null)
+    if(filters.includes('product')) {
+      getProducts()
+        .then(setProducts)
+        .catch(() => null)
+    } 
+    if(filters.includes('account')) {
+      getTypeOfAccount()
+        .then((data) => {
+          setAccountType(
+            data.map(({ id, type_of_account }) => ({
+              label: type_of_account,
+              value: id,
+            }))
+          );
+        })
+        .catch((e) => {
+          console.log(e);
+        })
+    }
   })
 
   useEffect(() => {
-    let zoneId = []
-    selectedZones.forEach(item => zoneId.push(item.value))
-    let productId = []
-    selectedProducts.forEach(item => productId.push(item.value))
-    let regionId = []
-    selectedRegion.forEach(item => regionId.push(item.value))
-    let qry = {
-      region: regionId.toString(),
-      products: productId.toString(),
-      zone: zoneId.toString()
+    let qry = {}
+    if(filters.includes('zone')){
+      let zoneId = []
+      selectedZones.forEach(item => zoneId.push(item.value))
+      qry.zone= zoneId.toString()
+    }
+    if(filters.includes('region')){
+      let regionId = []
+      selectedRegion.forEach(item => regionId.push(item.value))
+      qry.region = regionId.toString()
+    }
+    if(filters.includes('product')) {
+      let productId = []
+      selectedProducts.forEach(item => productId.push(item.value))
+      qry.products = productId.toString()
+    }
+    if(filters.includes('account')) {
+      let accountTypeID = []
+      selectedAccountType.forEach(item => accountTypeID.push(item.value))
+      qry.account = accountTypeID.toString()
     }
     if (selectedPeriod?.from) {
       qry.from = format(selectedPeriod?.from || new Date(), 'yyyy-MM-dd');
       qry.to = format(selectedPeriod?.to || new Date(), 'yyyy-MM-dd');
     }
-    getStats(qry)
-    filterQry(qry)
-  }, [selectedRegion, selectedPeriod, filterQry, selectedProducts, selectedZones])
+    if (filterType === 'Dashboard') {
+      getStats(qry)
+      filterQry(qry)
+    }
+    if (filterType === 'Credit Reload') {
+      getCreditReloadStats(qry)
+      filterQry(qry)
+    }
+  }, [selectedRegion, selectedPeriod, filterQry, selectedProducts, selectedZones, selectedAccountType])
 
   const getStats = (qry) => {
     getLoanStats(qry)
@@ -273,6 +308,19 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans }) => {
       })
   }
 
+  const getCreditReloadStats = (qry) => {
+    getCreditStats(qry)
+      .then(data => {
+        let cdata = [
+          { name: 'Zone', count: selectedZones },
+          { name: 'No.of. New Request', count: data?.new_request?.count},
+          { name: 'Total.Req. Amount', amount: data?.new_request?.amount}
+        ]
+        setChartData(cdata)
+      })
+      .catch(e => console.log(e))
+  }
+
   const onDateRangeClose = () => {
     setSelectedPeriod({
       from: dateRange.startDate,
@@ -285,61 +333,77 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans }) => {
     <Box p={3} borderRadius={4} bgcolor="background.paper" style={{padding: 10}}>
       <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
         <Box style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
-          <Selector title="Zone" options={zones} value={selectedZones} setValue={setSelectedZones} />
-          <Selector title="Region" options={regions} value={selectedRegion} setValue={setSelectedRegion} />
-          <Selector title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} />
+          {
+            filters.includes('zone') &&
+              <Selector title="Zone" options={zones} value={selectedZones} setValue={setSelectedZones} />
+          }
+          {
+            filters.includes('region') &&
+              <Selector title="Region" options={regions} value={selectedRegion} setValue={setSelectedRegion} />
+          }
+          {
+            filters.includes('product') &&
+              <Selector title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} />
+          }
+          {
+            filters.includes('account') &&
+              <Selector title="Account Type" options={accountType} value={selectedAccountType} setValue={setSelectedAccountType} />
+          }
         </Box>
-        <Box>
-          <label style={{ color: 'hsl(0,0%,75%)' }}>Period</label>
-          <div className={classes.filterWrapper}>
-            <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
-            <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
-            <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
-            <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'Y' && 'active'}`} onClick={onDateChange('Y')} onKeyDown>YTD</div>
-            <Tooltip title='Up to Date'>
-              <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')} onKeyDown>UTD</div>
-            </Tooltip>
-            <Tooltip title='Choose custom dates'>
-              <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
-                {
-                  selectedPeriodType === 'Custom' ? (
-                    `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`
-                  ) : 'Custom'
-                }
+        {
+          filters.includes('period') &&
+            <Box>
+              <label style={{ color: 'hsl(0,0%,75%)' }}>Period</label>
+              <div className={classes.filterWrapper}>
+                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
+                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
+                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
+                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'Y' && 'active'}`} onClick={onDateChange('Y')} onKeyDown>YTD</div>
+                <Tooltip title='Up to Date'>
+                  <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')} onKeyDown>UTD</div>
+                </Tooltip>
+                <Tooltip title='Choose custom dates'>
+                  <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
+                    {
+                      selectedPeriodType === 'Custom' ? (
+                        `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`
+                      ) : 'Custom'
+                    }
+                  </div>
+                </Tooltip>
               </div>
-            </Tooltip>
-          </div>
-          <Popover
-            id={showPicker ? 'dp' : undefined}
-            open={Boolean(showPicker)}
-            anchorEl={showPicker}
-            onClose={onDateRangeClose}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'center',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'center',
-            }}
-          >
-            <DateRange
-              ranges={[dateRange]}
-              onChange={onDatePickerChange}
-              maxDate={new Date()}
-              months={2}
-              direction="horizontal"
-              // scroll={{ enabled: true }}
-              minDate={subDays(new Date(), 1095)}
-            />
-            <Box p={1} textAlign='right'>
-              <Button variant="contained" color="primary" onClick={onDateRangeClose}>
-                Apply
-              </Button>
-              {/* <button className={`${classes.filterItem} active`} onClick={onDateRangeClose}>Apply</button> */}
+              <Popover
+                id={showPicker ? 'dp' : undefined}
+                open={Boolean(showPicker)}
+                anchorEl={showPicker}
+                onClose={onDateRangeClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'center',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'center',
+                }}
+              >
+                <DateRange
+                  ranges={[dateRange]}
+                  onChange={onDatePickerChange}
+                  maxDate={new Date()}
+                  months={2}
+                  direction="horizontal"
+                  // scroll={{ enabled: true }}
+                  minDate={subDays(new Date(), 1095)}
+                />
+                <Box p={1} textAlign='right'>
+                  <Button variant="contained" color="primary" onClick={onDateRangeClose}>
+                    Apply
+                  </Button>
+                  {/* <button className={`${classes.filterItem} active`} onClick={onDateRangeClose}>Apply</button> */}
+                </Box>
+              </Popover>
             </Box>
-          </Popover>
-        </Box>
+        }
       </Box>
     </Box>
   )

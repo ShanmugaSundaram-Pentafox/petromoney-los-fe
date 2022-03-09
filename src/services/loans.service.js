@@ -112,8 +112,6 @@ export const getAllRegionDpd = () => {
 
 export const getLoanBookData = () => {
   return new Promise((resolve, reject) => {
-    // reject("");
-    // return;
     apiCall(URL.loanBook)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
@@ -309,6 +307,46 @@ export const getLoanRejectReason = () => {
 export const getProjectionReport = () => {
   return new Promise((resolve, reject) => {
     apiCall('projection')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const getCreditStats = (qryStr = {}) => {
+  return new Promise((resolve, reject) => {
+    const { region, from, to, account, zone } = qryStr;
+    let qry = []
+    let apiUrl = 'credit/reload/stats';
+    if (zone && zone !=='0') qry.push(`zone=${zone}`)
+    if (region && region !=='0') qry.push(`region=${region}`)
+    if (account && account !=='0') qry.push(`account_type=${account}`)
+    if (from && to) qry.push(`from=${from}&to=${to}`)
+    if(qry.length) apiUrl += '?' + qry.join('&')
+    apiCall(apiUrl)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data[0] || []);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const getDpdReportData = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('app/dpd/report')
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data);

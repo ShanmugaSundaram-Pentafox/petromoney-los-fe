@@ -147,7 +147,7 @@ const LoanInfo = ({
                           money
                           number
                           fullWidth={false}
-                          value={row?.amount_approved}
+                          defaultValue={row?.amount_approved}
                           onChange={e => {
                             updateNewLoanInfo({
                               ...newInfo,

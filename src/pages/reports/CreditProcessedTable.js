@@ -46,6 +46,7 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
         name: 'dealership_id',
         label: 'Dealership ID',
         options: {
+          filter: false,
           customBodyRender: (value) => {
             return <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value}</div>
           }
@@ -55,6 +56,7 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
         name: 'name',
         label: 'Name',
         options: {
+          filter: false,
           customBodyRender: (value) => {
             return <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value?.toUpperCase()}</div>
           }
@@ -89,8 +91,12 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
         label: 'Account Type'
       },
       {
+        name: 'created_by',
+        label: 'Created by'
+      },
+      {
         name: 'last_modified_by',
-        label: 'Submitted or Modified by',
+        label: 'Processed by',
         options: {
           customBodyRender: (value, tableMeta) => {
             return <div>{value}</div>
@@ -104,8 +110,8 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
           customBodyRender: (value, tableMeta) => {
             if (value === 'Declined') {
               return (
-                tableMeta?.rowData[9] ? (
-                  <Tooltip title={tableMeta.rowData[9]}>
+                tableMeta?.rowData[10] ? (
+                  <Tooltip title={tableMeta.rowData[10]}>
                     <div><CustomToken label={value} variant='error' icon='cross' /></div>
                   </Tooltip>
                 ) : (
@@ -115,8 +121,8 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
             }
             else if (value === 'Disbursed') {
               return (
-                tableMeta?.rowData[9] ? (
-                  <Tooltip title={tableMeta.rowData[9]}>
+                tableMeta?.rowData[10] ? (
+                  <Tooltip title={tableMeta.rowData[10]}>
                     <div><CustomToken label={value} variant='success' icon='tick' /></div>
                   </Tooltip>
                 ) : (
@@ -141,7 +147,7 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
     rowsPerPage: 15,
     rowsPerPageOptions: [15, 20, 30],
     setRowProps: (row, dataIndex) => {
-      if(row[11]){
+      if(row[12]){
         return{ style: {backgroundColor: '#ffec9bba'}}
       }
     },

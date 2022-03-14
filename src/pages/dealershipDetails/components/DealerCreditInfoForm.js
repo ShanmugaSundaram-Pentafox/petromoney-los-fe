@@ -64,8 +64,6 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
               horizontal: 'right',
             },
             variant: 'error',
-            autoHideDuration: 1500,
-            style:{marginTop: 22, marginRight: 15}
           })
           setCibilLoading({icon:true, loading:false, success:false,error:true})
         })

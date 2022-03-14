@@ -119,3 +119,41 @@ export const addCreditReport = (data, currentUser, id) => {
       })
   });
 }
+export const getCibilReport = (applicantId, rowId, PAN, applicantType) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`cibil/${applicantId}/${rowId}/${PAN}?type=${applicantType}`)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data[0] || {});
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  })
+}
+export const updatePanApplicant = (applicantType, dealership_id, currentUser, formData, id) => {
+  const apiUrl = `${applicantType === 'Dealer' && URL.dealers || applicantType === 'Coapplicant' && URL.coApplicants || applicantType === 'Guarantor' && URL.guarantor}/${dealership_id}/${id}`
+  return new Promise((resolve, reject) => {
+    fetch(`${URL.base}${apiUrl}`,{
+      method: 'POST',
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${currentUser.token}`
+      }
+    })
+      .then(res => res.json())
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

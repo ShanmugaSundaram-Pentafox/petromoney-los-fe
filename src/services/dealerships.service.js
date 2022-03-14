@@ -588,3 +588,19 @@ export const getCalculateDeviation = (id, body) => {
       })
   });
 }
+
+export const validateId = (action, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${action}/${id}`)
+      .then(res => {
+        if (res.status === 'SUCCESS') {
+          resolve(res.data[0] || [])
+        } else {
+          reject(res.message)
+        }
+      })
+      .catch(({ message }) => {
+        reject(message)
+      })
+  });
+}

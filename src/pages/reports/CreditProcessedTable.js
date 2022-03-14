@@ -6,6 +6,7 @@ import React, { useState, useMemo } from 'react';
 import { useMount } from 'react-use';
 import CreditReloadForm from './CreditReloadForm';
 import CreditReloadRemarks from './CreditReloadRemarks';
+import CustomToken from '../../components/CommonComponents/CustomToken';
 import Currency from '../../components/Number/Currency';
 import usePageTitle from '../../hooks/usePageTitle';
 import {
@@ -14,16 +15,13 @@ import {
 
 
 const CreditProcessedTable = ({ data, currentUser, view }) => {
-  const [tableData, setTableData] = useState([]);
-  const [processedData, setProcessedData] = useState([]);
   const [accountType, setAccountType] = useState();
   const [rowData, setRowData] = useState();
   const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [statusModal, setStatusModal] = useState(false);
-  const [selectedTab, setSelectedTab] = useState('processed');
-  const [dealershipData, setDealershipData] = useState();
 
+  usePageTitle('Credit Reload');
 
   useMount(() => {
     getTypeOfAccount()
@@ -41,7 +39,7 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
         console.log(e);
       })
   });
-  usePageTitle('Credit Report');
+  
   const columns = useMemo(() => {
     return [
       {
@@ -108,10 +106,10 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
               return (
                 tableMeta?.rowData[9] ? (
                   <Tooltip title={tableMeta.rowData[9]}>
-                    <div style={{ color: '#FF5C58' }}>{value}</div>
+                    <div><CustomToken label={value} variant='error' icon='cross' /></div>
                   </Tooltip>
                 ) : (
-                  <div style={{ color: '#FF5C58'}}>{value}</div>
+                  <CustomToken label={value} variant='error' icon='cross' />
                 )
               )
             }
@@ -119,20 +117,21 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
               return (
                 tableMeta?.rowData[9] ? (
                   <Tooltip title={tableMeta.rowData[9]}>
-                    <div>{value}</div>
+                    <div><CustomToken label={value} variant='success' icon='tick' /></div>
                   </Tooltip>
                 ) : (
-                  <div>{value}</div>
+                  <CustomToken label={value} variant='success' icon='tick' />
                 )
               )
             }
             else
-              return value
+              return <CustomToken label={value} variant='warn' />
           }
         }
       },
       { name: 'remarks', options: { display: 'excluded', filter: false } },
-      { name: 'role_name', options: { display: 'excluded', filter: false } }
+      { name: 'role_name', options: { display: 'excluded', filter: false } },
+      { name: 'is_withheld', options: { display: 'excluded', filter: false}}
     ];
   }, [data]);
   const options = {
@@ -141,6 +140,11 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
     selectableRows: 'none',
     rowsPerPage: 15,
     rowsPerPageOptions: [15, 20, 30],
+    setRowProps: (row, dataIndex) => {
+      if(row[11]){
+        return{ style: {backgroundColor: '#ffec9bba'}}
+      }
+    },
     customToolbar: () => {
       return (
         <Button
@@ -198,7 +202,6 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
           <CreditReloadForm
             callback={() => setOpenModal(false)}
             data={accountType}
-            dealershipData={dealershipData}
             currentUser={currentUser}
             view={view}
           />

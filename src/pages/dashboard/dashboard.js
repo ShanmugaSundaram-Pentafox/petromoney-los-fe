@@ -1,4 +1,4 @@
-import { Table, TableBody, TableCell, TableRow, Typography } from '@material-ui/core';
+import { Typography, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
@@ -11,15 +11,14 @@ import styled from 'styled-components';
 import DashboardFilter from './components/DashboardFilter';
 import LoansTable from './components/LoansTable';
 import LoanStats from './components/LoanStats';
-import { PieChartData, BarChartData, GroupChartData, LineChart } from './components/MetricsComponents';
+import { PieChartData, BarChartData, GroupChartData } from './components/MetricsComponents';
 import Currency from '../../../src/components/Number/Currency';
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import LoanBookTable from '../../components/Tables/LoanBookTable';
-import { permissionCheck } from '../../components/UserCan/UserCan'
-import { rulesList } from '../../config/userRules'
 import usePageTitle from '../../hooks/usePageTitle';
 import { getDealerDetails } from '../../services/dealers.service';
 import { getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd, getProjectionReport, getOpportunities } from '../../services/loans.service';
+// import { getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd } from '../../services/loans.service';
 
 const currencyFormat = (value) => {
   const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumSignificantDigits: 8 }).format(value)
@@ -37,22 +36,13 @@ function createCustomHTMLContent({ label, data }) {
   `;
 }
 
-const CustomToolTip = (date, day, amount, shortAmt) => {
-  return`
-  <div style='padding: 7px; width: 220px'>
-    <h3>${date} - ${day}</h3>
-    <p style='font-size: 12px; margin-top: 3px'>Due Amount: <strong>${currencyFormat(amount)} (${shortAmt} Cr)</strong></p>
-  </div>
-  `
-}
-
 const arrangeData = (res) => {
   const result = res.reduce((temp, item, i) => {
     if (i === 0) {
       const firstRow = item.data?.map(r => r.label);
       temp[i] = ['', { role: 'tooltip', type: 'string', p: { html: true } }, ...firstRow];
     }
-    const dataRow = item.data.map(r => r.value);
+    const dataRow = item.data.map(r => r.value || 0);
     temp[i + 1] = [item.label, createCustomHTMLContent(item), ...dataRow];
     return temp;
   }, [])
@@ -116,7 +106,8 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   const [omcData, setOmcData] = useState([]);
   const [RegionData, setRegionData] = useState([]);
   const [filterQry, setFilterQry] = useState();
-  const [opportunity, setOpportunity] = useState({})
+  const [opportunity, setOpportunity] = useState()
+  console.log(opportunity);
   const [LineChartData, setLineChartData] = useState();
   const [projectionTableData, setProjectionTableData] = useState();
 
@@ -128,28 +119,29 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   useMount(() => {
     getOpportunities()
       .then(data => {
-        setOpportunity({
-          approved_amount:[['','Current','Projection'],['Approved Amount', parseFloat(data?.current?.amount_approved), parseFloat(data?.projection?.amount_approved)]],
-          average_amount:[['','Current','Projection'],['Avg. Amount', parseFloat(data?.current?.average_amount), parseFloat(data?.projection?.average_amount)]],
-          count:[['','Current','Projection'],['Leads', parseInt(data?.current?.leads), parseInt(data?.projection?.leads)],['Convertion', parseInt(data?.current?.convertion_count), parseInt(data?.projection?.convertion_count)],['Rejection', parseInt(data?.current?.rejection_count), parseInt(data?.projection?.rejection_count)]],
-          average_time_taken:[['','Current','Projection'],['Avg. Time Taken *(Convertion Count Considering 10 Employees)', parseInt(data?.current?.average_time_taken), parseInt(data?.projection?.average_time_taken)]],
-        })
+        setOpportunity(data)
+        // setOpportunity({
+        //   approved_amount:[['','Current','Projection'],['Approved Amount', parseFloat(data?.current?.amount_approved), parseFloat(data?.projection?.amount_approved)]],
+        //   average_amount:[['','Current','Projection'],['Avg. Amount', parseFloat(data?.current?.average_amount), parseFloat(data?.projection?.average_amount)]],
+        //   count:[['','Current','Projection'],['Leads', parseInt(data?.current?.leads), parseInt(data?.projection?.leads)],['Convertion', parseInt(data?.current?.convertion_count), parseInt(data?.projection?.convertion_count)],['Rejection', parseInt(data?.current?.rejection_count), parseInt(data?.projection?.rejection_count)]],
+        //   average_time_taken:[['','Current','Projection'],['Avg. Time Taken *(Convertion Count Considering 10 Employees)', parseInt(data?.current?.average_time_taken), parseInt(data?.projection?.average_time_taken)]],
+        // })
       })
       .catch(e => console.log(e))
     
-    getProjectionReport()
-      .then(data => {
-        setProjectionTableData(data)
-        let testData = data.reduce((temp, item, i) => {
-          if (i === 0) {
-            temp[i] = ['Date', 'Due Amount', { role: 'tooltip', type: 'string', p: { html: true }}];
-          }
-          temp[i+1] = [`${item.due_date.split('-')[0]}/${item.due_date.split('-')[1]}`,item.due_amount ,CustomToolTip(item.due_date, item.short_day, item.due_amount, item.short_amount)]
-          return temp
-        }, [])
-        setLineChartData(testData);
-      })
-      .catch(e => console.log(e))
+    // getProjectionReport()
+    //   .then(data => {
+    //     setProjectionTableData(data)
+    //     let testData = data.reduce((temp, item, i) => {
+    //       if (i === 0) {
+    //         temp[i] = ['Date', 'Due Amount', { role: 'tooltip', type: 'string', p: { html: true }}];
+    //       }
+    //       temp[i+1] = [`${item.due_date.split('-')[0]}/${item.due_date.split('-')[1]}`,item.due_amount ,CustomToolTip(item.due_date, item.short_day, item.due_amount, item.short_amount)]
+    //       return temp
+    //     }, [])
+    //     setLineChartData(testData);
+    //   })
+    //   .catch(e => console.log(e))
 
     getAllOmcDpd()
       .then((res) => {
@@ -255,6 +247,8 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                       filterQry={setFilterQry}
                       setChartData={setChartData}
                       setTotalLoans={setTotalLoans}
+                      filterType='Dashboard'
+                      filters={['zone', 'region', 'product', 'period']}
                     />
                   </Grid>
                 )
@@ -292,7 +286,61 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                       {ls2_metrices.length ? <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion} /> : <Paper className={classes.noData}>No Data Found. Check if EOD has been completed</Paper>}
                     </DataCharts>
                   </Grid>
-                  <Grid item md={12} style={{display: 'flex'}}>
+                  <Grid item md={12} component={Paper}>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Leeds</TableCell>
+                          <TableCell>Convertion Count</TableCell>
+                          <TableCell>Amount Approved</TableCell>
+                          <TableCell>Avg. Amount</TableCell>
+                          <TableCell>Avg. Time Taken</TableCell>
+                          <TableCell>Rejection Count</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        <TableRow>
+                          {
+                            opportunity && Object.keys(opportunity?.current).map((key) => {
+                              return <TableCell>{opportunity?.current[key]}</TableCell>
+                              // console.log(key)
+                            })
+                          }
+                        </TableRow>
+                        <TableRow>
+                          {
+                            opportunity && Object.keys(opportunity?.projection).map((key) => {
+                              return <TableCell>{opportunity?.projection[key]}</TableCell>
+                              // console.log(key)
+                            })
+                          }
+                        </TableRow>
+                      </TableBody>
+                      <TableBody>
+                        {/* <TableHead>
+                          <TableRow>
+                            <TableCell>Leeds</TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell>Convertion Count</TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell>Amount Aproved</TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell>Average Amount</TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell>Avg. Time Taken</TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell>Rejection Count</TableCell>
+                          </TableRow>
+                        </TableHead> */}
+                      </TableBody>
+                    </Table>  
+                  </Grid>
+                  {/* <Grid item md={12} style={{display: 'flex'}}>
                     <Grid item md={6}>
                       <BarChartData daysChartData={opportunity?.approved_amount} height='150px' title="Opportunities" />
                       <BarChartData daysChartData={opportunity?.average_amount} height='160px' yAxis='Amount(in Rupees)' title=""/>
@@ -301,7 +349,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                       <BarChartData daysChartData={opportunity?.count} height='220px' legend={true} />
                       <BarChartData daysChartData={opportunity?.average_time_taken} height='130px' />
                     </Grid>
-                  </Grid>
+                  </Grid> */}
                   <div style={{ width: '50%' }}>
                     <Grid item md={12} style={{ margin: '10px' }}>
                       <DataCharts>
@@ -335,52 +383,6 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                       }
                     </DataCharts>
                   </Grid>
-                  {
-                    permissionCheck(currentUser.role_name, rulesList.projection_report) &&
-                      <>
-                        <Grid item md={12}>
-                          <Paper>
-                            <LineChart chartData={LineChartData} title="Projection Graph" xAxis="Date" />
-                            <div className={classes.horizondalTable}>
-                              <Table>
-                                <TableBody>
-                                  <TableRow>
-                                    <TableCell className={classes.tableHead}><strong>Date</strong></TableCell>
-                                    {
-                                    projectionTableData?.map((item, i) => {
-                                      return(
-                                        <TableCell key={i} className={classes.item}>{item.due_date}</TableCell>
-                                      )
-                                    })
-                                    }
-                                  </TableRow>
-                                  <TableRow>
-                                    <TableCell className={classes.tableHead}><strong>Day</strong></TableCell>
-                                    {
-                                    projectionTableData?.map((item, i) => {
-                                      return(
-                                        <TableCell key={i} className={classes.item}>{item.day}</TableCell>
-                                      )
-                                    })
-                                    }
-                                  </TableRow>
-                                  <TableRow>
-                                    <TableCell className={classes.tableHead}><strong>Due Amount</strong></TableCell>
-                                    {
-                                    projectionTableData?.map((item, i) => {
-                                      return(
-                                        <TableCell key={i} className={classes.item}>{currencyFormat(item.due_amount)}</TableCell>
-                                      )
-                                    })
-                                    }
-                                  </TableRow>
-                                </TableBody>
-                              </Table>
-                            </div>
-                          </Paper>
-                        </Grid>
-                      </>
-                  }
                   <Grid item xs={12}>
                     <LoanBookTable title={'Loan Book'} currentUser={currentUser} />
                   </Grid>

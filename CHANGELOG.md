@@ -2,6 +2,74 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.10.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.10.0...v2.10.1) (2022-02-28)
+
+
+### Bug Fixes
+
+* **delete:** auto close model on delete success ([832bd87](https://gitlab.com/vignesh3/petromall-fe/commit/832bd8750e6a541f45dc446e2ba32a5e74f7f30f))
+* disb amt editable ([d604202](https://gitlab.com/vignesh3/petromall-fe/commit/d60420285e982740220571fb2da37a2e87a1ccac))
+* **OTP-login:** user OTP login ([d23d54d](https://gitlab.com/vignesh3/petromall-fe/commit/d23d54deb43b998798a3981922c725abe4ca4557))
+* Validation Fixes and leegality icon fixes ([198d6d5](https://gitlab.com/vignesh3/petromall-fe/commit/198d6d528373d57d9295e1b7ef989612d94f9bed))
+
+## [2.10.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.9.0...v2.10.0) (2022-02-22)
+
+
+### Features
+
+* **delete-applicant:** option to delete applicants in dealership ([060e419](https://gitlab.com/vignesh3/petromall-fe/commit/060e4197e7ea0e89238ebf6108c93b89032d29d6))
+
+
+### Bug Fixes
+
+* **pending-approval:** submitted form in pending approval ([973c2a7](https://gitlab.com/vignesh3/petromall-fe/commit/973c2a7e4e453b22cff5099e510d21114a835887))
+* **sign-form:** sign form close issue ([a78a9c7](https://gitlab.com/vignesh3/petromall-fe/commit/a78a9c7cbc8fff5953c7c33dd1ad697097911a47))
+
+## [2.9.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.8.3...v2.9.0) (2022-02-16)
+
+
+### Features
+
+* **credit-withheld:** highlight withheld loans ([2106355](https://gitlab.com/vignesh3/petromall-fe/commit/210635510cf8c8b7117c07b828f7e3a2c5384ae3))
+
+
+### Bug Fixes
+
+* **dealer-passbook:** invalid date format ([dfb9668](https://gitlab.com/vignesh3/petromall-fe/commit/dfb9668d34cd70016b9ab8877fda5efc9439f750))
+* **disb-details:** date format and prefilled data ([0de4625](https://gitlab.com/vignesh3/petromall-fe/commit/0de4625c5941161a318fc2048d76517184301d72))
+* **name-regex:** allow spaces in name ([00f86c2](https://gitlab.com/vignesh3/petromall-fe/commit/00f86c2a918957dc215ab25f49cb026344991853))
+* **styles:** update table style ([87c863b](https://gitlab.com/vignesh3/petromall-fe/commit/87c863bf89767f947265cfc828585a38c208ed43))
+
+### [2.8.3](https://gitlab.com/vignesh3/petromall-fe/compare/v2.8.2...v2.8.3) (2022-01-28)
+
+
+### Bug Fixes
+
+* merge msg ([5e26082](https://gitlab.com/vignesh3/petromall-fe/commit/5e26082241794f0de70eedd898eb2eb0ba5023f3))
+* Merge Msg ([4257dc9](https://gitlab.com/vignesh3/petromall-fe/commit/4257dc9acea82442a614749205dfaf1a060782ff))
+
+### [2.8.2](https://gitlab.com/vignesh3/petromall-fe/compare/v2.8.1...v2.8.2) (2022-01-26)
+
+
+### Bug Fixes
+
+* **credit-reload:** remove unused code ([399304a](https://gitlab.com/vignesh3/petromall-fe/commit/399304ad2cc7f56460aede014bc9061fc6c5b3c2))
+* Merge Message ([678ab4b](https://gitlab.com/vignesh3/petromall-fe/commit/678ab4b5c83056233129677af146dca19060cc46))
+* merge msg ([2fcfea5](https://gitlab.com/vignesh3/petromall-fe/commit/2fcfea582ed37b9818f19ae9f8213d4763faf654))
+* merge msg ([2c393d3](https://gitlab.com/vignesh3/petromall-fe/commit/2c393d352846a24711dae83c3ee73a55d371e154))
+* **pd:** add rule to credit head ([155beeb](https://gitlab.com/vignesh3/petromall-fe/commit/155beeb9fd71a6ce99aafb697afa10b495bad3f5))
+
+### [2.8.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.8.0...v2.8.1) (2022-01-17)
+
+
+### Bug Fixes
+
+* conflict fix ([71365b4](https://gitlab.com/vignesh3/petromall-fe/commit/71365b42a223d40e873e9048cc44918e58dfb3ef))
+* dashboard filter conflict fix ([457a3f4](https://gitlab.com/vignesh3/petromall-fe/commit/457a3f4d5f2ff4ea7e49ea1ea3669de2bce35b1e))
+* **Dealer:** Value check error in dealer login ([8cf8f84](https://gitlab.com/vignesh3/petromall-fe/commit/8cf8f841a179d3e579616324e7e2fefd5c5f3813))
+* **lms:** change chart default value to 0 ([287a117](https://gitlab.com/vignesh3/petromall-fe/commit/287a117bc54222e46fc85234d9e8304fdfefe35a))
+* **pd:** show all modules ([0e5b735](https://gitlab.com/vignesh3/petromall-fe/commit/0e5b735cca69424c39463b06c3172d33c7925a4c))
+
 ## [2.8.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.7.4...v2.8.0) (2022-01-09)
 
 

@@ -1,11 +1,9 @@
-import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import AddIconButon from './AddIcon';
 import CoApplicantsTable from './CoApplicantsTable';
-import CreditInfoSideWrapper from './CreditInfoSideWrapper';
 import DealerEditSideWrapper from './DealerEditSideWrapper';
 import DealersTable from './DealersTable';
 import GuarantorsTable from './GuarantorsTable';
@@ -128,6 +126,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   }
 
   const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit);
+  const deletable = permissionCheck(currentUser.role_name, rulesList.applicant_delete)
   return (
     <>
       {
@@ -138,6 +137,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
       <DealersTable
         id={id}
         editable={editable}
+        deletable={deletable}
         data={dealerData}
         formType={formType}
         rowData={rowData}
@@ -147,6 +147,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         editFormClose={editFormClose}
         dealersClickRow={dealersClickRow}
         onClickAddMenu={onClickAddMenu}
+        currentUser={currentUser}
         showDealerEditForm={showDealerEditForm} />
 
       <CoApplicantsTable
@@ -161,6 +162,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         editFormClose={editFormClose}
         dealersClickRow={dealersClickRow}
         onClickAddMenu={onClickAddMenu}
+        currentUser={currentUser}
         showDealerEditForm={showDealerEditForm} />
 
       <GuarantorsTable
@@ -175,6 +177,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         editFormClose={editFormClose}
         dealersClickRow={dealersClickRow}
         onClickAddMenu={onClickAddMenu}
+        currentUser={currentUser}
         showDealerEditForm={showDealerEditForm} />
       
       <Drawer
@@ -196,27 +199,6 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         </div>
       </Drawer>
 
-      {
-        editable && (dealerData.length != 0 || coApplicantsData.length != 0 || guarantorsData.length != 0) && (
-          <div className={classes.footer}>
-            <div className={classes.actionButtons}>
-              <Button color="primary" variant="contained" size="small" onClick={() => openCloseCreditForm()}>View/Edit Credit Information</Button>
-            </div>
-            <Drawer
-              anchor="right"
-              open={showCreditForm}
-              variant="temporary"
-            >
-              <div className={classes.sidePanelWrapper}>
-                {
-                  !dealerData?.isLoading && !coApplicantsData?.isLoading &&
-                    <CreditInfoSideWrapper dealershipId={id} data={[...dealerData, ...coApplicantsData, ...guarantorsData]} currentUser={currentUser} onClose={() => openCloseCreditForm()} />
-                }
-              </div>
-            </Drawer>
-          </div>
-        )
-      }
     </>
   )
 }

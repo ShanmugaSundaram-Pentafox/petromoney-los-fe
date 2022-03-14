@@ -17,7 +17,7 @@ import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import LoanBookTable from '../../components/Tables/LoanBookTable';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getDealerDetails } from '../../services/dealers.service';
-import { getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd, getProjectionReport, getOpportunities } from '../../services/loans.service';
+import { getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd, getOpportunities } from '../../services/loans.service';
 // import { getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd } from '../../services/loans.service';
 
 const currencyFormat = (value) => {
@@ -286,11 +286,13 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                       {ls2_metrices.length ? <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion} /> : <Paper className={classes.noData}>No Data Found. Check if EOD has been completed</Paper>}
                     </DataCharts>
                   </Grid>
-                  <Grid item md={12} component={Paper}>
+                  <Grid item md={12} style={{padding: 0, margin: 10, borderRadius: 3}} component={Paper}>
+                    <Typography variant='h5' style={{margin: 16}}>Opportunity</Typography>
                     <Table>
                       <TableHead>
                         <TableRow>
-                          <TableCell>Leeds</TableCell>
+                          <TableCell></TableCell>
+                          <TableCell>Leads</TableCell>
                           <TableCell>Convertion Count</TableCell>
                           <TableCell>Amount Approved</TableCell>
                           <TableCell>Avg. Amount</TableCell>
@@ -300,43 +302,33 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                       </TableHead>
                       <TableBody>
                         <TableRow>
-                          {
+                          <TableCell>
+                            <TableHead>Current</TableHead>
+                          </TableCell>
+                          <TableCell>{opportunity?.current?.leads}</TableCell>
+                          <TableCell>{opportunity?.current?.convertion_count}</TableCell>
+                          <TableCell><Currency value={opportunity?.current?.amount_approved}/></TableCell>
+                          <TableCell><Currency value={opportunity?.current?.average_amount}/></TableCell>
+                          <TableCell>{opportunity?.current?.average_time_taken}</TableCell>
+                          <TableCell>{opportunity?.current?.rejection_count}</TableCell>
+                          {/* {
                             opportunity && Object.keys(opportunity?.current).map((key) => {
                               return <TableCell>{opportunity?.current[key]}</TableCell>
                               // console.log(key)
                             })
-                          }
+                          } */}
                         </TableRow>
                         <TableRow>
-                          {
-                            opportunity && Object.keys(opportunity?.projection).map((key) => {
-                              return <TableCell>{opportunity?.projection[key]}</TableCell>
-                              // console.log(key)
-                            })
-                          }
+                          <TableCell>
+                            <TableHead>Projection</TableHead>
+                          </TableCell>
+                          <TableCell>{opportunity?.projection?.leads}</TableCell>
+                          <TableCell>{opportunity?.projection?.convertion_count}</TableCell>
+                          <TableCell><Currency value={opportunity?.projection?.amount_approved} /></TableCell>
+                          <TableCell><Currency value={opportunity?.projection?.average_amount} /></TableCell>
+                          <TableCell>{opportunity?.projection?.average_time_taken}</TableCell>
+                          <TableCell>{opportunity?.projection?.rejection_count}</TableCell>
                         </TableRow>
-                      </TableBody>
-                      <TableBody>
-                        {/* <TableHead>
-                          <TableRow>
-                            <TableCell>Leeds</TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell>Convertion Count</TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell>Amount Aproved</TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell>Average Amount</TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell>Avg. Time Taken</TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell>Rejection Count</TableCell>
-                          </TableRow>
-                        </TableHead> */}
                       </TableBody>
                     </Table>  
                   </Grid>

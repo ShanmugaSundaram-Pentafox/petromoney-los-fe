@@ -1,4 +1,4 @@
-import { Typography, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
@@ -17,7 +17,7 @@ import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import LoanBookTable from '../../components/Tables/LoanBookTable';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getDealerDetails } from '../../services/dealers.service';
-import { getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd, getOpportunities } from '../../services/loans.service';
+import { getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd } from '../../services/loans.service';
 // import { getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd } from '../../services/loans.service';
 
 const currencyFormat = (value) => {
@@ -107,7 +107,6 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   const [RegionData, setRegionData] = useState([]);
   const [filterQry, setFilterQry] = useState();
   const [opportunity, setOpportunity] = useState()
-  console.log(opportunity);
   const [LineChartData, setLineChartData] = useState();
   const [projectionTableData, setProjectionTableData] = useState();
 
@@ -117,17 +116,17 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   }
 
   useMount(() => {
-    getOpportunities()
-      .then(data => {
-        setOpportunity(data)
-        // setOpportunity({
-        //   approved_amount:[['','Current','Projection'],['Approved Amount', parseFloat(data?.current?.amount_approved), parseFloat(data?.projection?.amount_approved)]],
-        //   average_amount:[['','Current','Projection'],['Avg. Amount', parseFloat(data?.current?.average_amount), parseFloat(data?.projection?.average_amount)]],
-        //   count:[['','Current','Projection'],['Leads', parseInt(data?.current?.leads), parseInt(data?.projection?.leads)],['Convertion', parseInt(data?.current?.convertion_count), parseInt(data?.projection?.convertion_count)],['Rejection', parseInt(data?.current?.rejection_count), parseInt(data?.projection?.rejection_count)]],
-        //   average_time_taken:[['','Current','Projection'],['Avg. Time Taken *(Convertion Count Considering 10 Employees)', parseInt(data?.current?.average_time_taken), parseInt(data?.projection?.average_time_taken)]],
-        // })
-      })
-      .catch(e => console.log(e))
+    // getOpportunities()
+    //   .then(data => {
+    //     setOpportunity(data)
+    //     // setOpportunity({
+    //     //   approved_amount:[['','Current','Projection'],['Approved Amount', parseFloat(data?.current?.amount_approved), parseFloat(data?.projection?.amount_approved)]],
+    //     //   average_amount:[['','Current','Projection'],['Avg. Amount', parseFloat(data?.current?.average_amount), parseFloat(data?.projection?.average_amount)]],
+    //     //   count:[['','Current','Projection'],['Leads', parseInt(data?.current?.leads), parseInt(data?.projection?.leads)],['Convertion', parseInt(data?.current?.convertion_count), parseInt(data?.projection?.convertion_count)],['Rejection', parseInt(data?.current?.rejection_count), parseInt(data?.projection?.rejection_count)]],
+    //     //   average_time_taken:[['','Current','Projection'],['Avg. Time Taken *(Convertion Count Considering 10 Employees)', parseInt(data?.current?.average_time_taken), parseInt(data?.projection?.average_time_taken)]],
+    //     // })
+    //   })
+    //   .catch(e => console.log(e))
     
     // getProjectionReport()
     //   .then(data => {
@@ -286,7 +285,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                       {ls2_metrices.length ? <PieChartData ls2Data={ls2_metrices} totalForRegion={totalForRegion} /> : <Paper className={classes.noData}>No Data Found. Check if EOD has been completed</Paper>}
                     </DataCharts>
                   </Grid>
-                  <Grid item md={12} style={{padding: 0, margin: 10, borderRadius: 3}} component={Paper}>
+                  {/* <Grid item md={12} style={{padding: 0, margin: 10, borderRadius: 3}} component={Paper}>
                     <Typography variant='h5' style={{margin: 16}}>Opportunity</Typography>
                     <Table>
                       <TableHead>
@@ -311,12 +310,6 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                           <TableCell><Currency value={opportunity?.current?.average_amount}/></TableCell>
                           <TableCell>{opportunity?.current?.average_time_taken}</TableCell>
                           <TableCell>{opportunity?.current?.rejection_count}</TableCell>
-                          {/* {
-                            opportunity && Object.keys(opportunity?.current).map((key) => {
-                              return <TableCell>{opportunity?.current[key]}</TableCell>
-                              // console.log(key)
-                            })
-                          } */}
                         </TableRow>
                         <TableRow>
                           <TableCell>
@@ -331,7 +324,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                         </TableRow>
                       </TableBody>
                     </Table>  
-                  </Grid>
+                  </Grid> */}
                   {/* <Grid item md={12} style={{display: 'flex'}}>
                     <Grid item md={6}>
                       <BarChartData daysChartData={opportunity?.approved_amount} height='150px' title="Opportunities" />

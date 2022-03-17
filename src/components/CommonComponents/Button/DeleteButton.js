@@ -17,13 +17,13 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const DeleteButton = ({style, label='Delete', alertText='Do you really want to delete?', deleteAction, deleteModal, setDeleteModal, id, buttonType='button', autoHide=false}) => {
+const DeleteButton = ({style, label='Delete', alertText='Do you really want to delete?', deleteAction, deleteModal, setDeleteModal, id, buttonType='button', autoHide=false, ...props}) => {
   const classes = useStyles();
   return (
     <>
       {
         buttonType === 'button' &&
-          <Button variant='outlined' size='small' style={style} className={classes.redBtn} onClick={() => setDeleteModal(id ? {id:id} : true)}>{label}</Button>
+          <Button variant='outlined' size='small' style={style} className={classes.redBtn} onClick={() => setDeleteModal(id ? {id:id} : true)} {...props}>{label}</Button>
       }
       {
         buttonType === 'icon' &&

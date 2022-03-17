@@ -1,7 +1,4 @@
-import { Grid, Typography } from '@material-ui/core';
-import { Drawer } from '@material-ui/core';
-import { Button } from '@material-ui/core';
-import { CircularProgress } from '@material-ui/core';
+import { Grid, Typography, Button, Drawer, CircularProgress } from '@material-ui/core';
 import DialogContent from '@material-ui/core/DialogContent';
 import Tooltip from '@material-ui/core/Tooltip';
 import { makeStyles } from '@material-ui/styles';
@@ -35,6 +32,8 @@ import AddNewOutletDetailsForm from '../PDRForms/AddNewOutletDetailsForm';
 import AddOmcDetailsForm from '../PDRForms/AddOmcDetailsForm';
 import AddOtherDetailsForm from '../PDRForms/AddOtherDetailsForm';
 import AddReferenceForm from '../PDRForms/AddReferenceForm';
+import EmptySidewrapper from '../../../components/CommonComponents/EmptySidewrapper';
+import PdfViewer from '../../../components/CommonComponents/PdfViewer/PdfViewer';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -113,7 +112,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
   const [openIncomeForm, setOpenIncomeForm] = useState(false)
   const [omcEdit, setOmcEdit] = useState(false)
   const [omcData, setOmcData] = useState()
-  const [outletData, setOutletData] = useState()
+  const [outletData, setOutletData] = useState(false)
   const [referenceData, setReferenceData] = useState([])
   const [addlData, setAddlData] = useState([])
   const [infrastructureDetails, setInfrastructureDetails] = useState()
@@ -217,7 +216,8 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       })
   }
   const credit_permission = permissionCheck(currentUser.role_name, rulesList.credit_view);
-  const sales_permission = permissionCheck(currentUser.role_name, rulesList.pdr_view)
+  const sales_permission = permissionCheck(currentUser.role_name, rulesList.pdr_view);
+  const externalView = permissionCheck(currentUser.role_name, rulesList.external_view);
   return (
 
     <div>
@@ -362,7 +362,11 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         onClose={() => setOpenOmcForm(false)}
         variant="temporary"
       >
-        <AddOmcDetailsForm dealer_id={id} isEdit={omcEdit ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={omcData} />
+        {
+          externalView && !omcEdit ?
+          <EmptySidewrapper title="OMC Details" /> :
+          <AddOmcDetailsForm dealer_id={id} isEdit={omcEdit ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={omcData} editable={externalView} />
+        }
       </Drawer>
       <Drawer
         anchor="right"
@@ -370,7 +374,11 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         onClose={() => setOpenOutletForm(false)}
         variant="temporary"
       >
-        <AddNewOutletDetailsForm dealer_id={id} isEdit={outletData ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={outletData} />
+        {
+          externalView && !outletData ?
+          <EmptySidewrapper title="Outlet Details" /> :
+          <AddNewOutletDetailsForm dealer_id={id} isEdit={outletData ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={outletData} editable={externalView} />
+        }
       </Drawer>
       <Drawer
         anchor="right"
@@ -378,7 +386,11 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         onClose={() => setOpenBusinessForm(false)}
         variant="temporary"
       >
-        <AddBusinessDetailsForm dealer_id={id} isEdit={businessData ? null : 'Edit'} callback={handleEdit} data={businessData} currentUser={currentUser} />
+        {
+          externalView && !businessData ?
+          <EmptySidewrapper title="Business Details" /> :
+          <AddBusinessDetailsForm dealer_id={id} isEdit={businessData ? null : 'Edit'} callback={handleEdit} data={businessData} currentUser={currentUser} editable={externalView} />
+        }
       </Drawer>
       <Drawer
         anchor="right"
@@ -386,7 +398,11 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         onClose={() => setOpenInfrastructureForm(false)}
         variant="temporary"
       >
-        <AddInfrastructureDetailsForm dealer_id={id} isEdit={infrastructureDetails ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={infrastructureDetails} />
+        {
+          externalView && !infrastructureDetails ?
+          <EmptySidewrapper title="Infrastructure Details" /> :
+          <AddInfrastructureDetailsForm dealer_id={id} isEdit={infrastructureDetails ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={infrastructureDetails} editable={externalView} />
+        }
       </Drawer>
       <Drawer
         anchor="right"
@@ -394,7 +410,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         onClose={() => setOpenAssetForm(false)}
         variant="temporary"
       >
-        <AddAssetDetailsForm dealer_id={id} isEdit={assetDetails ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={assetDetails} />
+        <AddAssetDetailsForm dealer_id={id} isEdit={assetDetails ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={assetDetails} editable={externalView} />
       </Drawer>
       <Drawer
         anchor="right"
@@ -402,7 +418,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         onClose={() => setOpenBankingForm(false)}
         variant="temporary"
       >
-        <AddBankingDetailsForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} />
+        <AddBankingDetailsForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} editable={externalView} />
       </Drawer>
       <Drawer
         anchor="right"
@@ -410,7 +426,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         onClose={() => setOpenOtherForm(false)}
         variant="temporary"
       >
-        <AddOtherDetailsForm dealer_id={id} isEdit={addlData ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={addlData} />
+        <AddOtherDetailsForm dealer_id={id} isEdit={addlData ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={addlData} editable={externalView} />
       </Drawer>
       <Drawer
         anchor="right"
@@ -418,7 +434,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         onClose={() => setOpenLoanForm(false)}
         variant="temporary"
       >
-        <AddLoanDetailsForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} />
+        <AddLoanDetailsForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} editable={externalView} />
       </Drawer>
       <Drawer
         anchor="right"
@@ -426,7 +442,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         onClose={() => setOpenReferenceForm(false)}
         variant="temporary"
       >
-        <AddReferenceForm dealer_id={id} isEdit={referenceData ? null : 'Edit'} data={referenceData} callback={handleEdit} currentUser={currentUser} />
+        <AddReferenceForm dealer_id={id} isEdit={referenceData ? null : 'Edit'} data={referenceData} callback={handleEdit} currentUser={currentUser} editable={externalView} />
       </Drawer>
       <Drawer
         anchor="right"
@@ -434,7 +450,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         onClose={() => setOpenIncomeForm(false)}
         variant="temporary"
       >
-        <AddIncomeDetailsForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} />
+        <AddIncomeDetailsForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} editable={externalView} />
       </Drawer>
       <Drawer
         anchor="right"
@@ -442,7 +458,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         onClose={() => setOpenCreditPdForm(false)}
         variant="temporary"
       >
-        <AddCreditPdForm dealer_id={id} isEdit='Edit' data={dealershipData} callback={handleEdit} currentUser={currentUser} />
+        <AddCreditPdForm dealer_id={id} isEdit='Edit' data={dealershipData} callback={handleEdit} currentUser={currentUser} editable={externalView} />
       </Drawer>
     </div >
   );

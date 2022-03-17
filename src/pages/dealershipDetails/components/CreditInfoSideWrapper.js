@@ -14,6 +14,8 @@ import * as Yup from 'yup';
 import DealerCreditInfoForm from './DealerCreditInfoForm';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import { getCreditInfo, updateCreditInfo } from '../../../services/dealers.service';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
 
 
 
@@ -79,6 +81,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
   const [editMode, setEditMode] = useState(true);
   const [cibilEditMode, setCibilEditMode] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const editable = permissionCheck(currentUser.role_name, rulesList.external_view);
 
   React.useEffect(() => {
     getCreditInfo(dealershipId)
@@ -210,7 +213,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
               </Grid>
             </div>
             :
-            <DealerCreditInfoForm values={values} errors={errors} onChange={handleChange} dealerData={data} cibilEditMode={cibilEditMode} currentUser={currentUser} setFieldValue={setFieldValue} />
+            <DealerCreditInfoForm values={values} errors={errors} onChange={handleChange} dealerData={data} cibilEditMode={cibilEditMode} currentUser={currentUser} setFieldValue={setFieldValue} editable={editable} />
         }
       </div>
 
@@ -219,29 +222,18 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
         <Snackbar open={apiStatus.show} autoHideDuration={2000} onClose={() => setApiStatus({ show: false })}>
           <Alert severity={apiStatus.type}>{apiStatus.message}</Alert>
         </Snackbar>
-        <div className={classes.actionButtonsWrapper}>
-          {
-            apiData?.cibil_score &&
-              <Button
-                className={clsx(classes.btn, classes.btnSuccess)}
-                variant={cibilEditMode ? 'contained' : 'outlined'}
-                onClick={cibilEditMode ? handleSubmit : handleEdit}>{cibilEditMode === true ? 'Save' : 'Edit'}</Button>
-          }
-          {/* {
-            !loading ? (
-              <>
+        {
+          !editable &&
+          <div className={classes.actionButtonsWrapper}>
+            {
+              apiData?.cibil_score &&
                 <Button
                   className={clsx(classes.btn, classes.btnSuccess)}
-                  variant={editMode ? 'contained' : 'outlined'}
-                  onClick={editMode ? handleSubmit : handleEdit}>{editMode === true ? 'Save' : 'Edit'}</Button>
-              </>
-            ) : (
-              <div style={{display: 'flex', justifyContent: 'flex-end', width: '90%', margin: '0 auto'}}>
-                <CircularProgress size={30}/>
-              </div>
-            )
-          } */}
-        </div>
+                  variant={cibilEditMode ? 'contained' : 'outlined'}
+                  onClick={cibilEditMode ? handleSubmit : handleEdit}>{cibilEditMode === true ? 'Save' : 'Edit'}</Button>
+            }
+          </div>
+        }
       </div>
     </div>
   )

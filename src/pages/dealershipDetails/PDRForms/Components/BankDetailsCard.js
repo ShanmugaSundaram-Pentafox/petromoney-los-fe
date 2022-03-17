@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const BankDetailsCard = ({ id, data, editBankDetails }) => {
+const BankDetailsCard = ({ id, data, editBankDetails, editable }) => {
   const queryClient = useQueryClient()
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles()
@@ -105,6 +105,7 @@ const BankDetailsCard = ({ id, data, editBankDetails }) => {
               onCustom={() => setBankVerify(item)}
               tokenLabel='Verify Bank'
               customIcon={<AccountBalanceOutlinedIcon color='primary' />}
+              action={!editable}
             >
               <span className={classNames(classes.token, item?.bank_verified ? classes.tokenSuccess : classes.tokenError)}><CustomToken variant={item?.bank_verified ? 'success' : 'error'} label={item?.bank_verified ? 'verified' : 'unverified'} icon={item?.bank_verified ? 'tick' : 'cross'}/></span>
               <Grid container spacing={2} style={{marginTop: 4}}>
@@ -123,6 +124,7 @@ const BankDetailsCard = ({ id, data, editBankDetails }) => {
                 </Grid>
               </Grid>
               {
+                !editable &&
                 item?.bank_verified ?
                 <span style={{position: 'absolute', bottom: 15, left: 15}}>
                   <Typography variant='body2' style={{color: 'rgb(0,0,0,0.4)'}}>

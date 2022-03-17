@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const StatementTable = ({ addStatement, callback, id }) => {
+const StatementTable = ({ addStatement, callback, id, currentUser }) => {
   const classes = useStyles()
   const [RowData, setRowData] = useState()
   const { enqueueSnackbar } = useSnackbar();
@@ -139,7 +139,7 @@ const StatementTable = ({ addStatement, callback, id }) => {
         onClose={() => {callback({open: false}); setRowData()}}
         variant="temporary"
       >
-        <StatementForm callback={() => {callback(); setRowData()}} rowData={RowData} addStatement={addStatement} updateStatement={updateStatement} deleteStatement={deleteStatement} id={id} />
+        <StatementForm callback={() => {callback(); setRowData()}} rowData={RowData} addStatement={addStatement} updateStatement={updateStatement} deleteStatement={deleteStatement} id={id} currentUser={currentUser} />
       </Drawer>   
     </>
   )

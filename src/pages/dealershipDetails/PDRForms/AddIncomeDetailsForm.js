@@ -57,7 +57,8 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   typography: {
-    marginBottom: 12
+    marginBottom: 12,
+    marginTop: 12
   },
   typo: {
     marginTop: 12,
@@ -67,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
+const AddIncomeDetailsForm = ({ dealer_id, callback, editable }) => {
   const [businessTypes, setBusinessTypes] = useState([{}, {}, {}, {}, {}]);
   const [incomeData, setIncomeData] = useState([]);
   const [expenseData, setExpenseData] = useState([]);
@@ -194,6 +195,7 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
                           <PreviewCard
                             onEdit={() => { handleIncomeEdit(item, i) }}
                             onDelete={() => handleIncomeDelete(item, i)}
+                            action={!editable}
                           >
                             <Grid container spacing={2}>
                               <Grid item md={6}>
@@ -228,6 +230,7 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
                           <PreviewCard
                             onEdit={() => { handleExpenseEdit(item, i) }}
                             onDelete={() => { handleExpenseDelete(item, i) }}
+                            action={!editable}
                           >
                             <Grid container spacing={2}>
                               <Grid item md={6}>
@@ -267,22 +270,25 @@ const AddIncomeDetailsForm = ({ dealer_id, callback }) => {
               Back
             </Button>
           </div>
-          <div>
-            <Button
-              variant="contained"
-              className={clsx(classes.btn, classes.editButton)}
-              onClick={() => { setAddIncome(true); setAddExpense(false) }}
-            >
-              Add income
-            </Button>
-            <Button
-              variant="contained"
-              className={clsx(classes.btn, classes.editButton)}
-              onClick={() => { setAddExpense(true); setAddIncome(false) }}
-            >
-              Add expense
-            </Button>
-          </div>
+          {
+            !editable &&
+            <div>
+              <Button
+                variant="contained"
+                className={clsx(classes.btn, classes.editButton)}
+                onClick={() => { setAddIncome(true); setAddExpense(false) }}
+              >
+                Add income
+              </Button>
+              <Button
+                variant="contained"
+                className={clsx(classes.btn, classes.editButton)}
+                onClick={() => { setAddExpense(true); setAddIncome(false) }}
+              >
+                Add expense
+              </Button>
+            </div>
+          }
         </div>
       </div>
     </div >

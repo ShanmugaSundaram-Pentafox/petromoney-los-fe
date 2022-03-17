@@ -108,7 +108,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
+const AddReferenceForm = ({ data, dealer_id, isEdit, callback, editable }) => {
   const [addNew, setAddNew] = useState(data ? false : true)
   const [editRow, setEditRow] = useState(false);
 
@@ -271,20 +271,6 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
                       inputProps={{ className: classes.input }}
                     />
                   </Grid>
-                  {/* <Grid item md={6}>
-                    <TextInput
-                      select
-                      {...inputProps}
-                      labelText="Remarks"
-                      name="remarks"
-                      value={values.remarks}
-                      error={errors.remarks}
-                      helperText={errors.remarks}
-                    >
-                      <option value="POSITIVE">Positive</option>
-                      <option value="NEGATIVE">Negative</option>
-                    </TextInput>
-                  </Grid> */}
                 </Grid>
                 <div className={classes.actionFoot}>
                   <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -319,6 +305,7 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
                       <PreviewCard
                         onEdit={() => { editRefRow(item, i) }}
                         onDelete={() => deleteRefRow(item, i)}
+                        action={!editable}
                       >
                         <Grid container spacing={2}>
                           <Grid item md={6}>
@@ -327,7 +314,6 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
                           </Grid>
                           <Grid item md={6}>
                             <ViewData title="Name" value={item.name} />
-                            {/* <ViewData title="Remarks" value={item.remarks} /> */}
                           </Grid>
                         </Grid>
                       </PreviewCard>
@@ -352,7 +338,8 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
               Back
             </Button>
           </div>
-          <div>
+          {
+            !editable &&
             <Button
               variant="contained"
               color="primary"
@@ -361,7 +348,7 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback }) => {
             >
               Add Reference
             </Button>
-          </div>
+          }
         </div>
       </div>
     </div >

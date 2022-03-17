@@ -5,8 +5,6 @@ import { makeStyles } from '@material-ui/styles';
 import { useFormik } from 'formik';
 import isEqual from 'lodash/isEqual';
 import React, { useState } from 'react';
-// import DealerCreditInfoForm from './DealerCreditInfoForm';
-// import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
 import { useQuery } from 'react-query';
 import CreditReportForm from './CreditReportForm';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
@@ -101,33 +99,12 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
   const classes = useStyles();
   const [readOnly, setReadOnly] = useState(true);
   const [loading, setLoading] = useState(false);
-  // const [apiData, setApiData] = useState({});
   const [apiStatus, setApiStatus] = useState({});
   const { data: apiData, refetch: getReport } = useQuery(['credit-report', dealershipId], () => getCreditReport(dealershipId))
-
-  // const getCreditReport = () => {
-  //   apiCall(`${URL.dealership}/${dealershipId}/credit/report`)
-  //     .then(({ status, data }) => {
-  //       if (status === "SUCCESS") {
-  //         setApiData(data[0] || {});
-  //         setValues(data[0] || {})
-  //       } else {
-  //         // reject(data.message);
-  //       }
-  //     })
-  //     .catch(e => {
-  //       // reject(e.message);
-  //     })
-  // }
-
-  // useEffect(() => {
-  //   getCreditReport();
-  // }, [])
 
   const { values, errors, handleChange, handleSubmit, handleReset, setValues } = useFormik({
     initialValues: { ...apiData },
     onSubmit: values => {
-      // console.log('Form Values >> ', values);
       if (isEqual(values, apiData)) {
         setApiStatus({ type: 'info', message: 'No changes made! Kindly make any change before submitting.' })
         setTimeout(() => {
@@ -137,8 +114,6 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
       }
       setLoading(true);
       setApiStatus({});
-      // dealership/<int:dealership_id>/credit/info
-      // return null;
       const id = apiData.id || undefined;
       let reqData = {};
       if (id) {
@@ -150,11 +125,9 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
       })
         .then(({ status, message }) => {
           if (status == 'SUCCESS') {
-            // getCreditReport();
             getReport();
             setApiStatus({ type: 'success', message: message || 'Report details updated' })
             setLoading(false);
-            // handleReset();
           }
           else {
             setApiStatus({ type: 'error', message: data.message || 'Unable to save the details. Please try again later' })
@@ -171,12 +144,12 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
   });
 
   const editable = permissionCheck(currentUser.role_name, rulesList.dealership_credit_edit)
+  const viewOnly = permissionCheck(currentUser.role_name, rulesList.external_view)
 
   return (
     <div className={classes.sidePanelFormWrapper}>
       <div className={classes.title}>
         <Typography variant="h4">Financial Report</Typography>
-        {/* <CloseRoundedIcon onClick={onClose} /> */}
       </div>
 
       <div className={classes.sidePanelFormContentWrapper}>
@@ -191,8 +164,8 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
           currentUser={currentUser}
           onSubmit={handleSubmit}
           loading={loading}
+          viewOnly={viewOnly}
         />
-        {/* <Alert severity={'success'}>Thanks for submitting credit report</Alert> */}
       </div>
       <div className={classes.actionFooter}>
         <Divider />
@@ -201,27 +174,6 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
             <Alert severity={apiStatus.type}>{apiStatus.message}</Alert>
           )
         }
-        {/* <div className={classes.actionButtonsWrapper}>
-          <div>
-            <Button
-              variant="contained"
-              startIcon={<NavigateBeforeRoundedIcon />}
-              disabled={loading}
-              onClick={onClose}>Back</Button>
-          </div>
-          <div>
-            {
-              editable && (
-                <Button
-                  variant="contained"
-                  className={clsx(classes.btn, classes.btnSuccess)}
-                  startIcon={<NavigateNextRoundedIcon />}
-                  disabled={loading}
-                  onClick={loading ? () => null : handleSubmit}>{loading ? <CircularProgress size={20} /> : `Save`}</Button>
-              )
-            }
-          </div>
-        </div> */}
       </div>
     </div>
   )

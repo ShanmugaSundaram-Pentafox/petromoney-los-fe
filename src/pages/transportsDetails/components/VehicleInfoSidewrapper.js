@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export const VehicleInfoSidewrapper = ({currentUser, callbackClose, vehicleInfo, setImageModal, handleUpload, handleDocDelete, id, handleLoanDelete, getServiceStatus, openServiceModal, serviceData, tracking}) => {
+export const VehicleInfoSidewrapper = ({currentUser, callbackClose, vehicleInfo, setImageModal, handleUpload, handleDocDelete, id, handleLoanDelete, getServiceStatus, openServiceModal, serviceData, tracking, editable}) => {
   const [collapse, setCollapse] = useState(true)
   const [docs, setDocs] = useState({})
   const [services, setServices] = useState({})
@@ -103,7 +103,9 @@ export const VehicleInfoSidewrapper = ({currentUser, callbackClose, vehicleInfo,
               <TableRow>
                 <TableCell>Name</TableCell>
                 <TableCell>Doc</TableCell>
-                <TableCell>Action</TableCell>
+                {
+                  !editable && <TableCell>Action</TableCell>
+                }
               </TableRow>
             </TableHead>
             <TableBody>
@@ -116,21 +118,24 @@ export const VehicleInfoSidewrapper = ({currentUser, callbackClose, vehicleInfo,
                         <Typography variant='body1'><strong>{row?.file_name || row.file_path?.split('/')[row.file_path?.split('/').length - 1] || '-'}</strong></Typography>
                       </Button>
                     </TableCell>
-                    <TableCell>
-                      <Button
-                        size="small"
-                        onClick={() => handleUpload(row, vehicleInfo)}
-                      >
-                        Upload
-                      </Button>
-                      {
-                        row.file_path && (
-                          <Button size="small" onClick={() => handleDocDelete(row, vehicleInfo)}>
-                            Delete
-                          </Button>
-                        )
-                      }
-                    </TableCell>
+                    {
+                      !editable && 
+                      <TableCell>
+                        <Button
+                          size="small"
+                          onClick={() => handleUpload(row, vehicleInfo)}
+                        >
+                          Upload
+                        </Button>
+                        {
+                          row.file_path && (
+                            <Button size="small" onClick={() => handleDocDelete(row, vehicleInfo)}>
+                              Delete
+                            </Button>
+                          )
+                        }
+                      </TableCell>
+                    }
                   </TableRow>
                 ))
               }
@@ -144,7 +149,9 @@ export const VehicleInfoSidewrapper = ({currentUser, callbackClose, vehicleInfo,
               <TableRow>
                 <TableCell>Type</TableCell>
                 <TableCell>Amount</TableCell>
-                <TableCell>Action</TableCell>
+                {
+                  !editable && <TableCell>Action</TableCell>
+                }
               </TableRow>
             </TableHead>
             <TableBody>
@@ -155,11 +162,14 @@ export const VehicleInfoSidewrapper = ({currentUser, callbackClose, vehicleInfo,
                     <TableCell>
                       <Currency value={row.loan_amount} />
                     </TableCell>
-                    <TableCell>
-                      <Button size="small" onClick={() => handleLoanDelete(row)}>
-                        Delete
-                      </Button>
-                    </TableCell>
+                    {
+                      !editable && 
+                      <TableCell>
+                        <Button size="small" onClick={() => handleLoanDelete(row)}>
+                          Delete
+                        </Button>
+                      </TableCell>
+                    }
                   </TableRow>
                 ))
               }
@@ -219,9 +229,12 @@ export const VehicleInfoSidewrapper = ({currentUser, callbackClose, vehicleInfo,
           }
         </Box>
       </div>
-      <div className={classes.actionButtonsWrapper}>
-        <NewVehicleLoanAction vehicleId={vehicleInfo?.vehicle_id} currentUser={currentUser} callback={saveAndCloseNewLoan} />
-      </div>
+      {
+        !editable &&
+        <div className={classes.actionButtonsWrapper}>
+          <NewVehicleLoanAction vehicleId={vehicleInfo?.vehicle_id} currentUser={currentUser} callback={saveAndCloseNewLoan} />
+        </div>
+      }
     </div>
   )
 }

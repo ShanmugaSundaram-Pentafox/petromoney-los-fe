@@ -1,6 +1,4 @@
-import { Button, Typography } from '@material-ui/core';
-import { Tooltip } from '@material-ui/core';
-import { Grid } from '@material-ui/core';
+import { Tooltip, Grid, Button, Typography } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -16,8 +14,11 @@ import SearchIcon from '@material-ui/icons/Search';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
+import { useQueryClient } from 'react-query';
 import { useMount } from 'react-use';
+import TransferList from '../../../components/CommonComponents/TransferList';
 import TextInput from '../../../components/TextInput/TextInput';
+import { logger } from '../../../config/logger';
 import {
   addAssetType,
   addBusinessType,
@@ -45,22 +46,9 @@ import {
   updateRegionById,
   updateStateById,
 } from '../../../services/common.service';
+import { getStatesMapById, getUnmappedRegions, updateRegionMapById } from '../../../services/master.service';
 
 const useStyles = makeStyles((theme) => ({
-  '@global': {
-    '*::-webkit-scrollbar': {
-      backgroundColor: '#fff',
-      width: '16px',
-    },
-    '*::-webkit-scrollbar-track': {
-      backgroundColor: '#fff'
-    },
-    '*::-webkit-scrollbar-thumb': {
-      backgroundColor: '#babac0',
-      borderRadius: '16px',
-      border: '4px solid #fff'
-    }
-  },
   sidePanelTitle: {
     padding: '24px 16px',
     display: 'flex',
@@ -69,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: '0 1px 4px -3px #333',
   },
   root: {
-    minWidth: 500,
+    minWidth: '35vw',
     display: 'flex',
     flexDirection: 'column',
     padding: 10,
@@ -77,7 +65,6 @@ const useStyles = makeStyles((theme) => ({
     height: '80%',
     borderRadius: 5,
     overflow: 'hidden'
-
   },
   rooting: {
     position: 'absolute',
@@ -187,6 +174,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
   const classes = useStyles();
+  const queryClient = useQueryClient()
   const [data, setData] = useState([]);
   const [value, setValue] = useState();
   const [openEditForm, setOpenEditForm] = useState(false);
@@ -201,7 +189,26 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
   const [openAssetForm, setOpenAssetForm] = useState(false);
   const [assetValue, setAssetValue] = useState([{label: '', type: ''}]);
   const [states, setStates] = useState();
+  const [selectedItem, setSelectedItem] = useState([])
   const {enqueueSnackbar} = useSnackbar();
+
+  const updateMapping = (action) => {
+    let body = {region_id: selectedItem}
+    updateRegionMapById(rowData?.id, body, action)
+    .then(res => {
+      setSelectedItem([])
+      queryClient.invalidateQueries('mapped')
+      queryClient.invalidateQueries('unmapped')
+      enqueueSnackbar(res, {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'success',
+      })
+    })
+    .catch(e => logger(e))
+  }
 
   useMount(() => {  
     if(title === 'OMCs'){
@@ -858,19 +865,25 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                         {item.name}
                       </Typography>
                       <div>
+                        <Tooltip title='Edit'>
+                          <IconButton
+                            className={classes.btn}
+                            size='small'
+                            onClick={() => {
+                              handleClose()
+                              {
+                                title === 'Asset Type' ? setOpenAssetForm(true) : setOpenEditForm(true)
+                              }
+                              editItem(item, title);
+                            }}
+                          >
+                            <EditIcon fontSize='small' className={classes.edt} />
+                          </IconButton>
+                        </Tooltip>
                         {
-                          setStateBtn ? (
+                          setStateBtn && (
                             item.is_active ? (
                               <>
-                                <Tooltip title='Delete'>
-                                  <IconButton className={classes.btn} size='small' onClick={() => {
-                                    handleClose()
-                                    setOpenDeleteForm(true);
-                                    deleteItem(item, title);
-                                  }}>
-                                    <DeleteIcon fontSize='small' />
-                                  </IconButton>
-                                </Tooltip>
                                 <Tooltip title='Deactivate'>
                                   <IconButton
                                     className={classes.btn}
@@ -887,15 +900,6 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                               </>
                             ) : (
                               <>
-                                <Tooltip title='Delete'>
-                                  <IconButton className={classes.btn} size='small' onClick={() => {
-                                    handleClose()
-                                    setOpenDeleteForm(true);
-                                    deleteItem(item, title);
-                                  }}>
-                                    <DeleteIcon fontSize='small' />
-                                  </IconButton>
-                                </Tooltip>
                                 <Tooltip title='Activate'>
                                   <IconButton
                                     className={classes.btn}
@@ -925,25 +929,17 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                                 </Tooltip>
                               </>
                             )
-                          ) : (
-                            <Tooltip title='Delete'>
-                              <IconButton
-                                className={classes.btn}
-                                size='small'
-                                onClick={() => {
-                                  handleClose()
-                                  setOpenDeleteForm(true);
-                                  deleteItem(item, title);
-                                }}
-                              >
-                                <DeleteIcon
-                                  fontSize='small'
-                                  className={classes.del}
-                                />
-                              </IconButton>
-                            </Tooltip>
                           )
                         }
+                        <Tooltip title='Delete'>
+                          <IconButton className={classes.btn} size='small' onClick={() => {
+                            handleClose()
+                            setOpenDeleteForm(true);
+                            deleteItem(item, title);
+                          }}>
+                            <DeleteIcon fontSize='small' />
+                          </IconButton>
+                        </Tooltip>
                       </div>
                     </div>
                     <Divider className={classes.divider} />
@@ -1006,19 +1002,19 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                           <EditIcon fontSize='small' className={classes.edt} />
                         </IconButton>
                       </Tooltip>
+                      <Tooltip title='Delete'>
+                        <IconButton className={classes.btn} size='small' onClick={() => {
+                          handleClose()
+                          setOpenDeleteForm(true);
+                          deleteItem(item, title);
+                        }}>
+                          <DeleteIcon fontSize='small' />
+                        </IconButton>
+                      </Tooltip>
                       {
-                        setStateBtn ? (
+                        setStateBtn && (
                           item.is_active ? (
                             <>
-                              <Tooltip title='Delete'>
-                                <IconButton className={classes.btn} size='small' onClick={() => {
-                                  handleClose()
-                                  setOpenDeleteForm(true);
-                                  deleteItem(item, title);
-                                }}>
-                                  <DeleteIcon fontSize='small' />
-                                </IconButton>
-                              </Tooltip>
                               <Tooltip title='Deactivate'>
                                 <IconButton
                                   className={classes.btn}
@@ -1035,15 +1031,6 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                             </>
                           ) : (
                             <>
-                              <Tooltip title='Delete'>
-                                <IconButton className={classes.btn} size='small' onClick={() => {
-                                  handleClose()
-                                  setOpenDeleteForm(true);
-                                  deleteItem(item, title);
-                                }}>
-                                  <DeleteIcon fontSize='small' />
-                                </IconButton>
-                              </Tooltip>
                               <Tooltip title='Activate'>
                                 <IconButton
                                   className={classes.btn}
@@ -1073,24 +1060,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                               </Tooltip>
                             </>
                           )
-                        ) : (
-                          <Tooltip title='Delete'>
-                            <IconButton
-                              className={classes.btn}
-                              size='small'
-                              onClick={() => {
-                                handleClose()
-                                setOpenDeleteForm(true);
-                                deleteItem(item, title);
-                              }}
-                            >
-                              <DeleteIcon
-                                fontSize='small'
-                                className={classes.del}
-                              />
-                            </IconButton>
-                          </Tooltip>
-                        )
+                        ) 
                       }   
                     </div>
                   </div>
@@ -1152,6 +1122,10 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                 onChange={handleChange}
               />
             </Grid>
+            {
+              status === 'State' &&
+              <TransferList title='Regions Map' mappedData={() => getStatesMapById(rowData?.id)} unmappedData={getUnmappedRegions} selectedItem={selectedItem} setSelectedItem={setSelectedItem} updateMapping={updateMapping} />
+            }
             <div className={classes.formFooter}>
               <Button
                 onClick={handleClose}
@@ -1289,7 +1263,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
             {
               assetValue.map((x, i) => {
                 return(
-                  <Grid container spacing={2} style={{marginTop: 15, display: 'flex', alignItems: 'center'}}>
+                  <Grid key={i} container spacing={2} style={{marginTop: 15, display: 'flex', alignItems: 'center'}}>
                     <Grid item md={5}>
                       <label style={{ marginBottom: 8 }}>Label</label>
                       <TextField

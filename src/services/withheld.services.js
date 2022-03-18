@@ -34,33 +34,11 @@ export const getAllWithheldRemarks = () => {
       })
   })
 }
-export const updateRemarks = (id, remarks) => {
+export const updateRemarks = (id, body) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/withheld/loans`, {
       method: 'POST',
-      body: {
-        remarks_id: remarks
-      }
-    })
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          resolve(message);
-        } else {
-          reject(message);
-        }
-      })
-      .catch(e => {
-        reject(e.message);
-      })
-  });
-}
-export const addNewRemarks = (id, remarks) => {
-  return new Promise((resolve, reject) => {
-    apiCall(`dealership/${id}/withheld/loans`, {
-      method: 'POST',
-      body: {
-        remarks: remarks
-      }
+      body
     })
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {

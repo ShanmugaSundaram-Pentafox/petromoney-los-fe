@@ -9,6 +9,7 @@ import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useMount } from 'react-use';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
+import PdfViewer from '../../../components/CommonComponents/PdfViewer/PdfViewer';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { ReactComponent as AssetIcon } from '../../../icons/assets.svg';
@@ -202,7 +203,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
     setLoading(true)
     downloadPDReport(id)
       .then(res => {
-        setFileCode(res.base64)
+        setFileCode(res.file)
         setOpenDialog(true)
         setLoading(false)
       })
@@ -236,7 +237,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         >
           <div className={classes.dialogBox} >
             <DialogContent className={classes.frame}>
-              <iframe src={`data:application/pdf;base64,${fileCode}`} height="900" width="500" frameBorder="0"></iframe>
+              <iframe src={fileCode} height="900" width="500" frameBorder="0" />
             </DialogContent>
           </div>
         </FormDialog>

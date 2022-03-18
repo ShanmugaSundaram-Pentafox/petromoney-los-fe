@@ -309,8 +309,12 @@ export const getBankDetailsbyID = (id) => {
   });
 }
 export const updateBankDetailsByID = (data, id) => {
+  let url = `dealership/${id}/bank`;
+  if(data?.id) {
+    url += `/${data?.id}`
+  }
   return new Promise((resolve, reject) => {
-    apiCall(`dealership/${id}/bank`, {
+    apiCall(url, {
       method: 'POST',
       body: data,
     })
@@ -327,8 +331,12 @@ export const updateBankDetailsByID = (data, id) => {
   });
 }
 export const deleteBankDetailsByID = (data, id) => {
+  let url = `dealership/${id}/bank`;
+  if(data?.id) {
+    url += `/${data?.id}`
+  }
   return new Promise((resolve, reject) => {
-    apiCall(`dealership/${id}/bank`, {
+    apiCall(url, {
       method: 'DELETE',
       body: data,
     })
@@ -758,10 +766,12 @@ export const deleteOtherDetailsByID = (data, id) => {
 }
 export const bankAccValidate = (AccId=1175155000148626, IFSC='KVBL0001175') => {
   return new Promise((resolve, reject) => {
-    apiCall(`bank/${AccId}/${IFSC}`)
+    apiCall(`bank/${AccId}/${IFSC}`, {
+      method: 'POST'
+    })
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
-          resolve(data[0])
+          resolve(data?.[0])
         } else {
           reject(message)
         }

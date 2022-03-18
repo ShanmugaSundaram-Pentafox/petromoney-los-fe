@@ -2,8 +2,8 @@ import Grid from '@material-ui/core/Grid';
 import { useSnackbar } from 'notistack';
 import { makeStyles } from '@material-ui/styles';
 import classNames from 'classnames';
-import React, {useState} from 'react';
-import PreviewCard from '../../../../components/CommonComponents/Cards/PreviewCard';
+import React, { useState } from 'react';
+import { PreviewCardBank } from '../../../../components/CommonComponents/Cards/PreviewCard';
 import AccountBalanceOutlinedIcon from '@material-ui/icons/AccountBalanceOutlined';
 import CustomToken from '../../../../components/CommonComponents/CustomToken';
 import { ViewData } from '../../../../components/CommonComponents/FilePreview';
@@ -11,7 +11,7 @@ import { bankAccValidate, deleteBankDetailsByID } from '../../../../services/PDR
 import CheckCircleOutlinedIcon from '@material-ui/icons/CheckCircleOutlined';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import { Button, CircularProgress, Collapse, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@material-ui/core';
-import {Alert, AlertTitle} from '@material-ui/lab';
+import { Alert, AlertTitle } from '@material-ui/lab';
 import { useQueryClient } from 'react-query';
 import { logger } from '../../../../config/logger';
 
@@ -80,34 +80,35 @@ const BankDetailsCard = ({ id, data, editBankDetails }) => {
   const verifyBank = () => {
     setVerificationLoading(true)
     bankAccValidate(bankVerify?.account_no, bankVerify?.ifsc)
-    .then(res => {
-      setVerificationLoading(false)
-      queryClient.invalidateQueries('bank-data')
-      setVerifiedDetails(res)
-      setTimeout(() => setBankVerify(), 1000)
-    })
-    .catch(e => {
-      logger(e)
-      setVerifiedDetails(e)
-      setVerificationLoading(false)
-    })
+      .then(res => {
+        setVerificationLoading(false)
+        queryClient.invalidateQueries('bank-data')
+        setVerifiedDetails(res)
+        setTimeout(() => setBankVerify(), 1000)
+      })
+      .catch(e => {
+        logger(e)
+        setVerifiedDetails(e)
+        setVerificationLoading(false)
+      })
   }
 
   return (
-    <Grid container spacing={2} style={{marginTop: 4}}>{
+    <Grid container spacing={2} style={{ marginTop: 4 }}>{
       data.map((item, i) => {
         return (
-          <Grid item md={6}>
-            <PreviewCard
+          <Grid item md={6} key={item.id}>
+            <PreviewCardBank
+              id={item.id}
               onEdit={() => { editBankRow(item, i) }}
               onDelete={() => deleteBankRow(item, i)}
-              customButton={!item?.bank_verified}
+              verified={item?.bank_verified}
               onCustom={() => setBankVerify(item)}
               tokenLabel='Verify Bank'
               customIcon={<AccountBalanceOutlinedIcon color='primary' />}
             >
-              <span className={classNames(classes.token, item?.bank_verified ? classes.tokenSuccess : classes.tokenError)}><CustomToken variant={item?.bank_verified ? 'success' : 'error'} label={item?.bank_verified ? 'verified' : 'unverified'} icon={item?.bank_verified ? 'tick' : 'cross'}/></span>
-              <Grid container spacing={2} style={{marginTop: 4}}>
+              <span className={classNames(classes.token, item?.bank_verified ? classes.tokenSuccess : classes.tokenError)}><CustomToken variant={item?.bank_verified ? 'success' : 'error'} label={item?.bank_verified ? 'verified' : 'unverified'} icon={item?.bank_verified ? 'tick' : 'cross'} /></span>
+              <Grid container spacing={2} style={{ marginTop: 4 }}>
                 <Grid item md={6}>
                   <ViewData title="Acc. Holder's name" value={item.account_name} />
                   <ViewData title="Acc. type" value={item.account_type} />
@@ -116,7 +117,7 @@ const BankDetailsCard = ({ id, data, editBankDetails }) => {
                   <ViewData title="Security" value={item.security} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title="Acc. number" value={item.account_no}/>
+                  <ViewData title="Acc. number" value={item.account_no} />
                   <ViewData title="IFSC code" value={item.ifsc} />
                   <ViewData title="Branch" value={item.bank_branch} />
                   <ViewData title="Acc. since" value={item.account_since} />
@@ -124,13 +125,13 @@ const BankDetailsCard = ({ id, data, editBankDetails }) => {
               </Grid>
               {
                 item?.bank_verified ?
-                <span style={{position: 'absolute', bottom: 15, left: 15}}>
-                  <Typography variant='body2' style={{color: 'rgb(0,0,0,0.4)'}}>
-                    {`Last Verified: ${item?.last_verified_date || '-'}`}
-                  </Typography>
-                </span> : null
+                  <span style={{ position: 'absolute', bottom: 15, left: 15 }}>
+                    <Typography variant='body2' style={{ color: 'rgb(0,0,0,0.4)' }}>
+                      {`Last Verified: ${item?.last_verified_date || '-'}`}
+                    </Typography>
+                  </span> : null
               }
-            </PreviewCard>
+            </PreviewCardBank>
           </Grid>
         )
       })
@@ -141,7 +142,7 @@ const BankDetailsCard = ({ id, data, editBankDetails }) => {
         open={bankVerify}
         onClose={() => {
           !verificationLoading &&
-          setBankVerify(); setVerifiedDetails();
+            setBankVerify(); setVerifiedDetails();
         }}
       >
         <DialogTitle>Account Verification</DialogTitle>
@@ -153,25 +154,25 @@ const BankDetailsCard = ({ id, data, editBankDetails }) => {
           <Collapse in={verificationLoading}>
             <Typography variant='h5' className={classes.text}>
               Verifying your account
-              <CircularProgress size={20} style={{marginLeft: 10}} />
+              <CircularProgress size={20} style={{ marginLeft: 10 }} />
             </Typography>
           </Collapse>
           <Collapse in={verifiedDetails}>
             {
-              verifiedDetails?.details ? 
-              <Typography variant='h5' className={classNames(classes.text, classes.success)} >
-                <CheckCircleOutlinedIcon style={{marginRight: 8}} />
-                Account Verified Successfully
-              </Typography> :
-              <Typography variant='h5' className={classNames(classes.text, classes.error)} >
-                <CancelOutlinedIcon style={{marginRight: 8}} />
-                Account Not Verified
-              </Typography>
+              verifiedDetails?.details ?
+                <Typography variant='h5' className={classNames(classes.text, classes.success)} >
+                  <CheckCircleOutlinedIcon style={{ marginRight: 8 }} />
+                  Account Verified Successfully
+                </Typography> :
+                <Typography variant='h5' className={classNames(classes.text, classes.error)} >
+                  <CancelOutlinedIcon style={{ marginRight: 8 }} />
+                  Account Not Verified
+                </Typography>
             }
           </Collapse>
         </DialogContent>
         <DialogActions>
-          <Button variant='outlined' disabled={verificationLoading} onClick={() => {setBankVerify(); setVerifiedDetails();}}>Cancel</Button>
+          <Button variant='outlined' disabled={verificationLoading} onClick={() => { setBankVerify(); setVerifiedDetails(); }}>Cancel</Button>
           {
             !bankVerify?.bank_verified &&
             <Button variant='contained' disabled={verificationLoading} className={classes.btnSuccess} onClick={() => verifyBank()}>Verify</Button>

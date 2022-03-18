@@ -1,7 +1,7 @@
 import { Button, CircularProgress, Collapse, Typography } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
-import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
+import SpeedOutlinedIcon from '@material-ui/icons/SpeedOutlined';
 import {Alert, AlertTitle} from '@material-ui/lab';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
@@ -45,17 +45,8 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
       getCibilReport(dealership_id, id, pan || panId?.pan, userType?.replace(/[^a-zA-Z ]/g,'')?.toLowerCase())
         .then(data => {
           setCibilLoading({icon:true, loading:false, success:true})
+          queryClient.invalidateQueries('credit')
           setCibilData(data)
-          setFieldValue('cibil_score', data?.cibil_score)
-          setFieldValue('loans_count', data?.loans_count)
-          setFieldValue('closed_loans_count', data?.closed_loans_count)
-          setFieldValue('od_accounts_count', data?.od_accounts_count)
-          setFieldValue('od_amount', data?.od_amount)
-          setFieldValue('current_os_amount', data?.current_os_amount)
-          setFieldValue('no_of_enquiries', data?.no_of_enquiries)
-          setFieldValue('cibil_vintage', data?.cibil_vintage)
-          setFieldValue('is_loan_in_bureau', data?.is_loan_in_bureau)
-          setFieldValue('is_cc_in_cibil', data?.is_cc_in_cibil)
         })
         .catch(e => {
           enqueueSnackbar(e, {
@@ -100,8 +91,8 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
         {
           valid?.icon ?
           valid?.loading ? <CircularProgress size={20}/> :
-          valid?.success ? <CheckCircleOutlineOutlinedIcon fontSize='medium' style={{color:'#4caf50'}} /> :
-          <CancelOutlinedIcon fontSize='medium' color='error' /> : null
+          valid?.success ? 
+            <CheckCircleOutlineOutlinedIcon fontSize='medium' style={{color:'#4caf50'}} /> : null : null
         }
       </div>
     )
@@ -115,7 +106,7 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
 
   return (
     <>
-      <Grid container style={{marginLeft: 6}}>
+      <Grid container style={{padding: 8}}>
         <Grid item md={12} style={{marginBottom: 12}}>
           <div style={{display: 'flex', justifyContent: 'space-between', margin: 0, alignItems: 'center', paddingRight: 10}}>
             <ViewData title='Name' value={dealerData?.first_name+' '+dealerData?.last_name} style={{marginBottom: 0}} />
@@ -123,20 +114,16 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
           </div>
         </Grid>
         {
-          // !values?.cibil_score &&
           <>
-            <Grid {...gridItem} md={4}>
-              {<Button variant='outlined' color='primary' style={{marginTop: 10}} onClick={CIBILReport}>Check CIBIL Score</Button>}
-            </Grid>
+            {
+              !values?.cibil_score &&
+                <Grid {...gridItem} md={4}>
+                  {<Button variant='outlined' color='primary' style={{marginTop: 10}} onClick={CIBILReport} startIcon={<SpeedOutlinedIcon />}>Check CIBIL Score</Button>}
+                </Grid>
+            }
             <Grid {...gridItem} md={2}style={{marginTop:15}}>
               {ValidateProps(cibilLoading)}
             </Grid>
-            {
-              cibilData?.cibil_file_url &&
-                <Grid {...gridItem} md={6} style={{display: 'flex', justifyContent: 'flex-end', alignText: 'center'}}>
-                  <Button variant='outlined' color ='primary' size='small' onClick={handleDownload}>Download Report</Button>
-                </Grid>
-            }
           </>
         }
         <Collapse in={collapseOpen} style={{width: '100%'}}>

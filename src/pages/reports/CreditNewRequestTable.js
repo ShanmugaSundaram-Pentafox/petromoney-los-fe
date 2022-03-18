@@ -37,7 +37,6 @@ const CreditNewRequestTable = ({ data, currentUser, view }) => {
         console.log(e);
       })
   });
-
   const columns = useMemo(() => {
     return [
       {

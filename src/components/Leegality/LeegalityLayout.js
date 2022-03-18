@@ -163,7 +163,7 @@ const LeegalityLayout = ({ docId }) => {
     <Box bgcolor="#fbfbfb">
       <Grid container spacing={2}>
         <Grid item sm={6}>
-          {docDetails?.file && <PdfViewer title="Some Random File" file={docDetails.file} isBase64 showDownload />}
+          {docDetails?.file && <PdfViewer title="Some Random File" file={docDetails.file} showDownload />}
         </Grid>
         <Grid item sm={3}>
           <Box pt={2}>

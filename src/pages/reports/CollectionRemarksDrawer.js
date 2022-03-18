@@ -1,7 +1,7 @@
 import { Box, Button, Divider, Grid, IconButton, makeStyles, Table, TableBody, TableCell, TableFooter, TableHead, TableRow, Typography } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMount } from 'react-use';
 import { useQuery } from 'react-query';
 import { ViewData } from '../../components/CommonComponents/FilePreview';
@@ -61,12 +61,16 @@ const useStyles = makeStyles(() => ({
 export const CollectionRemarksDrawer = ({ callback, rowData = [] }) => {
   const classes = useStyles();
   const [loanReport, setLoanReport] = useState({})
-  let combined = loanReport?.due && loanReport?.overdue && [...loanReport?.due, ...loanReport?.overdue]
+  const [combined, setCombined] = useState()
 
   const FetchRemarks = (loan_id) => {
     const dealershipRemarks = useQuery(['remarks-by-loan-id', loan_id], () => getCollectionRemarkByLoanId(loan_id), { refetchOnWindowFocus: false })
     return dealershipRemarks;
   }
+
+  useEffect(() => {
+    setCombined(loanReport?.due && loanReport?.overdue && [...loanReport?.due, ...loanReport?.overdue])
+  }, [loanReport?.due, loanReport?.overdue])
   
   useMount(() => {
     getLoanReportByDealershipId(rowData[0])

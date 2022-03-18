@@ -61,20 +61,19 @@ const useStyles = makeStyles(() => ({
 export const CollectionRemarksDrawer = ({ callback, rowData = [] }) => {
   const classes = useStyles();
   const [loanReport, setLoanReport] = useState({})
-  const [combined, setCombined] = useState()
+  const [combined, setCombined] = useState([])
 
   const FetchRemarks = (loan_id) => {
     const dealershipRemarks = useQuery(['remarks-by-loan-id', loan_id], () => getCollectionRemarkByLoanId(loan_id), { refetchOnWindowFocus: false })
     return dealershipRemarks;
   }
-
-  useEffect(() => {
-    setCombined(loanReport?.due && loanReport?.overdue && [...loanReport?.due, ...loanReport?.overdue])
-  }, [loanReport?.due, loanReport?.overdue])
   
   useMount(() => {
     getLoanReportByDealershipId(rowData[0])
-    .then(setLoanReport)
+    .then(res => {
+      setLoanReport(res)
+      setCombined(res?.due && res?.overdue && [...res?.due, ...res?.overdue])
+    })
     .catch(e => {
       console.log(e);
     })

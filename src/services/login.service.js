@@ -39,3 +39,22 @@ export const resendOTP = (number) => {
       })
   })
 }
+
+export const resetPassword = (body) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`password/reset`, {
+      method: 'POST',
+      body
+    })
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve({status, message});
+        } else {
+          reject(message);
+        }
+      })
+      .catch(err => {
+        reject(err.message);
+      })
+  })
+}

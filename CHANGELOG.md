@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.11.2](https://gitlab.com/vignesh3/petromall-fe/compare/v2.11.1...v2.11.2) (2022-03-18)
+
+
+### Bug Fixes
+
+* **bank:** update bank preview card for pennydrop ([a868a02](https://gitlab.com/vignesh3/petromall-fe/commit/a868a024f8e36877c7e6281111a500173e5273e2))
+
 ### [2.11.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.11.0...v2.11.1) (2022-03-18)
 
 

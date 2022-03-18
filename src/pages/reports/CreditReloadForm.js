@@ -85,7 +85,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 2
   }
 }));
-const CreditReloadForm = ({ data, callback, currentUser, dealershipData, view }) => {
+const CreditReloadForm = ({ data, callback, currentUser, view }) => {
   const [accountId, setAccountId] = useState();
   const [amount, setAmount] = useState();
   const [selectedValue, setSelectedValue] = useState(!view ? null : currentUser.dealership_id);

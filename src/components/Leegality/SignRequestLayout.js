@@ -291,7 +291,6 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
                         {
                           pdfUrl ?
                             <PdfViewer
-                              isBase64
                               height="70vh"
                               file={pdfUrl}
                             />

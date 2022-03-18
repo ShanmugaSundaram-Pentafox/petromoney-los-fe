@@ -1,11 +1,10 @@
-import { Grid } from '@material-ui/core';
-import { Paper } from '@material-ui/core';
+import { Grid, Paper } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState } from 'react';
-import { useMount } from 'react-use';
+import { useQuery } from 'react-query';
 import { getAllWithheldLoans } from '../../services/withheld.services';
 
 const useStyles = makeStyles((theme) => ({
@@ -16,18 +15,8 @@ const useStyles = makeStyles((theme) => ({
 
 const ResolvedTable = () => {
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState([])
   const classes = useStyles()
-
-  useMount(() => {
-    getAllWithheldLoans(1)
-      .then((data) => {
-        setData(data)
-      })
-      .catch((e) => {
-        console.log(e);
-      })
-  })
+  const {data=[]} = useQuery('withheld-loans', () => getAllWithheldLoans(1), {refetchOnWindowFocus: false})
 
   const columns = useMemo(() => {
     return [
@@ -72,10 +61,10 @@ const ResolvedTable = () => {
           }),
           customBodyRender: (value, tableMeta) => {
             return (
-              value?.map((remark) => {
+              value?.map((remark, i) => {
                 return (
-                  <div style={{ marginBottom: 12, display: 'flex' }}>
-                    <div style={{ minWidth: 250, maxWidth: 250 }}>{remark.remarks}</div>
+                  <div style={{ marginBottom: 12, display: 'flex' }} key={i}>
+                    <div style={{ minWidth: 250, maxWidth: 250 }}>{remark.remarks} {remark.comment && '- ' + remark.comment}</div>
                   </div>
                 )
               })
@@ -86,7 +75,6 @@ const ResolvedTable = () => {
     ]
   }, [])
   const options = {
-    // filterType: 'checkbox',
     selectableRowsHeader: false,
     selectableRows: 'none',
     rowsPerPage: 10,

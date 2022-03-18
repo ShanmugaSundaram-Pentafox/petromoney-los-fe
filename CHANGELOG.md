@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.11.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.11.0...v2.11.1) (2022-03-18)
+
+
+### Bug Fixes
+
+* **doc-download:** PDR and SOA docs base 64 to url ([9ec9504](https://gitlab.com/vignesh3/petromall-fe/commit/9ec95046ec35ea3e30e8a9bd70031b31a500efef))
+
 ## [2.11.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.10.1...v2.11.0) (2022-03-18)
 
 

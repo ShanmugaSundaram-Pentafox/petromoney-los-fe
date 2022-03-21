@@ -1,4 +1,4 @@
-import { Button } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import { makeStyles } from '@material-ui/styles';
@@ -88,7 +88,7 @@ const PreviewCard = ({ children, onEdit, onDelete, onCustom, customButton = fals
 }
 export default PreviewCard;
 
-export const PreviewCardBank = ({ children, onEdit, onDelete, onCustom, verified = false, customIcon, tokenLabel }) => {
+export const PreviewCardBank = ({ children, onEdit, onDelete, onCustom, verified = false, customIcon, tokenLabel, verifiedDate }) => {
   const classes = useStyles()
   const [deleteModal, setDeleteModal] = useState(false)
   return (
@@ -97,22 +97,23 @@ export const PreviewCardBank = ({ children, onEdit, onDelete, onCustom, verified
         {children}
       </div>
       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingLeft: 10}} >
-        <div>
           {
-            !verified &&
-              <Button
-                size="small"
-                variant="outlined"
-                color="success"
-                style={{ margin: 4 }}
-                className={classes.btnSuccess}
-                startIcon={customIcon ? customIcon : <InfoOutlinedIcon color="primary" />}
-                onClick={onCustom}
-              >
-                {tokenLabel}
-              </Button> 
+            verified ?
+            <Typography variant='body2' style={{ color: 'rgb(0,0,0,0.4)', margin: '16px 0px' }}>
+              {`Last Verified: ${verifiedDate || '-'}`}
+            </Typography> :
+            <Button
+              size="small"
+              variant="outlined"
+              color="success"
+              style={{ margin: 4 }}
+              className={classes.btnSuccess}
+              startIcon={customIcon ? customIcon : <InfoOutlinedIcon color="primary" />}
+              onClick={onCustom}
+            >
+              {tokenLabel}
+            </Button> 
           }
-        </div>
         {
           !verified && (
             <div className='card-footer'>

@@ -97,6 +97,9 @@ const DpdReport = ({ title, currentUser }) => {
         options: {
           filter: false,
           sort: true,
+          setCellProps: () => ({
+            align: 'center',
+          }),
           customBodyRender: value => {
             if(value >= 0){
               return(<span style={{color:'#FC4F4F'}}>{value}</span>)
@@ -137,6 +140,7 @@ const DpdReport = ({ title, currentUser }) => {
   const options = {
     selectableRowsHeader: false,
     selectableRows: 'none',
+    rowsPerPage: 15,
     isRowSelectable: () => false,
   };
 

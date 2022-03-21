@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const LeegalityLayout = ({ docId }) => {
+const LeegalityLayout = ({ docId, dealershipId }) => {
   const [auditTrails, setAuditTrails] = useState([]);
   const [docDetails, setDocDetails] = useState({});
   const [successStatus, setSuccessStatus] = useState(false);
@@ -85,7 +85,7 @@ const LeegalityLayout = ({ docId }) => {
 
   useEffect(() => {
 
-    apiCall(`document/details/${docId}`)
+    apiCall(`dealership/${dealershipId}/document/${docId}`)
       .then(res => {
         if (res.status === 'SUCCESS') {
           if (res.data?.status) {
@@ -140,7 +140,7 @@ const LeegalityLayout = ({ docId }) => {
   const ActivateDealer = () => {
     apiCall(`document/reactivate/${docId}`)
       .then(res => {
-        apiCall(`document/details/${docId}`)
+        apiCall(`dealership/${dealershipId}/document/${docId}`)
           .then(res => {
             if (res.status === 'SUCCESS') {
               if (res.data?.status) {

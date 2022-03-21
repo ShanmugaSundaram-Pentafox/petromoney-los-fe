@@ -7,7 +7,7 @@ import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState } from 'react';
 import { useMount } from 'react-use';
 import Currency from '../../components/Number/Currency';
-import { getTestReport } from '../../services/users.service';
+import { getLoanReportByDealershipId } from '../../services/users.service';
 
 
 const useStyles = makeStyles(theme => ({
@@ -51,7 +51,7 @@ const OverDueTable = ({ id, onRowClick, style }) => {
   const [loans, setLoans] = useState([])
   const [loading, setLoading] = useState(false);
   useMount(async () => {
-    getTestReport(id)
+    getLoanReportByDealershipId(id)
       .then((data) => {
         setLoans(data.overdue)
         setLoading(false);

@@ -98,7 +98,7 @@ const DpdReport = ({ title, currentUser }) => {
           filter: false,
           sort: true,
           setCellProps: () => ({
-            align: 'center',
+            align: 'right',
           }),
           customBodyRender: value => {
             if(value >= 0){
@@ -113,6 +113,9 @@ const DpdReport = ({ title, currentUser }) => {
         label: 'Last Receipt Date',
         name: 'last_receipt_date',
         options: {
+          setCellProps: () => ({
+            align: 'center',
+          }),
           filter: false,
           sort: false,
         }

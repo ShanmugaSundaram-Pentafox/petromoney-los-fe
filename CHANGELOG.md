@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.11.3](https://gitlab.com/vignesh3/petromall-fe/compare/v2.11.2...v2.11.3) (2022-03-21)
+
+
+### Bug Fixes
+
+* **Dealer-edit:** error msg snackbar fix ([7faf586](https://gitlab.com/vignesh3/petromall-fe/commit/7faf5860f6d917d51ff0868058fa3bc0c79f4950))
+* DPD column align ([1622e42](https://gitlab.com/vignesh3/petromall-fe/commit/1622e427def162c67df3dd02cbf81f28740e66c4))
+* profile dropdown border radius ([ac27426](https://gitlab.com/vignesh3/petromall-fe/commit/ac2742659dbe4a3aa7054088e9fcfc8420072f17))
+* **snackbar:** snackbar font inherit ([cd00650](https://gitlab.com/vignesh3/petromall-fe/commit/cd00650b7b119f018c0838615917777bc2b7d46b))
+* **UI-update:** bank details card and resolve form ui update ([a085594](https://gitlab.com/vignesh3/petromall-fe/commit/a0855948603f46b41df4ef36eff128983aae6eb0))
+
 ### [2.11.2](https://gitlab.com/vignesh3/petromall-fe/compare/v2.11.1...v2.11.2) (2022-03-18)
 
 

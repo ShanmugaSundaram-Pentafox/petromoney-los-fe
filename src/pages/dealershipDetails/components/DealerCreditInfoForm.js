@@ -42,7 +42,7 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
   const CIBILReport = () => {
     if(pan || panId?.pan){
       setCibilLoading({icon:true, loading:true})
-      getCibilReport(dealership_id, id, pan || panId?.pan, userType?.replace(/[^a-zA-Z ]/g,'')?.toLowerCase())
+      getCibilReport(dealership_id, id, pan || panId?.pan, userType?.replace(/[- ]/g,'')?.toLowerCase())
         .then(data => {
           setCibilLoading({icon:true, loading:false, success:true})
           queryClient.invalidateQueries('credit')

@@ -259,20 +259,30 @@ const DealerEditSideWrapper = ({
         })
         .then((res) => {
           setLoading(false);
-          setApicallStatus('success');
-          enqueueSnackbar(res.message, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'success',
-          });
-          onClose();
-          modelType === 'DEALER' &&
-          queryClient.invalidateQueries(['dealers-coapplicant', id])
-
-          modelType === 'COAPPLICANT' ?
-            queryClient.invalidateQueries(['co-applicants', id]) : queryClient.invalidateQueries(['guarantors', id])
+          if(res.status === 'SUCCESS'){
+            setApicallStatus('success');
+            enqueueSnackbar(res.message, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'success',
+            });
+            onClose();
+            modelType === 'DEALER' &&
+            queryClient.invalidateQueries(['dealers-coapplicant', id])
+  
+            modelType === 'COAPPLICANT' ?
+              queryClient.invalidateQueries(['co-applicants', id]) : queryClient.invalidateQueries(['guarantors', id])
+          } else {
+            enqueueSnackbar(res.message, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            });
+          }
         })
         .catch((err) => {
           setReadOnly(false);

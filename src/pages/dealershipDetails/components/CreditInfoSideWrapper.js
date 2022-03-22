@@ -92,7 +92,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
   })
 
   const CIBILReport = () => {
-    getCibilReport(dealershipId, data?.id, data?.pan)
+    getCibilReport(dealershipId, data?.id, data?.pan, data?.userType?.replace(/[^a-zA-Z ]/g,'')?.toLowerCase())
       .then(data => {
         queryClient.invalidateQueries('credit')
       })

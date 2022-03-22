@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.11.4](https://gitlab.com/vignesh3/petromall-fe/compare/v2.11.3...v2.11.4) (2022-03-22)
+
+
+### Bug Fixes
+
+* **Cibil-refresh:** data post userType undefined ([7e18eb8](https://gitlab.com/vignesh3/petromall-fe/commit/7e18eb8ba1e904d23af449c0e8de64c867220b99))
+* **cibil:** Regex fix ([5657254](https://gitlab.com/vignesh3/petromall-fe/commit/5657254ab4fb55e3bd9fe360c1ee8ddbde88c768))
+
 ### [2.11.3](https://gitlab.com/vignesh3/petromall-fe/compare/v2.11.2...v2.11.3) (2022-03-21)
 
 

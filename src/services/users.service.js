@@ -95,7 +95,7 @@ export const getReport = () => {
       })
   })
 }
-export const getTestReport = (id) => {
+export const getLoanReportByDealershipId = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.report}/dealership/${id}`)
       .then(({ status, data, message }) => {

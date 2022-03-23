@@ -169,7 +169,7 @@ const AccountStatement = ({ id, currentUser }) => {
     if (from_date && to_date) {
       downloadAccountStatement(id, from_date, to_date)
         .then(res => {
-          setFileCode(res?.data)
+          setFileCode(res?.file)
           setOpenDialog(true)
           setLoading(false)
         })
@@ -276,7 +276,7 @@ const AccountStatement = ({ id, currentUser }) => {
       >
         <div className={classes.dialogBox} >
           <DialogContent className={classes.frame}>
-            <iframe src={`data:application/pdf;base64,${fileCode}`} height="900" width="500" frameBorder="0" title="Account Statement"></iframe>
+            <iframe src={fileCode} height="900" width="500" frameBorder="0" title="Account Statement"></iframe>
           </DialogContent>
         </div>
       </FormDialog>

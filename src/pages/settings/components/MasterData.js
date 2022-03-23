@@ -71,18 +71,18 @@ function MasterData() {
               </Tooltip>
             </Grid>
             <Grid item md={2}>
-              <Tooltip title="Regions">
-                <div className={classes.content} onClick={() => setOpenForm('Region')}>
-                  <OtherIcon width={35} className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title}>Regions</Typography>
-                </div>
-              </Tooltip>
-            </Grid>
-            <Grid item md={2}>
               <Tooltip title="States">
                 <div className={classes.content} onClick={() => setOpenForm('State')}>
                   <InfrastructureIcon width={35} className={classes.icons} />
                   <Typography variant="h5" align='center' className={classes.title}>States</Typography>
+                </div>
+              </Tooltip>
+            </Grid>
+            <Grid item md={2}>
+              <Tooltip title="Regions">
+                <div className={classes.content} onClick={() => setOpenForm('Region')}>
+                  <OtherIcon width={35} className={classes.icons} />
+                  <Typography variant="h5" align='center' className={classes.title}>Regions</Typography>
                 </div>
               </Tooltip>
             </Grid>

@@ -1,23 +1,25 @@
+import { DownloadOutlined } from '@ant-design/icons';
 import { Grid } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import Snackbar from '@material-ui/core/Snackbar';
 import Typography from '@material-ui/core/Typography';
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
+import RotateLeftOutlinedIcon from '@material-ui/icons/RotateLeftOutlined';
 import Alert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import DealerCreditInfoForm from './DealerCreditInfoForm';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
+import { getCibilReport } from '../../../services/creditreport.service';
 import { getCreditInfo, updateCreditInfo } from '../../../services/dealers.service';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-
-
 
 const useStyles = makeStyles(theme => ({
   sidePanelTitle: {
@@ -82,15 +84,31 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
   const [cibilEditMode, setCibilEditMode] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const editable = permissionCheck(currentUser.role_name, rulesList.external_view);
+  const queryClient = useQueryClient();
+  const creditData = useQuery('credit', () => getCreditInfo(dealershipId), {
+    refetchOnWindowFocus: false,
+    onSuccess: (res) => {
+      setApiData(res?.find(item => item?.dealer_id === data?.id));
+      setEditMode(res?.find(item => item?.dealer_id === data?.id)?.cibil_score ? false : true);
+    },
+    onError: (res) => null
+  })
 
-  React.useEffect(() => {
-    getCreditInfo(dealershipId)
-      .then(res => {
-        setApiData(res?.find(item => item?.dealer_id === data?.id));
-        setEditMode(res?.find(item => item?.dealer_id === data?.id)?.cibil_score ? false : true);
+  const CIBILReport = () => {
+    getCibilReport(dealershipId, data?.id, data?.pan, data?.userType?.replace(/[- ]/g,'')?.toLowerCase())
+      .then(data => {
+        queryClient.invalidateQueries('credit')
       })
-      .catch(e => null)
-  }, []);
+      .catch(e => {
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+      })
+  }
 
   const handleEdit = () => {
     setValues(apiData)
@@ -165,8 +183,11 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
               </Grid>
               <Grid container spacing={2} style={{marginTop: 10}}>
                 <Grid item md={12} style={{display: 'flex', justifyContent: 'space-between'}}>
-                  <Typography variant='h6'>CIBIL Extract</Typography>
-                  {apiData?.cibil_file_url && <Button size='small' variant='outlined' color='primary' onClick={handleDownload}>Download Report</Button>}
+                  <div style={{display: 'flex', alignItems: 'center'}}>
+                    <Typography variant='h6'>CIBIL Extract</Typography>
+                    <Button variant='text' color='primary' startIcon={<RotateLeftOutlinedIcon />} style={{marginLeft: 8}} onClick={CIBILReport}>Refresh CIBIL Report</Button>
+                  </div>
+                  { apiData?.cibil_file_url && <div><Button size='small' variant='outlined' color='primary' onClick={handleDownload} startIcon={<DownloadOutlined/>}>Download Report</Button></div> }
                 </Grid>
                 <Grid item md={6}>
                   <ViewData title='CIBIL Score' value={apiData?.cibil_score} style={{marginBottom: 0}} />

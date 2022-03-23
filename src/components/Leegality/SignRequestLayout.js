@@ -282,7 +282,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
               loading ? (
                 <CircularProgress className="circular-progress-color" variant="determinate" color="green" />
               ) : (loansData?.document_id ? (
-                <LeegalityLayout docId={loansData?.document_id} />
+                <LeegalityLayout docId={loansData?.document_id} dealershipId={dealershipId} />
               ) : (
                 <Grid container spacing={2}>
                   {
@@ -291,7 +291,6 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
                         {
                           pdfUrl ?
                             <PdfViewer
-                              isBase64
                               height="70vh"
                               file={pdfUrl}
                             />

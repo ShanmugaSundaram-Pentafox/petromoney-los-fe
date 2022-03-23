@@ -2,6 +2,7 @@ import { Button, Divider, Drawer, Grid, makeStyles, Table, TableBody, TableFoote
 import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import React, { useState } from 'react'
+import DeleteButton from '../../../components/CommonComponents/Button/DeleteButton';
 import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
@@ -60,6 +61,7 @@ const useStyles = makeStyles(() => ({
 const StatementForm = ({ callback, rowData, addStatement, updateStatement, deleteStatement, currentUser }) => {
   const classes = useStyles()
   const [openEdit, setOpenEdit] = useState(false)
+  const [deleteModal, setDeleteModal] = useState(false)
   const [disabled, setDisabled] = useState(addStatement?.action === 'view')
   const [editRow, setEditRow] = useState({})
   const [addData, setAddData] = useState(rowData)
@@ -200,7 +202,7 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
                 </TableHead>
                 <TableBody>
                   {
-                    rowData?.statement?.map(item => (
+                    rowData?.statement?.map((item, i) => (
                       <TableRow key={item.statement_id}>
                         <TableCell scope="row" component="th">{month?.find(type => { return type.value === item.month })?.label} - {item.year}</TableCell>
                         <TableCell align="center">{item.in_bound}</TableCell>
@@ -214,7 +216,7 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
                           !disabled && (
                             <TableCell align="right">
                               <Button size="small" variant="outlined" className={classes.btnEdit} onClick={() => { setEditRow({ ...item }); setOpenEdit(true) }}>Edit</Button>
-                              <Button size="small" variant="outlined" className={classes.btnDelete} onClick={() => handleDelete(item.statement_id)}>Delete</Button>
+                              <DeleteButton deleteAction={() => handleDelete(item.statement_id)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={i} style={{margin:2}} />
                             </TableCell>
                           )
                         }

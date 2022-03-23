@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#ef5454'
   },
   btnSuccess: {
+    marginLeft: 16,
     '&.MuiButton-contained': {
       backgroundColor: theme.palette.success.main,
       color: theme.palette.white
@@ -84,7 +85,7 @@ const BankDetailsCard = ({ id, data, editBankDetails, editable }) => {
         setVerificationLoading(false)
         queryClient.invalidateQueries('bank-data')
         setVerifiedDetails(res)
-        setTimeout(() => setBankVerify(), 1000)
+        setTimeout(() => {setBankVerify(); setVerifiedDetails();}, 1000)
       })
       .catch(e => {
         logger(e)
@@ -143,13 +144,9 @@ const BankDetailsCard = ({ id, data, editBankDetails, editable }) => {
         fullWidth
         maxWidth={'sm'}
         open={bankVerify}
-        onClose={() => {
-          !verificationLoading &&
-            setBankVerify(); setVerifiedDetails();
-        }}
       >
-        <DialogTitle>Account Verification</DialogTitle>
         <DialogContent>
+          <Typography variant="h5" style={{textAlign: 'center', marginBottom: 8}}>Account Verification</Typography>
           <Alert severity='warning' variant='outlined'>
             <AlertTitle>Note</AlertTitle>
             <Typography variant='body1'>As a part of account verification process an amount of ₹1 will be deposited on your account. Please do not close this window until the process is completed.</Typography>
@@ -173,14 +170,14 @@ const BankDetailsCard = ({ id, data, editBankDetails, editable }) => {
                 </Typography>
             }
           </Collapse>
+          <div style={{display: 'flex', justifyContent: 'center', marginTop:16, marginBottom: 8}}>
+            <Button variant='outlined' disabled={verificationLoading} onClick={() => { setBankVerify(); setVerifiedDetails(); }}>Cancel</Button>
+            {
+              !bankVerify?.bank_verified &&
+              <Button variant='contained' disabled={verificationLoading} className={classes.btnSuccess} onClick={() => verifyBank()}>Verify</Button>
+            }
+          </div>
         </DialogContent>
-        <DialogActions>
-          <Button variant='outlined' disabled={verificationLoading} onClick={() => { setBankVerify(); setVerifiedDetails(); }}>Cancel</Button>
-          {
-            !bankVerify?.bank_verified &&
-            <Button variant='contained' disabled={verificationLoading} className={classes.btnSuccess} onClick={() => verifyBank()}>Verify</Button>
-          }
-        </DialogActions>
       </Dialog>
     </Grid>
   )

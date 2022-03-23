@@ -134,13 +134,9 @@ const BankDetailsCard = ({ id, data, editBankDetails }) => {
         fullWidth
         maxWidth={'sm'}
         open={bankVerify}
-        onClose={() => {
-          !verificationLoading &&
-            setBankVerify(); setVerifiedDetails();
-        }}
       >
-        <DialogTitle>Account Verification</DialogTitle>
         <DialogContent>
+          <Typography variant="h5" style={{textAlign: 'center', marginBottom: 8}}>Account Verification</Typography>
           <Alert severity='warning' variant='outlined'>
             <AlertTitle>Note</AlertTitle>
             <Typography variant='body1'>As a part of account verification process an amount of ₹1 will be deposited on your account. Please do not close this window until the process is completed.</Typography>
@@ -164,7 +160,7 @@ const BankDetailsCard = ({ id, data, editBankDetails }) => {
                 </Typography>
             }
           </Collapse>
-          <div style={{display: 'flex', justifyContent: 'flex-end', marginTop:16, marginBottom: 8}}>
+          <div style={{display: 'flex', justifyContent: 'center', marginTop:16, marginBottom: 8}}>
             <Button variant='outlined' disabled={verificationLoading} onClick={() => { setBankVerify(); setVerifiedDetails(); }}>Cancel</Button>
             {
               !bankVerify?.bank_verified &&

@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#ef5454'
   },
   btnSuccess: {
+    marginLeft: 16,
     '&.MuiButton-contained': {
       backgroundColor: theme.palette.success.main,
       color: theme.palette.white
@@ -84,7 +85,7 @@ const BankDetailsCard = ({ id, data, editBankDetails }) => {
         setVerificationLoading(false)
         queryClient.invalidateQueries('bank-data')
         setVerifiedDetails(res)
-        setTimeout(() => setBankVerify(), 1000)
+        setTimeout(() => {setBankVerify(); setVerifiedDetails();}, 1000)
       })
       .catch(e => {
         logger(e)
@@ -163,14 +164,14 @@ const BankDetailsCard = ({ id, data, editBankDetails }) => {
                 </Typography>
             }
           </Collapse>
+          <div style={{display: 'flex', justifyContent: 'flex-end', marginTop:16, marginBottom: 8}}>
+            <Button variant='outlined' disabled={verificationLoading} onClick={() => { setBankVerify(); setVerifiedDetails(); }}>Cancel</Button>
+            {
+              !bankVerify?.bank_verified &&
+              <Button variant='contained' disabled={verificationLoading} className={classes.btnSuccess} onClick={() => verifyBank()}>Verify</Button>
+            }
+          </div>
         </DialogContent>
-        <DialogActions>
-          <Button variant='outlined' disabled={verificationLoading} onClick={() => { setBankVerify(); setVerifiedDetails(); }}>Cancel</Button>
-          {
-            !bankVerify?.bank_verified &&
-            <Button variant='contained' disabled={verificationLoading} className={classes.btnSuccess} onClick={() => verifyBank()}>Verify</Button>
-          }
-        </DialogActions>
       </Dialog>
     </Grid>
   )

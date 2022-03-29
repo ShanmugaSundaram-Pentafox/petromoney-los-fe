@@ -363,7 +363,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       >
         {
           externalView && !omcEdit ?
-          <EmptySidewrapper title="OMC Details" /> :
+          <EmptySidewrapper title="OMC Details" callback={handleEdit} /> :
           <AddOmcDetailsForm dealer_id={id} isEdit={omcEdit ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={omcData} editable={externalView} />
         }
       </Drawer>
@@ -375,7 +375,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       >
         {
           externalView && !outletData ?
-          <EmptySidewrapper title="Outlet Details" /> :
+          <EmptySidewrapper title="Outlet Details" callback={handleEdit} /> :
           <AddNewOutletDetailsForm dealer_id={id} isEdit={outletData ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={outletData} editable={externalView} />
         }
       </Drawer>
@@ -387,7 +387,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       >
         {
           externalView && !businessData ?
-          <EmptySidewrapper title="Business Details" /> :
+          <EmptySidewrapper title="Business Details" callback={handleEdit} /> :
           <AddBusinessDetailsForm dealer_id={id} isEdit={businessData ? null : 'Edit'} callback={handleEdit} data={businessData} currentUser={currentUser} editable={externalView} />
         }
       </Drawer>
@@ -399,7 +399,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       >
         {
           externalView && !infrastructureDetails ?
-          <EmptySidewrapper title="Infrastructure Details" /> :
+          <EmptySidewrapper title="Infrastructure Details" callback={handleEdit} /> :
           <AddInfrastructureDetailsForm dealer_id={id} isEdit={infrastructureDetails ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={infrastructureDetails} editable={externalView} />
         }
       </Drawer>

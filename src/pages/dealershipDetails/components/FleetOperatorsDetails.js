@@ -5,6 +5,8 @@ import React, { useState } from 'react';
 import Button from '../../../components/CommonComponents/Button/Button';
 import FleetOperatorsTable from '../../../components/Tables/FleetOperatorsTable';
 import AddNewFleetOperatorForm from '../../transports/components/AddNewFleetOperatorForm';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
 
 const useStyles = makeStyles((theme) => ({
 
@@ -27,6 +29,7 @@ const FleetOperatorsDetails = ({ id, currentUser, titleAlign }) => {
   const [edit, setEdit] = useState(false)
   const [data, setData] = useState({})
   const classes = useStyles()
+  const editable = permissionCheck(currentUser.role_name, rulesList.external_view);
 
 
   const handleEdit = () => {
@@ -46,14 +49,17 @@ const FleetOperatorsDetails = ({ id, currentUser, titleAlign }) => {
       <div className={classes.wrapper}>
         <div className={classes.header}>
           <Typography style={{ width: '70%' }} variant="h5" align={titleAlign} className={classes.title}>Fleet Operator</Typography>
-          <Button
-            color="primary"
-            variant="contained"
-            size='small'
-            onClick={() => setOpenModal(true)}
-          >
-            Add Fleet Operator
-          </Button>
+          {
+            !editable &&
+            <Button
+              color="primary"
+              variant="contained"
+              size='small'
+              onClick={() => setOpenModal(true)}
+            >
+              Add Fleet Operator
+            </Button>
+          }
         </div>
         <div>
           <FleetOperatorsTable id={id} dealersClickRow={handleClick} />
@@ -67,9 +73,9 @@ const FleetOperatorsDetails = ({ id, currentUser, titleAlign }) => {
       >
         {
           !edit ? (
-            <AddNewFleetOperatorForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} />
+            <AddNewFleetOperatorForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} editable={editable} />
           ) : (
-            <AddNewFleetOperatorForm data={data} dealer_id={id} callback={handleEdit} currentUser={currentUser} />
+            <AddNewFleetOperatorForm data={data} dealer_id={id} callback={handleEdit} currentUser={currentUser} editable={editable} />
           )
         }
       </Drawer>

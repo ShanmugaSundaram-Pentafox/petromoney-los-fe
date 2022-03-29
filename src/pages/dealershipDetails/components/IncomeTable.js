@@ -50,7 +50,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const IncomeTable = ({ id, editable, currentUser }) => {
+const IncomeTable = ({ id, editable, currentUser, viewOnly }) => {
   const classes = useStyles();
   const [income, setIncome] = useState([]);
   const [businessTypes, setBusinessTypes] = useState([]);
@@ -175,7 +175,7 @@ const IncomeTable = ({ id, editable, currentUser }) => {
             <TableCell>Business Name</TableCell>
             <TableCell>Business Age</TableCell>
             <TableCell align="right">FY Income</TableCell>
-            <TableCell align="right">Action</TableCell>
+            {!viewOnly && <TableCell align="right">Action</TableCell>}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -227,16 +227,19 @@ const IncomeTable = ({ id, editable, currentUser }) => {
                 <TableCell align={'right'}>
                   <Currency value={item.cur_fy_income} />
                 </TableCell>
-                <TableCell align={'right'}>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    color="success"
-                    className={clsx(classes.btnSuccess, classes.btnEdit)}
-                    onClick={() => editIncomeRow(item, i)}>
-                    Edit
-                  </Button>
-                </TableCell>
+                {
+                  !viewOnly &&
+                  <TableCell align={'right'}>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      color="success"
+                      className={clsx(classes.btnSuccess, classes.btnEdit)}
+                      onClick={() => editIncomeRow(item, i)}>
+                      Edit
+                    </Button>
+                  </TableCell>
+                }
               </TableRow>
             ))
           }
@@ -311,102 +314,6 @@ const IncomeTable = ({ id, editable, currentUser }) => {
           </TableRow>
         </TableBody>
       </Table>
-
-      {/* <Dialog
-        open={addNewRow}
-        fullWidth
-        maxWidth={'sm'}
-        // onClose={() => setAddNewRow(false)}
-        scroll={"paper"}
-        aria-labelledby="scroll-dialog-title"
-        aria-describedby="scroll-dialog-description"
-      >
-        <DialogTitle id="scroll-dialog-title">Add Income Detail</DialogTitle>
-        <DialogContent dividers>
-          <div className={classes.formWrapper}>
-            <Grid container>
-              <Grid {...gridItem}>
-                <TextInput
-                  label="Name of the Business"
-                  name="business_name"
-                  defaultValue={values.business_name}
-                  onChange={handleChange}
-                  />
-              </Grid>
-              <Grid {...gridItem}>
-                <TextInput
-                  select
-                  label="Business Type"
-                  name="business_type"
-                  defaultValue={values.business_type}
-                  onChange={handleChange}
-                  SelectProps={{ native: true }}
-                >
-                  {
-                    businessTypes.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
-                  }
-                  <option value="">Test</option>
-                </TextInput>
-              </Grid>
-              <Grid {...gridItem}>
-                <TextInput
-                  select
-                  label="Business Owner"
-                  name="business_owner"
-                  defaultValue={values.business_owner}
-                  onChange={handleChange}
-                  SelectProps={{ native: true }}
-                >
-                  {
-                    applicantsList.map((item, i) => <option key={i} value={item.value}>{item.label}</option>)
-                  }
-                </TextInput>
-              </Grid>
-              <Grid {...gridItem}>
-                <TextInput
-                  label="Business Age(Years)"
-                  name="business_age"
-                  type="number"
-                  defaultValue={values.business_age}
-                  onChange={handleChange}
-                  />
-              </Grid>
-              <Grid {...gridItem}>
-                <TextInput
-                  money
-                  label="Latest FY Turnover"
-                  name="cur_fy_turnover"
-                  type="number"
-                  defaultValue={values.cur_fy_turnover}
-                  onChange={handleChange}
-                  />
-              </Grid>
-              <Grid {...gridItem}>
-                <TextInput
-                  money
-                  label="FY Net Profit/Loss"
-                  name="cur_fy_profit_loss"
-                  type="number"
-                  defaultValue={values.cur_fy_profit_loss}
-                  onChange={handleChange}
-                  />
-              </Grid>
-            </Grid>
-          </div>
-        </DialogContent>
-        {
-          !loading && (
-            <DialogActions>
-              <Button onClick={() => setAddNewRow(false)} color="primary">
-                Cancel
-              </Button>
-              <Button onClick={handleSubmit} color="primary">
-                Save
-              </Button>
-            </DialogActions>
-          )
-        }
-      </Dialog> */}
     </Fragment>
   )
 }

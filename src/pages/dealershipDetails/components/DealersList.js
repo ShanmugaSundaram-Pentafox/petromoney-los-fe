@@ -126,7 +126,8 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   }
 
   const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit);
-  const deletable = permissionCheck(currentUser.role_name, rulesList.applicant_delete)
+  const deletable = permissionCheck(currentUser.role_name, rulesList.applicant_delete);
+  const viewOnly = permissionCheck(currentUser.role_name, rulesList.dealership_view);
   return (
     <>
       {
@@ -138,6 +139,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         id={id}
         editable={editable}
         deletable={deletable}
+        viewOnly={viewOnly}
         data={dealerData}
         formType={formType}
         rowData={rowData}
@@ -153,6 +155,8 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
       <CoApplicantsTable
         id={id}
         editable={editable}
+        deletable={deletable}
+        viewOnly={viewOnly}
         titleAlign={titleAlign}
         coApplicantsData={coApplicantsData}
         formType={formType}
@@ -168,6 +172,8 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
       <GuarantorsTable
         id={id}
         editable={editable}
+        deletable={deletable}
+        viewOnly={viewOnly}
         titleAlign={titleAlign}
         guarantorsData={guarantorsData}
         formType={formType}
@@ -190,6 +196,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
           <DealerEditSideWrapper
             id={id}
             dealersList={dealerData}
+            viewOnly={viewOnly}
             isAdd={formType}
             modelType={modelType}
             dealershipId={id}

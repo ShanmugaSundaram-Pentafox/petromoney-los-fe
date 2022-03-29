@@ -18,7 +18,7 @@ const useStyles = makeStyles({
   }
 });
 
-const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, currentUser, setFieldValue, cibilEditMode }) => {
+const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, currentUser, setFieldValue, cibilEditMode, editable }) => {
   let pan = dealerData?.pan
   let userType = dealerData?.userType
   let dealership_id = dealerData?.dealership_id
@@ -116,10 +116,10 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
         {
           <>
             {
-              !values?.cibil_score &&
-                <Grid {...gridItem} md={4}>
-                  {<Button variant='outlined' color='primary' style={{marginTop: 10}} onClick={CIBILReport} startIcon={<SpeedOutlinedIcon />}>Check CIBIL Score</Button>}
-                </Grid>
+              !editable &&
+              <Grid {...gridItem} md={4}>
+                {<Button variant='outlined' color='primary' style={{marginTop: 10}} onClick={CIBILReport}>Check CIBIL Score</Button>}
+              </Grid>
             }
             <Grid {...gridItem} md={2}style={{marginTop:15}}>
               {ValidateProps(cibilLoading)}

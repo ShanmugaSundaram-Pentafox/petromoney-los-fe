@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const GuarantorsTable = ({ id, editable, guarantorsData, titleAlign, getExperianData, onClickAddMenu, formType, openCloseCreditForm, currentUser, showDealerEditForm, dealersClickRow, editFormClose }) => {
+const GuarantorsTable = ({ id, editable, guarantorsData, titleAlign, getExperianData, onClickAddMenu, formType, openCloseCreditForm, currentUser, showDealerEditForm, dealersClickRow, editFormClose, deletable, viewOnly }) => {
   const classes = useStyles();
   const queryClient = useQueryClient()
   const { enqueueSnackbar } = useSnackbar();
@@ -101,25 +101,24 @@ const GuarantorsTable = ({ id, editable, guarantorsData, titleAlign, getExperian
             <TableCell>Guarantor Name</TableCell>
             <TableCell align="center">Mobile</TableCell>
             {
-              editable &&
-                <TableCell align="center">Action</TableCell>
+              editable || viewOnly ?
+                <TableCell align="center">Action</TableCell> : null
             }
           </TableRow>
         </TableHead>
         <TableBody>
           {guarantorsData.map((row, index) => (
-            <TableRow className={classes.tableRow} key={row.id}>
-              <TableCell onClick={e => editable && dealersClickRow(e, row, 'GUARANTOR')}>
+            <TableRow className={classes.tableRow} key={row.id} onClick={e => editable || viewOnly ? dealersClickRow(e, row, 'GUARANTOR') : null}>
+              <TableCell>
                 {row.first_name}&nbsp;&nbsp;
-                {/* <Chip size="small" label="Experian Report" onClick={(e) => getExperianData(e, row.id)} /> */}
               </TableCell>
-              <TableCell align="center" onClick={e => editable && dealersClickRow(e, row, 'GUARANTOR')}>{row.mobile}</TableCell>
+              <TableCell align="center" onClick={e => editable || viewOnly && dealersClickRow(e, row, 'GUARANTOR')}>{row.mobile}</TableCell>
               {
-                editable &&
-                  <TableCell align="right">
+                editable || viewOnly ?
+                  <TableCell align="right" onClick={e => e.stopPropagation()}>
                     <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>
-                    <DeleteButton alertText={`Do you really want to delete this guarantor named ${row?.first_name}?`} deleteAction={() => DeleteApplicant(row)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={index} buttonType='icon' />
-                  </TableCell>
+                    {deletable && <DeleteButton alertText={`Do you really want to delete this guarantor named ${row?.first_name}?`} deleteAction={() => DeleteApplicant(row)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={index} buttonType='icon' />}
+                  </TableCell> : null
               }
             </TableRow>
           ))}

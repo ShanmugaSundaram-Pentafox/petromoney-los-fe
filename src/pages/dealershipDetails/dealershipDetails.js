@@ -268,7 +268,7 @@ const DealershipDetails = ({ currentUser, match }) => {
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Deviations')}>
           {
             activeTab == tabs.indexOf('Deviations') &&
-              <Deviations id={id} />
+              <Deviations id={id} currentUser={currentUser} />
           }
         </TabPanel>
         {

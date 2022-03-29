@@ -75,7 +75,7 @@ const Row = ({ text, value, children }) => {
   )
 }
 
-const CreditReportForm = ({ id, editable, data, values, errors, onChange, setValues, currentUser, loading, onSubmit }) => {
+const CreditReportForm = ({ id, editable, data, values, errors, onChange, setValues, currentUser, loading, onSubmit, viewOnly }) => {
   const [financeData, setFinanceData] = useState()
   const [financialYear, setFinancialYear] = useState([])
   const classes = useStyles();
@@ -115,57 +115,12 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
         <Grid container spacing={2}>
           <Grid {...gridItem}>
             <Typography className={classes.sidePanelTitle} variant="h4">Financials</Typography>
-            {/* <Table className={classes.table} size="small" aria-label="Financials">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Previous Financial Year</TableCell>
-                  <TableCell>Latest Financial Year {values.from_year ? `${values.from_year}_${values.to_year}` : ''}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                <TableRow>
-                  <TableCell>2018 - 2019</TableCell>
-                  <TableCell>2019 - 2020</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>
-                    <FinanceFormData
-                      id={id}
-                      type={'previous_fy'}
-                      data={data.previous_fy}
-                      values={values.previous_fy || {}}
-                      errors={errors}
-                      editable={editable}
-                      btnLabel={'Previous FY'}
-                      currentUser={currentUser}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <FinanceFormData
-                      id={id}
-                      type={'latest_fy'}
-                      data={data.latest_fy}
-                      values={values.latest_fy || {}}
-                      errors={errors}
-                      editable={editable}
-                      btnLabel={'Latest FY'}
-                      currentUser={currentUser}
-                    />
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell colSpan={2}>
-                    <Text>Change in net profit over sales % for last 2 years <strong>{`-%`}</strong></Text>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table> */}
           </Grid>
           <Grid {...gridItem} md={12}>
             <Grid {...gridItem} md={6}>
               <TextInput
                 select
-                // readOnly
+                disabled={!editable}
                 label="Latest Financial Year"
                 name="financial_year"
                 value={values.financial_year}
@@ -195,45 +150,8 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 />
               )
             }
-
-            {/* <FinanceFormData
-              data={data.latest_fy}
-              values={values.latest_fy || {}}
-              errors={errors}
-              btnLabel={'Latest FY'}
-            // onSave={v => saveFinanceData('latest_fy', v)}
-            /> */}
           </Grid>
-          {/* <Grid {...gridItem} md={6}>
-            <Grid {...gridItem}>
-              <TextInput
-                select
-                readOnly
-                label="Previous Financial Year"
-                name="previous_fy"
-                value={`${values.from_year}_${values.to_year}`}
-                onChange={onChange}
-                SelectProps={{
-                  native: true,
-                }}
-                >
-                  <option value="2019_2020">FY 2019-2020</option>
-              </TextInput>
-            </Grid>
-            <FinanceFormData
-              data={data.previous_fy}
-              values={values.previous_fy || {}}
-              errors={errors}
-              btnLabel={'Previous FY'}
-              onSave={v => saveFinanceData('previous_fy', v)}
-            />
-          </Grid> */}
         </Grid>
-        {/* <Grid item>
-          <Typography className={classes.textLabel} variant="p">
-            Change in net profit over sales % for last 2 years <strong>{`Change%`}</strong>
-          </Typography>
-        </Grid> */}
       </Grid>
       <Grid {...gridItem}>
         <Typography className={classes.sidePanelTitle} variant="h4">General Factors</Typography>
@@ -266,7 +184,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
           name='other_services_count'
           value={values.other_services_count}
           onChange={onChange}
-          readOnly={!editable}
+          disabled={!editable}
           SelectProps={{
             native: true,
           }}
@@ -287,7 +205,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
           name="social_score"
           value={values.social_score}
           onChange={onChange}
-          readOnly={!editable}
+          disabled={!editable}
           SelectProps={{
             native: true,
           }}
@@ -308,7 +226,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
           name="pd_officer_remarks"
           value={values.pd_officer_remarks}
           onChange={onChange}
-          readOnly={!editable}
+          disabled={!editable}
           SelectProps={{
             native: true,
           }}
@@ -327,7 +245,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
       </Grid>
       <Grid {...gridItem}>
         <Typography className={classes.sidePanelTitle} variant="h4">Income</Typography>
-        <IncomeTable id={id} editable={editable} currentUser={currentUser} />
+        <IncomeTable id={id} editable={editable} currentUser={currentUser} viewOnly={viewOnly} />
       </Grid>
       <Grid {...gridItem}>
         <Text>Total Income <strong><Currency value={values.total_income} /></strong></Text>
@@ -337,7 +255,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
       </Grid>
       <Grid {...gridItem}>
         <Typography className={classes.sidePanelTitle} variant="h4">Expenses</Typography>
-        <ExpensesTable id={id} editable={editable} currentUser={currentUser} />
+        <ExpensesTable id={id} editable={editable} currentUser={currentUser} viewOnly={viewOnly} />
       </Grid>
       <Grid {...gridItem}>
         <Text>Total Expenses other than Depreciation, Interest &amp; Tax <strong><Currency value={values.total_expense} /></strong></Text>
@@ -613,9 +531,6 @@ const FinanceFormData = ({ id, editable, btnLabel, data, values = {}, errors, cu
           onChange={onTextChange}
         />
       </Grid>
-      {/* <Grid {...gridItem}>
-        <Text>Change in net profit over sales % for last 2 years <strong>{financeData.change_in_profit_over_sales}%</strong></Text>
-      </Grid> */}
       {
         editable && (
           <Grid {...gridItem} className={classes.lastRow} md={12}>

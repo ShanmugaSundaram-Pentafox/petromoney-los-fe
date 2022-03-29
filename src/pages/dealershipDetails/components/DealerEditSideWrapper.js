@@ -82,6 +82,7 @@ const DealerEditSideWrapper = ({
   currentUser,
   onClose,
   id,
+  viewOnly,
 }) => {
   const classes = useStyles();
   const queryClient = useQueryClient()
@@ -398,21 +399,24 @@ const DealerEditSideWrapper = ({
                   Back
                 </Button>
               </div>
-              <div>
-                <Button
-                  variant='contained'
-                  className={clsx(classes.btn, classes.editButton)}
-                  startIcon={
-                    !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
-                  }
-                  disabled={loading}
-                  onClick={
-                    loading ? () => null : readOnly ? handleEdit : handleSubmit
-                  }
-                >
-                  Edit
-                </Button>
-              </div>
+              {
+                !viewOnly &&
+                <div>
+                  <Button
+                    variant='contained'
+                    className={clsx(classes.btn, classes.editButton)}
+                    startIcon={
+                      !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
+                    }
+                    disabled={loading}
+                    onClick={
+                      loading ? () => null : readOnly ? handleEdit : handleSubmit
+                    }
+                  >
+                    Edit
+                  </Button>
+                </div>
+              }
             </>
           )}
         </div>

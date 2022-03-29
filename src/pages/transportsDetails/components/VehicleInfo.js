@@ -100,7 +100,8 @@ export default function VehicleInfo({ id, data, currentUser }) {
   const [formType, setFormType] = useState('');
   const [vehicleDetailsForm, setVehicleDetailsForm] = useState({open: false})
   const { enqueueSnackbar } = useSnackbar();
-  const classes = useStyles()
+  const classes = useStyles();
+  const editable = permissionCheck(currentUser.role_name, rulesList.external_view);
 
   const handleUpload = (row, vehicle) => {
     setFileUpload(true);
@@ -252,7 +253,10 @@ export default function VehicleInfo({ id, data, currentUser }) {
     <Paper borderRadius={5}>
       <Typography variant='h6' style={{padding: 15, display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
         <div>Vehicle</div>
-        <Button color="primary" variant="outlined" onClick={() => {setOpenModal(true); setFormType('Add');}}>Add Vehicle</Button>
+        {
+          !editable &&
+          <Button color="primary" variant="outlined" onClick={() => {setOpenModal(true); setFormType('Add');}}>Add Vehicle</Button>
+        }
       </Typography>
       <Grid container>
         <Grid item md={12}>
@@ -261,7 +265,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
               <TableRow>
                 <TableCell>Vehicle No</TableCell>
                 <TableCell>Credit Limit</TableCell>
-                <TableCell align="right">Action</TableCell>
+                {!editable && <TableCell align="right">Action</TableCell>}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -273,7 +277,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
                         <TableCell onClick={(e) => {setVehicleDetailsForm({ open: true, vehicleInfo: vehicleInfo })}}>{vehicleInfo.tt_no}</TableCell>
                         <TableCell onClick={(e) => {setVehicleDetailsForm({ open: true, vehicleInfo: vehicleInfo })}}><Currency value={vehicleInfo.credit_limit} /></TableCell>
                         {
-                          !permissionCheck(currentUser.role_name, rulesList.transporter_view) ? (
+                          !editable ? (
                             <TableCell style={{display: 'flex'}} align='right'>
                               <DeleteButton deleteAction={() => deleteVehicle(vehicleInfo.tt_no, vehicleInfo.vehicle_id)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={i} buttonType='icon' />
                             </TableCell>
@@ -314,7 +318,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
         onClose={() => setVehicleDetailsForm({open: false})}
         variant="temporary"
       >
-        <VehicleInfoSidewrapper currentUser={currentUser} callbackClose={() => setVehicleDetailsForm({open: false})} setImageModal={setImageModal} handleUpload={handleUpload} vehicleInfo={vehicleDetailsForm?.vehicleInfo} handleDocDelete={handleDocDelete} id={id} handleLoanDelete={handleLoanDelete} getServiceStatus={getServiceStatus} openServiceModal={openServiceModal} serviceData={serviceData} tracking={tracking} />
+        <VehicleInfoSidewrapper currentUser={currentUser} callbackClose={() => setVehicleDetailsForm({open: false})} setImageModal={setImageModal} handleUpload={handleUpload} vehicleInfo={vehicleDetailsForm?.vehicleInfo} handleDocDelete={handleDocDelete} id={id} handleLoanDelete={handleLoanDelete} getServiceStatus={getServiceStatus} openServiceModal={openServiceModal} serviceData={serviceData} tracking={tracking} editable={editable} />
       </Drawer>
     </Paper>
   )

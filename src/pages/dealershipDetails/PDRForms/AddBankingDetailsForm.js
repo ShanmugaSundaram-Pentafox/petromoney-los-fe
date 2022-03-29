@@ -105,7 +105,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => {
+const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, editable }) => {
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient()
   const classes = useStyles()
@@ -343,7 +343,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
                 </div>
               </>
             ) : (
-              <BankDetailsCard id={dealer_id} data={bankData} editBankDetails={editBankRow} />
+              <BankDetailsCard id={dealer_id} data={bankData} editBankDetails={editBankRow} editable={editable} />
             )
           }
         </div>
@@ -360,7 +360,8 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
               Back
             </Button>
           </div>
-          <div>
+          {
+            !editable &&
             <Button
               variant="contained"
               color="primary"
@@ -369,7 +370,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
             >
               Add Bank
             </Button>
-          </div>
+          }
         </div>
       </div>
     </div >

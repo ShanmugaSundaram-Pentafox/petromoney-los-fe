@@ -55,7 +55,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExperianData, onClickAddMenu, formType, openCloseCreditForm, currentUser, showDealerEditForm, dealersClickRow, editFormClose, deletable }) => {
+const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExperianData, onClickAddMenu, formType, openCloseCreditForm, currentUser, showDealerEditForm, dealersClickRow, editFormClose, deletable, viewOnly }) => {
   const classes = useStyles();
   const queryClient = useQueryClient()
   const { enqueueSnackbar } = useSnackbar();
@@ -112,20 +112,19 @@ const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExper
             <TableCell align="center">Mobile</TableCell>
             <TableCell align="center">Documents</TableCell>
             {
-              editable &&
-                <TableCell align="center">Action</TableCell>
+              editable || viewOnly ?
+                <TableCell align="center">Action</TableCell> : null
             }
           </TableRow>
         </TableHead>
         <TableBody>
           {data.map((row, index) => (
-            <TableRow className={classes.tableRow} key={row.id}>
-              <TableCell onClick={e => editable && dealersClickRow(e, row, 'DEALER')}>
+            <TableRow className={classes.tableRow} key={row.id} onClick={e => editable || viewOnly ? dealersClickRow(e, row, 'DEALER') : null}>
+              <TableCell>
                 {row.first_name}&nbsp;&nbsp;
-                {/* <Chip size="small" label="Experian Report" onClick={(e) => getExperianData(e, row.id)} /> */}
               </TableCell>
-              <TableCell align="center" onClick={e => editable && dealersClickRow(e, row, 'DEALER')}>{row.mobile}</TableCell>
-              <TableCell align="center" onClick={e => editable && dealersClickRow(e, row, 'DEALER')}>
+              <TableCell align="center">{row.mobile}</TableCell>
+              <TableCell align="center">
                 {row.aadhar_f_file_url && <TableCell style={{ border: 0 }} align="center">
                   <a className={classes.document}
                     href={row.aadhar_f_file_url} target="_blank" title={'Aadhar Front'} rel="noreferrer">{'Aadhar Front'}</a>
@@ -146,11 +145,11 @@ const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExper
                   </TableCell>}
               </TableCell>
               {
-                editable &&
-                  <TableCell align="right">
+                editable || viewOnly ?
+                  <TableCell align="right" onClick={e => e.stopPropagation()}>
                     <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>
                     {deletable && <DeleteButton alertText={`Do you really want to delete this dealer named ${row?.first_name}?`} deleteAction={() => DeleteApplicant(row)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={index} buttonType='icon' />}
-                  </TableCell>
+                  </TableCell> : null
               }
             </TableRow>
           ))}

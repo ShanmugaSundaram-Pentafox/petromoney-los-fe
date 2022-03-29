@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const ExpensesTable = ({ id, editable, values = [], currentUser }) => {
+const ExpensesTable = ({ id, editable, values = [], currentUser, viewOnly }) => {
   const classes = useStyles();
   const [expenses, setExpenses] = useState(values);
   const [addNewRow, setAddNewRow] = useState();
@@ -112,7 +112,7 @@ const ExpensesTable = ({ id, editable, values = [], currentUser }) => {
         <TableRow>
           <TableCell>Type</TableCell>
           <TableCell align="right">Amount</TableCell>
-          <TableCell align="right">Action</TableCell>
+          {!viewOnly && <TableCell align="right">Action</TableCell>}
         </TableRow>
       </TableHead>
       <TableBody>
@@ -155,14 +155,17 @@ const ExpensesTable = ({ id, editable, values = [], currentUser }) => {
                 <Currency value={item.expense_amount} />
               </TableCell>
               <TableCell align={'right'}>
-                <Button
-                  size="small"
-                  variant="outlined"
-                  color="success"
-                  className={clsx(classes.btnSuccess, classes.btnEdit)}
-                  onClick={() => editExpenseRow(item, i)}>
-                  Edit
-                </Button>
+                {
+                  !viewOnly &&
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    color="success"
+                    className={clsx(classes.btnSuccess, classes.btnEdit)}
+                    onClick={() => editExpenseRow(item, i)}>
+                    Edit
+                  </Button>
+                }
               </TableCell>
             </TableRow>
           ))

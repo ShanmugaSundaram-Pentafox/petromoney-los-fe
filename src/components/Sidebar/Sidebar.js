@@ -149,6 +149,17 @@ const Sidebar = props => {
     //   icon: <SettingsIcon />
     // }
   ];
+
+  if(permissionCheck(currentUser.role_name, rulesList.external_view)) {
+    pages = [
+      {
+        title: 'Dealerships',
+        href: '/dealership',
+        icon: <PeopleIcon />
+      },
+    ]
+  }
+
   if (permissionCheck(currentUser.role_name, rulesList.dealer_view)) {
     pages.splice(1, pages.length + 1)
     pages.push(

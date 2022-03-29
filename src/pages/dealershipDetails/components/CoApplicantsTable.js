@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const CoApplicantsTable = ({id, editable, coApplicantsData, titleAlign, getExperianData, onClickAddMenu, formType, openCloseCreditForm, currentUser, showDealerEditForm, dealersClickRow, editFormClose }) => {
+const CoApplicantsTable = ({id, editable, coApplicantsData, titleAlign, getExperianData, onClickAddMenu, formType, openCloseCreditForm, currentUser, showDealerEditForm, dealersClickRow, editFormClose, deletable, viewOnly }) => {
   const classes = useStyles();
   const queryClient = useQueryClient()
   const { enqueueSnackbar } = useSnackbar();
@@ -116,19 +116,19 @@ const CoApplicantsTable = ({id, editable, coApplicantsData, titleAlign, getExper
             <TableCell align="center">Mobile</TableCell>
             <TableCell align="center">Documents</TableCell>
             {
-              editable &&
-                <TableCell align="center">Action</TableCell>
+              editable || viewOnly ?
+                <TableCell align="center">Action</TableCell> : null
             }
           </TableRow>
         </TableHead>
         <TableBody>
           {coApplicantsData.map((row, index) => (
-            <TableRow className={classes.tableRow} key={row.id}>
-              <TableCell onClick={e => editable && dealersClickRow(e, row, 'COAPPLICANT')}>
+            <TableRow className={classes.tableRow} key={row.id} onClick={e => editable || viewOnly ? dealersClickRow(e, row, 'COAPPLICANT') : null}>
+              <TableCell>
                 {row.first_name}&nbsp;&nbsp;
               </TableCell>
-              <TableCell align="center" onClick={e => editable && dealersClickRow(e, row, 'COAPPLICANT')}>{row.mobile}</TableCell>
-              <TableCell align="center" onClick={e => editable && dealersClickRow(e, row, 'COAPPLICANT')}>
+              <TableCell align="center">{row.mobile}</TableCell>
+              <TableCell align="center">
                 {row.aadhar_f_file_url && <TableCell style={{ border: 0 }} align="center">
                   <a className={classes.document}
                     href={row.aadhar_f_file_url} target="_blank" title={'Aadhar Front'} rel="noreferrer">{'Aadhar Front'}</a>
@@ -149,11 +149,11 @@ const CoApplicantsTable = ({id, editable, coApplicantsData, titleAlign, getExper
                   </TableCell>}
               </TableCell>
               {
-                editable &&
-                  <TableCell align="right">
+                editable || viewOnly ?
+                  <TableCell align="right" onClick={e => e.stopPropagation()}>
                     <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>
-                    <DeleteButton alertText={`Do you really want to delete this co-applicant named ${row?.first_name}?`} deleteAction={() => DeleteApplicant(row)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={index} buttonType='icon' />
-                  </TableCell>
+                    {deletable && <DeleteButton alertText={`Do you really want to delete this co-applicant named ${row?.first_name}?`} deleteAction={() => DeleteApplicant(row)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={index} buttonType='icon' />}
+                  </TableCell> : null
               }
             </TableRow>
           ))}

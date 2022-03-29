@@ -70,6 +70,7 @@ const LoginUserInfoWrapper = styled.div`
         display: none;
         min-width: 152px;
         position: absolute;
+        border-radius: 4px 0px 4px 4px;
         top: 100%;
         right: 4px;
         background: #2F2E36;

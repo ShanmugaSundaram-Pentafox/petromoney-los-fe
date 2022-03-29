@@ -93,7 +93,7 @@ export const ViewData = ({ title, value }) => {
 }
 
 
-const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
+const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable }) => {
   const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
   const [loading, setLoading] = useState(false)
 
@@ -459,20 +459,17 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
                 </div>
               )
             ) : (
-              <>
-                <div>
-                  <Button
-                    variant="contained"
-                    type="submit"
-                    className={clsx(classes.btn, classes.editButton)}
-                    startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                    // disabled={loading}
-                    onClick={loading ? () => null : handleEdit}
-                  >
-                    Edit
-                  </Button>
-                </div>
-              </>
+              !editable &&
+              <Button
+                variant="contained"
+                type="submit"
+                className={clsx(classes.btn, classes.editButton)}
+                startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
+                // disabled={loading}
+                onClick={loading ? () => null : handleEdit}
+              >
+                Edit
+              </Button>
             )
           }
         </div>

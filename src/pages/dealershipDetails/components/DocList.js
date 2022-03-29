@@ -6,6 +6,8 @@ import DocListPreview from './DocListPreview';
 import FileUpload from '../../../components/FileUpload';
 import { URL } from '../../../config/serverUrls';
 import { getDealershipCheckList } from '../../../services/dealerships.service';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
 
 const DeleteButton = withStyles(() => ({
   root: {
@@ -70,11 +72,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DocList = ({ id }) => {
+const DocList = ({ id, currentUser }) => {
   const queryClient = useQueryClient()
   const classes = useStyles();
   const [showUpload, setShowUpload] = useState(false);
   const [rowData, setRowData] = useState();
+  const editable = permissionCheck(currentUser.role_name, rulesList.external_view);
+
   const { data: checkListData = [] } = useQuery(['doc-checklist', id], () => getDealershipCheckList(id), {refetchOnWindowFocus: false})
 
   const { enqueueSnackbar } = useSnackbar();
@@ -122,7 +126,7 @@ const DocList = ({ id }) => {
       <Table className={classes.table} size="small" aria-label="Dealers">
         <TableBody>
           {Array.isArray(checkListData) && checkListData.map((row, i) => row.doc_type !== 'dealer' && (
-            <DocListPreview docName={row.description} upload={() => onDocUpload(row)} file={row.file_data} id={i + 1} dealershipId={id} />
+            <DocListPreview docName={row.description} upload={() => onDocUpload(row)} file={row.file_data} id={i + 1} dealershipId={id} editable={editable} />
           ))}
         </TableBody>
       </Table>

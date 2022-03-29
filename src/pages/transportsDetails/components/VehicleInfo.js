@@ -1,16 +1,10 @@
 import { Drawer, Grid, Paper } from '@material-ui/core';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography'
-import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react'
@@ -18,6 +12,7 @@ import { useQueryClient } from 'react-query';
 import TrackerUpdateModal from './TrackerUpdateModal'
 import { VehicleInfoSidewrapper } from './VehicleInfoSidewrapper';
 import Button from '../../../components/CommonComponents/Button/Button'
+import DeleteButton from '../../../components/CommonComponents/Button/DeleteButton';
 import FilePreview from '../../../components/CommonComponents/FilePreview';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog'
 import FileUpload from '../../../components/FileUpload'
@@ -90,7 +85,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function VehicleInfo({ id, data, currentUser }) {
   const queryClient = useQueryClient()
-  const [open, setOpen] = useState(false)
+  const [deleteModal, setDeleteModal] = useState(false)
   const [serviceData, setServiceData] = useState({})
   const [serviceModal, setServiceModal] = useState({})
   const [imageModal, setImageModal] = useState({})
@@ -105,7 +100,8 @@ export default function VehicleInfo({ id, data, currentUser }) {
   const [formType, setFormType] = useState('');
   const [vehicleDetailsForm, setVehicleDetailsForm] = useState({open: false})
   const { enqueueSnackbar } = useSnackbar();
-  const classes = useStyles()
+  const classes = useStyles();
+  const editable = permissionCheck(currentUser.role_name, rulesList.external_view);
 
   const handleUpload = (row, vehicle) => {
     setFileUpload(true);
@@ -176,18 +172,11 @@ export default function VehicleInfo({ id, data, currentUser }) {
       getServiceStatus({ ...d, id: d.loan_id });
     }
   }
-  const handleClickOpen = (number, id) => {
-    setVehicleNumber(number)
-    setVehicleId(id)
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
-  const deleteVehicle = () => {
-    deleteVehicleStatus(id, vehicleId)
+  const deleteVehicle = (tt_no, vehicle_id) => {
+    deleteVehicleStatus(id, vehicle_id)
       .then(res => {
-        setOpen(false)
+        setDeleteModal(false)
+        queryClient.invalidateQueries(['vehicleData', id])
         enqueueSnackbar(res, {
           anchorOrigin: {
             vertical: 'top',
@@ -196,10 +185,6 @@ export default function VehicleInfo({ id, data, currentUser }) {
           autoHideDuration: 3000,
           variant: 'success',
         })
-
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000)
       })
       .catch(e => {
         enqueueSnackbar(e, {
@@ -214,7 +199,6 @@ export default function VehicleInfo({ id, data, currentUser }) {
   const handleDocDelete = (rowData, vehicle) => {
     deleteVehicleDoc(id, rowData, vehicle)
       .then(res => {
-        setOpen(false)
         enqueueSnackbar(res, {
           anchorOrigin: {
             vertical: 'top',
@@ -223,7 +207,6 @@ export default function VehicleInfo({ id, data, currentUser }) {
           autoHideDuration: 2000,
           variant: 'success',
         })
-
         setTimeout(() => {
           window.location.reload();
         }, 2000)
@@ -242,7 +225,6 @@ export default function VehicleInfo({ id, data, currentUser }) {
   const handleLoanDelete = (row) => {
     deleteVehicleLoan(row)
       .then(res => {
-        setOpen(false)
         enqueueSnackbar(res, {
           anchorOrigin: {
             vertical: 'top',
@@ -251,7 +233,6 @@ export default function VehicleInfo({ id, data, currentUser }) {
           autoHideDuration: 2000,
           variant: 'success',
         })
-
         setTimeout(() => {
           window.location.reload();
         }, 2000)
@@ -272,7 +253,10 @@ export default function VehicleInfo({ id, data, currentUser }) {
     <Paper borderRadius={5}>
       <Typography variant='h6' style={{padding: 15, display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
         <div>Vehicle</div>
-        <Button color="primary" variant="outlined" onClick={() => {setOpenModal(true); setFormType('Add');}}>Add Vehicle</Button>
+        {
+          !editable &&
+          <Button color="primary" variant="outlined" onClick={() => {setOpenModal(true); setFormType('Add');}}>Add Vehicle</Button>
+        }
       </Typography>
       <Grid container>
         <Grid item md={12}>
@@ -281,7 +265,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
               <TableRow>
                 <TableCell>Vehicle No</TableCell>
                 <TableCell>Credit Limit</TableCell>
-                <TableCell align="right">Action</TableCell>
+                {!editable && <TableCell align="right">Action</TableCell>}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -293,13 +277,9 @@ export default function VehicleInfo({ id, data, currentUser }) {
                         <TableCell onClick={(e) => {setVehicleDetailsForm({ open: true, vehicleInfo: vehicleInfo })}}>{vehicleInfo.tt_no}</TableCell>
                         <TableCell onClick={(e) => {setVehicleDetailsForm({ open: true, vehicleInfo: vehicleInfo })}}><Currency value={vehicleInfo.credit_limit} /></TableCell>
                         {
-                          !permissionCheck(currentUser.role_name, rulesList.transporter_view) ? (
+                          !editable ? (
                             <TableCell style={{display: 'flex'}} align='right'>
-                              <Tooltip title="Delete vehicle">
-                                <Typography style={{ color: '#ff6666' }}>
-                                  <DeleteOutlineIcon fontSize="medium" onClick={(e) => {handleClickOpen(vehicleInfo.tt_no, vehicleInfo.vehicle_id)}} />
-                                </Typography>
-                              </Tooltip>
+                              <DeleteButton deleteAction={() => deleteVehicle(vehicleInfo.tt_no, vehicleInfo.vehicle_id)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={i} buttonType='icon' />
                             </TableCell>
                           ) : null
                         }
@@ -312,26 +292,6 @@ export default function VehicleInfo({ id, data, currentUser }) {
           </Table>
         </Grid>
       </Grid>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Did you want to delete the vehicle with vehicle number {vehicleNumber} ?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            No
-          </Button>
-          <Button onClick={() => deleteVehicle()} color="primary">
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
       
       <FormDialog title={'File Preview'} onDownload={imageModal.image} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
         <FilePreview data={imageModal} />
@@ -358,7 +318,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
         onClose={() => setVehicleDetailsForm({open: false})}
         variant="temporary"
       >
-        <VehicleInfoSidewrapper currentUser={currentUser} callbackClose={() => setVehicleDetailsForm({open: false})} setImageModal={setImageModal} handleUpload={handleUpload} vehicleInfo={vehicleDetailsForm?.vehicleInfo} handleDocDelete={handleDocDelete} id={id} handleLoanDelete={handleLoanDelete} getServiceStatus={getServiceStatus} openServiceModal={openServiceModal} serviceData={serviceData} tracking={tracking} />
+        <VehicleInfoSidewrapper currentUser={currentUser} callbackClose={() => setVehicleDetailsForm({open: false})} setImageModal={setImageModal} handleUpload={handleUpload} vehicleInfo={vehicleDetailsForm?.vehicleInfo} handleDocDelete={handleDocDelete} id={id} handleLoanDelete={handleLoanDelete} getServiceStatus={getServiceStatus} openServiceModal={openServiceModal} serviceData={serviceData} tracking={tracking} editable={editable} />
       </Drawer>
     </Paper>
   )

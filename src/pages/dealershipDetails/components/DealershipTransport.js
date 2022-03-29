@@ -106,7 +106,7 @@ const DealershipTransport = ({ id, currentUser, titleAlign }) => {
   const classes = useStyles()
 
 
-  const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit)
+  const editable = permissionCheck(currentUser.role_name, rulesList.external_view)
   const handleEdit = () => {
     setOpenModal(!openModal)
   }
@@ -122,18 +122,21 @@ const DealershipTransport = ({ id, currentUser, titleAlign }) => {
       <div className={classes.wrapper}>
         <div className={classes.header}>
           <Typography style={{ width: '70%' }} variant="h5" align={titleAlign} className={classes.title}>Transport Owner</Typography>
-          <Button
-            color="primary"
-            variant="contained"
-            size='small'
-            onClick={() => {
-              setOpenModal(true)
-              setRowData({})
-              setFormType('Add')
-            }}
-          >
-            Add Owner
-          </Button>
+          {
+            !editable &&
+            <Button
+              color="primary"
+              variant="contained"
+              size='small'
+              onClick={() => {
+                setOpenModal(true)
+                setRowData({})
+                setFormType('Add')
+              }}
+            >
+              Add Owner
+            </Button>
+          }
         </div>
         <div>
           <TransportOwnerTable id={id} onRowClick={showOwnerEditForm} />
@@ -148,7 +151,7 @@ const DealershipTransport = ({ id, currentUser, titleAlign }) => {
         }}
         variant="temporary"
       >
-        <AddNewTransportsOwnerForm dealer_id={id} rowData={rowData} isAdd={formType} callback={handleEdit} currentUser={currentUser} />
+        <AddNewTransportsOwnerForm dealer_id={id} rowData={rowData} isAdd={formType} callback={handleEdit} currentUser={currentUser} editable={editable} />
       </Drawer>
     </div>
   )

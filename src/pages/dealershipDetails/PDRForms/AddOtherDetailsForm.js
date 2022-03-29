@@ -86,7 +86,7 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
+const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) => {
   const [omcs, setOmcs] = useState([])
   const [addNew, setAddNew] = useState(data ? false : true)
   const [editRow, setEditRow] = useState(false);
@@ -323,6 +323,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
                       <PreviewCard
                         onEdit={() => { editOthersRow(item, i) }}
                         onDelete={() => deleteOthersRow(item, i)}
+                        action={!editable}
                       >
                         <Grid container spacing={2}>
                           <Grid item md={6}>
@@ -361,7 +362,8 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
               Back
             </Button>
           </div>
-          <div>
+          {
+            !editable &&
             <Button
               variant="contained"
               color="primary"
@@ -370,7 +372,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback }) => {
             >
               Add other bunk
             </Button>
-          </div>
+          }
         </div>
       </div>
     </div >

@@ -145,20 +145,23 @@ const NewCallRequest = ({callbackData}) => {
         options={options}
         data={callbackData}
       />
-      <Dialog onClose={() => setRowData()} open={rowData}>
-        <DialogContent style={{minWidth: '300px'}}>
-          <label>Remark</label>
+      <Dialog onClose={() => setRowData()} open={rowData} maxWidth='xs' fullWidth>
+        <DialogContent>
+          <Typography variant='h5' style={{textAlign: 'center', marginBottom: 8}}>Add Remarks</Typography>
           <TextInput
             fullWidth
+            placeholder='Enter remarks and resolve...'
             name="remarks"
+            multiline
+            rows={4}
             value={remark}
             onChange={e => setRemark(e.target.value)}
           />
+          <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom:10, marginTop:12}}>
+            <Button onClick={() => setRowData()} variant='outlined' style={{marginRight: 16}}>Cancel</Button>
+            <Button onClick={handleResolve} variant="contained" color="secondary">Resolve</Button>
+          </div>
         </DialogContent>
-        <DialogActions>
-          <Button size="small" onClick={() => setRowData()}>Cancel</Button>
-          <Button onClick={handleResolve} variant="outlined" color="primary" size="small">Resolve</Button>
-        </DialogActions>
       </Dialog>
     </div>
   )

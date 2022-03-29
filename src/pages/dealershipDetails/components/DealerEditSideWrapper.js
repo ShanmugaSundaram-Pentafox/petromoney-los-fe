@@ -82,6 +82,7 @@ const DealerEditSideWrapper = ({
   currentUser,
   onClose,
   id,
+  viewOnly,
 }) => {
   const classes = useStyles();
   const queryClient = useQueryClient()
@@ -200,7 +201,7 @@ const DealerEditSideWrapper = ({
             setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}})
             !values?.first_name && setFieldValue('first_name', res?.details?.firstName)
             !values?.last_name && setFieldValue('last_name', res?.details?.lastName)
-            !values?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
+            res?.details?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
             !values?.gender && setFieldValue('gender', res?.details?.gender?.toUpperCase())
             !values?.pincode && setFieldValue('pincode', res?.details?.address?.pinCode)
             !values?.address && setFieldValue('address', `${res?.details?.address?.buildingName}, ${res?.details?.address?.streetName}, ${res?.details?.address?.city}, ${res?.details?.address?.state} - ${res?.details?.address?.pinCode}`)
@@ -259,20 +260,30 @@ const DealerEditSideWrapper = ({
         })
         .then((res) => {
           setLoading(false);
-          setApicallStatus('success');
-          enqueueSnackbar(res.message, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'success',
-          });
-          onClose();
-          modelType === 'DEALER' &&
-          queryClient.invalidateQueries(['dealers-coapplicant', id])
-
-          modelType === 'COAPPLICANT' ?
-            queryClient.invalidateQueries(['co-applicants', id]) : queryClient.invalidateQueries(['guarantors', id])
+          if(res.status === 'SUCCESS'){
+            setApicallStatus('success');
+            enqueueSnackbar(res.message, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'success',
+            });
+            onClose();
+            modelType === 'DEALER' &&
+            queryClient.invalidateQueries(['dealers-coapplicant', id])
+  
+            modelType === 'COAPPLICANT' ?
+              queryClient.invalidateQueries(['co-applicants', id]) : queryClient.invalidateQueries(['guarantors', id])
+          } else {
+            enqueueSnackbar(res.message, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            });
+          }
         })
         .catch((err) => {
           setReadOnly(false);
@@ -388,21 +399,24 @@ const DealerEditSideWrapper = ({
                   Back
                 </Button>
               </div>
-              <div>
-                <Button
-                  variant='contained'
-                  className={clsx(classes.btn, classes.editButton)}
-                  startIcon={
-                    !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
-                  }
-                  disabled={loading}
-                  onClick={
-                    loading ? () => null : readOnly ? handleEdit : handleSubmit
-                  }
-                >
-                  Edit
-                </Button>
-              </div>
+              {
+                !viewOnly &&
+                <div>
+                  <Button
+                    variant='contained'
+                    className={clsx(classes.btn, classes.editButton)}
+                    startIcon={
+                      !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
+                    }
+                    disabled={loading}
+                    onClick={
+                      loading ? () => null : readOnly ? handleEdit : handleSubmit
+                    }
+                  >
+                    Edit
+                  </Button>
+                </div>
+              }
             </>
           )}
         </div>

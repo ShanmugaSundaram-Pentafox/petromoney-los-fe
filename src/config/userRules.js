@@ -17,7 +17,9 @@ export const rulesList = {
   'financial_view': 'financial:view',
   'upload_statement': 'upload:statement',
   'projection_report': 'projection:report',
-  'applicant_delete': 'applicant:delete'
+  'applicant_delete': 'applicant:delete',
+  'external_view': 'external:view',
+  'dealership_view': 'dealership:view'
 }
 
 export const rulesForUserRoles = {
@@ -92,7 +94,7 @@ export const rulesForUserRoles = {
       rulesList.financial_view,
       rulesList.upload_statement,
       rulesList.projection_report,
-      rulesList.applicant_delete
+      rulesList.applicant_delete,
     ]
   },
   CREDIT_EXEC: {
@@ -187,6 +189,15 @@ export const rulesForUserRoles = {
   TRANSPORTER: {
     static: [
       rulesList.transporter_view,
+    ]
+  },
+  EXTERNAL: {
+    static: [
+      rulesList.external_view,
+      rulesList.pdr_view,
+      rulesList.credit_view,
+      rulesList.dealership_view,
+      rulesList.financial_view,
     ]
   }
 }

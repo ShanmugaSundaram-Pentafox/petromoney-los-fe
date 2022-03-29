@@ -67,7 +67,8 @@ const DealershipInfo = ({ data, className, currentUser }) => {
   const businessTypes = useQuery('business-types', getBusinessTypes, { cacheTime: 300000 })
   const states = useQuery('state', getActiveStates, { cacheTime: 300000 })
   const { enqueueSnackbar } = useSnackbar();
-  const view = permissionCheck(currentUser.role_name, rulesList.dealer_view)
+  const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit);
+  const viewOnly = permissionCheck(currentUser.role_name, rulesList.dealership_view);
 
   const handleValidate = (action, id) => {
     action === 'pan' ? setPanValidateData({icon:true, loading: true}) : setGstValidateData({icon:true, loading: true})
@@ -501,8 +502,9 @@ const DealershipInfo = ({ data, className, currentUser }) => {
               </>
             ) : <CircularProgress size={20} />
           ) : (
+            !viewOnly &&
             <Button
-              disabled={!permissionCheck(currentUser.role_name, rulesList.dealership_edit)}
+              disabled={!editable}
               color="primary"
               variant="contained"
               size="small"

@@ -15,6 +15,7 @@ import Button from '../../../components/CommonComponents/Button/Button';
 import TextInput from '../../../components/TextInput/TextInput';
 import { URL } from '../../../config/serverUrls';
 import { getBankDetailsbyID, updateBankDetailsByID } from '../../../services/PDReport.services';
+import { compareObject } from '../../../utils/compareObject.util';
 import { useQuery, useQueryClient } from 'react-query';
 
 const useStyles = makeStyles((theme) => ({
@@ -104,17 +105,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => {
+const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, editable }) => {
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient()
   const classes = useStyles()
   const [addNewRow, setAddNewRow] = useState(false);
-  const [editRow, setEditRow] = useState(false);
+  const [editRow, setEditRow] = useState({ editForm: false, index: 0});
   const { data: bankData = [] } = useQuery('bank-data', () => getBankDetailsbyID(dealer_id), {refetchOnWindowFocus: false})
 
   const editBankRow = (rowData, rowIndex) => {
     // setEditRow({ ...rowData, rowIndex });
-    setEditRow(true)
+    setEditRow({ editForm: true, index: rowIndex })
     setValues(rowData)
   }
   const handleClose = () => {
@@ -133,8 +134,12 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
       bank_branch: Yup.string('Enter valid branch name').nullable('Enter branch name').required('Enter branch name'),
       account_type: Yup.string('Enter valid type').nullable('Enter account type').required('Enter account type'),
     }),
-    onSubmit: values => {
-      updateBankDetailsByID(values, dealer_id)
+    onSubmit: finalValues => {
+      let v = { ...finalValues };
+      if(finalValues.id) {
+        v = compareObject(bankData[editRow?.index], finalValues, { id: finalValues.id })
+      }
+      updateBankDetailsByID(v, dealer_id)
         .then(res => {
           enqueueSnackbar(res, {
             anchorOrigin: {
@@ -146,7 +151,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
           )
           queryClient.invalidateQueries('bank-data')
           setAddNewRow(false)
-          setEditRow(false)
+          setEditRow({ editForm: false })
 
         })
         .catch(e => {
@@ -208,7 +213,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
               <Typography className={classes.typography}>No bank found,Click &apos;Add Bank&apos; to add new bank.</Typography>
           }
           {
-            addNewRow || editRow ? (
+            addNewRow || editRow?.editForm ? (
               <>
                 <Grid container spacing={2}>
                   <Grid item md={6}>
@@ -318,7 +323,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
                       <Button
                         variant="outlined"
                         className={classes.btn}
-                        onClick={() => { setAddNewRow(false); setEditRow(false) }}
+                        onClick={() => { setAddNewRow(false); setEditRow({ editForm: false }) }}
                       >
                         Cancel
                       </Button>
@@ -338,7 +343,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
                 </div>
               </>
             ) : (
-              <BankDetailsCard id={dealer_id} data={bankData} editBankDetails={editBankRow} />
+              <BankDetailsCard id={dealer_id} data={bankData} editBankDetails={editBankRow} editable={editable} />
             )
           }
         </div>
@@ -355,7 +360,8 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
               Back
             </Button>
           </div>
-          <div>
+          {
+            !editable &&
             <Button
               variant="contained"
               color="primary"
@@ -364,7 +370,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser }) => 
             >
               Add Bank
             </Button>
-          </div>
+          }
         </div>
       </div>
     </div >

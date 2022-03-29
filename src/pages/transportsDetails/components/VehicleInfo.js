@@ -277,7 +277,7 @@ export default function VehicleInfo({ id, data, currentUser }) {
                         <TableCell onClick={(e) => {setVehicleDetailsForm({ open: true, vehicleInfo: vehicleInfo })}}>{vehicleInfo.tt_no}</TableCell>
                         <TableCell onClick={(e) => {setVehicleDetailsForm({ open: true, vehicleInfo: vehicleInfo })}}><Currency value={vehicleInfo.credit_limit} /></TableCell>
                         {
-                          !permissionCheck(currentUser.role_name, rulesList.transporter_view) ? (
+                          !editable ? (
                             <TableCell style={{display: 'flex'}} align='right'>
                               <DeleteButton deleteAction={() => deleteVehicle(vehicleInfo.tt_no, vehicleInfo.vehicle_id)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={i} buttonType='icon' />
                             </TableCell>

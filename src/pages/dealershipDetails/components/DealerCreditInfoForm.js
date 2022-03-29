@@ -124,15 +124,6 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
             <Grid {...gridItem} md={2}style={{marginTop:15}}>
               {ValidateProps(cibilLoading)}
             </Grid>
-            {
-              !values?.cibil_score &&
-                <Grid {...gridItem} md={4}>
-                  {<Button variant='outlined' color='primary' style={{marginTop: 10}} onClick={CIBILReport} startIcon={<SpeedOutlinedIcon />}>Check CIBIL Score</Button>}
-                </Grid>
-            }
-            <Grid {...gridItem} md={2}style={{marginTop:15}}>
-              {ValidateProps(cibilLoading)}
-            </Grid>
           </>
         }
         <Collapse in={collapseOpen} style={{width: '100%'}}>

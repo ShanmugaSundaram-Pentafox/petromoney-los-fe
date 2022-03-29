@@ -94,7 +94,7 @@ export const rulesForUserRoles = {
       rulesList.financial_view,
       rulesList.upload_statement,
       rulesList.projection_report,
-      rulesList.applicant_delete
+      rulesList.applicant_delete,
     ]
   },
   CREDIT_EXEC: {
@@ -191,7 +191,7 @@ export const rulesForUserRoles = {
       rulesList.transporter_view,
     ]
   },
-  DOS: {
+  EXTERNAL: {
     static: [
       rulesList.external_view,
       rulesList.pdr_view,

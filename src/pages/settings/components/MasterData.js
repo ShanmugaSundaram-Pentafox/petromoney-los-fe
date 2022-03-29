@@ -1,6 +1,7 @@
 import { Drawer, Grid, Paper, Tooltip, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import React, {useState} from 'react';
+import AssignProducts from './AssignProducts';
 import Contain from './MasterDataTable';
 import Products from './Products';
 import Zones from './Zones';
@@ -11,6 +12,7 @@ import { ReactComponent as FuelIcon } from '../../../icons/fuelIcon.svg';
 import { ReactComponent as InfrastructureIcon } from '../../../icons/infrastructure.svg';
 import { ReactComponent as LoanIcon } from '../../../icons/loan.svg';
 import { ReactComponent as OtherIcon } from '../../../icons/other_icons.svg';
+import { ReactComponent as RolesIcon } from '../../../icons/rolesIcon.svg';
 import { ReactComponent as ZoneIcon } from '../../../icons/zoneIcon.svg';
 
 const useStyles = makeStyles({
@@ -121,8 +123,16 @@ function MasterData() {
             <Grid item md={2}>
               <Tooltip title="Products">
                 <div className={classes.content} onClick={() => setCustomForm('Products')}>
-                  <FuelIcon width={35} className={classes.icons} />
+                  <FuelIcon width={40} className={classes.icons} />
                   <Typography variant="h5" align='center' className={classes.title} >Products</Typography>
+                </div>
+              </Tooltip>
+            </Grid>
+            <Grid item md={2}>
+              <Tooltip title="Products">
+                <div className={classes.content} onClick={() => setCustomForm('assign_products')}>
+                  <RolesIcon className={classes.icons} />
+                  <Typography variant="h5" align='center' className={classes.title} >Assign Products</Typography>
                 </div>
               </Tooltip>
             </Grid>
@@ -152,6 +162,14 @@ function MasterData() {
           variant="temporary"
         >
           <Zones title={customForm} callback={setCustomForm}/>
+        </Drawer>
+        <Drawer
+          anchor="right"
+          open={customForm === 'assign_products'}
+          onClose={() => setCustomForm()}
+          variant="temporary"
+        >
+          <AssignProducts title='Assign Product' callback={setCustomForm} />
         </Drawer>
       </Paper>
 

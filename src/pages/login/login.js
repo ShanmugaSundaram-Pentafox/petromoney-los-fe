@@ -227,7 +227,7 @@ const Login = ({ setCurrentUser }) => {
   }
 
   const sendOTP = () => {
-    resendOTP(toString(values.mobile))
+    resendOTP(values.mobile?.toString())
       .then((status, message) => {
         if (status === 'SUCCESS') {
           enqueueSnackbar(`OTP Sent to ${values.mobile}`, {
@@ -397,7 +397,7 @@ const Login = ({ setCurrentUser }) => {
                       <label className={classes.forgetLabel} onClick={() => {
                         setLoginWithOTP(true)
                         setForgetPass(true)
-                      }}>Forget Password ?</label>
+                      }}>Forgot Password ?</label>
                     </div> :
                     <label className={classes.returnLabel}>Return to <span style={{color: '#1E88E5'}} onClick={goBackLogin}>Login Page</span></label>
                   }

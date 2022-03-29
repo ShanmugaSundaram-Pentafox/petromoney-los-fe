@@ -126,15 +126,6 @@ const BankDetailsCard = ({ id, data, editBankDetails, editable }) => {
                   <ViewData title="Acc. since" value={item.account_since} />
                 </Grid>
               </Grid>
-              {
-                !editable &&
-                item?.bank_verified ?
-                <span style={{position: 'absolute', bottom: 15, left: 15}}>
-                  <Typography variant='body2' style={{color: 'rgb(0,0,0,0.4)'}}>
-                    {`Last Verified: ${item?.last_verified_date || '-'}`}
-                  </Typography>
-                </span> : null
-              }
             </PreviewCardBank>
           </Grid>
         )

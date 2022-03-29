@@ -17,7 +17,7 @@ export const rulesList = {
   'financial_view': 'financial:view',
   'upload_statement': 'upload:statement',
   'projection_report': 'projection:report',
-  'applicant_delete': 'applicant:delete'
+  'applicant_delete': 'applicant:delete',
 }
 
 export const rulesForUserRoles = {
@@ -92,7 +92,7 @@ export const rulesForUserRoles = {
       rulesList.financial_view,
       rulesList.upload_statement,
       rulesList.projection_report,
-      rulesList.applicant_delete
+      rulesList.applicant_delete,
     ]
   },
   CREDIT_EXEC: {

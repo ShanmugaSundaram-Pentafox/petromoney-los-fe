@@ -200,7 +200,7 @@ const DealerEditSideWrapper = ({
             setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}})
             !values?.first_name && setFieldValue('first_name', res?.details?.firstName)
             !values?.last_name && setFieldValue('last_name', res?.details?.lastName)
-            !values?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
+            res?.details?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
             !values?.gender && setFieldValue('gender', res?.details?.gender?.toUpperCase())
             !values?.pincode && setFieldValue('pincode', res?.details?.address?.pinCode)
             !values?.address && setFieldValue('address', `${res?.details?.address?.buildingName}, ${res?.details?.address?.streetName}, ${res?.details?.address?.city}, ${res?.details?.address?.state} - ${res?.details?.address?.pinCode}`)

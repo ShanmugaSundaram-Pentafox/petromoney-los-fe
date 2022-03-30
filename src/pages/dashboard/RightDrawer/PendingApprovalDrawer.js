@@ -1,4 +1,4 @@
-import { Dialog, DialogActions, DialogContent, DialogContentText, Button, CircularProgress } from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, Button, CircularProgress } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/CloseRounded';
 import { Alert } from '@material-ui/lab';
@@ -14,6 +14,7 @@ import TextInput from '../../../components/TextInput/TextInput';
 import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import { DeviationsTable } from '../../dealershipDetails/components/Deviations';
 import SalesInfo from '../components/SalesInfo';
+import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -184,17 +185,17 @@ const PendingApprovalDrawer = ({ id, selectedLoanData, status, currentUser, read
                 <Alert severity="error" style={{padding: '0px 16px'}}>{errorStatus}</Alert>
             }
           </div>
-        </DialogContent>
-        <DialogActions>
-          <div>
-            <Button onClick={handlePendingApprovalModal}>Cancel</Button>
-            <Button color='primary' variant='outlined'
-              onClick={() => { updateLoanStatus() }}
-            >
-              {loading ? <CircularProgress size={22} /> : 'Confirm'}
-            </Button>
+          <div style={{display: 'flex', justifyContent: 'center', margin: '8px 0px 5px 0px'}}>
+            <Button variant='outlined' style={{marginRight:8}} onClick={handlePendingApprovalModal}>Cancel</Button>
+            <LoaderButton 
+              variant='contained'
+              color='primary'
+              loadingText='Submitting...'
+              isLoading={loading}
+              onClick={updateLoanStatus}
+            >Confirm</LoaderButton>
           </div>
-        </DialogActions>
+        </DialogContent>
       </Dialog>
     </>
   );

@@ -1,5 +1,4 @@
 import Box from '@material-ui/core/Box';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -19,6 +18,7 @@ import {
   addNewVehicle,
   getVehicleInfoFromID,
 } from '../../../services/transports.service';
+import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -167,10 +167,15 @@ const AddNewVehicleForm = ({
                   )}
                 </Grid>
                 <Grid item md={6}>
-                  {
-                    loading ? <div style={{height: '6vh', marginTop: 19}}><CircularProgress size={30}/></div> :
-                    <Button style={{marginTop: 21}} variant='contained' type='submit' className={clsx(classes.btn, classes.editButton)} onClick={handleSubmit}>Save</Button>
-                  }
+                  <LoaderButton 
+                    variant='contained'
+                    className={clsx(classes.btn, classes.editButton)}
+                    isLoading={loading}
+                    loadingText='Saving...'
+                    style={{marginTop: 19}}
+                    onClick={handleSubmit}
+                    type='submit'
+                  >Save</LoaderButton>
                 </Grid>
               </Grid>
               <Divider style={{marginTop: 8}} />

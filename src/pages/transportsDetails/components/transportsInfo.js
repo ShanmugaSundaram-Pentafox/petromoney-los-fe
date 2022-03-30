@@ -27,7 +27,6 @@ const TransportsInfo = ({ data, currentUser }) => {
   const {values, handleChange: onChange, handleSubmit, setValues} = useFormik({
     initialValues: data,
     onSubmit: values => {
-      console.log('Form Values >> ', values);
       setLoading(true);
       setApiStatus({});
       apiCall(
@@ -188,7 +187,6 @@ const TransportsInfo = ({ data, currentUser }) => {
           }
           {!loading ? (
             <Box textAlign="right">
-              {/* <Button variant="contained" size="small" onClick={() => { console.log(data); setValues({...data}); }}>Cancel</Button> */}
               <Button type="submit" color="primary" variant="contained" size="medium">Save</Button>
             </Box>
           ) : <CircularProgress />

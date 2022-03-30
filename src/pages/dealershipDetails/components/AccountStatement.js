@@ -8,6 +8,7 @@ import React, { useState } from 'react';
 import { DateRange } from 'react-date-range';
 import { Box } from 'victory';
 import Button from '../../../components/CommonComponents/Button/Button';
+import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import usePageTitle from '../../../hooks/usePageTitle';
 import { downloadAccountStatement } from '../../../services/dealerships.service';
@@ -257,17 +258,16 @@ const AccountStatement = ({ id, currentUser }) => {
         </Popover>
       </Grid>
       <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: 8 }}>
-        <Button
-          // disabled={!permissionCheck(currentUser.role_name, rulesList.dealership_edit)}
-          color="primary"
-          variant="contained"
-          size="small"
-          type="submit"
+        <LoaderButton 
+          variant='contained'
+          color='primary'
+          size='small'
+          type='submit'
+          isLoading={loading}
+          loadingText='Loading...'
           onClick={handleDownload}
           style={{marginTop: 8}}
-        >
-          Get statement
-        </Button>
+        >Get statement</LoaderButton>
       </div>
       <FormDialog
         open={openDialog}

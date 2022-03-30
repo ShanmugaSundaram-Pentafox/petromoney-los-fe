@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.12.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.11.4...v2.12.0) (2022-03-30)
+
+
+### Features
+
+* **product-mapping:** external user product map ([98376ef](https://gitlab.com/vignesh3/petromall-fe/commit/98376ef21ea683e4616d933d9b7b91ee08c4b38f))
+* **react:** Update react version to v18 ([cf8c926](https://gitlab.com/vignesh3/petromall-fe/commit/cf8c92676cdb06d15fadac2342601ec8743e8c31))
+
+
+### Bug Fixes
+
+* **enhancements:** fixes and enhancements ([8d68b61](https://gitlab.com/vignesh3/petromall-fe/commit/8d68b61d75b1df36ddd448f7b2a93032492fe43f))
+* **external-role:** viewOnly permission check for external role ([557f50d](https://gitlab.com/vignesh3/petromall-fe/commit/557f50dc34b1d49c53aa5fc3dfa37bf0d6d946bc))
+* **external:** improper merge changes ([ae2ae80](https://gitlab.com/vignesh3/petromall-fe/commit/ae2ae8025311a76a492354f6199343c8caec62ec))
+* pan dob values set and approved amount prefill ([5930889](https://gitlab.com/vignesh3/petromall-fe/commit/59308891fc8ed3dd6788acf9f1b463e4b865752c))
+* **pennydrop:** bank details verified state update ([91beced](https://gitlab.com/vignesh3/petromall-fe/commit/91beced42d6b68af899dda92b24a263bbd7ca02f))
+* **pennydrop:** bank details verified state update ([3167056](https://gitlab.com/vignesh3/petromall-fe/commit/31670568259c433aa91634f780e8019edfac0c9c))
+* **Role-rename:** Conflict resolve and Role rename in userRules ([7236987](https://gitlab.com/vignesh3/petromall-fe/commit/72369878fafbfa452c1385e59b18b2b48be653dc))
+* **vehicle-Info:** conflict fix ([160afd2](https://gitlab.com/vignesh3/petromall-fe/commit/160afd203e8fab9213cb28f5887ff307d26fe44d))
+* verify modal update ([1dbe6ac](https://gitlab.com/vignesh3/petromall-fe/commit/1dbe6acfbaa4029b3ac887e693ec44719e0c21b4))
+
 ### [2.11.4](https://gitlab.com/vignesh3/petromall-fe/compare/v2.11.3...v2.11.4) (2022-03-22)
 
 

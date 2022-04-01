@@ -71,27 +71,31 @@ const DealershipInfo = ({ data, className, currentUser }) => {
   const viewOnly = permissionCheck(currentUser.role_name, rulesList.dealership_view);
 
   const handleValidate = (action, id) => {
-    action === 'pan' ? setPanValidateData({icon:true, loading: true}) : setGstValidateData({icon:true, loading: true})
-    validateId(action, id)
-      .then((res) => {
-        action === 'pan' ?
-          setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}}) :
-          setGstValidateData({icon: true, loading: false, idType: 'GST', details: res?.details || {}})
-        !values?.name && setFieldValue('name', res?.details?.tradeNam);
-        setFieldValue('address', res?.details?.pradr?.adr);
-      })
-      .catch(e => {
-        console.log(e);
-        action === 'pan' ?
-          setPanValidateData({icon: true, idType: 'PAN'}) :
-          setGstValidateData({icon: true, idType: 'GST'})
-      })
+    if(id) {
+      action === 'pan' ? setPanValidateData({icon:true, loading: true}) : setGstValidateData({icon:true, loading: true})
+      validateId(action, id)
+        .then((res) => {
+          action === 'pan' ?
+            setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}}) :
+            setGstValidateData({icon: true, loading: false, idType: 'GST', details: res?.details || {}})
+          !values?.name && setFieldValue('name', res?.details?.tradeNam);
+          setFieldValue('address', res?.details?.pradr?.adr);
+        })
+        .catch(e => {
+          console.log(e);
+          action === 'pan' ?
+            setPanValidateData({icon: true, idType: 'PAN'}) :
+            setGstValidateData({icon: true, idType: 'GST'})
+        })
+    } else {
+      action === 'pan' ? validateField('pan') : validateField('gst')
+    }
   }
   useEffect(() => {
     setValues(data)
     setGstDetails(data?.gst_verified ? JSON.parse(data?.gst_details) || {} : {})
   }, [data])
-  const { values, errors, handleChange: onChange, handleSubmit, setFieldValue, setValues } = useFormik({
+  const { values, errors, handleChange: onChange, handleSubmit, setFieldValue, setValues, validateField } = useFormik({
     initialValues: { ...data },
     validateOnChange: false,
     validateOnBlur: true,
@@ -334,7 +338,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                   />
                   {
                     !values?.gst_verified || values?.gst !== data?.gst?
-                      <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={()=> values?.gst && handleValidate('gst', values?.gst)}>Validate GST</Typography> : null
+                      <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={() => handleValidate('gst', values?.gst)}>Validate GST</Typography> : null
                   }
                 </Grid>
                 <Grid {...gridProps} md={6}>
@@ -351,7 +355,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                   />
                   {
                     !values?.pan_verified || values?.pan !== data?.pan ?
-                      <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={()=> values?.pan && handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
+                      <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={() => handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
                   }
                 </Grid>
                 <Grid {...gridProps} md={6}>
@@ -503,12 +507,12 @@ const DealershipInfo = ({ data, className, currentUser }) => {
             ) : <CircularProgress size={20} />
           ) : (
             !viewOnly &&
-            <Button
-              disabled={!editable}
-              color="primary"
-              variant="contained"
-              size="small"
-              onClick={() => { setReadOnly(false); }}>Edit Details</Button>
+              <Button
+                disabled={!editable}
+                color="primary"
+                variant="contained"
+                size="small"
+                onClick={() => { setReadOnly(false); }}>Edit Details</Button>
           )}
         </CardActions>
       </div>

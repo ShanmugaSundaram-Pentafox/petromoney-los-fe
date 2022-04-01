@@ -77,7 +77,7 @@ const useStyles = makeStyles({
   },
 });
 
-const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave, setFieldValue, setPanValidateData, panValidateData }) => {
+const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave, setFieldValue, setPanValidateData, panValidateData, validateField }) => {
   const readOnly = readOnlyProps;
   const classes = useStyles();
   const [showUpload, setShowUpload] = useState(false);
@@ -125,23 +125,27 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
   }
 
   const handleValidate = (action, id) => {
-    action === 'pan' && setPanValidateData({icon:true, loading: true})
-    validateId(action, id)
-      .then((res) => {
-        action === 'pan' &&
-      setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}})
-        !values?.first_name && setFieldValue('first_name', res?.details?.firstName)
-        !values?.last_name && setFieldValue('last_name', res?.details?.lastName)
-        res?.details?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
-        !values?.gender && setFieldValue('gender', res?.details?.gender?.toUpperCase())
-        !values?.pincode && setFieldValue('pincode', res?.details?.address?.pinCode)
-        !values?.address && setFieldValue('address', `${res?.details?.address?.buildingName}, ${res?.details?.address?.streetName}, ${res?.details?.address?.city}, ${res?.details?.address?.state} - ${res?.details?.address?.pinCode}`)
-      })
-      .catch(e => {
-        console.log(e);
-        action === 'pan' &&
-      setPanValidateData({icon: true, idType: 'PAN'})
-      })
+    if(id){
+      action === 'pan' && setPanValidateData({icon:true, loading: true})
+      validateId(action, id)
+        .then((res) => {
+          action === 'pan' &&
+        setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}})
+          !values?.first_name && setFieldValue('first_name', res?.details?.firstName)
+          !values?.last_name && setFieldValue('last_name', res?.details?.lastName)
+          res?.details?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
+          !values?.gender && setFieldValue('gender', res?.details?.gender?.toUpperCase())
+          !values?.pincode && setFieldValue('pincode', res?.details?.address?.pinCode)
+          !values?.address && setFieldValue('address', `${res?.details?.address?.buildingName}, ${res?.details?.address?.streetName}, ${res?.details?.address?.city}, ${res?.details?.address?.state} - ${res?.details?.address?.pinCode}`)
+        })
+        .catch(e => {
+          console.log(e);
+          action === 'pan' &&
+        setPanValidateData({icon: true, idType: 'PAN'})
+        })
+    } else {
+      validateField('pan')
+    }
   }
 
   const gridItem = {
@@ -343,7 +347,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 />
                 {
                   !values?.pan_verified || values?.pan !== data?.pan ?
-                    <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={()=> values?.pan && handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
+                    <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={() => handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
                 }
               </Grid>
               <Grid {...gridItem} md={6}>

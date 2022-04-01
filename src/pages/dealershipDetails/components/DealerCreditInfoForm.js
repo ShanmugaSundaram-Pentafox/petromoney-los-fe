@@ -117,9 +117,9 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
           <>
             {
               !editable &&
-              <Grid {...gridItem} md={4}>
-                {<Button variant='outlined' color='primary' style={{marginTop: 10}} onClick={CIBILReport}>Check CIBIL Score</Button>}
-              </Grid>
+                <Grid {...gridItem} md={4}>
+                  {<Button variant='outlined' color='primary' style={{marginTop: 10}} onClick={CIBILReport} startIcon={<SpeedOutlinedIcon />}>Check CIBIL Score</Button>}
+                </Grid>
             }
             <Grid {...gridItem} md={2}style={{marginTop:15}}>
               {ValidateProps(cibilLoading)}

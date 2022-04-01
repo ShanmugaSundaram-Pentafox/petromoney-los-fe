@@ -4,8 +4,6 @@ import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Switch from '@material-ui/core/Switch';
 import Typography from '@material-ui/core/Typography';
-// import UploadIcon from '@material-ui/icons/CloudUploadOutlined';
-// import DeleteIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
 import {
@@ -16,11 +14,13 @@ import { makeStyles } from '@material-ui/styles';
 import { parse } from 'date-fns';
 import { useSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
+import { useQuery } from 'react-query';
 import { DocAttachment } from '../../../components/Attachment/DocAttachment';
 import CustomToken from '../../../components/CommonComponents/CustomToken';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import FileUpload from '../../../components/FileUpload';
 import TextInput from '../../../components/TextInput/TextInput';
+import { getActiveStates } from '../../../services/common.service';
 import { deleteProfileDoc } from '../../../services/dealers.service';
 import { validateId } from '../../../services/dealerships.service';
 
@@ -80,6 +80,7 @@ const useStyles = makeStyles({
 const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave, setFieldValue, setPanValidateData, panValidateData, validateField }) => {
   const readOnly = readOnlyProps;
   const classes = useStyles();
+  const { data: states = [] } = useQuery('state', getActiveStates, { cacheTime: 300000 })
   const [showUpload, setShowUpload] = useState(false);
   const [fileType, setFileType] = useState()
   const [state, setState] = React.useState({
@@ -211,10 +212,10 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   <ViewData title='ID' value={values.id} />
                   <ViewData title='Date of Birth' value={values.dob} />
                   <ViewData title='Address' value={values.address} />
+                  <ViewData title='State' value={values.state} />
                   <ViewData title='Marital Status' value={values.marital_status} />
                   <ViewData title='Mobile' value={values.mobile} />
                   <ViewData title='Aadhar' value={values.aadhar} />
-                  <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success': 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'}/>} />
                 </Box>
               </Grid>
               <Grid item md={6}>
@@ -225,6 +226,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   <ViewData title='Pincode' value={values.pincode} />
                   <ViewData title='Residing since' value={values.residing_since} />
                   <ViewData title='Email' value={values.email} />
+                  <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success': 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'}/>} />
                 </Box>
               </Grid>
             </Grid>
@@ -389,6 +391,29 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   onChange={onChange}
                   InputLabelProps={{ shrink: true }}
                 />
+              </Grid>
+              <Grid {...gridItem} md={6}>
+                <TextInput
+                  select
+                  name='state'
+                  label='State'
+                  readOnly={readOnly}
+                  defaultValue={values.state_code}
+                  error={errors.state}
+                  helperText={errors.state}
+                  onChange={onChange}
+                  SelectProps={{
+                    native: true,
+                  }}
+                >
+                  {
+                    states?.map((item, i)=> {
+                      return(
+                        <option key={i} value={item?.id}>{item?.name}</option>
+                      )
+                    })
+                  }
+                </TextInput>
               </Grid>
               <Grid {...gridItem} md={6}>
                 <TextInput

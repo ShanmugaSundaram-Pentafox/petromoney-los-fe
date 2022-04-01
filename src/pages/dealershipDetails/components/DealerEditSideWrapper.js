@@ -183,6 +183,7 @@ const DealerEditSideWrapper = ({
     handleReset,
     setFieldValue,
     setValues,
+    validateField
   } = useFormik({
     initialValues: {
       ...data,
@@ -339,6 +340,7 @@ const DealerEditSideWrapper = ({
               setFieldValue={setFieldValue}
               setPanValidateData={setPanValidateData}
               panValidateData={panValidateData}
+              validateField={validateField}
             />
           </Step>
         </Stepper>
@@ -401,21 +403,21 @@ const DealerEditSideWrapper = ({
               </div>
               {
                 !viewOnly &&
-                <div>
-                  <Button
-                    variant='contained'
-                    className={clsx(classes.btn, classes.editButton)}
-                    startIcon={
-                      !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
-                    }
-                    disabled={loading}
-                    onClick={
-                      loading ? () => null : readOnly ? handleEdit : handleSubmit
-                    }
-                  >
-                    Edit
-                  </Button>
-                </div>
+                  <div>
+                    <Button
+                      variant='contained'
+                      className={clsx(classes.btn, classes.editButton)}
+                      startIcon={
+                        !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
+                      }
+                      disabled={loading}
+                      onClick={
+                        loading ? () => null : readOnly ? handleEdit : handleSubmit
+                      }
+                    >
+                      Edit
+                    </Button>
+                  </div>
               }
             </>
           )}

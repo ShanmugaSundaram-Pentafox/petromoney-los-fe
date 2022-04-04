@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.13.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.12.0...v2.13.0) (2022-04-04)
+
+
+### Features
+
+* **master-city:** Master for City ([6980ac5](https://gitlab.com/vignesh3/petromall-fe/commit/6980ac5c64de836dcd4e08678caa639ea69a952a))
+
+
+### Bug Fixes
+
+* financials payload fix ([4a5c93a](https://gitlab.com/vignesh3/petromall-fe/commit/4a5c93a5cfe35dc310c9180a9f361f762259fb6a))
+* **state-field:** dealer, coapp, guar stateField ([63c5d6c](https://gitlab.com/vignesh3/petromall-fe/commit/63c5d6c89af5b28bbcf68c0d8c16e76f5590152a))
+* **validateId:** api call refactor ([b000bbf](https://gitlab.com/vignesh3/petromall-fe/commit/b000bbfb1a09c39a580252055f2a097d39e9d5f5))
+
 ## [2.12.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.11.4...v2.12.0) (2022-03-30)
 
 

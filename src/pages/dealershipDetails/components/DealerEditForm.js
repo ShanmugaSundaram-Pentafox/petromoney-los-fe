@@ -155,7 +155,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
     if(/^[1-9][0-9]{5}$/.test(values?.pincode)) {
       getPincodeDetails(values?.pincode)
         .then(res =>{
-          !values?.city && setFieldValue('city', res?.city)
+          !values?.city && setFieldValue('city', res?.city_code)
           !values?.state && setFieldValue('state', res?.state_code)
         })
         .catch(e => {
@@ -424,7 +424,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   {
                     city?.map((item, i) => {
                       return(
-                        <option key={i} value={item?.id}>{item?.city}</option>
+                        <option key={i} value={item?.id}>{item?.name}</option>
                       )
                     })
                   }

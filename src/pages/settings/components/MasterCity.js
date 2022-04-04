@@ -65,13 +65,13 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
-const ZoneGroup = ({data, setAddForm}) => {
+const DataGroup = ({data, setAddForm}) => {
   const classes = useStyles()
   return(
     <div className={classes.label}>
-      <Typography variant="body1" style={{ paddingLeft: 10 }}>{data.city}</Typography>
+      <Typography variant="body1" style={{ paddingLeft: 10 }}>{data.name}</Typography>
       <Tooltip title='Edit'>
-        <IconButton size='small' className={classes.btn} onClick={() => setAddForm({action: 'Edit', city: data.city, id: data.id, state: data?.state})}>
+        <IconButton size='small' className={classes.btn} onClick={() => setAddForm({action: 'Edit', name: data.name, id: data.id, state_code: data?.state_code})}>
           <EditIcon fontSize='small' />
         </IconButton>
       </Tooltip>
@@ -121,11 +121,11 @@ const MasterCity = ({ callback, title }) => {
   const handleAdd = (event) => {
     const { name, value } = event.target;
     if(name === 'state'){
-      setAddData({...addData, state: value.toUpperCase()});
-      setAddForm({...addForm, state: value.toUpperCase()});
+      setAddData({...addData, state_code: value.toUpperCase()});
+      setAddForm({...addForm, state_code: value.toUpperCase()});
     } else {
-      setAddData({...addData, city: value.toUpperCase()});
-      setAddForm({...addForm, city: value.toUpperCase()});
+      setAddData({...addData, name: value.toUpperCase()});
+      setAddForm({...addForm, name: value.toUpperCase()});
     }
   };
 
@@ -135,7 +135,7 @@ const MasterCity = ({ callback, title }) => {
 
   const handleSearch = (event) => {
     const { name, value } = event.target;
-    setFilteredData(city.filter(item => item?.city?.toUpperCase()?.includes(value?.toUpperCase())))
+    setFilteredData(city.filter(item => item?.name?.toUpperCase()?.includes(value?.toUpperCase())))
   }
 
   return (
@@ -169,7 +169,7 @@ const MasterCity = ({ callback, title }) => {
             <div className={classes.content}>
               {
                 filteredData.map((item, i) => {
-                  return(<ZoneGroup data={item} key={i} setAddForm={setAddForm}/>)
+                  return(<DataGroup data={item} key={i} setAddForm={setAddForm}/>)
                 })
               }
             </div>
@@ -187,7 +187,7 @@ const MasterCity = ({ callback, title }) => {
                   name='state'
                   fullWidth
                   variant='outlined'
-                  value={addForm?.state}
+                  value={addForm?.state_code}
                   onChange={handleAdd}
                 >
                   <option value={null}>Choose State...</option>
@@ -206,7 +206,7 @@ const MasterCity = ({ callback, title }) => {
                   id={addForm.action}
                   fullWidth
                   variant='outlined'
-                  value={addForm?.city}
+                  value={addForm?.name}
                   onChange={handleAdd}
                 />
               </Grid>

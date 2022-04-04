@@ -186,7 +186,7 @@ const DealerEditSideWrapper = ({
     validateField
   } = useFormik({
     initialValues: {
-      ...data,
+      ...data, state: data?.state_code, state_name: data?.state, city: data?.city_code, city_name: data?.city
     },
 
     onReset: (values, e) => {

@@ -21,8 +21,9 @@ import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import FileUpload from '../../../components/FileUpload';
 import TextInput from '../../../components/TextInput/TextInput';
 import { getActiveStates } from '../../../services/common.service';
-import { deleteProfileDoc } from '../../../services/dealers.service';
+import { deleteProfileDoc, getPincodeDetails } from '../../../services/dealers.service';
 import { validateId } from '../../../services/dealerships.service';
+import { getCity } from '../../../services/master.service';
 
 
 const useStyles = makeStyles({
@@ -81,6 +82,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
   const readOnly = readOnlyProps;
   const classes = useStyles();
   const { data: states = [] } = useQuery('state', getActiveStates, { cacheTime: 300000 })
+  const { data: city = [] } = useQuery('city', () => getCity(), {refetchOnWindowFocus: false})
   const [showUpload, setShowUpload] = useState(false);
   const [fileType, setFileType] = useState()
   const [state, setState] = React.useState({
@@ -149,6 +151,19 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
     }
   }
 
+  useEffect(() => {
+    if(/^[1-9][0-9]{5}$/.test(values?.pincode)) {
+      getPincodeDetails(values?.pincode)
+        .then(res =>{
+          !values?.city && setFieldValue('city', res?.city)
+          !values?.state && setFieldValue('state', res?.state_code)
+        })
+        .catch(e => {
+          console.log('error', e);
+        })
+    }
+  },[values?.pincode])
+
   const gridItem = {
     md: 12,
     item: true,
@@ -212,7 +227,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   <ViewData title='ID' value={values.id} />
                   <ViewData title='Date of Birth' value={values.dob} />
                   <ViewData title='Address' value={values.address} />
-                  <ViewData title='State' value={values.state} />
+                  <ViewData title='State' value={values.state_name} />
                   <ViewData title='Marital Status' value={values.marital_status} />
                   <ViewData title='Mobile' value={values.mobile} />
                   <ViewData title='Aadhar' value={values.aadhar} />
@@ -222,7 +237,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 <Box className={classes.box} >
                   <ViewData title='Name' value={`${values.first_name} ${values.last_name}`} />
                   <ViewData title='Gender' value={values.gender} />
-                  <ViewData title='City' value={values.city} />
+                  <ViewData title='City' value={values.city_name} />
                   <ViewData title='Pincode' value={values.pincode} />
                   <ViewData title='Residing since' value={values.residing_since} />
                   <ViewData title='Email' value={values.email} />
@@ -382,41 +397,6 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
               </Grid>
               <Grid {...gridItem} md={6}>
                 <TextInput
-                  label="City"
-                  name="city"
-                  readOnly={readOnly}
-                  value={values.city}
-                  error={errors.city}
-                  helperText={errors.city}
-                  onChange={onChange}
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Grid>
-              <Grid {...gridItem} md={6}>
-                <TextInput
-                  select
-                  name='state'
-                  label='State'
-                  readOnly={readOnly}
-                  defaultValue={values.state_code}
-                  error={errors.state}
-                  helperText={errors.state}
-                  onChange={onChange}
-                  SelectProps={{
-                    native: true,
-                  }}
-                >
-                  {
-                    states?.map((item, i)=> {
-                      return(
-                        <option key={i} value={item?.id}>{item?.name}</option>
-                      )
-                    })
-                  }
-                </TextInput>
-              </Grid>
-              <Grid {...gridItem} md={6}>
-                <TextInput
                   number
                   label="Pincode"
                   name="pincode"
@@ -427,6 +407,52 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   onChange={onChange}
                   InputLabelProps={{ shrink: true }}
                 />
+              </Grid>
+              <Grid {...gridItem} md={6}>
+                <TextInput
+                  select
+                  label="City"
+                  name="city"
+                  readOnly={readOnly}
+                  value={values.city}
+                  error={errors.city}
+                  helperText={errors.city}
+                  onChange={onChange}
+                  InputLabelProps={{ shrink: true }}
+                >
+                  <option value={null}>Choose City...</option>
+                  {
+                    city?.map((item, i) => {
+                      return(
+                        <option key={i} value={item?.id}>{item?.city}</option>
+                      )
+                    })
+                  }
+                </TextInput>
+              </Grid>
+              <Grid {...gridItem} md={6}>
+                <TextInput
+                  select
+                  name='state'
+                  label='State'
+                  readOnly={readOnly}
+                  value={values.state}
+                  error={errors.state}
+                  helperText={errors.state}
+                  onChange={onChange}
+                  SelectProps={{
+                    native: true,
+                  }}
+                >
+                  <option value={null}>Choose State...</option>
+                  {
+                    states?.map((item, i)=> {
+                      return(
+                        <option key={i} value={item?.id}>{item?.name}</option>
+                      )
+                    })
+                  }
+                </TextInput>
               </Grid>
               <Grid {...gridItem} md={6}>
                 <TextInput

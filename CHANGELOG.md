@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.13.2](https://gitlab.com/vignesh3/petromall-fe/compare/v2.13.1...v2.13.2) (2022-04-05)
+
+
+### Bug Fixes
+
+* **city-field-validation:** field validation added for state and city ([8529a45](https://gitlab.com/vignesh3/petromall-fe/commit/8529a45e239a86be61454652ab80e85e2dcad8f8))
+
 ### [2.13.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.13.0...v2.13.1) (2022-04-05)
 
 

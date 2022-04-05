@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.13.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.13.0...v2.13.1) (2022-04-05)
+
+
+### Bug Fixes
+
+* **state-city:** auto fill state and city on valid PAN ([8600782](https://gitlab.com/vignesh3/petromall-fe/commit/8600782d2055735c9c883a6424a79fd381bc39e2))
+
 ## [2.13.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.12.0...v2.13.0) (2022-04-04)
 
 

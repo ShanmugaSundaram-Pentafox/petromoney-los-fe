@@ -210,7 +210,7 @@ export const getPincodeDetails = (pincode) => {
     apiCall(`pincode/${pincode}`)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
-          resolve(data[0] || []);
+          resolve(data);
         } else {
           reject(message);
         }

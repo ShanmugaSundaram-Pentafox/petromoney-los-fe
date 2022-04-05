@@ -14,16 +14,13 @@ import { makeStyles } from '@material-ui/styles';
 import { parse } from 'date-fns';
 import { useSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
-import { useQuery } from 'react-query';
 import { DocAttachment } from '../../../components/Attachment/DocAttachment';
 import CustomToken from '../../../components/CommonComponents/CustomToken';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import FileUpload from '../../../components/FileUpload';
 import TextInput from '../../../components/TextInput/TextInput';
-import { getActiveStates } from '../../../services/common.service';
 import { deleteProfileDoc, getPincodeDetails } from '../../../services/dealers.service';
 import { validateId } from '../../../services/dealerships.service';
-import { getCity } from '../../../services/master.service';
 
 
 const useStyles = makeStyles({
@@ -81,8 +78,7 @@ const useStyles = makeStyles({
 const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave, setFieldValue, setPanValidateData, panValidateData, validateField }) => {
   const readOnly = readOnlyProps;
   const classes = useStyles();
-  const { data: states = [] } = useQuery('state', getActiveStates, { cacheTime: 300000 })
-  const { data: city = [] } = useQuery('city', () => getCity(), {refetchOnWindowFocus: false})
+  const [city, setCity] = useState([]);
   const [showUpload, setShowUpload] = useState(false);
   const [fileType, setFileType] = useState()
   const [state, setState] = React.useState({
@@ -155,11 +151,12 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
     if(/^[1-9][0-9]{5}$/.test(values?.pincode)) {
       getPincodeDetails(values?.pincode)
         .then(res =>{
-          !values?.city && setFieldValue('city', res?.city_code)
-          !values?.state && setFieldValue('state', res?.state_code)
+          setCity(res)
+          !values?.city && setFieldValue('city', res[0]?.city_code)
+          !values?.state && setFieldValue('state', res[0]?.state_code)
         })
         .catch(e => {
-          console.log('error', e);
+          console.log(e);
         })
     }
   },[values?.pincode])
@@ -420,11 +417,15 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   onChange={onChange}
                   InputLabelProps={{ shrink: true }}
                 >
-                  <option value={null}>Choose City...</option>
+                  {
+                    city?.length ?
+                      <option value="" disabled>Choose City...</option> :
+                      <option value="" disabled>Enter Pincode to select City</option>
+                  }
                   {
                     city?.map((item, i) => {
                       return(
-                        <option key={i} value={item?.id}>{item?.name}</option>
+                        <option key={i} value={item?.city_code}>{item?.city}</option>
                       )
                     })
                   }
@@ -440,15 +441,17 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   error={errors.state}
                   helperText={errors.state}
                   onChange={onChange}
-                  SelectProps={{
-                    native: true,
-                  }}
+                  InputLabelProps={{ shrink: true }}
                 >
-                  <option value={null}>Choose State...</option>
                   {
-                    states?.map((item, i)=> {
+                    city?.length ?
+                      <option value="" disabled>Choose State...</option> :
+                      <option value="" disabled>Enter Pincode to select State</option>
+                  }
+                  {
+                    city?.map((item, i)=> {
                       return(
-                        <option key={i} value={item?.id}>{item?.name}</option>
+                        <option key={i} value={item?.state_code}>{item?.state}</option>
                       )
                     })
                   }

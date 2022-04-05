@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.13.3](https://gitlab.com/vignesh3/petromall-fe/compare/v2.13.2...v2.13.3) (2022-04-05)
+
+
+### Bug Fixes
+
+* **payload-patch:** city and state payload patch ([bc0276b](https://gitlab.com/vignesh3/petromall-fe/commit/bc0276bfedce2dbce7f8bfdb004a3858e0cc9181))
+
 ### [2.13.2](https://gitlab.com/vignesh3/petromall-fe/compare/v2.13.1...v2.13.2) (2022-04-05)
 
 

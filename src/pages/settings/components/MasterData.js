@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/styles';
 import React, {useState} from 'react';
 import AssignProducts from './AssignProducts';
 import MasterCity from './MasterCity';
+import MasterCollectionRemarks from './MasterCollectionRemarks';
 import Contain from './MasterDataTable';
 import Products from './Products';
 import Zones from './Zones';
@@ -14,6 +15,7 @@ import { ReactComponent as InfrastructureIcon } from '../../../icons/infrastruct
 import { ReactComponent as LoanIcon } from '../../../icons/loan.svg';
 import { ReactComponent as CityIcon } from '../../../icons/locationIcon.svg';
 import { ReactComponent as OtherIcon } from '../../../icons/other_icons.svg';
+import { ReactComponent as RemarkIcon } from '../../../icons/remarkIcon.svg';
 import { ReactComponent as RolesIcon } from '../../../icons/rolesIcon.svg';
 import { ReactComponent as ZoneIcon } from '../../../icons/zoneIcon.svg';
 
@@ -146,6 +148,14 @@ function MasterData() {
                 </div>
               </Tooltip>
             </Grid>
+            <Grid item md={2}>
+              <Tooltip title="Collection Remarks">
+                <div className={classes.content} onClick={() => setCustomForm('collection_remark')}>
+                  <RemarkIcon className={classes.icons} />
+                  <Typography variant="h5" align='center' className={classes.title} >Collection Remark</Typography>
+                </div>
+              </Tooltip>
+            </Grid>
           </Grid>
         </div>
         
@@ -188,6 +198,14 @@ function MasterData() {
           variant="temporary"
         >
           <MasterCity title='City' callback={setCustomForm} />
+        </Drawer>
+        <Drawer
+          anchor="right"
+          open={customForm === 'collection_remark'}
+          onClose={() => setCustomForm()}
+          variant="temporary"
+        >
+          <MasterCollectionRemarks title='Collection Remarks' callback={setCustomForm} />
         </Drawer>
       </Paper>
 

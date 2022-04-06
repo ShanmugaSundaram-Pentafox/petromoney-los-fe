@@ -137,3 +137,23 @@ export const updateCity = (data, action, id) => {
       })
   });
 }
+
+export const updateCollectionRemark = (data, action, id) => {
+  const apiUrl = action === 'add' ? 'collection/remarks' : `collection/remarks/${id}`
+  return new Promise((resolve, reject) => {
+    apiCall(apiUrl, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

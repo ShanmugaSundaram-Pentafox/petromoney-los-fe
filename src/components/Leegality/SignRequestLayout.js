@@ -24,6 +24,7 @@ import { getAllGuarantor, getPdfContent } from '../../services/leegality.service
 import { getLoanDocumentHistoryById } from '../../services/loans.service';
 import apiCall from '../../utils/api.util';
 import { numInWords } from '../../utils/commonFunctions.util';
+import { ViewData } from '../CommonComponents/FilePreview';
 import PdfViewer from '../CommonComponents/PdfViewer/PdfViewer';
 import Currency from '../Number/Currency';
 
@@ -308,18 +309,14 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
                       <Grid item md={8} >
                           <Grid container spacing={2}>
                           <Grid item md={12} >
-                              <Box pt={2}>
+                              <Box>
+                              <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                  <ViewData title="Date of Agreement" value={format(new Date(), 'dd-MM-yyyy')} />
+                                  <ViewData title="Place of execution of Agreement" value="Chennai" />
+                                </div>
                               <TableContainer>
                                   <Table>
                                   <TableBody>
-                                      <TableRow>
-                                      <TableCell>Date of Agreement</TableCell>
-                                      <TableCell>{format(new Date(), 'dd-MM-yyyy')}</TableCell>
-                                    </TableRow>
-                                      <TableRow>
-                                      <TableCell>Place of execution of Agreement</TableCell>
-                                      <TableCell>Chennai</TableCell>
-                                    </TableRow>
                                       <TableRow>
                                       <TableCell>Dealership Name</TableCell>
                                       <TableCell>{dealership?.name}</TableCell>

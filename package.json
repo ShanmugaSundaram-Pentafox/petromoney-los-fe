@@ -1,6 +1,6 @@
 {
   "name": "mdm-dashboard",
-  "version": "2.13.2",
+  "version": "2.13.5",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.7.0",

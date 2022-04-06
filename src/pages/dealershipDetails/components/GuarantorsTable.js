@@ -100,6 +100,7 @@ const GuarantorsTable = ({ id, editable, guarantorsData, titleAlign, getExperian
           <TableRow>
             <TableCell>Guarantor Name</TableCell>
             <TableCell align="center">Mobile</TableCell>
+            <TableCell align="center">Documents</TableCell>
             {
               editable || viewOnly ?
                 <TableCell align="center">Action</TableCell> : null
@@ -113,6 +114,26 @@ const GuarantorsTable = ({ id, editable, guarantorsData, titleAlign, getExperian
                 {row.first_name}&nbsp;&nbsp;
               </TableCell>
               <TableCell align="center" onClick={e => editable || viewOnly && dealersClickRow(e, row, 'GUARANTOR')}>{row.mobile}</TableCell>
+              <TableCell align="center">
+                {row.aadhar_f_file_url && <TableCell style={{ border: 0 }} align="center">
+                  <a className={classes.document}
+                    href={row.aadhar_f_file_url} target="_blank" title={'Aadhar Front'} rel="noreferrer">{'Aadhar Front'}</a>
+
+                </TableCell>}
+                {row.aadhar_b_file_url && <TableCell style={{ border: 0 }} align="center">
+                  <a className={classes.document}
+                    href={row.aadhar_b_file_url} target="_blank" title={'Aadhar Back'} rel="noreferrer">{'Aadhar Back'}</a>
+
+                </TableCell>}
+                {row.pan_file_url && <TableCell style={{ border: 0 }} align="center">
+                  <a className={classes.document}
+                    href={row.pan_file_url} target="_blank" title={'PAN'} rel="noreferrer">{'PAN'}</a>
+                </TableCell>}
+                {!row.pan_file_url && !row.aadhar_b_file_url && !row.aadhar_f_file_url &&
+                  <TableCell style={{ border: 0 }} align="center">
+                    -
+                  </TableCell>}
+              </TableCell>
               {
                 editable || viewOnly ?
                   <TableCell align="right" onClick={e => e.stopPropagation()}>

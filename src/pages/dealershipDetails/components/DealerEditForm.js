@@ -152,8 +152,8 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
       getPincodeDetails(values?.pincode)
         .then(res =>{
           setCity(res)
-          !values?.city && setFieldValue('city', res[0]?.city_code)
-          !values?.state && setFieldValue('state', res[0]?.state_code)
+          setFieldValue('city', res[0]?.city_code)
+          setFieldValue('state', res[0]?.state_code)
         })
         .catch(e => {
           console.log(e);

@@ -17,8 +17,9 @@ import React, { useState, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import CardsCheckList from './components/CardsCheckList';
 import LeegalityLayout from './LeegalityLayout';
-import { getProductsMaster } from '../../services/common.service';
+import { getOmcList, getProductsMaster } from '../../services/common.service';
 import { getCoApplicantByDealershipId, getDealersByDealershipId } from '../../services/dealers.service';
+import { getDealershipById } from '../../services/dealerships.service';
 import { getAllGuarantor, getPdfContent } from '../../services/leegality.service';
 import { getLoanDocumentHistoryById } from '../../services/loans.service';
 import apiCall from '../../utils/api.util';
@@ -63,6 +64,7 @@ const TableCell = withStyles(() => ({
 
 const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, callback, loanAmount, productId }) => {
   const classes = useStyles();
+  const [dealership, setDealership] = useState({})
   const [dealers, setDealers] = useState([])
   const [applicants, setApplicants] = useState([])
   const [selectedDealers, setSelectedDealers] = useState([])
@@ -80,6 +82,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
   const { enqueueSnackbar } = useSnackbar();
   const [product, setProduct] = useState();
   const { data: products = [] } = useQuery(['products'], () => getProductsMaster(), {refetchOnWindowFocus: false})
+  const { data: omcs = [] } = useQuery('omcs', () => getOmcList(), {refetchOnWindowFocus: false})
 
   useEffect(() => {
     setProduct(products.find(item => item.product_id === productId))
@@ -114,6 +117,11 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
         })
     }
     if (dealershipId) {
+      getDealershipById(dealershipId)
+        .then(setDealership)
+        .catch(err => {
+          console.log('getDealershipDetails >>', err);
+        })
       getDealersByDealershipId(dealershipId)
         .then(res => {
           setDealers(res);
@@ -313,21 +321,31 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
                                       <TableCell>Chennai</TableCell>
                                     </TableRow>
                                       <TableRow>
-                                      <TableCell>Name of the borrower</TableCell>
+                                      <TableCell>Dealership Name</TableCell>
+                                      <TableCell>{dealership?.name}</TableCell>
+                                    </TableRow>
+                                      <TableRow>
+                                      <TableCell>Dealership Agreement Date</TableCell>
+                                      <TableCell>{dealership?.agreement_executed_on}</TableCell>
+                                    </TableRow>
+                                      <TableRow>
+                                      <TableCell>Dealership Address</TableCell>
+                                      <TableCell>{dealership?.address}</TableCell>
+                                    </TableRow>
+                                      <TableRow>
+                                      <TableCell>OMC</TableCell>
                                       <TableCell>
                                           {
-                                          dealers.map(item => {
-                                            return item.first_name
-                                          }).join(', ')
+                                          omcs.find(item => {return item.id == dealership?.omc})?.name
                                         }
                                         </TableCell>
                                     </TableRow>
                                       <TableRow>
-                                      <TableCell>Dealership Address</TableCell>
+                                      <TableCell>Name Of The Borrower</TableCell>
                                       <TableCell>
                                           {
-                                          dealers?.map(item => {
-                                            return item.address
+                                          dealers.map(item => {
+                                            return item.first_name
                                           }).join(', ')
                                         }
                                         </TableCell>
@@ -343,7 +361,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
                                         </TableCell>
                                     </TableRow>
                                       <TableRow>
-                                      <TableCell>Name of Co-borrower</TableCell>
+                                      <TableCell>Name Of Co-Borrower</TableCell>
                                       <TableCell>
                                           {
                                           applicants.map(item => {
@@ -353,7 +371,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
                                         </TableCell>
                                     </TableRow>
                                       <TableRow>
-                                      <TableCell>E-mail Address of Co-borrower</TableCell>
+                                      <TableCell>E-Mail Address Of Co-Borrower</TableCell>
                                       <TableCell>
                                           {
                                           applicants.map(item => {
@@ -363,7 +381,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
                                         </TableCell>
                                     </TableRow>
                                       <TableRow>
-                                      <TableCell>Contact Number of Co-borrower</TableCell>
+                                      <TableCell>Contact Number Of Co-Borrower</TableCell>
                                       <TableCell>
                                           {
                                           applicants.map(item => {
@@ -373,7 +391,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
                                         </TableCell>
                                     </TableRow>
                                       <TableRow>
-                                      <TableCell>Office/Residential Address of Co-borrower</TableCell>
+                                      <TableCell>Office/ Residential Address Of Co-Borrower</TableCell>
                                       <TableCell>
                                           {
                                           applicants.map(item => {
@@ -383,7 +401,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
                                         </TableCell>
                                     </TableRow>
                                       <TableRow>
-                                      <TableCell>Name of Guarantor</TableCell>
+                                      <TableCell>Name Of Guarantor</TableCell>
                                       <TableCell>
                                           {
                                           guarantor?.map(item => {
@@ -393,7 +411,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
                                         </TableCell>
                                     </TableRow>
                                       <TableRow>
-                                      <TableCell>E-mail Address of Guarantor</TableCell>
+                                      <TableCell>E-Mail Address Of Guarantor</TableCell>
                                       <TableCell>
                                           {
                                           guarantor?.map(item => {
@@ -403,7 +421,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
                                         </TableCell>
                                     </TableRow>
                                       <TableRow>
-                                      <TableCell>Contact Number of Guarantor</TableCell>
+                                      <TableCell>Contact Number Of Guarantor</TableCell>
                                       <TableCell>
                                           {
                                           guarantor?.map(item => {
@@ -413,7 +431,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
                                         </TableCell>
                                     </TableRow>
                                       <TableRow>
-                                      <TableCell>Office/ Residential Address of Guarantor</TableCell>
+                                      <TableCell>Office/ Residential Address Of Guarantor</TableCell>
                                       <TableCell>
                                           {
                                           guarantor?.map(item => {
@@ -435,7 +453,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
                                       <TableCell>{format(new Date(), 'dd-MM-yyyy')}</TableCell>
                                     </TableRow>
                                       <TableRow>
-                                      <TableCell>DPN Amount</TableCell>
+                                      <TableCell>DPN Loan Amount</TableCell>
                                       <TableCell><Currency value={loanAmount} /></TableCell>
                                     </TableRow>
                                       <TableRow>
@@ -443,11 +461,11 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
                                       <TableCell>{product?.tenure} days</TableCell>
                                     </TableRow>
                                       <TableRow>
-                                      <TableCell>Interest rate</TableCell>
+                                      <TableCell>Interest Rate</TableCell>
                                       <TableCell>{product?.interest} %</TableCell>
                                     </TableRow>
                                       <TableRow>
-                                      <TableCell>Overdue Interest</TableCell>
+                                      <TableCell>Overdue Interest Rate</TableCell>
                                       <TableCell>{product?.penal_interest} %</TableCell>
                                     </TableRow>
                                       <TableRow>

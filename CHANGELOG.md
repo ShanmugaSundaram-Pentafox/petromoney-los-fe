@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.13.5](https://gitlab.com/vignesh3/petromall-fe/compare/v2.13.4...v2.13.5) (2022-04-06)
+
+
+### Bug Fixes
+
+* **map-region:** enable region map to all users ([9585a8e](https://gitlab.com/vignesh3/petromall-fe/commit/9585a8e282f7198e80f6e16e85a8d7b173c11b19))
+
 ### [2.13.4](https://gitlab.com/vignesh3/petromall-fe/compare/v2.13.3...v2.13.4) (2022-04-05)
 
 

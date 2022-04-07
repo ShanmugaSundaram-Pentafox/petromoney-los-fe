@@ -75,7 +75,7 @@ const useStyles = makeStyles({
   },
 });
 
-const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave, setFieldValue, setPanValidateData, panValidateData, validateField }) => {
+const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave, setFieldValue, setPanValidateData, panValidateData, validateField, setAadharValidateData, aadharValidateData }) => {
   const readOnly = readOnlyProps;
   const classes = useStyles();
   const [city, setCity] = useState([]);
@@ -123,27 +123,40 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
       })
   }
 
-  const handleValidate = (action, id) => {
+  const handleValidate = (action, id, data) => {
     if(id){
       action === 'pan' && setPanValidateData({icon:true, loading: true})
-      validateId(action, id)
+      action === 'aadhar' && setAadharValidateData({icon:true, loading: true})
+      validateId(action, id, data)
         .then((res) => {
           action === 'pan' &&
-        setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}})
+            setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}})
           !values?.first_name && setFieldValue('first_name', res?.details?.firstName)
           !values?.last_name && setFieldValue('last_name', res?.details?.lastName)
-          res?.details?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
-          !values?.gender && setFieldValue('gender', res?.details?.gender?.toUpperCase())
-          !values?.pincode && setFieldValue('pincode', res?.details?.address?.pinCode)
-          !values?.address && setFieldValue('address', `${res?.details?.address?.buildingName}, ${res?.details?.address?.streetName}, ${res?.details?.address?.city}, ${res?.details?.address?.state} - ${res?.details?.address?.pinCode}`)
+            res?.details?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
+            !values?.gender && setFieldValue('gender', res?.details?.gender?.toUpperCase())
+            !values?.pincode && setFieldValue('pincode', res?.details?.address?.pinCode)
+            !values?.address && setFieldValue('address', `${res?.details?.address?.buildingName}, ${res?.details?.address?.streetName}, ${res?.details?.address?.city}, ${res?.details?.address?.state} - ${res?.details?.address?.pinCode}`)
+            action === 'aadhar' &&
+            setAadharValidateData({icon: true, loading: false, idType: 'AADHAR', details: res?.details || {}})
         })
         .catch(e => {
-          console.log(e);
-          action === 'pan' &&
-        setPanValidateData({icon: true, idType: 'PAN'})
+          enqueueSnackbar(e, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          });
+          action === 'pan' && setPanValidateData({icon: true, idType: 'PAN'})
+          action === 'aadhar' && setAadharValidateData({icon: true, idType: 'AADHAR'})
         })
     } else {
-      validateField('pan')
+      if(action === 'pan'){
+        validateField('pan')
+      } else {
+        validateField('aadhar')
+      }
     }
   }
 
@@ -168,6 +181,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
   };
 
   const ValidateProps = (valid) => {
+    //ToDo check with is_verified instead of details
     return({
       endAdornment: <div style={{marginRight: 6, marginTop: 4, cursor: 'pointer'}}>
         {
@@ -227,7 +241,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   <ViewData title='State' value={values.state_name} />
                   <ViewData title='Marital Status' value={values.marital_status} />
                   <ViewData title='Mobile' value={values.mobile} />
-                  <ViewData title='Aadhar' value={values.aadhar} />
+                  <ViewData title='Aadhar' value={values.aadhar} endIcon={<CustomToken variant={values?.aadhar_verified ? 'success': 'error'} label={values?.aadhar_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.aadhar_verified ? 'tick' : 'cross'}/>} />
                 </Box>
               </Grid>
               <Grid item md={6}>
@@ -370,13 +384,18 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   label="Aadhar"
                   name="aadhar"
                   value={values.aadhar}
+                  disabled={aadharValidateData?.loading || values?.aadhar_verified}
                   helperText={errors.aadhar}
                   readOnly={readOnly}
                   error={errors.aadhar}
                   onChange={onChange}
                   InputLabelProps={{ shrink: true }}
-                >
-                </TextInput>
+                  InputProps={ValidateProps(aadharValidateData)}
+                />
+                {
+                  !values?.aadhar_verified || values?.aadhar !== data?.aadhar ?
+                    <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={() => handleValidate('aadhar', values?.aadhar, values?.first_name)}>Validate Aadhar</Typography> : null
+                }
               </Grid>
               <Grid {...gridItem} md={6}>
                 <TextInput

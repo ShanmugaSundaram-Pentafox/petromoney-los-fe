@@ -150,29 +150,39 @@ const AddNewTransportsOwnerForm = ({
   const [loading, setLoading] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
   const [panValidateData, setPanValidateData] = useState({icon: false})
+  const [aadharValidateData, setAadharValidateData] = useState({icon: false})
   const [fileType, setFileType] = useState('');
   const [state, setState] = React.useState({
     checkedA: true,
     checkedB: true,
   });
   const [selectedDate, setSelectedDate] = useState(rowData?.dob && parse(rowData?.dob, 'dd-MM-yyyy', new Date()));
-  const handleValidate = (action, id) => {
+  const handleValidate = (action, id, data) => {
     action === 'pan' && setPanValidateData({icon:true, loading: true})
-    validateId(action, id)
+    action === 'aadhar' && setAadharValidateData({icon:true, loading: true})
+    validateId(action, id, data)
       .then((res) => {
         action === 'pan' &&
-      setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}})
+          setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}})
         !values?.first_name && setFieldValue('first_name', res?.details?.firstName)
         !values?.last_name && setFieldValue('last_name', res?.details?.lastName)
         !values?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
         !values?.gender && setFieldValue('gender', res?.details?.gender?.toUpperCase())
         !values?.pincode && setFieldValue('pincode', res?.details?.address?.pinCode)
         !values?.address && setFieldValue('address', `${res?.details?.address?.buildingName}, ${res?.details?.address?.streetName}, ${res?.details?.address?.city}, ${res?.details?.address?.state} - ${res?.details?.address?.pinCode}`)
+        action === 'aadhar' &&
+          setAadharValidateData({icon: true, loading: false, idType: 'AADHAR', details: res?.details || {}})
       })
       .catch(e => {
-        console.log(e);
-        action === 'pan' &&
-      setPanValidateData({icon: true, idType: 'PAN'})
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+        action === 'pan' && setPanValidateData({icon: true, idType: 'PAN'})
+        action === 'aadhar' && setAadharValidateData({icon: true, idType: 'AADHAR'})
       })
   }
   const handleDateChange = (e) => {
@@ -188,6 +198,7 @@ const AddNewTransportsOwnerForm = ({
     callback();
   };
   const ValidateProps = (valid) => {
+    //ToDo check with is_verified instead of details
     return({
       endAdornment: <div style={{marginRight: 6, marginTop: 4, cursor: 'pointer'}}>
         {
@@ -578,13 +589,19 @@ const AddNewTransportsOwnerForm = ({
                     <TextInput
                       label='Aadhar'
                       name='aadhar'
-                      value={values.aadhar?.toUpperCase()}
+                      value={values.aadhar}
+                      disabled={aadharValidateData?.loading || values?.aadhar_verified}
                       helperText={errors.aadhar}
                       readOnly={readOnly}
                       error={errors.aadhar}
                       onChange={handleChange}
                       InputLabelProps={{ shrink: true }}
-                    ></TextInput>
+                      InputProps={ValidateProps(aadharValidateData)}
+                    />
+                    {
+                      !values?.aadhar_verified || values?.aadhar !== rowData?.aadhar ?
+                        <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={() => handleValidate('aadhar', values?.aadhar, values?.first_name)}>Validate Aadhar</Typography> : null
+                    }
                   </Grid>
                   <Grid item md={6}>
                     <TextInput
@@ -805,18 +822,18 @@ const AddNewTransportsOwnerForm = ({
             )
           ) : (
             !editable &&
-            <div>
-              <Button
-                variant='contained'
-                type='submit'
-                className={clsx(classes.btn, classes.editButton)}
-                startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                disabled={loading}
-                onClick={loading ? () => null : handleEdit}
-              >
-                Edit
-              </Button>
-            </div>
+              <div>
+                <Button
+                  variant='contained'
+                  type='submit'
+                  className={clsx(classes.btn, classes.editButton)}
+                  startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
+                  disabled={loading}
+                  onClick={loading ? () => null : handleEdit}
+                >
+                  Edit
+                </Button>
+              </div>
           )}
         </div>
       </div>

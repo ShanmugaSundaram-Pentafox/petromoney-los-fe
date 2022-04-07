@@ -94,6 +94,7 @@ const DealerEditSideWrapper = ({
   const [selectedDate, setSelectedDate] = useState();
   const [selectedState, setSelectedState] = useState();
   const [panValidateData, setPanValidateData] = useState({icon: false})
+  const [aadharValidateData, setAadharValidateData] = useState({icon: false})
   const { enqueueSnackbar } = useSnackbar();
 
   const handleEdit = () => {
@@ -340,6 +341,8 @@ const DealerEditSideWrapper = ({
               setFieldValue={setFieldValue}
               setPanValidateData={setPanValidateData}
               panValidateData={panValidateData}
+              setAadharValidateData={setAadharValidateData}
+              aadharValidateData={aadharValidateData}
               validateField={validateField}
             />
           </Step>

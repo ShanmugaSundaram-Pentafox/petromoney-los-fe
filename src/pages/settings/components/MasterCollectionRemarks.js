@@ -99,7 +99,7 @@ const MasterCollectionRemarks = ({ callback, title }) => {
 
   const { data: remarks = [] } = useQuery('coll-rem', () => getCollectionRemark(), {refetchOnWindowFocus: false})
 
-  const { mutate: addRemarks } = useMutation(data =>!addForm.id ? updateCollectionRemark(data, 'add') : updateCollectionRemark(data, 'update', addForm?.id), {
+  const { mutate: addRemarks } = useMutation(data =>!addForm.id ? updateCollectionRemark(data) : updateCollectionRemark(data, addForm?.id), {
     onSuccess: (message) => {
       queryClient.invalidateQueries('coll-rem')
       setAddForm()

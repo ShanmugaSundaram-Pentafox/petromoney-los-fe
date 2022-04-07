@@ -93,7 +93,7 @@ const MasterCity = ({ callback, title }) => {
     setFilteredData(city)
   },[city])
 
-  const { mutate: addCity } = useMutation(data =>!addForm.id ? updateCity(data, 'add') : updateCity(data, 'update', addForm.id), {
+  const { mutate: addCity } = useMutation(data =>!addForm.id ? updateCity(data) : updateCity(data, addForm.id), {
     onSuccess: (message) => {
       queryClient.invalidateQueries('city')
       setAddForm()

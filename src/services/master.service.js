@@ -118,8 +118,8 @@ export const getCity = (filter) => {
   })
 }
 
-export const updateCity = (data, action, id) => {
-  const apiUrl = action === 'add' ? 'master/city' : `master/city/${id}`
+export const updateCity = (data, id) => {
+  const apiUrl = id ? `master/city/${id}` : 'master/city'
   return new Promise((resolve, reject) => {
     apiCall(apiUrl, {
       method: 'POST',
@@ -139,7 +139,7 @@ export const updateCity = (data, action, id) => {
 }
 
 export const updateCollectionRemark = (data, action, id) => {
-  const apiUrl = action === 'add' ? 'collection/remarks' : `collection/remarks/${id}`
+  const apiUrl = id ? `collection/remarks/${id}` : 'collection/remarks'
   return new Promise((resolve, reject) => {
     apiCall(apiUrl, {
       method: 'POST',

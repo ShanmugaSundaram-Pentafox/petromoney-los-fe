@@ -138,7 +138,7 @@ export const updateCity = (data, id) => {
   });
 }
 
-export const updateCollectionRemark = (data, action, id) => {
+export const updateCollectionRemark = (data, id) => {
   const apiUrl = id ? `collection/remarks/${id}` : 'collection/remarks'
   return new Promise((resolve, reject) => {
     apiCall(apiUrl, {

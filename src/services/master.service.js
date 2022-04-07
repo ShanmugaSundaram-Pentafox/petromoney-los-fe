@@ -118,8 +118,28 @@ export const getCity = (filter) => {
   })
 }
 
-export const updateCity = (data, action, id) => {
-  const apiUrl = action === 'add' ? 'master/city' : `master/city/${id}`
+export const updateCity = (data, id) => {
+  const apiUrl = id ? `master/city/${id}` : 'master/city'
+  return new Promise((resolve, reject) => {
+    apiCall(apiUrl, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const updateCollectionRemark = (data, id) => {
+  const apiUrl = id ? `collection/remarks/${id}` : 'collection/remarks'
   return new Promise((resolve, reject) => {
     apiCall(apiUrl, {
       method: 'POST',

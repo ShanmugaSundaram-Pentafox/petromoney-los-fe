@@ -595,11 +595,11 @@ export const validateId = (action, id, body) => {
       method: 'POST',
       body: body ? {name: body} : {}
     })
-      .then(res => {
-        if (res.status === 'SUCCESS') {
-          resolve(res.data[0] || [])
+      .then(({status, data, message}) => {
+        if (status === 'SUCCESS') {
+          resolve(data[0] || [])
         } else {
-          reject(res.message)
+          reject(message)
         }
       })
       .catch(({ message }) => {

@@ -124,21 +124,20 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
   }
 
   const handleValidate = (action, id, data) => {
-    if(id){
+    if(action === 'pan' ? id : id && values?.first_name){
       action === 'pan' && setPanValidateData({icon:true, loading: true})
       action === 'aadhar' && setAadharValidateData({icon:true, loading: true})
       validateId(action, id, data)
         .then((res) => {
-          action === 'pan' &&
-            setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}})
-          !values?.first_name && setFieldValue('first_name', res?.details?.firstName)
-          !values?.last_name && setFieldValue('last_name', res?.details?.lastName)
+          if(action === 'pan') {
+            setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}, is_verified: res?.is_verified})
+            !values?.first_name && setFieldValue('first_name', res?.details?.firstName)
+            !values?.last_name && setFieldValue('last_name', res?.details?.lastName)
             res?.details?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
             !values?.gender && setFieldValue('gender', res?.details?.gender?.toUpperCase())
             !values?.pincode && setFieldValue('pincode', res?.details?.address?.pinCode)
-            !values?.address && setFieldValue('address', `${res?.details?.address?.buildingName}, ${res?.details?.address?.streetName}, ${res?.details?.address?.city}, ${res?.details?.address?.state} - ${res?.details?.address?.pinCode}`)
-            action === 'aadhar' &&
-            setAadharValidateData({icon: true, loading: false, idType: 'AADHAR', details: res?.details || {}})
+            action === 'pan' && !values?.address && setFieldValue('address', `${res?.details?.address?.buildingName}, ${res?.details?.address?.streetName}, ${res?.details?.address?.city}, ${res?.details?.address?.state} - ${res?.details?.address?.pinCode}`)
+          } else { setAadharValidateData({icon: true, loading: false, idType: 'AADHAR', details: res?.details || {}, is_verified: res?.is_verified}) }
         })
         .catch(e => {
           enqueueSnackbar(e, {
@@ -152,11 +151,8 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
           action === 'aadhar' && setAadharValidateData({icon: true, idType: 'AADHAR'})
         })
     } else {
-      if(action === 'pan'){
-        validateField('pan')
-      } else {
-        validateField('aadhar')
-      }
+      validateField(action)
+      action === 'aadhar' && validateField('first_name')
     }
   }
 
@@ -181,13 +177,12 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
   };
 
   const ValidateProps = (valid) => {
-    //ToDo check with is_verified instead of details
     return({
       endAdornment: <div style={{marginRight: 6, marginTop: 4, cursor: 'pointer'}}>
         {
         valid?.icon ?
         valid?.loading ? <CircularProgress size={15}/> :
-        valid?.details ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{color:'#4caf50'}} /></Tooltip> :
+        valid?.is_verified ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{color:'#4caf50'}} /></Tooltip> :
         <Tooltip title={`Invalid ${valid.idType}`} ><CancelOutlinedIcon fontSize='small' color='error' /></Tooltip> : null
         }
       </div>

@@ -158,32 +158,38 @@ const AddNewTransportsOwnerForm = ({
   });
   const [selectedDate, setSelectedDate] = useState(rowData?.dob && parse(rowData?.dob, 'dd-MM-yyyy', new Date()));
   const handleValidate = (action, id, data) => {
-    action === 'pan' && setPanValidateData({icon:true, loading: true})
-    action === 'aadhar' && setAadharValidateData({icon:true, loading: true})
-    validateId(action, id, data)
-      .then((res) => {
-        action === 'pan' &&
-          setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}})
-        !values?.first_name && setFieldValue('first_name', res?.details?.firstName)
-        !values?.last_name && setFieldValue('last_name', res?.details?.lastName)
-        !values?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
-        !values?.gender && setFieldValue('gender', res?.details?.gender?.toUpperCase())
-        !values?.pincode && setFieldValue('pincode', res?.details?.address?.pinCode)
-        !values?.address && setFieldValue('address', `${res?.details?.address?.buildingName}, ${res?.details?.address?.streetName}, ${res?.details?.address?.city}, ${res?.details?.address?.state} - ${res?.details?.address?.pinCode}`)
-        action === 'aadhar' &&
-          setAadharValidateData({icon: true, loading: false, idType: 'AADHAR', details: res?.details || {}})
-      })
-      .catch(e => {
-        enqueueSnackbar(e, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        });
-        action === 'pan' && setPanValidateData({icon: true, idType: 'PAN'})
-        action === 'aadhar' && setAadharValidateData({icon: true, idType: 'AADHAR'})
-      })
+    if(action === 'pan' ? id : id && values?.first_name){
+      action === 'pan' && setPanValidateData({icon:true, loading: true})
+      action === 'aadhar' && setAadharValidateData({icon:true, loading: true})
+      validateId(action, id, data)
+        .then((res) => {
+          if(action === 'pan') {
+            setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}, is_verified: res?.is_verified})
+            !values?.first_name && setFieldValue('first_name', res?.details?.firstName)
+            !values?.last_name && setFieldValue('last_name', res?.details?.lastName)
+            res?.details?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
+            !values?.gender && setFieldValue('gender', res?.details?.gender?.toUpperCase())
+            !values?.pincode && setFieldValue('pincode', res?.details?.address?.pinCode)
+            !values?.address && setFieldValue('address', `${res?.details?.address?.buildingName}, ${res?.details?.address?.streetName}, ${res?.details?.address?.city}, ${res?.details?.address?.state} - ${res?.details?.address?.pinCode}`)
+          } else {
+            setAadharValidateData({icon: true, loading: false, idType: 'AADHAR', details: res?.details || {}, is_verified: res?.is_verified})
+          }
+        })
+        .catch(e => {
+          enqueueSnackbar(e, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          });
+          action === 'pan' && setPanValidateData({icon: true, idType: 'PAN'})
+          action === 'aadhar' && setAadharValidateData({icon: true, idType: 'AADHAR'})
+        })
+    } else {
+      validateField(action)
+      action === 'aadhar' && validateField('first_name')
+    }
   }
   const handleDateChange = (e) => {
     setSelectedDate(e);
@@ -198,13 +204,12 @@ const AddNewTransportsOwnerForm = ({
     callback();
   };
   const ValidateProps = (valid) => {
-    //ToDo check with is_verified instead of details
     return({
       endAdornment: <div style={{marginRight: 6, marginTop: 4, cursor: 'pointer'}}>
         {
         valid?.icon ?
         valid?.loading ? <CircularProgress size={15}/> :
-        valid?.details ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{color:'#4caf50'}} /></Tooltip> :
+        valid?.is_verified ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{color:'#4caf50'}} /></Tooltip> :
         <Tooltip title={`Invalid ${valid.idType}`} ><CancelOutlinedIcon fontSize='small' color='error' /></Tooltip> : null
         }
       </div>
@@ -224,6 +229,7 @@ const AddNewTransportsOwnerForm = ({
     isSubmitting,
     setFieldValue,
     setSubmitting,
+    validateField
   } = useFormik({
     initialValues: {
       ...rowData,
@@ -236,6 +242,8 @@ const AddNewTransportsOwnerForm = ({
       email: Yup.string().email('Enter valid mail id').nullable('Enter valid mail id'),
       mobile: Yup.number().required('Enter mobile number').nullable('Enter mobile number').test('maxDigits', 'Mobile Number mush have 10 digits', (number) => String(number).length === 10),
       address: Yup.string().required('Please enter address').nullable('Please enter address'),
+      pan: Yup.string().nullable('Enter PAN').matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN').required('Enter PAN').uppercase(),
+      aadhar: Yup.string().nullable('Enter GST').matches(/^(\d{12})$|^(\d{16})$/, 'Invalid aadhar').required('Enter valid aadhar'),
     }),
     onSubmit: (values) => {
       if(isAdd === 'Add'){
@@ -435,7 +443,7 @@ const AddNewTransportsOwnerForm = ({
                       value={values.marital_status}
                     />
                     <ViewData title='Mobile' value={values.mobile} />
-                    <ViewData title='Aadhar' value={values.aadhar} />
+                    <ViewData title='Aadhar' value={values.aadhar} endIcon={<CustomToken variant={values?.aadhar_verified ? 'success': 'error'} label={values?.aadhar_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.aadhar_verified ? 'tick' : 'cross'}/>} />
                   </Box>
                 </Grid>
                 <Grid item md={6}>
@@ -582,7 +590,7 @@ const AddNewTransportsOwnerForm = ({
                     />
                     {
                       !values?.pan_verified || values?.pan !== rowData?.pan ?
-                        <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={()=> values?.pan && handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
+                        <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={() => handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
                     }
                   </Grid>
                   <Grid item md={6}>

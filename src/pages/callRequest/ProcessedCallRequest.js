@@ -19,9 +19,23 @@ const ProcessedCallRequest = ({callbackProcessed}) => {
         label: 'Cust Name',
         options: {
           customBodyRender: (value, tableMeta, updateValue) => {
-            return <div>{value?.toUpperCase()} {tableMeta.rowData[2]?.toUpperCase()}</div>
+            return <div>{value?.toUpperCase()}</div>
           }
         }
+      },
+      {
+        name: 'dealership_id',
+        label: 'Dealership Id',
+        options: {
+          customBodyRender: (value) => {
+            return <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value}</div>
+          }
+        }
+      },
+      {
+        name: 'dealership_name',
+        label: 'Dealership Name',
+        options: { filter: false }
       },
       {
         name: 'region_value',

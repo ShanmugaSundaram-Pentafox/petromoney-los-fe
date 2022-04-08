@@ -76,6 +76,15 @@ const Row = ({ text, value, children }) => {
   )
 }
 
+const pastFyFinder = (startYear) => {
+  const prevFyYear = new Date().getMonth()+1 <= 3 ? new Date().getFullYear()-1 : new Date().getFullYear()
+  let options = []
+  for (let i=prevFyYear; i>startYear; i--) {
+    options.push(`${i-1}_${i}`)
+  }
+  return options
+}
+
 const CreditReportForm = ({ id, editable, data, values, errors, onChange, setValues, currentUser, loading, onSubmit, viewOnly }) => {
   const [financeData, setFinanceData] = useState()
   const [financialYear, setFinancialYear] = useState([])
@@ -86,7 +95,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
     className: classes.row
   };
   useEffect(() => {
-    const fy = values.financial_year ? values.financial_year?.split('_') : ['2020', '2021']
+    const fy = values.financial_year ? values.financial_year?.split('_') : ['2021', '2022']
     setFinancialYear(fy)
     if (fy) {
       getDealershipFinancialsById(id, fy[0], fy[1])
@@ -127,14 +136,18 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 value={values.financial_year}
                 data={financialYear}
                 onChange={onChange}
+                InputLabelProps={{ shrink: true }}
                 SelectProps={{
                   native: true,
                 }}
               >
-                {/* <option value="2019_2020">Choose FY</option> */}
-                <option value="2020_2021">FY 2020-2021</option>
-                <option value="2019_2020">FY 2019-2020</option>
-                <option value="2018_2019">FY 2018-2019</option>
+                {
+                  pastFyFinder(2018)?.map((option, i) => {
+                    return(
+                      <option value={option} key={i}>FY {option}</option>
+                    )
+                  })
+                }
               </TextInput>
             </Grid>
             {

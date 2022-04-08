@@ -1,15 +1,21 @@
-import { makeStyles, IconButton, Typography, Divider, Button, Grid, TextField, Tooltip, Paper, InputAdornment, CircularProgress } from '@material-ui/core'
+import { makeStyles, IconButton, Typography, Divider, Button, Grid, Tooltip, Paper } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
-import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
 import { useSnackbar } from 'notistack';
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import TextInput from '../../../components/TextInput/TextInput';
-import { getActiveStates } from '../../../services/common.service';
-import { getCity, updateCity} from '../../../services/master.service';
+import { updateCollectionRemark } from '../../../services/master.service';
+import { getCollectionRemark } from '../../../services/users.service';
 
 const useStyles = makeStyles(() => ({
+  sidePanelFormWrapper: {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    width: '40vw'
+  },
   root: {
     minWidth: '36vw',
     display: 'flex',
@@ -26,6 +32,10 @@ const useStyles = makeStyles(() => ({
     alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
+  },
+  sidePanelFormContentWrapper: {
+    flex: 1,
+    overflow: 'auto',
   },
   label: {
     display: 'flex',
@@ -67,11 +77,12 @@ const useStyles = makeStyles(() => ({
 
 const DataGroup = ({data, setAddForm}) => {
   const classes = useStyles()
+
   return(
     <div className={classes.label}>
-      <Typography variant="body1" style={{ paddingLeft: 10 }}>{data.name}</Typography>
+      <Typography variant="body1" style={{ paddingLeft: 10 }}>{data.remarks}</Typography>
       <Tooltip title='Edit'>
-        <IconButton size='small' className={classes.btn} onClick={() => setAddForm({action: 'Edit', name: data.name, id: data.id, state_code: data?.state_code})}>
+        <IconButton size='small' className={classes.btn} onClick={() => setAddForm({action: 'Edit', remarks: data.remarks, id: data.id})}>
           <EditIcon fontSize='small' />
         </IconButton>
       </Tooltip>
@@ -79,23 +90,18 @@ const DataGroup = ({data, setAddForm}) => {
   )
 }
 
-const MasterCity = ({ callback, title }) => {
+const MasterCollectionRemarks = ({ callback, title }) => {
   const classes = useStyles()
   const queryClient = useQueryClient()
   const { enqueueSnackbar } = useSnackbar();
   const [addForm, setAddForm] = useState()
   const [addData, setAddData] = useState()
-  const [filteredData, setFilteredData] = useState([])
-  const { data: city = [], isLoading } = useQuery('city', () => getCity(), {refetchOnWindowFocus: false})
-  const { data: states = [] } = useQuery('state', getActiveStates, {refetchOnWindowFocus: false})
 
-  useEffect(() => {
-    setFilteredData(city)
-  },[city])
+  const { data: remarks = [] } = useQuery('coll-rem', () => getCollectionRemark(), {refetchOnWindowFocus: false})
 
-  const { mutate: addCity } = useMutation(data =>!addForm.id ? updateCity(data) : updateCity(data, addForm.id), {
+  const { mutate: addRemarks } = useMutation(data =>!addForm.id ? updateCollectionRemark(data) : updateCollectionRemark(data, addForm?.id), {
     onSuccess: (message) => {
-      queryClient.invalidateQueries('city')
+      queryClient.invalidateQueries('coll-rem')
       setAddForm()
       setAddData()
       enqueueSnackbar(message, {
@@ -119,23 +125,13 @@ const MasterCity = ({ callback, title }) => {
   })
 
   const handleAdd = (event) => {
-    const { name, value } = event.target;
-    if(name === 'state'){
-      setAddData({...addData, state_code: value.toUpperCase()});
-      setAddForm({...addForm, state_code: value.toUpperCase()});
-    } else {
-      setAddData({...addData, name: value.toUpperCase()});
-      setAddForm({...addForm, name: value.toUpperCase()});
-    }
+    const {name, value} = event.target;
+    setAddData({...addData, [name]: value});
+    setAddForm({...addForm, [name]: value});
   };
 
   const handleSubmit = () => {
-    addData && addCity(addData)
-  }
-
-  const handleSearch = (event) => {
-    const { name, value } = event.target;
-    setFilteredData(city.filter(item => item?.name?.toUpperCase()?.includes(value?.toUpperCase())))
+    addData && addRemarks(addData)
   }
 
   return (
@@ -146,67 +142,28 @@ const MasterCity = ({ callback, title }) => {
           <CloseIcon fontSize='size' />
         </IconButton>
       </Typography>
-      <TextField 
-        name='search'
-        variant='outlined'
-        style={{margin: 10}}
-        placeholder='Search...'
-        onChange={handleSearch}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position='start'>
-              <SearchOutlinedIcon />
-            </InputAdornment>
-          )
-        }}
-      />
       <Paper className={classes.root}>
-        {
-          isLoading ?
-            <div style={{display: 'grid', justifyContent: 'center', alignContent: 'center'}}>
-              <CircularProgress size={30} />
-            </div> :
-            <div className={classes.content}>
-              {
-                filteredData.map((item, i) => {
-                  return(<DataGroup data={item} key={i} setAddForm={setAddForm}/>)
-                })
-              }
-            </div>
-        }
+        <div className={classes.content}>
+          {
+            remarks.map((item, i) => {
+              return(<DataGroup data={item} key={i} setAddForm={setAddForm}/>)
+            })
+          }
+        </div>
       </Paper>
       {
         addForm && (
           <div className={classes.addForm}>
             <Typography variant='h5'>{addForm.action} {title}</Typography>
             <Grid container spacing={2}>
-              <Grid item md={6} style={{marginTop: 15}}>
-                <label style={{marginBottom: 8}}>State</label>
-                <TextInput
-                  select
-                  name='state'
-                  fullWidth
-                  variant='outlined'
-                  value={addForm?.state_code}
-                  onChange={handleAdd}
-                >
-                  <option value={null}>Choose State...</option>
-                  {
-                    states.map((item, i) => {
-                      return(
-                        <option key={i} value={item?.id}>{item?.name}</option>
-                      )
-                    })
-                  }
-                </TextInput>
-              </Grid>
-              <Grid item md={6} style={{marginTop: 15}}>
-                <label style={{marginBottom: 8}}>{title}</label>
+              <Grid item md style={{marginTop: 15}}>
+                <label style={{marginBottom: 8}}>Remarks</label>
                 <TextInput
                   id={addForm.action}
+                  name='remarks'
                   fullWidth
                   variant='outlined'
-                  value={addForm?.name}
+                  value={addForm?.remarks}
                   onChange={handleAdd}
                 />
               </Grid>
@@ -256,4 +213,4 @@ const MasterCity = ({ callback, title }) => {
   )
 }
 
-export default MasterCity
+export default MasterCollectionRemarks

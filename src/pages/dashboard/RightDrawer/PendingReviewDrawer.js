@@ -1,4 +1,4 @@
-import { Dialog, DialogActions, DialogContent, DialogContentText, Button, CircularProgress } from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, Button, CircularProgress } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/CloseRounded';
 import { Alert } from '@material-ui/lab';
@@ -16,6 +16,7 @@ import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { getUserRoleForReview } from '../../../services/common.service';
 import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import SalesInfo from '../components/SalesInfo';
+import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -199,17 +200,17 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
                 <Alert severity="error" style={{padding: '0px 16px'}}>{errorStatus}</Alert>
             }
           </div>
-        </DialogContent>
-        <DialogActions>
-          <div>
-            <Button onClick={handleApprovalModal}>Cancel</Button>
-            <Button color='primary' variant='outlined'
+          <div style={{display: 'flex', justifyContent: 'center', marginTop: 8, marginBottom: 5}}>
+            <Button variant='outlined' style={{marginRight: 8}} onClick={handleApprovalModal}>Cancel</Button>
+            <LoaderButton 
+              color='primary'
+              variant='contained'
+              isLoading={loading}
+              loadingText='Submitting...'
               onClick={updateLoanStatus}
-            >
-              {loading ? <CircularProgress size={22} /> : 'Confirm'}
-            </Button>
+            >Confirm</LoaderButton>
           </div>
-        </DialogActions>
+        </DialogContent>
       </Dialog>
     </>
   );

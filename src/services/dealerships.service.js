@@ -591,7 +591,9 @@ export const getCalculateDeviation = (id, body) => {
 
 export const validateId = (action, id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`${action}/${id}`)
+    apiCall(`${action}/${id}`, {
+      method: 'POST'
+    })
       .then(res => {
         if (res.status === 'SUCCESS') {
           resolve(res.data[0] || [])

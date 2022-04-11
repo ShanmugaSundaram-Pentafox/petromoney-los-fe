@@ -1,4 +1,4 @@
-import { Grid, Typography, Button, Drawer, CircularProgress } from '@material-ui/core';
+import { Grid, Typography, Drawer } from '@material-ui/core';
 import DialogContent from '@material-ui/core/DialogContent';
 import Tooltip from '@material-ui/core/Tooltip';
 import { makeStyles } from '@material-ui/styles';
@@ -6,7 +6,6 @@ import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useMount } from 'react-use';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
-import PdfViewer from '../../../components/CommonComponents/PdfViewer/PdfViewer';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { ReactComponent as AssetIcon } from '../../../icons/assets.svg';
@@ -34,6 +33,7 @@ import AddOmcDetailsForm from '../PDRForms/AddOmcDetailsForm';
 import AddOtherDetailsForm from '../PDRForms/AddOtherDetailsForm';
 import AddReferenceForm from '../PDRForms/AddReferenceForm';
 import EmptySidewrapper from '../../../components/CommonComponents/EmptySidewrapper';
+import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -223,9 +223,10 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       <div className={classes.wrapper}>
         <div className={classes.header}>
           <Typography style={{ width: '70%' }} variant="h4" align={textAlign} className={classes.WrapperTitle} >Personal Discussion Report</Typography>
-          <Button variant="contained" size="small" className={classes.btnSuccess} onClick={handleDownload} >
-            {loading ? <CircularProgress size={20} /> : 'Report'}
-          </Button>
+          <LoaderButton
+            variant='contained' size='small' className={classes.btnSuccess} onClick={handleDownload} isLoading={loading} 
+            loadingText='Loading...'
+          >Report</LoaderButton>
         </div>
 
         <FormDialog

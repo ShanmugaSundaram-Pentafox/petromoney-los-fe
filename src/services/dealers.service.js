@@ -205,6 +205,22 @@ export const deleteApplicantById = (dealership_id, dealer_id, type) => {
   });
 }
 
+export const getPincodeDetails = (pincode) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`pincode/${pincode}`)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
 // export const getSanctionLetterPdf = (loan_id,id) => {
 //   return new Promise((resolve, reject) => {
 //     apiCall(`loans/${loan_id}/${id}/sanction`)

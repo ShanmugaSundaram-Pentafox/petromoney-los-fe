@@ -114,6 +114,7 @@ const DealerEditSideWrapper = ({
     gender: Yup.string().nullable('Choose gender').required('Enter gender'),
     email: Yup.string().nullable('Enter email').email('Invalid email').required('Enter email'),
     city: Yup.string().nullable('Enter City').required('Enter City'),
+    state: Yup.string().nullable('Enter State').required('Enter State'),
     address: Yup.string()
       .nullable('Enter address')
       .min(6, 'address must be atleast 6 characters')
@@ -122,7 +123,6 @@ const DealerEditSideWrapper = ({
       .nullable('Enter mobile number')
       .matches(/^\d{10}$/, 'Invalid mobile number')
       .required('Enter valid mobile number'),
-    // dob: Yup.number().required("Choose date of birth"),
     residing_since: Yup.number().nullable('Enter the year').required('Enter the year'),
     marital_status: Yup.string('Enter your Marital status'),
     pincode: Yup.string().nullable('Enter pincode').matches(/^[1-9][0-9]{5}$/, 'Invalid pincode').required('Enter pincode'),
@@ -183,9 +183,10 @@ const DealerEditSideWrapper = ({
     handleReset,
     setFieldValue,
     setValues,
+    validateField
   } = useFormik({
     initialValues: {
-      ...data,
+      ...data, state: data?.state_code, state_name: data?.state, city_name: data?.city, city: data?.city_name
     },
 
     onReset: (values, e) => {
@@ -339,6 +340,7 @@ const DealerEditSideWrapper = ({
               setFieldValue={setFieldValue}
               setPanValidateData={setPanValidateData}
               panValidateData={panValidateData}
+              validateField={validateField}
             />
           </Step>
         </Stepper>
@@ -401,21 +403,21 @@ const DealerEditSideWrapper = ({
               </div>
               {
                 !viewOnly &&
-                <div>
-                  <Button
-                    variant='contained'
-                    className={clsx(classes.btn, classes.editButton)}
-                    startIcon={
-                      !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
-                    }
-                    disabled={loading}
-                    onClick={
-                      loading ? () => null : readOnly ? handleEdit : handleSubmit
-                    }
-                  >
-                    Edit
-                  </Button>
-                </div>
+                  <div>
+                    <Button
+                      variant='contained'
+                      className={clsx(classes.btn, classes.editButton)}
+                      startIcon={
+                        !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
+                      }
+                      disabled={loading}
+                      onClick={
+                        loading ? () => null : readOnly ? handleEdit : handleSubmit
+                      }
+                    >
+                      Edit
+                    </Button>
+                  </div>
               }
             </>
           )}

@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.13.6](https://gitlab.com/vignesh3/petromall-fe/compare/v2.13.5...v2.13.6) (2022-04-08)
+
+
+### Bug Fixes
+
+* agreement table refactor ([fc3e0cf](https://gitlab.com/vignesh3/petromall-fe/commit/fc3e0cfc8cb603c6f32fcb3adbf99a1aeb2f6fd0))
+* api code refactor ([b7411c2](https://gitlab.com/vignesh3/petromall-fe/commit/b7411c28c75f8a63733ebeebade027964ab28d04))
+* api pararameters remove ([88108fb](https://gitlab.com/vignesh3/petromall-fe/commit/88108fb11be77b8f43ec32bc5184ae5f31d72589))
+* **call-req:** dealership id and name added ([16d89d7](https://gitlab.com/vignesh3/petromall-fe/commit/16d89d7d138e138439635f64e94243ade0707154))
+* **collection-remark:** master collection remarks ([1dd03b9](https://gitlab.com/vignesh3/petromall-fe/commit/1dd03b9bdf7fec4d7f51e7d848fe1be609cc1b30))
+* **financials:** latest financial year added ([81cb6ad](https://gitlab.com/vignesh3/petromall-fe/commit/81cb6ad62534f4ec3dc96e880d03a7084bb42b83))
+* **loan-agreement:** loan agreement refactor ([92ac70d](https://gitlab.com/vignesh3/petromall-fe/commit/92ac70d43d526e90a18bf72752d15142a7dec9dc))
+
 ### [2.13.5](https://gitlab.com/vignesh3/petromall-fe/compare/v2.13.4...v2.13.5) (2022-04-06)
 
 

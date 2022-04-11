@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, makeStyles, Typography } from '@material-ui/core';
+import { Button, Dialog, DialogContent, makeStyles, Typography } from '@material-ui/core';
 import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
 import React, { useMemo, useState } from 'react'
@@ -81,6 +81,20 @@ const NewCallRequest = ({callbackData}) => {
             )
           }
         }
+      },
+      {
+        name: 'dealership_id',
+        label: 'Dealership Id',
+        options: {
+          customBodyRender: (value) => {
+            return <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value}</div>
+          }
+        }
+      },
+      {
+        name: 'dealership_name',
+        label: 'Dealership Name',
+        options: { filter: false }
       },
       {
         name: 'created_date',

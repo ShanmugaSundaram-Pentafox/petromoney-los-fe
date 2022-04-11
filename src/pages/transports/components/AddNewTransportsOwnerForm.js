@@ -15,7 +15,7 @@ import clsx from 'clsx';
 import { format, parse } from 'date-fns';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import { DocAttachment } from '../../../components/Attachment/DocAttachment';
@@ -28,6 +28,7 @@ import FileUpload from '../../../components/FileUpload';
 import TextInput from '../../../components/TextInput/TextInput';
 import { URL } from '../../../config/serverUrls';
 import { cryptoEncrypt } from '../../../services/crypto.service';
+import { getPincodeDetails } from '../../../services/dealers.service';
 import { validateId } from '../../../services/dealerships.service';
 import { deleteTransportOwnerProfileDoc } from '../../../services/transports.service';
 import { compareObject } from '../../../utils/compareObject.util';
@@ -148,6 +149,7 @@ const AddNewTransportsOwnerForm = ({
 }) => {
   const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
   const [loading, setLoading] = useState(false);
+  const [city, setCity] = useState([]);
   const [showUpload, setShowUpload] = useState(false);
   const [panValidateData, setPanValidateData] = useState({icon: false})
   const [aadharValidateData, setAadharValidateData] = useState({icon: false})
@@ -232,7 +234,7 @@ const AddNewTransportsOwnerForm = ({
     validateField
   } = useFormik({
     initialValues: {
-      ...rowData,
+      ...rowData, state: rowData?.state_code, state_name: rowData?.state, city_name: rowData?.city, city: rowData?.city_name,
     },
     validateOnChange: false,
     validateOnBlur: true,
@@ -242,7 +244,10 @@ const AddNewTransportsOwnerForm = ({
       email: Yup.string().email('Enter valid mail id').nullable('Enter valid mail id'),
       mobile: Yup.number().required('Enter mobile number').nullable('Enter mobile number').test('maxDigits', 'Mobile Number mush have 10 digits', (number) => String(number).length === 10),
       address: Yup.string().required('Please enter address').nullable('Please enter address'),
+      pincode: Yup.string().nullable('Enter pincode').matches(/^[1-9][0-9]{5}$/, 'Invalid pincode').required('Enter pincode'),
       pan: Yup.string().nullable('Enter PAN').matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN').required('Enter PAN').uppercase(),
+      city: Yup.string().nullable('Enter City').required('Enter City'),
+      state: Yup.string().nullable('Enter State').required('Enter State'),
       aadhar: Yup.string().nullable('Enter GST').matches(/^(\d{12})$|^(\d{16})$/, 'Invalid aadhar').required('Enter valid aadhar'),
     }),
     onSubmit: (values) => {
@@ -378,6 +383,21 @@ const AddNewTransportsOwnerForm = ({
       }
     },
   });
+
+  useEffect(() => {
+    if(/^[1-9][0-9]{5}$/.test(values?.pincode)) {
+      getPincodeDetails(values?.pincode)
+        .then(res =>{
+          setCity(res)
+          setFieldValue('city', res[0]?.city_code)
+          setFieldValue('state', res[0]?.state_code)
+        })
+        .catch(e => {
+          console.log(e);
+        })
+    }
+  },[values?.pincode])
+
   const onCloseUploader = () => {
     setShowUpload(false);
   };
@@ -432,31 +452,37 @@ const AddNewTransportsOwnerForm = ({
         <div className={classes.stepperRoot}>
           {readOnly ? (
             <>
-              <Grid container className={classes.readOnlyWrapper}>
+              <Typography variant="h6" style={{marginTop: 8}}>Personal Details</Typography>
+              <Grid container spacing={2} className={classes.readOnlyWrapper}>
                 <Grid item md={6}>
                   <Box className={classes.box}>
                     <ViewData title='Owner ID' value={values.t_owner_id} />
                     <ViewData title='Date of Birth' value={values.dob} />
                     <ViewData title='Address' value={values.address} />
-                    <ViewData
-                      title='Marital Status'
-                      value={values.marital_status}
-                    />
+                    <ViewData title='City' value={values.city_name} />
+                    <ViewData title='Marital Status' value={values.marital_status} />
                     <ViewData title='Mobile' value={values.mobile} />
-                    <ViewData title='Aadhar' value={values.aadhar} endIcon={<CustomToken variant={values?.aadhar_verified ? 'success': 'error'} label={values?.aadhar_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.aadhar_verified ? 'tick' : 'cross'}/>} />
                   </Box>
                 </Grid>
                 <Grid item md={6}>
                   <Box className={classes.box}>
                     <ViewData title='Name' value={values.first_name} />
                     <ViewData title='Gender' value={values.gender} />
-                    <ViewData
-                      title='Residing since'
-                      value={values.residing_since}
-                    />
+                    <ViewData title='Pincode' value={values.pincode} />
+                    <ViewData title='State' value={values.state_name} />
+                    <ViewData title='Residing since' value={values.residing_since} />
                     <ViewData title='Email' value={values.email} />
-                    <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success': 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'}/>}/>
                   </Box>
+                </Grid>
+              </Grid>
+              <Divider />
+              <Typography variant="h6" style={{marginTop: 8}}>KYC Details</Typography>
+              <Grid container spacing={2} className={classes.readOnlyWrapper}>
+                <Grid item md={6}>
+                  <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success': 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'}/>}/>
+                </Grid>
+                <Grid item md={6}>
+                  <ViewData title='Aadhar' value={values.aadhar} endIcon={<CustomToken variant={values?.aadhar_verified ? 'success': 'error'} label={values?.aadhar_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.aadhar_verified ? 'tick' : 'cross'}/>} />
                 </Grid>
               </Grid>
               <Divider />
@@ -497,6 +523,48 @@ const AddNewTransportsOwnerForm = ({
             <Box>
               <form onSubmit={handleSubmit}>
                 <Grid container spacing={2}>
+                  <Grid item md={12} >
+                    <Typography variant="title"><strong>KYC Details</strong></Typography>
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      label='PAN'
+                      name='pan'
+                      value={values.pan?.toUpperCase()}
+                      disabled={panValidateData?.loading || values?.pan_verified}
+                      error={errors.pan}
+                      readOnly={readOnly}
+                      helperText={errors.pan}
+                      onChange={handleChange}
+                      InputLabelProps={{ shrink: true }}
+                      InputProps={ValidateProps(panValidateData)}
+                    />
+                    {
+                      !values?.pan_verified || values?.pan !== rowData?.pan ?
+                        <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={() => handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
+                    }
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      label='Aadhar'
+                      name='aadhar'
+                      value={values.aadhar}
+                      disabled={aadharValidateData?.loading || values?.aadhar_verified}
+                      helperText={errors.aadhar}
+                      readOnly={readOnly}
+                      error={errors.aadhar}
+                      onChange={handleChange}
+                      InputLabelProps={{ shrink: true }}
+                      InputProps={ValidateProps(aadharValidateData)}
+                    />
+                    {
+                      !values?.aadhar_verified || values?.aadhar !== rowData?.aadhar ?
+                        <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={() => handleValidate('aadhar', values?.aadhar, values?.first_name)}>Validate Aadhar</Typography> : null
+                    }
+                  </Grid>
+                  <Grid item md={12} >
+                    <Typography variant="title"><strong>Personal Details</strong></Typography>
+                  </Grid>
                   <Grid item md={6}>
                     <TextInput
                       label='First Name'
@@ -577,42 +645,6 @@ const AddNewTransportsOwnerForm = ({
                   </Grid>
                   <Grid item md={6}>
                     <TextInput
-                      label='PAN'
-                      name='pan'
-                      value={values.pan?.toUpperCase()}
-                      disabled={panValidateData?.loading || values?.pan_verified}
-                      error={errors.pan}
-                      readOnly={readOnly}
-                      helperText={errors.pan}
-                      onChange={handleChange}
-                      InputLabelProps={{ shrink: true }}
-                      InputProps={ValidateProps(panValidateData)}
-                    />
-                    {
-                      !values?.pan_verified || values?.pan !== rowData?.pan ?
-                        <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={() => handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
-                    }
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      label='Aadhar'
-                      name='aadhar'
-                      value={values.aadhar}
-                      disabled={aadharValidateData?.loading || values?.aadhar_verified}
-                      helperText={errors.aadhar}
-                      readOnly={readOnly}
-                      error={errors.aadhar}
-                      onChange={handleChange}
-                      InputLabelProps={{ shrink: true }}
-                      InputProps={ValidateProps(aadharValidateData)}
-                    />
-                    {
-                      !values?.aadhar_verified || values?.aadhar !== rowData?.aadhar ?
-                        <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={() => handleValidate('aadhar', values?.aadhar, values?.first_name)}>Validate Aadhar</Typography> : null
-                    }
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
                       label='Address'
                       name='address'
                       readOnly={readOnly}
@@ -621,9 +653,73 @@ const AddNewTransportsOwnerForm = ({
                       helperText={errors.address}
                       onChange={handleChange}
                       rows={3}
-                      // multiline={true}
                       InputLabelProps={{ shrink: true }}
                     />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      number
+                      label="Pincode"
+                      name="pincode"
+                      readOnly={readOnly}
+                      value={values.pincode}
+                      error={errors.pincode}
+                      helperText={errors.pincode}
+                      onChange={handleChange}
+                      InputLabelProps={{ shrink: true }}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      select
+                      label="City"
+                      name="city"
+                      readOnly={readOnly}
+                      value={values.city}
+                      error={errors.city}
+                      helperText={errors.city}
+                      onChange={handleChange}
+                      InputLabelProps={{ shrink: true }}
+                    >
+                      {
+                        city?.length ?
+                          <option value="" disabled>Choose City...</option> :
+                          <option value="" disabled>Enter Pincode to select City</option>
+                      }
+                      {
+                        city?.map((item, i) => {
+                          return(
+                            <option key={i} value={item?.city_code}>{item?.city}</option>
+                          )
+                        })
+                      }
+                    </TextInput>
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      select
+                      name='state'
+                      label='State'
+                      readOnly={readOnly}
+                      value={values.state}
+                      error={errors.state}
+                      helperText={errors.state}
+                      onChange={handleChange}
+                      InputLabelProps={{ shrink: true }}
+                    >
+                      {
+                        city?.length ?
+                          <option value="" disabled>Choose State...</option> :
+                          <option value="" disabled>Enter Pincode to select State</option>
+                      }
+                      {
+                        city?.map((item, i)=> {
+                          return(
+                            <option key={i} value={item?.state_code}>{item?.state}</option>
+                          )
+                        })
+                      }
+                    </TextInput>
                   </Grid>
                   <Grid item md={6}>
                     <TextInput

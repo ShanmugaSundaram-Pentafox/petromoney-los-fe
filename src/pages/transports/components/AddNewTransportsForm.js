@@ -1,5 +1,5 @@
 import DateFnsUtils from '@date-io/date-fns';
-import { Tooltip } from '@material-ui/core';
+import { Collapse, Tooltip } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
@@ -33,9 +33,7 @@ import {
 } from '../../../components/CommonComponents/FilePreview';
 import FileUpload from '../../../components/FileUpload';
 import TextInput from '../../../components/TextInput/TextInput';
-import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { URL } from '../../../config/serverUrls';
-import { rulesList } from '../../../config/userRules';
 import {
   getBusinessTypes,
   getOmcList,
@@ -483,6 +481,7 @@ const AddNewTransportsForm = ({
         <div className={classes.stepperRoot}>
           {readOnly ? (
             <>
+              <Typography variant="h6" style={{marginTop: 8}}>Transport Details</Typography>
               <Grid container spacing={2} className={classes.readOnlyWrapper}>
                 <Grid item md={6}>
                   <Box className={classes.box}>
@@ -498,7 +497,6 @@ const AddNewTransportsForm = ({
                         return true;
                     }))?.name} />
                     <ViewData title='District' value={values.district} />
-                    <ViewData title='GST' value={values.gst} endIcon={<CustomToken variant={values?.gst_verified ? 'success': 'error'} label={values?.gst_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.gst_verified ? 'tick' : 'cross'}/>} />
                     {values?.gst_verified ? <ViewData title='Legal Trade Name' value={gstDetails?.tradeNam} /> : null}
                     {values?.gst_verified ? <ViewData title='GSTIN Status' value={gstDetails?.sts} /> : null}
 
@@ -514,12 +512,21 @@ const AddNewTransportsForm = ({
                         return true;
                     }))?.name} />
                     <ViewData title='Pincode' value={values.pincode} />
-                    <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success': 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'}/>} />
                     {values?.gst_verified ? <ViewData title='Legal Business Name' value={gstDetails?.mbr} /> : null}
                     {values?.gst_verified ? <ViewData title='Effective Date of registration' value={gstDetails?.rgdt}/> : null}
                     {values?.gst_verified ? <ViewData title='Taxpayer Type' value={gstDetails?.dty} /> : null}
 
                   </Box>
+                </Grid>
+              </Grid>
+              <Divider />
+              <Typography variant="h6" style={{marginTop: 8}}>KYC Details</Typography>
+              <Grid container spacing={2} className={classes.readOnlyWrapper}>
+                <Grid item md={6}>
+                  <ViewData title='GST' value={values.gst} endIcon={<CustomToken variant={values?.gst_verified ? 'success': 'error'} label={values?.gst_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.gst_verified ? 'tick' : 'cross'}/>} />
+                </Grid>
+                <Grid item md={6}>
+                  <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success': 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'}/>} />
                 </Grid>
               </Grid>
               <Divider />
@@ -573,7 +580,7 @@ const AddNewTransportsForm = ({
                         </Grid>
                       </Typography>
                     }
-                    {checked && (
+                    <Collapse in={checked}>
                       <TextInput
                         {...inputProps}
                         // labelText="Transporter Code"
@@ -583,19 +590,11 @@ const AddNewTransportsForm = ({
                         readOnly={readOnly}
                         error={errors.id}
                         helperText={errors.id}
-                      ></TextInput>
-                    )}
+                      />
+                    </Collapse>
                   </Grid>
                   <Grid item md={12}>
-                    <TextInput
-                      {...inputProps}
-                      name='name'
-                      labelText='Transport Name'
-                      value={values.name?.toUpperCase()}
-                      readOnly={readOnly}
-                      error={errors.name}
-                      helperText={errors.name}
-                    />
+                    <Typography variant="title"><strong>KYC Details</strong></Typography>
                   </Grid>
                   <Grid item md={6}>
                     <TextInput
@@ -630,6 +629,17 @@ const AddNewTransportsForm = ({
                       !values?.pan_verified || values?.pan !== data?.pan ?
                         <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={()=> values?.pan && handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
                     }
+                  </Grid>
+                  <Grid item md={12}>
+                    <TextInput
+                      {...inputProps}
+                      name='name'
+                      labelText='Transport Name'
+                      value={values.name?.toUpperCase()}
+                      readOnly={readOnly}
+                      error={errors.name}
+                      helperText={errors.name}
+                    />
                   </Grid>
                   <Grid item md={6}>
                     <TextInput
@@ -799,9 +809,7 @@ const AddNewTransportsForm = ({
                       </> : null
                   }
                   <Grid md={12} item>
-                    <Typography variant='subtitle1' component='subtitle1'>
-                      Attachments
-                    </Typography>
+                    <Typography variant='h6'>Attachments</Typography>
                   </Grid>
                   <div className={classes.attachmentContainer}>
                     <DocAttachment action={true} imgUrl={values?.pan_file_url} docName='PAN Card' onUpload={() => docUpload('PAN')} onDelete={() => onDocDelete({pan_file_url:''})} disabled={!values?.pan_file_url} style={{marginRight: 25}} />
@@ -866,20 +874,20 @@ const AddNewTransportsForm = ({
             )
           ) : (
             !editable &&
-            <div>
-              <Button
-                variant='contained'
-                type='submit'
-                className={clsx(classes.btn, classes.editButton)}
-                startIcon={
-                  !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
-                }
-                // disabled={loading}
-                onClick={loading ? () => null : handleEdit}
-              >
-                Edit
-              </Button>
-            </div>
+              <div>
+                <Button
+                  variant='contained'
+                  type='submit'
+                  className={clsx(classes.btn, classes.editButton)}
+                  startIcon={
+                    !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
+                  }
+                  // disabled={loading}
+                  onClick={loading ? () => null : handleEdit}
+                >
+                  Edit
+                </Button>
+              </div>
           )}
         </div>
       </div>

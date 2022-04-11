@@ -1,8 +1,8 @@
-import { Grid } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
-import TextInput from '../../../components/TextInput/TextInput';
+import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { ViewMoreBtn } from '../../../theme/styled-components/utils'
 
 const useStyles = makeStyles(theme => ({
@@ -56,7 +56,6 @@ const DrawerRemarks = ({ loanData, readOnly, label }) => {
   const classes = useStyles();
   const [showRemarksModal, setShowRemarksModal] = useState(false);
 
-
   const gridProps = {
     item: true,
     xs: 12,
@@ -72,16 +71,12 @@ const DrawerRemarks = ({ loanData, readOnly, label }) => {
     <div>
       <>
         <Grid {...gridProps} style={{ position: 'relative', marginBottom: 10 }}>
-          <TextInput
-            multiline
-            rows={4}
-            rowsMax={8}
-            labelText={`${label}`}
-            alignTop
-            value={loanData}
-            disabled
-            {...fieldProps}
-          />
+          <label>{label}</label>
+          {
+            loanData ?
+              <TextEditor toolBar={false} remarkData={loanData} editable={false} style={{height: '20vh'}} /> :
+              <Typography variant='body1' style={{color: 'rgb(0,0,0,0.3)', marginTop: 8}}>No Remarks</Typography>
+          }
           {
             loanData?.length >= 300 ? (
               <ViewMoreBtn
@@ -94,14 +89,7 @@ const DrawerRemarks = ({ loanData, readOnly, label }) => {
         </Grid>
       </>
       <FormDialog open={showRemarksModal} title="Remarks" onClose={() => setShowRemarksModal(false)}>
-        <TextInput
-          disabled
-          alignTop
-          multiline
-          readOnly
-          value={showRemarksModal}
-          style={{ width: '40vw', minWidth: 400 }}
-        />
+        <TextEditor toolBar={false} remarkData={loanData} editable={false} />
       </FormDialog>
     </div>
   )

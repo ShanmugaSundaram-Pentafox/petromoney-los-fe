@@ -41,10 +41,10 @@ import {
   getStates,
 } from '../../../services/common.service';
 import { cryptoEncrypt } from '../../../services/crypto.service';
+import { getPincodeDetails } from '../../../services/dealers.service';
 import { validateId } from '../../../services/dealerships.service';
 import { deleteTransportProfileDoc } from '../../../services/transports.service';
 import { compareObject } from '../../../utils/compareObject.util';
-import { getDistricts } from '../../../utils/indianStates.util';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -159,6 +159,7 @@ const AddNewTransportsForm = ({
   const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
   const [loading, setLoading] = useState(false);
   const [omcs, setOmcs] = useState([]);
+  const [city, setCity] = useState([]);
   const [businessType, setBusinessType] = useState([]);
   const [states, setStates] = useState([]);
   const [showUpload, setShowUpload] = useState(false);
@@ -239,7 +240,7 @@ const AddNewTransportsForm = ({
     setFieldValue,
   } = useFormik({
     initialValues: {
-      ...data,
+      ...data, state: data?.state_code, state_name: data?.state, city_name: data?.city, city: data?.city_name
     },
     validateOnChange: false,
     validateOnBlur: true,
@@ -255,7 +256,7 @@ const AddNewTransportsForm = ({
       region: Yup.string().required('Please choose region').nullable('Choose region'),
       address: Yup.string().required('Please enter address').nullable('Enter address'),
       state: Yup.string().required('Please choose state').nullable('Choose state'),
-      district: Yup.string().required('Please enter district').nullable('Enter district'),
+      city: Yup.string().nullable('Enter City').required('Enter City'),
       pincode: Yup.string().nullable('Enter pincode').matches(/^[1-9][0-9]{5}$/, 'Invalid pincode').required('Enter pincode'),
       pan: Yup.string()
         .nullable('Enter PAN')
@@ -419,6 +420,19 @@ const AddNewTransportsForm = ({
         console.log(err);
       });
   };
+  useEffect(() => {
+    if(/^[1-9][0-9]{5}$/.test(values?.pincode)) {
+      getPincodeDetails(values?.pincode)
+        .then(res =>{
+          setCity(res)
+          setFieldValue('city', res[0]?.city_code)
+          setFieldValue('state', res[0]?.state_code)
+        })
+        .catch(e => {
+          console.log(e);
+        })
+    }
+  },[values?.pincode])
   const inputProps = {
     direction: 'column',
     alignTop: true,
@@ -491,12 +505,9 @@ const AddNewTransportsForm = ({
                     />
                     <ViewData title='Mobile' value={values.mobile} />
                     <ViewData title='OMC' value={values?.omc_value || omcs.find(item => {return item.name === values.omc})?.name} />
+                    <ViewData title='Pincode' value={values.pincode} />
+                    <ViewData title='City' value={values.city_name} />
                     <ViewData title='Date of Incoporation' value={values?.doi} />
-                    <ViewData title='Region' value={(regionList.find(function (region) {
-                      if (region.id == values.region)
-                        return true;
-                    }))?.name} />
-                    <ViewData title='District' value={values.district} />
                     {values?.gst_verified ? <ViewData title='Legal Trade Name' value={gstDetails?.tradeNam} /> : null}
                     {values?.gst_verified ? <ViewData title='GSTIN Status' value={gstDetails?.sts} /> : null}
 
@@ -507,11 +518,11 @@ const AddNewTransportsForm = ({
                     <ViewData title='Transport Name' value={values.name} />
                     <ViewData title='Address' value={values.address} />
                     <ViewData title='Business Type' value={businessType.find(item => {return item.name === values?.business_type})?.name} />
-                    <ViewData title='State' value={(states.find(function (state) {
-                      if (state.id == values.state)
+                    <ViewData title='State' value={values.state_name} />
+                    <ViewData title='Region' value={(regionList.find(function (region) {
+                      if (region.id == values.region)
                         return true;
                     }))?.name} />
-                    <ViewData title='Pincode' value={values.pincode} />
                     {values?.gst_verified ? <ViewData title='Legal Business Name' value={gstDetails?.mbr} /> : null}
                     {values?.gst_verified ? <ViewData title='Effective Date of registration' value={gstDetails?.rgdt}/> : null}
                     {values?.gst_verified ? <ViewData title='Taxpayer Type' value={gstDetails?.dty} /> : null}
@@ -666,6 +677,90 @@ const AddNewTransportsForm = ({
                     />
                   </Grid>
                   <Grid item md={6}>
+                    <TextInput
+                      number
+                      {...inputProps}
+                      name='pincode'
+                      labelText='Pincode'
+                      value={values?.pincode}
+                      disabled={readOnly}
+                      readOnly={readOnly}
+                      error={errors.pincode}
+                      helperText={errors.pincode}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      select
+                      name='state'
+                      labelText='State'
+                      readOnly={readOnly}
+                      disabled={readOnly}
+                      value={values?.state}
+                      error={errors.state}
+                      helperText={errors.state}
+                    >
+                      {
+                        city?.length ?
+                          <option value="" disabled>Choose State...</option> :
+                          <option value="" disabled>Enter Pincode to select State</option>
+                      }
+                      {
+                        city?.map((item, i)=> {
+                          return(
+                            <option key={i} value={item?.state_code}>{item?.state}</option>
+                          )
+                        })
+                      }
+                    </TextInput>
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      select
+                      labelText="City"
+                      name="city"
+                      readOnly={readOnly}
+                      value={values.city}
+                      error={errors.city}
+                      helperText={errors.city}
+                    >
+                      {
+                        city?.length ?
+                          <option value="" disabled>Choose City...</option> :
+                          <option value="" disabled>Enter Pincode to select City</option>
+                      }
+                      {
+                        city?.map((item, i) => {
+                          return(
+                            <option key={i} value={item?.city_code}>{item?.city}</option>
+                          )
+                        })
+                      }
+                    </TextInput>
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      select
+                      name='region'
+                      labelText='Region'
+                      readOnly={readOnly}
+                      disabled={readOnly}
+                      value={values?.region || ''}
+                      error={errors.region}
+                      helperText={errors.region}
+                    >
+                      {
+                        regionList?.length ?
+                          <option value="" disabled>Choose Region...</option> :
+                          <option value="" disabled>Enter Pincode to select Region</option>
+                      }
+                      {regionList.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))}
+                    </TextInput>
+                  </Grid>
+                  <Grid item md={6}>
                     {
                       <TextInput
                         {...inputProps}
@@ -695,6 +790,7 @@ const AddNewTransportsForm = ({
                       value={values?.business_type}
                       disabled={readOnly}
                       error={errors.business_type}
+                      helperText={errors.business_type}
                     >
                       <option value="">Choose Business Type</option>
                       {businessType.map((type) => (<option key={type.id} value={type.name}>{type.name}</option>))}
@@ -732,61 +828,6 @@ const AddNewTransportsForm = ({
                         }}
                       />
                     </MuiPickersUtilsProvider>
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      {...inputProps}
-                      select
-                      name='state'
-                      labelText='State'
-                      readOnly={readOnly}
-                      disabled={readOnly}
-                      value={values?.state}
-                      error={errors.state}
-                    >
-                      {states.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))}
-                    </TextInput>
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      {...inputProps}
-                      select
-                      name='region'
-                      labelText='Region'
-                      readOnly={readOnly}
-                      disabled={readOnly}
-                      value={values?.region}
-                      error={errors.region}
-                    >
-                      {regionList.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))}
-                    </TextInput>
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      number
-                      {...inputProps}
-                      name='pincode'
-                      labelText='Pincode'
-                      value={values?.pincode}
-                      disabled={readOnly}
-                      readOnly={readOnly}
-                      error={errors.pincode}
-                      helperText={errors.pincode}
-                    />
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      {...inputProps}
-                      // select
-                      name='district'
-                      labelText='District'
-                      readOnly={readOnly}
-                      disabled={readOnly}
-                      value={values.district}
-                      error={errors.district}
-                    >
-                      {getDistricts(values.state).map((item) => (<option key={item} value={item}>{item}</option>))}
-                    </TextInput>
                   </Grid>
                   {
                     gstDetails?.gstin || gstValidateData?.details ?

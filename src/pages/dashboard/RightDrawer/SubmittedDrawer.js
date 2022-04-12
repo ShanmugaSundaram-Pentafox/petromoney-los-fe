@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogContentText, Button, CircularProgress } from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, Button } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/CloseRounded';
 import Alert from '@material-ui/lab/Alert';
@@ -11,11 +11,11 @@ import { useMount } from 'react-use';
 import DealershipData from './DealershipData';
 import DrawerFooter from './DrawerFooter';
 import LoanInfo from './LoanInfo';
-import TextInput from '../../../components/TextInput/TextInput';
+import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
+import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { getUserRoleForReview } from '../../../services/common.service';
 import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import SalesInfo from '../components/SalesInfo';
-import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 
 
 const useStyles = makeStyles(theme => ({
@@ -183,7 +183,8 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
             <DialogContentText id="approval-remarks-desc">
               Please enter your remarks for sending this to review.
             </DialogContentText>
-            <TextInput
+            <TextEditor setJSON={setRemarks} toolBar={true} />
+            {/* <TextInput
               multiline
               alignTop
               direction='column'
@@ -195,7 +196,7 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
               onChange={e => {
                 setRemarks(e.target.value); setErrorStatus();
               }}
-            />
+            /> */}
             {
               errorStatus && 
                 <Alert severity="error" style={{padding: '0px 16px'}}>{errorStatus}</Alert>

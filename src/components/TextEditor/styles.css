@@ -1,0 +1,7 @@
+.ProseMirror:focus {
+    outline: none;
+}
+.ProseMirror {
+    min-height: 10vh;
+    padding-left: 15px;
+}

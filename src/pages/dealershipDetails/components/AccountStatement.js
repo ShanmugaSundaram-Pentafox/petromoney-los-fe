@@ -8,6 +8,7 @@ import React, { useState } from 'react';
 import { DateRange } from 'react-date-range';
 import { Box } from 'victory';
 import Button from '../../../components/CommonComponents/Button/Button';
+import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import usePageTitle from '../../../hooks/usePageTitle';
 import { downloadAccountStatement } from '../../../services/dealerships.service';
@@ -169,7 +170,7 @@ const AccountStatement = ({ id, currentUser }) => {
     if (from_date && to_date) {
       downloadAccountStatement(id, from_date, to_date)
         .then(res => {
-          setFileCode(res?.data)
+          setFileCode(res?.file)
           setOpenDialog(true)
           setLoading(false)
         })
@@ -257,17 +258,16 @@ const AccountStatement = ({ id, currentUser }) => {
         </Popover>
       </Grid>
       <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: 8 }}>
-        <Button
-          // disabled={!permissionCheck(currentUser.role_name, rulesList.dealership_edit)}
-          color="primary"
-          variant="contained"
-          size="small"
-          type="submit"
+        <LoaderButton 
+          variant='contained'
+          color='primary'
+          size='small'
+          type='submit'
+          isLoading={loading}
+          loadingText='Loading...'
           onClick={handleDownload}
           style={{marginTop: 8}}
-        >
-          Get statement
-        </Button>
+        >Get statement</LoaderButton>
       </div>
       <FormDialog
         open={openDialog}
@@ -276,7 +276,7 @@ const AccountStatement = ({ id, currentUser }) => {
       >
         <div className={classes.dialogBox} >
           <DialogContent className={classes.frame}>
-            <iframe src={`data:application/pdf;base64,${fileCode}`} height="900" width="500" frameBorder="0" title="Account Statement"></iframe>
+            <iframe src={fileCode} height="900" width="500" frameBorder="0" title="Account Statement"></iframe>
           </DialogContent>
         </div>
       </FormDialog>

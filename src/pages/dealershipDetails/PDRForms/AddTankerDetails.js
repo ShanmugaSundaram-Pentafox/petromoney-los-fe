@@ -78,7 +78,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 
-const AddTankerDetails = ({ dealer_id, tankerAdd, setTankerAdd }) => {
+const AddTankerDetails = ({ dealer_id, tankerAdd, setTankerAdd, editable }) => {
   const [tankerData, setTankerData] = useState([])
   // const [editable, setEditable] = useState(true)
   const [edit, setEdit] = useState(false)
@@ -227,7 +227,6 @@ const AddTankerDetails = ({ dealer_id, tankerAdd, setTankerAdd }) => {
                   <label><strong>Tanker capacity in liters</strong></label>
                   <TextInput
                     className={classes.field}
-                    className={classes.number}
                     inputProps={{ className: classes.input }}
                     name="tanker_capacity"
                     error={errors.tanker_capacity}
@@ -302,6 +301,7 @@ const AddTankerDetails = ({ dealer_id, tankerAdd, setTankerAdd }) => {
                           setTankerAdd(true)
                         }}
                         onDelete={() => deleteTankerRow(item, i)}
+                        action={editable? false : true}
                       >
                         <Grid container spacing={2} >
                           <Grid item md={6}>

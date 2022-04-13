@@ -11,6 +11,7 @@ import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { Link as RouterLink } from 'react-router-dom';
 import { useMount } from 'react-use';
+import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 import UserCan from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { getLoanById, getLoanRejectReason, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
@@ -206,14 +207,12 @@ const DrawerFooter = ({
                 role={currentUser.role_name}
                 perform={rulesList.loan_approval}
                 yes={() => (
-                  <Button
+                  <LoaderButton
                     variant="contained"
-                    disabled={loanData?.isLoading}
                     className={clsx(classes.btn, classes.btnError)}
+                    isLoading={reLoader}
                     onClick={handleResubmit}
-                  >
-                    {reLoader ? <CircularProgress size={23} /> : 'Re-submit'}
-                  </Button>
+                    loadingText='submitting...'>Re-submit</LoaderButton>
                 )}
               />)
           }

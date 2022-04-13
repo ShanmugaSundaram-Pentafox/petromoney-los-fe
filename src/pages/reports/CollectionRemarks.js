@@ -86,7 +86,8 @@ const CollectionRemarks = () => {
         label: 'Details',
         options: {
           filter: false,
-          display: false
+          display: 'excluded',
+          download: false
         }
       },
       {

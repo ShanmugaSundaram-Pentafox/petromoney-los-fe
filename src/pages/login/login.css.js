@@ -65,6 +65,9 @@ export const LoginWrapper = styled.div`
 
     .right-content {
         width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
         padding: 32px 16px;
         height: 100vh;
         background-color: #FFFFFF;

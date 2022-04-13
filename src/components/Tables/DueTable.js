@@ -6,7 +6,7 @@ import React, { useMemo, useState } from 'react';
 import { useMount } from 'react-use';
 import Currency from '../../components/Number/Currency';
 import usePageTitle from '../../hooks/usePageTitle';
-import { getTestReport } from '../../services/users.service';
+import { getLoanReportByDealershipId } from '../../services/users.service';
 
 const useStyles = makeStyles(theme => ({
   style: {
@@ -35,7 +35,7 @@ const DueTable = ({ id, onRowClick, style }) => {
 
   useMount(async () => {
     setLoading(true)
-    getTestReport(id)
+    getLoanReportByDealershipId(id)
       .then((data) => {
         setLoans(data.due)
         setLoading(false);

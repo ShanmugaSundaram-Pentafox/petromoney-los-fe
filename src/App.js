@@ -27,15 +27,15 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-        <SnackbarProvider ref={notistackRef} preventDuplicate maxSnack={3} anchorOrigin={{ vertical: 'bottom', horizontal: 'left'}} action={key => (<body1 style={actionStyle} onClick={() => onClickClose(key)}>DISMISS</body1>)}>
-          <ThemeProvider theme={theme}>
+        <ThemeProvider theme={theme}>
+          <SnackbarProvider hideIconVariant ref={notistackRef} preventDuplicate maxSnack={3} anchorOrigin={{ vertical: 'bottom', horizontal: 'left'}} action={key => (<body1 style={actionStyle} onClick={() => onClickClose(key)}>DISMISS</body1>)}>
             <HashRouter>
               <PersistGate persistor={persistor}>
                 <Routes />
               </PersistGate>
             </HashRouter>
-          </ThemeProvider>
-        </SnackbarProvider>
+          </SnackbarProvider>
+        </ThemeProvider>
       </Provider>
     </QueryClientProvider>
   );

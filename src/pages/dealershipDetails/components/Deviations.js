@@ -5,6 +5,8 @@ import React, {useState} from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import DeleteButton from '../../../components/CommonComponents/Button/DeleteButton';
 import TextInput from '../../../components/TextInput/TextInput';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
 import { deleteDeviationsById, getCalculateDeviation, getDeviations, updateDeviationsById } from '../../../services/dealerships.service';
 
 const useStyles = makeStyles(theme => ({
@@ -37,7 +39,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-const Deviations = ({id}) => {
+const Deviations = ({id, currentUser}) => {
   const classes = useStyles()
   const queryClient = useQueryClient()
   const [errorStatus, setErrorStatus] = useState()
@@ -45,6 +47,7 @@ const Deviations = ({id}) => {
   const [manualDeviationData, setManualDeviationData] = useState([])
   const [deleteModal, setDeleteModal] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const editable = permissionCheck(currentUser.role_name, rulesList.external_view);
 
   const deviationsTable = useQuery(['deviations', id], () => {return getDeviations(id)}, {
     onError: (error) => {
@@ -114,7 +117,9 @@ const Deviations = ({id}) => {
     <>
       <div className={classes.title}>
         <Typography variant="h5">Deviations</Typography>
-        <Button variant='contained' size='small' color='secondary' onClick={() => calculateDeviation()}>Calculate Deviations</Button>
+        {
+          !editable && <Button variant='contained' size='small' color='secondary' onClick={() => calculateDeviation()}>Calculate Deviations</Button>
+        }
       </div>
       {
         deviationsTable.isLoading ? (
@@ -151,13 +156,14 @@ const Deviations = ({id}) => {
                                           disabled={
                                             item.particulars === 'Max FOIR%' ||
                                                         item.particulars === 'Min Credit Bureau Score' ||
-                                                        item.particulars === 'Min Business Vintage with OMC (Yrs)' ? true : false
+                                                        item.particulars === 'Min Business Vintage with OMC (Yrs)' || editable ? true : false
                                           }
                                         />
                                       </TableCell>
                                       <TableCell>
                                         <TextInput
                                           className={classes.field}
+                                          disabled={editable}
                                           select
                                           name="deviation"
                                           value={item.deviation}
@@ -170,6 +176,7 @@ const Deviations = ({id}) => {
                                       <TableCell>
                                         <TextField
                                           className={classes.field}
+                                          disabled={editable}
                                           name="deviation_review"
                                           onChange={(e) => onChange(e, i)}
                                           value={item.deviation_review}
@@ -183,7 +190,7 @@ const Deviations = ({id}) => {
                                           control={
                                             <Checkbox
                                               checked={item?.review_status}
-                                              disabled={item.deviation_review.length <= 3}
+                                              disabled={item.deviation_review.length <= 3 || editable}
                                               name="review_status"
                                               onChange={(e) => {
                                                 if(item.deviation_review.length !== 1){
@@ -203,9 +210,12 @@ const Deviations = ({id}) => {
             </div>
             <div className={classes.topicBtn}>
               <Typography variant="h5">Manual Deviation</Typography>
-              <Button variant="outlined" color="secondary" size="medium" onClick={() => 
-                setManualDeviationData([...manualDeviationData, {deviation_description: '', deviation_review: ''}])
-              }>Add Deviation</Button>
+              {
+                !editable &&
+                <Button variant="outlined" color="secondary" size="medium" disabled={editable} onClick={() => 
+                  setManualDeviationData([...manualDeviationData, {deviation_description: '', deviation_review: ''}])
+                }>Add Deviation</Button>
+              }
             </div>
             <div style={{marginTop: 10}}>
               <Table>
@@ -226,6 +236,7 @@ const Deviations = ({id}) => {
                                           <TableCell>
                                             <TextInput
                                               name="deviation_description"
+                                              disabled={editable}
                                               placeholder="Description..."
                                               value={item.deviation_description}
                                               onChange={e => onManualChange(e, i)}
@@ -234,6 +245,7 @@ const Deviations = ({id}) => {
                                           <TableCell>
                                             <TextInput
                                               name="deviation_review"
+                                              disabled={editable}
                                               variant="outlined"
                                               placeholder="Review..."
                                               value={item.deviation_review}
@@ -245,7 +257,7 @@ const Deviations = ({id}) => {
                                               control={
                                                 <Checkbox
                                                   checked={item?.review_status}
-                                                  disabled={item.deviation_review.length <= 3}
+                                                  disabled={item.deviation_review.length <= 3 || editable}
                                                   name="review_status"
                                                   onChange={(e) => {
                                                     if(item.deviation_review.length !== 1){
@@ -257,7 +269,7 @@ const Deviations = ({id}) => {
                                             />
                                           </TableCell>
                                           <TableCell align="right">
-                                            <DeleteButton alertText='Do you really want to delete this deviation? This process cannot be undone.' deleteAction={() => item.id && (deleteDeviation({id: item.id, type: 'delete'}))} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={i} />
+                                            <DeleteButton disabled={editable} alertText='Do you really want to delete this deviation? This process cannot be undone.' deleteAction={() => item.id && (deleteDeviation({id: item.id, type: 'delete'}))} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={i} />
                                           </TableCell>
                                         </TableRow>
                                       )
@@ -273,9 +285,12 @@ const Deviations = ({id}) => {
               errorStatus && 
                 <Alert severity='error' style={{marginTop: 20}}>{errorStatus}</Alert>
             }
-            <div className={classes.footer}>
-              <Button variant="contained" color="primary" onClick={handleSubmit}>Save</Button>
-            </div>
+            {
+              !editable &&
+              <div className={classes.footer}>
+                <Button variant="contained" color="primary" onClick={handleSubmit}>Save</Button>
+              </div>
+            }
           </>
         )
       }

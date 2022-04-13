@@ -4,8 +4,6 @@ import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Switch from '@material-ui/core/Switch';
 import Typography from '@material-ui/core/Typography';
-// import UploadIcon from '@material-ui/icons/CloudUploadOutlined';
-// import DeleteIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
 import {
@@ -21,7 +19,7 @@ import CustomToken from '../../../components/CommonComponents/CustomToken';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import FileUpload from '../../../components/FileUpload';
 import TextInput from '../../../components/TextInput/TextInput';
-import { deleteProfileDoc } from '../../../services/dealers.service';
+import { deleteProfileDoc, getPincodeDetails } from '../../../services/dealers.service';
 import { validateId } from '../../../services/dealerships.service';
 
 
@@ -77,9 +75,10 @@ const useStyles = makeStyles({
   },
 });
 
-const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave, setFieldValue, setPanValidateData, panValidateData }) => {
+const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave, setFieldValue, setPanValidateData, panValidateData, validateField }) => {
   const readOnly = readOnlyProps;
   const classes = useStyles();
+  const [city, setCity] = useState([]);
   const [showUpload, setShowUpload] = useState(false);
   const [fileType, setFileType] = useState()
   const [state, setState] = React.useState({
@@ -125,24 +124,42 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
   }
 
   const handleValidate = (action, id) => {
-    action === 'pan' && setPanValidateData({icon:true, loading: true})
-    validateId(action, id)
-      .then((res) => {
-        action === 'pan' &&
-      setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}})
-        !values?.first_name && setFieldValue('first_name', res?.details?.firstName)
-        !values?.last_name && setFieldValue('last_name', res?.details?.lastName)
-        !values?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
-        !values?.gender && setFieldValue('gender', res?.details?.gender?.toUpperCase())
-        !values?.pincode && setFieldValue('pincode', res?.details?.address?.pinCode)
-        !values?.address && setFieldValue('address', `${res?.details?.address?.buildingName}, ${res?.details?.address?.streetName}, ${res?.details?.address?.city}, ${res?.details?.address?.state} - ${res?.details?.address?.pinCode}`)
-      })
-      .catch(e => {
-        console.log(e);
-        action === 'pan' &&
-      setPanValidateData({icon: true, idType: 'PAN'})
-      })
+    if(id){
+      action === 'pan' && setPanValidateData({icon:true, loading: true})
+      validateId(action, id)
+        .then((res) => {
+          action === 'pan' &&
+        setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}})
+          !values?.first_name && setFieldValue('first_name', res?.details?.firstName)
+          !values?.last_name && setFieldValue('last_name', res?.details?.lastName)
+          res?.details?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
+          !values?.gender && setFieldValue('gender', res?.details?.gender?.toUpperCase())
+          !values?.pincode && setFieldValue('pincode', res?.details?.address?.pinCode)
+          !values?.address && setFieldValue('address', `${res?.details?.address?.buildingName}, ${res?.details?.address?.streetName}, ${res?.details?.address?.city}, ${res?.details?.address?.state} - ${res?.details?.address?.pinCode}`)
+        })
+        .catch(e => {
+          console.log(e);
+          action === 'pan' &&
+        setPanValidateData({icon: true, idType: 'PAN'})
+        })
+    } else {
+      validateField('pan')
+    }
   }
+
+  useEffect(() => {
+    if(/^[1-9][0-9]{5}$/.test(values?.pincode)) {
+      getPincodeDetails(values?.pincode)
+        .then(res =>{
+          setCity(res)
+          setFieldValue('city', res[0]?.city_code)
+          setFieldValue('state', res[0]?.state_code)
+        })
+        .catch(e => {
+          console.log(e);
+        })
+    }
+  },[values?.pincode])
 
   const gridItem = {
     md: 12,
@@ -207,20 +224,21 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   <ViewData title='ID' value={values.id} />
                   <ViewData title='Date of Birth' value={values.dob} />
                   <ViewData title='Address' value={values.address} />
+                  <ViewData title='State' value={values.state_name} />
                   <ViewData title='Marital Status' value={values.marital_status} />
                   <ViewData title='Mobile' value={values.mobile} />
                   <ViewData title='Aadhar' value={values.aadhar} />
-                  <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success': 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'}/>} />
                 </Box>
               </Grid>
               <Grid item md={6}>
                 <Box className={classes.box} >
                   <ViewData title='Name' value={`${values.first_name} ${values.last_name}`} />
                   <ViewData title='Gender' value={values.gender} />
-                  <ViewData title='City' value={values.city} />
+                  <ViewData title='City' value={values.city_name} />
                   <ViewData title='Pincode' value={values.pincode} />
                   <ViewData title='Residing since' value={values.residing_since} />
                   <ViewData title='Email' value={values.email} />
+                  <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success': 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'}/>} />
                 </Box>
               </Grid>
             </Grid>
@@ -343,7 +361,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 />
                 {
                   !values?.pan_verified || values?.pan !== data?.pan ?
-                    <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={()=> values?.pan && handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
+                    <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={() => handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
                 }
               </Grid>
               <Grid {...gridItem} md={6}>
@@ -376,18 +394,6 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
               </Grid>
               <Grid {...gridItem} md={6}>
                 <TextInput
-                  label="City"
-                  name="city"
-                  readOnly={readOnly}
-                  value={values.city}
-                  error={errors.city}
-                  helperText={errors.city}
-                  onChange={onChange}
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Grid>
-              <Grid {...gridItem} md={6}>
-                <TextInput
                   number
                   label="Pincode"
                   name="pincode"
@@ -398,6 +404,58 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   onChange={onChange}
                   InputLabelProps={{ shrink: true }}
                 />
+              </Grid>
+              <Grid {...gridItem} md={6}>
+                <TextInput
+                  select
+                  label="City"
+                  name="city"
+                  readOnly={readOnly}
+                  value={values.city}
+                  error={errors.city}
+                  helperText={errors.city}
+                  onChange={onChange}
+                  InputLabelProps={{ shrink: true }}
+                >
+                  {
+                    city?.length ?
+                      <option value="" disabled>Choose City...</option> :
+                      <option value="" disabled>Enter Pincode to select City</option>
+                  }
+                  {
+                    city?.map((item, i) => {
+                      return(
+                        <option key={i} value={item?.city_code}>{item?.city}</option>
+                      )
+                    })
+                  }
+                </TextInput>
+              </Grid>
+              <Grid {...gridItem} md={6}>
+                <TextInput
+                  select
+                  name='state'
+                  label='State'
+                  readOnly={readOnly}
+                  value={values.state}
+                  error={errors.state}
+                  helperText={errors.state}
+                  onChange={onChange}
+                  InputLabelProps={{ shrink: true }}
+                >
+                  {
+                    city?.length ?
+                      <option value="" disabled>Choose State...</option> :
+                      <option value="" disabled>Enter Pincode to select State</option>
+                  }
+                  {
+                    city?.map((item, i)=> {
+                      return(
+                        <option key={i} value={item?.state_code}>{item?.state}</option>
+                      )
+                    })
+                  }
+                </TextInput>
               </Grid>
               <Grid {...gridItem} md={6}>
                 <TextInput

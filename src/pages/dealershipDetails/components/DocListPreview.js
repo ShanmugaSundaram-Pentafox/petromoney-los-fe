@@ -69,7 +69,7 @@ const usePreviewStyles = makeStyles((theme) => ({
     display: 'flex',justifyContent: 'center', alignItems: 'center',marginBottom: 19, width: '100%'
   }
 }))
-const DocPreview = ({ fileType, url, DocName, updatedDateTime, file_name, fileId, dealershipId }) => {
+const DocPreview = ({ fileType, url, DocName, updatedDateTime, file_name, fileId, dealershipId, editable }) => {
   const queryClient = useQueryClient()
   const [imageModal, setImageModal] = useState({});
   const classes = usePreviewStyles();
@@ -102,7 +102,10 @@ const DocPreview = ({ fileType, url, DocName, updatedDateTime, file_name, fileId
                       <PictureAsPdfIcon style={{ color: '#63686E' }} />
                       : <ListAltIcon style={{ color: '#63686E' }} />
                 }
-                <div className={classes.attachmentDelete} onClick={(e) => {e.stopPropagation(); setDeleteModal({open:true, fileId: fileId})}}><DeleteIcon width={16} /></div>
+                {
+                  !editable &&
+                  <div className={classes.attachmentDelete} onClick={(e) => {e.stopPropagation(); setDeleteModal({open:true, fileId: fileId})}}><DeleteIcon width={16} /></div>
+                }
               </div>
               <h5 style={{ width: 100, whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden', marginLeft: 15 }}>{file_name}</h5>
               <span className={classes.smallText}>{updatedDateTime}</span>
@@ -140,7 +143,7 @@ const DocPreview = ({ fileType, url, DocName, updatedDateTime, file_name, fileId
   )
 }
 
-const DocListPreview = ({ docName, upload, file, id, dealershipId }) => {
+const DocListPreview = ({ docName, upload, file, id, dealershipId, editable }) => {
   const classes = useStyles();
   const [collapse, setCollapse] = useState(false);
 
@@ -154,9 +157,12 @@ const DocListPreview = ({ docName, upload, file, id, dealershipId }) => {
           <Typography variant='h7' onClick={() => handleCollapse}><strong>{`${id}. ${docName}`}</strong></Typography>
           <Badge badgeContent={file[0].file_url && file?.length || 0} color="primary" style={{ marginLeft: 15 }} />
         </div>
-        <div className={classes.titleBtns}>
-          <Button size='small' style={{ marginLeft: 15 }} variant='outlined' onClick={upload} color='primary' startIcon={<AddIcon style={{ fontSize: 'small' }} />}>Upload</Button>
-        </div>
+        {
+          !editable &&
+          <div className={classes.titleBtns}>
+            <Button size='small' style={{ marginLeft: 15 }} variant='outlined' onClick={upload} color='primary' startIcon={<AddIcon style={{ fontSize: 'small' }} />}>Upload</Button>
+          </div>
+        }
       </div>
       <div
         style={{ display: 'flex', flexWrap: 'wrap' }}
@@ -165,7 +171,7 @@ const DocListPreview = ({ docName, upload, file, id, dealershipId }) => {
           file.map((data, i) => {
             return (
               <Collapse in={!collapse} key={i}>
-                <DocPreview fileId={data?.file_id} dealershipId={dealershipId} fileType={data.file_type} file_name={data.file_name} url={data.file_url} DocName={docName} updatedDateTime={format(new Date(data?.created_date || data?.modified_date), 'dd/MM/yyyy hh:mm a')} />
+                <DocPreview fileId={data?.file_id} dealershipId={dealershipId} fileType={data.file_type} file_name={data.file_name} url={data.file_url} DocName={docName} updatedDateTime={format(new Date(data?.created_date || data?.modified_date), 'dd/MM/yyyy hh:mm a')} editable={editable} />
               </Collapse>
             )
           })

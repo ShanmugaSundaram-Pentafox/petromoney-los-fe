@@ -12,28 +12,12 @@ import UserCan from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { getProductsMaster } from '../../../services/common.service';
 
-
 const LoanInfoWrapper = styled.div`
   padding: 12px;
   margin-bottom: 16px;
   border-radius: 4px;
   background-color: rgba(0, 160, 0, 0.15);
 `;
-
-
-const testProducts = [
-  {
-    product_id: 1,
-    product_name: 'FUEL 18',
-    interest: 18
-  },
-  {
-    product_id: 2,
-    product_name: 'FUEL 28',
-    interest: 28
-  },
-];
-
 
 const LoanInfo = ({
   data: row,
@@ -121,7 +105,7 @@ const LoanInfo = ({
                           money
                           number
                           fullWidth={false}
-                          value={newInfo?.amount_approved}
+                          defaultValue={row?.amount_requested}
                           onChange={e => {
                             updateNewLoanInfo({
                               ...newInfo,

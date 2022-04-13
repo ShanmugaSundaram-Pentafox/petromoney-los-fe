@@ -1,4 +1,4 @@
-import { Dialog, DialogActions, DialogContent, DialogContentText, Button, CircularProgress } from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, Button, CircularProgress } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/CloseRounded';
 import Alert from '@material-ui/lab/Alert';
@@ -11,10 +11,11 @@ import { useMount } from 'react-use';
 import DealershipData from './DealershipData';
 import DrawerFooter from './DrawerFooter';
 import LoanInfo from './LoanInfo';
-import TextInput from '../../../components/TextInput/TextInput';
+import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { getUserRoleForReview } from '../../../services/common.service';
 import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import SalesInfo from '../components/SalesInfo';
+import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 
 
 const useStyles = makeStyles(theme => ({
@@ -69,7 +70,6 @@ const useStyles = makeStyles(theme => ({
 
 
 const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, data, onClose }) => {
-  // const userRole = useQuery('user-role', () => { getUserRoleForReview('is_review=1') })
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
   const [reviewModal, setReviewModal] = useState(false);
   const [user, setUser] = useState()
@@ -183,7 +183,8 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
             <DialogContentText id="approval-remarks-desc">
               Please enter your remarks for sending this to review.
             </DialogContentText>
-            <TextInput
+            <TextEditor setJSON={setRemarks} toolBar={true} />
+            {/* <TextInput
               multiline
               alignTop
               direction='column'
@@ -195,23 +196,25 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
               onChange={e => {
                 setRemarks(e.target.value); setErrorStatus();
               }}
-            />
+            /> */}
             {
               errorStatus && 
                 <Alert severity="error" style={{padding: '0px 16px'}}>{errorStatus}</Alert>
             }
           </div>
-        </DialogContent>
-        <DialogActions>
-          <div>
-            <Button onClick={handleReviewModal}>Cancel</Button>
-            <Button color='primary' variant='outlined'
+          <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 8, marginBottom: 5}}>
+            <Button variant='outlined' onClick={handleReviewModal} style={{marginRight: 8}}>Cancel</Button>
+            <LoaderButton 
+              variant='contained'
+              color='primary'
+              buttonLabel='Confirm'
+              size='medium'
+              isLoading={loading}
+              loadingText="Submitting..."
               onClick={() => updateLoanStatus('loan_review')}
-            >
-              {loading ? <CircularProgress size={22} /> : 'Confirm'}
-            </Button>
+            >Confirm</LoaderButton>
           </div>
-        </DialogActions>
+        </DialogContent>
       </Dialog>
     </>
   );

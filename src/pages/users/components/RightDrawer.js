@@ -376,7 +376,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                             value={values.mobile}
                             error={errors.mobile}
                             helperText={errors.mobile ? errors.mobile : '*please enable to recieve whatsapp notifications.'}
-                            InputProps={{endAdornment: <Tooltip title={selected ? 'Notification Enabled' : 'Notification Disabled'}><ToggleButton value="check" size='small' selected={selected} onChange={() => setSelected(!selected)}><WhatsAppIcon fontSize='small' className={selected && classes.activeBtn} /></ToggleButton></Tooltip>}}
+                            InputProps={{ endAdornment: <Tooltip title={selected ? 'Notification Enabled' : 'Notification Disabled'}><ToggleButton value="check" size='small' selected={selected} onChange={() => setSelected(!selected)}><WhatsAppIcon fontSize='small' className={selected && classes.activeBtn} /></ToggleButton></Tooltip> }}
                           />
                         </Grid>
                         <Grid item md={6}>
@@ -419,7 +419,8 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                     role={currentUser.role_name}
                     perform={rulesList.region_map}
                     yes={() => (
-                      [1, 6, 7, 10, 11, 12].includes(data.role_id) ? <MapRegion data={data} /> : null
+                      // [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].includes(data.role_id) ? <MapRegion data={data} /> : null
+                      <MapRegion data={data} />
                     )}
                     no={() => null}
                   />
@@ -460,7 +461,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
               )
             }
           </>
-          
+
           <Dialog
             open={open}
             onClose={handleClose}

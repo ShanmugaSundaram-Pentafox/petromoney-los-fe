@@ -2,6 +2,151 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.13.6](https://gitlab.com/vignesh3/petromall-fe/compare/v2.13.5...v2.13.6) (2022-04-08)
+
+
+### Bug Fixes
+
+* agreement table refactor ([fc3e0cf](https://gitlab.com/vignesh3/petromall-fe/commit/fc3e0cfc8cb603c6f32fcb3adbf99a1aeb2f6fd0))
+* api code refactor ([b7411c2](https://gitlab.com/vignesh3/petromall-fe/commit/b7411c28c75f8a63733ebeebade027964ab28d04))
+* api pararameters remove ([88108fb](https://gitlab.com/vignesh3/petromall-fe/commit/88108fb11be77b8f43ec32bc5184ae5f31d72589))
+* **call-req:** dealership id and name added ([16d89d7](https://gitlab.com/vignesh3/petromall-fe/commit/16d89d7d138e138439635f64e94243ade0707154))
+* **collection-remark:** master collection remarks ([1dd03b9](https://gitlab.com/vignesh3/petromall-fe/commit/1dd03b9bdf7fec4d7f51e7d848fe1be609cc1b30))
+* **financials:** latest financial year added ([81cb6ad](https://gitlab.com/vignesh3/petromall-fe/commit/81cb6ad62534f4ec3dc96e880d03a7084bb42b83))
+* **loan-agreement:** loan agreement refactor ([92ac70d](https://gitlab.com/vignesh3/petromall-fe/commit/92ac70d43d526e90a18bf72752d15142a7dec9dc))
+
+### [2.13.5](https://gitlab.com/vignesh3/petromall-fe/compare/v2.13.4...v2.13.5) (2022-04-06)
+
+
+### Bug Fixes
+
+* **map-region:** enable region map to all users ([9585a8e](https://gitlab.com/vignesh3/petromall-fe/commit/9585a8e282f7198e80f6e16e85a8d7b173c11b19))
+
+### [2.13.4](https://gitlab.com/vignesh3/petromall-fe/compare/v2.13.3...v2.13.4) (2022-04-05)
+
+
+### Bug Fixes
+
+* **guar-docs:** guarantor table documents ([c9b4899](https://gitlab.com/vignesh3/petromall-fe/commit/c9b48994374f470f200fed5f39ac134f82012d14))
+
+### [2.13.3](https://gitlab.com/vignesh3/petromall-fe/compare/v2.13.2...v2.13.3) (2022-04-05)
+
+
+### Bug Fixes
+
+* **payload-patch:** city and state payload patch ([bc0276b](https://gitlab.com/vignesh3/petromall-fe/commit/bc0276bfedce2dbce7f8bfdb004a3858e0cc9181))
+
+### [2.13.2](https://gitlab.com/vignesh3/petromall-fe/compare/v2.13.1...v2.13.2) (2022-04-05)
+
+
+### Bug Fixes
+
+* **city-field-validation:** field validation added for state and city ([8529a45](https://gitlab.com/vignesh3/petromall-fe/commit/8529a45e239a86be61454652ab80e85e2dcad8f8))
+
+### [2.13.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.13.0...v2.13.1) (2022-04-05)
+
+
+### Bug Fixes
+
+* **state-city:** auto fill state and city on valid PAN ([8600782](https://gitlab.com/vignesh3/petromall-fe/commit/8600782d2055735c9c883a6424a79fd381bc39e2))
+
+## [2.13.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.12.0...v2.13.0) (2022-04-04)
+
+
+### Features
+
+* **master-city:** Master for City ([6980ac5](https://gitlab.com/vignesh3/petromall-fe/commit/6980ac5c64de836dcd4e08678caa639ea69a952a))
+
+
+### Bug Fixes
+
+* financials payload fix ([4a5c93a](https://gitlab.com/vignesh3/petromall-fe/commit/4a5c93a5cfe35dc310c9180a9f361f762259fb6a))
+* **state-field:** dealer, coapp, guar stateField ([63c5d6c](https://gitlab.com/vignesh3/petromall-fe/commit/63c5d6c89af5b28bbcf68c0d8c16e76f5590152a))
+* **validateId:** api call refactor ([b000bbf](https://gitlab.com/vignesh3/petromall-fe/commit/b000bbfb1a09c39a580252055f2a097d39e9d5f5))
+
+## [2.12.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.11.4...v2.12.0) (2022-03-30)
+
+
+### Features
+
+* **product-mapping:** external user product map ([98376ef](https://gitlab.com/vignesh3/petromall-fe/commit/98376ef21ea683e4616d933d9b7b91ee08c4b38f))
+* **react:** Update react version to v18 ([cf8c926](https://gitlab.com/vignesh3/petromall-fe/commit/cf8c92676cdb06d15fadac2342601ec8743e8c31))
+
+
+### Bug Fixes
+
+* **enhancements:** fixes and enhancements ([8d68b61](https://gitlab.com/vignesh3/petromall-fe/commit/8d68b61d75b1df36ddd448f7b2a93032492fe43f))
+* **external-role:** viewOnly permission check for external role ([557f50d](https://gitlab.com/vignesh3/petromall-fe/commit/557f50dc34b1d49c53aa5fc3dfa37bf0d6d946bc))
+* **external:** improper merge changes ([ae2ae80](https://gitlab.com/vignesh3/petromall-fe/commit/ae2ae8025311a76a492354f6199343c8caec62ec))
+* pan dob values set and approved amount prefill ([5930889](https://gitlab.com/vignesh3/petromall-fe/commit/59308891fc8ed3dd6788acf9f1b463e4b865752c))
+* **pennydrop:** bank details verified state update ([91beced](https://gitlab.com/vignesh3/petromall-fe/commit/91beced42d6b68af899dda92b24a263bbd7ca02f))
+* **pennydrop:** bank details verified state update ([3167056](https://gitlab.com/vignesh3/petromall-fe/commit/31670568259c433aa91634f780e8019edfac0c9c))
+* **Role-rename:** Conflict resolve and Role rename in userRules ([7236987](https://gitlab.com/vignesh3/petromall-fe/commit/72369878fafbfa452c1385e59b18b2b48be653dc))
+* **vehicle-Info:** conflict fix ([160afd2](https://gitlab.com/vignesh3/petromall-fe/commit/160afd203e8fab9213cb28f5887ff307d26fe44d))
+* verify modal update ([1dbe6ac](https://gitlab.com/vignesh3/petromall-fe/commit/1dbe6acfbaa4029b3ac887e693ec44719e0c21b4))
+
+### [2.11.4](https://gitlab.com/vignesh3/petromall-fe/compare/v2.11.3...v2.11.4) (2022-03-22)
+
+
+### Bug Fixes
+
+* **Cibil-refresh:** data post userType undefined ([7e18eb8](https://gitlab.com/vignesh3/petromall-fe/commit/7e18eb8ba1e904d23af449c0e8de64c867220b99))
+* **cibil:** Regex fix ([5657254](https://gitlab.com/vignesh3/petromall-fe/commit/5657254ab4fb55e3bd9fe360c1ee8ddbde88c768))
+
+### [2.11.3](https://gitlab.com/vignesh3/petromall-fe/compare/v2.11.2...v2.11.3) (2022-03-21)
+
+
+### Bug Fixes
+
+* **Dealer-edit:** error msg snackbar fix ([7faf586](https://gitlab.com/vignesh3/petromall-fe/commit/7faf5860f6d917d51ff0868058fa3bc0c79f4950))
+* DPD column align ([1622e42](https://gitlab.com/vignesh3/petromall-fe/commit/1622e427def162c67df3dd02cbf81f28740e66c4))
+* profile dropdown border radius ([ac27426](https://gitlab.com/vignesh3/petromall-fe/commit/ac2742659dbe4a3aa7054088e9fcfc8420072f17))
+* **snackbar:** snackbar font inherit ([cd00650](https://gitlab.com/vignesh3/petromall-fe/commit/cd00650b7b119f018c0838615917777bc2b7d46b))
+* **UI-update:** bank details card and resolve form ui update ([a085594](https://gitlab.com/vignesh3/petromall-fe/commit/a0855948603f46b41df4ef36eff128983aae6eb0))
+
+### [2.11.2](https://gitlab.com/vignesh3/petromall-fe/compare/v2.11.1...v2.11.2) (2022-03-18)
+
+
+### Bug Fixes
+
+* **bank:** update bank preview card for pennydrop ([a868a02](https://gitlab.com/vignesh3/petromall-fe/commit/a868a024f8e36877c7e6281111a500173e5273e2))
+
+### [2.11.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.11.0...v2.11.1) (2022-03-18)
+
+
+### Bug Fixes
+
+* **doc-download:** PDR and SOA docs base 64 to url ([9ec9504](https://gitlab.com/vignesh3/petromall-fe/commit/9ec95046ec35ea3e30e8a9bd70031b31a500efef))
+
+## [2.11.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.10.1...v2.11.0) (2022-03-18)
+
+
+### Features
+
+* **doc-delete:** add individual document delete ([23d6291](https://gitlab.com/vignesh3/petromall-fe/commit/23d62912b0fbdd3790af5659172edb66eee9ea30))
+* **passbook:** passbook download and share ([6a55a48](https://gitlab.com/vignesh3/petromall-fe/commit/6a55a480fe2eb4da5de36e0458645268effc717e))
+* **reset-password:** Reset Password Feature ([dd8a68c](https://gitlab.com/vignesh3/petromall-fe/commit/dd8a68c23de96b324f220e3967e313fb738419f4))
+
+
+### Bug Fixes
+
+* **base64:** removed base64 format for pdf ([0c97158](https://gitlab.com/vignesh3/petromall-fe/commit/0c9715877876cf5181886db6d1169bdfce7ff0b6))
+* **CIBIL-Flow:** cibil Flow refactor ([df4263c](https://gitlab.com/vignesh3/petromall-fe/commit/df4263ca731d9c4b20988a39f082065292c50c68))
+* **created-by:** credit reload created by ([3b82019](https://gitlab.com/vignesh3/petromall-fe/commit/3b820197c4d6a56f56e7108f56c84cd4e18b3f85))
+* disb amt total remove ([a6dc3fb](https://gitlab.com/vignesh3/petromall-fe/commit/a6dc3fbb2e584808d730e09c8b9a9c9ed7ef289c))
+* **disb.app-queue:** Label update ([8d31feb](https://gitlab.com/vignesh3/petromall-fe/commit/8d31feb07d18e5800ada22e7e422c90619b86348))
+* due sum code refactor ([0e206de](https://gitlab.com/vignesh3/petromall-fe/commit/0e206de635f438505ef934bf294970e7579e53f2))
+* **due-sum:** code refactor ([fdded70](https://gitlab.com/vignesh3/petromall-fe/commit/fdded70f6323f25c871e6455368a18d645cd18dc))
+* **loan-report:** list due and overdue by dealership ([0a4f793](https://gitlab.com/vignesh3/petromall-fe/commit/0a4f793a511e2e53e8ae4650f8f735c8a9a0413e))
+* **master-map:** zone-state-region map ([d1f2206](https://gitlab.com/vignesh3/petromall-fe/commit/d1f2206d4e6a0d02e41c4cd739a40b8985bc1f37))
+* **package:** conflict fix ([65a4b8a](https://gitlab.com/vignesh3/petromall-fe/commit/65a4b8aa88353903819be871fe056f4d34784594))
+* **page-title:** conflict fix ([84d190f](https://gitlab.com/vignesh3/petromall-fe/commit/84d190faa96a6078a23621dffde691140f6531b5))
+* redirect to login on success ([e4e1e4c](https://gitlab.com/vignesh3/petromall-fe/commit/e4e1e4c12e826b3c16c4f973a6c215a176d24a49))
+* remark icon noify ([e10d1a5](https://gitlab.com/vignesh3/petromall-fe/commit/e10d1a5b4d8a0a51e489d3a6e78278cf064a7c31))
+* **share-statement:** download and share for dealer passbook ([bed5506](https://gitlab.com/vignesh3/petromall-fe/commit/bed550669831c1e10571b5d8ef2e4ffb6c576b7c))
+* Snackbar dismiss action ([8734980](https://gitlab.com/vignesh3/petromall-fe/commit/873498004dfad5a46e14448ba720451849215798))
+* **withheld-comment:** added comment field in withheld loans ([b62e664](https://gitlab.com/vignesh3/petromall-fe/commit/b62e6648e0ade67980bdf5186513301032981d5c))
+
 ### [2.10.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.10.0...v2.10.1) (2022-02-28)
 
 

@@ -12,6 +12,8 @@ import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from '../../../components/CommonComponents/Button/Button';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
 import usePageTitle from '../../../hooks/usePageTitle';
 import AddNewTransportForm from '../../../pages/transports/components/AddNewTransportsForm';
 import AddNewTransportsOwnerForm from '../../../pages/transports/components/AddNewTransportsOwnerForm';
@@ -109,6 +111,8 @@ const OwnerDetails = ({ currentUser, match }) => {
   const [openModal, setOpenModal] = useState(false)
   const [rowData, setRowData] = useState({})
   const [formType, setFormType] = useState('');
+  const editable = permissionCheck(currentUser.role_name, rulesList.external_view);
+
   const {
     url,
     params: { id },
@@ -210,6 +214,7 @@ const OwnerDetails = ({ currentUser, match }) => {
     selectableRowsHeader: false,
     customToolbar: () => {
       return (
+        !editable &&
         <Button
           color="primary"
           variant="contained"
@@ -265,7 +270,7 @@ const OwnerDetails = ({ currentUser, match }) => {
         }}
         variant="temporary"
       >
-        <AddNewTransportForm callback={() => setOpenModal(false)} isAdd={formType} id={id} data={rowData} currentUser={currentUser} />
+        <AddNewTransportForm callback={() => setOpenModal(false)} isAdd={formType} id={id} data={rowData} currentUser={currentUser} editable={editable} />
       </Drawer>
     </>
   )

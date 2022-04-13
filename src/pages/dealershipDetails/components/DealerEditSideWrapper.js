@@ -82,6 +82,7 @@ const DealerEditSideWrapper = ({
   currentUser,
   onClose,
   id,
+  viewOnly,
 }) => {
   const classes = useStyles();
   const queryClient = useQueryClient()
@@ -113,6 +114,7 @@ const DealerEditSideWrapper = ({
     gender: Yup.string().nullable('Choose gender').required('Enter gender'),
     email: Yup.string().nullable('Enter email').email('Invalid email').required('Enter email'),
     city: Yup.string().nullable('Enter City').required('Enter City'),
+    state: Yup.string().nullable('Enter State').required('Enter State'),
     address: Yup.string()
       .nullable('Enter address')
       .min(6, 'address must be atleast 6 characters')
@@ -121,7 +123,6 @@ const DealerEditSideWrapper = ({
       .nullable('Enter mobile number')
       .matches(/^\d{10}$/, 'Invalid mobile number')
       .required('Enter valid mobile number'),
-    // dob: Yup.number().required("Choose date of birth"),
     residing_since: Yup.number().nullable('Enter the year').required('Enter the year'),
     marital_status: Yup.string('Enter your Marital status'),
     pincode: Yup.string().nullable('Enter pincode').matches(/^[1-9][0-9]{5}$/, 'Invalid pincode').required('Enter pincode'),
@@ -182,9 +183,10 @@ const DealerEditSideWrapper = ({
     handleReset,
     setFieldValue,
     setValues,
+    validateField
   } = useFormik({
     initialValues: {
-      ...data,
+      ...data, state: data?.state_code, state_name: data?.state, city_name: data?.city, city: data?.city_name
     },
 
     onReset: (values, e) => {
@@ -200,7 +202,7 @@ const DealerEditSideWrapper = ({
             setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}})
             !values?.first_name && setFieldValue('first_name', res?.details?.firstName)
             !values?.last_name && setFieldValue('last_name', res?.details?.lastName)
-            !values?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
+            res?.details?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
             !values?.gender && setFieldValue('gender', res?.details?.gender?.toUpperCase())
             !values?.pincode && setFieldValue('pincode', res?.details?.address?.pinCode)
             !values?.address && setFieldValue('address', `${res?.details?.address?.buildingName}, ${res?.details?.address?.streetName}, ${res?.details?.address?.city}, ${res?.details?.address?.state} - ${res?.details?.address?.pinCode}`)
@@ -259,20 +261,30 @@ const DealerEditSideWrapper = ({
         })
         .then((res) => {
           setLoading(false);
-          setApicallStatus('success');
-          enqueueSnackbar(res.message, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'success',
-          });
-          onClose();
-          modelType === 'DEALER' &&
-          queryClient.invalidateQueries(['dealers-coapplicant', id])
-
-          modelType === 'COAPPLICANT' ?
-            queryClient.invalidateQueries(['co-applicants', id]) : queryClient.invalidateQueries(['guarantors', id])
+          if(res.status === 'SUCCESS'){
+            setApicallStatus('success');
+            enqueueSnackbar(res.message, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'success',
+            });
+            onClose();
+            modelType === 'DEALER' &&
+            queryClient.invalidateQueries(['dealers-coapplicant', id])
+  
+            modelType === 'COAPPLICANT' ?
+              queryClient.invalidateQueries(['co-applicants', id]) : queryClient.invalidateQueries(['guarantors', id])
+          } else {
+            enqueueSnackbar(res.message, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            });
+          }
         })
         .catch((err) => {
           setReadOnly(false);
@@ -328,6 +340,7 @@ const DealerEditSideWrapper = ({
               setFieldValue={setFieldValue}
               setPanValidateData={setPanValidateData}
               panValidateData={panValidateData}
+              validateField={validateField}
             />
           </Step>
         </Stepper>
@@ -388,21 +401,24 @@ const DealerEditSideWrapper = ({
                   Back
                 </Button>
               </div>
-              <div>
-                <Button
-                  variant='contained'
-                  className={clsx(classes.btn, classes.editButton)}
-                  startIcon={
-                    !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
-                  }
-                  disabled={loading}
-                  onClick={
-                    loading ? () => null : readOnly ? handleEdit : handleSubmit
-                  }
-                >
-                  Edit
-                </Button>
-              </div>
+              {
+                !viewOnly &&
+                  <div>
+                    <Button
+                      variant='contained'
+                      className={clsx(classes.btn, classes.editButton)}
+                      startIcon={
+                        !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
+                      }
+                      disabled={loading}
+                      onClick={
+                        loading ? () => null : readOnly ? handleEdit : handleSubmit
+                      }
+                    >
+                      Edit
+                    </Button>
+                  </div>
+              }
             </>
           )}
         </div>

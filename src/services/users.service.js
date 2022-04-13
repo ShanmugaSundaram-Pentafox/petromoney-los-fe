@@ -95,7 +95,7 @@ export const getReport = () => {
       })
   })
 }
-export const getTestReport = (id) => {
+export const getLoanReportByDealershipId = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.report}/dealership/${id}`)
       .then(({ status, data, message }) => {
@@ -357,3 +357,41 @@ export const getCollectionRemarkByLoanId = (loan_id) => {
   })
 }
 
+export const getProductsMapById = (role_id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`role/${role_id}/map/product`)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          const result = data?.map(item => ({
+            label: item.product_name,
+            value: item.product_id,
+          }))
+          resolve(result || []);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const updateProductMapById = (role_id, data, action) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`role/${role_id}/map/product`, {
+      method: action === 'add' ? 'POST' : 'DELETE',
+      body: data,
+    })
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

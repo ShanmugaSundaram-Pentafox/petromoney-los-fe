@@ -1,4 +1,4 @@
-import { Dialog, DialogActions, DialogContent, DialogContentText, Button, CircularProgress } from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, Button, CircularProgress } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/CloseRounded';
 import { Alert } from '@material-ui/lab';
@@ -12,10 +12,11 @@ import DealershipData from './DealershipData';
 import DrawerFooter from './DrawerFooter';
 import DrawerRemarks from './DrawerRemarks';
 import LoanInfo from './LoanInfo';
-import TextInput from '../../../components/TextInput/TextInput';
+import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { getUserRoleForReview } from '../../../services/common.service';
 import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import SalesInfo from '../components/SalesInfo';
+import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -193,35 +194,23 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
             <DialogContentText id="approval-remarks-desc">
               Please enter your remarks for sending this for approval.
             </DialogContentText>
-            <TextInput
-              multiline
-              alignTop
-              direction='column'
-              rows={4}
-              rowsMax={8}
-              labelText="Remarks*"
-              placeholder="Enter your remarks here."
-              value={remarks}
-              onChange={e => {
-                setRemarks(e.target.value); setErrorStatus();
-              }}
-            />
+            <TextEditor setJSON={setRemarks} toolBar={true} />
             {
               errorStatus && 
                 <Alert severity="error" style={{padding: '0px 16px'}}>{errorStatus}</Alert>
             }
           </div>
-        </DialogContent>
-        <DialogActions>
-          <div>
-            <Button onClick={handleApprovalModal}>Cancel</Button>
-            <Button color='primary' variant='outlined'
+          <div style={{display: 'flex', justifyContent: 'center', marginTop: 8, marginBottom: 5}}>
+            <Button variant='outlined' style={{marginRight: 8}} onClick={handleApprovalModal}>Cancel</Button>
+            <LoaderButton 
+              color='primary'
+              variant='contained'
+              isLoading={loading}
+              loadingText='Submitting...'
               onClick={updateLoanStatus}
-            >
-              {loading ? <CircularProgress size={22} /> : 'Confirm'}
-            </Button>
+            >Confirm</LoaderButton>
           </div>
-        </DialogActions>
+        </DialogContent>
       </Dialog>
     </>
   );

@@ -1,6 +1,9 @@
 import { Drawer, Grid, Paper, Tooltip, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import React, {useState} from 'react';
+import AssignProducts from './AssignProducts';
+import MasterCity from './MasterCity';
+import MasterCollectionRemarks from './MasterCollectionRemarks';
 import Contain from './MasterDataTable';
 import Products from './Products';
 import Zones from './Zones';
@@ -10,7 +13,10 @@ import { ReactComponent as BusinessIcon } from '../../../icons/business.svg';
 import { ReactComponent as FuelIcon } from '../../../icons/fuelIcon.svg';
 import { ReactComponent as InfrastructureIcon } from '../../../icons/infrastructure.svg';
 import { ReactComponent as LoanIcon } from '../../../icons/loan.svg';
+import { ReactComponent as CityIcon } from '../../../icons/locationIcon.svg';
 import { ReactComponent as OtherIcon } from '../../../icons/other_icons.svg';
+import { ReactComponent as RemarkIcon } from '../../../icons/remarkIcon.svg';
+import { ReactComponent as RolesIcon } from '../../../icons/rolesIcon.svg';
 import { ReactComponent as ZoneIcon } from '../../../icons/zoneIcon.svg';
 
 const useStyles = makeStyles({
@@ -71,6 +77,14 @@ function MasterData() {
               </Tooltip>
             </Grid>
             <Grid item md={2}>
+              <Tooltip title="States">
+                <div className={classes.content} onClick={() => setOpenForm('State')}>
+                  <InfrastructureIcon width={35} className={classes.icons} />
+                  <Typography variant="h5" align='center' className={classes.title}>States</Typography>
+                </div>
+              </Tooltip>
+            </Grid>
+            <Grid item md={2}>
               <Tooltip title="Regions">
                 <div className={classes.content} onClick={() => setOpenForm('Region')}>
                   <OtherIcon width={35} className={classes.icons} />
@@ -79,10 +93,10 @@ function MasterData() {
               </Tooltip>
             </Grid>
             <Grid item md={2}>
-              <Tooltip title="States">
-                <div className={classes.content} onClick={() => setOpenForm('State')}>
-                  <InfrastructureIcon width={35} className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title}>States</Typography>
+              <Tooltip title="City">
+                <div className={classes.content} onClick={() => setCustomForm('city')}>
+                  <CityIcon className={classes.icons} />
+                  <Typography variant="h5" align='center' className={classes.title} >City</Typography>
                 </div>
               </Tooltip>
             </Grid>
@@ -121,8 +135,24 @@ function MasterData() {
             <Grid item md={2}>
               <Tooltip title="Products">
                 <div className={classes.content} onClick={() => setCustomForm('Products')}>
-                  <FuelIcon width={35} className={classes.icons} />
+                  <FuelIcon width={40} className={classes.icons} />
                   <Typography variant="h5" align='center' className={classes.title} >Products</Typography>
+                </div>
+              </Tooltip>
+            </Grid>
+            <Grid item md={2}>
+              <Tooltip title="Products">
+                <div className={classes.content} onClick={() => setCustomForm('assign_products')}>
+                  <RolesIcon className={classes.icons} />
+                  <Typography variant="h5" align='center' className={classes.title} >Assign Products</Typography>
+                </div>
+              </Tooltip>
+            </Grid>
+            <Grid item md={2}>
+              <Tooltip title="Collection Remarks">
+                <div className={classes.content} onClick={() => setCustomForm('collection_remark')}>
+                  <RemarkIcon className={classes.icons} />
+                  <Typography variant="h5" align='center' className={classes.title} >Collection Remark</Typography>
                 </div>
               </Tooltip>
             </Grid>
@@ -152,6 +182,30 @@ function MasterData() {
           variant="temporary"
         >
           <Zones title={customForm} callback={setCustomForm}/>
+        </Drawer>
+        <Drawer
+          anchor="right"
+          open={customForm === 'assign_products'}
+          onClose={() => setCustomForm()}
+          variant="temporary"
+        >
+          <AssignProducts title='Assign Product' callback={setCustomForm} />
+        </Drawer>
+        <Drawer
+          anchor="right"
+          open={customForm === 'city'}
+          onClose={() => setCustomForm()}
+          variant="temporary"
+        >
+          <MasterCity title='City' callback={setCustomForm} />
+        </Drawer>
+        <Drawer
+          anchor="right"
+          open={customForm === 'collection_remark'}
+          onClose={() => setCustomForm()}
+          variant="temporary"
+        >
+          <MasterCollectionRemarks title='Collection Remarks' callback={setCustomForm} />
         </Drawer>
       </Paper>
 

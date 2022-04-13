@@ -144,6 +144,7 @@ const AddNewTransportsOwnerForm = ({
   form_data,
   id,
   callback,
+  editable
 }) => {
   const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
   const [loading, setLoading] = useState(false);
@@ -803,6 +804,7 @@ const AddNewTransportsOwnerForm = ({
               </div>
             )
           ) : (
+            !editable &&
             <div>
               <Button
                 variant='contained'

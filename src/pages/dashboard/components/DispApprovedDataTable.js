@@ -2,7 +2,6 @@ import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import Backdrop from '@material-ui/core/Backdrop';
 import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -33,14 +32,13 @@ import Currency from '../../../components/Number/Currency';
 import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
 import { logger } from '../../../config/logger';
 import { updateLoanApprovalStatusById, deleteLoanDisbursementRecord } from '../../../services/loans.service';
+import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 
 
 
 const useStyles = makeStyles(theme => ({
   root: {
     marginTop: 20,
-    // padding: theme.spacing(3),
-    // paddingTop: 0,
   },
   modal: {
     display: 'flex',
@@ -263,7 +261,6 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                     />
                   </Grid>
                   <Grid item sm={6}
-                    // style={{ backgroundColor: "green" }}
                     className={classes.gridStyle}
                   >
                     <InputWrapper direction top>
@@ -309,29 +306,16 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                       onChange={handleChange}
                     />
                   </Grid>
-                  {/* <Grid item sm={12}>
-                    <TextInput
-                      direction
-                      alignTop
-                      multiline
-                      required
-                      rows={4}
-                      rowsMax={8}
-                      name={"disbursement_remarks"}
-                      labelText="Remarks"
-                      defaultValue={values.disbursement_remarks}
-                      error={errors.disbursement_remarks}
-                      helperText={errors.disbursement_remarks}
-                      onChange={handleChange}
-                      />
-                  </Grid> */}
                   <Grid item xs={12} className={classes.actionFooter}>
                     <Button disabled={loading} variant="outlined" color="default" onClick={() => { setModalData({}); setValues({}) }}>Cancel</Button>
-                    <Button disabled={loading} className={classes.actionButton} type="submit" variant="outlined" color="primary">
-                      {
-                        loading ? <CircularProgress size={23} /> : 'Save'
-                      }
-                    </Button>
+                    <LoaderButton 
+                      variant='outlined'
+                      className={classes.actionButton}
+                      color='primary'
+                      isLoading={loading}
+                      loadingText='Saving...'
+                      type="submit"
+                    >Save</LoaderButton>
                   </Grid>
                 </Grid>
               </form>

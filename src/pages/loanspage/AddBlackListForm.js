@@ -1,3 +1,4 @@
+import { TextField } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
@@ -7,18 +8,18 @@ import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
+import { useQueryClient } from 'react-query';
 import AsyncSelect from 'react-select/async';
 import CreatableSelect from 'react-select/creatable';
 import { useMount } from 'react-use';
 import Button from '../../components/CommonComponents/Button/Button';
 import { getDealershipForSearch } from '../../services/common.service';
-import { addNewRemarks, getAllWithheldRemarks, updateRemarks } from '../../services/withheld.services';
+import { getAllWithheldRemarks, updateRemarks } from '../../services/withheld.services';
 
 
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
-    // textAlign: 'center',
     padding: '24px 16px',
     display: 'flex',
     justifyContent: 'space-between',
@@ -66,22 +67,15 @@ const useStyles = makeStyles((theme) => ({
 
 
 const AddBlackListForm = ({ data, callback }) => {
+  const queryClient = useQueryClient()
   const [newRemarks, setNewRemarks] = useState()
   const [dealerID, setDealerID] = useState()
   const [remarks, setRemarks] = useState()
+  const [comment, setComment] = useState()
   const [value, setValue] = useState()
   const [optionsLoading, setOptionsLoading] = useState(false);
   const classes = useStyles()
   const { enqueueSnackbar } = useSnackbar();
-
-  // useEffect(() => {
-  //     if (data?.length) {
-  //         setList(data.map(({ id }) => ({
-  //             label: id,
-  //             value: id
-  //         })))
-  //     }
-  // }, [data])
 
   useMount(() => {
     getAllWithheldRemarks()
@@ -93,6 +87,10 @@ const AddBlackListForm = ({ data, callback }) => {
       })
 
   })
+
+  const handleChange = (event) => {
+    setComment(event.target.value)
+  }
 
   const onChangeOption = (newValue) => {
     setDealerID(newValue.dealership_id)
@@ -123,65 +121,34 @@ const AddBlackListForm = ({ data, callback }) => {
   };
   const handleSave = () => {
     const res = value ? value : newRemarks;
-    if (typeof res === 'number') {
-      updateRemarks(dealerID, res)
-        .then(res => {
-          enqueueSnackbar(res, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'success',
-          }
-          )
-          setTimeout(() => {
-            window.location.reload()
-          }, 1500);
-          setNewRemarks('')
-          setValue('')
-        })
-        .catch(err => {
-          console.log(err)
-          enqueueSnackbar(err, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'error',
-          }
-          )
-
-        })
+    let body = {
+      [typeof(res) === 'number' ? 'remarks_id' : 'remarks']: res,
+      comment: comment ? comment : null
     }
-    else {
-      addNewRemarks(dealerID, res)
-        .then(res => {
-          enqueueSnackbar(res, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'success',
-          }
-          )
-          setNewRemarks('')
-          setValue('')
-          setTimeout(() => {
-            window.location.reload()
-          }, 1500);
+    updateRemarks(dealerID, body)
+      .then(res => {
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
         })
-        .catch(err => {
-          console.log(err)
-          enqueueSnackbar(res.message, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'error',
-          }
-          )
+        queryClient.invalidateQueries('withheld-loans')
+        callback()
+        setNewRemarks('')
+        setValue('')
+      })
+      .catch(err => {
+        console.log(err)
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
         })
-    }
+      })
   }
 
   return (
@@ -210,11 +177,6 @@ const AddBlackListForm = ({ data, callback }) => {
                           loadOptions={getOptions}
                           placeholder='Search Dealership ID or Name'
                         />
-                        {/* <Select
-                                                    isClearable
-                                                    onChange={setDealerID}
-                                                    options={data}
-                                                /> */}
                       </Grid>
                       <Grid item md={7}>
                         <label style={{ marginBottom: 8 }}>Remarks</label>
@@ -222,6 +184,16 @@ const AddBlackListForm = ({ data, callback }) => {
                           isClearable
                           onChange={handleRemarkChange}
                           options={remarks}
+                        />
+                      </Grid>
+                      <Grid item md={7}>
+                        <label style={{ marginBottom: 8 }}>Comments</label>
+                        <TextField 
+                          name='comment'
+                          fullWidth
+                          variant='outlined'
+                          value={comment}
+                          onChange={handleChange}
                         />
                       </Grid>
                     </Grid>

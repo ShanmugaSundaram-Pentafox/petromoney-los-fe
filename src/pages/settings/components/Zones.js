@@ -1,10 +1,13 @@
-import { makeStyles, IconButton, Typography, Divider, Button, Grid, TextField, Tooltip } from '@material-ui/core'
+import { makeStyles, IconButton, Typography, Divider, Button, Grid, TextField, Tooltip, Paper } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import TransferList from '../../../components/CommonComponents/TransferList';
+import { logger } from '../../../config/logger';
 import { addZones, editZones, getZones } from '../../../services/common.service';
+import { getUnmappedStates, getZonesMapById, updateZoneMapById } from '../../../services/master.service';
 
 const useStyles = makeStyles(() => ({
   sidePanelFormWrapper: {
@@ -12,7 +15,16 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     height: '100vh',
-    width: '30vw'
+    width: '40vw'
+  },
+  root: {
+    minWidth: '36vw',
+    display: 'flex',
+    flexDirection: 'column',
+    margin: 10,
+    height: '100%',
+    borderRadius: 5,
+    overflow: 'auto'
   },
   sidePanelTitle: {
     padding: '15px 16px',
@@ -47,7 +59,8 @@ const useStyles = makeStyles(() => ({
   },
   addForm: {
     margin: 10,
-    padding: 25,
+    padding: 17,
+    position: 'relative',
     borderRadius: 6,
     boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px',
   },
@@ -74,7 +87,6 @@ const ZoneGroup = ({data, setAddForm}) => {
           <EditIcon fontSize='small' />
         </IconButton>
       </Tooltip>
-      {/* <KeyboardArrowDOwnIcon /> */}
     </div>
   )
 }
@@ -85,6 +97,7 @@ const Zones = ({ callback, title }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [addForm, setAddForm] = useState()
   const [addData, setAddData] = useState()
+  const [selectedItem, setSelectedItem] = useState([])
 
   const { data: zones = [] } = useQuery('zones', () => getZones(), {refetchOnWindowFocus: false})
 
@@ -113,6 +126,25 @@ const Zones = ({ callback, title }) => {
     },
   })
 
+  const updateMapping = (action) => {
+    let body = {state_id: selectedItem}
+
+    updateZoneMapById(addForm?.id, body, action)
+    .then(res => {
+      setSelectedItem([])
+      queryClient.invalidateQueries('mapped')
+      queryClient.invalidateQueries('unmapped')
+      enqueueSnackbar(res, {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'success',
+      })
+    })
+    .catch(e => logger(e))
+  }
+
   const handleAdd = (event) => {
     setAddData({...addData, name: event.target.value.toUpperCase()});
     setAddForm({...addForm, name: event.target.value.toUpperCase()})
@@ -130,7 +162,7 @@ const Zones = ({ callback, title }) => {
           <CloseIcon fontSize='size' />
         </IconButton>
       </Typography>
-      <div className={classes.sidePanelFormWrapper}>
+      <Paper className={classes.root}>
         <div className={classes.content}>
           {
             zones.map((item, i) => {
@@ -138,7 +170,7 @@ const Zones = ({ callback, title }) => {
             })
           }
         </div>
-      </div>
+      </Paper>
       {
         addForm && (
           <div className={classes.addForm}>
@@ -153,10 +185,13 @@ const Zones = ({ callback, title }) => {
                 onChange={handleAdd}
               />
             </Grid>
+            {
+              addForm?.action === 'Edit' &&
+              <TransferList title='States Map' mappedData={() => getZonesMapById(addForm?.id)} unmappedData={getUnmappedStates} selectedItem={selectedItem} setSelectedItem={setSelectedItem} updateMapping={updateMapping} />
+            }
             <div className={classes.formFooter}>
               <Button
                 onClick={() => setAddForm()}
-                // style={{marginTop: 15}}
                 size='small'
               >
                 Cancel

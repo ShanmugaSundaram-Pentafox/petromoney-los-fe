@@ -1,5 +1,4 @@
 import { Typography, Box, Grid, Button, Divider } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import { green } from '@material-ui/core/colors';
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import CloseIcon from '@material-ui/icons/Close';
@@ -11,6 +10,7 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
 import * as Yup from 'yup';
+import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
 import TextInput from '../../components/TextInput/TextInput';
 import { getDealershipForSearch } from '../../services/common.service';
 import { addCreditReport } from '../../services/creditreport.service';
@@ -85,7 +85,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 2
   }
 }));
-const CreditReloadForm = ({ data, callback, currentUser, dealershipData, view }) => {
+const CreditReloadForm = ({ data, callback, currentUser, view }) => {
   const [accountId, setAccountId] = useState();
   const [amount, setAmount] = useState();
   const [selectedValue, setSelectedValue] = useState(!view ? null : currentUser.dealership_id);
@@ -356,18 +356,14 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData, view })
             </div>
             <div>
               {
-                !loading ? (
-                  <Button
-                    variant='contained'
-                    type='submit'
-                    onClick={handleSubmit}
-                    className={clsx(classes.btn, classes.editButton)}
-                  >
-                    Submit
-                  </Button>
-                ) : (
-                  <CircularProgress size={30} />
-                )
+                <LoaderButton
+                  variant='contained'
+                  className={clsx(classes.btn, classes.editButton)}
+                  isLoading={loading}
+                  loadingText='Submitting...'
+                  type='submit'
+                  onClick={handleSubmit}
+                >Submit</LoaderButton>
               }
             </div>
           </div>

@@ -156,6 +156,7 @@ const AddNewTransportsForm = ({
   currentUser,
   callback,
   isAdd,
+  editable
 }) => {
   const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
   const [loading, setLoading] = useState(false);
@@ -864,22 +865,21 @@ const AddNewTransportsForm = ({
               </div>
             )
           ) : (
-            !permissionCheck(currentUser.role_name, rulesList.transporter_view) ? (
-              <div>
-                <Button
-                  variant='contained'
-                  type='submit'
-                  className={clsx(classes.btn, classes.editButton)}
-                  startIcon={
-                    !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
-                  }
-                  // disabled={loading}
-                  onClick={loading ? () => null : handleEdit}
-                >
-                  Edit
-                </Button>
-              </div>
-            ) : null
+            !editable &&
+            <div>
+              <Button
+                variant='contained'
+                type='submit'
+                className={clsx(classes.btn, classes.editButton)}
+                startIcon={
+                  !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
+                }
+                // disabled={loading}
+                onClick={loading ? () => null : handleEdit}
+              >
+                Edit
+              </Button>
+            </div>
           )}
         </div>
       </div>

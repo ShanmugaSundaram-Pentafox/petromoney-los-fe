@@ -124,7 +124,7 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) => {
+const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, editable }) => {
 
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles()
@@ -345,6 +345,7 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
                       <PreviewCard
                         onEdit={() => { editLoanRow(item, i) }}
                         onDelete={() => deleteLoanRow(item, i)}
+                        action={!editable}
                       >
                         <Grid container spacing={2}>
                           <Grid item md={6}>
@@ -381,7 +382,8 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
               Back
             </Button>
           </div>
-          <div>
+          {
+            !editable &&
             <Button
               variant="contained"
               color="primary"
@@ -390,7 +392,7 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
             >
               Add Loan
             </Button>
-          </div>
+          }
         </div>
       </div>
     </div >

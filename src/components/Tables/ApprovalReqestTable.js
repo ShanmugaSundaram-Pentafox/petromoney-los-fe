@@ -8,6 +8,7 @@ import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { NavLink as RouterLink } from 'react-router-dom';
+import { rulesList } from '../../config/userRules';
 import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
 // import { createStructuredSelector } from 'reselect';
 import { getLoansByStatus } from '../../services/loans.service';
@@ -15,6 +16,7 @@ import { setLoansByStatus } from '../../store/loans/loans.actions';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
 import SignRequestLayout from '../Leegality/SignRequestLayout';
 import Currency from '../Number/Currency';
+import { permissionCheck } from '../UserCan/UserCan';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -43,12 +45,13 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry }) => {
+const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry, currentUser }) => {
   const [loading, setLoading] = useState(false); 
   const [loanId, setloanId] = useState();
   const [type, setType] = useState('');
   const [dealershipId, setDealershipId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
+  const actionable = !permissionCheck(currentUser.role_name, rulesList.external_view);
 
   const classes = useStyles();
   useEffect(() => {
@@ -176,6 +179,7 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
         options: {
           filter: false,
           sort: false,
+          display: actionable,
           customBodyRender: (value, r) => {
             return (
               <Tooltip title="eSign Application">

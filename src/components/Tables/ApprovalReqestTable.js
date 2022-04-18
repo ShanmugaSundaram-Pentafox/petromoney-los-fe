@@ -179,7 +179,7 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
         options: {
           filter: false,
           sort: false,
-          display: actionable,
+          display: actionable ? true : 'excluded',
           customBodyRender: (value, r) => {
             return (
               <Tooltip title="eSign Application">

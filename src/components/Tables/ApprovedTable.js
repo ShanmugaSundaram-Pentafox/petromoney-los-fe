@@ -166,7 +166,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
         options: {
           filter: false,
           sort: false,
-          display: actionable,
+          display: actionable ? true : 'excluded',
           setCellProps: () => ({
             align: 'center',
           }),

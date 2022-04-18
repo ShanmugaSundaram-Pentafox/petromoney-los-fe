@@ -15,6 +15,8 @@ import { PieChartData, BarChartData, GroupChartData } from './components/Metrics
 import Currency from '../../../src/components/Number/Currency';
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import LoanBookTable from '../../components/Tables/LoanBookTable';
+import { permissionCheck } from '../../components/UserCan/UserCan';
+import { rulesList } from '../../config/userRules';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getDealerDetails } from '../../services/dealers.service';
 import { getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd } from '../../services/loans.service';
@@ -79,6 +81,57 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     overflow: 'auto',
     marginTop: 15
+  },
+  filterWrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 6,
+    border: '1px solid hsl(0, 0%, 90%)',
+    backgroundColor: 'hsl(0, 0%, 100%)',
+    minHeight: 32,
+    boxSizing: 'border-box',
+    padding: '0 4px',
+  },
+  filterItem: {
+    position: 'relative',
+    cursor: 'pointer',
+    borderRadius: 4,
+    marginRight: 2,
+    padding: '2px 4px',
+    minWidth: 50,
+    textAlign: 'center',
+    border: 'none',
+    backgroundColor: 'hsl(0, 0%, 100%)',
+    transition: 'all .2s ease-in-out',
+    '&:hover': {
+      backgroundColor: 'hsl(0, 0%, 95%)',
+    },
+    '&.active': {
+      backgroundColor: '#3f51b5',
+      color: '#fff',
+    },
+    '&.disabled': {
+      backgroundColor: 'hsl(0, 0%, 80%)',
+      padding: '4px 8px',
+      marginTop: 6,
+      borderRadius: 8,
+    },
+    '&:last-child': {
+      marginRight: 0,
+      '&::after': {
+        display: 'none',
+      }
+    }
+  },
+  creditBookHeader: {
+    display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between'
+  },
+  label: {
+    color: 'hsl(0,0%,75%)'
+  },
+  creditView: {
+    display: 'flex', alignItems: 'center'
   }
 }))
 const DataCharts = styled.div`
@@ -105,10 +158,24 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   const [omcData, setOmcData] = useState([]);
   const [RegionData, setRegionData] = useState([]);
   const [filterQry, setFilterQry] = useState();
+  const [creditBook, setCreditBook] = useState(permissionCheck(currentUser.role_name, rulesList.external_view) ? 'Vivriti' : 'Petromoney')
 
   const handleClick = (name) => {
     setSelectedStatsCard(name)
     setSelectedReportStatsCard(name)
+  }
+
+  const onCreditBookChange = type => (event) => {
+    switch (type) {
+    case 'Petromoney':
+      setCreditBook(type)
+      break;
+    case 'Vivriti':
+      setCreditBook(type)
+      break;
+    default:
+      break;
+    }
   }
 
   useMount(() => {
@@ -236,7 +303,23 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                 {
                   dashboardView === 'LMS' ? (
                     <Box p={2} borderRadius={4} bgcolor="background.paper">
-                      <Typography variant="h5">Credit Book</Typography>
+                      <div className={classes.creditBookHeader}>
+                        <Typography variant="h5" style={{width: 120}}>Credit Book</Typography>
+                        {
+                          !permissionCheck(currentUser.role_name, rulesList.external_view) &&
+                            <div className={classes.creditView}>
+                              <Box style={{marginRight: 8}}>
+                                <label className={classes.label}>View</label>
+                              </Box>
+                              <Box>
+                                <div className={classes.filterWrapper}>
+                                  <div role="button" className={`${classes.filterItem} ${creditBook === 'Petromoney' && 'active'}`} onClick={onCreditBookChange('Petromoney')} onKeyDown>Petromoney</div>
+                                  <div role="button" className={`${classes.filterItem} ${creditBook === 'Vivriti' && 'active'}`} onClick={onCreditBookChange('Vivriti')} onKeyDown>Vivriti</div>
+                                </div>
+                              </Box>
+                            </div>
+                        }
+                      </div>
                       <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">
                         <DashCard text="Date (Opening)" value={ls1_metrices.opening ? format(new Date(ls1_metrices.opening?.split(' ')?.[0]), 'dd MMM, yyyy') : '-'} />
                         <DashCard text="Loan Book (in Crs)" value={Number(ls1_metrices.loan_book)?.toFixed(2)} />

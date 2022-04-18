@@ -304,18 +304,28 @@ const AddNewTransportsForm = ({
             return res.json();
           })
 
-          .then((res) => {
+          .then(({status, message}) => {
             setLoading(false);
-            enqueueSnackbar(res.message, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-              variant: 'success',
-            });
-            setTimeout(() => {
-              window.location.reload();
-            }, 1000);
+            if (status === 'SUCCESS') {
+              enqueueSnackbar(message, {
+                anchorOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+                variant: 'success',
+              });
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000);
+            } else {
+              enqueueSnackbar(message, {
+                anchorOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+                variant: 'error',
+              });
+            }
           })
           .catch((error) => {
             setLoading(false);

@@ -125,7 +125,6 @@ const OwnerDetails = ({ currentUser, match }) => {
     setOpenModal(true)
     setRowData(rowData)
     setFormType('Edit')
-
   }
 
 
@@ -215,18 +214,16 @@ const OwnerDetails = ({ currentUser, match }) => {
     customToolbar: () => {
       return (
         !editable &&
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={() => {
-            setOpenModal(true)
-            setRowData('Add')
-            setFormType('Add')
-
-          }}
-        >
-          Add Transport
-        </Button>
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={() => {
+              setOpenModal(true)
+              setFormType('Add')
+            }}
+          >
+            Add Transport
+          </Button>
       );
     },
     onRowClick: (rowData, { dataIndex }) => {

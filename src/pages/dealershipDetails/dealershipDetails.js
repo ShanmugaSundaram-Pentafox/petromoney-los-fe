@@ -1,3 +1,4 @@
+// import Typography from "@material-ui/core/Typography";
 import Button from '@material-ui/core/Button';
 import Collapse from '@material-ui/core/Collapse';
 import Dialog from '@material-ui/core/Dialog';
@@ -9,6 +10,7 @@ import Tabs from '@material-ui/core/Tabs';
 import { makeStyles } from '@material-ui/styles';
 import toInteger from 'lodash-es/toInteger';
 import React, { useState } from 'react';
+import { useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { useMount } from 'react-use';
 import CreditReportSideWrapper from './components/CreditReportSideWrapper';
@@ -29,7 +31,7 @@ import { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getDealersByDealershipId } from '../../services/dealers.service';
-import { getDealershipById, getDealershipLoansById } from '../../services/dealerships.service';
+import { getDealershipById } from '../../services/dealerships.service';
 import SalesInfo from '../dashboard/components/SalesInfo';
 
 const useStyles = makeStyles((theme) => ({
@@ -75,13 +77,9 @@ const DealershipDetails = ({ currentUser, match }) => {
   const classes = useStyles();
   const [activeTab, setActiveTab] = useState(0);
   const [solarTab, setSolarTab] = useState(-1);
-  const [dealershipData, setDealershipData] = useState();
-  const [dealersData, setDealersData] = useState();
-  const [mainApplicant, setMainApplicant] = useState({})
   const [showCreditReport, setShowCreditReport] = useState();
   const [showSolarForm, setShowSolarForm] = useState();
   const [leegalityModalVisible, setLeegalityModalVisible] = useState(false);
-  const [dealerLoanData, setDealerLoanData] = useState();
   const history = useHistory();
   const financialReport_permission = permissionCheck(currentUser.role_name, rulesList.financial_view);
 
@@ -106,15 +104,22 @@ const DealershipDetails = ({ currentUser, match }) => {
     url,
     params: { id },
   } = match;
-
+  const dealershipData = useQuery(['dealership-info', id], () => getDealershipById(id), {refetchOnWindowFocus: false})
+  const mainApplicant = useQuery(['main-applicant-data', id], () => getDealersByDealershipId(id), {
+    select: (data) => {
+      const ap = data.find(item => item.is_main_applicant);
+      return ap;
+    }, 
+    refetchOnWindowFocus: false
+  })
   const onChangeTab = (e, newTab) => {
     setActiveTab(newTab);
     history.replace(`?t=${newTab}`)
   }
 
-  const onChangeSolarTab = (e, newTab) => {
-    setSolarTab(newTab);
-  }
+  // const onChangeSolarTab = (e, newTab) => {
+  //   setSolarTab(newTab);
+  // }
 
   const toggleCreditReport = () => {
     setShowCreditReport(!showCreditReport);
@@ -124,30 +129,32 @@ const DealershipDetails = ({ currentUser, match }) => {
     const queryString = window.location.hash;
     const test = queryString.split('=');
     setActiveTab(toInteger(test[1]))
-    getDealershipById(id)
-      .then((data) => setDealershipData(data))
-      .catch((e) => null);
-    getDealershipLoansById(id)
-      .then(data => setDealerLoanData(data))
-      .catch(e => null)
-    getDealersByDealershipId(id)
-      .then((data) => {
-        setDealersData(data);
-        const ap = data.find(item => item.is_main_applicant);
-        setMainApplicant(ap);
-      })
-      .catch((e) => null);
+    // getDealershipLoansById(id)
+    //   .then(data => setDealerLoanData(data))
+    //   .catch(e => null)
+    // getDealersByDealershipId(id)
+    //   .then((data) => {
+    //     setDealersData(data);
+    //     const ap = data.find(item => item.is_main_applicant);
+    //     setMainApplicant(ap);
+    //   })
+    //   .catch((e) => null);
   });
   let cardData = [
-    { label: 'Dealership ID', value: dealershipData?.id },
-    { label: 'Business name', value: dealershipData?.name },
-    { label: 'Dealer name', value: mainApplicant?.first_name },
-    { label: 'Mobile', value: mainApplicant?.mobile },
-    { label: 'Email', value: mainApplicant?.email }
+    { label: 'Dealership ID', value: dealershipData?.data?.id },
+    { label: 'Business name', value: dealershipData?.data?.name },
+    { label: 'Dealer name', value: mainApplicant?.data?.first_name },
+    { label: 'Mobile', value: mainApplicant?.data?.mobile },
+    { label: 'Email', value: mainApplicant?.data?.email }
   ]
   usePageTitle(`${id} - ${dealershipData && (dealershipData.name || '')} `, true, cardData)
   return (
     <div>
+      {/* {
+        data?.data.map(item =>{
+          return <h2>{item}</h2>
+        })
+      } */}
       {/* <Grid container spacing={2}>
         <Grid item xs={6} sm={4}>
           <InfoCard
@@ -248,44 +255,73 @@ const DealershipDetails = ({ currentUser, match }) => {
           </div> */}
         </div>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Dealership')}>
-          {dealershipData && (
-            <DealershipInfo data={dealershipData} currentUser={currentUser} toggleCreditReport={toggleCreditReport} />
+          {!dealershipData.isLoading && activeTab == tabs.indexOf('Dealership') && (
+            <DealershipInfo data={dealershipData.data} currentUser={currentUser} toggleCreditReport={toggleCreditReport} />
           )}
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Dealers')}>
-          <DealersList id={id} titleAlign="left" currentUser={currentUser} />
+          {
+            activeTab == tabs.indexOf('Dealers') &&
+              <DealersList id={id} titleAlign="left" currentUser={currentUser} />
+          }
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Deviations')}>
-          <Deviations id={id} />
-          {/* <DeviationsTable id={id}/> */}
+          {
+            activeTab == tabs.indexOf('Deviations') &&
+              <Deviations id={id} currentUser={currentUser} />
+          }
         </TabPanel>
         {
           financialReport_permission && (
             <TabPanel activeTab={activeTab} index={tabs.indexOf('Financial Report')}>
-              <CreditReportSideWrapper dealershipId={id} data={{}} currentUser={currentUser} />
+              {
+                activeTab == tabs.indexOf('Financial Report') &&
+                  <CreditReportSideWrapper dealershipId={id} data={{}} currentUser={currentUser} />
+              }
             </TabPanel>
           )
         }
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Sales History')}>
-          <SalesInfo id={id} titleAlign="left" currentUser={currentUser} column />
+          {
+            activeTab == tabs.indexOf('Sales History') &&
+              <SalesInfo id={id} titleAlign="left" currentUser={currentUser} column />
+          }
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Loans List')}>
-          <LoansList id={id} titleAlign="left" currentUser={currentUser} dealerData={dealerLoanData} />
+          {
+            activeTab == tabs.indexOf('Loans List') &&
+              <LoansList id={id} titleAlign="left" currentUser={currentUser} />
+          }
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Personal Discussion')}>
-          <PersonalDiscussionReport id={id} textAlign="left" currentUser={currentUser} />
+          {
+            activeTab == tabs.indexOf('Personal Discussion') &&
+              <PersonalDiscussionReport id={id} textAlign="left" currentUser={currentUser} />
+          }
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Document Checklist')}>
-          <DealershipDoc id={id} currentUser={currentUser} />
+          {
+            activeTab == tabs.indexOf('Document Checklist') &&
+              <DealershipDoc id={id} currentUser={currentUser} />
+          }
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Transporters')}>
-          <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
+          {
+            activeTab == tabs.indexOf('Transporters') &&
+              <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
+          }
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Fleet Operators')}>
-          <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
+          {
+            activeTab == tabs.indexOf('Fleet Operators') &&
+              <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
+          }
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Bank Statement Analysis')}>
-          <StatementAnalysis id={id} textAlign="left" currentUser={currentUser} />
+          {
+            activeTab == tabs.indexOf('Bank Statement Analysis') &&
+              <StatementAnalysis id={id} textAlign="left" currentUser={currentUser} />
+          }
         </TabPanel>
         <SolarEnquiryForm
           dealershipId={id}
@@ -349,7 +385,7 @@ const DealershipDetails = ({ currentUser, match }) => {
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </div >
   );
 };
 

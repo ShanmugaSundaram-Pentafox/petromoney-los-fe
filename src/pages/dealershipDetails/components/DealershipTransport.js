@@ -46,16 +46,6 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: 8,
     textAlign: 'right'
   },
-  sidePanelWrapper: {
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100vh',
-    width: '40vw',
-  },
-  actionButtons: {
-    // paddingTop: 8
-  },
   tableRow: {
     cursor: 'pointer'
   },
@@ -63,14 +53,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'inline-block',
     borderRadius: 2,
     lineHeight: 1,
-  },
-  sidePanelWrapper: {
-    width: '40vw',
-    padding: '14px',
-  },
-  stepperRoot: {
-    padding: 16,
-    paddingTop: 8
   },
   transportFormWrapper: {
     padding: theme.spacing(2),
@@ -99,13 +81,6 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     padding: '12px 16px'
   },
-  actionButtons: {
-    // paddingTop: 8
-  },
-  stepperRoot: {
-    padding: 16,
-    paddingTop: 8
-  },
   stepTitle: {
     '& .MuiStepLabel-label.MuiStepLabel-active': {
       fontSize: 15,
@@ -126,21 +101,16 @@ const useStyles = makeStyles((theme) => ({
 }))
 const DealershipTransport = ({ id, currentUser, titleAlign }) => {
   const [openModal, setOpenModal] = useState(false);
-  const [ownerInfo, setOwnerInfo] = useState()
-  const [transportsData, setTransportsData] = useState()
-  const [vehicleData, setVehicleData] = useState()
   const [formType, setFormType] = useState('');
-  const [data, setData] = useState([])
   const [rowData, setRowData] = useState({})
   const classes = useStyles()
 
 
-  const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit)
+  const editable = permissionCheck(currentUser.role_name, rulesList.external_view)
   const handleEdit = () => {
     setOpenModal(!openModal)
   }
   const showOwnerEditForm = (id, data) => {
-    // console.log("Owner edit form", data)
     setFormType('Edit')
     setRowData(data)
     setOpenModal(!openModal)
@@ -152,18 +122,21 @@ const DealershipTransport = ({ id, currentUser, titleAlign }) => {
       <div className={classes.wrapper}>
         <div className={classes.header}>
           <Typography style={{ width: '70%' }} variant="h5" align={titleAlign} className={classes.title}>Transport Owner</Typography>
-          <Button
-            color="primary"
-            variant="contained"
-            size='small'
-            onClick={() => {
-              setOpenModal(true)
-              setRowData({})
-              setFormType('Add')
-            }}
-          >
-            Add Owner
-          </Button>
+          {
+            !editable &&
+            <Button
+              color="primary"
+              variant="contained"
+              size='small'
+              onClick={() => {
+                setOpenModal(true)
+                setRowData({})
+                setFormType('Add')
+              }}
+            >
+              Add Owner
+            </Button>
+          }
         </div>
         <div>
           <TransportOwnerTable id={id} onRowClick={showOwnerEditForm} />
@@ -178,7 +151,7 @@ const DealershipTransport = ({ id, currentUser, titleAlign }) => {
         }}
         variant="temporary"
       >
-        <AddNewTransportsOwnerForm dealer_id={id} rowData={rowData} isAdd={formType} callback={handleEdit} currentUser={currentUser} />
+        <AddNewTransportsOwnerForm dealer_id={id} rowData={rowData} isAdd={formType} callback={handleEdit} currentUser={currentUser} editable={editable} />
       </Drawer>
     </div>
   )

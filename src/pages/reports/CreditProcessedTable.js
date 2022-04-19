@@ -1,15 +1,12 @@
-import { Button } from '@material-ui/core';
-import { Grid } from '@material-ui/core';
-import { Tooltip } from '@material-ui/core';
-import { Drawer } from '@material-ui/core';
+import { Button, Grid, Tooltip, Drawer } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { classes } from 'istanbul-lib-coverage';
 import MUIDataTable from 'mui-datatables';
-import { useMemo } from 'react';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useMount } from 'react-use';
 import CreditReloadForm from './CreditReloadForm';
 import CreditReloadRemarks from './CreditReloadRemarks';
+import CustomToken from '../../components/CommonComponents/CustomToken';
 import Currency from '../../components/Number/Currency';
 import usePageTitle from '../../hooks/usePageTitle';
 import {
@@ -17,17 +14,14 @@ import {
 } from '../../services/users.service';
 
 
-const CreditProcessedTable = ({ data, currentUser }) => {
-  const [tableData, setTableData] = useState([]);
-  const [processedData, setProcessedData] = useState([]);
+const CreditProcessedTable = ({ data, currentUser, view }) => {
   const [accountType, setAccountType] = useState();
   const [rowData, setRowData] = useState();
   const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [statusModal, setStatusModal] = useState(false);
-  const [selectedTab, setSelectedTab] = useState('processed');
-  const [dealershipData, setDealershipData] = useState();
 
+  usePageTitle('Credit Reload');
 
   useMount(() => {
     getTypeOfAccount()
@@ -45,13 +39,14 @@ const CreditProcessedTable = ({ data, currentUser }) => {
         console.log(e);
       })
   });
-  usePageTitle('Credit Report');
+  
   const columns = useMemo(() => {
     return [
       {
         name: 'dealership_id',
         label: 'Dealership ID',
         options: {
+          filter: false,
           customBodyRender: (value) => {
             return <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value}</div>
           }
@@ -61,6 +56,7 @@ const CreditProcessedTable = ({ data, currentUser }) => {
         name: 'name',
         label: 'Name',
         options: {
+          filter: false,
           customBodyRender: (value) => {
             return <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value?.toUpperCase()}</div>
           }
@@ -95,8 +91,12 @@ const CreditProcessedTable = ({ data, currentUser }) => {
         label: 'Account Type'
       },
       {
+        name: 'created_by',
+        label: 'Created by'
+      },
+      {
         name: 'last_modified_by',
-        label: 'Submitted or Modified by',
+        label: 'Processed by',
         options: {
           customBodyRender: (value, tableMeta) => {
             return <div>{value}</div>
@@ -110,33 +110,34 @@ const CreditProcessedTable = ({ data, currentUser }) => {
           customBodyRender: (value, tableMeta) => {
             if (value === 'Declined') {
               return (
-                tableMeta?.rowData[9] ? (
-                  <Tooltip title={tableMeta.rowData[9]}>
-                    <div style={{ color: '#FF5C58' }}>{value}</div>
+                tableMeta?.rowData[10] ? (
+                  <Tooltip title={tableMeta.rowData[10]}>
+                    <div><CustomToken label={value} variant='error' icon='cross' /></div>
                   </Tooltip>
                 ) : (
-                  <div style={{ color: '#FF5C58'}}>{value}</div>
+                  <CustomToken label={value} variant='error' icon='cross' />
                 )
               )
             }
             else if (value === 'Disbursed') {
               return (
-                tableMeta?.rowData[9] ? (
-                  <Tooltip title={tableMeta.rowData[9]}>
-                    <div>{value}</div>
+                tableMeta?.rowData[10] ? (
+                  <Tooltip title={tableMeta.rowData[10]}>
+                    <div><CustomToken label={value} variant='success' icon='tick' /></div>
                   </Tooltip>
                 ) : (
-                  <div>{value}</div>
+                  <CustomToken label={value} variant='success' icon='tick' />
                 )
               )
             }
             else
-              return value
+              return <CustomToken label={value} variant='warn' />
           }
         }
       },
       { name: 'remarks', options: { display: 'excluded', filter: false } },
-      { name: 'role_name', options: { display: 'excluded', filter: false } }
+      { name: 'role_name', options: { display: 'excluded', filter: false } },
+      { name: 'is_withheld', options: { display: 'excluded', filter: false}}
     ];
   }, [data]);
   const options = {
@@ -145,6 +146,11 @@ const CreditProcessedTable = ({ data, currentUser }) => {
     selectableRows: 'none',
     rowsPerPage: 15,
     rowsPerPageOptions: [15, 20, 30],
+    setRowProps: (row, dataIndex) => {
+      if(row[12]){
+        return{ style: {backgroundColor: '#ffec9bba'}}
+      }
+    },
     customToolbar: () => {
       return (
         <Button
@@ -161,7 +167,7 @@ const CreditProcessedTable = ({ data, currentUser }) => {
         let d = [];
         d.push({
           ...data[cellMeta.dataIndex],
-          payment_proof_attachment: typeof (data[cellMeta.dataIndex].payment_proof_attachment) === 'string' ? JSON.parse(data[cellMeta.dataIndex].payment_proof_attachment) : (data[cellMeta.dataIndex].payment_proof_attachment || [])
+          payment_proof_attachment: typeof (data[cellMeta.dataIndex]?.payment_proof_attachment) === 'string' ? JSON.parse(data[cellMeta.dataIndex]?.payment_proof_attachment) : (data[cellMeta.dataIndex]?.payment_proof_attachment || [])
         })
         setRowData(d[0])
         setStatusModal(true)
@@ -202,8 +208,8 @@ const CreditProcessedTable = ({ data, currentUser }) => {
           <CreditReloadForm
             callback={() => setOpenModal(false)}
             data={accountType}
-            dealershipData={dealershipData}
             currentUser={currentUser}
+            view={view}
           />
         }
       </Drawer>

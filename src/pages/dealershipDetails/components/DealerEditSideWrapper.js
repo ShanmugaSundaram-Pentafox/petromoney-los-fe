@@ -11,22 +11,23 @@ import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
 import Alert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
+import { useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import DealerEditForm from './DealerEditForm';
 import { API } from '../../../config/api';
 import { logger } from '../../../config/logger';
 import { URL } from '../../../config/serverUrls';
 import { cryptoEncrypt } from '../../../services/crypto.service';
+import { validateId } from '../../../services/dealerships.service';
 import { compareObject } from '../../../utils/compareObject.util';
 
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
-    // textAlign: 'center',
     padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
@@ -43,16 +44,10 @@ const useStyles = makeStyles((theme) => ({
     flex: 1,
     overflow: 'auto',
   },
-  actionFooter: {
-    // justifyContent: 'flex-end',
-  },
   actionButtonsWrapper: {
     display: 'flex',
     justifyContent: 'space-between',
     padding: '12px 16px',
-  },
-  actionButtons: {
-    // paddingTop: 8
   },
   stepperRoot: {
     padding: 16,
@@ -83,12 +78,14 @@ const DealerEditSideWrapper = ({
   isAdd,
   dealershipId,
   getDealerApiCall,
-  getCoApplicantApiCall,
   data,
   currentUser,
   onClose,
+  id,
+  viewOnly,
 }) => {
   const classes = useStyles();
+  const queryClient = useQueryClient()
   const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -96,6 +93,7 @@ const DealerEditSideWrapper = ({
   const [apiCallMessage, setApiCallMessage] = useState('');
   const [selectedDate, setSelectedDate] = useState();
   const [selectedState, setSelectedState] = useState();
+  const [panValidateData, setPanValidateData] = useState({icon: false})
   const { enqueueSnackbar } = useSnackbar();
 
   const handleEdit = () => {
@@ -115,6 +113,8 @@ const DealerEditSideWrapper = ({
     last_name: Yup.string().nullable('Enter last name').required('Enter last name'),
     gender: Yup.string().nullable('Choose gender').required('Enter gender'),
     email: Yup.string().nullable('Enter email').email('Invalid email').required('Enter email'),
+    city: Yup.string().nullable('Enter City').required('Enter City'),
+    state: Yup.string().nullable('Enter State').required('Enter State'),
     address: Yup.string()
       .nullable('Enter address')
       .min(6, 'address must be atleast 6 characters')
@@ -123,7 +123,6 @@ const DealerEditSideWrapper = ({
       .nullable('Enter mobile number')
       .matches(/^\d{10}$/, 'Invalid mobile number')
       .required('Enter valid mobile number'),
-    // dob: Yup.number().required("Choose date of birth"),
     residing_since: Yup.number().nullable('Enter the year').required('Enter the year'),
     marital_status: Yup.string('Enter your Marital status'),
     pincode: Yup.string().nullable('Enter pincode').matches(/^[1-9][0-9]{5}$/, 'Invalid pincode').required('Enter pincode'),
@@ -158,7 +157,7 @@ const DealerEditSideWrapper = ({
     API.delete(url, { type, file })
       .then((res) => {
         onClose();
-        getDealerApiCall(dealershipId);
+        queryClient.invalidateQueries(['dealers-coapplicant', id])
       })
       .catch((err) => {
         setReadOnly(true);
@@ -175,8 +174,6 @@ const DealerEditSideWrapper = ({
     } else {
       setFieldValue('profile_image_url', value[0]);
     }
-    handleSubmit(values);
-    // onCloseUploader();
   };
   const {
     values,
@@ -186,9 +183,10 @@ const DealerEditSideWrapper = ({
     handleReset,
     setFieldValue,
     setValues,
+    validateField
   } = useFormik({
     initialValues: {
-      ...data,
+      ...data, state: data?.state_code, state_name: data?.state, city_name: data?.city, city: data?.city_name
     },
 
     onReset: (values, e) => {
@@ -198,6 +196,22 @@ const DealerEditSideWrapper = ({
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: (values) => {
+      if(isAdd === 'Add'){
+        validateId('pan', values?.pan)
+          .then((res) => {
+            setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}})
+            !values?.first_name && setFieldValue('first_name', res?.details?.firstName)
+            !values?.last_name && setFieldValue('last_name', res?.details?.lastName)
+            res?.details?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
+            !values?.gender && setFieldValue('gender', res?.details?.gender?.toUpperCase())
+            !values?.pincode && setFieldValue('pincode', res?.details?.address?.pinCode)
+            !values?.address && setFieldValue('address', `${res?.details?.address?.buildingName}, ${res?.details?.address?.streetName}, ${res?.details?.address?.city}, ${res?.details?.address?.state} - ${res?.details?.address?.pinCode}`)
+          })
+          .catch(e => {
+            console.log(e);
+            setPanValidateData({icon: true, idType: 'PAN'})
+          })
+      }
       values.first_name = values.first_name.toUpperCase();
       values.last_name = values.last_name.toUpperCase();
       setLoading(true);
@@ -247,23 +261,30 @@ const DealerEditSideWrapper = ({
         })
         .then((res) => {
           setLoading(false);
-          setApicallStatus('success');
-          enqueueSnackbar(res.message, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'success',
-          });
-
-          // setTimeout(() => {
-          //   window.location.reload();
-          // }, 1000);
-          // setApiCallMessage(isAdd ? 'Dealer Added' : 'Dealer Updated');
-          onClose();
-          modelType === 'DEALER'
-            ? getDealerApiCall(dealershipId)
-            : getCoApplicantApiCall(dealershipId);
+          if(res.status === 'SUCCESS'){
+            setApicallStatus('success');
+            enqueueSnackbar(res.message, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'success',
+            });
+            onClose();
+            modelType === 'DEALER' &&
+            queryClient.invalidateQueries(['dealers-coapplicant', id])
+  
+            modelType === 'COAPPLICANT' ?
+              queryClient.invalidateQueries(['co-applicants', id]) : queryClient.invalidateQueries(['guarantors', id])
+          } else {
+            enqueueSnackbar(res.message, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            });
+          }
         })
         .catch((err) => {
           setReadOnly(false);
@@ -275,8 +296,6 @@ const DealerEditSideWrapper = ({
             },
             variant: 'error',
           });
-          // setApicallStatus('error');
-          // setApiCallMessage('Sorry! Unable to add or Update. Try again later.');
           logger(err);
         });
     },
@@ -306,7 +325,6 @@ const DealerEditSideWrapper = ({
           className={classes.stepperRoot}
         >
           <Step key={data.id}>
-            {/* <StepContent> */}
             <DealerEditForm
               dealersList={dealersList}
               deleteFile={deleteFile}
@@ -319,8 +337,11 @@ const DealerEditSideWrapper = ({
               errors={errors}
               onChange={handleChange}
               handleSave={handleSave}
+              setFieldValue={setFieldValue}
+              setPanValidateData={setPanValidateData}
+              panValidateData={panValidateData}
+              validateField={validateField}
             />
-            {/* </StepContent> */}
           </Step>
         </Stepper>
         {apicallStatus ? (
@@ -334,7 +355,7 @@ const DealerEditSideWrapper = ({
             !loading ? (
               <>
                 <Button
-                  variant='contained'
+                  variant='outlined'
                   startIcon={<NavigateBeforeRoundedIcon />}
                   disabled={loading}
                   onClick={onClose}
@@ -372,7 +393,7 @@ const DealerEditSideWrapper = ({
             <>
               <div>
                 <Button
-                  variant='contained'
+                  variant='outlined'
                   startIcon={<NavigateBeforeRoundedIcon />}
                   disabled={loading}
                   onClick={onClose}
@@ -380,21 +401,24 @@ const DealerEditSideWrapper = ({
                   Back
                 </Button>
               </div>
-              <div>
-                <Button
-                  variant='contained'
-                  className={clsx(classes.btn, classes.editButton)}
-                  startIcon={
-                    !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
-                  }
-                  disabled={loading}
-                  onClick={
-                    loading ? () => null : readOnly ? handleEdit : handleSubmit
-                  }
-                >
-                  Edit
-                </Button>
-              </div>
+              {
+                !viewOnly &&
+                  <div>
+                    <Button
+                      variant='contained'
+                      className={clsx(classes.btn, classes.editButton)}
+                      startIcon={
+                        !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
+                      }
+                      disabled={loading}
+                      onClick={
+                        loading ? () => null : readOnly ? handleEdit : handleSubmit
+                      }
+                    >
+                      Edit
+                    </Button>
+                  </div>
+              }
             </>
           )}
         </div>

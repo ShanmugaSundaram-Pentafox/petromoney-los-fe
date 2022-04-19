@@ -1,9 +1,4 @@
-import { Typography } from '@material-ui/core';
-import { Box } from '@material-ui/core';
-import { Grid } from '@material-ui/core';
-import { Button } from '@material-ui/core';
-import { Divider } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { Typography, Box, Grid, Button, Divider } from '@material-ui/core';
 import { green } from '@material-ui/core/colors';
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import CloseIcon from '@material-ui/icons/Close';
@@ -15,6 +10,7 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
 import * as Yup from 'yup';
+import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
 import TextInput from '../../components/TextInput/TextInput';
 import { getDealershipForSearch } from '../../services/common.service';
 import { addCreditReport } from '../../services/creditreport.service';
@@ -89,10 +85,10 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 2
   }
 }));
-const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
+const CreditReloadForm = ({ data, callback, currentUser, view }) => {
   const [accountId, setAccountId] = useState();
   const [amount, setAmount] = useState();
-  const [selectedValue, setSelectedValue] = useState();
+  const [selectedValue, setSelectedValue] = useState(!view ? null : currentUser.dealership_id);
   const classes = useStyles();
   const [optionsLoading, setOptionsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -195,16 +191,22 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
                 <Grid container spacing={2}>
                   <Grid item md={8} style={{ marginBottom: 10 }}>
                     <label style={{ marginBottom: 8 }}>Dealership</label>
-                    <AsyncSelect
-                      components={optionsLoading ? null : { LoadingIndicator: null }}
-                      styles={{
-                        menu: provided => ({ ...provided, zIndex: 9999 })
-                      }}
-                      onChange={onChangeOption}
-                      loadingMessage={() => ' '}
-                      loadOptions={getOptions}
-                      placeholder='Search Dealership ID or Name'
-                    />
+                    {
+                      !view ? (
+                        <AsyncSelect
+                          components={optionsLoading ? null : { LoadingIndicator: null }}
+                          styles={{
+                            menu: provided => ({ ...provided, zIndex: 9999 })
+                          }}
+                          onChange={onChangeOption}
+                          loadingMessage={() => ' '}
+                          loadOptions={getOptions}
+                          placeholder='Search Dealership ID or Name'
+                        />
+                      ) : (
+                        <Typography variant='h6' style={{marginTop: 7}}>{selectedValue}</Typography>
+                      )
+                    }
                   </Grid>
                 </Grid>
                 <Grid container spacing={2}>
@@ -354,18 +356,14 @@ const CreditReloadForm = ({ data, callback, currentUser, dealershipData }) => {
             </div>
             <div>
               {
-                !loading ? (
-                  <Button
-                    variant='contained'
-                    type='submit'
-                    onClick={handleSubmit}
-                    className={clsx(classes.btn, classes.editButton)}
-                  >
-                    Submit
-                  </Button>
-                ) : (
-                  <CircularProgress size={30} />
-                )
+                <LoaderButton
+                  variant='contained'
+                  className={clsx(classes.btn, classes.editButton)}
+                  isLoading={loading}
+                  loadingText='Submitting...'
+                  type='submit'
+                  onClick={handleSubmit}
+                >Submit</LoaderButton>
               }
             </div>
           </div>

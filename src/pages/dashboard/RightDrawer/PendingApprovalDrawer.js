@@ -1,6 +1,7 @@
-import { Dialog, DialogActions, DialogContent, DialogContentText, Button, CircularProgress } from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, Button, CircularProgress } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/CloseRounded';
+import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
@@ -9,10 +10,11 @@ import DealershipData from './DealershipData';
 import DrawerFooter from './DrawerFooter';
 import DrawerRemarks from './DrawerRemarks';
 import LoanInfo from './LoanInfo';
-import TextInput from '../../../components/TextInput/TextInput';
+import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import { DeviationsTable } from '../../dealershipDetails/components/Deviations';
 import SalesInfo from '../components/SalesInfo';
+import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -21,6 +23,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     height: '100vh',
+  },
+  dialog: {
+    minWidth: '25vw'
   },
   contentWrapper: {
     padding: 12,
@@ -69,41 +74,46 @@ const PendingApprovalDrawer = ({ id, selectedLoanData, status, currentUser, read
   const [loading, setLoading] = useState(false)
   const classes = useStyles();
   const [remarks, setRemarks] = useState();
+  const [errorStatus, setErrorStatus] = useState()
   const { enqueueSnackbar } = useSnackbar();
 
   const updateLoanStatus = () => {
-    setLoading(true)
-    let reqBody = {
-      user_id: currentUser.id,
-      product_id: info?.product_id,
-      amount_approved: info?.amount_approved,
-      remarks: remarks
-    }
+    if(remarks){
+      setLoading(true)
+      let reqBody = {
+        user_id: currentUser.id,
+        product_id: info?.product_id,
+        amount_approved: info?.amount_approved,
+        remarks: remarks
+      }
 
-    updateLoanApprovalStatusById(id, loanData.id, 'approval', reqBody)
-      .then(res => {
-        enqueueSnackbar(res.message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
+      updateLoanApprovalStatusById(id, loanData.id, 'approval', reqBody)
+        .then(res => {
+          enqueueSnackbar(res.message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
+          setTimeout(() => {
+            window.location.reload();
+            setLoading(false)
+          }, 1500)
         })
-        setTimeout(() => {
-          window.location.reload();
+        .catch(err => {
           setLoading(false)
-        }, 1500)
-      })
-      .catch(err => {
-        setLoading(false)
-        enqueueSnackbar(err, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
+          enqueueSnackbar(err, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
         })
-      })
+    } else {
+      setErrorStatus('Please enter remarks for approval')
+    }
   }
   const handlePendingApprovalModal = () => {
     if (!info.amount_approved) {
@@ -155,33 +165,25 @@ const PendingApprovalDrawer = ({ id, selectedLoanData, status, currentUser, read
         <DialogContent>
           <div className={classes.dialog}>
             <DialogContentText id="approval-remarks-desc">
-              Please enter your remarks for sending this for approval.
+              Please enter your remarks for approval.
             </DialogContentText>
-            <TextInput
-              multiline
-              alignTop
-              direction='column'
-              rows={4}
-              rowsMax={8}
-              labelText="Remarks*"
-              placeholder="Enter your remarks here."
-              value={remarks}
-              onChange={e => {
-                setRemarks(e.target.value);
-              }}
-            />
+            <TextEditor setJSON={setRemarks} toolBar={true}/>
+            {
+              errorStatus && 
+                <Alert severity="error" style={{padding: '0px 16px'}}>{errorStatus}</Alert>
+            }
+          </div>
+          <div style={{display: 'flex', justifyContent: 'center', margin: '8px 0px 5px 0px'}}>
+            <Button variant='outlined' style={{marginRight:8}} onClick={handlePendingApprovalModal}>Cancel</Button>
+            <LoaderButton 
+              variant='contained'
+              color='primary'
+              loadingText='Submitting...'
+              isLoading={loading}
+              onClick={updateLoanStatus}
+            >Confirm</LoaderButton>
           </div>
         </DialogContent>
-        <DialogActions>
-          <div>
-            <Button onClick={handlePendingApprovalModal}>Cancel</Button>
-            <Button color='primary' variant='outlined'
-              onClick={() => { updateLoanStatus() }}
-            >
-              {loading ? <CircularProgress size={22} /> : 'Confirm'}
-            </Button>
-          </div>
-        </DialogActions>
       </Dialog>
     </>
   );

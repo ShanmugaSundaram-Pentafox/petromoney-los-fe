@@ -14,6 +14,8 @@ import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import * as Yup from 'yup';
 import Button from '../../../components/CommonComponents/Button/Button';
+import { ViewData } from '../../../components/CommonComponents/FilePreview';
+import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
 import { addOutletDetails } from '../../../services/PDReport.services';
 
@@ -72,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) => {
+const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, editable }) => {
 
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles()
@@ -130,15 +132,12 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
       outlet_category: Yup.string().nullable('Choose outlet category').required('Choose outlet category'),
       distance_from_headquarters: Yup.string().nullable('Please enter fuel transported from area').required('Please enter fuel transported from area'),
       terminal_name: Yup.string().nullable('Please enter terminal name').required('Please enter terminal name'),
-      size_of_outlet: Yup.number().nullable('Please enter outlet size').required('Please enter outlet size'),
       land_type: Yup.string().nullable('Enter land type').required('Enter land type'),
       outlet_operated_by: Yup.string().nullable('Enter operator name').required('Enter operator name'),
       land_owner_name: Yup.string().nullable('Enter land owner name').required('Enter land owner name')
-
     }),
     onSubmit: values => {
       const data = { ...values }
-
       addOutletDetails(data, dealer_id)
         .then(res => {
           enqueueSnackbar(res, {
@@ -177,177 +176,197 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
           <Box>
-            <form onSubmit={handleSubmit}>
+            {
+              readOnly ? 
               <Grid container spacing={2}>
                 <Grid item md={6}>
-                  <TextInput
-                    select
-                    {...inputProps}
-                    labelText="Outlet category"
-                    name="outlet_category"
-                    value={values.outlet_category}
-                    readOnly={readOnly}
-                    disabled={readOnly}
-                    error={errors.outlet_category}
-                    helperText={errors.outlet_category}
-                  >
-                    <option value="">Choose category</option>
-                    <option value="A">A</option>
-                    <option value="B">B</option>
-                    <option value="C">C</option>
-                  </TextInput>
+                  <ViewData title='Outlet category' value={values.outlet_category} style={{marginBottom:6}} />
                 </Grid>
                 <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    className={classes.number}
-                    inputProps={{ className: classes.input }}
-                    type='number'
-                    labelText="Distance from headquarters"
-                    name="distance_from_headquarters"
-                    value={values.distance_from_headquarters}
-                    readOnly={readOnly}
-                    error={errors.distance_from_headquarters}
-                    helperText={errors.distance_from_headquarters}
-                  />
+                  <ViewData title='Distance from headquarters' value={values.distance_from_headquarters} style={{marginBottom:6}} />
                 </Grid>
                 <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    labelText="Terminal name"
-                    name="terminal_name"
-                    value={values.terminal_name}
-                    readOnly={readOnly}
-                    error={errors.terminal_name}
-                    helperText={errors.terminal_name}
-                  />
+                  <ViewData title='Terminal name' value={values.terminal_name} style={{marginBottom:6}} />
                 </Grid>
                 <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    className={classes.number}
-                    inputProps={{ className: classes.input }}
-                    type='number'
-                    labelText="Distance from Terminal (in Km)"
-                    name="distance_from_terminal"
-                    value={values.distance_from_terminal}
-                    readOnly={readOnly}
-                    error={errors.distance_from_terminal}
-                    helperText={errors.distance_from_terminal}
-                  />
+                  <ViewData title='Distance from Terminal (in Km)' value={values.distance_from_terminal} style={{marginBottom:6}} />
                 </Grid>
                 <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    className={classes.number}
-                    inputProps={{ className: classes.input }}
-                    labelText="Size of the Outlet (in Sq. ft)"
-                    name="size_of_outlet"
-                    value={values.size_of_outlet}
-                    readOnly={readOnly}
-                    error={errors.size_of_outlet}
-                    helperText={errors.size_of_outlet}
-                    className={classes.number}
-                    inputProps={{ className: classes.input }}
-                    type='number'
-                  />
-                </Grid><Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    select
-                    labelText="Land Type"
-                    name="land_type"
-                    value={values.land_type}
-                    readOnly={readOnly}
-                    disabled={readOnly}
-                    error={errors.land_type}
-                    helperText={errors.land_type}
-                  >
-                    <option value=""></option>
-                    <option value="Owned">Owned</option>
-                    <option value="leased">Leased</option>
-                  </TextInput>
+                  <ViewData title='Land Type' value={values.land_type} style={{marginBottom:6}} />
                 </Grid>
                 <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    labelText="Land Owner Name"
-                    name="land_owner_name"
-                    value={values.land_owner_name}
-                    readOnly={readOnly}
-                    error={errors.land_owner_name}
-                    helperText={errors.land_owner_name}
-                  />
+                  <ViewData title='Land Owner Name' value={values.land_owner_name} style={{marginBottom:6}} />
                 </Grid>
                 <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    money
-                    className={classes.number}
-                    inputProps={{ className: classes.input }}
-                    labelText="Lease Amount"
-                    name="lease_amount"
-                    value={values.lease_amount}
-                    readOnly={readOnly}
-                    error={errors.lease_amount}
-                    helperText={errors.lease_amount}
-                    type='number'
-                  />
+                  <ViewData title='Lease Amount' value={<Currency value={values.lease_amount}/>} style={{marginBottom:6}} />
                 </Grid>
                 <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    select
-                    labelText="Outlet operated by"
-                    name="outlet_operated_by"
-                    value={values.outlet_operated_by}
-                    readOnly={readOnly}
-                    disabled={readOnly}
-                    error={errors.outlet_operated_by}
-                    helperText={errors.outlet_operated_by}
-                  >
-                    <option value=""></option>
-                    <option value="Proprietor">Proprietor</option>
-                    <option value="Managing partner">Managing Partner</option>
-                    <option value="Third party">Third Party</option>
-                  </TextInput>
+                  <ViewData title='Outlet operated by' value={values.outlet_operated_by} style={{marginBottom:6}} />
                 </Grid>
                 <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    select
-                    labelText="Relationship with owner"
-                    name="relation_type_with_owner"
-                    error={errors.relation_type_with_owner}
-                    helperText={errors.relation_type_with_owner}
-                    readOnly={readOnly}
-                    value={values.relation_type_with_owner}
-                    disabled={readOnly}
-                  >
-                    {
-                      relationShipOptions.map((item, i) => {
-                        return (
-                          <option value={item.value}>{item.label}</option>
-                        )
-                      })
-                    }
-                  </TextInput>
+                  <ViewData title='Relationship with owner' value={values.relation_type_with_owner} style={{marginBottom:6}} />
                 </Grid>
                 <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    inputProps={{ className: classes.input }}
-                    labelText="Operator Mobile number"
-                    name="operator_mobile"
-                    type="number"
-                    value={values.operator_mobile}
-                    readOnly={readOnly}
-                    error={errors.operator_mobile}
-                    helperText={errors.operator_mobile}
-                  />
+                  <ViewData title='Operator Mobile number' value={values.operator_mobile} style={{marginBottom:6}} />
                 </Grid>
-              </Grid>
-            </form>
+              </Grid> : 
+              <form onSubmit={handleSubmit}>
+                <Grid container spacing={2}>
+                  <Grid item md={6}>
+                    <TextInput
+                      select
+                      {...inputProps}
+                      labelText="Outlet category"
+                      name="outlet_category"
+                      value={values.outlet_category}
+                      readOnly={readOnly}
+                      disabled={readOnly}
+                      error={errors.outlet_category}
+                      helperText={errors.outlet_category}
+                    >
+                      <option value="">Choose category</option>
+                      <option value="A">A</option>
+                      <option value="B">B</option>
+                      <option value="C">C</option>
+                    </TextInput>
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      className={classes.number}
+                      inputProps={{ className: classes.input }}
+                      type='number'
+                      labelText="Distance from headquarters"
+                      name="distance_from_headquarters"
+                      value={values.distance_from_headquarters}
+                      readOnly={readOnly}
+                      error={errors.distance_from_headquarters}
+                      helperText={errors.distance_from_headquarters}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      labelText="Terminal name"
+                      name="terminal_name"
+                      value={values.terminal_name}
+                      readOnly={readOnly}
+                      error={errors.terminal_name}
+                      helperText={errors.terminal_name}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      className={classes.number}
+                      inputProps={{ className: classes.input }}
+                      type='number'
+                      labelText="Distance from Terminal (in Km)"
+                      name="distance_from_terminal"
+                      value={values.distance_from_terminal}
+                      readOnly={readOnly}
+                      error={errors.distance_from_terminal}
+                      helperText={errors.distance_from_terminal}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      select
+                      labelText="Land Type"
+                      name="land_type"
+                      value={values.land_type}
+                      readOnly={readOnly}
+                      disabled={readOnly}
+                      error={errors.land_type}
+                      helperText={errors.land_type}
+                    >
+                      <option value=""></option>
+                      <option value="Owned">Owned</option>
+                      <option value="leased">Leased</option>
+                    </TextInput>
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      labelText="Land Owner Name"
+                      name="land_owner_name"
+                      value={values.land_owner_name}
+                      readOnly={readOnly}
+                      error={errors.land_owner_name}
+                      helperText={errors.land_owner_name}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      money
+                      className={classes.number}
+                      inputProps={{ className: classes.input }}
+                      labelText="Lease Amount"
+                      name="lease_amount"
+                      value={values.lease_amount}
+                      readOnly={readOnly}
+                      error={errors.lease_amount}
+                      helperText={errors.lease_amount}
+                      type='number'
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      select
+                      labelText="Outlet operated by"
+                      name="outlet_operated_by"
+                      value={values.outlet_operated_by}
+                      readOnly={readOnly}
+                      disabled={readOnly}
+                      error={errors.outlet_operated_by}
+                      helperText={errors.outlet_operated_by}
+                    >
+                      <option value=""></option>
+                      <option value="Proprietor">Proprietor</option>
+                      <option value="Managing partner">Managing Partner</option>
+                      <option value="Third party">Third Party</option>
+                    </TextInput>
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      select
+                      labelText="Relationship with owner"
+                      name="relation_type_with_owner"
+                      error={errors.relation_type_with_owner}
+                      helperText={errors.relation_type_with_owner}
+                      readOnly={readOnly}
+                      value={values.relation_type_with_owner}
+                      disabled={readOnly}
+                    >
+                      {
+                        relationShipOptions.map((item, i) => {
+                          return (
+                            <option value={item.value} key={i}>{item.label}</option>
+                          )
+                        })
+                      }
+                    </TextInput>
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      inputProps={{ className: classes.input }}
+                      labelText="Operator Mobile number"
+                      name="operator_mobile"
+                      type="number"
+                      value={values.operator_mobile}
+                      readOnly={readOnly}
+                      error={errors.operator_mobile}
+                      helperText={errors.operator_mobile}
+                    />
+                  </Grid>
+                </Grid>
+              </form>
+            }
           </Box >
         </div>
       </div>
@@ -364,7 +383,8 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
               Back
             </Button>
           </div>
-          <div>
+          {
+            !editable &&
             <Button
               variant="contained"
               type="submit"
@@ -375,7 +395,7 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
               {loading ? <CircularProgress size={20} /> : readOnly ? 'Edit' :
                 'Save'}
             </Button>
-          </div>
+          }
         </div>
       </div>
     </div>

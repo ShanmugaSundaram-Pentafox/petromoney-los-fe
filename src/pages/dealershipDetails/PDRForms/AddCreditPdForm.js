@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const AddCreditPdForm = ({ data, dealer_id, callback, currentUser }) => {
+const AddCreditPdForm = ({ data, dealer_id, callback, currentUser, editable }) => {
   const classes = useStyles()
   const { enqueueSnackbar } = useSnackbar();
 
@@ -70,17 +70,12 @@ const AddCreditPdForm = ({ data, dealer_id, callback, currentUser }) => {
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      // transport_name: Yup.string().required('Please enter transporter name'),
       pdr_remarks: Yup.string().nullable('Enter your remarks').required('Enter your remarks')
 
     }),
     onSubmit: values => {
-      // let eDate = format(parse(values.agreement_executed_on, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
-      // let vDate = format(parse(values.agreement_valid_till, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd')
       const date = {
         ...values,
-        // agreement_valid_till: vDate,
-        // agreement_executed_on: eDate,
       };
       const data = new FormData();
       Object.keys(date).forEach((key) => {
@@ -140,6 +135,7 @@ const AddCreditPdForm = ({ data, dealer_id, callback, currentUser }) => {
                 multiline
                 rows={20}
                 name='pdr_remarks'
+                disabled={editable}
                 value={values.pdr_remarks}
                 error={errors.pdr_remarks}
                 helperText={errors.pdr_remarks}
@@ -162,7 +158,8 @@ const AddCreditPdForm = ({ data, dealer_id, callback, currentUser }) => {
               Back
             </Button>
           </div>
-          <div>
+          {
+            !editable &&
             <Button
               variant="contained"
               className={clsx(classes.btn, classes.editButton)}
@@ -170,7 +167,7 @@ const AddCreditPdForm = ({ data, dealer_id, callback, currentUser }) => {
             >
               Save
             </Button>
-          </div>
+          }
         </div>
       </div>
     </div >

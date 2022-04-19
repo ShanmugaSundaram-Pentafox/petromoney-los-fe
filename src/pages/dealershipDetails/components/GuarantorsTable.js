@@ -1,3 +1,4 @@
+import { Drawer } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 // import { useMount } from 'react-use';
@@ -7,7 +8,13 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
-import React from 'react';
+import { useSnackbar } from 'notistack';
+import React, { useState } from 'react';
+import { useQueryClient } from 'react-query';
+import CreditInfoSideWrapper from './CreditInfoSideWrapper';
+import DeleteButton from '../../../components/CommonComponents/Button/DeleteButton';
+import { logger } from '../../../config/logger';
+import { deleteApplicantById } from '../../../services/dealers.service';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -26,12 +33,49 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 8
   },
   tableRow: {
-    cursor: 'pointer'
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: '#fafafa',
+    }
+  },
+  sidePanelWrapper: {
+    width: '40vw',
+    minWidth: 300
   },
 }));
 
-const GuarantorsTable = ({ id, editable, guarantorsData, titleAlign, getExperianData, onClickAddMenu, formType, openCloseCreditForm, rowData, currentUser, showDealerEditForm, dealersClickRow, editFormClose }) => {
+const GuarantorsTable = ({ id, editable, guarantorsData, titleAlign, getExperianData, onClickAddMenu, formType, openCloseCreditForm, currentUser, showDealerEditForm, dealersClickRow, editFormClose, deletable, viewOnly }) => {
   const classes = useStyles();
+  const queryClient = useQueryClient()
+  const { enqueueSnackbar } = useSnackbar();
+  const [rowData, setRowData] = useState();
+  const [deleteModal, setDeleteModal] = useState(false);
+  
+  const DeleteApplicant = (row_data) => {
+    deleteApplicantById(id, row_data?.id, row_data?.userType)
+      .then(res => {
+        queryClient.invalidateQueries(['guarantors', id])
+        setDeleteModal(false)
+        enqueueSnackbar(res.message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
+      })
+      .catch(e => {
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+        logger(e)
+      })
+  }
+
   if (!guarantorsData || !guarantorsData.length)
     return (
       <div className={classes.wrapper}>
@@ -56,20 +100,62 @@ const GuarantorsTable = ({ id, editable, guarantorsData, titleAlign, getExperian
           <TableRow>
             <TableCell>Guarantor Name</TableCell>
             <TableCell align="center">Mobile</TableCell>
+            <TableCell align="center">Documents</TableCell>
+            {
+              editable || viewOnly ?
+                <TableCell align="center">Action</TableCell> : null
+            }
           </TableRow>
         </TableHead>
         <TableBody>
-          {guarantorsData.map(row => (
-            <TableRow className={classes.tableRow} key={row.id} onClick={e => editable && dealersClickRow(e, row, 'GUARANTOR')}>
+          {guarantorsData.map((row, index) => (
+            <TableRow className={classes.tableRow} key={row.id} onClick={e => editable || viewOnly ? dealersClickRow(e, row, 'GUARANTOR') : null}>
               <TableCell>
                 {row.first_name}&nbsp;&nbsp;
-                {/* <Chip size="small" label="Experian Report" onClick={(e) => getExperianData(e, row.id)} /> */}
               </TableCell>
-              <TableCell align="center">{row.mobile}</TableCell>
+              <TableCell align="center" onClick={e => editable || viewOnly && dealersClickRow(e, row, 'GUARANTOR')}>{row.mobile}</TableCell>
+              <TableCell align="center">
+                {row.aadhar_f_file_url && <TableCell style={{ border: 0 }} align="center">
+                  <a className={classes.document}
+                    href={row.aadhar_f_file_url} target="_blank" title={'Aadhar Front'} rel="noreferrer">{'Aadhar Front'}</a>
+
+                </TableCell>}
+                {row.aadhar_b_file_url && <TableCell style={{ border: 0 }} align="center">
+                  <a className={classes.document}
+                    href={row.aadhar_b_file_url} target="_blank" title={'Aadhar Back'} rel="noreferrer">{'Aadhar Back'}</a>
+
+                </TableCell>}
+                {row.pan_file_url && <TableCell style={{ border: 0 }} align="center">
+                  <a className={classes.document}
+                    href={row.pan_file_url} target="_blank" title={'PAN'} rel="noreferrer">{'PAN'}</a>
+                </TableCell>}
+                {!row.pan_file_url && !row.aadhar_b_file_url && !row.aadhar_f_file_url &&
+                  <TableCell style={{ border: 0 }} align="center">
+                    -
+                  </TableCell>}
+              </TableCell>
+              {
+                editable || viewOnly ?
+                  <TableCell align="right" onClick={e => e.stopPropagation()}>
+                    <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>
+                    {deletable && <DeleteButton alertText={`Do you really want to delete this guarantor named ${row?.first_name}?`} deleteAction={() => DeleteApplicant(row)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={index} buttonType='icon' />}
+                  </TableCell> : null
+              }
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      <Drawer
+        anchor="right"
+        open={rowData}
+        variant="temporary"
+      >
+        <div className={classes.sidePanelWrapper}>
+          {
+            <CreditInfoSideWrapper dealershipId={id} data={rowData} currentUser={currentUser} onClose={() => setRowData()} />
+          }
+        </div>
+      </Drawer>
     </div>
   )
 }

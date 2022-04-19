@@ -1,8 +1,5 @@
-
-
 import { Select as MSelect } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-// import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -18,9 +15,11 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
 import Select from 'react-select';
+import AccountStatement from './AccountStatement';
 import Currency from '../../../components/Number/Currency';
-import TextInput from '../../../components/TextInput/TextInput';
+import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { getUserRoleForReview } from '../../../services/common.service';
@@ -38,58 +37,52 @@ const useStyles = makeStyles({
     marginBottom: 8
   },
   table: {
-    // minWidth: 650,
     padding: 8
   },
+  editor: {
+    border: '1px solid gray',
+    minHeight: '6em'
+  }
 });
 
-const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
+const LoansList = ({ id, currentUser, titleAlign }) => {
+  const queryClient = useQueryClient()
   const classes = useStyles();
-  const [data, setLoansData] = useState();
   const [loading, setLoading] = useState(false);
   const [remarks, setRemarks] = useState();
   const [dialogState, setDialogState] = useState({});
-  const [status, setStatus] = useState([]);
   const [user, setUser] = useState([]);
   const [userRole, setUserRole] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState();
-  const [optionsLoading, setOptionsLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
-
+  const { data: loanData = [], isLoading } = useQuery(['dealership-loans', id], () => getDealershipLoansById(id), {refetchOnWindowFocus: false})
+  const { data: status } = useQuery(['dealership-status', id], () => getApplicationStatusById(id), {refetchOnWindowFocus: false})
   useEffect(() => {
-    getDealershipLoansById(id)
-      .then(data => {
-        setLoansData(data)
-        if (data) {
-          let val = data[0]?.status === 'submitted' ? 'is_review=1' : 'is_approve=1'
-          getUserRoleForReview(val)
-            .then(res => {
-              let d = [];
-              res.forEach((item, i) => {
-                d.push({
-                  label: <div>{item.first_name} {item.last_name}</div>,
-                  value: item.id
-                })
+    if (!isLoading) {
+      if (loanData.length) {
+        let val = loanData[0].status === 'submitted' ? 'is_review=1' : 'is_approve=1'
+        getUserRoleForReview(val)
+          .then(res => {
+            let d = [];
+            res.forEach((item, i) => {
+              d.push({
+                label: <div>{item.first_name} {item.last_name}</div>,
+                value: item.id
               })
-              setUserRole(d);
             })
-            .catch(e => {
-              console.log(e);
-            })
-        }
-      })
-      .catch(e => null)
-    getApplicationStatusById(id)
-      .then(data => {
-        setStatus(data)
-        if (dealerData[0].application_state_id) {
-          const re = data.find(d => d.id == dealerData[0].application_state_id)
-          setSelectedStatus({ ...re, disabled: status !== 'loan_approval' } || {})
-        }
-      })
-      .catch(e => null)
+            setUserRole(d);
+          })
+          .catch(e => {
+            console.log(e);
+          })
+      }
+    }
+    if (loanData[0]?.application_state_id) {
+      const re = status?.find(d => d.id == loanData[0]?.application_state_id)
+      setSelectedStatus({ ...re, disabled: status !== 'loan_approval' } || {})
+    }
+  }, [status, loanData])
 
-  }, [dealerData]);
   const processLoan = loan => {
     let status, remarksObj = {};
     if (loan?.status?.toLowerCase() === 'submitted') {
@@ -111,7 +104,7 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
 
     status && updateLoanApprovalStatusById(id, loan.id, 'approval', { user_id: currentUser.id, ...remarksObj })
       .then(res => {
-        setLoansData(res.loans);
+        queryClient.invalidateQueries(['dealership-loans', id])
         setLoading(false);
         setDialogState({});
       })
@@ -132,15 +125,13 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
     processLoan({ ...dialogState.data });
   }
   const updateApplicationStatus = (state) => {
-    apiCall(`dealership/${id}/loans/${data[0].id}`, {
+    apiCall(`dealership/${id}/loans/${loanData[0].id}`, {
       method: 'POST',
       body: state,
     })
       .then(res => {
         if (res.status === 'SUCCESS') {
-          getDealershipLoansById(id)
-            .then(data => setLoansData(data))
-            .catch(e => null)
+          queryClient.invalidateQueries(['dealership-loans', id])
           enqueueSnackbar(res.message, {
             anchorOrigin: {
               vertical: 'top',
@@ -156,8 +147,7 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
 
   }
 
-
-  if (!data || !data.length)
+  if (!loanData || !loanData.length)
     return (
       <div className={classes.wrapper}>
         <Typography variant="h5" align={titleAlign} className={classes.title}>No Loan details found</Typography>
@@ -179,7 +169,7 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map(row => (
+          {Array.isArray(loanData) && loanData?.map(row => (
             <TableRow key={row.id}>
               <TableCell>{row.type}</TableCell>
               <TableCell align="right"><Currency value={row.amount_requested} /></TableCell>
@@ -195,24 +185,27 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
               </TableCell>
               <TableCell align="center">{row.status}</TableCell>
               <TableCell align="center">
-                <MSelect
-                  fullWidth
-                  native
-                  placeholder={'Select status'}
-                  value={selectedStatus?.id}
-                  onChange={e => {
-                    const d = status.find(i => i.id == e.target.value)
-                    setSelectedStatus(d)
-                    updateApplicationStatus({
-                      application_state: e.target.value
-                    })
-                  }}
-                >
-                  <option value={selectedStatus}>{row.application_state}</option>
-                  {
-                    status.map(item => item.application_state !== row.application_state && <option value={item.id}>{item.application_state}</option>)
-                  }
-                </MSelect>
+                {
+                  row?.status?.toLowerCase() !== 'disbursed' && row?.status?.toLowerCase() !== 'rejected' &&
+                    <MSelect
+                      fullWidth
+                      native
+                      placeholder={'Select status'}
+                      value={selectedStatus?.id}
+                      onChange={e => {
+                        const d = status?.find(i => i.id == e.target.value)
+                        setSelectedStatus(d)
+                        updateApplicationStatus({
+                          application_state: e.target.value
+                        })
+                      }}
+                    >
+                      <option value=''>-</option>
+                      {
+                      status?.map(item => item.application_state !== row.application_state && <option value={item.id}>{item.application_state}</option>)
+                      }
+                    </MSelect>
+                }
               </TableCell>
               <TableCell align="center">
                 {
@@ -220,7 +213,6 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
                     <Button
                       variant="outlined"
                       color="primary"
-                      // fontSize="small"
                       size='small'
                       disabled={loading}
                       className={classes.btnSuccess}
@@ -236,7 +228,6 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
                     <Button
                       variant="outlined"
                       color="primary"
-                      // fontSize="small"
                       size='small'
                       disabled={loading}
                       className={classes.btnSuccess}
@@ -273,6 +264,12 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
           ))}
         </TableBody>
       </Table>
+      {
+        loanData[0]?.status === 'disbursed' &&
+          <div style={{marginTop: 18}}>
+            <AccountStatement id={id} currentUser={currentUser} />
+          </div>
+      }
 
       <Dialog
         open={dialogState.open}
@@ -323,7 +320,8 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
             <DialogContentText id="approval-remarks-desc">
               Please enter your remarks for sending this for {dialogState.data?.status?.toLowerCase() === 'submitted' ? 'review' : dialogState.data?.status?.toLowerCase() === 'loan_review' ? 'Approval' : 'Disbursement Approval'}.
             </DialogContentText>
-            <TextInput
+            <TextEditor setJSON={setRemarks} toolBar={true}/>
+            {/* <TextInput
               multiline
               alignTop
               direction='column'
@@ -335,7 +333,7 @@ const LoansList = ({ id, currentUser, dealerData, titleAlign }) => {
               onChange={e => {
                 setRemarks(e.target.value);
               }}
-            />
+            /> */}
           </div>
         </DialogContent>
         <DialogActions>

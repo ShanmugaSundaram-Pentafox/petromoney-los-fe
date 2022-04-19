@@ -11,22 +11,31 @@ import Routes from './routes/routes';
 import { store, persistor } from './store';
 import theme from './theme';
 
-const queryClient = new QueryClient();
+const actionStyle = {
+  cursor: 'pointer',
+  color: '#fff',
+  padding: '10px 14px'
+}
 
 
+const queryClient = new QueryClient()
+const notistackRef = React.createRef();
+const onClickClose = key => {
+  notistackRef.current.closeSnackbar(key);
+}
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-        <SnackbarProvider maxSnack={3} anchorOrigin={{ vertical: 'bottom', horizontal: 'left'}}>
-          <ThemeProvider theme={theme}>
+        <ThemeProvider theme={theme}>
+          <SnackbarProvider hideIconVariant ref={notistackRef} preventDuplicate maxSnack={3} anchorOrigin={{ vertical: 'bottom', horizontal: 'left'}} action={key => (<body1 style={actionStyle} onClick={() => onClickClose(key)}>DISMISS</body1>)}>
             <HashRouter>
               <PersistGate persistor={persistor}>
                 <Routes />
               </PersistGate>
             </HashRouter>
-          </ThemeProvider>
-        </SnackbarProvider>
+          </SnackbarProvider>
+        </ThemeProvider>
       </Provider>
     </QueryClientProvider>
   );

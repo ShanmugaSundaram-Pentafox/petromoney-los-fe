@@ -1,3 +1,4 @@
+import { Drawer } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -6,7 +7,13 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
-import React from 'react';
+import { useSnackbar } from 'notistack';
+import React, { useState } from 'react';
+import { useQueryClient } from 'react-query';
+import CreditInfoSideWrapper from './CreditInfoSideWrapper';
+import DeleteButton from '../../../components/CommonComponents/Button/DeleteButton';
+import { logger } from '../../../config/logger';
+import { deleteApplicantById } from '../../../services/dealers.service';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -36,7 +43,10 @@ const useStyles = makeStyles(theme => ({
     // paddingTop: 8
   },
   tableRow: {
-    cursor: 'pointer'
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: '#fafafa',
+    }
   },
   document: {
     display: 'inline-block',
@@ -45,8 +55,37 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExperianData, onClickAddMenu, formType, openCloseCreditForm, rowData, currentUser, showDealerEditForm, dealersClickRow, editFormClose }) => {
+const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExperianData, onClickAddMenu, formType, openCloseCreditForm, currentUser, showDealerEditForm, dealersClickRow, editFormClose, deletable, viewOnly }) => {
   const classes = useStyles();
+  const queryClient = useQueryClient()
+  const { enqueueSnackbar } = useSnackbar();
+  const [rowData, setRowData] = useState();
+  const [deleteModal, setDeleteModal] = useState(false);
+
+  const DeleteApplicant = (row_data) => {
+    deleteApplicantById (id, row_data?.id, row_data?.userType)
+      .then(res => {
+        queryClient.invalidateQueries(['dealers-coapplicant', id])
+        setDeleteModal(false)
+        enqueueSnackbar(res.message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
+      })
+      .catch(e => {
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+        logger(e)
+      })
+  }
 
   if (!data || !data.length)
     return (
@@ -72,14 +111,17 @@ const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExper
             <TableCell>Dealer Name</TableCell>
             <TableCell align="center">Mobile</TableCell>
             <TableCell align="center">Documents</TableCell>
+            {
+              editable || viewOnly ?
+                <TableCell align="center">Action</TableCell> : null
+            }
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map(row => (
-            <TableRow className={classes.tableRow} key={row.id} onClick={e => editable && dealersClickRow(e, row, 'DEALER')}>
+          {data.map((row, index) => (
+            <TableRow className={classes.tableRow} key={row.id} onClick={e => editable || viewOnly ? dealersClickRow(e, row, 'DEALER') : null}>
               <TableCell>
                 {row.first_name}&nbsp;&nbsp;
-                {/* <Chip size="small" label="Experian Report" onClick={(e) => getExperianData(e, row.id)} /> */}
               </TableCell>
               <TableCell align="center">{row.mobile}</TableCell>
               <TableCell align="center">
@@ -102,10 +144,28 @@ const DealersTable = ({ id, editable, data, titleAlign, showCreditForm, getExper
                     -
                   </TableCell>}
               </TableCell>
+              {
+                editable || viewOnly ?
+                  <TableCell align="right" onClick={e => e.stopPropagation()}>
+                    <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>
+                    {deletable && <DeleteButton alertText={`Do you really want to delete this dealer named ${row?.first_name}?`} deleteAction={() => DeleteApplicant(row)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={index} buttonType='icon' />}
+                  </TableCell> : null
+              }
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      <Drawer
+        anchor="right"
+        open={rowData}
+        variant="temporary"
+      >
+        <div className={classes.sidePanelWrapper}>
+          {
+            <CreditInfoSideWrapper dealershipId={id} data={rowData} currentUser={currentUser} onClose={() => setRowData()} />
+          }
+        </div>
+      </Drawer>
     </div>
   )
 }

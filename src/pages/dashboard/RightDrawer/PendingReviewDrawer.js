@@ -1,6 +1,7 @@
-import { Dialog, DialogActions, DialogContent, DialogContentText, Button, CircularProgress } from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, Button, CircularProgress } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/CloseRounded';
+import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
@@ -11,10 +12,11 @@ import DealershipData from './DealershipData';
 import DrawerFooter from './DrawerFooter';
 import DrawerRemarks from './DrawerRemarks';
 import LoanInfo from './LoanInfo';
-import TextInput from '../../../components/TextInput/TextInput';
+import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { getUserRoleForReview } from '../../../services/common.service';
 import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import SalesInfo from '../components/SalesInfo';
+import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -23,6 +25,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     height: '100vh',
+  },
+  dialog: {
+    minWidth: '30vw'
   },
   contentWrapper: {
     padding: 12,
@@ -70,7 +75,8 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
   const [approvalModal, setApprovalModal] = useState(false)
   const [info, setInfo] = useState({})
   const [loading, setLoading] = useState(false)
-  const [user, setUser] = useState([])
+  const [user, setUser] = useState()
+  const [errorStatus, setErrorStatus] = useState()
   const [userRole, setUserRole] = useState([]);
   const [remarks, setRemarks] = useState();
   const { enqueueSnackbar } = useSnackbar();
@@ -95,37 +101,41 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
     setApprovalModal(!approvalModal)
   }
   const updateLoanStatus = () => {
-    setLoading(true)
-    let reqBody = {
-      user_id: currentUser.id,
-      approver_id: user.value,
-      product_id: info?.product_id,
-      approval_remarks: remarks,
-    }
-    updateLoanApprovalStatusById(id, loanData?.id, 'approval', reqBody)
-      .then(res => {
-        enqueueSnackbar(res.message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
+    if(user && remarks){
+      setLoading(true)
+      let reqBody = {
+        user_id: currentUser.id,
+        approver_id: user.value,
+        product_id: info?.product_id,
+        approval_remarks: remarks,
+      }
+      updateLoanApprovalStatusById(id, loanData?.id, 'approval', reqBody)
+        .then(res => {
+          enqueueSnackbar(res.message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
+          setTimeout(() => {
+            window.location.reload();
+            setLoading(false)
+          }, 1500)
         })
-        setTimeout(() => {
-          window.location.reload();
+        .catch(err => {
           setLoading(false)
-        }, 1500)
-      })
-      .catch(err => {
-        setLoading(false)
-        enqueueSnackbar(err, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
+          enqueueSnackbar(err, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
         })
-      })
+    } else {
+      setErrorStatus('Please select approver and enter remarks.')
+    }
   }
   const updateNewLoanInfo = (d) => {
     setInfo({
@@ -174,7 +184,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
               <Select
                 isClearable
                 name='user_approve'
-                onChange={setUser}
+                onChange={(data) => {setUser(data); setErrorStatus();}}
                 options={userRole}
                 menuPlacement='bottom'
                 menuPosition='fixed'
@@ -184,31 +194,23 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
             <DialogContentText id="approval-remarks-desc">
               Please enter your remarks for sending this for approval.
             </DialogContentText>
-            <TextInput
-              multiline
-              alignTop
-              direction='column'
-              rows={4}
-              rowsMax={8}
-              labelText="Remarks*"
-              placeholder="Enter your remarks here."
-              value={remarks}
-              onChange={e => {
-                setRemarks(e.target.value);
-              }}
-            />
+            <TextEditor setJSON={setRemarks} toolBar={true} />
+            {
+              errorStatus && 
+                <Alert severity="error" style={{padding: '0px 16px'}}>{errorStatus}</Alert>
+            }
+          </div>
+          <div style={{display: 'flex', justifyContent: 'center', marginTop: 8, marginBottom: 5}}>
+            <Button variant='outlined' style={{marginRight: 8}} onClick={handleApprovalModal}>Cancel</Button>
+            <LoaderButton 
+              color='primary'
+              variant='contained'
+              isLoading={loading}
+              loadingText='Submitting...'
+              onClick={updateLoanStatus}
+            >Confirm</LoaderButton>
           </div>
         </DialogContent>
-        <DialogActions>
-          <div>
-            <Button onClick={handleApprovalModal}>Cancel</Button>
-            <Button color='primary' variant='outlined'
-              onClick={updateLoanStatus}
-            >
-              {loading ? <CircularProgress size={22} /> : 'Confirm'}
-            </Button>
-          </div>
-        </DialogActions>
       </Dialog>
     </>
   );

@@ -124,7 +124,7 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) => {
+const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, editable }) => {
 
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles()
@@ -234,7 +234,6 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
   const deleteLoanRow = (row, index) => {
     deleteLoanDetailsByID(row, dealer_id)
       .then(data => {
-        console.log(data)
         enqueueSnackbar(data, {
           anchorOrigin: {
             vertical: 'top',
@@ -269,7 +268,7 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
         <div className={classes.stepperRoot}>
           {
             loanData.length || addNew ? null :
-              <Typography className={classes.typography}>No loan found,Click 'Add Loan' to add new loan.</Typography>
+              <Typography className={classes.typography}>No loan found&#44; Click &apos;Add Loan&apos; to add new loan.</Typography>
           }
           {
             addNew || editRow ? (
@@ -342,10 +341,11 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
               <Grid container spacing={2}>{
                 loanData.map((item, i) => {
                   return (
-                    <Grid item md={6}>
+                    <Grid item md={6} key={i}>
                       <PreviewCard
                         onEdit={() => { editLoanRow(item, i) }}
                         onDelete={() => deleteLoanRow(item, i)}
+                        action={!editable}
                       >
                         <Grid container spacing={2}>
                           <Grid item md={6}>
@@ -382,7 +382,8 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
               Back
             </Button>
           </div>
-          <div>
+          {
+            !editable &&
             <Button
               variant="contained"
               color="primary"
@@ -391,7 +392,7 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser }) 
             >
               Add Loan
             </Button>
-          </div>
+          }
         </div>
       </div>
     </div >

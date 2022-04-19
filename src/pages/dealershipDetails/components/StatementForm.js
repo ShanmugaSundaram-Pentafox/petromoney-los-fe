@@ -2,8 +2,11 @@ import { Button, Divider, Drawer, Grid, makeStyles, Table, TableBody, TableFoote
 import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import React, { useState } from 'react'
+import DeleteButton from '../../../components/CommonComponents/Button/DeleteButton';
 import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
 import { getPastYears, getMonth as month } from '../../../utils/commonFunctions.util';
 import { compareObject } from '../../../utils/compareObject.util';
 
@@ -55,14 +58,16 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
-const StatementForm = ({ callback, rowData, addStatement, updateStatement, deleteStatement }) => {
+const StatementForm = ({ callback, rowData, addStatement, updateStatement, deleteStatement, currentUser }) => {
   const classes = useStyles()
   const [openEdit, setOpenEdit] = useState(false)
+  const [deleteModal, setDeleteModal] = useState(false)
   const [disabled, setDisabled] = useState(addStatement?.action === 'view')
   const [editRow, setEditRow] = useState({})
   const [addData, setAddData] = useState(rowData)
   const [statementRow, setStatementRow] = useState([{ month: 0, year: 0, in_bound: 0, out_bound: 0, credits_total: 0, no_of_credits: 0, debits_total: 0, no_of_debits: 0, omc_transaction: 0 }])
   const LastThreeYear = getPastYears(3)
+  const editable = permissionCheck(currentUser.role_name, rulesList.external_view);
 
   const handleInputChange = (e, index) => {
     const { name, value } = e.target;
@@ -197,7 +202,7 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
                 </TableHead>
                 <TableBody>
                   {
-                    rowData?.statement?.map(item => (
+                    rowData?.statement?.map((item, i) => (
                       <TableRow key={item.statement_id}>
                         <TableCell scope="row" component="th">{month?.find(type => { return type.value === item.month })?.label} - {item.year}</TableCell>
                         <TableCell align="center">{item.in_bound}</TableCell>
@@ -211,7 +216,7 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
                           !disabled && (
                             <TableCell align="right">
                               <Button size="small" variant="outlined" className={classes.btnEdit} onClick={() => { setEditRow({ ...item }); setOpenEdit(true) }}>Edit</Button>
-                              <Button size="small" variant="outlined" className={classes.btnDelete} onClick={() => handleDelete(item.statement_id)}>Delete</Button>
+                              <DeleteButton deleteAction={() => handleDelete(item.statement_id)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={i} style={{margin:2}} />
                             </TableCell>
                           )
                         }
@@ -382,9 +387,7 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
         <div>
           <Button variant="outlined" startIcon={<NavigateBeforeRoundedIcon />} onClick={() => callback(false)}>Back</Button>
         </div>
-        <div>
-          <Button variant="contained" color="primary" onClick={() => disabled ? setDisabled(!disabled) : handleSave()} style={{ marginBottom: 12 }}>{disabled ? 'Edit' : 'Save'}</Button>
-        </div>
+        {!editable && <Button variant="contained" color="primary" onClick={() => disabled ? setDisabled(!disabled) : handleSave()} style={{ marginBottom: 12 }}>{disabled ? 'Edit' : 'Save'}</Button>}
       </div>
       <Drawer
         anchor="right"

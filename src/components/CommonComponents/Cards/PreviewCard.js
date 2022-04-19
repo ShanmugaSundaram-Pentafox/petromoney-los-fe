@@ -1,9 +1,10 @@
-import { Button } from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
+import { Button, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import { makeStyles } from '@material-ui/styles';
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components'
+import DeleteButton from '../Button/DeleteButton';
 
 const Card = styled.div`
   background-color: #fff;
@@ -42,36 +43,102 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 
-const PreviewCard = ({ children, onEdit, onDelete }) => {
+const PreviewCard = ({ children, action=true, onEdit, onDelete, onCustom, customButton = false, customIcon, token=false, tokenLabel, tokenIcon, variant }) => {
   const classes = useStyles()
+  const [deleteModal, setDeleteModal] = useState(false)
   return (
-    <Card>
+    <Card style={{marginBottom:0}}>
       <div className="card-body">
         {children}
       </div>
-      <div className="card-footer">
-        <Button
-          size="small"
-          variant="outlined"
-          color="success"
-          style={{ margin: 4 }}
-          className={classes.btnSuccess}
-          startIcon={<EditIcon color="primary" />}
-          onClick={onEdit}
-        >
-          Edit
-        </Button>
-        <Button
-          size="small"
-          variant="outlined"
-          style={{ margin: 4 }}
-          startIcon={<DeleteIcon color="error" />}
-          onClick={onDelete}
-        >
-          Delete
-        </Button>
-      </div>
+      {
+        action &&
+        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingLeft: 10}} >
+          <div>
+            {
+              customButton &&
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="success"
+                  style={{ margin: 4 }}
+                  className={classes.btnSuccess}
+                  startIcon={customIcon ? customIcon : <InfoOutlinedIcon color="primary" />}
+                  onClick={onCustom}
+                >
+                  {tokenLabel}
+                </Button> 
+            }
+          </div>
+          <div className='card-footer'>
+            <Button
+              size="small"
+              variant="outlined"
+              color="success"
+              style={{ margin: 4 }}
+              className={classes.btnSuccess}
+              startIcon={<EditIcon color="primary" />}
+              onClick={onEdit}
+            >
+              Edit
+            </Button>
+            <DeleteButton deleteModal={deleteModal} deleteAction={onDelete} setDeleteModal={setDeleteModal} />
+          </div>
+        </div>
+      }
     </Card>
   )
 }
 export default PreviewCard;
+
+export const PreviewCardBank = ({ children, onEdit, action=true, onDelete, onCustom, verified = false, customIcon, tokenLabel, verifiedDate }) => {
+  const classes = useStyles()
+  const [deleteModal, setDeleteModal] = useState(false)
+  return (
+    <Card style={{marginBottom:0}}>
+      <div className="card-body">
+        {children}
+      </div>
+      {
+        action &&
+        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingLeft: 10}} >
+            {
+              verified ?
+              <Typography variant='body2' style={{ color: 'rgb(0,0,0,0.4)', margin: '16px 0px' }}>
+                {`Last Verified: ${verifiedDate || '-'}`}
+              </Typography> :
+              <Button
+                size="small"
+                variant="outlined"
+                color="success"
+                style={{ margin: 4 }}
+                className={classes.btnSuccess}
+                startIcon={customIcon ? customIcon : <InfoOutlinedIcon color="primary" />}
+                onClick={onCustom}
+              >
+                {tokenLabel}
+              </Button> 
+            }
+          {
+            !verified && (
+              <div className='card-footer'>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="success"
+                  style={{ margin: 4 }}
+                  className={classes.btnSuccess}
+                  startIcon={<EditIcon color="primary" />}
+                  onClick={onEdit}
+                >
+                  Edit
+                </Button>
+                <DeleteButton deleteModal={deleteModal} deleteAction={onDelete} setDeleteModal={setDeleteModal} />
+              </div>
+            )
+          }
+        </div>
+      }
+    </Card>
+  )
+}

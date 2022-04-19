@@ -7,7 +7,7 @@ import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState } from 'react';
 import { useMount } from 'react-use';
 import Currency from '../../components/Number/Currency';
-import { getTestReport } from '../../services/users.service';
+import { getLoanReportByDealershipId } from '../../services/users.service';
 
 
 const useStyles = makeStyles(theme => ({
@@ -33,15 +33,25 @@ const useStyles = makeStyles(theme => ({
   pills_SOLAR: {
     color: '#51b37f',
     backgroundColor: '#e1f8e5',
+  },
+  style: {
+    '&.MuiPaper-root': {
+      backgroundColor: '#ffe2e2',
+      border: '2px solid #ffb7b7'
+    },
+    '& .MuiTableCell-head': {
+      color: 'white',
+      backgroundColor: '#ffb7b7'
+    }
   }
 }));
-const OverDueTable = ({ id, onRowClick }) => {
+const OverDueTable = ({ id, onRowClick, style }) => {
 
   const classes = useStyles();
   const [loans, setLoans] = useState([])
   const [loading, setLoading] = useState(false);
   useMount(async () => {
-    getTestReport(id)
+    getLoanReportByDealershipId(id)
       .then((data) => {
         setLoans(data.overdue)
         setLoading(false);
@@ -113,6 +123,8 @@ const OverDueTable = ({ id, onRowClick }) => {
             data={loans}
             columns={columns}
             options={options}
+            style={style}
+            className={style === 'red' && classes.style}
           />
         ) : <Paper style={{ marginTop: 10, padding: 10 }}>No overdue Reports found</Paper>
       }

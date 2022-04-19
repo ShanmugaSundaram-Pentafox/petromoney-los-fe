@@ -6,11 +6,13 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
+import SettingsIcon from '@material-ui/icons/Settings';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
 import ExpensesTable from './ExpensesTable';
 import IncomeTable from './IncomeTable';
+import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
 import { postDealershipFinancialsById, getDealershipFinancialsById } from '../../../services/dealerships.service';
@@ -74,7 +76,16 @@ const Row = ({ text, value, children }) => {
   )
 }
 
-const CreditReportForm = ({ id, editable, data, values, errors, onChange, setValues, currentUser, loading, onSubmit }) => {
+const pastFyFinder = (startYear) => {
+  const prevFyYear = new Date().getMonth()+1 <= 3 ? new Date().getFullYear()-1 : new Date().getFullYear()
+  let options = []
+  for (let i=prevFyYear; i>startYear; i--) {
+    options.push(`${i-1}_${i}`)
+  }
+  return options
+}
+
+const CreditReportForm = ({ id, editable, data, values, errors, onChange, setValues, currentUser, loading, onSubmit, viewOnly }) => {
   const [financeData, setFinanceData] = useState()
   const [financialYear, setFinancialYear] = useState([])
   const classes = useStyles();
@@ -84,7 +95,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
     className: classes.row
   };
   useEffect(() => {
-    const fy = values.financial_year ? values.financial_year?.split('_') : ['2020', '2021']
+    const fy = values.financial_year ? values.financial_year?.split('_') : ['2021', '2022']
     setFinancialYear(fy)
     if (fy) {
       getDealershipFinancialsById(id, fy[0], fy[1])
@@ -100,10 +111,10 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
     <Grid container>
       <Grid {...gridItem}>
         <Grid item md={6}>
+          <label>Business Vintage with OMC</label>
           <TextInput
             number
             readOnly={!editable}
-            label="Business Vintage with OMC"
             name="business_vintage"
             value={values.business_vintage}
             onChange={onChange}
@@ -114,70 +125,29 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
         <Grid container spacing={2}>
           <Grid {...gridItem}>
             <Typography className={classes.sidePanelTitle} variant="h4">Financials</Typography>
-            {/* <Table className={classes.table} size="small" aria-label="Financials">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Previous Financial Year</TableCell>
-                  <TableCell>Latest Financial Year {values.from_year ? `${values.from_year}_${values.to_year}` : ''}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                <TableRow>
-                  <TableCell>2018 - 2019</TableCell>
-                  <TableCell>2019 - 2020</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>
-                    <FinanceFormData
-                      id={id}
-                      type={'previous_fy'}
-                      data={data.previous_fy}
-                      values={values.previous_fy || {}}
-                      errors={errors}
-                      editable={editable}
-                      btnLabel={'Previous FY'}
-                      currentUser={currentUser}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <FinanceFormData
-                      id={id}
-                      type={'latest_fy'}
-                      data={data.latest_fy}
-                      values={values.latest_fy || {}}
-                      errors={errors}
-                      editable={editable}
-                      btnLabel={'Latest FY'}
-                      currentUser={currentUser}
-                    />
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell colSpan={2}>
-                    <Text>Change in net profit over sales % for last 2 years <strong>{`-%`}</strong></Text>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table> */}
           </Grid>
           <Grid {...gridItem} md={12}>
             <Grid {...gridItem} md={6}>
               <TextInput
                 select
-                // readOnly
+                disabled={!editable}
                 label="Latest Financial Year"
                 name="financial_year"
                 value={values.financial_year}
                 data={financialYear}
                 onChange={onChange}
+                InputLabelProps={{ shrink: true }}
                 SelectProps={{
                   native: true,
                 }}
               >
-                {/* <option value="2019_2020">Choose FY</option> */}
-                <option value="2020_2021">FY 2020-2021</option>
-                <option value="2019_2020">FY 2019-2020</option>
-                <option value="2018_2019">FY 2018-2019</option>
+                {
+                  pastFyFinder(2018)?.map((option, i) => {
+                    return(
+                      <option value={option} key={i}>FY {option}</option>
+                    )
+                  })
+                }
               </TextInput>
             </Grid>
             {
@@ -194,45 +164,8 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 />
               )
             }
-
-            {/* <FinanceFormData
-              data={data.latest_fy}
-              values={values.latest_fy || {}}
-              errors={errors}
-              btnLabel={'Latest FY'}
-            // onSave={v => saveFinanceData('latest_fy', v)}
-            /> */}
           </Grid>
-          {/* <Grid {...gridItem} md={6}>
-            <Grid {...gridItem}>
-              <TextInput
-                select
-                readOnly
-                label="Previous Financial Year"
-                name="previous_fy"
-                value={`${values.from_year}_${values.to_year}`}
-                onChange={onChange}
-                SelectProps={{
-                  native: true,
-                }}
-                >
-                  <option value="2019_2020">FY 2019-2020</option>
-              </TextInput>
-            </Grid>
-            <FinanceFormData
-              data={data.previous_fy}
-              values={values.previous_fy || {}}
-              errors={errors}
-              btnLabel={'Previous FY'}
-              onSave={v => saveFinanceData('previous_fy', v)}
-            />
-          </Grid> */}
         </Grid>
-        {/* <Grid item>
-          <Typography className={classes.textLabel} variant="p">
-            Change in net profit over sales % for last 2 years <strong>{`Change%`}</strong>
-          </Typography>
-        </Grid> */}
       </Grid>
       <Grid {...gridItem}>
         <Typography className={classes.sidePanelTitle} variant="h4">General Factors</Typography>
@@ -265,7 +198,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
           name='other_services_count'
           value={values.other_services_count}
           onChange={onChange}
-          readOnly={!editable}
+          disabled={!editable}
           SelectProps={{
             native: true,
           }}
@@ -286,7 +219,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
           name="social_score"
           value={values.social_score}
           onChange={onChange}
-          readOnly={!editable}
+          disabled={!editable}
           SelectProps={{
             native: true,
           }}
@@ -307,7 +240,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
           name="pd_officer_remarks"
           value={values.pd_officer_remarks}
           onChange={onChange}
-          readOnly={!editable}
+          disabled={!editable}
           SelectProps={{
             native: true,
           }}
@@ -326,7 +259,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
       </Grid>
       <Grid {...gridItem}>
         <Typography className={classes.sidePanelTitle} variant="h4">Income</Typography>
-        <IncomeTable id={id} editable={editable} currentUser={currentUser} />
+        <IncomeTable id={id} editable={editable} currentUser={currentUser} viewOnly={viewOnly} />
       </Grid>
       <Grid {...gridItem}>
         <Text>Total Income <strong><Currency value={values.total_income} /></strong></Text>
@@ -336,7 +269,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
       </Grid>
       <Grid {...gridItem}>
         <Typography className={classes.sidePanelTitle} variant="h4">Expenses</Typography>
-        <ExpensesTable id={id} editable={editable} currentUser={currentUser} />
+        <ExpensesTable id={id} editable={editable} currentUser={currentUser} viewOnly={viewOnly} />
       </Grid>
       <Grid {...gridItem}>
         <Text>Total Expenses other than Depreciation, Interest &amp; Tax <strong><Currency value={values.total_expense} /></strong></Text>
@@ -466,10 +399,10 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
           editable && (
             <Button
               variant="contained"
-              className={clsx(classes.btn, classes.btnSuccess)}
-              // startIcon={<NavigateNextRoundedIcon />}
+              color='secondary'
               disabled={loading}
-              onClick={loading ? () => null : onSubmit}>{loading ? <CircularProgress size={20} /> : 'Save'}</Button>
+              startIcon={<SettingsIcon fontSize='small' />}
+              onClick={loading ? () => null : onSubmit}>{loading ? <CircularProgress size={20} /> : 'Compute'}</Button>
           )
         }
       </Grid>
@@ -480,6 +413,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
 const FinanceFormData = ({ id, editable, btnLabel, data, values = {}, errors, currentUser }) => {
   const classes = useStyles();
   const [financeData, setFinanceData] = useState();
+  const [loading, setLoading] = useState(false);
   const [financeErrors, setFinanceErrors] = useState({});
   const gridItem = {
     md: 6,
@@ -494,17 +428,20 @@ const FinanceFormData = ({ id, editable, btnLabel, data, values = {}, errors, cu
     const { name, value } = e.target;
     setFinanceData({
       ...financeData,
-      [name]: value
+      [name]: value ? value : 0
     })
   }
 
   const validateFinanceData = () => {
+    setLoading(true)
     // TODO: need to add validation
     postDealershipFinancialsById(id, { from_year: data[0], to_year: data[1], user_id: currentUser.id, ...financeData })
       .then(res => {
         setFinanceData(res) 
+        setLoading(false)
       })
       .catch(err => {
+        setLoading(false)
         console.log('Finance form save error - ', err)
       })
   }
@@ -612,16 +549,15 @@ const FinanceFormData = ({ id, editable, btnLabel, data, values = {}, errors, cu
           onChange={onTextChange}
         />
       </Grid>
-      {/* <Grid {...gridItem}>
-        <Text>Change in net profit over sales % for last 2 years <strong>{financeData.change_in_profit_over_sales}%</strong></Text>
-      </Grid> */}
       {
         editable && (
           <Grid {...gridItem} className={classes.lastRow} md={12}>
-            <Button
-              variant="contained"
+            <LoaderButton
+              variant='contained'
               className={classes.btnSuccess}
-              onClick={validateFinanceData}>Save {btnLabel}</Button>
+              isLoading={loading}
+              loadingText="Saving..."
+              onClick={validateFinanceData}>Save {btnLabel}</LoaderButton>
           </Grid>
         )
       }

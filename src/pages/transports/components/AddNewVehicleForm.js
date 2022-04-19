@@ -1,28 +1,27 @@
 import Box from '@material-ui/core/Box';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
-import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
+import { useQueryClient } from 'react-query';
 import * as Yup from 'yup';
+import { VehicleDetails } from './VehicleDetails';
 import Button from '../../../components/CommonComponents/Button/Button';
 import TextInput from '../../../components/TextInput/TextInput';
 import {
   addNewVehicle,
-  updateVehicle,
+  getVehicleInfoFromID,
 } from '../../../services/transports.service';
+import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
-    // textAlign: 'center',
     padding: '24px 16px',
     display: 'flex',
     justifyContent: 'space-between',
@@ -59,6 +58,12 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.success.dark,
     },
   },
+  items: {
+    '&.MuiGrid-item': {
+      paddingTop: 0,
+      paddingBottom: 2
+    }
+  }
 }));
 
 const AddNewVehicleForm = ({
@@ -70,14 +75,13 @@ const AddNewVehicleForm = ({
   isAdd,
   callback,
 }) => {
+  const queryClient = useQueryClient()
   const [readOnly, setReadOnly] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
+  const [vehicleDetails, setVehicleDetails] = useState()
   const classes = useStyles();
 
-  const handleEdit = () => {
-    setReadOnly(!readOnly);
-  };
   const {
     values,
     errors,
@@ -92,60 +96,37 @@ const AddNewVehicleForm = ({
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      tt_no: Yup.string().required('Please enter vehicle number').nullable('Enter vehicle number').matches(/^[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}$/, 'Invalid Vehicle Number'),
+      tt_no: Yup.string().required('Please enter vehicle number').nullable('Enter vehicle number').matches(/^[A-Z]{2}[0-9]{2}[A-Z\s]{0,2}[0-9]{4,6}$/, 'Invalid Vehicle Number'),
     }),
     onSubmit: (formData) => {
       setLoading(true);
-      if (isAdd === 'Edit') {
-        updateVehicle(formData, id, trans_id)
-          .then((message) => {
-            setLoading(false);
-            enqueueSnackbar(message, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-              variant: 'success',
-            });
-
-            setTimeout(() => {
-              window.location.reload();
-            }, 2000);
-          })
-          .catch((e) => {
-            setLoading(false);
-            enqueueSnackbar(e, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-              variant: 'error',
-            });
+      addNewVehicle(formData, id)
+        .then((message) => {
+          setLoading(false)
+          enqueueSnackbar(message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
           });
-      } else {
-        addNewVehicle(formData, id)
-          .then((message) => {
-            enqueueSnackbar(message, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-              variant: 'success',
-            });
-            setTimeout(() => {
-              window.location.reload();
-            }, 2000);
-          })
-          .catch((e) => {
-            enqueueSnackbar(e, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-              variant: 'error',
-            });
+          getVehicleInfoFromID(id)
+            .then((data) => {
+              setVehicleDetails(data?.find(item => item.tt_no === formData.tt_no)?.vehicle_details)
+            })
+            .catch(e => console.log(e))
+        })
+        .catch((e) => {
+          setLoading(false)
+          enqueueSnackbar(e, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
           });
-      }
+        });
+      // }
     },
   });
   const inputProps = {
@@ -185,64 +166,34 @@ const AddNewVehicleForm = ({
                     />
                   )}
                 </Grid>
+                <Grid item md={6}>
+                  <LoaderButton 
+                    variant='contained'
+                    className={clsx(classes.btn, classes.editButton)}
+                    isLoading={loading}
+                    loadingText='Saving...'
+                    style={{marginTop: 19}}
+                    onClick={handleSubmit}
+                    type='submit'
+                  >Save</LoaderButton>
+                </Grid>
               </Grid>
+              <Divider style={{marginTop: 8}} />
             </form>
+            {
+              vehicleDetails &&
+                <VehicleDetails vehicleTestDet={vehicleDetails} />
+            }
           </Box>
-        </div>
-      </div>
-      <div className={classes.actionFooter}>
-        <Divider />
-        <div className={classes.actionButtonsWrapper}>
           <Button
             variant='outlined'
             startIcon={<NavigateBeforeRoundedIcon />}
             disabled={loading}
-            onClick={callback}
+            onClick={() => {callback(); queryClient.invalidateQueries(['vehicleData', id])}}
+            style={{marginTop: 10}}
           >
             Back
           </Button>
-          {!readOnly ? (
-            !loading ? (
-              <>
-                <Button
-                  variant='contained'
-                  type='submit'
-                  className={clsx(classes.btn, classes.editButton)}
-                  startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                  disabled={loading}
-                  onClick={loading ? () => null : handleSubmit}
-                >
-                  Save
-                </Button>
-              </>
-            ) : (
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                  width: '90%',
-                  margin: '0 auto',
-                }}
-              >
-                <CircularProgress size={30} />
-              </div>
-            )
-          ) : (
-            <>
-              <div>
-                <Button
-                  variant='contained'
-                  type='submit'
-                  className={clsx(classes.btn, classes.editButton)}
-                  startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                  disabled={loading}
-                  onClick={loading ? () => null : handleEdit}
-                >
-                  Edit
-                </Button>
-              </div>
-            </>
-          )}
         </div>
       </div>
     </div>

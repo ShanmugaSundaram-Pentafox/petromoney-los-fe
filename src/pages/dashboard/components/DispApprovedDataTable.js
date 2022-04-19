@@ -2,7 +2,6 @@ import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import Backdrop from '@material-ui/core/Backdrop';
 import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -33,14 +32,13 @@ import Currency from '../../../components/Number/Currency';
 import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
 import { logger } from '../../../config/logger';
 import { updateLoanApprovalStatusById, deleteLoanDisbursementRecord } from '../../../services/loans.service';
+import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 
 
 
 const useStyles = makeStyles(theme => ({
   root: {
     marginTop: 20,
-    // padding: theme.spacing(3),
-    // paddingTop: 0,
   },
   modal: {
     display: 'flex',
@@ -104,7 +102,6 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
     validateOnChange: false,
     validateOnBlur: false,
     initialValues: {
-      disbursement_status: 1,
       disbursement_date: selectedDate,
     },
     validationSchema: Yup.object().shape({
@@ -115,7 +112,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
     }),
     onSubmit: values => {
       const date = moment(selectedDate).format('YYYY/MM/DD')
-      const data = values.applicant_code ? { ...values, disbursement_date: date, amount: values.amount?.trim() } : { ...values, applicant_code: dispHistory.applicant_code, disbursement_date: date, amount: values.amount?.trim() };
+      const data = values.applicant_code ? { ...values, disbursement_date: date, amount: values?.amount, disbursement_status: 1 } : { ...values, applicant_code: dispHistory.applicant_code, disbursement_date: date, amount: values?.amount, disbursement_status: 1 };
       // alert(JSON.stringify(data, null, 2));
       setLoading(true);
       updateLoanApprovalStatusById(id, loanData.id, 'approval', data)
@@ -128,6 +125,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
           setApiStatus({ status: 'success', message });
           setTimeout(() => {
             setModalData({ open: false })
+            setValues({})
           }, 500);
         })
         .catch(e => {
@@ -243,7 +241,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                           labelText="Applicant Code"
                           error={errors.applicant_code}
                           helperText={errors.applicant_code}
-                          defaultValue={values.applicant_code}
+                          value={values.applicant_code}
                           onChange={handleChange}
                         />
                       )
@@ -258,12 +256,11 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                       labelText="Prospect Code"
                       error={errors.prospect_code}
                       helperText={errors.prospect_code}
-                      defaultValue={values.prospect_code}
+                      value={values.prospect_code}
                       onChange={handleChange}
                     />
                   </Grid>
                   <Grid item sm={6}
-                    // style={{ backgroundColor: "green" }}
                     className={classes.gridStyle}
                   >
                     <InputWrapper direction top>
@@ -271,9 +268,10 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                       <MuiPickersUtilsProvider utils={DateFnsUtils}>
                         <KeyboardDatePicker
                           hideTabs={true}
+                          disableFuture={true}
                           variant='inline'
                           inputVariant='outlined'
-                          format='MM/dd/yyyy'
+                          format='dd/MM/yyyy'
                           animateYearScrolling={true}
                           invalidDateMessage='Invalid Date Format'
                           margin='normal'
@@ -308,29 +306,16 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
                       onChange={handleChange}
                     />
                   </Grid>
-                  {/* <Grid item sm={12}>
-                    <TextInput
-                      direction
-                      alignTop
-                      multiline
-                      required
-                      rows={4}
-                      rowsMax={8}
-                      name={"disbursement_remarks"}
-                      labelText="Remarks"
-                      defaultValue={values.disbursement_remarks}
-                      error={errors.disbursement_remarks}
-                      helperText={errors.disbursement_remarks}
-                      onChange={handleChange}
-                      />
-                  </Grid> */}
                   <Grid item xs={12} className={classes.actionFooter}>
                     <Button disabled={loading} variant="outlined" color="default" onClick={() => { setModalData({}); setValues({}) }}>Cancel</Button>
-                    <Button disabled={loading} className={classes.actionButton} type="submit" variant="outlined" color="primary">
-                      {
-                        loading ? <CircularProgress size={23} /> : 'Save'
-                      }
-                    </Button>
+                    <LoaderButton 
+                      variant='outlined'
+                      className={classes.actionButton}
+                      color='primary'
+                      isLoading={loading}
+                      loadingText='Saving...'
+                      type="submit"
+                    >Save</LoaderButton>
                   </Grid>
                 </Grid>
               </form>

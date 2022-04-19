@@ -1,7 +1,4 @@
-import { Typography } from '@material-ui/core';
-import { Grid } from '@material-ui/core';
-import Avatar from '@material-ui/core/Avatar';
-import Box from '@material-ui/core/Box';
+import { Typography, Grid, Box, Avatar } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
@@ -11,14 +8,16 @@ import EditIcon from '@material-ui/icons/Edit';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState } from 'react';
+import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
-import { useMount } from 'react-use';
 import styled from 'styled-components';
 import Button from '../../../components/CommonComponents/Button/Button';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
 import usePageTitle from '../../../hooks/usePageTitle';
 import AddNewTransportForm from '../../../pages/transports/components/AddNewTransportsForm';
+import AddNewTransportsOwnerForm from '../../../pages/transports/components/AddNewTransportsOwnerForm';
 import { getTransportsByOwnersId, getOwnerDetailsById } from '../../../services/transports.service';
-import AddNewTransportsOwnerForm from '../../transports/components/AddNewTransportsOwnerForm';
 
 
 const Card = styled.div`
@@ -107,18 +106,21 @@ export const OwnerInfoCard = ({ id, ownerData, currentUser }) => {
   )
 }
 
-const OwnerDetails = ({ currentUser, match, loading }) => {
+const OwnerDetails = ({ currentUser, match }) => {
   const classes = useStyles()
   const [openModal, setOpenModal] = useState(false)
-  const [transportsData, setTransportsData] = useState()
-  const [ownerData, setOwnerData] = useState([]);
   const [rowData, setRowData] = useState({})
   const [formType, setFormType] = useState('');
+  const editable = permissionCheck(currentUser.role_name, rulesList.external_view);
 
   const {
     url,
     params: { id },
   } = match
+  const { data: transportsData, isLoading } = useQuery(['transport-data', id], () => getTransportsByOwnersId(id))
+  const { data: ownerData } = useQuery(['owner-data', id], () => getOwnerDetailsById(id))
+
+
   const onRowClick = (id, rowData) => {
     setOpenModal(true)
     setRowData(rowData)
@@ -127,25 +129,25 @@ const OwnerDetails = ({ currentUser, match, loading }) => {
   }
 
 
-  useMount(() => {
-    getTransportsByOwnersId(id)
-      .then(data => {
-        setTransportsData(data);
-      })
-      .catch(e => {
-        console.log(e)
-      })
-    getOwnerDetailsById(id)
-      .then(data => {
-        setOwnerData(data[0])
-      })
-      .catch(error => {
-        console.log(error)
-      })
-  })
+  // useMount(() => {
+  //   getTransportsByOwnersId(id)
+  //     .then(data => {
+  //       setTransportsData(data);
+  //     })
+  //     .catch(e => {
+  //       console.log(e)
+  //     })
+  //   getOwnerDetailsById(id)
+  //     .then(data => {
+  //       setOwnerData(data[0])
+  //     })
+  //     .catch(error => {
+  //       console.log(error)
+  //     })
+  // })
   let cardData = [
     { label: 'Owner ID', value: ownerData?.t_owner_id },
-    { label: 'Owner name', value: ownerData.first_name + ' ' + ownerData.last_name },
+    { label: 'Owner name', value: ownerData?.first_name + ' ' + ownerData?.last_name },
     { label: 'Mobile', value: ownerData?.mobile },
     // { label: 'Email', value: ownerData?.email }
   ]
@@ -201,7 +203,6 @@ const OwnerDetails = ({ currentUser, match, loading }) => {
   }, [transportsData]);
 
   const options = {
-    selectableRowsHeader: false,
     selectableRows: 'none',
     print: false,
     filter: false,
@@ -213,6 +214,7 @@ const OwnerDetails = ({ currentUser, match, loading }) => {
     selectableRowsHeader: false,
     customToolbar: () => {
       return (
+        !editable &&
         <Button
           color="primary"
           variant="contained"
@@ -250,11 +252,11 @@ const OwnerDetails = ({ currentUser, match, loading }) => {
                   options={options}
                 />
               ) : (
-                !loading && <Paper style={{ padding: 10 }}>No transports found</Paper>
+                !isLoading && <Paper style={{ padding: 10 }}>No transports found</Paper>
               )
             }
             {
-              loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
+              isLoading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
             }
           </div>
         </Grid>
@@ -268,7 +270,7 @@ const OwnerDetails = ({ currentUser, match, loading }) => {
         }}
         variant="temporary"
       >
-        <AddNewTransportForm callback={() => setOpenModal(false)} isAdd={formType} id={id} data={rowData} currentUser={currentUser} />
+        <AddNewTransportForm callback={() => setOpenModal(false)} isAdd={formType} id={id} data={rowData} currentUser={currentUser} editable={editable} />
       </Drawer>
     </>
   )

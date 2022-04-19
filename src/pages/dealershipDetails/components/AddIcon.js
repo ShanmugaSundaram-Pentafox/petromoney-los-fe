@@ -54,7 +54,7 @@ const AddIconButton = ({ onClickAddMenu }) => {
             <AddIcon fontSize="small" />
           </Button>
         </ButtonGroup>
-        <Popper open={open} placement="bottom-end" anchorEl={anchorRef.current} role={undefined} transition disablePortal>
+        <Popper open={open} placement="bottom-end" anchorEl={anchorRef.current} role={undefined} transition>
           {({ TransitionProps, placement }) => (
             <Grow
               {...TransitionProps}

@@ -84,9 +84,11 @@ export const downloadPDF = ({ file, isBase64, name }) => {
   downloadLink.click();
 }
 
-export const getAllRegions = () => {
+export const getAllRegions = (id) => {
   return new Promise((resolve, reject) => {
-    apiCall('regions', {}, 'GET')
+    let apiUrl = 'regions/los'
+    if(id !== '0' && id !=='' && id) apiUrl += `?zone=${id}`
+    apiCall(apiUrl, {}, 'GET')
       .then(response => {
         if (response?.status === 'SUCCESS') {
           const result = response?.data.map(item => ({
@@ -237,12 +239,15 @@ export const SendReports = () => {
       })
   });
 }
-export const getPassbookDetails = (id) => {
+export const getPassbookDetails = (id, action) => {
+  let apiUrl = `dealership/${id}/passbook`
+  if (action === 'download') apiUrl+='?send=1&download=1'
+  if (action === 'share') apiUrl+='?send=1'
   return new Promise((resolve, reject) => {
-    apiCall(`passbook/dealership/${id}`)
+    apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
-          resolve(data);
+          resolve({data, message});
         } else {
           reject(message);
         }
@@ -252,6 +257,7 @@ export const getPassbookDetails = (id) => {
       })
   });
 }
+
 export const getStates = () => {
   return new Promise((resolve, reject) => {
     apiCall('master/states')
@@ -299,7 +305,21 @@ export const getActiveStates = () => {
       })
   })
 }
-
+export const getMenuItemsCount = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('count')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data || {});
+        } else {
+          reject(message);
+        }
+      })
+      .catch(err => {
+        reject(err.message);
+      })
+  })
+}
 // export const getMasterRegionById = (res) => {
 //   return new Promise((resolve, reject) => {
 //     apiCall(`master/regions/${res}`)
@@ -716,6 +736,155 @@ export const getUserRoleForReview = (status) => {
       })
       .catch(err => {
         reject(err.message);
+      })
+  })
+}
+
+export const getProducts = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('business/products/valid')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          const result = data?.map(item => ({
+            label: item.product_name,
+            value: item.product_id,
+          }))
+          resolve(result || []);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(err => {
+        reject(err.message);
+      })
+  })
+}
+
+export const getProductsMaster = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('business/products')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data || []);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(err => {
+        reject(err.message);
+      })
+  })
+}
+
+export const getZones = (filter) => {
+  return new Promise((resolve, reject) => {
+    let apiUrl = 'zones'
+    if(filter === 1) apiUrl+='?filter=1'
+    apiCall(apiUrl)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(err => {
+        reject(err.message);
+      })
+  })
+}
+
+export const insertNewProduct = (data) => {
+  return new Promise((resolve, reject) => {
+    apiCall('business/products', {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+
+export const addZones = (data) => {
+  return new Promise((resolve, reject) => {
+    apiCall('zones', {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const updateProductbyId = (id, data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`business/products/${id}`, {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const editZones = (id, data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`zones/${id}`, {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const refreshRedis = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('redis/refresh', {
+      method: 'POST',
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
       })
   })
 }

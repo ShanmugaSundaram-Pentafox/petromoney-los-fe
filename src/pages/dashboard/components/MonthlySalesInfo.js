@@ -8,8 +8,10 @@ import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components';
+import DeleteButton from '../../../components/CommonComponents/Button/DeleteButton';
 import TextInput from '../../../components/TextInput/TextInput';
 import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
@@ -70,21 +72,25 @@ const getPastFiveYears = () => {
 
 
 const MonthlySalesInfo = ({ id, titleAlign, column, currentUser, readOnly }) => {
-  const [info, setInfo] = useState([]);
+  // const [info, setInfo] = useState([]);
   const classes = useStyles();
+  const queryClient = useQueryClient()
   const [addNewRow, setAddNewRow] = useState();
   const [apiData, setApiData] = useState({});
   const [editRow, setEditRow] = useState({});
+  const [deleteModal, setDeleteModal] = useState(false)
   const { enqueueSnackbar } = useSnackbar();
   const LastFiveYear = getPastFiveYears()
+  const { data: info = [] } = useQuery(['monthly-sales', id], () => getDealershipMonthlySalesById(id))
 
-  useEffect(() => {
-    if (id) {
-      getDealershipMonthlySalesById(id)
-        .then(data => setInfo(data))
-        .catch(err => null)
-    }
-  }, [id]);
+
+  // useEffect(() => {
+  //   if (id) {
+  //     getDealershipMonthlySalesById(id)
+  //       .then(data => setInfo(data))
+  //       .catch(err => null)
+  //   }
+  // }, [id]);
 
   const onTextChange = e => {
     const { name, value } = e.target;
@@ -97,7 +103,10 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser, readOnly }) => 
   const deleteSalesRow = (rowData, rowIndex) => {
     deleteDealershipMonthlySalesById(id, rowData, rowIndex)
       .then((res) => {
-        setInfo(res);
+        // setInfo(res);
+        setDeleteModal(false)
+        queryClient.invalidateQueries(['monthly-sales', id])
+        console.log(res)
       })
       .catch(err => {
         enqueueSnackbar(err, {
@@ -114,7 +123,8 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser, readOnly }) => 
     if (Object.keys(apiData).length < 4) return null;
     postDealershipMonthlySalesById(id, apiData)
       .then(res => {
-        setInfo(res);
+        // setInfo(res);
+        queryClient.invalidateQueries(['monthly-sales', id])
         setAddNewRow(false);
       })
       .catch(err => {
@@ -133,7 +143,8 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser, readOnly }) => 
     delete data.rowIndex
     updateDealershipMonthlySalesById(id, data)
       .then(res => {
-        setInfo(res);
+        // setInfo(res);
+        queryClient.invalidateQueries(['monthly-sales', id])
         setEditRow({});
       })
       .catch(err => {
@@ -284,14 +295,7 @@ const MonthlySalesInfo = ({ id, titleAlign, column, currentUser, readOnly }) => 
                       }
                       {
                         editable ? (
-                          <Button
-                            size="small"
-                            variant="outlined"
-                            color="success"
-                            className={clsx(classes.btnSuccess, classes.btnDelete)}
-                            onClick={() => deleteSalesRow(row, i)}>
-                            Delete
-                          </Button>
+                          <DeleteButton deleteAction={() => deleteSalesRow(row, i)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={i} />
                         ) : null
                       }
 

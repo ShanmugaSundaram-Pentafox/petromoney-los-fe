@@ -28,7 +28,7 @@ const DashCardWrapper = styled.div`
     color: #fff;
     font-size: 11px;
     font-weight: 600;
-    background-color: #388e3c;
+    background-color: #2d9c32;
     border-radius: 14px;
     position: absolute;
     bottom: -16px;
@@ -75,7 +75,7 @@ const DashCardWrapper = styled.div`
       font-weight: 600;
       flex: 1;
     }
-    
+  
     .stat-icon {
 
     }

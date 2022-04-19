@@ -1,17 +1,14 @@
-import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState } from 'react';
-import { useMount } from 'react-use';
+import { useQuery } from 'react-query';
 import AddIconButon from './AddIcon';
 import CoApplicantsTable from './CoApplicantsTable';
-import CreditInfoSideWrapper from './CreditInfoSideWrapper';
 import DealerEditSideWrapper from './DealerEditSideWrapper';
 import DealersTable from './DealersTable';
 import GuarantorsTable from './GuarantorsTable';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-// import ExperianReport from './ExperianReport';
 import { getDealersByDealershipId, getCoApplicantByDealershipId } from '../../../services/dealers.service';
 import { getAllGuarantor } from '../../../services/leegality.service';
 
@@ -30,7 +27,6 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 8
   },
   table: {
-    // minWidth: 650,
     padding: 8
   },
   header: {
@@ -44,13 +40,6 @@ const useStyles = makeStyles(theme => ({
   sidePanelWrapper: {
     width: '40vw',
     minWidth: 300
-  },
-  // experianWrapper: {
-  //   width: '50vw',
-  //   minWidth: 300
-  // },
-  actionButtons: {
-    // paddingTop: 8
   },
   tableRow: {
     cursor: 'pointer'
@@ -73,40 +62,36 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   const [formType, setFormType] = useState('');
   const [modelType, setModelType] = useState('');
   const [rowData, setRowData] = useState({});
-  const [dealerData, setDealersData] = useState([]);
-  const [coApplicantsData, setCoApplicantsData] = useState([]);
-  const [guarantorsData, setGuarantorsData] = useState([]);
-  const [dealerCoApplicantData, setDealerCoApplicantData] = useState([]);
-
-  const getCoApplicantApiCall = (id) => {
-    getCoApplicantByDealershipId(id)
-      .then(data => {
-        setCoApplicantsData(data);
-        setDealerCoApplicantData(prevArray => [...prevArray, ...data]);
-      })
-      .catch(e => null)
-  }
-
-  const getDealerApiCall = (id) => {
-    getDealersByDealershipId(id)
-      .then(data => {
-        setDealersData(data);
-        setDealerCoApplicantData(prevArray => [...prevArray, ...data]);
-      })
-      .catch(e => null)
-  }
-  const getGuarantorApiCall = () => {
-    getAllGuarantor(id)
-      .then(data => {
-        setGuarantorsData(data);
-      })
-  }
-
-  useMount(() => {
-    getDealerApiCall(id);
-    getCoApplicantApiCall(id);
-    getGuarantorApiCall(id);
-  });
+  const { data: coApplicantsData } = useQuery(['co-applicants', id], () => getCoApplicantByDealershipId(id), {
+    initialData: [],
+    select: res => {
+      return res.map(d => ({
+        ...d,
+        userType: 'Co-Applicant'
+      }))
+    },
+    refetchOnWindowFocus: false
+  })
+  const { data: dealerData } = useQuery(['dealers-coapplicant', id], () => getDealersByDealershipId(id), {
+    initialData: [],
+    select: res => {
+      return res.map(d => ({
+        ...d,
+        userType: 'Dealer'
+      }))
+    },
+    refetchOnWindowFocus: false
+  })
+  const { data: guarantorsData } = useQuery(['guarantors', id], () => getAllGuarantor(id), {
+    initialData: [],
+    select: res => {
+      return res.map(d => ({
+        ...d,
+        userType: 'Guarantor'
+      }))
+    },
+    refetchOnWindowFocus: false
+  })
 
   const openCloseCreditForm = () => {
     setShowCreditForm(!showCreditForm);
@@ -140,24 +125,21 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
     setShowDealerEditForm(false)
   }
 
-  // const getExperianData = type => (event, id) => {
-  //   event.preventDefault();
-  //   event.stopPropagation()
-  //   setExperianData({ show: true, id, type });
-  // }
-
   const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit);
+  const deletable = permissionCheck(currentUser.role_name, rulesList.applicant_delete);
+  const viewOnly = permissionCheck(currentUser.role_name, rulesList.dealership_view);
   return (
     <>
       {
         editable && <div className={classes.addButton}>
           <AddIconButon onClickAddMenu={onClickAddMenu} />
-          {/* <Button color="primary" variant="contained" size="small" onClick={() => onClickAddMenu()}>Add Dealer</Button> */}
         </div>
       }
       <DealersTable
         id={id}
         editable={editable}
+        deletable={deletable}
+        viewOnly={viewOnly}
         data={dealerData}
         formType={formType}
         rowData={rowData}
@@ -167,58 +149,43 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         editFormClose={editFormClose}
         dealersClickRow={dealersClickRow}
         onClickAddMenu={onClickAddMenu}
-        // getExperianData={getExperianData("dealer")}
+        currentUser={currentUser}
         showDealerEditForm={showDealerEditForm} />
 
       <CoApplicantsTable
         id={id}
         editable={editable}
+        deletable={deletable}
+        viewOnly={viewOnly}
         titleAlign={titleAlign}
         coApplicantsData={coApplicantsData}
         formType={formType}
         rowData={rowData}
-        titleAlign={titleAlign}
         showCreditForm={showCreditForm}
         openCloseCreditForm={openCloseCreditForm}
         editFormClose={editFormClose}
         dealersClickRow={dealersClickRow}
         onClickAddMenu={onClickAddMenu}
-        // getExperianData={getExperianData("coapplicant")}
+        currentUser={currentUser}
         showDealerEditForm={showDealerEditForm} />
 
       <GuarantorsTable
         id={id}
         editable={editable}
+        deletable={deletable}
+        viewOnly={viewOnly}
         titleAlign={titleAlign}
         guarantorsData={guarantorsData}
         formType={formType}
         rowData={rowData}
-        titleAlign={titleAlign}
         showCreditForm={showCreditForm}
         openCloseCreditForm={openCloseCreditForm}
         editFormClose={editFormClose}
         dealersClickRow={dealersClickRow}
         onClickAddMenu={onClickAddMenu}
-        // getExperianData={getExperianData("guarantor")}
+        currentUser={currentUser}
         showDealerEditForm={showDealerEditForm} />
-      {/* <Drawer
-        anchor="right"
-        open={experianData.show}
-        onBackdropClick={() => setExperianData({ show: false })}
-        variant="temporary"
-      >
-        <div className={classes.experianWrapper}>
-          {
-            experianData.id ? (
-              <ExperianReport
-                id={experianData.id}
-                type={experianData.type}
-                onClose={() => setExperianData({ show: false })}
-              />
-            ) : null
-          }
-        </div>
-      </Drawer> */}
+      
       <Drawer
         anchor="right"
         open={showDealerEditForm}
@@ -227,9 +194,9 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
       >
         <div className={classes.sidePanelWrapper}>
           <DealerEditSideWrapper
-            getDealerApiCall={getDealerApiCall}
+            id={id}
             dealersList={dealerData}
-            getCoApplicantApiCall={getCoApplicantApiCall}
+            viewOnly={viewOnly}
             isAdd={formType}
             modelType={modelType}
             dealershipId={id}
@@ -239,24 +206,6 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         </div>
       </Drawer>
 
-      {
-        editable && ((dealerData || []).length != 0 || (coApplicantsData || []).length != 0 || (guarantorsData || []).length != 0) && (
-          <div className={classes.footer}>
-            <div className={classes.actionButtons}>
-              <Button color="primary" variant="contained" size="small" onClick={() => openCloseCreditForm()}>View/Edit Credit Information</Button>
-            </div>
-            <Drawer
-              anchor="right"
-              open={showCreditForm}
-              variant="temporary"
-            >
-              <div className={classes.sidePanelWrapper}>
-                <CreditInfoSideWrapper dealershipId={id} data={dealerCoApplicantData} currentUser={currentUser} onClose={() => openCloseCreditForm()} />
-              </div>
-            </Drawer>
-          </div>
-        )
-      }
     </>
   )
 }

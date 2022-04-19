@@ -10,8 +10,7 @@ import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
 import UserCan from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-import apiCall from '../../../utils/api.util';
-
+import { getProductsMaster } from '../../../services/common.service';
 
 const LoanInfoWrapper = styled.div`
   padding: 12px;
@@ -19,21 +18,6 @@ const LoanInfoWrapper = styled.div`
   border-radius: 4px;
   background-color: rgba(0, 160, 0, 0.15);
 `;
-
-
-const testProducts = [
-  {
-    product_id: 1,
-    product_name: 'FUEL 18',
-    interest: 18
-  },
-  {
-    product_id: 2,
-    product_name: 'FUEL 28',
-    interest: 28
-  },
-];
-
 
 const LoanInfo = ({
   data: row,
@@ -48,14 +32,12 @@ const LoanInfo = ({
   const [selectedProduct, setSelectedProduct] = useState({ amount_approved: newInfo?.amount_approved });
 
   useEffect(() => {
-    apiCall('business/products')
-      .then(res => {
-        if (res.status === 'SUCCESS') {
-          setProducts(res.data || testProducts);
-          if (row.product_id) {
-            const re = res.data.find(d => d.product_id == row.product_id)
-            setSelectedProduct({ ...re, disabled: status !== 'loan_approval' && status !== 'submitted' && status !== 'loan_review' } || {})
-          }
+    getProductsMaster()
+      .then((data) => {
+        setProducts(data)
+        if (row.product_id) {
+          const re = data.find(d => d.product_id == row.product_id)
+          setSelectedProduct({ ...re, disabled: status !== 'loan_approval' && status !== 'submitted' && status !== 'loan_review' } || {})
         }
       })
       .catch(() => null)
@@ -123,7 +105,7 @@ const LoanInfo = ({
                           money
                           number
                           fullWidth={false}
-                          value={newInfo?.amount_approved}
+                          defaultValue={row?.amount_requested}
                           onChange={e => {
                             updateNewLoanInfo({
                               ...newInfo,
@@ -149,11 +131,11 @@ const LoanInfo = ({
                           money
                           number
                           fullWidth={false}
-                          value={selectedProduct?.amount_approved}
+                          defaultValue={row?.amount_approved}
                           onChange={e => {
                             updateNewLoanInfo({
                               ...newInfo,
-                              amount_disbursed: e.target.value
+                              amount_disbursed: e.target.value || row?.amount_approved
                             })
                           }}
                         />

@@ -23,6 +23,7 @@ import { useSnackbar } from 'notistack';
 import * as Yup from 'yup';
 import Button from '../../../components/CommonComponents/Button/Button';
 import { URL } from '../../../config/serverUrls';
+import { ViewData } from '../../../components/CommonComponents/FilePreview';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -82,7 +83,7 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) => {
+const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback, editable }) => {
   const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
   const [loading, setLoading] = useState(false)
   const [executedDate, setExecutedDate] = useState(data.agreement_executed_on ? parse(data?.agreement_executed_on, 'dd-MM-yyyy', new Date()) : new Date())
@@ -135,6 +136,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
           return res.json();
         })
         .then(res => {
+          callback();
           enqueueSnackbar(res.message, {
             anchorOrigin: {
               vertical: 'top',
@@ -171,113 +173,135 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
           <Box>
-            <form onSubmit={handleSubmit}>
-              <Grid container spacing={2}>
+            {
+              readOnly ? 
+              <Grid container spacing={2} style={{marginTop: 8}}>
                 <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    labelText="Sales officer name"
-                    name="sales_officer_name"
-                    value={values.sales_officer_name}
-                    disabled={readOnly}
-                    readOnly={readOnly}
-                    error={errors.sales_officer_name}
-                    helperText={errors.sales_officer_name}
-                  />
+                  <ViewData title='Sales officer name' value={values?.sales_officer_name} style={{marginBottom: 6}} />  
+                </Grid> 
+                <Grid item md={6}>
+                  <ViewData title='Sales officer mobile' value={values?.sales_officer_mobile} style={{marginBottom: 6}} />  
+                </Grid> 
+                <Grid item md={6}>
+                  <ViewData title='Mode Call/Mail' value={values?.communication_mode} style={{marginBottom: 6}} />  
                 </Grid>
                 <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    className={classes.number}
-                    inputProps={{ className: classes.input }}
-                    labelText="Sales officer mobile"
-                    name="sales_officer_mobile"
-                    value={values.sales_officer_mobile}
-                    disabled={readOnly}
-                    readOnly={readOnly}
-                    type='number'
-                    error={errors.sales_officer_mobile}
-                    helperText={errors.sales_officer_mobile}
-                  />
-                </Grid>
+                  <ViewData title='Dealership agreement executed on' value={values?.agreement_executed_on} style={{marginBottom: 6}} />  
+                </Grid> 
                 <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    labelText="Mode Call/Mail"
-                    name="communication_mode"
-                    disabled={readOnly}
-                    readOnly={readOnly}
-                    value={values.communication_mode}
-                    error={errors.communication_mode}
-                    helperText={errors.communication_mode}
-                  />
-                </Grid>
-                <Grid item md={6}>
-                  <label className="input-label">Dealership agreement executed on</label>
-                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                    <KeyboardDatePicker
-                      className={classes.date}
-                      variant='inline'
-                      inputVariant='outlined'
-                      format='dd-MM-yyyy'
-                      animateYearScrolling={true}
-                      invalidDateMessage='Invalid Date Format'
-                      error={errors.agreement_executed_on}
-                      helperText={errors.agreement_executed_on}
-                      margin='normal'
-                      id='date-picker'
-                      autoOk={true}
-                      value={executedDate}
+                  <ViewData title='Dealership agreement valid till' value={values?.agreement_valid_till} style={{marginBottom: 6}} />  
+                </Grid> 
+              </Grid> :
+              <form onSubmit={handleSubmit}>
+                <Grid container spacing={2}>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      labelText="Sales officer name"
+                      name="sales_officer_name"
+                      value={values.sales_officer_name}
+                      disabled={readOnly || editable}
                       readOnly={readOnly}
-                      disabled={readOnly}
-                      onChange={handleExecutedDateChange}
-                      keyboardButtonProps={{
-                        'aria-label': 'change date'
-                      }}
-                      PopoverProps={{
-                        anchorOrigin: {
-                          vertical: 'bottom',
-                          horizontal: 'center',
-                        }
-                      }}
+                      error={errors.sales_officer_name}
+                      helperText={errors.sales_officer_name}
                     />
-                  </MuiPickersUtilsProvider>
-                </Grid>
-                <Grid item md={6}>
-                  <label className="input-label">Dealership agreement valid till</label>
-                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                    <KeyboardDatePicker
-                      className={classes.date}
-                      hideTabs={true}
-                      variant='inline'
-                      inputVariant='outlined'
-                      format='dd/MM/yyyy'
-                      maxDate={new Date('2050-01-01')}
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      className={classes.number}
+                      inputProps={{ className: classes.input }}
+                      labelText="Sales officer mobile"
+                      name="sales_officer_mobile"
+                      value={values.sales_officer_mobile}
+                      disabled={readOnly || editable}
                       readOnly={readOnly}
-                      disabled={readOnly}
-                      error={errors.agreement_valid_till}
-                      helperText={errors.agreement_valid_till}
-                      animateYearScrolling={true}
-                      // invalidDateMessage='Invalid Date Format'
-                      margin='normal'
-                      id='date-picker'
-                      autoOk={true}
-                      value={validDate}
-                      onChange={handleValidDateChange}
-                      keyboardButtonProps={{
-                        'aria-label': 'change date'
-                      }}
-                      PopoverProps={{
-                        anchorOrigin: {
-                          vertical: 'bottom',
-                          horizontal: 'center',
-                        }
-                      }}
+                      type='number'
+                      error={errors.sales_officer_mobile}
+                      helperText={errors.sales_officer_mobile}
                     />
-                  </MuiPickersUtilsProvider>
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      labelText="Mode Call/Mail"
+                      name="communication_mode"
+                      disabled={readOnly || editable}
+                      readOnly={readOnly}
+                      value={values.communication_mode}
+                      error={errors.communication_mode}
+                      helperText={errors.communication_mode}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <label>Dealership agreement executed on</label>
+                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                      <KeyboardDatePicker
+                        className={classes.date}
+                        fullWidth
+                        variant='inline'
+                        inputVariant='outlined'
+                        format='dd-MM-yyyy'
+                        animateYearScrolling={true}
+                        invalidDateMessage='Invalid Date Format'
+                        error={errors.agreement_executed_on}
+                        helperText={errors.agreement_executed_on}
+                        margin='normal'
+                        id='date-picker'
+                        autoOk={true}
+                        value={executedDate}
+                        readOnly={readOnly}
+                        disabled={readOnly || editable}
+                        onChange={handleExecutedDateChange}
+                        keyboardButtonProps={{
+                          'aria-label': 'change date'
+                        }}
+                        PopoverProps={{
+                          anchorOrigin: {
+                            vertical: 'bottom',
+                            horizontal: 'center',
+                          }
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
+                  </Grid>
+                  <Grid item md={6}>
+                    <label>Dealership agreement valid till</label>
+                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                      <KeyboardDatePicker
+                        className={classes.date}
+                        fullWidth
+                        hideTabs={true}
+                        variant='inline'
+                        inputVariant='outlined'
+                        format='dd/MM/yyyy'
+                        maxDate={new Date('2050-01-01')}
+                        readOnly={readOnly}
+                        disabled={readOnly || editable}
+                        error={errors.agreement_valid_till}
+                        helperText={errors.agreement_valid_till}
+                        animateYearScrolling={true}
+                        // invalidDateMessage='Invalid Date Format'
+                        margin='normal'
+                        id='date-picker'
+                        autoOk={true}
+                        value={validDate}
+                        onChange={handleValidDateChange}
+                        keyboardButtonProps={{
+                          'aria-label': 'change date'
+                        }}
+                        PopoverProps={{
+                          anchorOrigin: {
+                            vertical: 'bottom',
+                            horizontal: 'center',
+                          }
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </form>
+              </form>
+            }
           </Box >
         </div>
       </div>
@@ -293,18 +317,21 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback }) =
               Back
             </Button>
           </div>
-          <div>
-            <Button
-              variant="contained"
-              type="submit"
-              className={clsx(classes.btn, classes.editButton)}
-              startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-              onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
-            >
-              {loading ? <CircularProgress size={20} /> : readOnly ? 'Edit' :
-                'Save'}
-            </Button>
-          </div>
+          {
+            !editable &&
+            <div>
+              <Button
+                variant="contained"
+                type="submit"
+                className={clsx(classes.btn, classes.editButton)}
+                startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
+                onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
+              >
+                {loading ? <CircularProgress size={20} /> : readOnly ? 'Edit' :
+                  'Save'}
+              </Button>
+            </div>
+          }
         </div>
       </div>
     </div >

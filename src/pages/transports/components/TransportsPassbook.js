@@ -1,13 +1,4 @@
-import { Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel } from '@material-ui/core';
-import { Tooltip } from '@material-ui/core';
-import { Paper } from '@material-ui/core';
-import { Typography } from '@material-ui/core';
-import { Button } from '@material-ui/core';
-import { Radio } from '@material-ui/core';
-import { RadioGroup } from '@material-ui/core';
-import { CircularProgress } from '@material-ui/core';
-import { Popover } from '@material-ui/core';
-import { Box } from '@material-ui/core';
+import { Box, Popover, CircularProgress, RadioGroup, Radio, Button, Typography, Paper, Tooltip, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel } from '@material-ui/core';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import PublishIcon from '@material-ui/icons/Publish';
 import ShareIcon from '@material-ui/icons/Share';
@@ -18,6 +9,7 @@ import { useSnackbar } from 'notistack';
 import React, { useMemo, useState, useEffect } from 'react';
 import { DateRange } from 'react-date-range';
 import AsyncSelect from 'react-select/async';
+import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 import Currency from '../../../components/Number/Currency';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { URL } from '../../../config/serverUrls';
@@ -723,10 +715,12 @@ function FastTagPassbook( {currentUser} ) {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setShareModal(false)}>Cancel</Button>
-          <Button onClick={() => {
-            // setShareLoading(true)
-            handleCSV('share')
-          }}>{shareLoading ? <CircularProgress size={20}/> : 'Send'}</Button>
+          <LoaderButton 
+            variant='text'
+            isLoading={shareLoading}
+            loadingText='Sending...'
+            onClick={() => handleCSV('share')}
+          >Send</LoaderButton>
         </DialogActions>
 
       </Dialog>

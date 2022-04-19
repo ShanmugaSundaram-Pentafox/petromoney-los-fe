@@ -149,14 +149,14 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
     getLoanStats()
       .then(data => {
         let cdata = [
-          { name: 'Submitted', count: data.submitted_count },
-          { name: 'Pending Review', count: data.loan_review_count },
-          { name: 'Pending Approval', count: data.loan_approval_count || 0 },
-          { name: 'Approved', count: data.approved_count },
-          { name: 'Disb. Approval', count: data.disbursement_approval_count || 0 },
-          { name: 'Disb. Approved', count: data.disbursement_approved_count || 0 },
-          { name: 'Disbursed', count: data.disbursed_count },
-          { name: 'Rejected', count: data.rejected_count },
+          { name: 'Submitted', count: data?.submitted_count },
+          { name: 'Pending Review', count: data?.loan_review_count },
+          { name: 'Pending Approval', count: data?.loan_approval_count || 0, amount: data?.amount_requested },
+          { name: 'Approved', count: data?.approved_count, amount: data?.amount_approved },
+          { name: 'Disb. Approval', count: data?.disbursement_approval_count || 0, amount: data?.amount_disbursement_approval },
+          { name: 'Disb. Approved', count: data?.disbursement_approved_count || 0, amount: data?.amount_disbursement_approved },
+          { name: 'Disbursed', count: data?.disbursed_count, amount: data?.actual_amount_disbursed },
+          { name: 'Rejected', count: data?.rejected_count },
         ];
         setChartData(cdata);
       })

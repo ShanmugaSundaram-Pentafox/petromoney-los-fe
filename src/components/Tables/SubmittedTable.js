@@ -13,6 +13,7 @@ import { NavLink as RouterLink } from 'react-router-dom';
 import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
+import { dateCustomSort } from '../../utils/commonFunctions.util';
 import SignRequestLayout from '../Leegality/SignRequestLayout';
 import Currency from '../Number/Currency';
 
@@ -99,7 +100,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
         options: {
           filter: true,
           sort: true,
-          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value.charAt(0)}</span>
+          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
         }
       },
       {
@@ -119,7 +120,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
           filter: false,
           sort: true,
           setCellProps: () => ({
-            align: 'right',
+            align: 'left',
           }),
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }
@@ -178,13 +179,19 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
       }
     ]
   }, [loans]);
-
+ 
   const options = {
     selectableRowsHeader: false,
     selectableRows: 'none',
     isRowSelectable: () => false,
-    onRowClick: (rowData, { dataIndex }) => {
-      onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'submitted')
+    onCellClick: (colData, cellMeta) => {
+      if (cellMeta.colIndex !== 7) {
+        onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'submitted')
+      }
+    },
+    customSort: (data, dataIndex, rowIndex) => {
+      let dateIndex = 5
+      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
     }
   };
 

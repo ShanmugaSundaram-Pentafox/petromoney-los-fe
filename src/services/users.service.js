@@ -95,7 +95,7 @@ export const getReport = () => {
       })
   })
 }
-export const getTestReport = (id) => {
+export const getLoanReportByDealershipId = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.report}/dealership/${id}`)
       .then(({ status, data, message }) => {
@@ -236,8 +236,16 @@ export const passReset = (password, userId) => {
   });
 }
 
-export const getCreditReport = (tab) => {
-  const apiUrl = `credit/reload?processed=${tab}`
+export const getCreditReload = (tab, filterQry={region: '0', account: '0', zone: '0'}) => {
+  // const apiUrl = `credit/reload?processed=${tab}`
+  const { region, from, to, account, zone } = filterQry;
+  let qry = []
+  let apiUrl = `credit/reload?processed=${tab}`;
+  if (zone && zone !=='0') qry.push(`zone=${zone}`)
+  if (region && region !=='0') qry.push(`region=${region}`)
+  if (account && account !=='0') qry.push(`account_type=${account}`)
+  if (from && to) qry.push(`from=${from}&to=${to}`)
+  if(qry.length) apiUrl += '&'+ qry.join('&')
   return new Promise((resolve, reject) => {
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
@@ -253,7 +261,7 @@ export const getCreditReport = (tab) => {
   })
 }
 
-export const getCreditReportById = (id) => {
+export const getCreditReloadById = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`credit/reload/${id}`)
       .then(({ status, data, message }) => {
@@ -301,6 +309,22 @@ export const getCollectionRemark = () => {
   })
 }
 
+export const getCollectionRemarkData = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('loan/collection/remarks')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
 export const getCollectionRemarkOptions = () => {
   return new Promise((resolve, reject) => {
     apiCall('collection/remarks/options')
@@ -315,4 +339,59 @@ export const getCollectionRemarkOptions = () => {
         reject(e.message)
       })
   })
+}
+
+export const getCollectionRemarkByLoanId = (loan_id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${loan_id}/collection/remarks`)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const getProductsMapById = (role_id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`role/${role_id}/map/product`)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          const result = data?.map(item => ({
+            label: item.product_name,
+            value: item.product_id,
+          }))
+          resolve(result || []);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const updateProductMapById = (role_id, data, action) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`role/${role_id}/map/product`, {
+      method: action === 'add' ? 'POST' : 'DELETE',
+      body: data,
+    })
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
 }

@@ -4,8 +4,10 @@ import { List, ListItem, Button, colors, Hidden } from '@material-ui/core';
 import Collapse from '@material-ui/core/Collapse';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
+import AssignmentIcon from '@material-ui/icons/Assignment';
 import BookIcon from '@material-ui/icons/Book';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
+// import ChatIcon from '@material-ui/icons/Chat';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import InputIcon from '@material-ui/icons/Input';
@@ -13,6 +15,7 @@ import ListAltIcon from '@material-ui/icons/ListAlt';
 import LocalShippingIcon from '@material-ui/icons/LocalShipping';
 import ReportIcon from '@material-ui/icons/Report';
 import ReportProblemIcon from '@material-ui/icons/ReportProblem';
+import TimelineIcon from '@material-ui/icons/Timeline';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
@@ -196,22 +199,6 @@ const SidebarNav = props => {
                   {'Vehicle Loans'}
                 </Button>
               </ListItem>
-              <ListItem
-                className={classes.itemSub}
-                disableGutters
-                key={'All'}
-              >
-                <Button
-                  activeClassName={classes.active}
-                  className={classes.button}
-                  component={CustomRouterLink}
-                  to={'/withheld'}
-                  exact
-                >
-                  <div className={classes.icon}><BookmarkBorderIcon /></div>
-                  {'Withheld'}
-                </Button>
-              </ListItem>
             </Collapse>
           </Fragment>
         ) : page.title === 'Transports' ? (
@@ -336,6 +323,38 @@ const SidebarNav = props => {
                   >
                     <div className={classes.icon}><ReportProblemIcon /></div>
                     {'Loan Overdue'}
+                  </Button>
+                </ListItem>
+                <ListItem
+                  className={classes.itemSub}
+                  disableGutters
+                  key={'dpd'}
+                >
+                  <Button
+                    className={classes.button}
+                    activeClassName={classes.active}
+                    component={CustomRouterLink}
+                    to={'/reports/dpd'}
+                    exact
+                  >
+                    <div className={classes.icon}><AssignmentIcon /></div>
+                    {'DPD Report'}
+                  </Button>
+                </ListItem>
+                <ListItem
+                  className={classes.itemSub}
+                  disableGutters
+                  key={'projection'}
+                >
+                  <Button
+                    className={classes.button}
+                    activeClassName={classes.active}
+                    component={CustomRouterLink}
+                    to={'/reports/projection'}
+                    exact
+                  >
+                    <div className={classes.icon}><TimelineIcon /></div>
+                    {'Projection Report'}
                   </Button>
                 </ListItem>
               </Collapse>

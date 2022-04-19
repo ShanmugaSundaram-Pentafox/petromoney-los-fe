@@ -9,7 +9,8 @@ import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components';
 import MonthlySalesInfo from './MonthlySalesInfo';
 import TextInput from '../../../components/TextInput/TextInput';
@@ -64,21 +65,24 @@ const SalesInfo = ({
   currentUser,
   readOnly
 }) => {
-  const [info, setInfo] = useState([]);
+  // const [info, setInfo] = useState([]);
   const classes = useStyles();
+  const queryClient = useQueryClient()
   const [addNewRow, setAddNewRow] = useState();
   const [apiData, setApiData] = useState({});
   const [anchorEl, setAnchorEl] = useState(null);
   const [editRow, setEditRow] = useState({});
   const { enqueueSnackbar } = useSnackbar();
+  const { data: info = [] } = useQuery(['sales', id], () => getDealershipSalesById(id))
 
-  useEffect(() => {
-    if (id) {
-      getDealershipSalesById(id)
-        .then(data => setInfo(data))
-        .catch(err => null)
-    }
-  }, [id]);
+
+  // useEffect(() => {
+  //   if (id) {
+  //     getDealershipSalesById(id)
+  //       .then(data => setInfo(data))
+  //       .catch(err => null)
+  //   }
+  // }, [id]);
 
   const handlePopoverClose = () => {
     setAnchorEl(null);
@@ -111,7 +115,8 @@ const SalesInfo = ({
       }
       postDealershipSalesById(id, objBody)
         .then(res => {
-          setInfo(res);
+          // setInfo(res);
+          queryClient.invalidateQueries(['sales', id])
           setAddNewRow(false);
         })
         .catch(err => {
@@ -136,7 +141,8 @@ const SalesInfo = ({
       }
       postDealershipSalesById(id, objBody)
         .then(res => {
-          setInfo(res);
+          queryClient.invalidateQueries(['sales', id])
+          // setInfo(res);
           setEditRow({});
         })
         .catch(err => {
@@ -157,6 +163,7 @@ const SalesInfo = ({
     })
   }
   const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit)
+
   return (
     <SalesInfoWrapper>
       <Popover
@@ -215,7 +222,7 @@ const SalesInfo = ({
             }
             <TableBody>
               {
-                info?.map((row, i) => i === editRow?.rowIndex ? (
+                Array.isArray(info) && info?.map((row, i) => i === editRow?.rowIndex ? (
                   <TableRow key={`edit-row-${i}`}>
                     <TableCell scope="row" component="th">
                       <TextInput

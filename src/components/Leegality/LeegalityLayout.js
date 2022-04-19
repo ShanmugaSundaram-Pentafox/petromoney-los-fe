@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const LeegalityLayout = ({ docId }) => {
+const LeegalityLayout = ({ docId, dealershipId }) => {
   const [auditTrails, setAuditTrails] = useState([]);
   const [docDetails, setDocDetails] = useState({});
   const [successStatus, setSuccessStatus] = useState(false);
@@ -85,7 +85,7 @@ const LeegalityLayout = ({ docId }) => {
 
   useEffect(() => {
 
-    apiCall(`document/details/${docId}`)
+    apiCall(`dealership/${dealershipId}/document/${docId}`)
       .then(res => {
         if (res.status === 'SUCCESS') {
           if (res.data?.status) {
@@ -140,7 +140,7 @@ const LeegalityLayout = ({ docId }) => {
   const ActivateDealer = () => {
     apiCall(`document/reactivate/${docId}`)
       .then(res => {
-        apiCall(`document/details/${docId}`)
+        apiCall(`dealership/${dealershipId}/document/${docId}`)
           .then(res => {
             if (res.status === 'SUCCESS') {
               if (res.data?.status) {
@@ -163,7 +163,7 @@ const LeegalityLayout = ({ docId }) => {
     <Box bgcolor="#fbfbfb">
       <Grid container spacing={2}>
         <Grid item sm={6}>
-          {docDetails?.file && <PdfViewer title="Some Random File" file={docDetails.file} isBase64 showDownload />}
+          {docDetails?.file && <PdfViewer title="Some Random File" file={docDetails.file} showDownload />}
         </Grid>
         <Grid item sm={3}>
           <Box pt={2}>

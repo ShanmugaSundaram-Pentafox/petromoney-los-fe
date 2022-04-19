@@ -25,7 +25,8 @@ export const InfoBoxStyle = styled.div`
 
 export const ViewMoreBtn = styled.div`
   position: absolute;
-  bottom: 5px;
+  bottom: 0px;
+  border-radius: 4px;
   width: 100%;
   text-align: center;
   padding: 5px;
@@ -33,10 +34,10 @@ export const ViewMoreBtn = styled.div`
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
-  background: linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(176,176,176,0.75) 100%);
+  background: linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(216,216,216,0.75) 100%);
   transition: all .35s ease-in-out;
 
   &:hover {
-    background: linear-gradient(180deg, rgba(255,255,255,0.50) 0%, rgba(176,176,176,0.90) 100%);
+    background: linear-gradient(180deg, rgba(255,255,255,0.50) 0%, rgba(210,210,210,0.90) 100%);
   }
 `;

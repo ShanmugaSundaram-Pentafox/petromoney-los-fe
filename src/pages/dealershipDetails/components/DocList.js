@@ -1,26 +1,15 @@
-import { Checkbox, FormControlLabel, FormGroup, Paper, Typography } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import ButtonComp from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
-import { withStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-// import Typography from "@material-ui/core/Typography";
+import { Typography, Table, TableBody, Button, makeStyles, withStyles } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
-import { useMount } from 'react-use';
-// import Chip from '@material-ui/core/Chip';
+import { useQuery, useQueryClient } from 'react-query';
 import DocListPreview from './DocListPreview';
-import FilePreview from '../../../components/CommonComponents/FilePreview';
-import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import FileUpload from '../../../components/FileUpload';
 import { URL } from '../../../config/serverUrls';
-import { deleteDocsImage, getDealershipCheckList } from '../../../services/dealerships.service';
-import { getFileNameFromUrl } from '../../../utils/strings.util';
+import { getDealershipCheckList } from '../../../services/dealerships.service';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
 
-const DeleteButton = withStyles(theme => ({
+const DeleteButton = withStyles(() => ({
   root: {
     background: '#DC143C',
     textTransform: 'none',
@@ -42,7 +31,7 @@ const DeleteButton = withStyles(theme => ({
 
     },
   }
-}))(ButtonComp)
+}))(Button)
 
 
 const useStyles = makeStyles((theme) => ({
@@ -83,103 +72,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
-const Docs = ({ data }) => {
+const DocList = ({ id, currentUser }) => {
+  const queryClient = useQueryClient()
   const classes = useStyles();
-  const [imageModal, setImageModal] = useState({})
-  let temp = 0;
-  return (
-    <>
-      {
-        data.map((file, i) => {
-          temp += file.file_url ? 1 : 0;
-          return file.file_url ? (
-            <div>
-              <Button onClick={() => setImageModal({ open: true, image: file.file_url, type: file.file_url.endsWith('.pdf') })}>
-                <a style={{ display: 'inline-block', borderRadius: 4, lineHeight: 1, marginRight: 8, marginBottom: 8, padding: 8, backgroundColor: '#f0f0f0' }}>{getFileNameFromUrl(file?.file_url)} </a>
-              </Button>
-            </div>
-
-          ) : null
-        })
-      }
-      <FormDialog title={'File Preview'} onDownload={imageModal.image} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
-        <FilePreview data={imageModal} />
-      </FormDialog>
-    </>
-  );
-
-}
-
-const DocList = ({ id }) => {
-  const classes = useStyles();
-  const [checkListData, setCheckListData] = useState();
   const [showUpload, setShowUpload] = useState(false);
-  const [openModal, setOpenModal] = useState(false);
-  const [modalData, setModalData] = useState([]);
   const [rowData, setRowData] = useState();
-  const [value, setValue] = useState();
-  const [imageModal, setImageModal] = useState({})
-  const [array, setArray] = useState([]);
-  const [description, setDescription] = useState();
+  const editable = permissionCheck(currentUser.role_name, rulesList.external_view);
 
-  const getValue = (e) => {
-    const val = e?.target?.value;
-    if (!val) return;
-    if (array.includes(val)) {
-      var n = array.indexOf(val);
-      setArray((d) => {
-        const re = [...d];
-        re.splice(n, 1);
-        return re;
-      });
-    } else {
-      setArray((d) => {
-        return d.concat(val);
-      });
-    }
-  }
+  const { data: checkListData = [] } = useQuery(['doc-checklist', id], () => getDealershipCheckList(id), {refetchOnWindowFocus: false})
 
   const { enqueueSnackbar } = useSnackbar();
   const onCloseUploader = () => {
     setShowUpload(false);
   }
-  const handleModal = (data, desc) => {
-    setOpenModal(true);
-    // setImageModal(true);
-    setModalData(data);
-    setDescription(desc);
-  }
-
-  const onView = () => { };
 
   const onDocUpload = (row) => {
     setShowUpload(true);
     setRowData(row);
   };
-
-  useMount(() => {
-    getDealershipCheckList(id)
-      .then((data) => setCheckListData(data))
-      .catch((e) => null);
-  });
-  const DeleteDocs = () => {
-    deleteDocsImage(array, id)
-      .then((res) => {
-        setOpenModal(false)
-        setModalData([])
-        setArray([])
-        getDealershipCheckList(id)
-          .then((data) => setCheckListData(data))
-          .catch((e) => null);
-      })
-      .catch((err) => {
-        alert(err?.message)
-        console.log(err);
-      });
-
-  }
-
 
   const handleSave = (files) => {
     const formData = new FormData();
@@ -191,6 +101,7 @@ const DocList = ({ id }) => {
       formData.append('fileName', fileName);
       formData.append('id', rowData.doc_id);
     });
+    
     fetch(`${URL.base}${URL.checklist}/${dealerShipId}/doc/${docID}`, {
       method: 'POST',
       body: formData
@@ -198,21 +109,12 @@ const DocList = ({ id }) => {
       .then(data => {
         enqueueSnackbar('File Upload Success', { variant: 'success' });
         onCloseUploader();
-        window.location.reload();
+        queryClient.invalidateQueries(['doc-checklist', id])
       })
       .catch(error => {
         enqueueSnackbar('File Upload Failed', { variant: 'error' });
 
       })
-
-    // uploadDocument(dealerShipId, docID, formData)
-    //   .then(data => {
-    //     enqueueSnackbar('File Upload Success', { variant: "success" });
-    //     onCloseUploader();
-    //   })
-    //   .catch(e => {
-    //     enqueueSnackbar('File Upload Failed', { variant: "error" });
-    //   });
   };
 
   return (
@@ -222,90 +124,12 @@ const DocList = ({ id }) => {
         Dealership Documents
       </Typography>
       <Table className={classes.table} size="small" aria-label="Dealers">
-        <TableHead>
-          <TableRow>
-            {/* <TableCell align="center">ID</TableCell> */}
-            {/* <TableCell style={{ minWidth: 300 }}>Document Name</TableCell> */}
-            {/* <TableCell align="center">Document Type</TableCell> */}
-            {/* <TableCell align="center">Files</TableCell> */}
-          </TableRow>
-        </TableHead>
         <TableBody>
-          {Array.isArray(checkListData) && checkListData.map((row, i) =>  row.doc_type !== 'dealer' && (
-            <DocListPreview docName={row.description} upload={() => onDocUpload(row)} deleteDocs={() => handleModal(row.file_data, row.description)} file={row.file_data} id={i+1}/>
-            // <TableRow key={row.doc_id}>
-            //   {/* <TableCell align="center">{row.doc_id}</TableCell> */}
-            //   <TableCell>{row.description}</TableCell>
-            //   {/* <TableCell align="center">{row.doc_type}</TableCell> */}
-            //   <TableCell align="right">
-            //     <Docs data={Array.isArray(row.file_data) && row.file_data.length ? row.file_data : []} />
-            //     <ButtonGroup size="small" aria-label="dealer action buttons">
-            //       {
-            //         Array.isArray(row.file_data) && row.file_data.length && row.file_data[0].file_id ?
-            //           <Button onClick={() => handleModal(row.file_data, row.description)}>Delete</Button>
-            //           : null
-            //       }
-            //       <Button onClick={(e) => onDocUpload(row)}>Upload</Button>
-            //     </ButtonGroup>
-            //   </TableCell>
-            // </TableRow>
+          {Array.isArray(checkListData) && checkListData.map((row, i) => row.doc_type !== 'dealer' && (
+            <DocListPreview docName={row.description} upload={() => onDocUpload(row)} file={row.file_data} id={i + 1} dealershipId={id} editable={editable} />
           ))}
         </TableBody>
       </Table>
-      <FormDialog
-        title={description}
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        actions={
-          array.length !== 0 ?
-            <DeleteButton className={classes.button} variant="contained" onClick={() => DeleteDocs()}>Delete</DeleteButton>
-            : null
-        }
-      >
-        <div className={classes.content}>
-          <div className={classes.list}>
-            <div>
-              {
-                modalData.map(item => {
-                  return (
-                    <Paper key={item.file_id} style={{minWidth: '350px'}}>
-                      <FormGroup>
-                        <FormControlLabel
-                          key={item.file_id}
-                          control={<Checkbox key={item.region} color="primary" value={item.file_id} onChange={(e) => getValue(e)} />}
-                          label={getFileNameFromUrl(item?.file_url)}
-                          value={getFileNameFromUrl(item?.file_url)}
-                        />
-                      </FormGroup>
-                    </Paper>
-                  )
-
-                })
-              }
-            </div>
-          </div>
-        </div>
-      </FormDialog> 
-
-      {/* <Modal
-        className={classes.modal}
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        closeAfterTransition
-        action={array.length !== 0 ? <DeleteButton className={classes.button} variant="contained" onClick={() => DeleteDocs()}>Delete</DeleteButton> : null}
-
-      >
-        <div className={classes.inner_modal}>
-          <Box p={2} borderRadius={4} bgcolor={"#f0f0f0"} display="flex" justifyContent="space-between" alignItems="center">
-            <Typography variant="h3" component="h2">{description}</Typography>
-            <IconButton size="small">
-              <CloseIcon onClick={() => setOpenModal(false)} />
-            </IconButton>
-          </Box>
-          
-          </div>
-        </div>
-      </Modal> */}
     </div >
 
   );

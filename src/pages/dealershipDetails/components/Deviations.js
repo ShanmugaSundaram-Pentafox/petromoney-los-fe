@@ -1,8 +1,12 @@
-import { Table, TableBody, TableHead, TableRow, TableCell, Typography, makeStyles, TextField, Button, CircularProgress } from '@material-ui/core';
+import { Table, TableBody, TableHead, TableRow, TableCell, Typography, makeStyles, TextField, Button, CircularProgress, FormControlLabel, Checkbox } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import { useSnackbar } from 'notistack';
 import React, {useState} from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import DeleteButton from '../../../components/CommonComponents/Button/DeleteButton';
 import TextInput from '../../../components/TextInput/TextInput';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
 import { deleteDeviationsById, getCalculateDeviation, getDeviations, updateDeviationsById } from '../../../services/dealerships.service';
 
 const useStyles = makeStyles(theme => ({
@@ -35,27 +39,24 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-const Deviations = ({id}) => {
+const Deviations = ({id, currentUser}) => {
   const classes = useStyles()
   const queryClient = useQueryClient()
+  const [errorStatus, setErrorStatus] = useState()
   const [deviationData, setDeviationData] = useState([])
   const [manualDeviationData, setManualDeviationData] = useState([])
+  const [deleteModal, setDeleteModal] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
-  
+  const editable = permissionCheck(currentUser.role_name, rulesList.external_view);
+
   const deviationsTable = useQuery(['deviations', id], () => {return getDeviations(id)}, {
     onError: (error) => {
-      console.log(error);
-      enqueueSnackbar(error, {
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-        variant: 'error',
-      });
+      setErrorStatus(error)
     },
     onSuccess: (data) => {
       setDeviationData(data.data)
       setManualDeviationData(data.others)
+      setErrorStatus()
     },
     refetchOnWindowFocus: false
   })
@@ -63,6 +64,7 @@ const Deviations = ({id}) => {
   const { mutate: deleteDeviation, mutate: updateDeviation } = useMutation(data => data.type === 'delete' ? deleteDeviationsById(id, data.id) : updateDeviationsById(id, data) , {
     onSuccess: (message) => {
       queryClient.invalidateQueries(['deviations', id])
+      setDeleteModal(false)
       enqueueSnackbar(message.message, {
         anchorOrigin: {
           vertical: 'top',
@@ -84,16 +86,16 @@ const Deviations = ({id}) => {
   })
 
   const onChange = (e, i) => {
-    const {name, value} = e.target
+    const {name, value, checked} = e.target
     const newData = [...deviationData]
-    newData[i] = {...newData[i], [name]: value}
+    newData[i] = {...newData[i], [name]: name === 'review_status' ? checked : value}
     setDeviationData(newData)
   }
 
   const onManualChange = (e, i) => {
-    const {name, value} = e.target
+    const {name, value, checked} = e.target
     const newData = [...manualDeviationData]
-    newData[i] = {...newData[i], [name]: value}
+    newData[i] = {...newData[i], [name]: name === 'review_status' ? checked : value}
     setManualDeviationData(newData)
   }
 
@@ -107,7 +109,6 @@ const Deviations = ({id}) => {
       .then((data) => {
         setDeviationData(data.data)
         setManualDeviationData(data.others)
-        // window.location.reload(false)
       })
       .catch(e => console.log(e))
   }
@@ -116,7 +117,9 @@ const Deviations = ({id}) => {
     <>
       <div className={classes.title}>
         <Typography variant="h5">Deviations</Typography>
-        <Button variant='contained' size='small' color='secondary' onClick={() => calculateDeviation()}>Calculate Deviations</Button>
+        {
+          !editable && <Button variant='contained' size='small' color='secondary' onClick={() => calculateDeviation()}>Calculate Deviations</Button>
+        }
       </div>
       {
         deviationsTable.isLoading ? (
@@ -133,7 +136,8 @@ const Deviations = ({id}) => {
                     <TableCell>Policy</TableCell>
                     <TableCell>Actual</TableCell>
                     <TableCell>Deviation</TableCell>
-                    <TableCell>Deviation Review</TableCell>
+                    <TableCell>Remarks</TableCell>
+                    <TableCell>Status</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -152,13 +156,14 @@ const Deviations = ({id}) => {
                                           disabled={
                                             item.particulars === 'Max FOIR%' ||
                                                         item.particulars === 'Min Credit Bureau Score' ||
-                                                        item.particulars === 'Min Business Vintage with OMC (Yrs)' ? true : false
+                                                        item.particulars === 'Min Business Vintage with OMC (Yrs)' || editable ? true : false
                                           }
                                         />
                                       </TableCell>
                                       <TableCell>
                                         <TextInput
                                           className={classes.field}
+                                          disabled={editable}
                                           select
                                           name="deviation"
                                           value={item.deviation}
@@ -171,12 +176,29 @@ const Deviations = ({id}) => {
                                       <TableCell>
                                         <TextField
                                           className={classes.field}
+                                          disabled={editable}
                                           name="deviation_review"
                                           onChange={(e) => onChange(e, i)}
                                           value={item.deviation_review}
                                           placeholder="Remarks"
                                           variant="outlined"
                                           fullWidth
+                                        />
+                                      </TableCell>
+                                      <TableCell>
+                                        <FormControlLabel
+                                          control={
+                                            <Checkbox
+                                              checked={item?.review_status}
+                                              disabled={item.deviation_review.length <= 3 || editable}
+                                              name="review_status"
+                                              onChange={(e) => {
+                                                if(item.deviation_review.length !== 1){
+                                                  onChange(e, i)
+                                                }
+                                              }}
+                                            />
+                                          }
                                         />
                                       </TableCell>
                                     </TableRow>
@@ -188,16 +210,20 @@ const Deviations = ({id}) => {
             </div>
             <div className={classes.topicBtn}>
               <Typography variant="h5">Manual Deviation</Typography>
-              <Button variant="outlined" color="secondary" size="medium" onClick={() => 
-                setManualDeviationData([...manualDeviationData, {deviation_description: '', deviation_review: ''}])
-              }>Add Deviation</Button>
+              {
+                !editable &&
+                <Button variant="outlined" color="secondary" size="medium" disabled={editable} onClick={() => 
+                  setManualDeviationData([...manualDeviationData, {deviation_description: '', deviation_review: ''}])
+                }>Add Deviation</Button>
+              }
             </div>
             <div style={{marginTop: 10}}>
               <Table>
                 <TableHead>
                   <TableRow>
                     <TableCell>Deviation Description</TableCell>
-                    <TableCell>Deviation Review</TableCell>
+                    <TableCell>Remarks</TableCell>
+                    <TableCell>Status</TableCell>
                     <TableCell align="right">Action</TableCell>
                   </TableRow>
                 </TableHead>
@@ -210,6 +236,7 @@ const Deviations = ({id}) => {
                                           <TableCell>
                                             <TextInput
                                               name="deviation_description"
+                                              disabled={editable}
                                               placeholder="Description..."
                                               value={item.deviation_description}
                                               onChange={e => onManualChange(e, i)}
@@ -218,14 +245,31 @@ const Deviations = ({id}) => {
                                           <TableCell>
                                             <TextInput
                                               name="deviation_review"
+                                              disabled={editable}
                                               variant="outlined"
                                               placeholder="Review..."
                                               value={item.deviation_review}
                                               onChange={e => onManualChange(e, i)}
                                             />
                                           </TableCell>
+                                          <TableCell>
+                                            <FormControlLabel
+                                              control={
+                                                <Checkbox
+                                                  checked={item?.review_status}
+                                                  disabled={item.deviation_review.length <= 3 || editable}
+                                                  name="review_status"
+                                                  onChange={(e) => {
+                                                    if(item.deviation_review.length !== 1){
+                                                      onManualChange(e, i)
+                                                    }
+                                                  }}
+                                                />
+                                              }
+                                            />
+                                          </TableCell>
                                           <TableCell align="right">
-                                            <Button variant='outlined' size="small" className={classes.delBtn} onClick={() => item.id && (deleteDeviation({id: item.id, type: 'delete'}))}>Delete</Button>
+                                            <DeleteButton disabled={editable} alertText='Do you really want to delete this deviation? This process cannot be undone.' deleteAction={() => item.id && (deleteDeviation({id: item.id, type: 'delete'}))} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={i} />
                                           </TableCell>
                                         </TableRow>
                                       )
@@ -237,9 +281,16 @@ const Deviations = ({id}) => {
                 </TableBody>
               </Table>
             </div>
-            <div className={classes.footer}>
-              <Button variant="contained" color="primary" onClick={handleSubmit}>Save</Button>
-            </div>
+            {
+              errorStatus && 
+                <Alert severity='error' style={{marginTop: 20}}>{errorStatus}</Alert>
+            }
+            {
+              !editable &&
+              <div className={classes.footer}>
+                <Button variant="contained" color="primary" onClick={handleSubmit}>Save</Button>
+              </div>
+            }
           </>
         )
       }
@@ -252,12 +303,11 @@ export default Deviations;
 export const DeviationsTable = ({id}) => {
   const classes = useStyles()
 
-  const deviationsTable = useQuery(['deviations', id], () => {return getDeviations(id)}, {
+  const { data: deviationsTable=[] } = useQuery(['deviations', id], () => {return getDeviations(id)}, {
     onError: (error) => {
       console.log(error);
     },
   })
-
   return(
     <>
       <div className={classes.title}>
@@ -265,7 +315,7 @@ export const DeviationsTable = ({id}) => {
       </div>
       <div className={classes.tableContainer}>
         {
-          deviationsTable?.data?.data?.length ? (
+          deviationsTable?.data?.length ? (
             <Table>
               <TableHead>
                 <TableRow>
@@ -273,12 +323,13 @@ export const DeviationsTable = ({id}) => {
                   <TableCell>Policy</TableCell>
                   <TableCell>Actual</TableCell>
                   <TableCell>Deviation</TableCell>
-                  <TableCell>Deviation Review</TableCell>
+                  <TableCell>Remarks</TableCell>
+                  <TableCell>Status</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {
-                                deviationsTable?.data?.data?.map((item, i)=> {
+                                deviationsTable?.data?.map((item, i)=> {
                                   return(
                                     <TableRow key={i}>
                                       <TableCell>{item.particulars}</TableCell>
@@ -286,6 +337,7 @@ export const DeviationsTable = ({id}) => {
                                       <TableCell>{item.actual}</TableCell>
                                       <TableCell>{item?.deviation}</TableCell>
                                       <TableCell>{item?.deviation_review}</TableCell>
+                                      <TableCell>{item.review_status === true || item.review_status === 1 ? 'Reviewed' : '-'}</TableCell>
                                     </TableRow>
                                   )
                                 })
@@ -300,21 +352,23 @@ export const DeviationsTable = ({id}) => {
           <Typography variant="h5">Manual Deviations</Typography>
         </div>
         {
-          deviationsTable?.data?.others?.length ? (
+          deviationsTable?.others?.length ? (
             <Table>
               <TableHead>
                 <TableRow>
                   <TableCell>Deviation Description</TableCell>
-                  <TableCell>Deviation Review</TableCell>
+                  <TableCell>Remarks</TableCell>
+                  <TableCell>Status</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {
-                                deviationsTable?.data?.others.map((item, i) => {
+                                deviationsTable?.others?.map((item, i) => {
                                   return(
                                     <TableRow key={i}>
                                       <TableCell>{item.deviation_description}</TableCell>
                                       <TableCell>{item.deviation_review}</TableCell>
+                                      <TableCell>{item.review_status === true || item.review_status === 1 ? 'Reviewed' : '-'}</TableCell>
                                     </TableRow>
                                   )
                                 })

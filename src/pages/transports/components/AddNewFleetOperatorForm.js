@@ -93,7 +93,7 @@ export const ViewData = ({ title, value }) => {
 }
 
 
-const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
+const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable }) => {
   const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
   const [loading, setLoading] = useState(false)
 
@@ -114,7 +114,7 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       transport_name: Yup.string().required('Please enter Transport Name').nullable('Please enter Transport Name'),
-      vehicle_no: Yup.string().required('Please Enter Vehicle Number').nullable('Please Enter Vehicle Number'),
+      vehicle_no: Yup.string().required('Please Enter Vehicle Number').nullable('Please Enter Vehicle Number').matches(/^[A-Z]{2}[0-9]{2}[A-Z\s]{0,2}[0-9]{4,6}$/, 'Invalid Vehicle Number'),
       mobile: Yup.number().required('Enter mobile number').nullable('Enter mobile number').test('maxDigits', 'Mobile Number mush have 10 digits', (number) => String(number).length === 10),
       name_on_card: Yup.string().required('Please Enter your name').nullable('Please Enter your name'),
       dtplus_card_number: Yup.string().max(16, 'Enter valid card number').required('Please enter your card number').nullable('Please enter your card number'),
@@ -459,20 +459,17 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback }) => {
                 </div>
               )
             ) : (
-              <>
-                <div>
-                  <Button
-                    variant="contained"
-                    type="submit"
-                    className={clsx(classes.btn, classes.editButton)}
-                    startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                    // disabled={loading}
-                    onClick={loading ? () => null : handleEdit}
-                  >
-                    Edit
-                  </Button>
-                </div>
-              </>
+              !editable &&
+              <Button
+                variant="contained"
+                type="submit"
+                className={clsx(classes.btn, classes.editButton)}
+                startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
+                // disabled={loading}
+                onClick={loading ? () => null : handleEdit}
+              >
+                Edit
+              </Button>
             )
           }
         </div>

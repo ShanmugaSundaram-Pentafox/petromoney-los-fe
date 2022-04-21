@@ -64,6 +64,7 @@ const AddNewUserForm = ({ callback, action }) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
+  let isDealership = {};
   useMount(() => {
     getAllUserRoles()
       .then((data) => {
@@ -92,6 +93,7 @@ const AddNewUserForm = ({ callback, action }) => {
       mobile: Yup.string().nullable('Enter mobile number').matches(/^\d{10}$/, 'Enter valid mobile number').required('Enter mobile number'),
       email: Yup.string().nullable('Enter email').email('Enter valid email').required('Enter email'),
       password: Yup.string(),
+      ...isDealership,
     }),
     onSubmit: (formData) => {
       setLoading(true);
@@ -115,7 +117,7 @@ const AddNewUserForm = ({ callback, action }) => {
         })
         .catch((e) => {
           setLoading(false);
-          enqueueSnackbar('Something went wrong, Please try Again!', {
+          enqueueSnackbar(e, {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',
@@ -131,6 +133,11 @@ const AddNewUserForm = ({ callback, action }) => {
     alignTop: true,
     onChange: handleChange,
   };
+  if( values?.role_id == 13){
+    isDealership= {
+      dealership_id: Yup.string().nullable('Enter dealership id').matches('Enter valid dealership id').required('Enter valid dealership id')
+    };
+  }
 
   return (
     <div className={classes.sidePanelFormWrapper}>
@@ -184,6 +191,20 @@ const AddNewUserForm = ({ callback, action }) => {
                     helperText={errors.last_name}
                   />
                 </Grid>
+                {
+                  (values.role_id == 13) &&
+                    <Grid item md={6}>
+                      <TextInput
+                        {...inputProps}
+                        type='number'
+                        name='dealership_id'
+                        labelText='Dealership ID'
+                        value={values.dealership_id}
+                        error={errors.dealership_id}
+                        helperText={errors.dealership_id}
+                      />
+                    </Grid>
+                }
                 <Grid item md={6}>
                   <TextInput
                     {...inputProps}

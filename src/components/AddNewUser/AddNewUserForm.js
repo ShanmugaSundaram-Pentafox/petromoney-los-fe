@@ -100,6 +100,8 @@ const AddNewUserForm = ({ callback, action }) => {
       const userType = userRoles.find(
         (role) => role.id === Number(formData.role_id)
       );
+
+      Object.keys(formData).forEach(k => (formData[k] === '') && delete formData[k]);
       addNewUser(formData, userType.role_name)
         .then((message) => {
           setLoading(false);

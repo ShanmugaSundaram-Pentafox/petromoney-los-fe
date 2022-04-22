@@ -1,5 +1,6 @@
 import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
+import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 import styled, { css } from 'styled-components';
 
@@ -46,6 +47,21 @@ export const InputLabel = styled.label`
   color: #242424;
 `;
 
+const useStyles = makeStyles((theme) => ({
+  number: {
+    backgroundColor: 'white',
+    '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+      '-webkit-appearance': 'none',
+      margin: 0,
+    }
+  },
+  input: {
+    '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+      '-webkit-appearance': 'none',
+      margin: 0,
+    }
+  },
+}))
 const TextInput = ({
   alignTop,
   direction,
@@ -60,37 +76,41 @@ const TextInput = ({
   select,
   number,
   ...restProps
-}) => (
-  <InputWrapper direction={direction} top={alignTop} labelWidth={labelWidth}>
-    {labelText ? <label className="input-label">{labelText}</label> : null}
-    <TextField
-      className="text-field"
-      fullWidth
-      size="small"
-      variant="outlined"
-      inputProps={{
-        readOnly,
-        placeholder,
-        ...inputProps
-      }}
-      back
-      onChange={e => {
-        const v = e?.target?.value;
-        if (number && isNaN(parseFloat(Number(v)))) {
-          return;
-        }
-        onChange(e);
-      }}
-      InputProps={{
-        startAdornment: money && <InputAdornment position="start">₹</InputAdornment>,
-      }}
-      select={select}
-      SelectProps={{
-        native: true,
-      }}
-      {...restProps}
-    />
-  </InputWrapper>
-);
-
+}) => {
+  const classes = useStyles()
+  return( 
+    <InputWrapper direction={direction} top={alignTop} labelWidth={labelWidth}>
+      {labelText ? <label className="input-label">{labelText}</label> : null}
+      <TextField
+        className={classes.number}
+        fullWidth
+        size="small"
+        variant="outlined"
+        type={number ? 'number':'string'}
+        inputProps={{
+          className: classes.input,
+          readOnly,
+          placeholder,
+          ...inputProps
+        }}
+        back
+        onChange={e => {
+          const v = e?.target?.value;
+          if (number && isNaN(parseFloat(Number(v)))) {
+            return;
+          }
+          onChange(e);
+        }}
+        InputProps={{
+          startAdornment: money && <InputAdornment position="start">₹</InputAdornment>,
+        }}
+        select={select}
+        SelectProps={{
+          native: true,
+        }}
+        {...restProps}
+      />
+    </InputWrapper>
+  )
+}
 export default TextInput

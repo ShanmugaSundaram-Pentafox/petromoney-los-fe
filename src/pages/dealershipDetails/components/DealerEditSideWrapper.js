@@ -132,7 +132,7 @@ const DealerEditSideWrapper = ({
       .required('Enter PAN')
       .uppercase(),
     aadhar: Yup.string()
-      .nullable('Enter GST')
+      .nullable('Enter Aadhar')
       .matches(/^(\d{12})$|^(\d{16})$/, 'Invalid aadhar')
       .required('Enter valid aadhar'),
     ...coApplicantFields,

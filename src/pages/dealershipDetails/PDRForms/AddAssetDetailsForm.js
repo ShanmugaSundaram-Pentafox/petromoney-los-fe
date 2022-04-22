@@ -115,7 +115,6 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable 
         setAssetData(d);
       })
       .catch((e) => {
-        console.log(e);
       })
     getAssetDetailsById(dealer_id)
       .then(data => {
@@ -129,7 +128,6 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable 
         setAsset(d)
       })
       .catch((e) => {
-        console.log(e);
       })
 
   })
@@ -141,7 +139,8 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable 
   let CustomValidation = {};
   if (type.label === 'Car') {
     CustomValidation = {
-      address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
+      // address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
+      model: Yup.number().nullable('Please enter model').required('Please enter model'),
       yom: Yup.number().nullable('Please enter year of manufacture').required('Please enter year of manufacture').test('year', 'Invalid Manufacture Year', value => value >= 1900 && value <= format(new Date(), 'yyyy')),
     };
   } else if (type.label === 'Gold') {
@@ -195,7 +194,6 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable 
           }, 1500);
         })
         .catch(e => {
-          console.log(e);
         })
     }
   });
@@ -223,7 +221,6 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable 
         }, 1500);
       })
       .catch(e => {
-        console.log(e);
       })
 
   }
@@ -245,7 +242,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable 
               <div>
                 {
                   asset.length || addNewAsset ? null :
-                    <Typography className={classes.typography}>No asset found,Click 'Add asset' to add new asset.</Typography>
+                    <Typography className={classes.typography}>No asset found,Click &apos Add asset &apos to add new asset.</Typography>
                 }
                 <div className={classes.typeField}>
                   {
@@ -254,7 +251,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable 
                         <Grid item md={6}>
                           <label style={{ marginBottom: 8 }}>Choose asset type to add</label>
                           <Select
-                            isClearable
+                            isClearable = {false}
                             name='type'
                             onChange={setType}
                             options={assetList} />
@@ -275,7 +272,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable 
                                   {
                                     Array.isArray(data.details) && data.details.map((item, i) => {
                                       return (
-                                        <Grid item md={6}>
+                                        <Grid item md={6} key={i}>
                                           <TextInput
                                             {...inputProps}
                                             className={classes.number}
@@ -284,8 +281,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable 
                                             name={item.key}
                                             // value={values.key}
                                             error={errors[item.key]}
-                                            helperText={errors[item.key]}
-                                            type={item.type}
+                                            helperText={errors[item.key]}                                                                                   
                                           >
                                           </TextInput>
                                         </Grid>
@@ -384,7 +380,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable 
                       ) : (
                         !addNewAsset && asset.map((item, i) => {
                           return (
-                            <Grid item md={6}>
+                            <Grid item md={6} key={i}>
                               <PreviewCard
                                 onEdit={() => { editAssetRow(item, i) }}
                                 onDelete={() => deleteAssetRow(item, i)}
@@ -429,14 +425,14 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable 
           </div>
           {
             !editable &&
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => { setAddNewAsset(true); }}
-              style={{ marginBottom: 12 }}
-            >
-              Add asset
-            </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => { setAddNewAsset(true); }}
+                style={{ marginBottom: 12 }}
+              >
+                Add asset
+              </Button>
           }
         </div>
       </div>

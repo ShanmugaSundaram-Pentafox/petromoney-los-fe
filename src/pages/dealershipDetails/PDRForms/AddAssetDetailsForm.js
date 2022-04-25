@@ -20,6 +20,7 @@ import PreviewCard from '../../../components/CommonComponents/Cards/PreviewCard'
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
 import { addAssetDetailsById, deleteAssetDetailsById, getAssetDetailsById, getAssetList } from '../../../services/PDReport.services';
+import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -84,7 +85,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable }) => {
+const AddAssetDetailsForm = ({ data: init_data, dealer_id, callback, currentUser, editable }) => {
 
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles()
@@ -173,13 +174,20 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable 
       ...CustomValidation
     }),
     onSubmit: values => {
+      let obj = {};
+      if (dealer_id) {
+        obj = compareObject(init_data, values)
+      }
+      else {
+        obj = { ...values }
+      }
       const { asset_value, market_value, ownership, ownership_proof, relationship } = values
       delete values.asset_value; delete values.market_value; delete values.ownership_proof; delete values.relationship;
-      const data = { asset_id: type.value, asset_value, market_value, ownership, ownership_proof, relationship, details: { ...values } }
+      const data = { asset_id: type.value, asset_value, market_value, ownership, ownership_proof, relationship, details: { ...obj } }
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
         formData.append(key, data[key]);
-      });
+      }); 
       addAssetDetailsById(data, dealer_id)
         .then(res => {
           enqueueSnackbar(res, {

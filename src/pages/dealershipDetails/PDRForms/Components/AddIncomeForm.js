@@ -13,6 +13,7 @@ import Button from '../../../../components/CommonComponents/Button/Button';
 import TextInput from '../../../../components/TextInput/TextInput';
 import { getBusinessTypes } from '../../../../services/common.service';
 import { addIncomeDetailsByID } from '../../../../services/PDReport.services';
+import { compareObject } from '../../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -59,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 
-const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
+const AddIncomeForm = ({ data: init_data, isEdit, id, handleClose }) => {
   const [loading, setLoading] = useState(false)
   const [businessTypes, setBusinessTypes] = useState([{}, {}, {}, {}, {}]);
 
@@ -78,7 +79,7 @@ const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
   const classes = useStyles()
 
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
-    initialValues: { ...data },
+    initialValues: { ...init_data },
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
@@ -91,8 +92,16 @@ const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
       cur_fy_turnover: Yup.number().nullable().required('Enter turnover')
     }),
     onSubmit: values => {
+      let obj = {};
+      if (id) {
+        obj = compareObject(init_data, values)
+      }
+      else {
+        obj = { ...values }
+      } 
       const data = { ...values, is_pdr: 1 }
-      addIncomeDetailsByID(data, id, isEdit)
+      const edit_data = { ...obj, id: values.id, is_pdr: 1 }
+      addIncomeDetailsByID(edit_data, id, isEdit)
         .then(res => {
           enqueueSnackbar(res, {
             anchorOrigin: {

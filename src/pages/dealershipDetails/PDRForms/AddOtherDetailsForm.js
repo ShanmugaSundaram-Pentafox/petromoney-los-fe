@@ -18,6 +18,7 @@ import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
 import { getOmcList } from '../../../services/common.service';
 import { addAdditionalDetails, deleteOtherDetailsByID, updateAdditionalDetails } from '../../../services/PDReport.services';
+import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -90,6 +91,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
   const [omcs, setOmcs] = useState([])
   const [addNew, setAddNew] = useState(data ? false : true)
   const [editRow, setEditRow] = useState(false);
+  const [initData, setInitData] = useState({})
 
   const handleClose = () => {
     callback();
@@ -117,8 +119,16 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
       mobile: Yup.string().nullable('Enter sales officer name').matches(/^\d{10}$/, 'Invalid mobile number').required('Enter valid mobile number'),
     }),
     onSubmit: values => {
+      let obj = {};
+      if (dealer_id) {
+        obj = compareObject(initData, values)
+      }
+      else {
+        obj = { ...values }
+      } 
+      const edit_value = { ...obj, id: values.id}
       if (editRow) {
-        updateAdditionalDetails(values, dealer_id)
+        updateAdditionalDetails(edit_value, dealer_id)
           .then(res => {
             console.log(res)
             enqueueSnackbar(res, {
@@ -179,6 +189,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
   const editOthersRow = (rowData, rowIndex) => {
     setEditRow(true)
     setValues(rowData)
+    setInitData(rowData)
   }
   const deleteOthersRow = (row, index) => {
     deleteOtherDetailsByID(row, dealer_id)

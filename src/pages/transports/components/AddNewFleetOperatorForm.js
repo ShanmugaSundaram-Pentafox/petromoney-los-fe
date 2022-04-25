@@ -16,6 +16,7 @@ import * as Yup from 'yup';
 import Button from '../../../components/CommonComponents/Button/Button';
 import TextInput from '../../../components/TextInput/TextInput';
 import { addNewFleetOperator, updateFleetOperator } from '../../../services/transports.service';
+import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -126,8 +127,15 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable }
     }),
     onSubmit: values => {
       if (data) {
+        let obj = {};
+        if (dealer_id) {
+          obj = compareObject(data, values)
+        }
+        else {
+          obj = { ...values }
+        } 
         setLoading(true)
-        updateFleetOperator(values, dealer_id, data.id)
+        updateFleetOperator(obj, dealer_id, data.id)
           .then(res => {
             setLoading(false)
             enqueueSnackbar(res, {

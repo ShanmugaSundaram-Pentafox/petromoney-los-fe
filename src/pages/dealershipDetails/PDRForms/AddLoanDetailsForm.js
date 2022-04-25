@@ -18,6 +18,7 @@ import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
 import { getLoanTypes } from '../../../services/common.service';
 import { addLoanDetailsByID, deleteLoanDetailsByID, getLoanDetailsbyID, updateLoanDetailsByID } from '../../../services/PDReport.services';
+import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -132,11 +133,12 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
   const [loanTypes, setLoanTypes] = useState([])
   const [addNew, setAddNew] = useState(loanData ? false : true)
   const [editRow, setEditRow] = useState(false);
-
+  const [initData, setInitData] = useState({})
+  
   useMount(() => {
     getLoanDetailsbyID(dealer_id)
-      .then(data => {
-        setLoanData(data)
+    .then(data => {
+      setLoanData(data)
       })
       .catch((e) => {
         console.log(e);
@@ -164,8 +166,16 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
 
     }),
     onSubmit: values => {
+      let obj = {};
+      if (dealer_id) {
+        obj = compareObject(initData, values)
+      }
+      else {
+        obj = { ...values }
+      }
+      const data = { ...obj, loan_id:initData.loan_id}
       if (editRow) {
-        updateLoanDetailsByID(values, dealer_id)
+        updateLoanDetailsByID(data, dealer_id)
           .then(res => {
             console.log(res)
             enqueueSnackbar(res, {
@@ -230,6 +240,7 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
   const editLoanRow = (rowData, rowIndex) => {
     setEditRow(true)
     setValues(rowData)
+    setInitData(rowData)
   }
   const deleteLoanRow = (row, index) => {
     deleteLoanDetailsByID(row, dealer_id)

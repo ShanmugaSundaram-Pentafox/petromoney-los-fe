@@ -18,6 +18,7 @@ import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
 import { addOutletDetails } from '../../../services/PDReport.services';
+import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -74,13 +75,12 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, editable }) => {
+const AddNewOutletDetailsForm = ({ data: init_data, dealer_id, isEdit, callback, currentUser, editable }) => {
 
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles()
   const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
   const [loading, setLoading] = useState(false)
-  console.log(data);
 
   const handleEdit = () => {
     setReadOnly(!readOnly)
@@ -124,7 +124,7 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
 
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
     initialValues: {
-      ...data,
+      ...init_data,
     },
     validateOnChange: false,
     validateOnBlur: true,
@@ -137,7 +137,14 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
       land_owner_name: Yup.string().nullable('Enter land owner name').required('Enter land owner name')
     }),
     onSubmit: values => {
-      const data = { ...values }
+      let obj = {};
+      if (dealer_id) {
+        obj = compareObject(init_data, values)
+      }
+      else {
+        obj = { ...values }
+      } 
+      const data = { ...obj }
       addOutletDetails(data, dealer_id)
         .then(res => {
           enqueueSnackbar(res, {
@@ -160,7 +167,6 @@ const AddNewOutletDetailsForm = ({ data, dealer_id, isEdit, callback, currentUse
             variant: 'error',
           });
         })
-      console.log(values);
     }
   });
   const inputProps = {

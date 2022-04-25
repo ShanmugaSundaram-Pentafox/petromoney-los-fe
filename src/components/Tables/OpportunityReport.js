@@ -1,4 +1,4 @@
-import { Typography, Paper, FormControl, RadioGroup, FormControlLabel, Radio, TextField, InputAdornment, Box } from '@material-ui/core';
+import { Typography, Paper, FormControl, RadioGroup, FormControlLabel, Radio, TextField, InputAdornment, Box, TableFooter } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -12,11 +12,12 @@ import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import PersonOutlinedIcon from '@material-ui/icons/PersonOutlined';
 import { makeStyles } from '@material-ui/styles';
 import { Formik } from 'formik';
+import { head } from 'lodash';
 import React, { useState } from 'react'
 import { useMount } from 'react-use';
 import * as Yup from 'yup';
 import usePageTitle from '../../hooks/usePageTitle';
-import { getOpportunities } from '../../services/loans.service';
+import { getOpportunities, getPotentialOpportunity } from '../../services/loans.service';
 import LoaderButton from '../CommonComponents/Button/LoaderButton';
 import { ViewData } from '../CommonComponents/FilePreview';
 import Currency from '../Number/Currency';
@@ -25,7 +26,6 @@ const useStyles = makeStyles(() => ({
   cardWrapper: {
     display: 'flex',
     flexWrap: 'wrap',
-    // flexBasis: '33.33%',
     justifyContent: 'space-between',
   },
   rootCard: {
@@ -38,7 +38,6 @@ const useStyles = makeStyles(() => ({
     display: 'inline-block',
     position: 'relative',
     overflow: 'hidden',
-    // flexDirection: 'column',
     boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px'
   },
   cardTitle: {
@@ -66,6 +65,10 @@ const OpportunityReport = () => {
   usePageTitle('Opportunity Report');
   const classes = useStyles();
   const [opportunities, setOpportunities] = useState();
+  const [view, setView] = useState('state_data')
+  const [potentialOpportunity, setPotentialOpportunity] = useState([])
+  const regionTotal = head(potentialOpportunity?.region_total)
+  const stateTotal = head(potentialOpportunity?.state_total)
 
   useMount(() => {
     getOpportunities()
@@ -73,22 +76,35 @@ const OpportunityReport = () => {
       .catch(e => {
         console.log(e)
       })
+    getPotentialOpportunity()
+      .then(data => {
+        setPotentialOpportunity(data)
+      })
+      .catch(e => {
+        console.log(e)
+      })
   })
 
   const vSchema = Yup.object().shape({
-    convertion_ratio: Yup.number().required('Enter Convertion Ratio').min(1, '1% is minimum value').max(100, '100% is maximum value'),
-    avg_ticket_size: Yup.number().required('Enter Ticket Size').min(1, '1Lacs in minimum value').max(45, '45Lacs is maximum value')
+    conversion_ratio: Yup.number().required('Enter Convertion Ratio').min(1, '1% is minimum value').max(100, '100% is maximum value'),
+    ticket_size: Yup.number().required('Enter Ticket Size').min(1, '1Lacs in minimum value').max(45, '45Lacs is maximum value')
   })
 
   return (
     <>
       <Formik
-        initialValues={{convertion_ratio: 30, avg_ticket_size: 15}}
+        initialValues={{conversion_ratio: 30, ticket_size: 15}}
         validateOnBlur
         validationSchema={vSchema}
         validateOnChange={false}
         onSubmit={(values, action) => {
-          console.log(values, action)
+          getPotentialOpportunity(values)
+          .then(data => {
+            setPotentialOpportunity(data)
+          })
+          .catch(e => {
+            console.log(e)
+          })
         }}
       >
         {
@@ -96,26 +112,26 @@ const OpportunityReport = () => {
             <Paper style={{margin: 8, padding: 16, borderRadius: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
               <div>
                 <TextField
-                  name='convertion_ratio'
+                  name='conversion_ratio'
                   type='number'
                   defaultValue={30}
                   variant='outlined'
-                  label="Convertion Ratio"
-                  helperText={errors?.convertion_ratio}
-                  error={errors?.convertion_ratio}
+                  label="Conversion Ratio"
+                  helperText={errors?.conversion_ratio}
+                  error={errors?.conversion_ratio}
                   style={{marginRight: 8}}
                   onChange={handleChange}
                   InputLabelProps={{ shrink: true }}
                   InputProps={{endAdornment: <InputAdornment position="start">%</InputAdornment>}}
                 />
                 <TextField
-                  name='avg_ticket_size'
+                  name='ticket_size'
                   type='number'
                   defaultValue={15}
                   variant='outlined'
                   label="Avg Ticket Size in Lacs"
-                  helperText={errors?.avg_ticket_size}
-                  error={errors?.avg_ticket_size}
+                  helperText={errors?.ticket_size}
+                  error={errors?.ticket_size}
                   style={{marginLeft: 8}}
                   onChange={handleChange}
                   InputLabelProps={{ shrink: true }}
@@ -123,7 +139,7 @@ const OpportunityReport = () => {
                 />
                 <LoaderButton variant='outlined' color='primary' style={{marginLeft: 16}} onClick={handleSubmit}>Get Data</LoaderButton>
               </div>
-              <ViewData title="Potential Opportunity (in Crs)" value={<Currency value='2934'/>} />
+              <ViewData title="Potential Opportunity (in Crs)" value={<Currency value={view === 'state_data' ? stateTotal?.total_average_ticket_count : regionTotal?.total_average_ticket_count}/>} />
             </Paper>
           )
         }
@@ -132,9 +148,9 @@ const OpportunityReport = () => {
         <div style={{margin: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end'}}>
           <Typography variant='h4'>Potential Opportunity</Typography>
           <FormControl component="fieldset">
-            <RadioGroup row defaultValue="state_wise">
-              <FormControlLabel value="state_wise" control={<Radio size="small" />} label="State Wise" />
-              <FormControlLabel value="region_wise" control={<Radio size="small" />} label="Region Wise" />
+            <RadioGroup row defaultValue="state_data" value={view} onChange={(event) => setView(event.target.value)}>
+              <FormControlLabel value="state_data" control={<Radio size="small" />} label="State Wise" />
+              <FormControlLabel value="region_data" control={<Radio size="small" />} label="Region Wise" />
             </RadioGroup>
           </FormControl>
         </div>
@@ -146,113 +162,50 @@ const OpportunityReport = () => {
               <TableCell>HPCL</TableCell>
               <TableCell>BPCL</TableCell>
               <TableCell>Total</TableCell>
-              <TableCell>Convertion Ratio</TableCell>
               <TableCell>Converted Dealer Count</TableCell>
-              <TableCell style={{width: '20%'}}>Proposed Exposure (in Crs) if Avg Ticket size 15L</TableCell>
+              <TableCell style={{width: '20%'}}>Proposed Exposure (in Crs)</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow>
-              <TableCell>Test State</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>1726</TableCell>
-              <TableCell>30%</TableCell>
-              <TableCell>588</TableCell>
-              <TableCell>075</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Test State</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>1726</TableCell>
-              <TableCell>30%</TableCell>
-              <TableCell>588</TableCell>
-              <TableCell>075</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Test State</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>1726</TableCell>
-              <TableCell>30%</TableCell>
-              <TableCell>588</TableCell>
-              <TableCell>075</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Test State</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>1726</TableCell>
-              <TableCell>30%</TableCell>
-              <TableCell>588</TableCell>
-              <TableCell>075</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Test State</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>1726</TableCell>
-              <TableCell>30%</TableCell>
-              <TableCell>588</TableCell>
-              <TableCell>075</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Test State</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>1726</TableCell>
-              <TableCell>30%</TableCell>
-              <TableCell>588</TableCell>
-              <TableCell>075</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Test State</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>1726</TableCell>
-              <TableCell>30%</TableCell>
-              <TableCell>588</TableCell>
-              <TableCell>075</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Test State</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>1726</TableCell>
-              <TableCell>30%</TableCell>
-              <TableCell>588</TableCell>
-              <TableCell>075</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Test State</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>1726</TableCell>
-              <TableCell>30%</TableCell>
-              <TableCell>588</TableCell>
-              <TableCell>075</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Test State</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>585</TableCell>
-              <TableCell>1726</TableCell>
-              <TableCell>30%</TableCell>
-              <TableCell>588</TableCell>
-              <TableCell>075</TableCell>
-            </TableRow>
+            {
+              potentialOpportunity?.[view]?.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell>{item?.name}</TableCell>
+                  <TableCell>{item?.IOCL}</TableCell>
+                  <TableCell>{item?.HPCL}</TableCell>
+                  <TableCell>{item?.BPCL}</TableCell>
+                  <TableCell>{item?.opportunities}</TableCell>
+                  <TableCell>{item?.converted_dealers_count}</TableCell>
+                  <TableCell>{item?.average_ticket_count}</TableCell>
+                </TableRow>
+              ))
+            }
           </TableBody>
+          <TableFooter>
+            <TableRow>
+              {
+                view === 'state_data' ? 
+                <>
+                  <TableCell>Total</TableCell>
+                  <TableCell><strong>{stateTotal?.total_IOCL}</strong></TableCell>
+                  <TableCell><strong>{stateTotal?.total_HPCL}</strong></TableCell>
+                  <TableCell><strong>{stateTotal?.total_BPCL}</strong></TableCell>
+                  <TableCell><strong>{stateTotal?.total_opportunities}</strong></TableCell>
+                  <TableCell><strong>{stateTotal?.total_opportunities}</strong></TableCell>
+                  <TableCell><strong>{stateTotal?.total_average_ticket_count}</strong></TableCell> 
+                </> : 
+                <>
+                  <TableCell>Total</TableCell>
+                  <TableCell><strong>{regionTotal?.total_IOCL}</strong></TableCell>
+                  <TableCell><strong>{regionTotal?.total_HPCL}</strong></TableCell>
+                  <TableCell><strong>{regionTotal?.total_BPCL}</strong></TableCell>
+                  <TableCell><strong>{regionTotal?.total_opportunities}</strong></TableCell>
+                  <TableCell><strong>{regionTotal?.total_opportunities}</strong></TableCell>
+                  <TableCell><strong>{regionTotal?.total_average_ticket_count}</strong></TableCell> 
+                </>
+              }
+            </TableRow>
+          </TableFooter>
         </Table>
       </Box>
       <div className={classes.cardWrapper}>

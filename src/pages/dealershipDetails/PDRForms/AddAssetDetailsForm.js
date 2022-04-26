@@ -138,30 +138,50 @@ const AddAssetDetailsForm = ({ data: init_data, dealer_id, callback, currentUser
   };
 
   let CustomValidation = {};
-  if (type.label === 'Car') {
-    CustomValidation = {
-      // address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
-      model: Yup.number().nullable('Please enter model').required('Please enter model'),
-      yom: Yup.number().nullable('Please enter year of manufacture').required('Please enter year of manufacture').test('year', 'Invalid Manufacture Year', value => value >= 1900 && value <= format(new Date(), 'yyyy')),
-    };
-  } else if (type.label === 'Gold') {
-    CustomValidation = {
-      quantity: Yup.number().nullable('Please enter quantity').required('Please enter quantity'),
-    }
-  } else if (type.label === 'CV') {
-    CustomValidation = {
-      model: Yup.number().nullable('Please enter model').required('Please enter model'),
-      yom: Yup.number().nullable('Please enter year of manufacture').required('Please enter year of manufacture').test('year', 'Invalid Manufacture Year', value => value >= 1900 && value <= format(new Date(), 'yyyy')),
-    }
-  } else if (type.label === 'Land') {
-    CustomValidation = {
-      address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
-    }
-  } else if (type.label === 'Building') {
-    CustomValidation = {
-      address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
-    }
-  }
+  let setKey = assetData.map(data => {
+    let item;
+    item = assetData.filter(names => names.name == type.label)
+    // if (type.label === 'Car'){
+    // } else if (type.label === 'Gold'){
+    //   item = assetData.filter(names => names.name == 'Gold')
+    // } else if (type.label === 'CV') {
+    //   item = assetData.filter(names => names.name == 'CV')
+    // } else if (type.label === 'Land') {
+    //   item = assetData.filter(names => names.name == 'Land')
+    // } else if (type.label === 'BUILDING') {
+    //   item = assetData.filter(names => names.name == 'BUILDING')
+    // }
+    // console.log(item);
+    let asset_name = item?.map(aname => {
+      let ass = aname?.details.map(detail => {
+        CustomValidation[detail.key] = Yup.string().nullable('Required').required('Required')
+      })
+    })
+  }) 
+  // if (type.label === 'Car') {
+  //   CustomValidation = {
+  //     // address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
+  //     model: Yup.number().nullable('Please enter model').required('Please enter model'),
+  //     yom: Yup.number().nullable('Please enter year of manufacture').required('Please enter year of manufacture').test('year', 'Invalid Manufacture Year', value => value >= 1900 && value <= format(new Date(), 'yyyy')),
+  //   };
+  // } else if (type.label === 'Gold') {
+  //   CustomValidation = {
+  //     quantity: Yup.number().nullable('Please enter quantity').required('Please enter quantity'),
+  //   }
+  // } else if (type.label === 'CV') {
+  //   CustomValidation = {
+  //     model: Yup.number().nullable('Please enter model').required('Please enter model'),
+  //     yom: Yup.number().nullable('Please enter year of manufacture').required('Please enter year of manufacture').test('year', 'Invalid Manufacture Year', value => value >= 1900 && value <= format(new Date(), 'yyyy')),
+  //   }
+  // } else if (type.label === 'Land') {
+  //   CustomValidation = {
+  //     address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
+  //   }
+  // } else if (type.label === 'Building') {
+  //   CustomValidation = {
+  //     address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
+  //   }
+  // }
 
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
     initialValues: {},
@@ -175,12 +195,13 @@ const AddAssetDetailsForm = ({ data: init_data, dealer_id, callback, currentUser
     }),
     onSubmit: values => {
       let obj = {};
-      if (dealer_id) {
+      if (editRow) {
         obj = compareObject(init_data, values)
       }
       else {
         obj = { ...values }
       }
+      console.log(obj);
       const { asset_value, market_value, ownership, ownership_proof, relationship } = values
       delete values.asset_value; delete values.market_value; delete values.ownership_proof; delete values.relationship;
       const data = { asset_id: type.value, asset_value, market_value, ownership, ownership_proof, relationship, details: { ...obj } }

@@ -104,7 +104,6 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
         setOmcs(data);
       })
       .catch((e) => {
-        console.log(e);
       });
   })
 
@@ -120,7 +119,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
     }),
     onSubmit: values => {
       let obj = {};
-      if (dealer_id) {
+      if (editRow) {
         obj = compareObject(initData, values)
       }
       else {
@@ -130,7 +129,6 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
       if (editRow) {
         updateAdditionalDetails(edit_value, dealer_id)
           .then(res => {
-            console.log(res)
             enqueueSnackbar(res, {
               anchorOrigin: {
                 vertical: 'top',
@@ -176,7 +174,6 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
               },
               variant: 'error',
             });
-            console.log(e);
           })
       }
     }
@@ -225,7 +222,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
         <div className={classes.stepperRoot}>
           {
             data?.length || addNew ? null :
-              <Typography className={classes.typography}>No bunks found,Click 'Add other bunk' to add.</Typography>
+              <Typography className={classes.typography}>No bunks found,Click &apos Add other bunk &apos to add.</Typography>
           }
           {
             addNew || editRow ? (
@@ -330,7 +327,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
               <Grid container spacing={2}>{
                 data.map((item, i) => {
                   return (
-                    <Grid item md={6}>
+                    <Grid item md={6} key={i}>
                       <PreviewCard
                         onEdit={() => { editOthersRow(item, i) }}
                         onDelete={() => deleteOthersRow(item, i)}

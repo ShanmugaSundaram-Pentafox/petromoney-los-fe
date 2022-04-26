@@ -130,7 +130,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
     }),
     onSubmit: values => {
       let obj = {};
-      if (dealer_id) {
+      if (!readOnly) {
         obj = compareObject(data, values)
       }
       else {

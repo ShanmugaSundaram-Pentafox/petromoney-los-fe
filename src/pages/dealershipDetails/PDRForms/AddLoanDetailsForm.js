@@ -141,14 +141,12 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
       setLoanData(data)
       })
       .catch((e) => {
-        console.log(e);
       })
     getLoanTypes()
       .then(data => {
         setLoanTypes(data)
       })
       .catch((e) => {
-        console.log(e)
       })
   })
   const handleClose = () => {
@@ -167,7 +165,7 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
     }),
     onSubmit: values => {
       let obj = {};
-      if (dealer_id) {
+      if (editRow) {
         obj = compareObject(initData, values)
       }
       else {
@@ -177,7 +175,6 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
       if (editRow) {
         updateLoanDetailsByID(data, dealer_id)
           .then(res => {
-            console.log(res)
             enqueueSnackbar(res, {
               anchorOrigin: {
                 vertical: 'top',
@@ -205,7 +202,6 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
       else {
         addLoanDetailsByID(values, dealer_id)
           .then(res => {
-            console.log(res)
             enqueueSnackbar(res, {
               anchorOrigin: {
                 vertical: 'top',
@@ -258,7 +254,6 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
         }, 1500);
       })
       .catch((e) => {
-        console.log(e);
         enqueueSnackbar(e, {
           anchorOrigin: {
             vertical: 'top',

@@ -119,7 +119,7 @@ const AddOmcDetailsForm = ({ data: init_data, dealer_id, isEdit, currentUser, ca
     }),
     onSubmit: values => {
       let obj = {};
-      if (dealer_id) {
+      if (!readOnly) {
         obj = compareObject(init_data, values)
       }
       else {

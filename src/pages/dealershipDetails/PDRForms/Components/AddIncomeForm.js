@@ -69,10 +69,8 @@ const AddIncomeForm = ({ data: init_data, isEdit, id, handleClose }) => {
     getBusinessTypes()
       .then(setBusinessTypes)
       .catch(err => {
-        console.log('BusinessTypes fetch error - ', err)
       })
       .catch(err => {
-        console.log('Expense details fetch error - ', err)
       })
   })
   const { enqueueSnackbar } = useSnackbar();
@@ -93,7 +91,7 @@ const AddIncomeForm = ({ data: init_data, isEdit, id, handleClose }) => {
     }),
     onSubmit: values => {
       let obj = {};
-      if (id) {
+      if (isEdit) {
         obj = compareObject(init_data, values)
       }
       else {

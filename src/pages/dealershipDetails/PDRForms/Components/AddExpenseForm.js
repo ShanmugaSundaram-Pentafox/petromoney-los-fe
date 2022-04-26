@@ -74,7 +74,7 @@ const AddExpenseForm = ({ data:init_data, isEdit, id, handleClose }) => {
     }),
     onSubmit: values => {
       let obj = {};
-      if (id) {
+      if (isEdit) {
         obj = compareObject(init_data, values)
       }
       else {
@@ -83,7 +83,6 @@ const AddExpenseForm = ({ data:init_data, isEdit, id, handleClose }) => {
       const data = { ...obj, id: values.id, is_pdr: 1 }
       addExpenseDetailsByID(data, id, isEdit)
         .then(res => {
-          console.log(res)
           enqueueSnackbar(res, {
             anchorOrigin: {
               vertical: 'top',

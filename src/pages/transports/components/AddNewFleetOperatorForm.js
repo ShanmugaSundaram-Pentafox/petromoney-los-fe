@@ -128,7 +128,7 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable }
     onSubmit: values => {
       if (data) {
         let obj = {};
-        if (dealer_id) {
+        if (!readOnly) {
           obj = compareObject(data, values)
         }
         else {
@@ -152,7 +152,6 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable }
 
           })
           .catch(e => {
-            console.log(e)
             setLoading(false)
             enqueueSnackbar('Something went wrong, Please try Again!', {
               anchorOrigin: {
@@ -183,7 +182,6 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable }
             }, 1500);
           })
           .catch(e => {
-            console.log(e)
             setLoading(false)
             enqueueSnackbar('Something went wrong, Please try Again!', {
               anchorOrigin: {

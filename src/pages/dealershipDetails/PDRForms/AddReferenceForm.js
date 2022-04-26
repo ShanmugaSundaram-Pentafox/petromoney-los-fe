@@ -113,7 +113,6 @@ const AddReferenceForm = ({ data: init_data, dealer_id, isEdit, callback, editab
   const [addNew, setAddNew] = useState(init_data ? false : true)
   const [editRow, setEditRow] = useState(false);
   const [initData, setInitData] = useState({})
-
   const handleClose = () => {
     callback();
   };
@@ -129,17 +128,11 @@ const AddReferenceForm = ({ data: init_data, dealer_id, isEdit, callback, editab
     }),
     onSubmit: values => {
       let obj = {};
-      if (dealer_id) {
-        obj = compareObject(initData, values)
-      }
-      else {
-        obj = { ...values }
-      } 
-      const data = { ...obj, name: values.name.toUpperCase() }
+      
+      const data = { ...values, name: values.name.toUpperCase() }
       if (editRow) {
         updateReferenceById(data, dealer_id)
           .then(res => {
-            console.log(res)
             enqueueSnackbar(res, {
               anchorOrigin: {
                 vertical: 'top',
@@ -166,7 +159,6 @@ const AddReferenceForm = ({ data: init_data, dealer_id, isEdit, callback, editab
       else {
         addReferenceDetails(data, dealer_id)
           .then(res => {
-            console.log(res)
             enqueueSnackbar(res, {
               anchorOrigin: {
                 vertical: 'top',
@@ -237,7 +229,7 @@ const AddReferenceForm = ({ data: init_data, dealer_id, isEdit, callback, editab
         <div className={classes.stepperRoot}>
           {
             init_data.length || addNew ? null :
-              <Typography className={classes.typography}>No references found,Click 'Add reference' to add.</Typography>
+              <Typography className={classes.typography}>No references found,Click &apos Add reference &apos to add.</Typography>
           }
           {
             addNew || editRow ? (
@@ -311,7 +303,7 @@ const AddReferenceForm = ({ data: init_data, dealer_id, isEdit, callback, editab
               <Grid container spacing={2}>{
                 init_data.map((item, i) => {
                   return (
-                    <Grid item md={6}>
+                    <Grid item md={6} key={i}>
                       <PreviewCard
                         onEdit={() => { editRefRow(item, i) }}
                         onDelete={() => deleteRefRow(item, i)}

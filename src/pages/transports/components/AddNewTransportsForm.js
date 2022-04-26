@@ -193,8 +193,8 @@ const AddNewTransportsForm = ({
     validateId(action, id)
       .then((res) => {
         action === 'pan' ?
-          setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}}) :
-          setGstValidateData({icon: true, loading: false, idType: 'GST', details: res?.details || {}})
+          setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}, is_verified: res?.is_verified}) :
+          setGstValidateData({icon: true, loading: false, idType: 'GST', details: res?.details || {}, is_verified: res?.is_verified})
         !values?.name && setFieldValue('name', res?.details?.tradeNam)
         setFieldValue('address', res?.details?.pradr?.adr)
         !values?.business_type && setFieldValue('business_type', res?.details?.ctb)
@@ -454,7 +454,7 @@ const AddNewTransportsForm = ({
         {
         valid?.icon ?
         valid?.loading ? <CircularProgress size={15}/> :
-        valid?.details ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{color:'#4caf50'}} /></Tooltip> :
+        valid?.is_verified ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{color:'#4caf50'}} /></Tooltip> :
         <Tooltip title={`Invalid ${valid.idType}`} ><CancelOutlinedIcon fontSize='small' color='error' /></Tooltip> : null
         }
       </div>

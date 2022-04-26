@@ -593,7 +593,7 @@ export const validateId = (action, id, body) => {
   return new Promise((resolve, reject) => {
     apiCall(`${action}/${id}`, {
       method: 'POST',
-      body: body ? {name: body} : {}
+      body: body ? {name: body, time: Date.now()/1000} : {}
     })
       .then(({status, data, message}) => {
         if (status === 'SUCCESS') {

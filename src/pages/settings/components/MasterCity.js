@@ -2,6 +2,7 @@ import { makeStyles, IconButton, Typography, Divider, Button, Grid, TextField, T
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
+import AddIcon from '@material-ui/icons/Add';
 import { useSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -242,6 +243,7 @@ const MasterCity = ({ callback, title }) => {
             <Button
               variant='contained'
               type='submit'
+              startIcon={<AddIcon  />}
               onClick={() => {
                 setAddForm({action:'Add'})
               }}

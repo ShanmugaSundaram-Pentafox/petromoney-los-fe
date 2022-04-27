@@ -11,6 +11,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
 import WhatsAppIcon from '@material-ui/icons/WhatsApp';
+import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack'
@@ -45,6 +46,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 6,
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
@@ -459,6 +461,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                           variant="contained"
                           color="primary"
                           size="small"
+                          startIcon={<VpnKeyIcon  />}
                           onClick={() => {
                             setReadOnly(false);
                             data.status === 'Active' ? setEditPassword(true) : activationAlert()

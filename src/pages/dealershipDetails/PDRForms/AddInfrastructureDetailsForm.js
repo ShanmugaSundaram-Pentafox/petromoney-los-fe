@@ -9,6 +9,8 @@ import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import { makeStyles } from '@material-ui/styles';
+import { IconButton } from '@material-ui/core'
+import AddIcon from '@material-ui/icons/Add';
 import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
@@ -27,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
     padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
@@ -164,7 +167,9 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Add Infrastructure Details</div>
-        <CloseIcon onClick={handleClose} />
+        <IconButton onClick={handleClose}  size='small'>
+          <CloseIcon fontSize='size' />
+        </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
@@ -318,6 +323,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
             <Button
               variant='contained'
               color='primary'
+              startIcon={<AddIcon  />}
               onClick={() => setTankerAdd(true)}
               style={{ marginRight: 10 }}
             >

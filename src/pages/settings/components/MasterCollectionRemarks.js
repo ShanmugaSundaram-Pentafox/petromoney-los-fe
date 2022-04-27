@@ -1,6 +1,7 @@
 import { makeStyles, IconButton, Typography, Divider, Button, Grid, Tooltip, Paper } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
+import AddIcon from '@material-ui/icons/Add';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -199,6 +200,7 @@ const MasterCollectionRemarks = ({ callback, title }) => {
             <Button
               variant='contained'
               type='submit'
+              startIcon={<AddIcon  />}
               onClick={() => {
                 setAddForm({action:'Add'})
               }}

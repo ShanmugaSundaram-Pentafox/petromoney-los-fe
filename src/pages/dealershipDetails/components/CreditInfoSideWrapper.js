@@ -5,7 +5,10 @@ import Divider from '@material-ui/core/Divider';
 import Snackbar from '@material-ui/core/Snackbar';
 import Typography from '@material-ui/core/Typography';
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
+import { IconButton } from '@material-ui/core'
 import RotateLeftOutlinedIcon from '@material-ui/icons/RotateLeftOutlined';
+import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
+import EditIcon from '@material-ui/icons/Edit';
 import Alert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
@@ -27,6 +30,7 @@ const useStyles = makeStyles(theme => ({
     padding: '12px 16px',
     display:'flex',
     justifyContent:'space-between',
+    alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
@@ -164,7 +168,9 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
     <div className={classes.sidePanelFormWrapper}>
       <div className={classes.sidePanelTitle}>
         <Typography  variant="h4">Credit Information ({data?.pan || '-'})</Typography>
-        <CloseRoundedIcon onClick={onClose} />
+        <IconButton onClick={onClose}  size='small'>
+          <CloseRoundedIcon fontSize='size' />
+        </IconButton>
       </div>
       <div className={classes.sidePanelFormContentWrapper}>
         {
@@ -250,7 +256,8 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
               apiData?.cibil_score &&
                 <Button
                   className={clsx(classes.btn, classes.btnSuccess)}
-                  variant={cibilEditMode ? 'contained' : 'outlined'}
+                  variant="contained"
+                  startIcon={cibilEditMode ? <NavigateNextRounded /> : <EditIcon />}
                   onClick={cibilEditMode ? handleSubmit : handleEdit}>{cibilEditMode === true ? 'Save' : 'Edit'}</Button>
             }
           </div>

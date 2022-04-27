@@ -4,6 +4,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import PhoneAndroidIcon from '@material-ui/icons/PhoneAndroid';
+import AddIcon from '@material-ui/icons/Add';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react'
@@ -322,6 +323,7 @@ const Products = ({title, callback}) => {
             <Button
               variant="contained"
               color="primary"
+              startIcon={<AddIcon  />}
               onClick={() => { setAddNewProduct(true); }}
               style={{ marginBottom: 12 }}
             >

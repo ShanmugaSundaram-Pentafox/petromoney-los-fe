@@ -30,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
     padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333',
   },

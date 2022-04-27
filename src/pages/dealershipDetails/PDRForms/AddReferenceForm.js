@@ -6,6 +6,7 @@ import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { makeStyles } from '@material-ui/styles';
+import { IconButton } from '@material-ui/core'
 import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
@@ -22,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
     padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
@@ -221,7 +223,9 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback, editable }) => {
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Add Reference Details</div>
-        <CloseIcon onClick={handleClose} />
+        <IconButton onClick={handleClose}  size='small'>
+          <CloseIcon fontSize='size' />
+        </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>

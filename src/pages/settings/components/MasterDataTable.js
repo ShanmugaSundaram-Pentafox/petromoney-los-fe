@@ -4,10 +4,10 @@ import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
-
 import CheckCircleTwoTone from '@material-ui/icons/CheckCircleTwoTone';
 import CloseIcon from '@material-ui/icons/Close';
 import DeleteIcon from '@material-ui/icons/Delete';
+import AddIcon from '@material-ui/icons/Add';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import EditIcon from '@material-ui/icons/Edit';
 import SearchIcon from '@material-ui/icons/Search';
@@ -53,6 +53,7 @@ const useStyles = makeStyles((theme) => ({
     padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333',
   },
@@ -62,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     padding: 10,
     margin: 10,
-    height: '80%',
+    height: '100%',
     borderRadius: 5,
     overflow: 'hidden'
   },
@@ -833,7 +834,9 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
     <>
       <Typography className={classes.sidePanelTitle} variant='h4'>
         <div>{title}</div>
-        <CloseIcon onClick={callback} />
+        <IconButton onClick={callback} size='small'>
+          <CloseIcon fontSize='size' />
+        </IconButton>
       </Typography>
       <Paper className={classes.root}>
         <form className={classes.search} noValidate autoComplete='off'>
@@ -1330,6 +1333,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
             <Button
               variant='contained'
               type='submit'
+              startIcon={<AddIcon  />}
               onClick={() => {
                 handleClose()
                 !regionForm && !assetForm? setOpenAddForm(true) : !assetForm? setOpenRegionForm(true) : setOpenAssetForm(true)

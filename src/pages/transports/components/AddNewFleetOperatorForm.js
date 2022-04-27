@@ -8,6 +8,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import { makeStyles } from '@material-ui/styles';
+import { IconButton } from '@material-ui/core'
 import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
@@ -23,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
     padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
@@ -195,7 +197,9 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable }
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Fleet Operator Information</div>
-        <CloseIcon onClick={handleClose} />
+        <IconButton onClick={handleClose}  size='small'>
+          <CloseIcon fontSize='size' />
+        </IconButton>
       </Typography>
       {
         readOnly ? (

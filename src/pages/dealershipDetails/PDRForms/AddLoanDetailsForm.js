@@ -22,7 +22,7 @@ import { addLoanDetailsByID, deleteLoanDetailsByID, getLoanDetailsbyID, updateLo
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
     // textAlign: 'center',
-    padding: '24px 16px',
+    padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
     zIndex: 0,

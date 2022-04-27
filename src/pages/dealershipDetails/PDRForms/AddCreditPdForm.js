@@ -3,6 +3,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { useFormik } from 'formik';
@@ -18,7 +19,7 @@ import { URL } from '../../../config/serverUrls';
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
     // textAlign: 'center',
-    padding: '24px 16px',
+    padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
     zIndex: 0,
@@ -163,6 +164,7 @@ const AddCreditPdForm = ({ data, dealer_id, callback, currentUser, editable }) =
             <Button
               variant="contained"
               className={clsx(classes.btn, classes.editButton)}
+              startIcon={<NavigateNextRounded />}
               onClick={handleSubmit}
             >
               Save

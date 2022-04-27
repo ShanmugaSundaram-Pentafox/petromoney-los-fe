@@ -34,6 +34,7 @@ import AddOtherDetailsForm from '../PDRForms/AddOtherDetailsForm';
 import AddReferenceForm from '../PDRForms/AddReferenceForm';
 import EmptySidewrapper from '../../../components/CommonComponents/EmptySidewrapper';
 import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
+import AssessmentIcon from '@material-ui/icons/Assessment';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -205,6 +206,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         setLoading(false)
       })
       .catch((e) => {
+        setLoading(false)
         enqueueSnackbar('Something went wrong please try again.', {
           anchorOrigin: {
             vertical: 'top',

@@ -21,7 +21,7 @@ import { addOutletDetails } from '../../../services/PDReport.services';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
-    padding: '24px 16px',
+    padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
     zIndex: 0,

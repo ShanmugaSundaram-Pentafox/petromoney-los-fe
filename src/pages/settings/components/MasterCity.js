@@ -20,7 +20,7 @@ const useStyles = makeStyles(() => ({
     overflow: 'auto'
   },
   sidePanelTitle: {
-    padding: '15px 16px',
+    padding: '10px 16px',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',

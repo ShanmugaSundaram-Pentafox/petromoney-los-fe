@@ -19,7 +19,7 @@ const useStyles = makeStyles(() => ({
     width: '60vw'
   },
   sidePanelTitle: {
-    padding: '15px 16px',
+    padding: '8px 16px',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',

@@ -16,7 +16,7 @@ import { getProductsMaster, updateProductbyId, insertNewProduct } from '../../..
 const useStyles = makeStyles(() => ({
   sidePanelTitle: {
     // textAlign: 'center',
-    padding: '15px 12px',
+    padding: '10px 12px',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',

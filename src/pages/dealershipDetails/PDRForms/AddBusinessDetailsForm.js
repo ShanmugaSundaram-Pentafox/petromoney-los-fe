@@ -9,6 +9,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import { makeStyles } from '@material-ui/styles';
+import { IconButton } from '@material-ui/core'
 import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
@@ -23,7 +24,7 @@ import { updateBusinessDetailsByID } from '../../../services/PDReport.services';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
-    padding: '24px 16px',
+    padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
     zIndex: 0,
@@ -109,7 +110,6 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
       let data = { ...values, has_atm: values.has_atm === 'Yes' ? 1 : 0, is_pep: values.is_pep === 'Yes' ? 1 : 0 }
       updateBusinessDetailsByID(data, dealer_id)
         .then(res => {
-          console.log(res)
           enqueueSnackbar(res, {
             anchorOrigin: {
               vertical: 'top',
@@ -141,7 +141,9 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Add Business Details</div>
-        <CloseIcon onClick={handleClose} />
+        <IconButton onClick={handleClose}  size='small'>
+          <CloseIcon fontSize='size' />
+        </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>

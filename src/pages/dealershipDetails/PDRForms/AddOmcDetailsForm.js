@@ -16,6 +16,7 @@ import {
   KeyboardDatePicker
 } from '@material-ui/pickers';
 import { makeStyles } from '@material-ui/styles';
+import { IconButton } from '@material-ui/core'
 import clsx from 'clsx';
 import { format, parse } from 'date-fns';
 import { useFormik } from 'formik';
@@ -27,7 +28,7 @@ import { ViewData } from '../../../components/CommonComponents/FilePreview';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
-    padding: '24px 16px',
+    padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
     zIndex: 0,
@@ -168,7 +169,9 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback, edi
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Add OMC Details</div>
-        <CloseIcon onClick={handleClose} />
+        <IconButton onClick={handleClose} size='small'>
+          <CloseIcon fontSize='size' />
+        </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>

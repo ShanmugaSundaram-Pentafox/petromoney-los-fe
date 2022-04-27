@@ -10,6 +10,7 @@ import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded'
 import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
 import Alert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/styles';
+import { IconButton } from '@material-ui/core'
 import clsx from 'clsx';
 import { format, parse } from 'date-fns';
 import { useFormik } from 'formik';
@@ -316,7 +317,9 @@ const DealerEditSideWrapper = ({
               ? 'Guarantor Edit Form'
               : 'CoApplicant Edit Form'}
         </div>
-        <CloseIcon onClick={onClose} />
+        <IconButton onClick={onClose} size='small'>
+          <CloseIcon fontSize='size' />
+        </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <Stepper

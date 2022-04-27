@@ -1,4 +1,3 @@
-// import Typography from "@material-ui/core/Typography";
 import Button from '@material-ui/core/Button';
 import Collapse from '@material-ui/core/Collapse';
 import Dialog from '@material-ui/core/Dialog';
@@ -33,6 +32,7 @@ import usePageTitle from '../../hooks/usePageTitle';
 import { getDealersByDealershipId } from '../../services/dealers.service';
 import { getDealershipById } from '../../services/dealerships.service';
 import SalesInfo from '../dashboard/components/SalesInfo';
+import ScoreCard from './components/ScoreCard';
 
 const useStyles = makeStyles((theme) => ({
 
@@ -47,7 +47,6 @@ const useStyles = makeStyles((theme) => ({
   },
   solarTabs: {
     paddingLeft: 16,
-    // borderLeft: '0.5px solid rgba(0,0,0,0.25)'
   },
   title: {
     fontWeight: 600,
@@ -89,6 +88,7 @@ const DealershipDetails = ({ currentUser, match }) => {
     'Bank Statement Analysis',
     'Deviations',
     'Sales History',
+    'Score Card',
     'Loans List',
     'Personal Discussion',
     'Document Checklist',
@@ -117,10 +117,6 @@ const DealershipDetails = ({ currentUser, match }) => {
     history.replace(`?t=${newTab}`)
   }
 
-  // const onChangeSolarTab = (e, newTab) => {
-  //   setSolarTab(newTab);
-  // }
-
   const toggleCreditReport = () => {
     setShowCreditReport(!showCreditReport);
   }
@@ -129,16 +125,6 @@ const DealershipDetails = ({ currentUser, match }) => {
     const queryString = window.location.hash;
     const test = queryString.split('=');
     setActiveTab(toInteger(test[1]))
-    // getDealershipLoansById(id)
-    //   .then(data => setDealerLoanData(data))
-    //   .catch(e => null)
-    // getDealersByDealershipId(id)
-    //   .then((data) => {
-    //     setDealersData(data);
-    //     const ap = data.find(item => item.is_main_applicant);
-    //     setMainApplicant(ap);
-    //   })
-    //   .catch((e) => null);
   });
   let cardData = [
     { label: 'Dealership ID', value: dealershipData?.data?.id },
@@ -150,109 +136,26 @@ const DealershipDetails = ({ currentUser, match }) => {
   usePageTitle(`${id} - ${dealershipData && (dealershipData.name || '')} `, true, cardData)
   return (
     <div>
-      {/* {
-        data?.data.map(item =>{
-          return <h2>{item}</h2>
-        })
-      } */}
-      {/* <Grid container spacing={2}>
-        <Grid item xs={6} sm={4}>
-          <InfoCard
-            title={"Dealership Info"}
-            userInitial={dealershipData?.name?.charAt(0)}
-            name={dealershipData?.name}
-            caption={id}
-            content={dealershipData?.address}
-          />
-        </Grid>
-        {
-          mainApplicant?.first_name ? (
-            <Grid item xs={6} sm={4}>
-              <InfoCard
-                title={"Main Dealer Info"}
-                userInitial={`${mainApplicant?.first_name?.charAt(0)}`}
-                name={`${mainApplicant?.first_name} ${mainApplicant?.last_name || ''}`}
-                description={`+91 ${mainApplicant?.mobile}`}
-                content={`${mainApplicant?.email || ''}`}
-              />
-            </Grid>
-          ) : null
-        } */}
-      {/* <Grid item xs={6} sm={4}>
-          <InfoCard 
-            title={" "}
-            userInitial={`V`}
-            name={`AppVault`}
-            description={`Sign applications`}
-            onClick={() => {
-              setLeegalityModalVisible(true)
-            }}
-          />
-        </Grid> */}
-      {/* </Grid> */}
       <div className={classes.tabsWrapper}>
         <div>
           <Collapse in={!showSolarForm}>
             <Tabs
               orientation="vertical"
-              // variant="scrollable"
               value={activeTab}
               onChange={onChangeTab}
               aria-label="Dealership Details Panel"
               className={classes.tabs}
+              TabIndicatorProps={{
+                style: {display: 'none'}
+              }}
             >
               {
                 tabs.map((title, i) => {
                   return (<Tab key={1} label={<InfoBox active={activeTab === i} number={i + 1} title={title} />} {...tabA11yProps(i)} />)
                 })
               }
-              {/* <Tab label={<InfoBox active={activeTab === 0} title="Dealership" />} {...tabA11yProps(0)} />
-              <Tab label={<InfoBox active={activeTab === 1} title="Dealers" />} {...tabA11yProps(1)} />
-              {
-                financialReport_permission && (
-                  <Tab label={<InfoBox active={activeTab === 2} title="Financial Report" />} {...tabA11yProps(2)} />
-                )
-              }
-              <Tab label={<InfoBox active={activeTab === 3} title="Sales History" />} {...tabA11yProps(3)} />
-              <Tab label={<InfoBox active={activeTab === 4} title="Loans List" />} {...tabA11yProps(4)} />
-              <Tab label={<InfoBox active={activeTab === 5} title="Personal Discussion" />} {...tabA11yProps(5)} />
-              <Tab label={<InfoBox active={activeTab === 6} title="Document Checklist" />} {...tabA11yProps(6)} />
-              <Tab label={<InfoBox active={activeTab === 7} title="Transporters" />} {...tabA11yProps(7)} />
-              <Tab label={<InfoBox active={activeTab === 8} title="Fleet Operators" />} {...tabA11yProps(8)} /> */}
             </Tabs>
           </Collapse>
-          {/* <div>
-            <div onClick={() => {
-              setActiveTab(-1);
-              setSolarTab(0);
-              setShowSolarForm(true);
-            }}>
-              <InfoBox title="Solar Enquiry Form" />
-            </div>
-            <Collapse in={showSolarForm}>
-              <Tabs
-                orientation="vertical"
-                // variant="scrollable"
-                value={solarTab}
-                onChange={onChangeSolarTab}
-                aria-label="Solar Enquiry Form"
-                className={[classes.tabs, classes.solarTabs]}
-              >
-                <Tab label={<InfoBox active={solarTab === 0} number={1} title="Dealer Info" />} {...tabA11yProps(0)} />
-                <Tab label={<InfoBox active={solarTab === 1} number={2} title="Project Details" />} {...tabA11yProps(1)} />
-                <Tab label={<InfoBox active={solarTab === 2} number={3} title="Roof Details" />} {...tabA11yProps(2)} />
-                <Tab label={<InfoBox active={solarTab === 3} number={4} title="Electrical Assessments" />} {...tabA11yProps(3)} />
-                <Tab label={<InfoBox active={solarTab === 4} number={5} title="Load Profile" />} {...tabA11yProps(4)} />
-              </Tabs>
-              <div onClick={() => {
-                setActiveTab(0);
-                setSolarTab(-1);
-                setShowSolarForm(false);
-              }}>
-                <InfoBox title="Go Back" />
-              </div>
-            </Collapse>
-          </div> */}
         </div>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Dealership')}>
           {!dealershipData.isLoading && activeTab == tabs.indexOf('Dealership') && (
@@ -285,6 +188,12 @@ const DealershipDetails = ({ currentUser, match }) => {
           {
             activeTab == tabs.indexOf('Sales History') &&
               <SalesInfo id={id} titleAlign="left" currentUser={currentUser} column />
+          }
+        </TabPanel>
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Score Card')}>
+          {
+            activeTab == tabs.indexOf('Score Card') &&
+              <ScoreCard currentUser={currentUser} dealership_id={id} />
           }
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Loans List')}>
@@ -332,25 +241,6 @@ const DealershipDetails = ({ currentUser, match }) => {
           onClose={() => setShowSolarForm(false)}
         />
       </div>
-
-      {/* <Drawer
-        anchor="right"
-        open={false}
-        variant="temporary"
-        PaperProps={{
-          style: { backgroundColor: '#e5e5e5' }
-        }}
-      >
-        <div className={classes.solarPanelWrapper}>
-          <SolarEnquiryForm
-            dealershipId={id}
-            data={{}}
-            dealershipData={dealershipData}
-            currentUser={currentUser}
-            onClose={() => setShowSolarForm(false)}
-          />
-        </div>
-      </Drawer> */}
 
       <Drawer
         anchor="right"

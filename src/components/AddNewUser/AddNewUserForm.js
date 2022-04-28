@@ -61,9 +61,10 @@ const AddNewUserForm = ({ callback, action }) => {
   const [apiStatus, setApiStatus] = useState({});
   const [userRoles, setUserRoles] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [type, setType] = useState('')
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-
+  let role;
   let isDealership = {};
   useMount(() => {
     getAllUserRoles()
@@ -74,7 +75,11 @@ const AddNewUserForm = ({ callback, action }) => {
         console.log(e);
       });
   });
-
+  if(type.role_id == 13){
+    isDealership= {
+      dealership_id: Yup.string().nullable('Enter dealership id').required('Enter valid dealership id')
+    };
+  }
   const {
     values,
     errors,
@@ -94,13 +99,15 @@ const AddNewUserForm = ({ callback, action }) => {
       email: Yup.string().nullable('Enter email').email('Enter valid email').required('Enter email'),
       password: Yup.string(),
       ...isDealership,
-    }),
+    }
+    ),
     onSubmit: (formData) => {
+      console.log(isDealership);
       setLoading(true);
       const userType = userRoles.find(
         (role) => role.id === Number(formData.role_id)
       );
-
+        
       Object.keys(formData).forEach(k => (formData[k] === '') && delete formData[k]);
       addNewUser(formData, userType.role_name)
         .then((message) => {
@@ -113,9 +120,9 @@ const AddNewUserForm = ({ callback, action }) => {
             variant: 'success',
           });
           callback &&
-            setTimeout(() => {
-              callback();
-            }, 1000);
+          setTimeout(() => {
+            callback();
+          }, 1000);
         })
         .catch((e) => {
           setLoading(false);
@@ -130,16 +137,16 @@ const AddNewUserForm = ({ callback, action }) => {
         });
     },
   });
+  if(role){
+    setType(role)
+  }
+  console.log(type);
   const inputProps = {
     direction: 'column',
     alignTop: true,
     onChange: handleChange,
   };
-  if( values?.role_id == 13){
-    isDealership= {
-      dealership_id: Yup.string().nullable('Enter dealership id').matches('Enter valid dealership id').required('Enter valid dealership id')
-    };
-  }
+    
 
   return (
     <div className={classes.sidePanelFormWrapper}>
@@ -159,16 +166,18 @@ const AddNewUserForm = ({ callback, action }) => {
                     labelText='User Role'
                     name='role_id'
                     value={values.role_id}
+                    
                     error={errors.role_id}
                     helperText={errors.role_id}
                     SelectProps={{
                       native: true,
                     }}
                   >
-                    <option value=''>Choose user role</option>
+                    <option value=''  >Choose user role</option>
+                    {(values.role_id) && type != values && setType(values)}
                     {userRoles.map((userRole) => (
-                      <option key={userRole.role_name} value={userRole.id}>
-                        ({userRole.role_name}) - {userRole.name}
+                      <option key={userRole.role_name} value={userRole.id}  >
+                        ({userRole.role_name}) - {userRole.name} 
                       </option>
                     ))}
                   </TextInput>

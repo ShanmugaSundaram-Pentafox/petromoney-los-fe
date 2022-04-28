@@ -1,8 +1,15 @@
-import { Box, Table, TableBody, TableCell as TableCellComp, TableContainer, TableHead, TableRow, Typography, withStyles } from '@material-ui/core'
+import { Box, makeStyles, Table, TableBody, TableCell as TableCellComp, TableContainer, TableHead, TableRow, Typography, withStyles } from '@material-ui/core'
 import { head } from 'lodash';
 import React from 'react'
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import Currency from '../../../components/Number/Currency';
+
+const useStyles = makeStyles(() => ({
+    subtitle: {
+        color: 'rgba(0,0,0,0.4)',
+        marginTop: 8
+    }
+}))
 
 const TableCell = withStyles(() => ({
     root: {
@@ -10,85 +17,90 @@ const TableCell = withStyles(() => ({
     },
 }))(TableCellComp)
 
-const CamInputTable = ({data}) => {
+const CamInputTable = ({data, header}) => {
+    const classes = useStyles()
     const caseSummary = head(data?.case_summary_data)
     const cam_miscellaneous_data = head(data?.cam_miscellaneous_data)
+    const header_data = head(header?.scorecard_master_data)
 
   return (
     <div>
         <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
             <Typography variant='h6'>Case Summary</Typography>
-            <ViewData title="Date" value='10/12/2020' />
+            <ViewData title="Date" value={header_data?.cam_date} />
         </div>
         <TableContainer>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Particulars</TableCell>
-                        <TableCell colSpan={4}>Details</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    <TableRow>
-                        <TableCell>Loan Application ID</TableCell>
-                        <TableCell colSpan={4}>{caseSummary?.loan_app_id}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell>Fuel Category</TableCell>
-                        <TableCell colSpan={4}>{caseSummary?.fuel_category}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell>Name of Fuel Station</TableCell>
-                        <TableCell colSpan={4}>{caseSummary?.fuel_station_name}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell>Business Entity Type</TableCell>
-                        <TableCell colSpan={4}>{caseSummary?.business_entity_type}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell>Internal PM Score for the case</TableCell>
-                        <TableCell colSpan={4}>{caseSummary?.internal_pm_score}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell variant='head'>Demographics</TableCell>
-                        <TableCell variant='head'>Name</TableCell>
-                        <TableCell variant='head'>CIBIL Score</TableCell>
-                        <TableCell variant='head'>PM Score</TableCell>
-                        <TableCell variant='head'>Vintage/Age (Yrs)</TableCell>
-                    </TableRow>
-                    {
-                        data?.demographics_data?.map((field, i) => (
-                            <TableRow key={i}>
-                                <TableCell>{field?.demographics}</TableCell>
-                                <TableCell>{field?.name}</TableCell>
-                                <TableCell>{field?.cibil_score}</TableCell>
-                                <TableCell>{field?.pm_score}</TableCell>
-                                <TableCell>{field?.vintage}</TableCell>
-                            </TableRow>
-                        ))
-                    }
-                    <TableRow>
-                        <TableCell colSpan={2}>Loan Amount (Rs)</TableCell>
-                        <TableCell colSpan={3}><Currency value={caseSummary?.loan_amt}/></TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell colSpan={2}>Applicable interest Rate Per Annum %</TableCell>
-                        <TableCell colSpan={3}>{caseSummary?.applicable_interest_rate_per_annum}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell colSpan={2}>Loan Tenure</TableCell>
-                        <TableCell colSpan={3}>{caseSummary?.loan_tenure}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell colSpan={2}>Annual Interest on Fuel Credit (Rs)</TableCell>
-                        <TableCell colSpan={3}><Currency value={caseSummary?.annual_interest_on_fuel_credit}/></TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell colSpan={2}>FOIR %</TableCell>
-                        <TableCell colSpan={3}>{caseSummary?.foir_percent}</TableCell>
-                    </TableRow>
-                </TableBody>
-            </Table>
+            {
+                caseSummary ?
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Particulars</TableCell>
+                            <TableCell colSpan={4}>Details</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        <TableRow>
+                            <TableCell>Loan Application ID</TableCell>
+                            <TableCell colSpan={4}>{caseSummary?.loan_app_id}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Fuel Category</TableCell>
+                            <TableCell colSpan={4}>{caseSummary?.fuel_category}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Name of Fuel Station</TableCell>
+                            <TableCell colSpan={4}>{caseSummary?.fuel_station_name}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Business Entity Type</TableCell>
+                            <TableCell colSpan={4}>{caseSummary?.business_entity_type}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Internal PM Score for the case</TableCell>
+                            <TableCell colSpan={4}>{caseSummary?.internal_pm_score}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell variant='head'>Demographics</TableCell>
+                            <TableCell variant='head'>Name</TableCell>
+                            <TableCell variant='head'>CIBIL Score</TableCell>
+                            <TableCell variant='head'>PM Score</TableCell>
+                            <TableCell variant='head'>Vintage/Age (Yrs)</TableCell>
+                        </TableRow>
+                        {
+                            data?.demographics_data?.map((field, i) => (
+                                <TableRow key={i}>
+                                    <TableCell>{field?.demographics}</TableCell>
+                                    <TableCell>{field?.name}</TableCell>
+                                    <TableCell>{field?.cibil_score}</TableCell>
+                                    <TableCell>{field?.pm_score}</TableCell>
+                                    <TableCell>{field?.vintage}</TableCell>
+                                </TableRow>
+                            ))
+                        }
+                        <TableRow>
+                            <TableCell colSpan={2}>Loan Amount (Rs)</TableCell>
+                            <TableCell colSpan={3}><Currency value={caseSummary?.loan_amt}/></TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell colSpan={2}>Applicable interest Rate Per Annum %</TableCell>
+                            <TableCell colSpan={3}>{caseSummary?.applicable_interest_rate_per_annum}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell colSpan={2}>Loan Tenure</TableCell>
+                            <TableCell colSpan={3}>{caseSummary?.loan_tenure}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell colSpan={2}>Annual Interest on Fuel Credit (Rs)</TableCell>
+                            <TableCell colSpan={3}><Currency value={caseSummary?.annual_interest_on_fuel_credit}/></TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell colSpan={2}>FOIR %</TableCell>
+                            <TableCell colSpan={3}>{caseSummary?.foir_percent}</TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table> : <Typography className={classes.subtitle} variant='body2'>No case summary found!</Typography>
+            }
             <Box pt={2}>
                 <Typography variant='h6'>Deviations From Policy</Typography>
             </Box>

@@ -1,4 +1,4 @@
-import { Typography, makeStyles, Button, Tabs, Tab, Box, CircularProgress } from '@material-ui/core';
+import { Typography, makeStyles, Button, Tabs, Tab, Box, CircularProgress, AppBar } from '@material-ui/core';
 import PublishIcon from '@material-ui/icons/Publish';
 import { useSnackbar } from 'notistack';
 import PropTypes from 'prop-types';
@@ -121,9 +121,7 @@ const ScoreCard = ({currentUser, dealership_id}) => {
               vertical: 'top',
               horizontal: 'right',
             },
-            variant: 'success',
-            style: { width: 400 },
-            autoHideDuration: 10000,
+            variant: 'success'
           })
         }
         else {
@@ -171,33 +169,35 @@ const ScoreCard = ({currentUser, dealership_id}) => {
         </Button>
       </div>
       <div className={classes.tabsRoot}>
-        <Tabs
-          value={tabValue}
-          onChange={handleChange}
-          textColor="primary"
-          indicatorColor='primary'
-          variant='scrollable'
-          scrollButtons='auto'
-        >
-          {
-                scoreCardTabs?.map((title, i) => {
-                  return(
-                    <Tab label={title} key={i} style={{margin:0}} {...a11yProps(i)} TouchRippleProps={{ classes: {root: classes.buttonRipple } }} />
-                  )
-                })
-          }
-        </Tabs>
+        <AppBar position='static' color='default' style={{zIndex: '0'}}>
+          <Tabs
+            value={tabValue}
+            onChange={handleChange}
+            textColor="primary"
+            indicatorColor='primary'
+            variant='scrollable'
+            scrollButtons='auto'
+          >
+            {
+              scoreCardTabs?.map((title, i) => {
+                return(
+                  <Tab label={title} key={i} style={{margin:0}} {...a11yProps(i)} TouchRippleProps={{ classes: {root: classes.buttonRipple } }} />
+                )
+              })
+            }
+          </Tabs>
+        </AppBar>
         <TabPanel value={tabValue} index={0}>
-          <OmcSaleTable data={scoreCardData?.omc_sale_sheet} />
+          <OmcSaleTable data={scoreCardData?.omc_sale_sheet} header={scoreCardData?.headers_across_sheets} />
         </TabPanel>
         <TabPanel value={tabValue} index={1}>
-          <BureauInputTable data={scoreCardData?.demo_and_bureau_inputs_sheet} />
+          <BureauInputTable data={scoreCardData?.demo_and_bureau_inputs_sheet} header={scoreCardData?.headers_across_sheets} />
         </TabPanel>
         <TabPanel value={tabValue} index={2}>
           <OtherInputsTable data={scoreCardData?.other_inputs_sheet} />
         </TabPanel>
         <TabPanel value={tabValue} index={3}>
-          <BankingInputsTable data={scoreCardData?.banking_inputs_sheet} />
+          <BankingInputsTable data={scoreCardData?.banking_inputs_sheet} header={scoreCardData?.headers_across_sheets} />
         </TabPanel>
         <TabPanel value={tabValue} index={4}>
           <FixedObligationsTable data={scoreCardData?.fixed_obligations_sheet} />
@@ -206,10 +206,10 @@ const ScoreCard = ({currentUser, dealership_id}) => {
           <FcEligibilityTable data={scoreCardData?.fc_eligibility_sheet} />
         </TabPanel>
         <TabPanel value={tabValue} index={6}>
-          <DeviationsInputTable data={scoreCardData?.deviations_sheet} />
+          <DeviationsInputTable data={scoreCardData?.deviations_sheet} header={scoreCardData?.headers_across_sheets} />
         </TabPanel>
         <TabPanel value={tabValue} index={7}>
-          <CamInputTable data={scoreCardData?.cam_sheet} />
+          <CamInputTable data={scoreCardData?.cam_sheet} header={scoreCardData?.headers_across_sheets} />
         </TabPanel>
         <TabPanel value={tabValue} index={8}>
           <ScoreCardInputTable data={scoreCardData?.scorecard_sheet} />

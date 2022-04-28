@@ -1,10 +1,18 @@
-import { Drawer, IconButton, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow, Typography } from '@material-ui/core'
+import { Drawer, IconButton, makeStyles, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow, Typography } from '@material-ui/core'
 import { head, sumBy } from 'lodash'
 import React, { useState } from 'react'
 import Currency from '../../../components/Number/Currency'
 import CloseIcon from '@material-ui/icons/Close';
 
+const useStyles = makeStyles(() => ({
+    subtitle: {
+        color: 'rgba(0,0,0,0.4)',
+        marginTop: 8
+    }
+}))
+
 const FcEligibilityTable = ({data}) => {
+    const classes = useStyles()
     const [tableView, setTableView] = useState()
     const eligibilityFuelCredit = [
         {item: 'A', label: 'Income from Fuel Sales', key: null, input: null},
@@ -65,30 +73,34 @@ const FcEligibilityTable = ({data}) => {
     const fc_summary_data = head(data?.fc_summary_data)
   return (
     <div>
-        <TableContainer>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Item</TableCell>
-                        <TableCell>Particulars</TableCell>
-                        <TableCell>Considered</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {
-                        eligibilityFuelCredit?.map((item, index) => {
-                            return(
-                                <TableRow key={index}>
-                                    <TableCell><strong>{item?.item}</strong></TableCell>
-                                    <TableCell>{item?.label}</TableCell>
-                                    <TableCell>{fc_summary_data?.[item?.key]}<span style={{cursor: 'pointer', color: '#1976d2', textDecoration: 'underlined', display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}} onClick={() => setTableView(item?.input)}>{item?.input && '>>'}</span></TableCell>
-                                </TableRow>
-                            )
-                        })
-                    }
-                </TableBody>
-            </Table>
-        </TableContainer>
+        <Typography variant='h6'>Eligibility Calculator for Fuel Credit</Typography>
+        {
+            fc_summary_data ?
+            <TableContainer>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Item</TableCell>
+                            <TableCell>Particulars</TableCell>
+                            <TableCell>Considered</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {
+                            eligibilityFuelCredit?.map((item, index) => {
+                                return(
+                                    <TableRow key={index}>
+                                        <TableCell><strong>{item?.item}</strong></TableCell>
+                                        <TableCell>{item?.label}</TableCell>
+                                        <TableCell>{fc_summary_data?.[item?.key]}<span style={{cursor: 'pointer', color: '#1976d2', textDecoration: 'underlined', display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}} onClick={() => setTableView(item?.input)}>{item?.input && '>>'}</span></TableCell>
+                                    </TableRow>
+                                )
+                            })
+                        }
+                    </TableBody>
+                </Table>
+            </TableContainer> : <Typography className={classes.subtitle} variant='body2'>No data found!</Typography>
+        }
         <Drawer
         anchor="right"
         open={tableView === 'income_fuel_sales'}

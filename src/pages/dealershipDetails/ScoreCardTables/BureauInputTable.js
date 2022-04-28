@@ -1,5 +1,16 @@
-import { TableContainer, TableRow, TableHead, TableCell as TableCellComp, Table, TableBody, withStyles } from '@material-ui/core'
+import { TableContainer, TableRow, TableHead, TableCell as TableCellComp, Table, TableBody, withStyles, Typography, makeStyles } from '@material-ui/core'
+import { head } from 'lodash'
 import React from 'react'
+
+const useStyles = makeStyles(() => ({
+    subtitle: {
+        color: 'rgba(0,0,0,0.4)',
+        marginTop: 8
+    },
+    tableStyle: {
+        marginTop:8
+    }
+}))
 
 const TableCell = withStyles(() => ({
     root: {
@@ -7,7 +18,9 @@ const TableCell = withStyles(() => ({
     },
 }))(TableCellComp)
 
-const BureauInputTable = ({data}) => {
+const BureauInputTable = ({data, header}) => {
+    const classes = useStyles();
+    const header_data = head(header?.scorecard_master_data)
 
     let Particulars = [
         {key: 'name', label: 'Name'},
@@ -28,51 +41,57 @@ const BureauInputTable = ({data}) => {
     ]
 
   return (
-    <TableContainer>
-        <Table>
-            <TableHead>
-                <TableRow>
-                    <TableCell>Name of Fuel Station</TableCell>
-                    <TableCell variant='body'>VAIDRAJ PETROLEUM</TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell>Entity Type</TableCell>
-                    <TableCell variant='body'>Proprietorship</TableCell>
-                </TableRow>
-            </TableHead>
-        </Table>
-        <Table>
-            <TableHead>
-                <TableRow>
-                    <TableCell>Sr.No</TableCell>
-                    <TableCell>Particulars</TableCell>
-                    <TableCell>Main Applicant (Entity)</TableCell>
-                    <TableCell>Individual Co-applicant No 1 (Main Individual Co-applicant)</TableCell>
-                    <TableCell>Individual Co-applicant No 2</TableCell>
-                    <TableCell>Individual Co-applicant No 3</TableCell>
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {
-                    Particulars.map((field, i) => {
-                        return(
-                            <TableRow key={i}>
-                                <TableCell>{i+1}</TableCell>
-                                <TableCell>{field?.label}</TableCell>
-                                {
-                                    data?.demo_bureau_inputs?.map((item,i) => {
-                                        return (
-                                            <TableCell key={i}>{item?.[field?.key]}</TableCell>
-                                        )
-                                    })
-                                }
-                            </TableRow>
-                        )
-                    })
-                }
-            </TableBody>
-        </Table>
-    </TableContainer>
+      <>
+        <Typography variant='h6'>Demographics & Credit Bureau Inputs</Typography>
+        {
+            data?.demo_bureau_inputs?.length ?
+            <TableContainer className={classes.tableStyle}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Name of Fuel Station</TableCell>
+                            <TableCell variant='body'>{header_data?.fuel_station_name}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Entity Type</TableCell>
+                            <TableCell variant='body'>{header_data?.entity_type}</TableCell>
+                        </TableRow>
+                    </TableHead>
+                </Table>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Sr.No</TableCell>
+                            <TableCell>Particulars</TableCell>
+                            <TableCell>Main Applicant (Entity)</TableCell>
+                            <TableCell>Individual Co-applicant No 1 (Main Individual Co-applicant)</TableCell>
+                            <TableCell>Individual Co-applicant No 2</TableCell>
+                            <TableCell>Individual Co-applicant No 3</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {
+                            Particulars.map((field, i) => {
+                                return(
+                                    <TableRow key={i}>
+                                        <TableCell>{i+1}</TableCell>
+                                        <TableCell>{field?.label}</TableCell>
+                                        {
+                                            data?.demo_bureau_inputs?.map((item,i) => {
+                                                return (
+                                                    <TableCell key={i}>{item?.[field?.key]}</TableCell>
+                                                )
+                                            })
+                                        }
+                                    </TableRow>
+                                )
+                            })
+                        }
+                    </TableBody>
+                </Table>
+            </TableContainer> : <Typography className={classes.subtitle} variant='body2'>No credit bureau data found!</Typography>
+        }
+      </>
   )
 }
 

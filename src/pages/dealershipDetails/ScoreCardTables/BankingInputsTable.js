@@ -1,8 +1,18 @@
-import { Table, TableBody, TableCell as TableCellComp, TableFooter, TableHead, TableRow, withStyles } from '@material-ui/core'
+import { makeStyles, Table, TableBody, TableCell as TableCellComp, TableFooter, TableHead, TableRow, Typography, withStyles } from '@material-ui/core'
 import { head, sumBy } from 'lodash';
 import React from 'react'
 import Currency from '../../../components/Number/Currency'
 import { getMonth as monthData } from '../../../utils/commonFunctions.util';
+
+const useStyles = makeStyles(() => ({
+    subtitle: {
+        color: 'rgba(0,0,0,0.4)',
+        marginTop: 8
+    },
+    tableStyle: {
+        marginTop: 16, width: '40%'
+    }
+}))
 
 const TableCell = withStyles(() => ({
     root: {
@@ -10,13 +20,22 @@ const TableCell = withStyles(() => ({
     },
 }))(TableCellComp)
 
-const BankingInputsTable = ({data}) => {
+const BankingInputsTable = ({data, header}) => {
+    const classes = useStyles()
+    const header_data = head(header?.scorecard_master_data)
+
   return (
     <div>
+        <Typography variant='h6'>Banking Details</Typography>
         {
+            data?.bank_metadata?.length ?
             data?.bank_metadata?.map((bank, i) => {
                 return(
                     <Table style={{marginBottom: 16}} key={i}>
+                        <TableHead>
+                            <TableCell colSpan={2}>Bank Verification Status</TableCell>
+                            <TableCell colSpan={2} variant='body'>{header_data?.bank_verification_status}</TableCell>
+                        </TableHead>
                         <TableHead>
                             <TableRow>
                                 <TableCell colSpan={2}>{`Bank ${bank.bank_number}:`}</TableCell>
@@ -74,24 +93,27 @@ const BankingInputsTable = ({data}) => {
                         </TableFooter>
                     </Table>
                 )
-            })
+            }) : <Typography className={classes.subtitle} variant='body2'>No banking details found!</Typography>
         }
-        <Table style={{marginTop: 16, width: '40%'}}>
-            <TableHead>
-                <TableRow>
-                    <TableCell>ABB for all Banks (Rs)</TableCell>
-                    <TableCell variant="body"><Currency value={head(data?.banks_overall_stats)?.abb_for_all_banks}/></TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell>Total Inward Bounces (Nos)</TableCell>
-                    <TableCell variant="body">{head(data?.banks_overall_stats)?.total_inward_bounces}</TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell>Average Peak CC / OD Utilisation (Rs)</TableCell>
-                    <TableCell variant="body"><Currency value={head(data?.banks_overall_stats)?.avg_peak_util}/></TableCell>
-                </TableRow>
-            </TableHead>
-        </Table>
+        {
+            data?.bank_metadata?.length ?
+            <Table className={classes.tableStyle}>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>ABB for all Banks (Rs)</TableCell>
+                        <TableCell variant="body"><Currency value={head(data?.banks_overall_stats)?.abb_for_all_banks}/></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>Total Inward Bounces (Nos)</TableCell>
+                        <TableCell variant="body">{head(data?.banks_overall_stats)?.total_inward_bounces}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>Average Peak CC / OD Utilisation (Rs)</TableCell>
+                        <TableCell variant="body"><Currency value={head(data?.banks_overall_stats)?.avg_peak_util}/></TableCell>
+                    </TableRow>
+                </TableHead>
+            </Table> : null
+        }
     </div>
   )
 }

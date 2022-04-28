@@ -1,7 +1,14 @@
-import { Box, Table, TableBody, TableCell as TableCellComp, TableContainer, TableHead, TableRow, Typography, withStyles } from '@material-ui/core'
+import { Box, makeStyles, Table, TableBody, TableCell as TableCellComp, TableContainer, TableHead, TableRow, Typography, withStyles } from '@material-ui/core'
 import { head } from 'lodash'
 import React from 'react'
 import Currency from '../../../components/Number/Currency'
+
+const useStyles = makeStyles(() => ({
+    subtitle: {
+        color: 'rgba(0,0,0,0.4)',
+        marginTop: 8
+    }
+}))
 
 const TableCell = withStyles(() => ({
     root: {
@@ -10,7 +17,7 @@ const TableCell = withStyles(() => ({
 }))(TableCellComp)
 
 const OtherInputsTable = ({data}) => {
-
+    const classes = useStyles()
     const other_inputs_leverage_cals_data = head(data?.other_inputs_leverage_cals_data)
     const other_key_inputs = head(data?.other_key_inputs)
 
@@ -51,102 +58,111 @@ const OtherInputsTable = ({data}) => {
   return (
     <div>
         <Typography variant='h6'>Key Inputs</Typography>
-        <Table>
-            <TableHead>
-                <TableRow>
-                    <TableCell>Particulars</TableCell>
-                    <TableCell>Inputs</TableCell>
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {
-                    particulars?.map((field, i) => {
-                        return(
-                            <TableRow key={i}>
-                                <TableCell>{field.label}</TableCell>
-                                <TableCell>{other_key_inputs?.[field.key]}</TableCell>
-                            </TableRow>
-                        )
-                    })
-                }
-            </TableBody>
-        </Table>
-        <Box pt={3}>
-            <Typography variant='h6'>Turnover & Net Profit Calculations</Typography>
+        {
+            other_key_inputs ?
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell rowSpan={2} align='center'>Particulars</TableCell>
-                        <TableCell>Latest FY</TableCell>
-                        <TableCell>Previous FY</TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell variant='body'>{data?.other_inputs_turnover_data?.find(item => {return item.type === 'latest_fy'})?.year}</TableCell>
-                        <TableCell variant='body'>{data?.other_inputs_turnover_data?.find(item => {return item.type === 'previous_f'})?.year}</TableCell>
+                        <TableCell>Particulars</TableCell>
+                        <TableCell>Inputs</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {
-                        netProfitField.map((item, i) => {
+                        particulars?.map((field, i) => {
                             return(
                                 <TableRow key={i}>
-                                    <TableCell>{item?.label}</TableCell>
-                                    {
-                                        data?.other_inputs_turnover_data?.map(field => {
-                                            return(
-                                                <>
-                                                    <TableCell>{field[item.key]}</TableCell>
-                                                </>
-                                            )
-                                        })
-                                    }
+                                    <TableCell>{field.label}</TableCell>
+                                    <TableCell>{other_key_inputs?.[field.key]}</TableCell>
                                 </TableRow>
                             )
                         })
                     }
                 </TableBody>
-            </Table>
+            </Table> : <Typography className={classes.subtitle} variant="body2">No data found!</Typography>
+        }
+        <Box pt={3}>
+            <Typography variant='h6'>Turnover & Net Profit Calculations</Typography>
+            {
+                data?.other_inputs_turnover_data?.length ?
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell rowSpan={2} align='center'>Particulars</TableCell>
+                            <TableCell>Latest FY</TableCell>
+                            <TableCell>Previous FY</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell variant='body'>{data?.other_inputs_turnover_data?.find(item => {return item.type === 'latest_fy'})?.year}</TableCell>
+                            <TableCell variant='body'>{data?.other_inputs_turnover_data?.find(item => {return item.type === 'previous_f'})?.year}</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {
+                            netProfitField.map((item, i) => {
+                                return(
+                                    <TableRow key={i}>
+                                        <TableCell>{item?.label}</TableCell>
+                                        {
+                                            data?.other_inputs_turnover_data?.map(field => {
+                                                return(
+                                                    <>
+                                                        <TableCell>{field[item.key]}</TableCell>
+                                                    </>
+                                                )
+                                            })
+                                        }
+                                    </TableRow>
+                                )
+                            })
+                        }
+                    </TableBody>
+                </Table> : <Typography className={classes.subtitle} variant='body2'>No data found!</Typography>
+            }
         </Box>
         <Box pt={3}>
             <Typography variant='h6'>Leverage Calculations</Typography>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableCell align='center'>Particulars</TableCell>
-                        <TableCell>Value</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    <TableRow>
-                        <TableCell>Net Worth (Equity+Reserves+Quasi Capital) (Rs)</TableCell>
-                        <TableCell><Currency value={other_inputs_leverage_cals_data?.net_worth} /></TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell>Existing Loan Obligations Outstanding (Rs)</TableCell>
-                        <TableCell><Currency value={other_inputs_leverage_cals_data?.existing_loan_obligations_outstanding} /></TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell>PM Exposure (Rs)</TableCell>
-                        <TableCell><Currency value={other_inputs_leverage_cals_data?.pm_exposure}/></TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell>Average Peak CC / OD Utilisation (Rs)</TableCell>
-                        <TableCell><Currency value={other_inputs_leverage_cals_data?.average_peak_cc_od_utilisation}/></TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell>Any Other Debt outstanding (Rs)</TableCell>
-                        <TableCell><Currency value={other_inputs_leverage_cals_data?.any_other_debt_outstanding}/></TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell>Total Debt Outstanding (Rs)</TableCell>
-                        <TableCell><Currency value={other_inputs_leverage_cals_data?.total_debt_outstanding}/></TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell>Leverage (No of Times)</TableCell>
-                        <TableCell>{other_inputs_leverage_cals_data?.leverage_no_of_times}</TableCell>
-                    </TableRow>
-                </TableBody>
-            </Table>
+            {
+                other_inputs_leverage_cals_data ?
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell align='center'>Particulars</TableCell>
+                            <TableCell>Value</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        <TableRow>
+                            <TableCell>Net Worth (Equity+Reserves+Quasi Capital) (Rs)</TableCell>
+                            <TableCell><Currency value={other_inputs_leverage_cals_data?.net_worth} /></TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Existing Loan Obligations Outstanding (Rs)</TableCell>
+                            <TableCell><Currency value={other_inputs_leverage_cals_data?.existing_loan_obligations_outstanding} /></TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>PM Exposure (Rs)</TableCell>
+                            <TableCell><Currency value={other_inputs_leverage_cals_data?.pm_exposure}/></TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Average Peak CC / OD Utilisation (Rs)</TableCell>
+                            <TableCell><Currency value={other_inputs_leverage_cals_data?.average_peak_cc_od_utilisation}/></TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Any Other Debt outstanding (Rs)</TableCell>
+                            <TableCell><Currency value={other_inputs_leverage_cals_data?.any_other_debt_outstanding}/></TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Total Debt Outstanding (Rs)</TableCell>
+                            <TableCell><Currency value={other_inputs_leverage_cals_data?.total_debt_outstanding}/></TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Leverage (No of Times)</TableCell>
+                            <TableCell>{other_inputs_leverage_cals_data?.leverage_no_of_times}</TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table> : <Typography className={classes.subtitle} variant='body2'>No data found!</Typography>
+            }
         </Box>
     </div>
   )

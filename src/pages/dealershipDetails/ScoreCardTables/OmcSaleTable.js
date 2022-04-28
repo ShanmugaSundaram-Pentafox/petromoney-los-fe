@@ -1,4 +1,5 @@
 import { Box, makeStyles, Table, TableBody, TableCell as TableCellComp, TableContainer, TableFooter, TableHead, TableRow, Typography, withStyles } from '@material-ui/core'
+import { head } from 'lodash';
 import React, { useState } from 'react'
 import { ViewData } from '../../../components/CommonComponents/FilePreview'
 import { getMonth as monthData } from '../../../utils/commonFunctions.util';
@@ -46,6 +47,10 @@ const useStyles = makeStyles(() => ({
           }
         }
     },
+    subtitle: {
+        color: 'rgba(0,0,0,0.4)',
+        marginTop: 8
+    }
 }))
 
 const TableCell = withStyles(() => ({
@@ -54,9 +59,10 @@ const TableCell = withStyles(() => ({
     },
 }))(TableCellComp)
 
-const OmcSaleTable = ({data}) => {
+const OmcSaleTable = ({data, header}) => {
     const classes = useStyles()
     const [tableView, setTableView] = useState({value: 'previous_fy', label: 'Previous FY'})
+    const header_data = head(header?.scorecard_master_data)
 
     const onViewUpdate = type => (event) => {
         switch (type) {
@@ -77,7 +83,7 @@ const OmcSaleTable = ({data}) => {
   return (
     <div className={classes.root}>
         <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-            <ViewData title="OMC Name" value="HPCL"/>
+            <ViewData title="OMC Name" value={header_data?.omc_name} />
             <Box>
               <label style={{ color: 'hsl(0,0%,75%)' }}>Table View</label>
               <div className={classes.filterWrapper}>
@@ -87,197 +93,210 @@ const OmcSaleTable = ({data}) => {
               </div>
             </Box>
         </div>
-        <Table style={{marginTop: 8}}>
-            <TableHead>
-                <TableRow>
-                    <TableCell align='center' colSpan={6}>{tableView?.label}</TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell>Sr.No</TableCell>
-                    <TableCell>Month</TableCell>
-                    <TableCell>MS(KL)</TableCell>
-                    <TableCell>HSD(KL)</TableCell>
-                    <TableCell>CNG/Auto LPG (Litres)</TableCell>
-                    <TableCell>Total (KL)</TableCell>
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {
-                    data?.omc_sales_monthwise?.filter((item, i) => {return item?.type === tableView?.value})?.map((item,i) => {
-                        return(
-                            <TableRow key={i}>
-                                <TableCell>{i+1}</TableCell>
-                                <TableCell>{monthData.find(month => {return month.value == item.month})?.label} - {item.year}</TableCell>
-                                <TableCell>{item?.ms}</TableCell>
-                                <TableCell>{item?.hsd}</TableCell>
-                                <TableCell></TableCell>
-                                <TableCell>{item?.total}</TableCell>
-                            </TableRow>
-                        )
-                    })
-                }
-            </TableBody>
-            <TableFooter style={{backgroundColor: '#f4f4f4'}}>
-                <TableRow>
-                    <TableCell><strong>Total (KL)</strong></TableCell>
-                    <TableCell />
+        <Typography variant="h6">OMC Sale Data</Typography>
+        {
+            data?.omc_sales_monthwise?.length ?
+            <Table style={{marginTop: 8}}>
+                <TableHead>
+                    <TableRow>
+                        <TableCell align='center' colSpan={6}>{tableView?.label}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>Sr.No</TableCell>
+                        <TableCell>Month</TableCell>
+                        <TableCell>MS(KL)</TableCell>
+                        <TableCell>HSD(KL)</TableCell>
+                        <TableCell>CNG/Auto LPG (Litres)</TableCell>
+                        <TableCell>Total (KL)</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
                     {
-                        data?.omc_sales_monthwise_total?.filter((item, i) => {return item?.type === tableView?.value})?.map((item, i) => {
+                        data?.omc_sales_monthwise?.filter((item, i) => {return item?.type === tableView?.value})?.map((item,i) => {
                             return(
-                                <>
+                                <TableRow key={i}>
+                                    <TableCell>{i+1}</TableCell>
+                                    <TableCell>{monthData.find(month => {return month.value == item.month})?.label} - {item.year}</TableCell>
                                     <TableCell>{item?.ms}</TableCell>
                                     <TableCell>{item?.hsd}</TableCell>
-                                    <TableCell>{item?.lpg}</TableCell>
+                                    <TableCell></TableCell>
                                     <TableCell>{item?.total}</TableCell>
-                                </>
+                                </TableRow>
                             )
                         })
                     }
-                </TableRow>
-                <TableRow>
-                    <TableCell><strong>Avg (KL)</strong></TableCell>
-                    <TableCell/>
-                    {
-                        data?.omc_sales_monthwise_avg?.filter((item, i) => {return item?.type === tableView?.value})?.map((item, i) => {
-                            return(
-                                <>
-                                    <TableCell>{item?.ms}</TableCell>
-                                    <TableCell>{item?.hsd}</TableCell>
-                                    <TableCell>{item?.lpg}</TableCell>
-                                    <TableCell>{item?.total}</TableCell>
-                                </>
-                            )
-                        })
-                    }
-                </TableRow>
-            </TableFooter>
-        </Table>
+                </TableBody>
+                <TableFooter style={{backgroundColor: '#f4f4f4'}}>
+                    <TableRow>
+                        <TableCell><strong>Total (KL)</strong></TableCell>
+                        <TableCell />
+                        {
+                            data?.omc_sales_monthwise_total?.filter((item, i) => {return item?.type === tableView?.value})?.map((item, i) => {
+                                return(
+                                    <>
+                                        <TableCell>{item?.ms}</TableCell>
+                                        <TableCell>{item?.hsd}</TableCell>
+                                        <TableCell>{item?.lpg}</TableCell>
+                                        <TableCell>{item?.total}</TableCell>
+                                    </>
+                                )
+                            })
+                        }
+                    </TableRow>
+                    <TableRow>
+                        <TableCell><strong>Avg (KL)</strong></TableCell>
+                        <TableCell/>
+                        {
+                            data?.omc_sales_monthwise_avg?.filter((item, i) => {return item?.type === tableView?.value})?.map((item, i) => {
+                                return(
+                                    <>
+                                        <TableCell>{item?.ms}</TableCell>
+                                        <TableCell>{item?.hsd}</TableCell>
+                                        <TableCell>{item?.lpg}</TableCell>
+                                        <TableCell>{item?.total}</TableCell>
+                                    </>
+                                )
+                            })
+                        }
+                    </TableRow>
+                </TableFooter>
+            </Table> 
+            : <Typography className={classes.subtitle} variant='body2'>No OMC Sales data found!</Typography>
+        } 
 
         <div style={{marginTop: 16}}>
             <Typography variant="h6">Annual Fuel Sale considered for Eligibility Calculation</Typography>
-            <TableContainer style={{display: 'flex', marginTop: 8}}>
-                <Table style={{borderRight: '1px solid rgba(0,0,0,0.3)'}}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell rowSpan={2}>Sr.No</TableCell>
-                            <TableCell rowSpan={2}>Fuel Credit Category</TableCell>
-                            <TableCell colSpan={4} align="center">Total KL Considered</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>MS</TableCell>
-                            <TableCell>HSD</TableCell>
-                            <TableCell>CNG/Auto LPG</TableCell>
-                            <TableCell>Total</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {
-                            data?.omc_fuel_data_for_elig_calc_total?.map((item, i) => {
-                                return (
-                                    <TableRow key={i}>
-                                        <TableCell>{i+1}</TableCell>
-                                        <TableCell>{item?.category}</TableCell>
-                                        <TableCell>{item?.ms}</TableCell>
-                                        <TableCell>{item?.hsd}</TableCell>
-                                        <TableCell>{item?.lpg}</TableCell>
-                                        <TableCell><strong>{item?.total}</strong></TableCell>
-                                    </TableRow>
-                                )
-                            })
-                        }
-                    </TableBody>
-                </Table>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell colSpan={4} align="center">Average Monthly KL Considered</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>MS</TableCell>
-                            <TableCell>HSD</TableCell>
-                            <TableCell>CNG/Auto LPG</TableCell>
-                            <TableCell>Total</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {
-                            data?.omc_fuel_data_for_elig_calc_avg?.map((item, i) => {
-                                return (
-                                    <TableRow key={i}>
-                                        <TableCell>{item?.ms}</TableCell>
-                                        <TableCell>{item?.hsd}</TableCell>
-                                        <TableCell>{item?.lpg}</TableCell>
-                                        <TableCell><strong>{item?.total}</strong></TableCell>
-                                    </TableRow>
-                                )
-                            })
-                        }
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            {
+                data?.omc_fuel_data_for_elig_calc_total?.length ?
+                <TableContainer style={{display: 'flex', marginTop: 8}}>
+                    <Table style={{borderRight: '1px solid rgba(0,0,0,0.3)'}}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell rowSpan={2}>Sr.No</TableCell>
+                                <TableCell rowSpan={2}>Fuel Credit Category</TableCell>
+                                <TableCell colSpan={4} align="center">Total KL Considered</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>MS</TableCell>
+                                <TableCell>HSD</TableCell>
+                                <TableCell>CNG/Auto LPG</TableCell>
+                                <TableCell>Total</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {
+                                data?.omc_fuel_data_for_elig_calc_total?.map((item, i) => {
+                                    return (
+                                        <TableRow key={i}>
+                                            <TableCell>{i+1}</TableCell>
+                                            <TableCell>{item?.category}</TableCell>
+                                            <TableCell>{item?.ms}</TableCell>
+                                            <TableCell>{item?.hsd}</TableCell>
+                                            <TableCell>{item?.lpg}</TableCell>
+                                            <TableCell><strong>{item?.total}</strong></TableCell>
+                                        </TableRow>
+                                    )
+                                })
+                            }
+                        </TableBody>
+                    </Table>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell colSpan={4} align="center">Average Monthly KL Considered</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>MS</TableCell>
+                                <TableCell>HSD</TableCell>
+                                <TableCell>CNG/Auto LPG</TableCell>
+                                <TableCell>Total</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {
+                                data?.omc_fuel_data_for_elig_calc_avg?.map((item, i) => {
+                                    return (
+                                        <TableRow key={i}>
+                                            <TableCell>{item?.ms}</TableCell>
+                                            <TableCell>{item?.hsd}</TableCell>
+                                            <TableCell>{item?.lpg}</TableCell>
+                                            <TableCell><strong>{item?.total}</strong></TableCell>
+                                        </TableRow>
+                                    )
+                                })
+                            }
+                        </TableBody>
+                    </Table>
+                </TableContainer> 
+                : <Typography className={classes.subtitle} variant='body2'>No data found!</Typography>
+            }
         </div>
         <div style={{marginTop: 16}}>
             <Typography variant="h6">Annual Fuel Sale considered in limit setting for standard category</Typography>
-            <TableContainer style={{display: 'flex', marginTop: 8}}>
-                <Table style={{borderRight: '1px solid rgba(0,0,0,0.3)'}}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell rowSpan={2}>Sr.No</TableCell>
-                            <TableCell rowSpan={2}>Fuel Credit Category</TableCell>
-                            <TableCell colSpan={4} align="center">Total KL Considered</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>MS</TableCell>
-                            <TableCell>HSD</TableCell>
-                            <TableCell>CNG/Auto LPG</TableCell>
-                            <TableCell>Total</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {
-                            data?.omc_fuel_data_for_limit_setting_total?.map((item, i) => {
-                                return (
-                                    <TableRow key={i}>
-                                        <TableCell>{i+1}</TableCell>
-                                        <TableCell>{item?.category}</TableCell>
-                                        <TableCell>{item?.ms}</TableCell>
-                                        <TableCell>{item?.hsd}</TableCell>
-                                        <TableCell>{item?.lpg}</TableCell>
-                                        <TableCell><strong>{item?.total}</strong></TableCell>
-                                    </TableRow>
-                                )
-                            })
-                        }
-                    </TableBody>
-                </Table>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell colSpan={4} align="center">Average Monthly KL Considered</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>MS</TableCell>
-                            <TableCell>HSD</TableCell>
-                            <TableCell>CNG/Auto LPG</TableCell>
-                            <TableCell>Total</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {
-                            data?.omc_fuel_data_for_limit_setting_avg?.map((item, i) => {
-                                return (
-                                    <TableRow key={i}>
-                                        <TableCell>{item?.ms}</TableCell>
-                                        <TableCell>{item?.hsd}</TableCell>
-                                        <TableCell>{item?.lpg}</TableCell>
-                                        <TableCell><strong>{item?.total}</strong></TableCell>
-                                    </TableRow>
-                                )
-                            })
-                        }
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            {
+                data?.omc_fuel_data_for_limit_setting_total?.length ?
+                <TableContainer style={{display: 'flex', marginTop: 8}}>
+                    <Table style={{borderRight: '1px solid rgba(0,0,0,0.3)'}}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell rowSpan={2}>Sr.No</TableCell>
+                                <TableCell rowSpan={2}>Fuel Credit Category</TableCell>
+                                <TableCell colSpan={4} align="center">Total KL Considered</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>MS</TableCell>
+                                <TableCell>HSD</TableCell>
+                                <TableCell>CNG/Auto LPG</TableCell>
+                                <TableCell>Total</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {
+                                data?.omc_fuel_data_for_limit_setting_total?.map((item, i) => {
+                                    return (
+                                        <TableRow key={i}>
+                                            <TableCell>{i+1}</TableCell>
+                                            <TableCell>{item?.category}</TableCell>
+                                            <TableCell>{item?.ms}</TableCell>
+                                            <TableCell>{item?.hsd}</TableCell>
+                                            <TableCell>{item?.lpg}</TableCell>
+                                            <TableCell><strong>{item?.total}</strong></TableCell>
+                                        </TableRow>
+                                    )
+                                })
+                            }
+                        </TableBody>
+                    </Table>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell colSpan={4} align="center">Average Monthly KL Considered</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>MS</TableCell>
+                                <TableCell>HSD</TableCell>
+                                <TableCell>CNG/Auto LPG</TableCell>
+                                <TableCell>Total</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {
+                                data?.omc_fuel_data_for_limit_setting_avg?.map((item, i) => {
+                                    return (
+                                        <TableRow key={i}>
+                                            <TableCell>{item?.ms}</TableCell>
+                                            <TableCell>{item?.hsd}</TableCell>
+                                            <TableCell>{item?.lpg}</TableCell>
+                                            <TableCell><strong>{item?.total}</strong></TableCell>
+                                        </TableRow>
+                                    )
+                                })
+                            }
+                        </TableBody>
+                    </Table>
+                </TableContainer> 
+                : <Typography className={classes.subtitle} variant='body2'>No data found!</Typography>
+            }
         </div>
     </div>
   )

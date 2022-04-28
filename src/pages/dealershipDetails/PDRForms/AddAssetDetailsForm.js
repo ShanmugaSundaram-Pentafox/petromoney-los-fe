@@ -7,7 +7,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
-import { format } from 'date-fns'
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
@@ -141,19 +140,9 @@ const AddAssetDetailsForm = ({ data: init_data, dealer_id, callback, currentUser
   let setKey = assetData.map(data => {
     let item;
     item = assetData.filter(names => names.name == type.label)
-    // if (type.label === 'Car'){
-    // } else if (type.label === 'Gold'){
-    //   item = assetData.filter(names => names.name == 'Gold')
-    // } else if (type.label === 'CV') {
-    //   item = assetData.filter(names => names.name == 'CV')
-    // } else if (type.label === 'Land') {
-    //   item = assetData.filter(names => names.name == 'Land')
-    // } else if (type.label === 'BUILDING') {
-    //   item = assetData.filter(names => names.name == 'BUILDING')
-    // }
-    // console.log(item);
-    let asset_name = item?.map(aname => {
-      let ass = aname?.details.map(detail => {
+
+    let asset_validate = item?.map(valueOfAsset => {
+      let validate = valueOfAsset?.details.map(detail => {
         CustomValidation[detail.key] = Yup.string().nullable('Required').required('Required')
       })
     })
@@ -280,7 +269,7 @@ const AddAssetDetailsForm = ({ data: init_data, dealer_id, callback, currentUser
                         <Grid item md={6}>
                           <label style={{ marginBottom: 8 }}>Choose asset type to add</label>
                           <Select
-                            isClearable = {false}
+                            isClearable
                             name='type'
                             onChange={setType}
                             options={assetList} />

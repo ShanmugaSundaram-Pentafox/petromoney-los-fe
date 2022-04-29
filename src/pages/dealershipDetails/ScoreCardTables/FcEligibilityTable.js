@@ -14,6 +14,7 @@ const useStyles = makeStyles(() => ({
 const FcEligibilityTable = ({data}) => {
     const classes = useStyles()
     const [tableView, setTableView] = useState()
+    const fc_eligibility_total_salary_data = head(data?.fc_eligibility_total_salary_data)
     const eligibilityFuelCredit = [
         {item: 'A', label: 'Income from Fuel Sales', key: null, input: null},
         {item: null, label: 'Annual Gross Income from sale of HSD', key: null, input: 'income_fuel_sales'},
@@ -234,6 +235,29 @@ const FcEligibilityTable = ({data}) => {
                             ))
                         }
                     </TableBody>
+                    <TableFooter>
+                        <TableRow>
+                            <TableCell />
+                            <TableCell />
+                            <TableCell colSpan={2}>Total Salary Per Month</TableCell>
+                            <TableCell />
+                            <TableCell><Currency value={fc_eligibility_total_salary_data?.total_salary_per_month}/></TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell />
+                            <TableCell />
+                            <TableCell colSpan={2}>Total Salary Per Annum</TableCell>
+                            <TableCell />
+                            <TableCell><Currency value={fc_eligibility_total_salary_data?.total_salary_per_annum}/></TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell />
+                            <TableCell />
+                            <TableCell colSpan={2}>Total Salary per annum as per Latest Completed FY Financials</TableCell>
+                            <TableCell />
+                            <TableCell><Currency value={fc_eligibility_total_salary_data?.total_salary_per_annum_per_latest_fy}/></TableCell>
+                        </TableRow>
+                    </TableFooter>
                 </Table>
             </>
 

@@ -4,6 +4,7 @@ import { useSnackbar } from 'notistack';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
+import { URL } from '../../../config/serverUrls';
 import { getScoreCard } from '../../../services/common.service';
 import BankingInputsTable from '../ScoreCardTables/BankingInputsTable';
 import BureauInputTable from '../ScoreCardTables/BureauInputTable';
@@ -102,7 +103,9 @@ const ScoreCard = ({currentUser, dealership_id}) => {
     setLoading(true)
     const formData = new FormData();
     formData.append('file', event.target.files[0])
-    fetch(`https://api-uat.petromoney.in/api/dealership/${dealership_id}/scorecard`, {
+    event.target.type = 'submit';
+    event.target.type = 'file';
+    fetch(`${URL.base}dealership/${dealership_id}/scorecard`, {
       method: 'POST',
       body: formData,
       headers: {

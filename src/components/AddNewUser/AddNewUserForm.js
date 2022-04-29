@@ -64,7 +64,6 @@ const AddNewUserForm = ({ callback, action }) => {
   const [type, setType] = useState('')
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  let role;
   let isDealership = {};
   useMount(() => {
     getAllUserRoles()
@@ -102,7 +101,6 @@ const AddNewUserForm = ({ callback, action }) => {
     }
     ),
     onSubmit: (formData) => {
-      console.log(isDealership);
       setLoading(true);
       const userType = userRoles.find(
         (role) => role.id === Number(formData.role_id)
@@ -137,10 +135,6 @@ const AddNewUserForm = ({ callback, action }) => {
         });
     },
   });
-  if(role){
-    setType(role)
-  }
-  console.log(type);
   const inputProps = {
     direction: 'column',
     alignTop: true,

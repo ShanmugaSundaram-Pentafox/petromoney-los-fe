@@ -258,7 +258,6 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
 
     }
   }
-  console.log(loansData)
   return (
     <Dialog
       fullWidth

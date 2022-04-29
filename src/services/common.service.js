@@ -888,3 +888,23 @@ export const refreshRedis = () => {
       })
   })
 }
+
+export const getFilteredProducts = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('products/los')
+      .then(response => {
+        if (response?.status === 'SUCCESS') {
+          const result = response?.data.map(item => ({
+            label: item.product_name,
+            value: item.product_id,
+          }))
+          resolve(result || [])
+        } else {
+          reject(new Error(response.message || 'Unable to get products'))
+        }
+      })
+      .catch(err => {
+        reject(err)
+      })
+  })
+}

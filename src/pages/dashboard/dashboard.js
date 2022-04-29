@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import { format } from 'date-fns';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { useMount } from 'react-use';
 import styled from 'styled-components';
@@ -178,8 +178,8 @@ const Dashboard = ({ currentUser, dashboardView }) => {
     }
   }
 
-  useMount(() => {
-    getAllOmcDpd()
+  useEffect(() => {
+    getAllOmcDpd(creditBook)
       .then((res) => {
         const result = arrangeData(res)
         setOmcData(result)
@@ -188,7 +188,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
         console.log(e);
       })
 
-    getAllRegionDpd()
+    getAllRegionDpd(creditBook)
       .then((res) => {
         const result = arrangeData(res)
         setRegionData(result)
@@ -197,7 +197,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
         console.log(e);
       })
 
-    getAll_ls1_Metrices()
+    getAll_ls1_Metrices(creditBook)
       .then(res => {
         const result = res[0] || {};
         setLs1Metrices(result);
@@ -216,7 +216,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
         console.log(err)
       })
 
-    getAll_ls2_Metrices()
+    getAll_ls2_Metrices(creditBook)
       .then(res => {
         const result = res;
         let total = 0;
@@ -232,7 +232,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
       .catch(err => {
         console.log(err)
       })
-  });
+  }, [creditBook]);
   useMount(() => {
     getDealerDetails()
       .then((data) => {
@@ -372,7 +372,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                     </DataCharts>
                   </Grid>
                   <Grid item xs={12}>
-                    <LoanBookTable title={'Loan Book'} currentUser={currentUser} />
+                    <LoanBookTable title={'Loan Book'} currentUser={currentUser} view={creditBook} />
                   </Grid>
                 </>
                 )

@@ -112,7 +112,7 @@ const OmcSaleTable = ({data, header}) => {
                 </TableHead>
                 <TableBody>
                     {
-                        data?.omc_sales_monthwise?.filter((item, i) => {return item?.type === tableView?.value})?.map((item,i) => {
+                        data?.omc_sales_monthwise?.filter((item, i) => {return item?.type === tableView?.value})?.sort((a,b) => (a.month > b.month)?1:((b.month > a.month)? -1:0))?.sort((a,b) => (a.year > b.year)?1:((b.year > a.year)? -1:0))?.map((item,i) => {
                             return(
                                 <TableRow key={i}>
                                     <TableCell>{i+1}</TableCell>

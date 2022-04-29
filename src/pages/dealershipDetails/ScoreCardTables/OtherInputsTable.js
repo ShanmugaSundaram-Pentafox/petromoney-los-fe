@@ -94,7 +94,7 @@ const OtherInputsTable = ({data}) => {
                         </TableRow>
                         <TableRow>
                             <TableCell variant='body'>{data?.other_inputs_turnover_data?.find(item => {return item.type === 'latest_fy'})?.year}</TableCell>
-                            <TableCell variant='body'>{data?.other_inputs_turnover_data?.find(item => {return item.type === 'previous_f'})?.year}</TableCell>
+                            <TableCell variant='body'>{data?.other_inputs_turnover_data?.find(item => {return item.type === 'previous_fy'})?.year}</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

@@ -1,4 +1,4 @@
-import { Drawer, IconButton, makeStyles, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow, Typography } from '@material-ui/core'
+import { Drawer, IconButton, makeStyles, Table, TableBody, TableCell as TableCellComp, TableContainer, TableFooter, TableHead, TableRow, Typography, withStyles } from '@material-ui/core'
 import { head, sumBy } from 'lodash'
 import React, { useState } from 'react'
 import Currency from '../../../components/Number/Currency'
@@ -10,6 +10,12 @@ const useStyles = makeStyles(() => ({
         marginTop: 8
     }
 }))
+
+const TableCell = withStyles(() => ({
+    root: {
+      border: '1px solid #eeeeee',
+    },
+}))(TableCellComp)
 
 const FcEligibilityTable = ({data}) => {
     const classes = useStyles()
@@ -145,7 +151,7 @@ const FcEligibilityTable = ({data}) => {
                                         <TableCell><strong>Total</strong></TableCell>
                                         <TableCell />
                                         <TableCell />
-                                        <TableCell><strong><Currency value={sumBy(data?.fc_eligibility_yearwise_data?.filter(item => {return item?.type === table?.tableType}), 'amount').toFixed(2)} /></strong></TableCell>
+                                        <TableCell><strong><Currency value={sumBy(data?.fc_eligibility_yearwise_data?.filter(item => {return item?.type === table?.tableType}), 'amount')} /></strong></TableCell>
                                     </TableRow>
                                 </TableFooter>
                             </Table>

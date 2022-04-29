@@ -58,7 +58,7 @@ const DeviationsInputTable = ({data, header}) => {
                                         <TableCell>{item?.policy_std}</TableCell>
                                         <TableCell>{item?.deviation_fm_policy_allowed}</TableCell>
                                         <TableCell>{item?.actual_val}</TableCell>
-                                        <TableCell>{item?.deviation_particulars}</TableCell>
+                                        <TableCell>{item?.deviation}</TableCell>
                                     </TableRow>
                                 )
                             })

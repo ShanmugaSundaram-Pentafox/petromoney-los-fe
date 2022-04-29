@@ -119,9 +119,12 @@ const CreditReportSideWrapper = ({ dealershipId, data, currentUser, onClose }) =
       if (id) {
         reqData = apiData;
       }
+      let payLoad = {...reqData, ...values, id, user_id: currentUser.id}
+      Object.keys(payLoad).forEach(k => (payLoad[k] === '') && delete payLoad[k])
+
       apiCall(`${URL.dealership}/${dealershipId}/credit/report`, {
         method: 'POST',
-        body: { ...reqData, ...values, id, user_id: currentUser.id }
+        body: payLoad
       })
         .then(({ status, message }) => {
           if (status == 'SUCCESS') {

@@ -207,7 +207,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       })
       .catch((e) => {
         setLoading(false)
-        enqueueSnackbar('Something went wrong please try again.', {
+        enqueueSnackbar(e, {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',

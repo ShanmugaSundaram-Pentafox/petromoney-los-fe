@@ -21,6 +21,7 @@ import DealershipDoc from './components/DocList';
 import FleetOperatorsDetails from './components/FleetOperatorsDetails';
 import LoansList from './components/LoansList';
 import PersonalDiscussionReport from './components/PDReport';
+import ScoreCard from './components/ScoreCard';
 import SolarEnquiryForm from './components/SolarEnquiryForm';
 import StatementAnalysis from './components/StatementAnalysis';
 import InfoBox from '../../components/CommonComponents/InfoBox';
@@ -32,7 +33,6 @@ import usePageTitle from '../../hooks/usePageTitle';
 import { getDealersByDealershipId } from '../../services/dealers.service';
 import { getDealershipById } from '../../services/dealerships.service';
 import SalesInfo from '../dashboard/components/SalesInfo';
-import ScoreCard from './components/ScoreCard';
 
 const useStyles = makeStyles((theme) => ({
 
@@ -85,9 +85,9 @@ const DealershipDetails = ({ currentUser, match }) => {
   const tabs = [
     'Dealership',
     'Dealers',
-    'Bank Statement Analysis',
-    'Deviations',
-    'Sales History',
+    // 'Bank Statement Analysis',
+    // 'Deviations',
+    // 'Sales History',
     'Score Card',
     'Loans List',
     'Personal Discussion',
@@ -96,9 +96,9 @@ const DealershipDetails = ({ currentUser, match }) => {
     'Fleet Operators'
   ];
 
-  if (financialReport_permission) {
-    tabs.splice(2, 0, 'Financial Report')
-  }
+  // if (financialReport_permission) {
+  //   tabs.splice(2, 0, 'Financial Report')
+  // }
 
   const {
     url,

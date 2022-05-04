@@ -19,7 +19,7 @@ export default {
       opacity: 1
     },
   },
-  indicator: {
-    display: 'none'
-  },
+  // indicator: {
+  //   display: 'none'
+  // },
 };

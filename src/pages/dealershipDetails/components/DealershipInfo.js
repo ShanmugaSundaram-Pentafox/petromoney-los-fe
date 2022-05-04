@@ -465,7 +465,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                         <ViewData title='Taxpayer Type' value={gstDetails?.dty || gstValidateData?.details?.dty} />
                       </Grid>
                       <Grid item md={3}>
-                        <ViewData title='Legal Business Name' value={gstDetails?.mbr || gstValidateData?.details?.lgnm} />
+                        <ViewData title='Legal Business Name' value={gstDetails?.lgnm || gstValidateData?.details?.lgnm} />
                       </Grid>
                       <Grid item md={3}>
                         <ViewData title='GSTIN Status' value={gstDetails?.sts || gstValidateData?.details?.sts} />

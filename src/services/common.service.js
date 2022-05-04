@@ -888,3 +888,19 @@ export const refreshRedis = () => {
       })
   })
 }
+
+export const getScoreCard = (dealership_id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${dealership_id}/scorecard`)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data || []);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(err => {
+        reject(err.message);
+      })
+  })
+}

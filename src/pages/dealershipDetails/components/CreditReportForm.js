@@ -176,7 +176,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
           label="Vintage with main banker"
           name="vintage_with_banker"
           type="number"
-          value={values.vintage_with_banker || 0}
+          value={values.vintage_with_banker}
           onChange={onChange}
         />
       </Grid>
@@ -186,7 +186,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
           label="No of inward returns(last 6 months)"
           name="inward_returns"
           type="number"
-          value={values.inward_returns || 0}
+          value={values.inward_returns}
           onChange={onChange}
 
         />
@@ -297,7 +297,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 readOnly={!editable}
                 name="interest"
                 type="number"
-                value={values.interest || 0}
+                value={values.interest}
                 onChange={onChange}
               />
             </Row>
@@ -318,7 +318,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 readOnly={!editable}
                 name="applicable_interest"
                 type="number"
-                value={values.applicable_interest || 0}
+                value={values.applicable_interest}
                 onChange={onChange}
                 min={0}
                 max={100}
@@ -331,7 +331,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 readOnly={!editable}
                 name="loan_percentage"
                 type="number"
-                value={values.loan_percentage || 0}
+                value={values.loan_percentage}
                 onChange={onChange}
               />
             </Row>
@@ -342,7 +342,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 readOnly={!editable}
                 name="score"
                 type="number"
-                value={values.score || 0}
+                value={values.score}
                 onChange={onChange}
               />
             </Row>
@@ -354,7 +354,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 readOnly={!editable}
                 name="max_loan_cap"
                 type="number"
-                value={values.max_loan_cap || 0}
+                value={values.max_loan_cap}
                 onChange={onChange}
               />
             </Row>
@@ -364,7 +364,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 readOnly={!editable}
                 name="pm_exposure"
                 type="number"
-                value={values.pm_exposure || 0}
+                value={values.pm_exposure}
                 onChange={onChange}
               />
             </Row>
@@ -375,7 +375,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 readOnly={!editable}
                 name="approved_loan_amount"
                 type="number"
-                value={values.approved_loan_amount || 0}
+                value={values.approved_loan_amount}
                 onChange={onChange}
               />
             </Row>
@@ -385,7 +385,7 @@ const CreditReportForm = ({ id, editable, data, values, errors, onChange, setVal
                 readOnly={!editable}
                 name="final_loan_amount"
                 type="number"
-                value={values.final_loan_amount || 0}
+                value={values.final_loan_amount}
                 onChange={onChange}
               />
             </Row>

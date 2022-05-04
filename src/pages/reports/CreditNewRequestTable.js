@@ -95,6 +95,15 @@ const CreditNewRequestTable = ({ data, currentUser, view }) => {
         }
       },
       {
+        name: 'origin',
+        label: 'Origin',
+        options: {
+          customBodyRender: (value, tableMeta) => {
+            return <div>{value?.toUpperCase()}</div>
+          }
+        }
+      },
+      {
         name: 'status',
         label: 'Status',
         options: {
@@ -132,7 +141,7 @@ const CreditNewRequestTable = ({ data, currentUser, view }) => {
     rowsPerPage: 15,
     rowsPerPageOptions: [15, 20, 30],
     setRowProps: (row, dataIndex) => {
-      if(row[11]){
+      if(row[12]){
         return{ style: {backgroundColor: '#ffec9bba'}}
       }
     },

@@ -137,7 +137,7 @@ const AddNewOutletDetailsForm = ({ data: init_data, dealer_id, isEdit, callback,
     }),
     onSubmit: values => {
       let obj = {};
-      if (!readOnly) {
+      if (!isEdit) {
         obj = compareObject(init_data, values)
       }
       else {

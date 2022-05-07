@@ -168,7 +168,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
       <div className={classes.sidePanelTitle}>
         <Typography  variant="h4">Credit Information ({data?.pan || '-'})</Typography>
         <IconButton onClick={onClose}  size='small'>
-          <CloseRoundedIcon fontSize='size' />
+          <CloseRoundedIcon />
         </IconButton>
       </div>
       <div className={classes.sidePanelFormContentWrapper}>

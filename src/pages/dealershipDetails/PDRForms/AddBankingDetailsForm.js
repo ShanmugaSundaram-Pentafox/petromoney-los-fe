@@ -1,3 +1,4 @@
+import { IconButton } from '@material-ui/core'
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -5,11 +6,11 @@ import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { makeStyles } from '@material-ui/styles';
-import { IconButton } from '@material-ui/core'
 import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import BankDetailsCard from './Components/BankDetailsCard';
 import Button from '../../../components/CommonComponents/Button/Button';
@@ -17,7 +18,6 @@ import TextInput from '../../../components/TextInput/TextInput';
 import { URL } from '../../../config/serverUrls';
 import { getBankDetailsbyID, updateBankDetailsByID } from '../../../services/PDReport.services';
 import { compareObject } from '../../../utils/compareObject.util';
-import { useQuery, useQueryClient } from 'react-query';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -207,7 +207,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, edita
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Add Banking Details</div>
         <IconButton onClick={handleClose}  size='small'>
-          <CloseIcon fontSize='size' />
+          <CloseIcon />
         </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
@@ -366,14 +366,14 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, edita
           </div>
           {
             !editable &&
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => { setAddNewRow(true); setValues({}) }}
-              style={{ marginBottom: 12 }}
-            >
-              Add Bank
-            </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => { setAddNewRow(true); setValues({}) }}
+                style={{ marginBottom: 12 }}
+              >
+                Add Bank
+              </Button>
           }
         </div>
       </div>

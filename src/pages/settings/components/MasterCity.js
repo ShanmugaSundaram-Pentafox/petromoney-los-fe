@@ -1,8 +1,8 @@
 import { makeStyles, IconButton, Typography, Divider, Button, Grid, TextField, Tooltip, Paper, InputAdornment, CircularProgress } from '@material-ui/core'
+import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
-import AddIcon from '@material-ui/icons/Add';
 import { useSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -144,7 +144,7 @@ const MasterCity = ({ callback, title }) => {
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>{title}</div>
         <IconButton onClick={() => callback(false)} size='small'>
-          <CloseIcon fontSize='size' />
+          <CloseIcon />
         </IconButton>
       </Typography>
       <TextField 

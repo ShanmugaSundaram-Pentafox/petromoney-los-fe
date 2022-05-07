@@ -1,3 +1,4 @@
+import { IconButton } from '@material-ui/core'
 import Box from '@material-ui/core/Box';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
@@ -6,7 +7,6 @@ import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { makeStyles } from '@material-ui/styles';
-import { IconButton } from '@material-ui/core'
 import clsx from 'clsx';
 import { format } from 'date-fns'
 import { useFormik } from 'formik';
@@ -239,7 +239,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable 
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Add Asset Details</div>
         <IconButton onClick={handleClose}  size='small'>
-          <CloseIcon fontSize='size' />
+          <CloseIcon />
         </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
@@ -249,7 +249,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable 
               <div>
                 {
                   asset.length || addNewAsset ? null :
-                    <Typography className={classes.typography}>No asset found,Click 'Add asset' to add new asset.</Typography>
+                    <Typography className={classes.typography}>No asset found,Click &apos; Add asset &apos; to add new asset.</Typography>
                 }
                 <div className={classes.typeField}>
                   {
@@ -279,7 +279,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable 
                                   {
                                     Array.isArray(data.details) && data.details.map((item, i) => {
                                       return (
-                                        <Grid item md={6}>
+                                        <Grid key={i} item md={6}>
                                           <TextInput
                                             {...inputProps}
                                             className={classes.number}
@@ -335,16 +335,6 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable 
                                       {type.label !== 'Gold' && <option value="Leased">Leased</option>}
                                     </TextInput>
                                   </Grid>
-                                  {/* <Grid item md={6}>
-                                    <TextInput
-                                      {...inputProps}
-                                      labelText="Ownership Proof"
-                                      name="ownership_proof"
-                                      value={values.ownership_proof}
-                                      error={errors.ownership_proof}
-                                      helperText={errors.ownership_proof}
-                                    />
-                                  </Grid> */}
                                 </Grid>
                               ) : null
                             }
@@ -388,7 +378,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable 
                       ) : (
                         !addNewAsset && asset.map((item, i) => {
                           return (
-                            <Grid item md={6}>
+                            <Grid key={i} item md={6}>
                               <PreviewCard
                                 onEdit={() => { editAssetRow(item, i) }}
                                 onDelete={() => deleteAssetRow(item, i)}
@@ -433,14 +423,14 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable 
           </div>
           {
             !editable &&
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => { setAddNewAsset(true); }}
-              style={{ marginBottom: 12 }}
-            >
-              Add asset
-            </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => { setAddNewAsset(true); }}
+                style={{ marginBottom: 12 }}
+              >
+                Add asset
+              </Button>
           }
         </div>
       </div>

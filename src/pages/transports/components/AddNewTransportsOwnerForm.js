@@ -1,5 +1,5 @@
 import DateFnsUtils from '@date-io/date-fns';
-import { Box, CircularProgress, Divider, Grid, Switch, Tooltip, Typography, } from '@material-ui/core';
+import { Box, CircularProgress, Divider, Grid, Switch, Tooltip, Typography,IconButton } from '@material-ui/core';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
 import CloseIcon from '@material-ui/icons/Close';
@@ -11,7 +11,6 @@ import {
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 import { makeStyles } from '@material-ui/styles';
-import { IconButton } from '@material-ui/core'
 import clsx from 'clsx';
 import { format, parse } from 'date-fns';
 import { useFormik } from 'formik';
@@ -410,7 +409,7 @@ const AddNewTransportsOwnerForm = ({
       <Typography className={classes.sidePanelTitle} variant='h4'>
         <div>Owner Information</div>
         <IconButton onClick={handleClose}  size='small'>
-          <CloseIcon fontSize='size' />
+          <CloseIcon />
         </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
@@ -809,18 +808,18 @@ const AddNewTransportsOwnerForm = ({
             )
           ) : (
             !editable &&
-            <div>
-              <Button
-                variant='contained'
-                type='submit'
-                className={clsx(classes.btn, classes.editButton)}
-                startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                disabled={loading}
-                onClick={loading ? () => null : handleEdit}
-              >
-                Edit
-              </Button>
-            </div>
+              <div>
+                <Button
+                  variant='contained'
+                  type='submit'
+                  className={clsx(classes.btn, classes.editButton)}
+                  startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
+                  disabled={loading}
+                  onClick={loading ? () => null : handleEdit}
+                >
+                  Edit
+                </Button>
+              </div>
           )}
         </div>
       </div>

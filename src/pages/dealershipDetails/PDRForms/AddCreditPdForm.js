@@ -1,3 +1,4 @@
+import { IconButton } from '@material-ui/core'
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -5,7 +6,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import { makeStyles } from '@material-ui/styles';
-import { IconButton } from '@material-ui/core'
 import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
@@ -127,7 +127,7 @@ const AddCreditPdForm = ({ data, dealer_id, callback, currentUser, editable }) =
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Add  Remarks</div>
         <IconButton onClick={callback}  size='small'>
-          <CloseIcon fontSize='size' />
+          <CloseIcon />
         </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
@@ -165,14 +165,14 @@ const AddCreditPdForm = ({ data, dealer_id, callback, currentUser, editable }) =
           </div>
           {
             !editable &&
-            <Button
-              variant="contained"
-              className={clsx(classes.btn, classes.editButton)}
-              startIcon={<NavigateNextRounded />}
-              onClick={handleSubmit}
-            >
-              Save
-            </Button>
+              <Button
+                variant="contained"
+                className={clsx(classes.btn, classes.editButton)}
+                startIcon={<NavigateNextRounded />}
+                onClick={handleSubmit}
+              >
+                Save
+              </Button>
           }
         </div>
       </div>

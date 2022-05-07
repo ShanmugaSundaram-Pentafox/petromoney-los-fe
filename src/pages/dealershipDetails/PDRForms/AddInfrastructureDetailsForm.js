@@ -1,16 +1,15 @@
-import { FormControl, RadioGroup, FormControlLabel, Radio, FormGroup } from '@material-ui/core';
+import { FormControl, RadioGroup, FormControlLabel, Radio, FormGroup,IconButton } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import { makeStyles } from '@material-ui/styles';
-import { IconButton } from '@material-ui/core'
-import AddIcon from '@material-ui/icons/Add';
 import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
@@ -18,9 +17,9 @@ import React, { Fragment, useState } from 'react';
 import * as Yup from 'yup';
 import AddTankerDetails from './AddTankerDetails';
 import Button from '../../../components/CommonComponents/Button/Button';
+import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
 import { addInfrastructureDetails } from '../../../services/PDReport.services';
-import { ViewData } from '../../../components/CommonComponents/FilePreview';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -168,7 +167,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Add Infrastructure Details</div>
         <IconButton onClick={handleClose}  size='small'>
-          <CloseIcon fontSize='size' />
+          <CloseIcon />
         </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
@@ -176,124 +175,124 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
           <Box>
             {
               readOnly ?
-              <Grid container spacing={2}>
-                <Grid item md={6}>
-                  <ViewData title="No of Employees" value={values.no_of_employee} style={{marginBottom:6}} />
+                <Grid container spacing={2}>
+                  <Grid item md={6}>
+                    <ViewData title="No of Employees" value={values.no_of_employee} style={{marginBottom:6}} />
+                  </Grid>
+                  <Grid item md={6}>
+                    <ViewData title="No of Storage Tank" value={values.no_of_tank} style={{marginBottom:6}} />
+                  </Grid>
+                  <Grid item md={6}>
+                    <ViewData title="No of Hoarding (Advertisement banners)" value={values.no_of_hoarding} style={{marginBottom:6}} />
+                  </Grid>
+                  <Grid item md={6}>
+                    <ViewData title="Tank Capacity (in liters)" value={values.tank_capacity} style={{marginBottom:6}} />
+                  </Grid>
+                  <Grid item md={6}>
+                    <ViewData title="Using Solar" value={values.is_solar} style={{marginBottom:6}} />
+                  </Grid>
+                </Grid> :
+                <Grid container spacing={2}>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      labelText="No of Employees"
+                      name="no_of_employee"
+                      type="number"
+                      value={values.no_of_employee}
+                      readOnly={readOnly}
+                      error={errors.no_of_employee}
+                      helperText={errors.no_of_employee}
+                      className={classes.number}
+                      inputProps={{ className: classes.input }}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      labelText="No of Storage Tank"
+                      name="no_of_tank"
+                      type="number"
+                      value={values.no_of_tank}
+                      readOnly={readOnly}
+                      error={errors.no_of_tank}
+                      helperText={errors.no_of_tank}
+                      className={classes.number}
+                      inputProps={{ className: classes.input }}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      labelText="No of Hoarding (Advertisement banners)"
+                      name="no_of_hoarding"
+                      type="number"
+                      value={values.no_of_hoarding}
+                      readOnly={readOnly}
+                      error={errors.no_of_hoarding}
+                      helperText={errors.no_of_hoarding}
+                      className={classes.number}
+                      inputProps={{ className: classes.input }}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      labelText="Tank Capacity (in liters)"
+                      name="tank_capacity"
+                      value={values.tank_capacity}
+                      readOnly={readOnly}
+                      error={errors.tank_capacity}
+                      helperText={errors.tank_capacity}
+                      className={classes.number}
+                      inputProps={{ className: classes.input }}
+                      type='number'
+                    />
+                  </Grid>
+                  <Grid item md={2} style={{ marginTop: 22 }}>
+                    <div>
+                      <label>Using Solar</label>
+                    </div>
+                  </Grid>
+                  <Grid item md={3} style={{ marginTop: 12 }} >
+                    <FormControl>
+                      <RadioGroup name="is_solar" value={values.is_solar} onChange={handleChange}>
+                        <FormGroup row>
+                          <FormControlLabel value="Yes" control={<Radio color="secondary" />} label="Yes" />
+                          <FormControlLabel value="No" control={<Radio color="secondary" />} label="No" />
+                        </FormGroup>
+                      </RadioGroup>
+                    </FormControl>
+                  </Grid>
                 </Grid>
-                <Grid item md={6}>
-                  <ViewData title="No of Storage Tank" value={values.no_of_tank} style={{marginBottom:6}} />
-                </Grid>
-                <Grid item md={6}>
-                  <ViewData title="No of Hoarding (Advertisement banners)" value={values.no_of_hoarding} style={{marginBottom:6}} />
-                </Grid>
-                <Grid item md={6}>
-                  <ViewData title="Tank Capacity (in liters)" value={values.tank_capacity} style={{marginBottom:6}} />
-                </Grid>
-                <Grid item md={6}>
-                  <ViewData title="Using Solar" value={values.is_solar} style={{marginBottom:6}} />
-                </Grid>
-              </Grid> :
-              <Grid container spacing={2}>
-                <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    labelText="No of Employees"
-                    name="no_of_employee"
-                    type="number"
-                    value={values.no_of_employee}
-                    readOnly={readOnly}
-                    error={errors.no_of_employee}
-                    helperText={errors.no_of_employee}
-                    className={classes.number}
-                    inputProps={{ className: classes.input }}
-                  />
-                </Grid>
-                <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    labelText="No of Storage Tank"
-                    name="no_of_tank"
-                    type="number"
-                    value={values.no_of_tank}
-                    readOnly={readOnly}
-                    error={errors.no_of_tank}
-                    helperText={errors.no_of_tank}
-                    className={classes.number}
-                    inputProps={{ className: classes.input }}
-                  />
-                </Grid>
-                <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    labelText="No of Hoarding (Advertisement banners)"
-                    name="no_of_hoarding"
-                    type="number"
-                    value={values.no_of_hoarding}
-                    readOnly={readOnly}
-                    error={errors.no_of_hoarding}
-                    helperText={errors.no_of_hoarding}
-                    className={classes.number}
-                    inputProps={{ className: classes.input }}
-                  />
-                </Grid>
-                <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    labelText="Tank Capacity (in liters)"
-                    name="tank_capacity"
-                    value={values.tank_capacity}
-                    readOnly={readOnly}
-                    error={errors.tank_capacity}
-                    helperText={errors.tank_capacity}
-                    className={classes.number}
-                    inputProps={{ className: classes.input }}
-                    type='number'
-                  />
-                </Grid>
-                <Grid item md={2} style={{ marginTop: 22 }}>
-                  <div>
-                    <label>Using Solar</label>
-                  </div>
-                </Grid>
-                <Grid item md={3} style={{ marginTop: 12 }} >
-                  <FormControl>
-                    <RadioGroup name="is_solar" value={values.is_solar} onChange={handleChange}>
-                      <FormGroup row>
-                        <FormControlLabel value="Yes" control={<Radio color="secondary" />} label="Yes" />
-                        <FormControlLabel value="No" control={<Radio color="secondary" />} label="No" />
-                      </FormGroup>
-                    </RadioGroup>
-                  </FormControl>
-                </Grid>
-              </Grid>
             }
             {
               !editable &&
-              <div className={classes.actionFoot}>
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <div>
-                    <Button
-                      variant="outlined"
-                      className={classes.btn}
-                      onClick={handleClose}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                  <div>
-                    <Button
-                      variant="contained"
-                      type="submit"
-                      className={clsx(classes.btn, classes.editButton)}
-                      startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                      onClick={readOnly ? handleEdit : handleSubmit}
-                    >
-                      {loading ? <CircularProgress size={20} /> : readOnly ? 'Edit' :
-                        'Save'}
-                    </Button>
+                <div className={classes.actionFoot}>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <div>
+                      <Button
+                        variant="outlined"
+                        className={classes.btn}
+                        onClick={handleClose}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                    <div>
+                      <Button
+                        variant="contained"
+                        type="submit"
+                        className={clsx(classes.btn, classes.editButton)}
+                        startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
+                        onClick={readOnly ? handleEdit : handleSubmit}
+                      >
+                        {loading ? <CircularProgress size={20} /> : readOnly ? 'Edit' :
+                          'Save'}
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
             }
             <Grid item md={12}>
               <Fragment className={classes.table}>
@@ -320,15 +319,15 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
           </div>
           {
             !editable &&
-            <Button
-              variant='contained'
-              color='primary'
-              startIcon={<AddIcon  />}
-              onClick={() => setTankerAdd(true)}
-              style={{ marginRight: 10 }}
-            >
-              Add Tanker
-            </Button>
+              <Button
+                variant='contained'
+                color='primary'
+                startIcon={<AddIcon  />}
+                onClick={() => setTankerAdd(true)}
+                style={{ marginRight: 10 }}
+              >
+                Add Tanker
+              </Button>
           }
         </div>
       </div>

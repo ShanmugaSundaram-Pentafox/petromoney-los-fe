@@ -1,3 +1,4 @@
+import { IconButton } from '@material-ui/core'
 import Box from '@material-ui/core/Box';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
@@ -6,7 +7,6 @@ import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { makeStyles } from '@material-ui/styles';
-import { IconButton } from '@material-ui/core'
 import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
@@ -224,14 +224,14 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback, editable }) => {
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Add Reference Details</div>
         <IconButton onClick={handleClose}  size='small'>
-          <CloseIcon fontSize='size' />
+          <CloseIcon />
         </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
           {
             data.length || addNew ? null :
-              <Typography className={classes.typography}>No references found,Click 'Add reference' to add.</Typography>
+              <Typography className={classes.typography}>No references found,Click &apos; Add reference &apos; to add.</Typography>
           }
           {
             addNew || editRow ? (
@@ -305,7 +305,7 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback, editable }) => {
               <Grid container spacing={2}>{
                 data.map((item, i) => {
                   return (
-                    <Grid item md={6}>
+                    <Grid key={i} item md={6}>
                       <PreviewCard
                         onEdit={() => { editRefRow(item, i) }}
                         onDelete={() => deleteRefRow(item, i)}
@@ -344,14 +344,14 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback, editable }) => {
           </div>
           {
             !editable &&
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => { setAddNew(true); setValues({}) }}
-              style={{ marginBottom: 12 }}
-            >
-              Add Reference
-            </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => { setAddNew(true); setValues({}) }}
+                style={{ marginBottom: 12 }}
+              >
+                Add Reference
+              </Button>
           }
         </div>
       </div>

@@ -1,7 +1,7 @@
 import { makeStyles, IconButton, Typography, Divider, Button, Grid, TextField, Tooltip, Paper } from '@material-ui/core'
+import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
-import AddIcon from '@material-ui/icons/Add';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -131,19 +131,19 @@ const Zones = ({ callback, title }) => {
     let body = {state_id: selectedItem}
 
     updateZoneMapById(addForm?.id, body, action)
-    .then(res => {
-      setSelectedItem([])
-      queryClient.invalidateQueries('mapped')
-      queryClient.invalidateQueries('unmapped')
-      enqueueSnackbar(res, {
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-        variant: 'success',
+      .then(res => {
+        setSelectedItem([])
+        queryClient.invalidateQueries('mapped')
+        queryClient.invalidateQueries('unmapped')
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
       })
-    })
-    .catch(e => logger(e))
+      .catch(e => logger(e))
   }
 
   const handleAdd = (event) => {
@@ -160,7 +160,7 @@ const Zones = ({ callback, title }) => {
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>{title}</div>
         <IconButton onClick={() => callback(false)} size='small'>
-          <CloseIcon fontSize='size' />
+          <CloseIcon />
         </IconButton>
       </Typography>
       <Paper className={classes.root}>
@@ -188,7 +188,7 @@ const Zones = ({ callback, title }) => {
             </Grid>
             {
               addForm?.action === 'Edit' &&
-              <TransferList title='States Map' mappedData={() => getZonesMapById(addForm?.id)} unmappedData={getUnmappedStates} selectedItem={selectedItem} setSelectedItem={setSelectedItem} updateMapping={updateMapping} />
+                <TransferList title='States Map' mappedData={() => getZonesMapById(addForm?.id)} unmappedData={getUnmappedStates} selectedItem={selectedItem} setSelectedItem={setSelectedItem} updateMapping={updateMapping} />
             }
             <div className={classes.formFooter}>
               <Button

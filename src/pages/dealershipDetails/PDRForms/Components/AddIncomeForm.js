@@ -17,7 +17,6 @@ import { compareObject } from '../../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
-    // textAlign: 'center',
     padding: '24px 16px',
     display: 'flex',
     justifyContent: 'space-between',
@@ -69,8 +68,7 @@ const AddIncomeForm = ({ data: init_data, isEdit, id, handleClose }) => {
     getBusinessTypes()
       .then(setBusinessTypes)
       .catch(err => {
-      })
-      .catch(err => {
+        // logger(err)
       })
   })
   const { enqueueSnackbar } = useSnackbar();
@@ -83,7 +81,6 @@ const AddIncomeForm = ({ data: init_data, isEdit, id, handleClose }) => {
     validationSchema: Yup.object().shape({
       business_name: Yup.string().nullable('Enter business type').required('Enter business type'),
       business_age: Yup.number().nullable('Enter business age').required('Enter business age'),
-      business_owner: Yup.string().nullable('Enter business owner name').required('Enter business owner name'),
       cur_fy_income: Yup.number().nullable('Enter income').required('Enter income'),
       business_type: Yup.string().nullable().required('Choose business type'),
       cur_fy_profit_loss: Yup.number().nullable().required('Enter profit/loss'),
@@ -96,7 +93,7 @@ const AddIncomeForm = ({ data: init_data, isEdit, id, handleClose }) => {
       }
       else {
         obj = { ...values }
-      } 
+      }
       const data = { ...values, is_pdr: 1 }
       const edit_data = { ...obj, id: values.id, is_pdr: 1 }
       addIncomeDetailsByID(edit_data, id, isEdit)

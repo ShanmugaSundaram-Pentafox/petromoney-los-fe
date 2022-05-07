@@ -97,7 +97,6 @@ const AddIncomeForm = ({ data: init_data, isEdit, id, handleClose }) => {
       else {
         obj = { ...values }
       } 
-      const data = { ...values, is_pdr: 1 }
       const edit_data = { ...obj, id: values.id, is_pdr: 1 }
       addIncomeDetailsByID(edit_data, id, isEdit)
         .then(res => {

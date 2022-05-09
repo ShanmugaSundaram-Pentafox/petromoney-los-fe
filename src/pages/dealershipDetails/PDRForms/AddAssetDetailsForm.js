@@ -115,6 +115,7 @@ const AddAssetDetailsForm = ({ data: init_data, dealer_id, callback, currentUser
         setAssetData(d);
       })
       .catch((e) => {
+        console.log(e);
       })
     getAssetDetailsById(dealer_id)
       .then(data => {
@@ -128,6 +129,7 @@ const AddAssetDetailsForm = ({ data: init_data, dealer_id, callback, currentUser
         setAsset(d)
       })
       .catch((e) => {
+        console.log(e);
       })
 
   })
@@ -187,6 +189,7 @@ const AddAssetDetailsForm = ({ data: init_data, dealer_id, callback, currentUser
           }, 1500);
         })
         .catch(e => {
+          console.log(e);
         })
     }
   });
@@ -214,6 +217,7 @@ const AddAssetDetailsForm = ({ data: init_data, dealer_id, callback, currentUser
         }, 1500);
       })
       .catch(e => {
+        console.log(e);
       })
 
   }

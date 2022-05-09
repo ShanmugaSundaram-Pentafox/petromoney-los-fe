@@ -1,3 +1,4 @@
+import { IconButton } from '@material-ui/core'
 import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
@@ -8,7 +9,6 @@ import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import { makeStyles } from '@material-ui/styles';
-import { IconButton } from '@material-ui/core'
 import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
@@ -198,7 +198,7 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable }
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Fleet Operator Information</div>
         <IconButton onClick={handleClose}  size='small'>
-          <CloseIcon fontSize='size' />
+          <CloseIcon />
         </IconButton>
       </Typography>
       {
@@ -464,16 +464,16 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable }
               )
             ) : (
               !editable &&
-              <Button
-                variant="contained"
-                type="submit"
-                className={clsx(classes.btn, classes.editButton)}
-                startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                // disabled={loading}
-                onClick={loading ? () => null : handleEdit}
-              >
-                Edit
-              </Button>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  className={clsx(classes.btn, classes.editButton)}
+                  startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
+                  // disabled={loading}
+                  onClick={loading ? () => null : handleEdit}
+                >
+                  Edit
+                </Button>
             )
           }
         </div>

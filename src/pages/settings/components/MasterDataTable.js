@@ -4,10 +4,10 @@ import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
+import AddIcon from '@material-ui/icons/Add';
 import CheckCircleTwoTone from '@material-ui/icons/CheckCircleTwoTone';
 import CloseIcon from '@material-ui/icons/Close';
 import DeleteIcon from '@material-ui/icons/Delete';
-import AddIcon from '@material-ui/icons/Add';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import EditIcon from '@material-ui/icons/Edit';
 import SearchIcon from '@material-ui/icons/Search';
@@ -196,19 +196,19 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
   const updateMapping = (action) => {
     let body = {region_id: selectedItem}
     updateRegionMapById(rowData?.id, body, action)
-    .then(res => {
-      setSelectedItem([])
-      queryClient.invalidateQueries('mapped')
-      queryClient.invalidateQueries('unmapped')
-      enqueueSnackbar(res, {
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-        variant: 'success',
+      .then(res => {
+        setSelectedItem([])
+        queryClient.invalidateQueries('mapped')
+        queryClient.invalidateQueries('unmapped')
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
       })
-    })
-    .catch(e => logger(e))
+      .catch(e => logger(e))
   }
 
   useMount(() => {  
@@ -835,7 +835,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
       <Typography className={classes.sidePanelTitle} variant='h4'>
         <div>{title}</div>
         <IconButton onClick={callback} size='small'>
-          <CloseIcon fontSize='size' />
+          <CloseIcon />
         </IconButton>
       </Typography>
       <Paper className={classes.root}>
@@ -1082,7 +1082,6 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
               <label>{title}</label>
               <TextField 
                 id='add'
-                autoFocus
                 style={{ marginTop: 8 }}
                 variant='outlined'
                 fullWidth
@@ -1118,7 +1117,6 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
               <label style={{marginBottom: 8}}>{title}</label>
               <TextField
                 id='edit'
-                autoFocus
                 fullWidth
                 variant='outlined'
                 value={rowData.name}
@@ -1127,7 +1125,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
             </Grid>
             {
               status === 'State' &&
-              <TransferList title='Regions Map' mappedData={() => getStatesMapById(rowData?.id)} unmappedData={getUnmappedRegions} selectedItem={selectedItem} setSelectedItem={setSelectedItem} updateMapping={updateMapping} />
+                <TransferList title='Regions Map' mappedData={() => getStatesMapById(rowData?.id)} unmappedData={getUnmappedRegions} selectedItem={selectedItem} setSelectedItem={setSelectedItem} updateMapping={updateMapping} />
             }
             <div className={classes.formFooter}>
               <Button
@@ -1220,7 +1218,6 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                 <TextField 
                   id='add'
                   style={{width: '100%', marginTop: 4}}
-                  autoFocus
                   variant='outlined'
                   onChange={handleAdd}
                 />
@@ -1255,7 +1252,6 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                 <label style={{ marginBottom: 8 }}>Asset Type</label>
                 <TextField
                   id='edit'
-                  autoFocus
                   fullWidth
                   variant='outlined'
                   value={rowData ? rowData?.name : AddData?.name}

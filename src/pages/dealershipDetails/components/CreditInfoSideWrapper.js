@@ -1,4 +1,4 @@
-import { Grid, IconButton } from '@material-ui/core';
+import { IconButton,Grid } from '@material-ui/core'
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -168,7 +168,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
       <div className={classes.sidePanelTitle}>
         <Typography  variant="h4">Credit Information ({data?.pan || '-'})</Typography>
         <IconButton onClick={onClose}  size='small'>
-          <CloseRoundedIcon fontSize='size' />
+          <CloseRoundedIcon />
         </IconButton>
       </div>
       <div className={classes.sidePanelFormContentWrapper}>

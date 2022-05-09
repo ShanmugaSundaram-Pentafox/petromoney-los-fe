@@ -1,7 +1,9 @@
 import { Button, Divider, Drawer, Grid, makeStyles, Table, TableBody, TableFooter, TableHead, TableRow, TableCell, Typography, IconButton } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
+import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
+import clsx from 'clsx';
 import React, { useState } from 'react'
 import DeleteButton from '../../../components/CommonComponents/Button/DeleteButton';
 import Currency from '../../../components/Number/Currency';
@@ -10,8 +12,6 @@ import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { getPastYears, getMonth as month } from '../../../utils/commonFunctions.util';
 import { compareObject } from '../../../utils/compareObject.util';
-import EditIcon from '@material-ui/icons/Edit';
-import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelFormWrapper: {
@@ -152,7 +152,7 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Add Bank Statement</div>
         <IconButton onClick={() => callback({ open: false })} size='small'>
-          <CloseIcon fontSize='size' />
+          <CloseIcon />
         </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
@@ -420,7 +420,7 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
         <div className={classes.sidePanelWrapper}>
           <Typography className={classes.sidePanelTitle} variant="h4">
             <div>Edit Statement</div>
-            <CloseIcon fontSize='size' onClick={() => { setEditRow({}); setOpenEdit(false) }} />
+            <CloseIcon onClick={() => { setEditRow({}); setOpenEdit(false) }} />
           </Typography>
           <div className={classes.sidePanelFormContentWrapper}>
             <div className={classes.stepperRoot}>

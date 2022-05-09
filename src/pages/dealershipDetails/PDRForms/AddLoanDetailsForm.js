@@ -1,3 +1,4 @@
+import { IconButton } from '@material-ui/core'
 import Box from '@material-ui/core/Box';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
@@ -6,7 +7,6 @@ import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { makeStyles } from '@material-ui/styles';
-import { IconButton } from '@material-ui/core'
 import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
@@ -265,7 +265,7 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Add Loan Details</div>
         <IconButton onClick={handleClose}  size='small'>
-          <CloseIcon fontSize='size' />
+          <CloseIcon />
         </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
@@ -388,14 +388,14 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
           </div>
           {
             !editable &&
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => { setAddNew(true); setValues({}) }}
-              style={{ marginBottom: 12 }}
-            >
-              Add Loan
-            </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => { setAddNew(true); setValues({}) }}
+                style={{ marginBottom: 12 }}
+              >
+                Add Loan
+              </Button>
           }
         </div>
       </div>

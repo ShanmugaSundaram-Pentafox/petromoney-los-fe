@@ -122,7 +122,7 @@ const CreditNewRequestTable = ({ data, currentUser, view }) => {
                 </Tooltip>
               )
             }
-            else if(tableMeta?.rowData[11])
+            else if(tableMeta?.rowData[12])
               return <CustomToken label="Withheld" variant='warn' />
             else return <CustomToken label={value} variant='success' /> 
           },

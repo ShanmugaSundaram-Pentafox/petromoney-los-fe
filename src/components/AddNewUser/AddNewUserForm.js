@@ -18,7 +18,6 @@ import TextInput from '../TextInput/TextInput';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
-    // textAlign: 'center',
     padding: '24px 16px',
     display: 'flex',
     justifyContent: 'space-between',
@@ -105,7 +104,6 @@ const AddNewUserForm = ({ callback, action }) => {
       const userType = userRoles.find(
         (role) => role.id === Number(formData.role_id)
       );
-        
       Object.keys(formData).forEach(k => (formData[k] === '') && delete formData[k]);
       addNewUser(formData, userType.role_name)
         .then((message) => {
@@ -131,7 +129,6 @@ const AddNewUserForm = ({ callback, action }) => {
             },
             variant: 'error',
           });
-          console.log(e);
         });
     },
   });
@@ -245,16 +242,6 @@ const AddNewUserForm = ({ callback, action }) => {
                     }
                   />
                 </Grid>
-                {/* <Grid item xs={12} justify="flex-end" alignItems="flex-end">
-            <Button
-              size="large"
-              type="submit"
-              color="primary"
-              variant="contained"
-            >
-              Create New User
-            </Button>
-          </Grid> */}
               </Grid>
             </form>
             {apiStatus.type && (

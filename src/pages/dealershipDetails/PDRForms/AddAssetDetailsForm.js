@@ -23,7 +23,6 @@ import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
-    // textAlign: 'center',
     padding: '24px 16px',
     display: 'flex',
     justifyContent: 'space-between',
@@ -89,7 +88,6 @@ const AddAssetDetailsForm = ({ data: init_data, dealer_id, callback, currentUser
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles()
   const [type, setType] = useState('')
-  const [loading, setLoading] = useState(false)
   const [editRowData, setEditRowData] = useState({})
   const [editRow, setEditRow] = useState(false);
   const [asset, setAsset] = useState([])
@@ -115,7 +113,7 @@ const AddAssetDetailsForm = ({ data: init_data, dealer_id, callback, currentUser
         setAssetData(d);
       })
       .catch((e) => {
-        console.log(e);
+        console.log('AssetDetailsFetchError >>',e)
       })
     getAssetDetailsById(dealer_id)
       .then(data => {
@@ -129,7 +127,7 @@ const AddAssetDetailsForm = ({ data: init_data, dealer_id, callback, currentUser
         setAsset(d)
       })
       .catch((e) => {
-        console.log(e);
+        console.log('AssetDetailsFetchError >>',e)
       })
 
   })
@@ -138,24 +136,28 @@ const AddAssetDetailsForm = ({ data: init_data, dealer_id, callback, currentUser
     callback();
   };
 
-  let CustomValidation = {};
-  let setKey = assetData.map(data => {
+  
+  
+  const validate = () => {
+    let val = {};
+    // let setKey = assetData.map(data => {
     let item;
     item = assetData.filter(names => names.name == type.label)
-
-    let asset_validate = item?.map(valueOfAsset => {
-      let validate = valueOfAsset?.details.map(detail => {
-        CustomValidation[detail.key] = Yup.string().nullable('Required').required('Required')
+    let asset_name = item?.map(aname => {
+      let ass = aname?.details.map(detail => {
+        val[detail.key] = Yup.string().nullable('Required').required('Required')
       })
     })
-  }) 
-  
+    // })
+    return val;
+  }
+  let CustomValidation = validate()
+
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
     initialValues: {},
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      // type: Yup.string().nullable('Please choose type').required('Please choose type'),
       asset_value: Yup.number().nullable('Please enter value').required('Please enter value'),
       market_value: Yup.number().nullable('Please enter value').required('Please enter value'),
       ...CustomValidation
@@ -239,7 +241,7 @@ const AddAssetDetailsForm = ({ data: init_data, dealer_id, callback, currentUser
               <div>
                 {
                   asset.length || addNewAsset ? null :
-                    <Typography className={classes.typography}>No asset found,Click &apos Add asset &apos to add new asset.</Typography>
+                    <Typography className={classes.typography}>No asset found,Click &apos; Add asset &apos; to add new asset.</Typography>
                 }
                 <div className={classes.typeField}>
                   {
@@ -324,16 +326,6 @@ const AddAssetDetailsForm = ({ data: init_data, dealer_id, callback, currentUser
                                       {type.label !== 'Gold' && <option value="Leased">Leased</option>}
                                     </TextInput>
                                   </Grid>
-                                  {/* <Grid item md={6}>
-                                    <TextInput
-                                      {...inputProps}
-                                      labelText="Ownership Proof"
-                                      name="ownership_proof"
-                                      value={values.ownership_proof}
-                                      error={errors.ownership_proof}
-                                      helperText={errors.ownership_proof}
-                                    />
-                                  </Grid> */}
                                 </Grid>
                               ) : null
                             }
@@ -388,7 +380,6 @@ const AddAssetDetailsForm = ({ data: init_data, dealer_id, callback, currentUser
                                     <ViewData title="Asset Type" value={item.name} />
                                     <ViewData title="Ownership" value={item.ownership} />
                                     <ViewData title="Market value" value={item.market_value} />
-                                    {/* <ViewData title="Relationship" value={item.relationship} /> */}
                                   </Grid>
                                   <Grid item md={6}>
                                     <ViewData title="Asset value" value={item.asset_value} />

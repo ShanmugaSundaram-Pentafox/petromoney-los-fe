@@ -126,8 +126,8 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
 
   const handleValidate = (action, id, data) => {
     /*
-     * If action is pan, only id is required else pan validation will be called.
-     * If action is aadhar, id and name is required else aadhar field validation and name field validation will be called.
+     * If action is pan, only id is required else pan validateField will be called.
+     * If action is aadhar, id and name is required else aadhar validateField and name validateField will be called.
      */
     if((action === 'pan' && id) || (action === 'aadhar' && id && values?.first_name)){
       action === 'pan' && setPanValidateData({icon:true, loading: true})

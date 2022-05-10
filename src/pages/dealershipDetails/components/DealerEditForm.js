@@ -19,6 +19,7 @@ import CustomToken from '../../../components/CommonComponents/CustomToken';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import FileUpload from '../../../components/FileUpload';
 import TextInput from '../../../components/TextInput/TextInput';
+import { logger } from '../../../config/logger';
 import { deleteProfileDoc, getPincodeDetails } from '../../../services/dealers.service';
 import { validateId } from '../../../services/dealerships.service';
 
@@ -124,7 +125,11 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
   }
 
   const handleValidate = (action, id, data) => {
-    if(action === 'pan' ? id : id && values?.first_name){
+    /*
+     * If action is pan, only id is required else pan validation will be called.
+     * If action is aadhar, id and name is required else aadhar field validation and name field validation will be called.
+     */
+    if((action === 'pan' && id) || (action === 'aadhar' && id && values?.first_name)){
       action === 'pan' && setPanValidateData({icon:true, loading: true})
       action === 'aadhar' && setAadharValidateData({icon:true, loading: true})
       validateId(action, id, data)
@@ -165,7 +170,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
           setFieldValue('state', res[0]?.state_code)
         })
         .catch(e => {
-          console.log(e);
+          logger(e)
         })
     }
   },[values?.pincode])

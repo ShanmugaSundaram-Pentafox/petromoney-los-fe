@@ -141,10 +141,10 @@ function MasterData() {
               </Tooltip>
             </Grid>
             <Grid item md={2}>
-              <Tooltip title="Products">
+              <Tooltip title="Role Products">
                 <div className={classes.content} onClick={() => setCustomForm('assign_products')}>
                   <RolesIcon className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title} >Assign Products</Typography>
+                  <Typography variant="h5" align='center' className={classes.title} >Assign Role Products</Typography>
                 </div>
               </Tooltip>
             </Grid>
@@ -189,7 +189,7 @@ function MasterData() {
           onClose={() => setCustomForm()}
           variant="temporary"
         >
-          <AssignProducts title='Assign Product' callback={setCustomForm} />
+          <AssignProducts title='Select Role to Assign Product' callback={setCustomForm} />
         </Drawer>
         <Drawer
           anchor="right"

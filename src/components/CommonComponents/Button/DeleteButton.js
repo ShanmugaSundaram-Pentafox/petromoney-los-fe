@@ -1,6 +1,6 @@
-import { InfoCircleOutlined } from '@ant-design/icons';
 import { Button, Dialog, DialogContent, DialogContentText, IconButton, makeStyles, Tooltip, Typography } from '@material-ui/core'
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
 import React from 'react'
 
 const useStyles = makeStyles(theme => ({

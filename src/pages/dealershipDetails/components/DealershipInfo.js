@@ -282,7 +282,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                     if (type.id == values?.business_type)
                       return true;
                   })?.name} />
-                  {values?.gst_verified ? <ViewData title='Legal Business Name' value={gstDetails?.mbr} /> : null}
+                  {values?.gst_verified ? <ViewData title='Legal Business Name' value={gstDetails?.lgnm} /> : null}
                   {values?.gst_verified ? <ViewData title='GSTIN Status' value={gstDetails?.sts} /> : null}
                   {values?.gst_verified ? <ViewData title='Legal Trade Name' value={gstDetails?.tradeNam} /> : null}
                 </Grid>
@@ -465,7 +465,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                         <ViewData title='Taxpayer Type' value={gstDetails?.dty || gstValidateData?.details?.dty} />
                       </Grid>
                       <Grid item md={3}>
-                        <ViewData title='Legal Business Name' value={gstDetails?.mbr || gstValidateData?.details?.mbr} />
+                        <ViewData title='Legal Business Name' value={gstDetails?.lgnm || gstValidateData?.details?.lgnm} />
                       </Grid>
                       <Grid item md={3}>
                         <ViewData title='GSTIN Status' value={gstDetails?.sts || gstValidateData?.details?.sts} />

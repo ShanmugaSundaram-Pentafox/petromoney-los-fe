@@ -18,6 +18,7 @@ import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
 import { getLoanTypes } from '../../../services/common.service';
 import { addLoanDetailsByID, deleteLoanDetailsByID, getLoanDetailsbyID, updateLoanDetailsByID } from '../../../services/PDReport.services';
+import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -132,21 +133,20 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
   const [loanTypes, setLoanTypes] = useState([])
   const [addNew, setAddNew] = useState(loanData ? false : true)
   const [editRow, setEditRow] = useState(false);
-
+  const [initData, setInitData] = useState({})
+  
   useMount(() => {
     getLoanDetailsbyID(dealer_id)
-      .then(data => {
-        setLoanData(data)
+    .then(data => {
+      setLoanData(data)
       })
       .catch((e) => {
-        console.log(e);
       })
     getLoanTypes()
       .then(data => {
         setLoanTypes(data)
       })
       .catch((e) => {
-        console.log(e)
       })
   })
   const handleClose = () => {
@@ -164,10 +164,17 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
 
     }),
     onSubmit: values => {
+      let obj = {};
       if (editRow) {
-        updateLoanDetailsByID(values, dealer_id)
+        obj = compareObject(initData, values)
+      }
+      else {
+        obj = { ...values }
+      }
+      const data = { ...obj, loan_id:initData.loan_id}
+      if (editRow) {
+        updateLoanDetailsByID(data, dealer_id)
           .then(res => {
-            console.log(res)
             enqueueSnackbar(res, {
               anchorOrigin: {
                 vertical: 'top',
@@ -195,7 +202,6 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
       else {
         addLoanDetailsByID(values, dealer_id)
           .then(res => {
-            console.log(res)
             enqueueSnackbar(res, {
               anchorOrigin: {
                 vertical: 'top',
@@ -230,6 +236,7 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
   const editLoanRow = (rowData, rowIndex) => {
     setEditRow(true)
     setValues(rowData)
+    setInitData(rowData)
   }
   const deleteLoanRow = (row, index) => {
     deleteLoanDetailsByID(row, dealer_id)
@@ -247,7 +254,6 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
         }, 1500);
       })
       .catch((e) => {
-        console.log(e);
         enqueueSnackbar(e, {
           anchorOrigin: {
             vertical: 'top',

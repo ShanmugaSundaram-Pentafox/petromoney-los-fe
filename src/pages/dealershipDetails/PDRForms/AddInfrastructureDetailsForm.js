@@ -16,9 +16,10 @@ import React, { Fragment, useState } from 'react';
 import * as Yup from 'yup';
 import AddTankerDetails from './AddTankerDetails';
 import Button from '../../../components/CommonComponents/Button/Button';
+import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
 import { addInfrastructureDetails } from '../../../services/PDReport.services';
-import { ViewData } from '../../../components/CommonComponents/FilePreview';
+import { compareObject } from '../../../utils/compareObject.util';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -128,9 +129,16 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
       tank_capacity: Yup.number().nullable('Enter tank capacity').required('Enter tank capacity'),
     }),
     onSubmit: values => {
+      let obj = {};
+      if (!isEdit) {
+        obj = compareObject(data, values)
+      }
+      else {
+        obj = { ...values }
+      } 
       delete values.created_date
       delete values.modified_date
-      let val = { ...values, is_solar: values?.is_solar == 'Yes' ? 1 : 0 }
+      let val = { ...obj, is_solar: values?.is_solar == 'Yes' ? 1 : 0 }
       addInfrastructureDetails(val, dealer_id)
         .then(res => {
           enqueueSnackbar(res, {
@@ -171,124 +179,124 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
           <Box>
             {
               readOnly ?
-              <Grid container spacing={2}>
-                <Grid item md={6}>
-                  <ViewData title="No of Employees" value={values.no_of_employee} style={{marginBottom:6}} />
+                <Grid container spacing={2}>
+                  <Grid item md={6}>
+                    <ViewData title="No of Employees" value={values.no_of_employee} style={{marginBottom:6}} />
+                  </Grid>
+                  <Grid item md={6}>
+                    <ViewData title="No of Storage Tank" value={values.no_of_tank} style={{marginBottom:6}} />
+                  </Grid>
+                  <Grid item md={6}>
+                    <ViewData title="No of Hoarding (Advertisement banners)" value={values.no_of_hoarding} style={{marginBottom:6}} />
+                  </Grid>
+                  <Grid item md={6}>
+                    <ViewData title="Tank Capacity (in liters)" value={values.tank_capacity} style={{marginBottom:6}} />
+                  </Grid>
+                  <Grid item md={6}>
+                    <ViewData title="Using Solar" value={values.is_solar} style={{marginBottom:6}} />
+                  </Grid>
+                </Grid> :
+                <Grid container spacing={2}>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      labelText="No of Employees"
+                      name="no_of_employee"
+                      type="number"
+                      value={values.no_of_employee}
+                      readOnly={readOnly}
+                      error={errors.no_of_employee}
+                      helperText={errors.no_of_employee}
+                      className={classes.number}
+                      inputProps={{ className: classes.input }}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      labelText="No of Storage Tank"
+                      name="no_of_tank"
+                      type="number"
+                      value={values.no_of_tank}
+                      readOnly={readOnly}
+                      error={errors.no_of_tank}
+                      helperText={errors.no_of_tank}
+                      className={classes.number}
+                      inputProps={{ className: classes.input }}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      labelText="No of Hoarding (Advertisement banners)"
+                      name="no_of_hoarding"
+                      type="number"
+                      value={values.no_of_hoarding}
+                      readOnly={readOnly}
+                      error={errors.no_of_hoarding}
+                      helperText={errors.no_of_hoarding}
+                      className={classes.number}
+                      inputProps={{ className: classes.input }}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextInput
+                      {...inputProps}
+                      labelText="Tank Capacity (in liters)"
+                      name="tank_capacity"
+                      value={values.tank_capacity}
+                      readOnly={readOnly}
+                      error={errors.tank_capacity}
+                      helperText={errors.tank_capacity}
+                      className={classes.number}
+                      inputProps={{ className: classes.input }}
+                      type='number'
+                    />
+                  </Grid>
+                  <Grid item md={2} style={{ marginTop: 22 }}>
+                    <div>
+                      <label>Using Solar</label>
+                    </div>
+                  </Grid>
+                  <Grid item md={3} style={{ marginTop: 12 }} >
+                    <FormControl>
+                      <RadioGroup name="is_solar" value={values.is_solar} onChange={handleChange}>
+                        <FormGroup row>
+                          <FormControlLabel value="Yes" control={<Radio color="secondary" />} label="Yes" />
+                          <FormControlLabel value="No" control={<Radio color="secondary" />} label="No" />
+                        </FormGroup>
+                      </RadioGroup>
+                    </FormControl>
+                  </Grid>
                 </Grid>
-                <Grid item md={6}>
-                  <ViewData title="No of Storage Tank" value={values.no_of_tank} style={{marginBottom:6}} />
-                </Grid>
-                <Grid item md={6}>
-                  <ViewData title="No of Hoarding (Advertisement banners)" value={values.no_of_hoarding} style={{marginBottom:6}} />
-                </Grid>
-                <Grid item md={6}>
-                  <ViewData title="Tank Capacity (in liters)" value={values.tank_capacity} style={{marginBottom:6}} />
-                </Grid>
-                <Grid item md={6}>
-                  <ViewData title="Using Solar" value={values.is_solar} style={{marginBottom:6}} />
-                </Grid>
-              </Grid> :
-              <Grid container spacing={2}>
-                <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    labelText="No of Employees"
-                    name="no_of_employee"
-                    type="number"
-                    value={values.no_of_employee}
-                    readOnly={readOnly}
-                    error={errors.no_of_employee}
-                    helperText={errors.no_of_employee}
-                    className={classes.number}
-                    inputProps={{ className: classes.input }}
-                  />
-                </Grid>
-                <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    labelText="No of Storage Tank"
-                    name="no_of_tank"
-                    type="number"
-                    value={values.no_of_tank}
-                    readOnly={readOnly}
-                    error={errors.no_of_tank}
-                    helperText={errors.no_of_tank}
-                    className={classes.number}
-                    inputProps={{ className: classes.input }}
-                  />
-                </Grid>
-                <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    labelText="No of Hoarding (Advertisement banners)"
-                    name="no_of_hoarding"
-                    type="number"
-                    value={values.no_of_hoarding}
-                    readOnly={readOnly}
-                    error={errors.no_of_hoarding}
-                    helperText={errors.no_of_hoarding}
-                    className={classes.number}
-                    inputProps={{ className: classes.input }}
-                  />
-                </Grid>
-                <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    labelText="Tank Capacity (in liters)"
-                    name="tank_capacity"
-                    value={values.tank_capacity}
-                    readOnly={readOnly}
-                    error={errors.tank_capacity}
-                    helperText={errors.tank_capacity}
-                    className={classes.number}
-                    inputProps={{ className: classes.input }}
-                    type='number'
-                  />
-                </Grid>
-                <Grid item md={2} style={{ marginTop: 22 }}>
-                  <div>
-                    <label>Using Solar</label>
-                  </div>
-                </Grid>
-                <Grid item md={3} style={{ marginTop: 12 }} >
-                  <FormControl>
-                    <RadioGroup name="is_solar" value={values.is_solar} onChange={handleChange}>
-                      <FormGroup row>
-                        <FormControlLabel value="Yes" control={<Radio color="secondary" />} label="Yes" />
-                        <FormControlLabel value="No" control={<Radio color="secondary" />} label="No" />
-                      </FormGroup>
-                    </RadioGroup>
-                  </FormControl>
-                </Grid>
-              </Grid>
             }
             {
               !editable &&
-              <div className={classes.actionFoot}>
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <div>
-                    <Button
-                      variant="outlined"
-                      className={classes.btn}
-                      onClick={handleClose}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                  <div>
-                    <Button
-                      variant="contained"
-                      type="submit"
-                      className={clsx(classes.btn, classes.editButton)}
-                      startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                      onClick={readOnly ? handleEdit : handleSubmit}
-                    >
-                      {loading ? <CircularProgress size={20} /> : readOnly ? 'Edit' :
-                        'Save'}
-                    </Button>
+                <div className={classes.actionFoot}>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <div>
+                      <Button
+                        variant="outlined"
+                        className={classes.btn}
+                        onClick={handleClose}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                    <div>
+                      <Button
+                        variant="contained"
+                        type="submit"
+                        className={clsx(classes.btn, classes.editButton)}
+                        startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
+                        onClick={readOnly ? handleEdit : handleSubmit}
+                      >
+                        {loading ? <CircularProgress size={20} /> : readOnly ? 'Edit' :
+                          'Save'}
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
             }
             <Grid item md={12}>
               <Fragment className={classes.table}>
@@ -315,14 +323,14 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
           </div>
           {
             !editable &&
-            <Button
-              variant='contained'
-              color='primary'
-              onClick={() => setTankerAdd(true)}
-              style={{ marginRight: 10 }}
-            >
-              Add Tanker
-            </Button>
+              <Button
+                variant='contained'
+                color='primary'
+                onClick={() => setTankerAdd(true)}
+                style={{ marginRight: 10 }}
+              >
+                Add Tanker
+              </Button>
           }
         </div>
       </div>

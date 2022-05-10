@@ -18,6 +18,7 @@ import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
 import { getOmcList } from '../../../services/common.service';
 import { addAdditionalDetails, deleteOtherDetailsByID, updateAdditionalDetails } from '../../../services/PDReport.services';
+import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -90,6 +91,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
   const [omcs, setOmcs] = useState([])
   const [addNew, setAddNew] = useState(data ? false : true)
   const [editRow, setEditRow] = useState(false);
+  const [initData, setInitData] = useState({})
 
   const handleClose = () => {
     callback();
@@ -102,7 +104,6 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
         setOmcs(data);
       })
       .catch((e) => {
-        console.log(e);
       });
   })
 
@@ -117,10 +118,17 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
       mobile: Yup.string().nullable('Enter sales officer name').matches(/^\d{10}$/, 'Invalid mobile number').required('Enter valid mobile number'),
     }),
     onSubmit: values => {
+      let obj = {};
       if (editRow) {
-        updateAdditionalDetails(values, dealer_id)
+        obj = compareObject(initData, values)
+      }
+      else {
+        obj = { ...values }
+      } 
+      const edit_value = { ...obj, id: values.id}
+      if (editRow) {
+        updateAdditionalDetails(edit_value, dealer_id)
           .then(res => {
-            console.log(res)
             enqueueSnackbar(res, {
               anchorOrigin: {
                 vertical: 'top',
@@ -166,7 +174,6 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
               },
               variant: 'error',
             });
-            console.log(e);
           })
       }
     }
@@ -179,6 +186,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
   const editOthersRow = (rowData, rowIndex) => {
     setEditRow(true)
     setValues(rowData)
+    setInitData(rowData)
   }
   const deleteOthersRow = (row, index) => {
     deleteOtherDetailsByID(row, dealer_id)
@@ -214,7 +222,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
         <div className={classes.stepperRoot}>
           {
             data?.length || addNew ? null :
-              <Typography className={classes.typography}>No bunks found,Click 'Add other bunk' to add.</Typography>
+              <Typography className={classes.typography}>No bunks found,Click &apos Add other bunk &apos to add.</Typography>
           }
           {
             addNew || editRow ? (
@@ -319,7 +327,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
               <Grid container spacing={2}>{
                 data.map((item, i) => {
                   return (
-                    <Grid item md={6}>
+                    <Grid item md={6} key={i}>
                       <PreviewCard
                         onEdit={() => { editOthersRow(item, i) }}
                         onDelete={() => deleteOthersRow(item, i)}

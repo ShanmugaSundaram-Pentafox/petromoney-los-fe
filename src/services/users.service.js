@@ -39,10 +39,8 @@ export const getUsersByRole = (users = [], role = '') => {
   })
 }
 
-export const addNewUser = (data, type) => {
+export const addNewUser = (data) => {
   let apiUrl = URL.addNewUser;
-  if (type === 'DEALER') apiUrl = URL.addNewDealer;
-  else if (type === 'TRANSPORTER') apiUrl = URL.addNewTransporter;
 
   return new Promise((resolve, reject) => {
     apiCall(apiUrl, {

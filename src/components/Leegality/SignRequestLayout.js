@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
     display: 'flex',
   },
-  butSigned: {
+  ifSigned: {
     width: '100px'
   },
   closeButton: {
@@ -269,7 +269,7 @@ const SignRequestLayout = ({ open, onClose, title, type, dealershipId , loanId, 
         {
           type === 'sanction' ? (<strong>Sanction Letter</strong>) : type === 'agreement' ? <strong>Loan Agreement</strong> : <strong>{title}</strong>
         }
-        <div className={classes.butSigned}>{loansData.is_signed == '1' ? <CustomToken label='Signed' variant='success' icon='tick' /> : ''}</div>
+        {loansData.is_signed == '1' ? <div className={classes.ifSigned}><CustomToken label='Signed' variant='success' icon='tick' /></div> : null}
         {/* <strong>{title}</strong> */}
       </DialogTitle>
       <IconButton size="small" aria-label="close" className={classes.closeButton} onClick={onClose}>

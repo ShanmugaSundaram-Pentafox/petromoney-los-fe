@@ -20,6 +20,7 @@ import Button from '../../../components/CommonComponents/Button/Button';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
 import { addInfrastructureDetails } from '../../../services/PDReport.services';
+import { compareObject } from '../../../utils/compareObject.util';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -130,9 +131,16 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
       tank_capacity: Yup.number().nullable('Enter tank capacity').required('Enter tank capacity'),
     }),
     onSubmit: values => {
+      let obj = {};
+      if (!isEdit) {
+        obj = compareObject(data, values)
+      }
+      else {
+        obj = { ...values }
+      } 
       delete values.created_date
       delete values.modified_date
-      let val = { ...values, is_solar: values?.is_solar == 'Yes' ? 1 : 0 }
+      let val = { ...obj, is_solar: values?.is_solar == 'Yes' ? 1 : 0 }
       addInfrastructureDetails(val, dealer_id)
         .then(res => {
           enqueueSnackbar(res, {

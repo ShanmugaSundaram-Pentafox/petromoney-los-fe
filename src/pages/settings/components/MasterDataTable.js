@@ -1263,7 +1263,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
               assetValue.map((x, i) => {
                 return(
                   <Grid key={i} container spacing={2} style={{marginTop: 15, display: 'flex', alignItems: 'center'}}>
-                    <Grid item md={5}>
+                    <Grid item md={3}>
                       <label style={{ marginBottom: 8 }}>Label</label>
                       <TextField
                         id='label'
@@ -1273,7 +1273,17 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                         onChange={e => handleInputChange(e, i)}
                       />
                     </Grid>
-                    <Grid item md={5}>
+                    <Grid item md={3}>
+                      <label style={{ marginBottom: 8 }}>Key</label>
+                      <TextField
+                        id='key'
+                        fullWidth
+                        variant='outlined'
+                        value={x?.key}
+                        onChange={e => handleInputChange(e, i)}
+                      />
+                    </Grid>
+                    <Grid item md={3}>
                       <label style={{ marginBottom: 8 }}>Type</label>
                       <TextInput
                         select

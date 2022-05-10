@@ -19,6 +19,7 @@ import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
 import { updateBusinessDetailsByID } from '../../../services/PDReport.services';
+import { compareObject } from '../../../utils/compareObject.util';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -81,7 +82,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, editable }) => {
+const AddBusinessDetailsForm = ({ data: init_data, dealer_id, isEdit, callback, currentUser, editable }) => {
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles()
   const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
@@ -95,7 +96,7 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
 
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
     initialValues: {
-      ...data
+      ...init_data
     },
     validateOnChange: false,
     validateOnBlur: true,
@@ -107,7 +108,14 @@ const AddBusinessDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser
       credit_sales_month: Yup.number().nullable('Enter sales details').required('Enter sales details'),
     }),
     onSubmit: values => {
-      let data = { ...values, has_atm: values.has_atm === 'Yes' ? 1 : 0, is_pep: values.is_pep === 'Yes' ? 1 : 0 }
+      let obj = {};
+      if (!isEdit) {
+        obj = compareObject(init_data, values)
+      }
+      else {
+        obj = { ...values }
+      } 
+      let data = { ...obj, has_atm: values.has_atm === 'Yes' ? 1 : 0, is_pep: values.is_pep === 'Yes' ? 1 : 0 }
       updateBusinessDetailsByID(data, dealer_id)
         .then(res => {
           enqueueSnackbar(res, {

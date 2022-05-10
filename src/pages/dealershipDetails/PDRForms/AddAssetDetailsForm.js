@@ -8,7 +8,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
-import { format } from 'date-fns'
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
@@ -21,6 +20,7 @@ import PreviewCard from '../../../components/CommonComponents/Cards/PreviewCard'
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
 import { addAssetDetailsById, deleteAssetDetailsById, getAssetDetailsById, getAssetList } from '../../../services/PDReport.services';
+import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -86,12 +86,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable }) => {
+const AddAssetDetailsForm = ({ data: init_data, dealer_id, callback, currentUser, editable }) => {
 
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles()
   const [type, setType] = useState('')
-  const [loading, setLoading] = useState(false)
   const [editRowData, setEditRowData] = useState({})
   const [editRow, setEditRow] = useState(false);
   const [asset, setAsset] = useState([])
@@ -117,7 +116,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable 
         setAssetData(d);
       })
       .catch((e) => {
-        console.log(e);
+        console.log('AssetDetailsFetchError >>',e)
       })
     getAssetDetailsById(dealer_id)
       .then(data => {
@@ -131,7 +130,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable 
         setAsset(d)
       })
       .catch((e) => {
-        console.log(e);
+        console.log('AssetDetailsFetchError >>',e)
       })
 
   })
@@ -140,49 +139,47 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable 
     callback();
   };
 
-  let CustomValidation = {};
-  if (type.label === 'Car') {
-    CustomValidation = {
-      address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
-      yom: Yup.number().nullable('Please enter year of manufacture').required('Please enter year of manufacture').test('year', 'Invalid Manufacture Year', value => value >= 1900 && value <= format(new Date(), 'yyyy')),
-    };
-  } else if (type.label === 'Gold') {
-    CustomValidation = {
-      quantity: Yup.number().nullable('Please enter quantity').required('Please enter quantity'),
-    }
-  } else if (type.label === 'CV') {
-    CustomValidation = {
-      model: Yup.number().nullable('Please enter model').required('Please enter model'),
-      yom: Yup.number().nullable('Please enter year of manufacture').required('Please enter year of manufacture').test('year', 'Invalid Manufacture Year', value => value >= 1900 && value <= format(new Date(), 'yyyy')),
-    }
-  } else if (type.label === 'Land') {
-    CustomValidation = {
-      address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
-    }
-  } else if (type.label === 'Building') {
-    CustomValidation = {
-      address: Yup.string().nullable('Please enter your address').required('Please enter your address'),
-    }
+  
+  
+  const validate = () => {
+    let val = {};
+    // let setKey = assetData.map(data => {
+    let item;
+    item = assetData.filter(names => names.name == type.label)
+    let asset_name = item?.map(aname => {
+      let ass = aname?.details.map(detail => {
+        val[detail.key] = Yup.string().nullable('Required').required('Required')
+      })
+    })
+    // })
+    return val;
   }
+  let CustomValidation = validate()
 
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
     initialValues: {},
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      // type: Yup.string().nullable('Please choose type').required('Please choose type'),
       asset_value: Yup.number().nullable('Please enter value').required('Please enter value'),
       market_value: Yup.number().nullable('Please enter value').required('Please enter value'),
       ...CustomValidation
     }),
     onSubmit: values => {
+      let obj = {};
+      if (editRow) {
+        obj = compareObject(init_data, values)
+      }
+      else {
+        obj = { ...values }
+      }
       const { asset_value, market_value, ownership, ownership_proof, relationship } = values
       delete values.asset_value; delete values.market_value; delete values.ownership_proof; delete values.relationship;
-      const data = { asset_id: type.value, asset_value, market_value, ownership, ownership_proof, relationship, details: { ...values } }
+      const data = { asset_id: type.value, asset_value, market_value, ownership, ownership_proof, relationship, details: { ...obj } }
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
         formData.append(key, data[key]);
-      });
+      }); 
       addAssetDetailsById(data, dealer_id)
         .then(res => {
           enqueueSnackbar(res, {
@@ -288,8 +285,7 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable 
                                             name={item.key}
                                             // value={values.key}
                                             error={errors[item.key]}
-                                            helperText={errors[item.key]}
-                                            type={item.type}
+                                            helperText={errors[item.key]}                                                                                   
                                           >
                                           </TextInput>
                                         </Grid>
@@ -389,7 +385,6 @@ const AddAssetDetailsForm = ({ data, dealer_id, callback, currentUser, editable 
                                     <ViewData title="Asset Type" value={item.name} />
                                     <ViewData title="Ownership" value={item.ownership} />
                                     <ViewData title="Market value" value={item.market_value} />
-                                    {/* <ViewData title="Relationship" value={item.relationship} /> */}
                                   </Grid>
                                   <Grid item md={6}>
                                     <ViewData title="Asset value" value={item.asset_value} />

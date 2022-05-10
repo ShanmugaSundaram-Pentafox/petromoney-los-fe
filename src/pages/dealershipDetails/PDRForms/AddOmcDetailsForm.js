@@ -24,6 +24,7 @@ import Button from '../../../components/CommonComponents/Button/Button';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
 import { URL } from '../../../config/serverUrls';
+import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -84,11 +85,11 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback, editable }) => {
+const AddOmcDetailsForm = ({ data: init_data, dealer_id, isEdit, currentUser, callback, editable }) => {
   const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
   const [loading, setLoading] = useState(false)
-  const [executedDate, setExecutedDate] = useState(data.agreement_executed_on ? parse(data?.agreement_executed_on, 'dd-MM-yyyy', new Date()) : new Date())
-  const [validDate, setValidDate] = useState(data.agreement_valid_till ? parse(data?.agreement_valid_till, 'dd-MM-yyyy', new Date()) : new Date())
+  const [executedDate, setExecutedDate] = useState(init_data?.agreement_executed_on ? parse(init_data?.agreement_executed_on, 'dd-MM-yyyy', new Date()) : new Date())
+  const [validDate, setValidDate] = useState(init_data?.agreement_valid_till ? parse(init_data?.agreement_valid_till, 'dd-MM-yyyy', new Date()) : new Date())
 
   const handleEdit = () => {
     setReadOnly(!readOnly)
@@ -106,7 +107,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback, edi
   const classes = useStyles()
 
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
-    initialValues: { ...data },
+    initialValues: { ...init_data },
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
@@ -118,10 +119,16 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback, edi
       communication_mode: Yup.string().nullable('Enter communication mode').required('Enter communication mode')
     }),
     onSubmit: values => {
-
+      let obj = {};
+      if (!isEdit) {
+        obj = compareObject(init_data, values)
+      }
+      else {
+        obj = { ...values }
+      } 
       const executed_date = executedDate ? format(new Date(executedDate), 'dd-MM-yyyy') : values.agreement_executed_on;
       const valid_date = validDate ? format(new Date(validDate), 'dd-MM-yyyy') : values.agreement_valid_till;
-      const date = { ...values, agreement_executed_on: executed_date, agreement_valid_till: valid_date };
+      const date = { ...obj, agreement_executed_on: executed_date, agreement_valid_till: valid_date };
       const data = new FormData();
       Object.keys(date).forEach((key) => {
         data.append(key, date[key]);
@@ -277,7 +284,7 @@ const AddOmcDetailsForm = ({ data, dealer_id, isEdit, currentUser, callback, edi
                           hideTabs={true}
                           variant='inline'
                           inputVariant='outlined'
-                          format='dd/MM/yyyy'
+                          format='dd-MM-yyyy'
                           maxDate={new Date('2050-01-01')}
                           readOnly={readOnly}
                           disabled={readOnly || editable}

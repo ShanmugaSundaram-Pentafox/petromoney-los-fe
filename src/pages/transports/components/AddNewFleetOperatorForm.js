@@ -17,6 +17,7 @@ import * as Yup from 'yup';
 import Button from '../../../components/CommonComponents/Button/Button';
 import TextInput from '../../../components/TextInput/TextInput';
 import { addNewFleetOperator, updateFleetOperator } from '../../../services/transports.service';
+import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -128,8 +129,15 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable }
     }),
     onSubmit: values => {
       if (data) {
+        let obj = {};
+        if (!readOnly) {
+          obj = compareObject(data, values)
+        }
+        else {
+          obj = { ...values }
+        } 
         setLoading(true)
-        updateFleetOperator(values, dealer_id, data.id)
+        updateFleetOperator(obj, dealer_id, data.id)
           .then(res => {
             setLoading(false)
             enqueueSnackbar(res, {
@@ -146,7 +154,6 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable }
 
           })
           .catch(e => {
-            console.log(e)
             setLoading(false)
             enqueueSnackbar('Something went wrong, Please try Again!', {
               anchorOrigin: {
@@ -177,7 +184,6 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable }
             }, 1500);
           })
           .catch(e => {
-            console.log(e)
             setLoading(false)
             enqueueSnackbar('Something went wrong, Please try Again!', {
               anchorOrigin: {

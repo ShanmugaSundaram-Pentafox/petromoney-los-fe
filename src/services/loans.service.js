@@ -320,9 +320,13 @@ export const getOpportunities = () => {
   });
 }
 
-export const getPotentialOpportunity = (body) => {
+export const getPotentialOpportunity = (view, body) => {
+  let qry = []
   let apiUrl = 'potential/opportunities';
-  apiUrl += `?conversion_ratio=${body?.conversion_ratio || 30}&ticket_size=${body?.ticket_size || 15}`
+  qry.push(`conversion_ratio=${body?.conversion_ratio || 30}&ticket_size=${body?.ticket_size || 15}`)
+  if(view) qry.push(`view=${view}`)
+  if(qry.length) apiUrl += '?' + qry.join('&')
+  // apiUrl += `?conversion_ratio=${body?.conversion_ratio || 30}&ticket_size=${body?.ticket_size || 15}`
   return new Promise((resolve, reject) => {
     apiCall(apiUrl)
       .then(({ status, data, message }) => {

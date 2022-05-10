@@ -16,6 +16,7 @@ import PreviewCard from '../../../components/CommonComponents/Cards/PreviewCard'
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
 import { addReferenceDetails, deleteReferenceDetailsByID, updateReferenceById } from '../../../services/PDReport.services';
+import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -108,17 +109,17 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const AddReferenceForm = ({ data, dealer_id, isEdit, callback, editable }) => {
-  const [addNew, setAddNew] = useState(data ? false : true)
+const AddReferenceForm = ({ data: init_data, dealer_id, isEdit, callback, editable }) => {
+  const [addNew, setAddNew] = useState(init_data ? false : true)
   const [editRow, setEditRow] = useState(false);
-
+  const [initData, setInitData] = useState({})
   const handleClose = () => {
     callback();
   };
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles()
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
-    initialValues: { ...data },
+    initialValues: { ...init_data },
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
@@ -126,11 +127,12 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback, editable }) => {
       mobile: Yup.string().nullable('Please enter dealership mobile number').required('Please enter dealership mobile number'),
     }),
     onSubmit: values => {
+      let obj = {};
+      
       const data = { ...values, name: values.name.toUpperCase() }
       if (editRow) {
         updateReferenceById(data, dealer_id)
           .then(res => {
-            console.log(res)
             enqueueSnackbar(res, {
               anchorOrigin: {
                 vertical: 'top',
@@ -157,7 +159,6 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback, editable }) => {
       else {
         addReferenceDetails(data, dealer_id)
           .then(res => {
-            console.log(res)
             enqueueSnackbar(res, {
               anchorOrigin: {
                 vertical: 'top',
@@ -191,6 +192,7 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback, editable }) => {
   const editRefRow = (rowData, rowIndex) => {
     setEditRow(true)
     setValues(rowData)
+    setInitData(rowData)
   }
   const deleteRefRow = (row, index) => {
     deleteReferenceDetailsByID(row, dealer_id)
@@ -226,8 +228,8 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback, editable }) => {
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
           {
-            data.length || addNew ? null :
-              <Typography className={classes.typography}>No references found,Click 'Add reference' to add.</Typography>
+            init_data.length || addNew ? null :
+              <Typography className={classes.typography}>No references found,Click &apos Add reference &apos to add.</Typography>
           }
           {
             addNew || editRow ? (
@@ -299,9 +301,9 @@ const AddReferenceForm = ({ data, dealer_id, isEdit, callback, editable }) => {
               </Box >
             ) : (
               <Grid container spacing={2}>{
-                data.map((item, i) => {
+                init_data.map((item, i) => {
                   return (
-                    <Grid item md={6}>
+                    <Grid item md={6} key={i}>
                       <PreviewCard
                         onEdit={() => { editRefRow(item, i) }}
                         onDelete={() => deleteRefRow(item, i)}

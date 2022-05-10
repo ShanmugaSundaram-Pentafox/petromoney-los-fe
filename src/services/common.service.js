@@ -1,5 +1,5 @@
 // import { API } from "../config/api"
-import { URL } from '../config/serverUrls'
+import { URL } from '../config/serverUrls';
 // import { store } from "../store";
 import apiCall from '../utils/api.util';
 
@@ -13,11 +13,11 @@ export const getBusinessTypes = () => {
           reject(message);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         reject(err.message);
-      })
-  })
-}
+      });
+  });
+};
 
 export const getOmcList = () => {
   return new Promise((resolve, reject) => {
@@ -29,11 +29,11 @@ export const getOmcList = () => {
           reject(message);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         reject(err.message);
-      })
-  })
-}
+      });
+  });
+};
 
 export const getExperianReportById = (id, type) => {
   return new Promise((resolve, reject) => {
@@ -45,11 +45,11 @@ export const getExperianReportById = (id, type) => {
           reject(message);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         reject(e.message);
-      })
+      });
   });
-}
+};
 
 export const refreshExperianReportById = (id, type) => {
   // const currentUser = store.getState().user.currentUser;
@@ -69,11 +69,11 @@ export const refreshExperianReportById = (id, type) => {
           reject(message);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         reject(e.message);
-      })
+      });
   });
-}
+};
 
 export const downloadPDF = ({ file, isBase64, name }) => {
   const linkSource = isBase64 ? `data:application/pdf;base64,${file}` : file;
@@ -82,29 +82,29 @@ export const downloadPDF = ({ file, isBase64, name }) => {
   downloadLink.href = linkSource;
   downloadLink.download = fileName;
   downloadLink.click();
-}
+};
 
 export const getAllRegions = (id) => {
   return new Promise((resolve, reject) => {
-    let apiUrl = 'regions/los'
-    if(id !== '0' && id !=='' && id) apiUrl += `?zone=${id}`
+    let apiUrl = 'regions/los';
+    if (id !== '0' && id !== '' && id) apiUrl += `?zone=${id}`;
     apiCall(apiUrl, {}, 'GET')
-      .then(response => {
+      .then((response) => {
         if (response?.status === 'SUCCESS') {
-          const result = response?.data.map(item => ({
+          const result = response?.data.map((item) => ({
             label: item.region,
             value: item.id,
-          }))
-          resolve(result || [])
+          }));
+          resolve(result || []);
         } else {
-          reject(new Error(response.message || 'Unable to get regions'))
+          reject(new Error(response.message || 'Unable to get regions'));
         }
       })
-      .catch(err => {
-        reject(err)
-      })
-  })
-}
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
 
 export const getAllRegion = () => {
   return new Promise((resolve, reject) => {
@@ -112,40 +112,37 @@ export const getAllRegion = () => {
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data || []);
-
         } else {
           reject(message);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         reject(e.message);
-      })
+      });
   });
-}
+};
 export const getMappedRegion = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`user/${id}/map/region`)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data);
-
         } else {
           reject(message);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         reject(e.message);
-      })
+      });
   });
-}
+};
 export const updateMappedRegion = (data, id) => {
-
   return new Promise((resolve, reject) => {
     apiCall(`user/${id}/map/region`, {
       method: 'POST',
       body: {
-        'regions': data
-      }
+        regions: data,
+      },
     })
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
@@ -154,18 +151,18 @@ export const updateMappedRegion = (data, id) => {
           reject(message);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         reject(e.message);
-      })
+      });
   });
-}
+};
 export const deleteMappedRegion = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`user/${id}/map/region`, {
       method: 'DELETE',
       body: {
-        'regions': data
-      }
+        regions: data,
+      },
     })
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
@@ -174,18 +171,18 @@ export const deleteMappedRegion = (data, id) => {
           reject(message);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         reject(e.message);
-      })
+      });
   });
-}
+};
 export const updatePassword = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`user/${id}`, {
       method: 'POST',
       body: {
-        password: data.password
-      }
+        password: data.password,
+      },
     })
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
@@ -194,18 +191,16 @@ export const updatePassword = (data, id) => {
           reject(message);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         reject(e.message);
-      })
+      });
   });
-}
+};
 export const updateUserDetails = (data, id) => {
-
   return new Promise((resolve, reject) => {
     apiCall(`user/${id}`, {
       method: 'POST',
-      body: data
-
+      body: data,
     })
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
@@ -214,49 +209,48 @@ export const updateUserDetails = (data, id) => {
           reject(message);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         reject(e.message);
-      })
+      });
   });
-}
+};
 export const SendReports = () => {
   return new Promise((resolve, reject) => {
     apiCall('loan/report/1', {
       method: 'POST',
     })
       .then(({ status, message }) => {
-
         if (status === 'SUCCESS') {
-          console.log(status, 'status')
-          console.log(message, 'status')
+          console.log(status, 'status');
+          console.log(message, 'status');
           resolve({ status, message });
         } else {
           reject(message);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         reject(e.message);
-      })
+      });
   });
-}
+};
 export const getPassbookDetails = (id, action) => {
-  let apiUrl = `dealership/${id}/passbook`
-  if (action === 'download') apiUrl+='?send=1&download=1'
-  if (action === 'share') apiUrl+='?send=1'
+  let apiUrl = `dealership/${id}/passbook`;
+  if (action === 'download') apiUrl += '?send=1&download=1';
+  if (action === 'share') apiUrl += '?send=1';
   return new Promise((resolve, reject) => {
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
-          resolve({data, message});
+          resolve({ data, message });
         } else {
           reject(message);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         reject(e.message);
-      })
+      });
   });
-}
+};
 
 export const getStates = () => {
   return new Promise((resolve, reject) => {
@@ -268,11 +262,11 @@ export const getStates = () => {
           reject(message);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         reject(err.message);
-      })
-  })
-}
+      });
+  });
+};
 
 export const getAssetType = () => {
   return new Promise((resolve, reject) => {
@@ -284,11 +278,11 @@ export const getAssetType = () => {
           reject(message);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         reject(err.message);
-      })
-  })
-}
+      });
+  });
+};
 
 export const getActiveStates = () => {
   return new Promise((resolve, reject) => {
@@ -300,11 +294,11 @@ export const getActiveStates = () => {
           reject(message);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         reject(err.message);
-      })
-  })
-}
+      });
+  });
+};
 export const getMenuItemsCount = () => {
   return new Promise((resolve, reject) => {
     apiCall('count')
@@ -315,11 +309,11 @@ export const getMenuItemsCount = () => {
           reject(message);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         reject(err.message);
-      })
-  })
-}
+      });
+  });
+};
 // export const getMasterRegionById = (res) => {
 //   return new Promise((resolve, reject) => {
 //     apiCall(`master/regions/${res}`)
@@ -346,11 +340,11 @@ export const getRegionById = (res) => {
           reject(message);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         reject(err.message);
-      })
-  })
-}
+      });
+  });
+};
 
 export const updateOmcsById = (data, id) => {
   return new Promise((resolve, reject) => {
@@ -365,11 +359,11 @@ export const updateOmcsById = (data, id) => {
           reject(message);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         reject(e.message);
-      })
+      });
   });
-}
+};
 
 export const updateRegionById = (data, id) => {
   return new Promise((resolve, reject) => {
@@ -384,11 +378,11 @@ export const updateRegionById = (data, id) => {
           reject(message);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         reject(e.message);
-      })
+      });
   });
-}
+};
 
 export const updateStateById = (data, id) => {
   return new Promise((resolve, reject) => {
@@ -403,11 +397,11 @@ export const updateStateById = (data, id) => {
           reject(message);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         reject(e.message);
-      })
+      });
   });
-}
+};
 
 export const updateAssetById = (data, id) => {
   return new Promise((resolve, reject) => {
@@ -422,11 +416,11 @@ export const updateAssetById = (data, id) => {
           reject(message);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         reject(e.message);
-      })
+      });
   });
-}
+};
 
 export const updateBusinessById = (data, id) => {
   return new Promise((resolve, reject) => {
@@ -441,11 +435,11 @@ export const updateBusinessById = (data, id) => {
           reject(message);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         reject(e.message);
-      })
+      });
   });
-}
+};
 
 export const updateLoanById = (data, id) => {
   return new Promise((resolve, reject) => {
@@ -460,200 +454,198 @@ export const updateLoanById = (data, id) => {
           reject(message);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         reject(e.message);
-      })
+      });
   });
-}
+};
 
 export const addOmcs = (data) => {
   return new Promise((resolve, reject) => {
     apiCall('omcs', {
       method: 'POST',
-      body: data
+      body: data,
     })
       .then(({ status, message }) => {
         if (status === 'SUCCESS') {
-          resolve(message)
+          resolve(message);
         } else {
-          reject(message)
+          reject(message);
         }
       })
       .catch((e) => {
-        reject(e.message)
-      })
-  })
-}
+        reject(e.message);
+      });
+  });
+};
 
 export const addRegion = (data) => {
   return new Promise((resolve, reject) => {
     apiCall('regions', {
       method: 'POST',
-      body: data
+      body: data,
     })
       .then(({ status, message }) => {
         if (status === 'SUCCESS') {
-          resolve(message)
+          resolve(message);
         } else {
-          reject(message)
+          reject(message);
         }
       })
       .catch((e) => {
-        reject(e.message)
-      })
-  })
-
-}
+        reject(e.message);
+      });
+  });
+};
 export const addState = (data) => {
   return new Promise((resolve, reject) => {
     apiCall('master/states', {
       method: 'POST',
-      body: data
+      body: data,
     })
       .then(({ status, message }) => {
         if (status === 'SUCCESS') {
-          resolve(message)
+          resolve(message);
         } else {
-          reject(message)
+          reject(message);
         }
       })
       .catch((e) => {
-        reject(e.message)
-      })
-  })
-}
+        reject(e.message);
+      });
+  });
+};
 
 export const addBusinessType = (data) => {
   return new Promise((resolve, reject) => {
     apiCall('business/types', {
       method: 'POST',
-      body: data
+      body: data,
     })
       .then(({ status, message }) => {
         if (status === 'SUCCESS') {
-          resolve(message)
+          resolve(message);
         } else {
-          reject(message)
+          reject(message);
         }
       })
       .catch((e) => {
-        reject(e.message)
-      })
-  })
-}
+        reject(e.message);
+      });
+  });
+};
 
 export const addLoanType = (data) => {
   return new Promise((resolve, reject) => {
     apiCall('loan/types', {
       method: 'POST',
-      body: data
+      body: data,
     })
       .then(({ status, message }) => {
         if (status === 'SUCCESS') {
-          resolve(message)
+          resolve(message);
         } else {
-          reject(message)
+          reject(message);
         }
       })
       .catch((e) => {
-        reject(e.message)
-      })
-  })
-}
+        reject(e.message);
+      });
+  });
+};
 
 export const addAssetType = (data) => {
   return new Promise((resolve, reject) => {
     apiCall('asset', {
       method: 'POST',
-      body: data
+      body: data,
     })
       .then(({ status, message }) => {
         if (status === 'SUCCESS') {
-          resolve(message)
+          resolve(message);
         } else {
-          reject(message)
+          reject(message);
         }
       })
       .catch((e) => {
-        reject(e.message)
-      })
-  })
-}
+        reject(e.message);
+      });
+  });
+};
 
 export const deleteOmcs = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`omcs/${id}`, {
       method: 'DELETE',
-      body: data
+      body: data,
     })
       .then(({ status, message }) => {
         if (status === 'SUCCESS') {
-          resolve(message)
+          resolve(message);
         } else {
-          reject(message)
+          reject(message);
         }
       })
       .catch((e) => {
-        reject(e.message)
-      })
-  })
-}
+        reject(e.message);
+      });
+  });
+};
 
 export const deleteRegion = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`master/regions/${id}`, {
       method: 'DELETE',
-      body: data
+      body: data,
     })
       .then(({ status, message }) => {
         if (status === 'SUCCESS') {
-          resolve(message)
+          resolve(message);
         } else {
-          reject(message)
+          reject(message);
         }
       })
       .catch((e) => {
-        reject(e.message)
-      })
-  })
-
-}
+        reject(e.message);
+      });
+  });
+};
 export const deleteState = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`master/states/${id}`, {
       method: 'DELETE',
-      body: data
+      body: data,
     })
       .then(({ status, message }) => {
         if (status === 'SUCCESS') {
-          resolve(message)
+          resolve(message);
         } else {
-          reject(message)
+          reject(message);
         }
       })
       .catch((e) => {
-        reject(e.message)
-      })
-  })
-}
+        reject(e.message);
+      });
+  });
+};
 export const deleteAsset = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`asset/${id}`, {
       method: 'DELETE',
-      body: data
+      body: data,
     })
       .then(({ status, message }) => {
         if (status === 'SUCCESS') {
-          resolve(message)
+          resolve(message);
         } else {
-          reject(message)
+          reject(message);
         }
       })
       .catch((e) => {
-        reject(e.message)
-      })
-  })
-}
+        reject(e.message);
+      });
+  });
+};
 export const deleteBusiness = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`business/types/${id}`, {
@@ -662,16 +654,16 @@ export const deleteBusiness = (data, id) => {
     })
       .then(({ status, message }) => {
         if (status === 'SUCCESS') {
-          resolve(message)
+          resolve(message);
         } else {
-          reject(message)
+          reject(message);
         }
       })
       .catch((e) => {
-        reject(e.message)
-      })
-  })
-}
+        reject(e.message);
+      });
+  });
+};
 export const deleteLoan = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`loan/types/${id}`, {
@@ -680,16 +672,16 @@ export const deleteLoan = (data, id) => {
     })
       .then(({ status, message }) => {
         if (status === 'SUCCESS') {
-          resolve(message)
+          resolve(message);
         } else {
-          reject(message)
+          reject(message);
         }
       })
       .catch((e) => {
-        reject(e.message)
-      })
-  })
-}
+        reject(e.message);
+      });
+  });
+};
 
 export const getDealershipForSearch = (id) => {
   return new Promise((resolve, reject) => {
@@ -701,11 +693,11 @@ export const getDealershipForSearch = (id) => {
           reject(message);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         reject(err.message);
-      })
-  })
-}
+      });
+  });
+};
 
 export const getLoanTypes = () => {
   return new Promise((resolve, reject) => {
@@ -713,16 +705,15 @@ export const getLoanTypes = () => {
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data);
-
         } else {
           reject(message);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         reject(e.message);
-      })
+      });
   });
-}
+};
 
 export const getUserRoleForReview = (status) => {
   return new Promise((resolve, reject) => {
@@ -734,31 +725,31 @@ export const getUserRoleForReview = (status) => {
           reject(message);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         reject(err.message);
-      })
-  })
-}
+      });
+  });
+};
 
 export const getProducts = () => {
   return new Promise((resolve, reject) => {
     apiCall('business/products/valid')
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
-          const result = data?.map(item => ({
+          const result = data?.map((item) => ({
             label: item.product_name,
             value: item.product_id,
-          }))
+          }));
           resolve(result || []);
         } else {
           reject(message);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         reject(err.message);
-      })
-  })
-}
+      });
+  });
+};
 
 export const getProductsMaster = () => {
   return new Promise((resolve, reject) => {
@@ -770,16 +761,16 @@ export const getProductsMaster = () => {
           reject(message);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         reject(err.message);
-      })
-  })
-}
+      });
+  });
+};
 
 export const getZones = (filter) => {
   return new Promise((resolve, reject) => {
-    let apiUrl = 'zones'
-    if(filter === 1) apiUrl+='?filter=1'
+    let apiUrl = 'zones';
+    if (filter === 1) apiUrl += '?filter=1';
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
@@ -788,88 +779,87 @@ export const getZones = (filter) => {
           reject(message);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         reject(err.message);
-      })
-  })
-}
+      });
+  });
+};
 
 export const insertNewProduct = (data) => {
   return new Promise((resolve, reject) => {
     apiCall('business/products', {
       method: 'POST',
-      body: data
+      body: data,
     })
       .then(({ status, message }) => {
         if (status === 'SUCCESS') {
-          resolve(message)
+          resolve(message);
         } else {
-          reject(message)
+          reject(message);
         }
       })
       .catch((e) => {
-        reject(e.message)
-      })
-  })
-}
-
+        reject(e.message);
+      });
+  });
+};
 
 export const addZones = (data) => {
   return new Promise((resolve, reject) => {
     apiCall('zones', {
       method: 'POST',
-      body: data
+      body: data,
     })
       .then(({ status, message }) => {
         if (status === 'SUCCESS') {
-          resolve(message)
+          resolve(message);
         } else {
-          reject(message)
+          reject(message);
         }
       })
       .catch((e) => {
-        reject(e.message)
-      })
-  })
-}
+        reject(e.message);
+      });
+  });
+};
 
 export const updateProductbyId = (id, data) => {
   return new Promise((resolve, reject) => {
     apiCall(`business/products/${id}`, {
       method: 'POST',
-      body: data
+      body: data,
     })
       .then(({ status, message }) => {
         if (status === 'SUCCESS') {
-          resolve(message)
+          resolve(message);
         } else {
-          reject(message)
+          reject(message);
         }
       })
       .catch((e) => {
-        reject(e.message)
-      })
-  })
-}
+        reject(e.message);
+      });
+  });
+};
 
 export const editZones = (id, data) => {
   return new Promise((resolve, reject) => {
     apiCall(`zones/${id}`, {
       method: 'POST',
-      body: data
+      body: data,
     })
       .then(({ status, message }) => {
         if (status === 'SUCCESS') {
-          resolve(message)
+          resolve(message);
         } else {
-          reject(message)
+          reject(message);
         }
       })
       .catch((e) => {
-        reject(e.message)
-      })
-  })
-}
+        reject(e.message);
+      });
+  });
+};
 
 export const refreshRedis = () => {
   return new Promise((resolve, reject) => {
@@ -878,33 +868,49 @@ export const refreshRedis = () => {
     })
       .then(({ status, message }) => {
         if (status === 'SUCCESS') {
-          resolve(message)
+          resolve(message);
         } else {
-          reject(message)
+          reject(message);
         }
       })
       .catch((e) => {
-        reject(e.message)
-      })
-  })
-}
+        reject(e.message);
+      });
+  });
+};
 
 export const getFilteredProducts = () => {
   return new Promise((resolve, reject) => {
     apiCall('products/los')
-      .then(response => {
+      .then((response) => {
         if (response?.status === 'SUCCESS') {
-          const result = response?.data.map(item => ({
+          const result = response?.data.map((item) => ({
             label: item.product_name,
             value: item.product_id,
-          }))
-          resolve(result || [])
+          }));
+          resolve(result || []);
         } else {
-          reject(new Error(response.message || 'Unable to get products'))
+          reject(new Error(response.message || 'Unable to get products'));
         }
       })
-      .catch(err => {
-        reject(err)
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const getScoreCard = (dealership_id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${dealership_id}/scorecard`)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data || []);
+        } else {
+          reject(message);
+        }
       })
-  })
-}
+      .catch((err) => {
+        reject(err.message);
+      });
+  });
+};

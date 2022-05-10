@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import { HashRouter } from 'react-router-dom';
 import { PersistGate } from 'redux-persist/integration/react';
 
-import './App.scss';
+import './App.css';
 import Routes from './routes/routes';
 import { store, persistor } from './store';
 import theme from './theme';

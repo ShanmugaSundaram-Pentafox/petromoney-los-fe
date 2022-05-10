@@ -1,4 +1,3 @@
-import { DownloadOutlined } from '@ant-design/icons';
 import { Grid } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
@@ -6,6 +5,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import Typography from '@material-ui/core/Typography';
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 import RotateLeftOutlinedIcon from '@material-ui/icons/RotateLeftOutlined';
+import DownloadOutlined from '@material-ui/icons/SystemUpdateAltRounded';
 import Alert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
@@ -16,10 +16,10 @@ import { useQuery, useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import DealerCreditInfoForm from './DealerCreditInfoForm';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
-import { getCibilReport } from '../../../services/creditreport.service';
-import { getCreditInfo, updateCreditInfo } from '../../../services/dealers.service';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
+import { getCibilReport } from '../../../services/creditreport.service';
+import { getCreditInfo, updateCreditInfo } from '../../../services/dealers.service';
 
 const useStyles = makeStyles(theme => ({
   sidePanelTitle: {
@@ -245,15 +245,15 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
         </Snackbar>
         {
           !editable &&
-          <div className={classes.actionButtonsWrapper}>
-            {
+            <div className={classes.actionButtonsWrapper}>
+              {
               apiData?.cibil_score &&
                 <Button
                   className={clsx(classes.btn, classes.btnSuccess)}
                   variant={cibilEditMode ? 'contained' : 'outlined'}
                   onClick={cibilEditMode ? handleSubmit : handleEdit}>{cibilEditMode === true ? 'Save' : 'Edit'}</Button>
-            }
-          </div>
+              }
+            </div>
         }
       </div>
     </div>

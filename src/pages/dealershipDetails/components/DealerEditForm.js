@@ -19,6 +19,7 @@ import CustomToken from '../../../components/CommonComponents/CustomToken';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import FileUpload from '../../../components/FileUpload';
 import TextInput from '../../../components/TextInput/TextInput';
+import { logger } from '../../../config/logger';
 import { deleteProfileDoc, getPincodeDetails } from '../../../services/dealers.service';
 import { validateId } from '../../../services/dealerships.service';
 
@@ -75,7 +76,7 @@ const useStyles = makeStyles({
   },
 });
 
-const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave, setFieldValue, setPanValidateData, panValidateData, validateField }) => {
+const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave, setFieldValue, setPanValidateData, panValidateData, validateField, setAadharValidateData, aadharValidateData }) => {
   const readOnly = readOnlyProps;
   const classes = useStyles();
   const [city, setCity] = useState([]);
@@ -123,27 +124,40 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
       })
   }
 
-  const handleValidate = (action, id) => {
-    if(id){
+  const handleValidate = (action, id, data) => {
+    /*
+     * If action is pan, only id is required else pan validateField will be called.
+     * If action is aadhar, id and name is required else aadhar validateField and name validateField will be called.
+     */
+    if((action === 'pan' && id) || (action === 'aadhar' && id && values?.first_name)){
       action === 'pan' && setPanValidateData({icon:true, loading: true})
-      validateId(action, id)
+      action === 'aadhar' && setAadharValidateData({icon:true, loading: true})
+      validateId(action, id, data)
         .then((res) => {
-          action === 'pan' &&
-        setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}})
-          !values?.first_name && setFieldValue('first_name', res?.details?.firstName)
-          !values?.last_name && setFieldValue('last_name', res?.details?.lastName)
-          res?.details?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
-          !values?.gender && setFieldValue('gender', res?.details?.gender?.toUpperCase())
-          !values?.pincode && setFieldValue('pincode', res?.details?.address?.pinCode)
-          !values?.address && setFieldValue('address', `${res?.details?.address?.buildingName}, ${res?.details?.address?.streetName}, ${res?.details?.address?.city}, ${res?.details?.address?.state} - ${res?.details?.address?.pinCode}`)
+          if(action === 'pan') {
+            setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}, is_verified: res?.is_verified})
+            !values?.first_name && setFieldValue('first_name', res?.details?.firstName)
+            !values?.last_name && setFieldValue('last_name', res?.details?.lastName)
+            res?.details?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
+            !values?.gender && setFieldValue('gender', res?.details?.gender?.toUpperCase())
+            !values?.pincode && setFieldValue('pincode', res?.details?.address?.pinCode)
+            action === 'pan' && !values?.address && setFieldValue('address', `${res?.details?.address?.buildingName}, ${res?.details?.address?.streetName}, ${res?.details?.address?.city}, ${res?.details?.address?.state} - ${res?.details?.address?.pinCode}`)
+          } else { setAadharValidateData({icon: true, loading: false, idType: 'AADHAR', details: res?.details || {}, is_verified: res?.is_verified}) }
         })
         .catch(e => {
-          console.log(e);
-          action === 'pan' &&
-        setPanValidateData({icon: true, idType: 'PAN'})
+          enqueueSnackbar(e, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          });
+          action === 'pan' && setPanValidateData({icon: true, idType: 'PAN'})
+          action === 'aadhar' && setAadharValidateData({icon: true, idType: 'AADHAR'})
         })
     } else {
-      validateField('pan')
+      validateField(action)
+      action === 'aadhar' && validateField('first_name')
     }
   }
 
@@ -156,7 +170,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
           setFieldValue('state', res[0]?.state_code)
         })
         .catch(e => {
-          console.log(e);
+          logger(e)
         })
     }
   },[values?.pincode])
@@ -173,7 +187,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
         {
         valid?.icon ?
         valid?.loading ? <CircularProgress size={15}/> :
-        valid?.details ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{color:'#4caf50'}} /></Tooltip> :
+        valid?.is_verified ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{color:'#4caf50'}} /></Tooltip> :
         <Tooltip title={`Invalid ${valid.idType}`} ><CancelOutlinedIcon fontSize='small' color='error' /></Tooltip> : null
         }
       </div>
@@ -218,6 +232,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
       {
         readOnly ? (
           <>
+            <Typography variant="h6" style={{marginTop: 8}}>Personal Details</Typography>
             <Grid container spacing={2} className={classes.readOnlyWrapper}>
               <Grid item md={6}>
                 <Box className={classes.box} >
@@ -227,7 +242,6 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   <ViewData title='State' value={values.state_name} />
                   <ViewData title='Marital Status' value={values.marital_status} />
                   <ViewData title='Mobile' value={values.mobile} />
-                  <ViewData title='Aadhar' value={values.aadhar} />
                 </Box>
               </Grid>
               <Grid item md={6}>
@@ -238,15 +252,24 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   <ViewData title='Pincode' value={values.pincode} />
                   <ViewData title='Residing since' value={values.residing_since} />
                   <ViewData title='Email' value={values.email} />
-                  <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success': 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'}/>} />
                 </Box>
+              </Grid>
+            </Grid>
+            <Divider />
+            <Typography variant="h6" style={{marginTop: 8}}>KYC Details</Typography>
+            <Grid container spacing={2} className={classes.readOnlyWrapper}>
+              <Grid item md={6}>
+                <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success': 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'}/>} />
+              </Grid>
+              <Grid item md={6}>
+                <ViewData title='Aadhar' value={values.aadhar} endIcon={<CustomToken variant={values?.aadhar_verified ? 'success': 'error'} label={values?.aadhar_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.aadhar_verified ? 'tick' : 'cross'}/>} />
               </Grid>
             </Grid>
             <Divider />
             {
               values?.profile_image_url || values?.pan_file_url || values?.aadhar_f_file_url || values?.aadhar_b_file_url ? (
                 <div className={classes.readOnlyWrapper}>
-                  <Typography variant="h4">Attachments</Typography>
+                  <Typography variant="h6" style={{marginTop: 8}}>Attachments</Typography>
                   <div style={{ display: 'flex', marginTop: 16 }}>
                     {values.profile_image_url && <DocAttachment tooltip='View Profile' imgUrl={values?.profile_image_url} docName='Profile' style={{marginRight: 20}} />}
                     {values.pan_file_url && <DocAttachment tooltip='View PAN' imgUrl={values?.pan_file_url} docName='PAN' style={{marginRight: 20}} />}
@@ -256,7 +279,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 </div>
               ) : (
                 <div className={classes.readOnlyWrapper}>
-                  <Typography variant="h4">Attachments</Typography>
+                  <Typography variant="h6">Attachments</Typography>
                   <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
                     <Typography variant="h7">No Attachments Found</Typography>
                   </div>
@@ -267,6 +290,49 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
         ) : (
           <Grid container style={{marginTop: 10}}>
             <>
+              <Grid {...gridItem} md={12} >
+                <Typography variant="title"><strong>KYC Details</strong></Typography>
+              </Grid>
+              <Grid {...gridItem} md={6}>
+                <TextInput
+                  label="PAN Number"
+                  name="pan"
+                  value={values.pan?.toUpperCase()}
+                  disabled={panValidateData?.loading || values?.pan_verified}
+                  error={errors.pan}
+                  helperText={errors.pan}
+                  readOnly={readOnly}
+                  onChange={onChange}
+                  InputLabelProps={{ shrink: true }}
+                  InputProps={ValidateProps(panValidateData)}
+                />
+                {
+                  !values?.pan_verified || values?.pan !== data?.pan ?
+                    <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={() => handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
+                }
+              </Grid>
+              <Grid {...gridItem} md={6}>
+                <TextInput
+                  number
+                  label="Aadhar"
+                  name="aadhar"
+                  value={values.aadhar}
+                  disabled={aadharValidateData?.loading || values?.aadhar_verified}
+                  helperText={errors.aadhar}
+                  readOnly={readOnly}
+                  error={errors.aadhar}
+                  onChange={onChange}
+                  InputLabelProps={{ shrink: true }}
+                  InputProps={ValidateProps(aadharValidateData)}
+                />
+                {
+                  !values?.aadhar_verified || values?.aadhar !== data?.aadhar ?
+                    <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={() => handleValidate('aadhar', values?.aadhar, values?.first_name)}>Validate Aadhar</Typography> : null
+                }
+              </Grid>
+              <Grid {...gridItem} md={12} >
+                <Typography variant="title"><strong>Personal Details</strong></Typography>
+              </Grid>
               <Grid {...gridItem} md={6}>
                 <TextInput
                   label="First Name"
@@ -344,38 +410,6 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   <option value="null">Select Gender</option>
                   <option value={'MALE'}>Male</option>
                   <option value={'FEMALE'}>Female</option>
-                </TextInput>
-              </Grid>
-              <Grid {...gridItem} md={6}>
-                <TextInput
-                  label="PAN Number"
-                  name="pan"
-                  value={values.pan?.toUpperCase()}
-                  disabled={panValidateData?.loading || values?.pan_verified}
-                  error={errors.pan}
-                  helperText={errors.pan}
-                  readOnly={readOnly}
-                  onChange={onChange}
-                  InputLabelProps={{ shrink: true }}
-                  InputProps={ValidateProps(panValidateData)}
-                />
-                {
-                  !values?.pan_verified || values?.pan !== data?.pan ?
-                    <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={() => handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
-                }
-              </Grid>
-              <Grid {...gridItem} md={6}>
-                <TextInput
-                  number
-                  label="Aadhar"
-                  name="aadhar"
-                  value={values.aadhar}
-                  helperText={errors.aadhar}
-                  readOnly={readOnly}
-                  error={errors.aadhar}
-                  onChange={onChange}
-                  InputLabelProps={{ shrink: true }}
-                >
                 </TextInput>
               </Grid>
               <Grid {...gridItem} md={6}>

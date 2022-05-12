@@ -2,6 +2,53 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.14.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.13.6...v2.14.0) (2022-05-12)
+
+
+### Features
+
+* **aadhar-verify:** Aadhar verification ([e062c5b](https://gitlab.com/vignesh3/petromall-fe/commit/e062c5b41df573d1763a7f0df8bbeadb06044a38))
+* **Editor:** TipTap editor for remarks ([9858911](https://gitlab.com/vignesh3/petromall-fe/commit/9858911d6d0789870562f207cdfabf7c627e6f18))
+* **scorecard:** eligibility score card UI added ([3e1e631](https://gitlab.com/vignesh3/petromall-fe/commit/3e1e63130956b07c42d45873c674489181f490f1))
+
+
+### Bug Fixes
+
+* aadhar verify for transport owner ([479f781](https://gitlab.com/vignesh3/petromall-fe/commit/479f78173c21847c09f9d59a28899013cbcd72a8))
+* **applicant-form:** form refactor ([6e47e17](https://gitlab.com/vignesh3/petromall-fe/commit/6e47e172ec069e1838d5d4438a4d3e67c72f15f4))
+* **assign-product:** Title and label modified ([5fe0592](https://gitlab.com/vignesh3/petromall-fe/commit/5fe05927cdb42a1df49de3010c49298ba259cc77))
+* **callback:** inproper data post ([5d02a35](https://gitlab.com/vignesh3/petromall-fe/commit/5d02a35ca2a8d70f59689344771f8297d9484df3))
+* **code-refactor:** some code changes ([17e94cf](https://gitlab.com/vignesh3/petromall-fe/commit/17e94cf25ef4d6e80234026de6d873921e43ddb2))
+* **coll-rem:** origin and timestamp added ([c186381](https://gitlab.com/vignesh3/petromall-fe/commit/c1863815c320217a3b8ff0baa4dd3934edd5737f))
+* conflict fix ([c5ccf63](https://gitlab.com/vignesh3/petromall-fe/commit/c5ccf63ebdea5812e2db6452ee8be51f12024242))
+* **credit-report:** empty string value check ([eb1b3cb](https://gitlab.com/vignesh3/petromall-fe/commit/eb1b3cb9da8803fcdc2bdb29763e2cd2aeb69951))
+* **Dealer_signup:** added Dealership_id for dealers signup ([6c3d8f5](https://gitlab.com/vignesh3/petromall-fe/commit/6c3d8f515c6246ec58b75abd9011418589e6ed8e))
+* Dealership id verify key update ([2fcf694](https://gitlab.com/vignesh3/petromall-fe/commit/2fcf6947f8c89362c612bde9fe8f70f11b316755))
+* **dealershipDetails:** dealership view updated ([de88fab](https://gitlab.com/vignesh3/petromall-fe/commit/de88faba6f9fc5bbedd08156de5d7bcd34e947ca))
+* **Editor:** Added Text Editor ([221e544](https://gitlab.com/vignesh3/petromall-fe/commit/221e54478d52ac10ae4636306e306211f868936a))
+* emplty data handle ([bbb301d](https://gitlab.com/vignesh3/petromall-fe/commit/bbb301d7056a8b45fe083fbc3aba51c1036798a3))
+* **exitor:** html formatter added ([e7f6105](https://gitlab.com/vignesh3/petromall-fe/commit/e7f6105b6f97907503e24540e4d67df91ef5f7ab))
+* file upload issue ([95ebcf5](https://gitlab.com/vignesh3/petromall-fe/commit/95ebcf5c31e4b61649a5d73ffa24256648e0cbd6))
+* **gst-ln:** in the [Legal Business Name] lable the (lgnm) value is displayed now ([5d5f3a7](https://gitlab.com/vignesh3/petromall-fe/commit/5d5f3a7a6d71be7c4200a5a2aff4370e68be2f92))
+* handleValidate function comment updated ([ac89486](https://gitlab.com/vignesh3/petromall-fe/commit/ac89486f831dbd8b289fbdadcdbd25436424e9f9))
+* **idValidation:** validation function comment added ([8f66a67](https://gitlab.com/vignesh3/petromall-fe/commit/8f66a679f29be3328319123e02295c2c9ebb5618))
+* **lable-value:** Legal Business Name-lable value changed ([7ac4cf2](https://gitlab.com/vignesh3/petromall-fe/commit/7ac4cf27b981ff7bc80b76f321deb4251cb742f7))
+* **leegality-ui:** added signed batch for eSign Application[singed one] ([b5b6611](https://gitlab.com/vignesh3/petromall-fe/commit/b5b66116ebbd2295a88d477d1a9d90e0b1233b84))
+* **loader-button:** conflict fix Pending Approval Drawer ([4ceb702](https://gitlab.com/vignesh3/petromall-fe/commit/4ceb7028cbbdb635bee6df16bb81828bf71948b7))
+* **loan-statement:** fixed loading in loan statement for get statement ([d64ebf0](https://gitlab.com/vignesh3/petromall-fe/commit/d64ebf0a97705d517302b35ab7db9e01aaf88f43))
+* **LoansList:** Conflict fix ([507841a](https://gitlab.com/vignesh3/petromall-fe/commit/507841a42cf84f2b6451c123c64e2e090062d4be))
+* **package:** conflict fix ([a227cbd](https://gitlab.com/vignesh3/petromall-fe/commit/a227cbdd5f43bc992439fc67c6f1aa67329e9cf7))
+* **PDR-issue:** PDR asset issue fixed ([a054a59](https://gitlab.com/vignesh3/petromall-fe/commit/a054a599e3f1b14be93b829586c97c08ef690d1c))
+* **pdr:** some changes ([ab1ceda](https://gitlab.com/vignesh3/petromall-fe/commit/ab1cedaa9c77aec207907b8505596d3e1400efd2))
+* **pdr:** some changes in if statement ([8f32b11](https://gitlab.com/vignesh3/petromall-fe/commit/8f32b11da5ebbe176f57320c75ba945752cf3142))
+* **prd:** asset validation corrected & some few issue fixed. ([e18ad01](https://gitlab.com/vignesh3/petromall-fe/commit/e18ad0192dc4eb03dba43d62a57d57f1b0e74e5f))
+* scorecard upload ([438fcb9](https://gitlab.com/vignesh3/petromall-fe/commit/438fcb912de637354f2bcea93557c487aea28f32))
+* transports add issue ([af18bf5](https://gitlab.com/vignesh3/petromall-fe/commit/af18bf580c3b5ef9e22efef84c8b6773bc5809d6))
+* **Transports-form:** District replaced with city field ([30bb335](https://gitlab.com/vignesh3/petromall-fe/commit/30bb3359215016f2b1e7976673bc84a4fb6c8eb0))
+* **ui-changes:** changed all buttons to uniformly ([426d02b](https://gitlab.com/vignesh3/petromall-fe/commit/426d02b7d88e2eddc9f443ea3f74fd49c82aec9e))
+* **ui-changes:** doing ui changes ([f316a06](https://gitlab.com/vignesh3/petromall-fe/commit/f316a065c70b5a2fb790d8b2bd1614a4cf853005))
+* **yarn-lock:** update yarn lock file ([ea98492](https://gitlab.com/vignesh3/petromall-fe/commit/ea98492d314e15d6aa0a3aaa4ca9ec7e60e1aa0a))
+
 ### [2.13.6](https://gitlab.com/vignesh3/petromall-fe/compare/v2.13.5...v2.13.6) (2022-04-08)
 
 

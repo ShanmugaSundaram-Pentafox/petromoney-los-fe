@@ -1,6 +1,9 @@
 import { Button, Divider, Drawer, Grid, makeStyles, Table, TableBody, TableFooter, TableHead, TableRow, TableCell, Typography, IconButton } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
+import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
+import clsx from 'clsx';
 import React, { useState } from 'react'
 import DeleteButton from '../../../components/CommonComponents/Button/DeleteButton';
 import Currency from '../../../components/Number/Currency';
@@ -10,7 +13,7 @@ import { rulesList } from '../../../config/userRules';
 import { getPastYears, getMonth as month } from '../../../utils/commonFunctions.util';
 import { compareObject } from '../../../utils/compareObject.util';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   sidePanelFormWrapper: {
     position: 'relative',
     display: 'flex',
@@ -19,7 +22,7 @@ const useStyles = makeStyles(() => ({
     width: '80vw'
   },
   sidePanelTitle: {
-    padding: '15px 16px',
+    padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -48,6 +51,25 @@ const useStyles = makeStyles(() => ({
     '&.MuiButton-root': { color: '#2196f3' },
     border: '1px #2196f3 solid',
     margin: 2
+  },
+  btnSuccess: {
+    '&.MuiButton-contained': {
+      backgroundColor: theme.palette.success.main,
+      color: theme.palette.white
+    },
+    '&.MuiButton-contained:hover': {
+      backgroundColor: theme.palette.success.dark
+    }
+  },
+  editButton: {
+    marginRight: '8px',
+    '&.MuiButton-contained': {
+      backgroundColor: theme.palette.success.main,
+      color: theme.palette.white
+    },
+    '&.MuiButton-contained:hover': {
+      backgroundColor: theme.palette.success.dark
+    }
   },
   sidePanelWrapper: {
     position: 'relative',
@@ -130,7 +152,7 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Add Bank Statement</div>
         <IconButton onClick={() => callback({ open: false })} size='small'>
-          <CloseIcon fontSize='size' />
+          <CloseIcon />
         </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
@@ -387,7 +409,7 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
         <div>
           <Button variant="outlined" startIcon={<NavigateBeforeRoundedIcon />} onClick={() => callback(false)}>Back</Button>
         </div>
-        {!editable && <Button variant="contained" color="primary" onClick={() => disabled ? setDisabled(!disabled) : handleSave()} style={{ marginBottom: 12 }}>{disabled ? 'Edit' : 'Save'}</Button>}
+        {!editable && <Button variant="contained" className={clsx(classes.btn, classes.editButton)} startIcon={!disabled ? <NavigateNextRounded /> : <EditIcon />} onClick={() => disabled ? setDisabled(!disabled) : handleSave()} >{disabled ? 'Edit' : 'Save'}</Button>}
       </div>
       <Drawer
         anchor="right"
@@ -398,7 +420,7 @@ const StatementForm = ({ callback, rowData, addStatement, updateStatement, delet
         <div className={classes.sidePanelWrapper}>
           <Typography className={classes.sidePanelTitle} variant="h4">
             <div>Edit Statement</div>
-            <CloseIcon fontSize='size' onClick={() => { setEditRow({}); setOpenEdit(false) }} />
+            <CloseIcon onClick={() => { setEditRow({}); setOpenEdit(false) }} />
           </Typography>
           <div className={classes.sidePanelFormContentWrapper}>
             <div className={classes.stepperRoot}>

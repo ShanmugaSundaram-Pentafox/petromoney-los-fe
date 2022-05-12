@@ -1,9 +1,10 @@
-import { FormControl, RadioGroup, FormControlLabel, Radio, FormGroup } from '@material-ui/core';
+import { FormControl, RadioGroup, FormControlLabel, Radio, FormGroup,IconButton } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
@@ -25,9 +26,10 @@ import { compareObject } from '../../../utils/compareObject.util';
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
     // textAlign: 'center',
-    padding: '24px 16px',
+    padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
@@ -172,7 +174,9 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Add Infrastructure Details</div>
-        <CloseIcon onClick={handleClose} />
+        <IconButton onClick={handleClose}  size='small'>
+          <CloseIcon />
+        </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
@@ -326,6 +330,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
               <Button
                 variant='contained'
                 color='primary'
+                startIcon={<AddIcon  />}
                 onClick={() => setTankerAdd(true)}
                 style={{ marginRight: 10 }}
               >

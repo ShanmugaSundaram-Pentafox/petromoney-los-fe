@@ -1,3 +1,4 @@
+import { IconButton } from '@material-ui/core'
 import Box from '@material-ui/core/Box';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
@@ -23,9 +24,10 @@ import { compareObject } from '../../../utils/compareObject.util';
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
     // textAlign: 'center',
-    padding: '24px 16px',
+    padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
@@ -137,8 +139,8 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
   
   useMount(() => {
     getLoanDetailsbyID(dealer_id)
-    .then(data => {
-      setLoanData(data)
+      .then(data => {
+        setLoanData(data)
       })
       .catch((e) => {
       })
@@ -268,7 +270,9 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Add Loan Details</div>
-        <CloseIcon onClick={handleClose} />
+        <IconButton onClick={handleClose}  size='small'>
+          <CloseIcon />
+        </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
@@ -390,14 +394,14 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
           </div>
           {
             !editable &&
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => { setAddNew(true); setValues({}) }}
-              style={{ marginBottom: 12 }}
-            >
-              Add Loan
-            </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => { setAddNew(true); setValues({}) }}
+                style={{ marginBottom: 12 }}
+              >
+                Add Loan
+              </Button>
           }
         </div>
       </div>

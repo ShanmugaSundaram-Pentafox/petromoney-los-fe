@@ -1,3 +1,4 @@
+import { IconButton } from '@material-ui/core'
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
@@ -31,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
     padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333',
   },
@@ -317,7 +319,9 @@ const DealerEditSideWrapper = ({
               ? 'Guarantor Edit Form'
               : 'CoApplicant Edit Form'}
         </div>
-        <CloseIcon onClick={onClose} />
+        <IconButton onClick={onClose} size='small'>
+          <CloseIcon />
+        </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <Stepper

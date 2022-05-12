@@ -175,6 +175,7 @@ const AccountStatement = ({ id, currentUser }) => {
           setLoading(false)
         })
         .catch(e => {
+          setLoading(false)
           enqueueSnackbar(e, {
             anchorOrigin: {
               vertical: 'top',
@@ -185,6 +186,7 @@ const AccountStatement = ({ id, currentUser }) => {
         })
     }
     else {
+      setLoading(false)
       enqueueSnackbar('Please enter from date and to date.', {
         anchorOrigin: {
           vertical: 'top',

@@ -1,3 +1,4 @@
+import { IconButton } from '@material-ui/core'
 import Box from '@material-ui/core/Box';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
@@ -23,9 +24,10 @@ import { compareObject } from '../../../utils/compareObject.util';
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
     // textAlign: 'center',
-    padding: '24px 16px',
+    padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
@@ -216,7 +218,9 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Add Other Bunk Details</div>
-        <CloseIcon onClick={handleClose} />
+        <IconButton onClick={handleClose}  size='small'>
+          <CloseIcon />
+        </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
@@ -327,7 +331,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
               <Grid container spacing={2}>{
                 data.map((item, i) => {
                   return (
-                    <Grid item md={6} key={i}>
+                    <Grid key={i} item md={6}>
                       <PreviewCard
                         onEdit={() => { editOthersRow(item, i) }}
                         onDelete={() => deleteOthersRow(item, i)}
@@ -372,14 +376,14 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
           </div>
           {
             !editable &&
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => { setAddNew(true); setValues({}) }}
-              style={{ marginBottom: 12 }}
-            >
-              Add other bunk
-            </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => { setAddNew(true); setValues({}) }}
+                style={{ marginBottom: 12 }}
+              >
+                Add other bunk
+              </Button>
           }
         </div>
       </div>

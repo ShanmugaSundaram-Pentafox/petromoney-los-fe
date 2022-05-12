@@ -1,13 +1,13 @@
 import { Box, Button, Divider, Grid, IconButton, makeStyles, Table, TableBody, TableCell, TableFooter, TableHead, TableRow, Typography } from '@material-ui/core';
+import ChatOutlinedIcon from '@material-ui/icons/ChatOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import React, { useEffect, useState } from 'react';
-import { useMount } from 'react-use';
+import sumBy from 'lodash-es/sumBy';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
+import { useMount } from 'react-use';
 import { ViewData } from '../../components/CommonComponents/FilePreview';
-import ChatOutlinedIcon from '@material-ui/icons/ChatOutlined';
 import Currency from '../../components/Number/Currency';
-import { sumBy } from 'lodash';
 import { getCollectionRemarkByLoanId, getLoanReportByDealershipId } from '../../services/users.service';
 
 const useStyles = makeStyles(() => ({
@@ -19,7 +19,7 @@ const useStyles = makeStyles(() => ({
     width: '60vw'
   },
   sidePanelTitle: {
-    padding: '15px 16px',
+    padding: '8px 16px',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -67,16 +67,16 @@ export const CollectionRemarksDrawer = ({ callback, rowData = [] }) => {
     const dealershipRemarks = useQuery(['remarks-by-loan-id', loan_id], () => getCollectionRemarkByLoanId(loan_id), { refetchOnWindowFocus: false })
     return dealershipRemarks;
   }
-  
+
   useMount(() => {
     getLoanReportByDealershipId(rowData[0])
-    .then(res => {
-      setLoanReport(res)
-      setCombined(res?.due && res?.overdue && [...res?.due, ...res?.overdue])
-    })
-    .catch(e => {
-      console.log(e);
-    })
+      .then(res => {
+        setLoanReport(res)
+        setCombined(res?.due && res?.overdue && [...res?.due, ...res?.overdue])
+      })
+      .catch(e => {
+        console.log(e);
+      })
   })
 
   return (
@@ -84,7 +84,7 @@ export const CollectionRemarksDrawer = ({ callback, rowData = [] }) => {
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Remarks</div>
         <IconButton onClick={callback} size='small'>
-          <CloseIcon fontSize='size' />
+          <CloseIcon />
         </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
@@ -134,13 +134,13 @@ export const CollectionRemarksDrawer = ({ callback, rowData = [] }) => {
             <TableBody>
               {
                 loanReport.due?.map((item, i) => {
-                  return(
-                    <TableRow key={i} style={{backgroundColor: '#ffec9b69'}}>
-                      <TableCell style={{display: 'flex', alignItems: 'center'}}>
+                  return (
+                    <TableRow key={i} style={{ backgroundColor: '#ffec9b69' }}>
+                      <TableCell style={{ display: 'flex', alignItems: 'center' }}>
                         {item.prospectcode}
                         {
                           rowData[7].map((row) => {
-                            return(row.prospectcode === item.prospectcode && <ChatOutlinedIcon style={{fontSize:13, marginLeft: 5, color: 'rgb(0,0,0,0.4)'}} />)
+                            return (row.prospectcode === item.prospectcode && <ChatOutlinedIcon style={{ fontSize: 13, marginLeft: 5, color: 'rgb(0,0,0,0.4)' }} />)
                           })
                         }
                       </TableCell>
@@ -158,13 +158,13 @@ export const CollectionRemarksDrawer = ({ callback, rowData = [] }) => {
               }
               {
                 loanReport?.overdue?.map((item, i) => {
-                  return(
-                    <TableRow key={i} style={{backgroundColor: '#ffb99b69'}}>
-                      <TableCell style={{display: 'flex', alignItems: 'center'}}>
+                  return (
+                    <TableRow key={i} style={{ backgroundColor: '#ffb99b69' }}>
+                      <TableCell style={{ display: 'flex', alignItems: 'center' }}>
                         {item.prospectcode}
                         {
                           rowData[7].map((row) => {
-                            return(row.prospectcode === item.prospectcode && <ChatOutlinedIcon style={{fontSize:13, marginLeft: 5, color: 'rgb(0,0,0,0.3)'}} />)
+                            return (row.prospectcode === item.prospectcode && <ChatOutlinedIcon style={{ fontSize: 13, marginLeft: 5, color: 'rgb(0,0,0,0.3)' }} />)
                           })
                         }
                       </TableCell>
@@ -199,7 +199,7 @@ export const CollectionRemarksDrawer = ({ callback, rowData = [] }) => {
             rowData[7]?.map((item, i) => {
               const { data, isLoading } = item?.prospectcode && FetchRemarks(item.prospectcode)
               return (
-                <div key={i} style={{ marginBottom: 20,marginTop:16 }}>
+                <div key={i} style={{ marginBottom: 20, marginTop: 16 }}>
                   <h4 style={{ marginBottom: 8 }}>Prospect code : {item?.prospectcode}</h4>
                   <Table>
                     <TableHead>

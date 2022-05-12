@@ -1,3 +1,4 @@
+import { IconButton } from '@material-ui/core'
 import Box from '@material-ui/core/Box';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
@@ -16,13 +17,13 @@ import PreviewCard from '../../../components/CommonComponents/Cards/PreviewCard'
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
 import { addReferenceDetails, deleteReferenceDetailsByID, updateReferenceById } from '../../../services/PDReport.services';
-import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
-    padding: '24px 16px',
+    padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
@@ -223,7 +224,9 @@ const AddReferenceForm = ({ data: init_data, dealer_id, isEdit, callback, editab
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Add Reference Details</div>
-        <CloseIcon onClick={handleClose} />
+        <IconButton onClick={handleClose}  size='small'>
+          <CloseIcon />
+        </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
@@ -342,14 +345,14 @@ const AddReferenceForm = ({ data: init_data, dealer_id, isEdit, callback, editab
           </div>
           {
             !editable &&
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => { setAddNew(true); setValues({}) }}
-              style={{ marginBottom: 12 }}
-            >
-              Add Reference
-            </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => { setAddNew(true); setValues({}) }}
+                style={{ marginBottom: 12 }}
+              >
+                Add Reference
+              </Button>
           }
         </div>
       </div>

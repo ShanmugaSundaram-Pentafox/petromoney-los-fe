@@ -158,24 +158,15 @@ const Dashboard = ({ currentUser, dashboardView }) => {
   const [omcData, setOmcData] = useState([]);
   const [RegionData, setRegionData] = useState([]);
   const [filterQry, setFilterQry] = useState();
-  const [creditBook, setCreditBook] = useState(permissionCheck(currentUser.role_name, rulesList.external_view) ? 'Vivriti' : 'Petromoney')
+  const [creditBook, setCreditBook] = useState(permissionCheck(currentUser.role_name, rulesList.external_view) ? 'External' : 'Petromoney')
 
   const handleClick = (name) => {
     setSelectedStatsCard(name)
     setSelectedReportStatsCard(name)
   }
 
-  const onCreditBookChange = type => (event) => {
-    switch (type) {
-    case 'Petromoney':
-      setCreditBook(type)
-      break;
-    case 'Vivriti':
-      setCreditBook(type)
-      break;
-    default:
-      break;
-    }
+  const onCreditBookChange = type => {
+    setCreditBook(type)
   }
 
   useEffect(() => {
@@ -313,8 +304,8 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                               </Box>
                               <Box>
                                 <div className={classes.filterWrapper}>
-                                  <div role="button" className={`${classes.filterItem} ${creditBook === 'Petromoney' && 'active'}`} onClick={onCreditBookChange('Petromoney')} onKeyDown>Petromoney</div>
-                                  <div role="button" className={`${classes.filterItem} ${creditBook === 'Vivriti' && 'active'}`} onClick={onCreditBookChange('Vivriti')} onKeyDown>Vivriti</div>
+                                  <div role="button" className={`${classes.filterItem} ${creditBook === 'Petromoney' && 'active'}`} onClick={() => onCreditBookChange('Petromoney')} onKeyDown>Petromoney</div>
+                                  <div role="button" className={`${classes.filterItem} ${creditBook === 'External' && 'active'}`} onClick={() => onCreditBookChange('External')} onKeyDown>Vivriti</div>
                                 </div>
                               </Box>
                             </div>

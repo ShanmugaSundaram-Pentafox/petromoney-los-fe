@@ -45,7 +45,7 @@ export const getAllLoans = () => {
 export const getAll_ls1_Metrices = (view) => {
   return new Promise((resolve, reject) => {
     let apiUrl = URL.ls1_metrices
-    if(view === 'Vivriti') apiUrl += '?external=1'
+    if(view === 'External') apiUrl += '?external=1'
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
@@ -63,7 +63,7 @@ export const getAll_ls1_Metrices = (view) => {
 export const getAll_ls2_Metrices = (view) => {
   return new Promise((resolve, reject) => {
     let apiUrl = URL.ls2_metrices
-    if(view === 'Vivriti') apiUrl += '?external=1'
+    if(view === 'External') apiUrl += '?external=1'
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
@@ -81,7 +81,7 @@ export const getAll_ls2_Metrices = (view) => {
 export const getAllOmcDpd = (view) => {
   return new Promise((resolve, reject) => {
     let apiUrl = 'app/dpd/omc'
-    if(view === 'Vivriti') apiUrl += '?external=1'
+    if(view === 'External') apiUrl += '?external=1'
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
@@ -99,7 +99,7 @@ export const getAllOmcDpd = (view) => {
 export const getAllRegionDpd = (view) => {
   return new Promise((resolve, reject) => {
     let apiUrl = 'app/dpd/region'
-    if(view === 'Vivriti') apiUrl += '?external=1'
+    if(view === 'External') apiUrl += '?external=1'
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
@@ -117,7 +117,7 @@ export const getAllRegionDpd = (view) => {
 export const getLoanBookData = (view) => {
   return new Promise((resolve, reject) => {
     let apiUrl = URL.loanBook
-    if(view === 'Vivriti') apiUrl += '?external=1'
+    if(view === 'External') apiUrl += '?external=1'
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {

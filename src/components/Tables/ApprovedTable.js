@@ -11,6 +11,7 @@ import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { NavLink as RouterLink } from 'react-router-dom';
+import { rulesList } from '../../config/userRules';
 import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
 // import { createStructuredSelector } from 'reselect';
 import { ReactComponent as LoanAgreementIcon } from '../../icons/loan_agreement.svg';
@@ -19,6 +20,7 @@ import { setLoansByStatus } from '../../store/loans/loans.actions';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
 import SignRequestLayout from '../Leegality/SignRequestLayout';
 import Currency from '../Number/Currency';
+import { permissionCheck } from '../UserCan/UserCan';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -47,7 +49,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) => {
+const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, currentUser }) => {
   const classes = useStyles();
   const [loanAmount, setLoanAmount] = useState();
   const [dealershipId, setDealershipId] = useState();
@@ -56,6 +58,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
   const [loanId, setloanId] = useState();
   const [type, setType] = useState('');
   const [productTypeId, setProductTypeId] = useState();
+  const actionable = !permissionCheck(currentUser.role_name, rulesList.external_view);
 
   useEffect(() => {
     setLoading(true);
@@ -163,6 +166,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
         options: {
           filter: false,
           sort: false,
+          display: actionable ? true : 'excluded',
           setCellProps: () => ({
             align: 'center',
           }),

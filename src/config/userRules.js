@@ -198,6 +198,7 @@ export const rulesForUserRoles = {
       rulesList.credit_view,
       rulesList.dealership_view,
       rulesList.financial_view,
+      rulesList.dashboard,
     ]
   }
 }

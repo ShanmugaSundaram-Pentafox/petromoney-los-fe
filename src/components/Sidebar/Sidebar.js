@@ -153,6 +153,11 @@ const Sidebar = props => {
   if(permissionCheck(currentUser.role_name, rulesList.external_view)) {
     pages = [
       {
+        title: 'Dashboard',
+        href: '/',
+        icon: <DashboardIcon />
+      },
+      {
         title: 'Dealerships',
         href: '/dealership',
         icon: <PeopleIcon />

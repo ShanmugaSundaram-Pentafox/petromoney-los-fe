@@ -1,9 +1,11 @@
-import { Grid } from '@material-ui/core';
+import { IconButton,Grid } from '@material-ui/core'
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import Snackbar from '@material-ui/core/Snackbar';
 import Typography from '@material-ui/core/Typography';
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
+import EditIcon from '@material-ui/icons/Edit';
+import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import RotateLeftOutlinedIcon from '@material-ui/icons/RotateLeftOutlined';
 import DownloadOutlined from '@material-ui/icons/SystemUpdateAltRounded';
 import Alert from '@material-ui/lab/Alert';
@@ -27,6 +29,7 @@ const useStyles = makeStyles(theme => ({
     padding: '12px 16px',
     display:'flex',
     justifyContent:'space-between',
+    alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
@@ -164,7 +167,9 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
     <div className={classes.sidePanelFormWrapper}>
       <div className={classes.sidePanelTitle}>
         <Typography  variant="h4">Credit Information ({data?.pan || '-'})</Typography>
-        <CloseRoundedIcon onClick={onClose} />
+        <IconButton onClick={onClose}  size='small'>
+          <CloseRoundedIcon />
+        </IconButton>
       </div>
       <div className={classes.sidePanelFormContentWrapper}>
         {
@@ -250,7 +255,8 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
               apiData?.cibil_score &&
                 <Button
                   className={clsx(classes.btn, classes.btnSuccess)}
-                  variant={cibilEditMode ? 'contained' : 'outlined'}
+                  variant="contained"
+                  startIcon={cibilEditMode ? <NavigateNextRounded /> : <EditIcon />}
                   onClick={cibilEditMode ? handleSubmit : handleEdit}>{cibilEditMode === true ? 'Save' : 'Edit'}</Button>
               }
             </div>

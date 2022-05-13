@@ -13,10 +13,10 @@ import Button from '../../../../components/CommonComponents/Button/Button';
 import TextInput from '../../../../components/TextInput/TextInput';
 import { getBusinessTypes } from '../../../../services/common.service';
 import { addIncomeDetailsByID } from '../../../../services/PDReport.services';
+import { compareObject } from '../../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
-    // textAlign: 'center',
     padding: '24px 16px',
     display: 'flex',
     justifyContent: 'space-between',
@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 
-const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
+const AddIncomeForm = ({ data: init_data, isEdit, id, handleClose }) => {
   const [loading, setLoading] = useState(false)
   const [businessTypes, setBusinessTypes] = useState([{}, {}, {}, {}, {}]);
 
@@ -68,31 +68,34 @@ const AddIncomeForm = ({ data, isEdit, id, handleClose }) => {
     getBusinessTypes()
       .then(setBusinessTypes)
       .catch(err => {
-        console.log('BusinessTypes fetch error - ', err)
-      })
-      .catch(err => {
-        console.log('Expense details fetch error - ', err)
+        // logger(err)
       })
   })
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles()
 
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
-    initialValues: { ...data },
+    initialValues: { ...init_data },
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       business_name: Yup.string().nullable('Enter business type').required('Enter business type'),
       business_age: Yup.number().nullable('Enter business age').required('Enter business age'),
-      business_owner: Yup.string().nullable('Enter business owner name').required('Enter business owner name'),
       cur_fy_income: Yup.number().nullable('Enter income').required('Enter income'),
       business_type: Yup.string().nullable().required('Choose business type'),
       cur_fy_profit_loss: Yup.number().nullable().required('Enter profit/loss'),
       cur_fy_turnover: Yup.number().nullable().required('Enter turnover')
     }),
     onSubmit: values => {
-      const data = { ...values, is_pdr: 1 }
-      addIncomeDetailsByID(data, id, isEdit)
+      let obj = {};
+      if (isEdit) {
+        obj = compareObject(init_data, values)
+      }
+      else {
+        obj = { ...values }
+      }
+      const edit_data = { ...obj, id: values.id, is_pdr: 1 }
+      addIncomeDetailsByID(edit_data, id, isEdit)
         .then(res => {
           enqueueSnackbar(res, {
             anchorOrigin: {

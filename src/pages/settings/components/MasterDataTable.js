@@ -4,7 +4,7 @@ import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
-
+import AddIcon from '@material-ui/icons/Add';
 import CheckCircleTwoTone from '@material-ui/icons/CheckCircleTwoTone';
 import CloseIcon from '@material-ui/icons/Close';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -50,9 +50,10 @@ import { getStatesMapById, getUnmappedRegions, updateRegionMapById } from '../..
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
-    padding: '24px 16px',
+    padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333',
   },
@@ -62,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     padding: 10,
     margin: 10,
-    height: '80%',
+    height: '100%',
     borderRadius: 5,
     overflow: 'hidden'
   },
@@ -195,19 +196,19 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
   const updateMapping = (action) => {
     let body = {region_id: selectedItem}
     updateRegionMapById(rowData?.id, body, action)
-    .then(res => {
-      setSelectedItem([])
-      queryClient.invalidateQueries('mapped')
-      queryClient.invalidateQueries('unmapped')
-      enqueueSnackbar(res, {
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-        variant: 'success',
+      .then(res => {
+        setSelectedItem([])
+        queryClient.invalidateQueries('mapped')
+        queryClient.invalidateQueries('unmapped')
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
       })
-    })
-    .catch(e => logger(e))
+      .catch(e => logger(e))
   }
 
   useMount(() => {  
@@ -833,7 +834,9 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
     <>
       <Typography className={classes.sidePanelTitle} variant='h4'>
         <div>{title}</div>
-        <CloseIcon onClick={callback} />
+        <IconButton onClick={callback} size='small'>
+          <CloseIcon />
+        </IconButton>
       </Typography>
       <Paper className={classes.root}>
         <form className={classes.search} noValidate autoComplete='off'>
@@ -1079,7 +1082,6 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
               <label>{title}</label>
               <TextField 
                 id='add'
-                autoFocus
                 style={{ marginTop: 8 }}
                 variant='outlined'
                 fullWidth
@@ -1115,7 +1117,6 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
               <label style={{marginBottom: 8}}>{title}</label>
               <TextField
                 id='edit'
-                autoFocus
                 fullWidth
                 variant='outlined'
                 value={rowData.name}
@@ -1124,7 +1125,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
             </Grid>
             {
               status === 'State' &&
-              <TransferList title='Regions Map' mappedData={() => getStatesMapById(rowData?.id)} unmappedData={getUnmappedRegions} selectedItem={selectedItem} setSelectedItem={setSelectedItem} updateMapping={updateMapping} />
+                <TransferList title='Regions Map' mappedData={() => getStatesMapById(rowData?.id)} unmappedData={getUnmappedRegions} selectedItem={selectedItem} setSelectedItem={setSelectedItem} updateMapping={updateMapping} />
             }
             <div className={classes.formFooter}>
               <Button
@@ -1217,7 +1218,6 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                 <TextField 
                   id='add'
                   style={{width: '100%', marginTop: 4}}
-                  autoFocus
                   variant='outlined'
                   onChange={handleAdd}
                 />
@@ -1252,7 +1252,6 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                 <label style={{ marginBottom: 8 }}>Asset Type</label>
                 <TextField
                   id='edit'
-                  autoFocus
                   fullWidth
                   variant='outlined'
                   value={rowData ? rowData?.name : AddData?.name}
@@ -1264,7 +1263,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
               assetValue.map((x, i) => {
                 return(
                   <Grid key={i} container spacing={2} style={{marginTop: 15, display: 'flex', alignItems: 'center'}}>
-                    <Grid item md={5}>
+                    <Grid item md={3}>
                       <label style={{ marginBottom: 8 }}>Label</label>
                       <TextField
                         id='label'
@@ -1274,7 +1273,17 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                         onChange={e => handleInputChange(e, i)}
                       />
                     </Grid>
-                    <Grid item md={5}>
+                    <Grid item md={3}>
+                      <label style={{ marginBottom: 8 }}>Key</label>
+                      <TextField
+                        id='key'
+                        fullWidth
+                        variant='outlined'
+                        value={x?.key}
+                        onChange={e => handleInputChange(e, i)}
+                      />
+                    </Grid>
+                    <Grid item md={3}>
                       <label style={{ marginBottom: 8 }}>Type</label>
                       <TextInput
                         select
@@ -1330,6 +1339,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
             <Button
               variant='contained'
               type='submit'
+              startIcon={<AddIcon  />}
               onClick={() => {
                 handleClose()
                 !regionForm && !assetForm? setOpenAddForm(true) : !assetForm? setOpenRegionForm(true) : setOpenAssetForm(true)

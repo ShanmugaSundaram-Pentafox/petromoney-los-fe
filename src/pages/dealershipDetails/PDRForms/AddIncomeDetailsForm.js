@@ -1,3 +1,4 @@
+import { IconButton } from '@material-ui/core'
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -19,9 +20,10 @@ import { deleteExpenseDetailsByID, deleteIncomeDetailsByID, getExpensesDetailsBy
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
     // textAlign: 'center',
-    padding: '24px 16px',
+    padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
@@ -173,7 +175,9 @@ const AddIncomeDetailsForm = ({ dealer_id, callback, editable }) => {
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Add Income/Expense Details</div>
-        <CloseIcon onClick={handleClose} />
+        <IconButton onClick={handleClose}  size='small'>
+          <CloseIcon />
+        </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
@@ -191,7 +195,7 @@ const AddIncomeDetailsForm = ({ dealer_id, callback, editable }) => {
                   {
                     Array.isArray(incomeData) && incomeData?.map((item, i) => {
                       return (
-                        <Grid item md={6}>
+                        <Grid key={i} item md={6}>
                           <PreviewCard
                             onEdit={() => { handleIncomeEdit(item, i) }}
                             onDelete={() => handleIncomeDelete(item, i)}
@@ -226,7 +230,7 @@ const AddIncomeDetailsForm = ({ dealer_id, callback, editable }) => {
                   {
                     Array.isArray(expenseData) && expenseData?.map((item, i) => {
                       return (
-                        <Grid item md={6}>
+                        <Grid key={i} item md={6}>
                           <PreviewCard
                             onEdit={() => { handleExpenseEdit(item, i) }}
                             onDelete={() => { handleExpenseDelete(item, i) }}
@@ -272,22 +276,22 @@ const AddIncomeDetailsForm = ({ dealer_id, callback, editable }) => {
           </div>
           {
             !editable &&
-            <div>
-              <Button
-                variant="contained"
-                className={clsx(classes.btn, classes.editButton)}
-                onClick={() => { setAddIncome(true); setAddExpense(false) }}
-              >
-                Add income
-              </Button>
-              <Button
-                variant="contained"
-                className={clsx(classes.btn, classes.editButton)}
-                onClick={() => { setAddExpense(true); setAddIncome(false) }}
-              >
-                Add expense
-              </Button>
-            </div>
+              <div>
+                <Button
+                  variant="contained"
+                  className={clsx(classes.btn, classes.editButton)}
+                  onClick={() => { setAddIncome(true); setAddExpense(false) }}
+                >
+                  Add income
+                </Button>
+                <Button
+                  variant="contained"
+                  className={clsx(classes.btn, classes.editButton)}
+                  onClick={() => { setAddExpense(true); setAddIncome(false) }}
+                >
+                  Add expense
+                </Button>
+              </div>
           }
         </div>
       </div>

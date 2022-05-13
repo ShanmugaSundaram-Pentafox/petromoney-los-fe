@@ -1,4 +1,5 @@
 import { makeStyles, IconButton, Typography, Divider, Button, Grid, Tooltip, Paper } from '@material-ui/core'
+import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import { useSnackbar } from 'notistack';
@@ -26,7 +27,7 @@ const useStyles = makeStyles(() => ({
     overflow: 'auto'
   },
   sidePanelTitle: {
-    padding: '15px 16px',
+    padding: '10px 16px',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -139,7 +140,7 @@ const MasterCollectionRemarks = ({ callback, title }) => {
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>{title}</div>
         <IconButton onClick={() => callback(false)} size='small'>
-          <CloseIcon fontSize='size' />
+          <CloseIcon />
         </IconButton>
       </Typography>
       <Paper className={classes.root}>
@@ -199,6 +200,7 @@ const MasterCollectionRemarks = ({ callback, title }) => {
             <Button
               variant='contained'
               type='submit'
+              startIcon={<AddIcon  />}
               onClick={() => {
                 setAddForm({action:'Add'})
               }}

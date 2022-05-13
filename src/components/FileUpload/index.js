@@ -1,7 +1,7 @@
 import { DropzoneDialog, DropzoneArea } from 'material-ui-dropzone';
 import React from 'react';
 
-const FileUpload = ({id,data, inline, open, onCloseUploader, title, excel, limit, handleSave, initialFiles=[] }) => {
+const FileUpload = ({id,data, inline, open, onCloseUploader, title, excel, limit, handleSave, initialFiles=[], format = ['image/jpeg', 'image/png', '.pdf', '.xls', '.xlsx', '.csv'] }) => {
   if(inline) {
     return (
       <DropzoneArea
@@ -46,7 +46,7 @@ const FileUpload = ({id,data, inline, open, onCloseUploader, title, excel, limit
         disableBackdropClick: true
       }}
       onSave={handleSave}
-      acceptedFiles={['image/jpeg', 'image/png', '.pdf', '.xls', '.xlsx', '.csv']}
+      acceptedFiles={format}
       showPreviews={true}
       submitButtonText={'Upload'}
       maxFileSize={11000000}

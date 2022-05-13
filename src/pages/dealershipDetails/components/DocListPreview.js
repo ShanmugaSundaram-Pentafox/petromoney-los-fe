@@ -2,6 +2,7 @@ import { Badge, Button, Typography, Dialog, DialogContent, DialogContentText, Co
 import { makeStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
 import AddIcon from '@material-ui/icons/Add';
+import AudiotrackIcon from '@material-ui/icons/Audiotrack';
 import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
@@ -99,8 +100,10 @@ const DocPreview = ({ fileType, url, DocName, updatedDateTime, file_name, fileId
                   imgFileTypes.includes(fileType) ?
                     <img src={url} height="100%" width="100%" style={{ borderRadius: 6, padding: 1, objectFit: 'cover' }} alt={url} />
                     : fileType === 'pdf' ?
-                      <PictureAsPdfIcon style={{ color: '#63686E' }} />
-                      : <ListAltIcon style={{ color: '#63686E' }} />
+                      <PictureAsPdfIcon style={{ color: '#63686E' }} /> 
+                      : fileType === '.mp3' || fileType === '.m4a' || fileType === '.wav' || fileType === '.wma' || fileType === '.aac' ? 
+                        <AudiotrackIcon style={{ color: '#63686E' }} />
+                        : <ListAltIcon style={{ color: '#63686E'}} />
                 }
                 {
                   !editable &&

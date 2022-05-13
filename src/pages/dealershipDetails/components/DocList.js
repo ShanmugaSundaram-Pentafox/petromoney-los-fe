@@ -4,10 +4,10 @@ import React, { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import DocListPreview from './DocListPreview';
 import FileUpload from '../../../components/FileUpload';
-import { URL } from '../../../config/serverUrls';
-import { getDealershipCheckList } from '../../../services/dealerships.service';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
+import { getDealershipCheckList } from '../../../services/dealerships.service';
 
 const DeleteButton = withStyles(() => ({
   root: {
@@ -119,7 +119,7 @@ const DocList = ({ id, currentUser }) => {
 
   return (
     <div className={classes.wrapper}>
-      {showUpload && <FileUpload handleSave={handleSave} id={id} data={rowData} title='Upload Dealership Document' open={showUpload} onCloseUploader={onCloseUploader} />}
+      {showUpload && <FileUpload handleSave={handleSave} id={id} data={rowData} title='Upload Dealership Document' open={showUpload} onCloseUploader={onCloseUploader} format={rowData.description == 'Other Documents' ? ['.mp3', '.m4a', '.wav', '.wma', '.aac', 'image/jpeg', 'image/png', '.pdf', '.xls', '.xlsx', '.csv'] : ['image/jpeg', 'image/png', '.pdf', '.xls', '.xlsx', '.csv'] } />}
       <Typography variant="h5" align={'Left'} className={classes.title}>
         Dealership Documents
       </Typography>

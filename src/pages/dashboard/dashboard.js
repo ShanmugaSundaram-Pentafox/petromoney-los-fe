@@ -20,6 +20,7 @@ import { rulesList } from '../../config/userRules';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getDealerDetails } from '../../services/dealers.service';
 import { getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd } from '../../services/loans.service';
+// import { getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd } from '../../services/loans.service';
 
 const currencyFormat = (value) => {
   const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumSignificantDigits: 8 }).format(value)
@@ -332,7 +333,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                   <div style={{ width: '50%' }}>
                     <Grid item md={12} style={{ margin: '10px' }}>
                       <DataCharts>
-                        <BarChartData daysChartData={daysChartData} />
+                        <BarChartData daysChartData={daysChartData} title='DPD Wise' yAxis='Amount' />
                       </DataCharts>
                     </Grid>
                     <Grid item md={12} style={{ margin: '10px', marginTop: 17 }}>

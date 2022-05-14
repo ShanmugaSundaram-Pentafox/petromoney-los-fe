@@ -310,6 +310,44 @@ export const getLoanRejectReason = () => {
   });
 };
 
+export const getOpportunities = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('business/projection')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data[0] || {});
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const getPotentialOpportunity = (view, body) => {
+  let qry = []
+  let apiUrl = 'potential/opportunities';
+  qry.push(`conversion_ratio=${body?.conversion_ratio || 30}&ticket_size=${body?.ticket_size || 15}`)
+  if(view) qry.push(`view=${view}`)
+  if(qry.length) apiUrl += '?' + qry.join('&')
+  // apiUrl += `?conversion_ratio=${body?.conversion_ratio || 30}&ticket_size=${body?.ticket_size || 15}`
+  return new Promise((resolve, reject) => {
+    apiCall(apiUrl)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
 export const getProjectionReport = () => {
   return new Promise((resolve, reject) => {
     apiCall('projection')

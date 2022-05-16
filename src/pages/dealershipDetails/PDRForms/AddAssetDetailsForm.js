@@ -255,7 +255,6 @@ const AddAssetDetailsForm = ({ data: init_data, dealer_id, callback, currentUser
                         <Grid item md={6}>
                           <label style={{ marginBottom: 8 }}>Choose asset type to add</label>
                           <Select
-                            isClearable
                             name='type'
                             onChange={setType}
                             options={assetList} />

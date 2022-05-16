@@ -42,11 +42,11 @@ export const getAllLoans = () => {
   });
 }
 
-export const getAll_ls1_Metrices = () => {
+export const getAll_ls1_Metrices = (view) => {
   return new Promise((resolve, reject) => {
-    // resolve({});
-    // return;
-    apiCall(URL.ls1_metrices)
+    let apiUrl = URL.ls1_metrices
+    if(view === 'External') apiUrl += '?external=1'
+    apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data);
@@ -60,11 +60,11 @@ export const getAll_ls1_Metrices = () => {
   });
 }
 
-export const getAll_ls2_Metrices = () => {
+export const getAll_ls2_Metrices = (view) => {
   return new Promise((resolve, reject) => {
-    // resolve([]);
-    // return;
-    apiCall(URL.ls2_metrices)
+    let apiUrl = URL.ls2_metrices
+    if(view === 'External') apiUrl += '?external=1'
+    apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data);
@@ -78,9 +78,11 @@ export const getAll_ls2_Metrices = () => {
   });
 }
 
-export const getAllOmcDpd = () => {
+export const getAllOmcDpd = (view) => {
   return new Promise((resolve, reject) => {
-    apiCall('app/dpd/omc')
+    let apiUrl = 'app/dpd/omc'
+    if(view === 'External') apiUrl += '?external=1'
+    apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data);
@@ -94,9 +96,11 @@ export const getAllOmcDpd = () => {
   });
 }
 
-export const getAllRegionDpd = () => {
+export const getAllRegionDpd = (view) => {
   return new Promise((resolve, reject) => {
-    apiCall('app/dpd/region')
+    let apiUrl = 'app/dpd/region'
+    if(view === 'External') apiUrl += '?external=1'
+    apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data);
@@ -110,9 +114,11 @@ export const getAllRegionDpd = () => {
   });
 }
 
-export const getLoanBookData = () => {
+export const getLoanBookData = (view) => {
   return new Promise((resolve, reject) => {
-    apiCall(URL.loanBook)
+    let apiUrl = URL.loanBook
+    if(view === 'External') apiUrl += '?external=1'
+    apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data);
@@ -303,6 +309,44 @@ export const getLoanRejectReason = () => {
       });
   });
 };
+
+export const getOpportunities = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('business/projection')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data[0] || {});
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const getPotentialOpportunity = (view, body) => {
+  let qry = []
+  let apiUrl = 'potential/opportunities';
+  qry.push(`conversion_ratio=${body?.conversion_ratio || 30}&ticket_size=${body?.ticket_size || 15}`)
+  if(view) qry.push(`view=${view}`)
+  if(qry.length) apiUrl += '?' + qry.join('&')
+  // apiUrl += `?conversion_ratio=${body?.conversion_ratio || 30}&ticket_size=${body?.ticket_size || 15}`
+  return new Promise((resolve, reject) => {
+    apiCall(apiUrl)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
 
 export const getProjectionReport = () => {
   return new Promise((resolve, reject) => {

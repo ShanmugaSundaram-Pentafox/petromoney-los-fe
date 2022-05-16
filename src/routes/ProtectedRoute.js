@@ -27,9 +27,6 @@ const ProtectedRoute = ({ component: Component, currentUser, allow, ...rest }) =
               // return <Redirect to={`/dealership/${currentUser.dealership_id}`} />
               return <Redirect to={'/reports'} />
             }
-            if (permissionCheck(currentUser.role_name, rulesList.external_view)){
-              return <Redirect to={'/dealership'} />
-            }
             return <Redirect to="/" />
           }
         }

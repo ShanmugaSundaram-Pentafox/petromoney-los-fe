@@ -15,98 +15,121 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import AccessTimeOutlinedIcon from '@material-ui/icons/AccessTimeOutlined';
-import AccountBalanceOutlinedIcon from '@material-ui/icons/AccountBalanceOutlined';
-import BeenhereOutlinedIcon from '@material-ui/icons/BeenhereOutlined';
-import CachedOutlinedIcon from '@material-ui/icons/CachedOutlined';
-import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
-import PersonOutlinedIcon from '@material-ui/icons/PersonOutlined';
-import { makeStyles } from '@material-ui/styles';
+import TableSortLabel from '@material-ui/core/TableSortLabel';
+// import AccessTimeOutlinedIcon from '@material-ui/icons/AccessTimeOutlined';
+// import AccountBalanceOutlinedIcon from '@material-ui/icons/AccountBalanceOutlined';
+// import BeenhereOutlinedIcon from '@material-ui/icons/BeenhereOutlined';
+// import CachedOutlinedIcon from '@material-ui/icons/CachedOutlined';
+// import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
+// import PersonOutlinedIcon from '@material-ui/icons/PersonOutlined';
+// import { makeStyles } from '@material-ui/styles';
 import { Formik } from 'formik';
 import { head } from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { useMount } from 'react-use';
+// import { useMount } from 'react-use';
 import * as Yup from 'yup';
 import { logger } from '../../config/logger';
 import usePageTitle from '../../hooks/usePageTitle';
 import {
-  getOpportunities,
+  // getOpportunities,
   getPotentialOpportunity,
 } from '../../services/loans.service';
 import LoaderButton from '../CommonComponents/Button/LoaderButton';
 import { ViewData } from '../CommonComponents/FilePreview';
 import Currency from '../Number/Currency';
 
-const useStyles = makeStyles(() => ({
-  cardWrapper: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  rootCard: {
-    flex: '2 0 21%',
-    margin: 8,
-    padding: 16,
-    minWidth: 220,
-    backgroundColor: '#FFF',
-    borderRadius: 6,
-    display: 'inline-block',
-    position: 'relative',
-    overflow: 'hidden',
-    boxShadow:
-      'rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px',
-  },
-  cardTitle: {
-    fontSize: '1.4rem',
-  },
-  content: {
-    display: 'flex',
-    alignItems: 'flex-end',
-    flexDirection: 'column',
-    marginTop: 8,
-  },
-  value: {
-    fontSize: '28px',
-    fontWeight: 'bolder',
-  },
-  valueTitle: {
-    color: 'rgb(0,0,0,0.3)',
-  },
-  iconStyle: {
-    position: 'absolute',
-    color: 'rgb(0,0,0,0.03)',
-    right: '-85px',
-    top: '-10px',
-    fontSize: 240,
-    zIndex: '-1px',
-  },
-}));
+// const useStyles = makeStyles(() => ({
+//   cardWrapper: {
+//     display: 'flex',
+//     flexWrap: 'wrap',
+//     justifyContent: 'space-between',
+//   },
+//   rootCard: {
+//     flex: '2 0 21%',
+//     margin: 8,
+//     padding: 16,
+//     minWidth: 220,
+//     backgroundColor: '#FFF',
+//     borderRadius: 6,
+//     display: 'inline-block',
+//     position: 'relative',
+//     overflow: 'hidden',
+//     boxShadow:
+//       'rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px',
+//   },
+//   cardTitle: {
+//     fontSize: '1.4rem',
+//   },
+//   content: {
+//     display: 'flex',
+//     alignItems: 'flex-end',
+//     flexDirection: 'column',
+//     marginTop: 8,
+//   },
+//   value: {
+//     fontSize: '28px',
+//     fontWeight: 'bolder',
+//   },
+//   valueTitle: {
+//     color: 'rgb(0,0,0,0.3)',
+//   },
+//   iconStyle: {
+//     position: 'absolute',
+//     color: 'rgb(0,0,0,0.03)',
+//     right: '-85px',
+//     top: '-10px',
+//     fontSize: 240,
+//     zIndex: '-1px',
+//   },
+// }));
 
 const OpportunityReport = () => {
   usePageTitle('Opportunity Report');
-  const classes = useStyles();
-  const [opportunities, setOpportunities] = useState();
+  // const classes = useStyles();
+  // const [opportunities, setOpportunities] = useState();
   const [view, setView] = useState('state');
   const [potentialOpportunity, setPotentialOpportunity] = useState([]);
+  const [rowData, setRowData] = useState([]);
+  const [orderDirection, setOrderDirection] = useState('asc');
   const total = head(potentialOpportunity?.total);
 
   useEffect(() => {
     getPotentialOpportunity(view)
       .then((data) => {
         setPotentialOpportunity(data);
+        setRowData(data?.result);
       })
       .catch((e) => {
-        logger(e)
+        logger(e);
       });
-  },[view])
+  }, [view]);
 
-  useMount(() => {
-    getOpportunities()
-      .then(setOpportunities)
-      .catch((e) => {
-        logger(e)
-      });
-  });
+  // useMount(() => {
+  //   getOpportunities()
+  //     .then(setOpportunities)
+  //     .catch((e) => {
+  //       logger(e);
+  //     });
+  // });
+
+  const sortArray = (arr, orderBy, key) => {
+    switch (orderBy) {
+    case 'asc':
+    default:
+      return arr.sort((a, b) =>
+        a[key] > b[key] ? 1 : b[key] > a[key] ? -1 : 0
+      );
+    case 'desc':
+      return arr.sort((a, b) =>
+        a[key] < b[key] ? 1 : b[key] < a[key] ? -1 : 0
+      );
+    }
+  };
+
+  const handleSortRequest = (key) => {
+    setRowData(sortArray(potentialOpportunity?.result, orderDirection, key));
+    setOrderDirection(orderDirection === 'asc' ? 'desc' : 'asc');
+  };
 
   const vSchema = Yup.object().shape({
     conversion_ratio: Yup.number()
@@ -130,9 +153,10 @@ const OpportunityReport = () => {
           getPotentialOpportunity(view, values)
             .then((data) => {
               setPotentialOpportunity(data);
+              setRowData(data?.result);
             })
             .catch((e) => {
-              logger(e)
+              logger(e);
             });
         }}
       >
@@ -151,7 +175,7 @@ const OpportunityReport = () => {
               <TextField
                 name="conversion_ratio"
                 type="number"
-                defaultValue={30}
+                value={values?.conversion_ratio}
                 variant="outlined"
                 label="Conversion Ratio"
                 helperText={errors?.conversion_ratio}
@@ -168,7 +192,7 @@ const OpportunityReport = () => {
               <TextField
                 name="ticket_size"
                 type="number"
-                defaultValue={15}
+                value={values?.ticket_size}
                 variant="outlined"
                 label="Avg Ticket Size in Lacs"
                 helperText={errors?.ticket_size}
@@ -194,9 +218,11 @@ const OpportunityReport = () => {
             <ViewData
               title="Potential Opportunity (in Crs)"
               value={
-                <Currency
-                  value={total?.total_average_ticket_count}
-                />
+                <span style={{ fontSize: '1.1rem' }}>
+                  <strong>
+                    <Currency value={total?.total_average_ticket_count} />
+                  </strong>
+                </span>
               }
             />
           </Paper>
@@ -235,19 +261,28 @@ const OpportunityReport = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>{view.charAt(0).toUpperCase() + view.slice(1)}</TableCell>
+              <TableCell onClick={() => handleSortRequest('name')}>
+                <TableSortLabel active={true} direction={orderDirection}>
+                  {view.charAt(0).toUpperCase() + view.slice(1)}
+                </TableSortLabel>
+              </TableCell>
               <TableCell>IOCL</TableCell>
               <TableCell>HPCL</TableCell>
               <TableCell>BPCL</TableCell>
               <TableCell>Total</TableCell>
               <TableCell>Converted Dealer Count</TableCell>
-              <TableCell style={{ width: '20%' }}>
-                Proposed Exposure (in Crs)
+              <TableCell
+                style={{ width: '20%' }}
+                onClick={() => handleSortRequest('average_ticket_count')}
+              >
+                <TableSortLabel active={true} direction={orderDirection}>
+                  Proposed Exposure (in Crs)
+                </TableSortLabel>
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {potentialOpportunity?.result?.map((item, index) => (
+            {(rowData)?.map((item, index) => (
               <TableRow key={index}>
                 <TableCell>{item?.name}</TableCell>
                 <TableCell>{item?.IOCL}</TableCell>
@@ -284,7 +319,7 @@ const OpportunityReport = () => {
           </TableFooter>
         </Table>
       </Box>
-      <div className={classes.cardWrapper}>
+      {/* <div className={classes.cardWrapper}>
         <OpportunityCard
           title="Leads"
           currValue={opportunities?.current?.leads}
@@ -323,40 +358,40 @@ const OpportunityReport = () => {
           currency={true}
           icon={AccountBalanceOutlinedIcon}
         />
-      </div>
+      </div> */}
     </>
   );
 };
 
-const OpportunityCard = ({
-  title,
-  currValue,
-  projValue,
-  currency = false,
-  icon,
-}) => {
-  const classes = useStyles();
-  const Icon = icon;
-  return (
-    <div className={classes.rootCard}>
-      <Icon className={classes.iconStyle} />
-      <div className={classes.cardTitle}>{title}</div>
-      <div className={classes.content}>
-        <span className={classes.value}>
-          {currency ? <Currency value={currValue} /> : currValue}
-        </span>
-        <div className={classes.valueTitle}>Current</div>
-      </div>
-      <div className={classes.content}>
-        <span className={classes.value}>
-          {currency ? <Currency value={projValue} /> : projValue}
-        </span>
-        <Typography variant="body1" className={classes.valueTitle}>
-          Projection
-        </Typography>
-      </div>
-    </div>
-  );
-};
+// const OpportunityCard = ({
+//   title,
+//   currValue,
+//   projValue,
+//   currency = false,
+//   icon,
+// }) => {
+//   const classes = useStyles();
+//   const Icon = icon;
+//   return (
+//     <div className={classes.rootCard}>
+//       <Icon className={classes.iconStyle} />
+//       <div className={classes.cardTitle}>{title}</div>
+//       <div className={classes.content}>
+//         <span className={classes.value}>
+//           {currency ? <Currency value={currValue} /> : currValue}
+//         </span>
+//         <div className={classes.valueTitle}>Current</div>
+//       </div>
+//       <div className={classes.content}>
+//         <span className={classes.value}>
+//           {currency ? <Currency value={projValue} /> : projValue}
+//         </span>
+//         <Typography variant="body1" className={classes.valueTitle}>
+//           Projection
+//         </Typography>
+//       </div>
+//     </div>
+//   );
+// };
 
 export default OpportunityReport;

@@ -9,7 +9,9 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
 import WhatsAppIcon from '@material-ui/icons/WhatsApp';
+import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack'
@@ -26,8 +28,8 @@ import { logger } from '../../../config/logger';
 import { rulesList } from '../../../config/userRules';
 import { updateUserDetails } from '../../../services/common.service';
 import { deleteUser, getAllUserRoles } from '../../../services/users.service';
-
-
+import clsx from 'clsx';
+import EditIcon from '@material-ui/icons/Edit';
 
 const useStyles = makeStyles(theme => ({
 
@@ -40,10 +42,11 @@ const useStyles = makeStyles(theme => ({
     overflowX: 'hidden'
   },
   sidePanelTitle: {
-    padding: '14px 16px',
+    padding: '8px 16px',
     marginBottom: 6,
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
@@ -126,7 +129,16 @@ const useStyles = makeStyles(theme => ({
       width: '100%',
     }
   },
-
+  editButton: {
+    marginRight: '8px',
+    '&.MuiButton-contained': {
+      backgroundColor: theme.palette.success.main,
+      color: theme.palette.white,
+    },
+    '&.MuiButton-contained:hover': {
+      backgroundColor: theme.palette.success.dark,
+    },
+  },
   btnError: {
     '&.MuiButton-contained': {
       backgroundColor: theme.palette.error.main,
@@ -308,8 +320,9 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                 {
                   <Button
                     variant="contained"
-                    color="primary"
                     size="small"
+                    className={clsx(classes.btn, classes.editButton)}
+                    startIcon={<EditIcon />}
                     onClick={() => {
                       setReadOnly(false);
                       setEditPassword(false);
@@ -429,7 +442,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                       !loading ? (
                         <>
                           <Button variant='outlined' onClick={() => setEditProfile(false)} style={{ marginRight: 4 }}>Cancel</Button>
-                          <Button variant='contained' color="primary" onClick={() => { handleSubmit(); setSubmitType('Profile') }}>Save</Button>
+                          <Button variant='contained' startIcon={<NavigateNextRoundedIcon />} className={clsx(classes.btn, classes.editButton)} onClick={() => { handleSubmit(); setSubmitType('Profile') }}>Save</Button>
                         </>
                       ) : <CircularProgress />
                     }
@@ -448,6 +461,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                           variant="contained"
                           color="primary"
                           size="small"
+                          startIcon={<VpnKeyIcon  />}
                           onClick={() => {
                             setReadOnly(false);
                             data.status === 'Active' ? setEditPassword(true) : activationAlert()

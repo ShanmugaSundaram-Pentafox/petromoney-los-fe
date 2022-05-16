@@ -24,7 +24,7 @@ const useStyles = makeStyles(() => ({
     overflow: 'auto'
   },
   sidePanelTitle: {
-    padding: '15px 16px',
+    padding: '10px 16px',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -97,7 +97,7 @@ const AssignProducts = ({ callback, title }) => {
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>{title}</div>
         <IconButton onClick={() => callback(false)} size='small'>
-          <CloseIcon fontSize='size' />
+          <CloseIcon />
         </IconButton>
       </Typography>
       <Paper className={classes.root}>
@@ -115,7 +115,7 @@ const AssignProducts = ({ callback, title }) => {
             <Grid item md={12} style={{marginTop: 5, display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
               <Typography variant='body1'>{addForm?.name}<span style={{color:'rgb(0,0,0,0.3)', marginLeft: 8}}>({addForm?.role})</span></Typography>
               <IconButton onClick={() => setAddForm()} size='small'>
-                <CloseIcon fontSize='size' />
+                <CloseIcon />
               </IconButton>
             </Grid>
             {

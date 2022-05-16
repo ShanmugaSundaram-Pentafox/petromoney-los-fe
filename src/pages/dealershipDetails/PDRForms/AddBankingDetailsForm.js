@@ -1,3 +1,4 @@
+import { IconButton } from '@material-ui/core'
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -9,6 +10,7 @@ import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import BankDetailsCard from './Components/BankDetailsCard';
 import Button from '../../../components/CommonComponents/Button/Button';
@@ -16,14 +18,14 @@ import TextInput from '../../../components/TextInput/TextInput';
 import { URL } from '../../../config/serverUrls';
 import { getBankDetailsbyID, updateBankDetailsByID } from '../../../services/PDReport.services';
 import { compareObject } from '../../../utils/compareObject.util';
-import { useQuery, useQueryClient } from 'react-query';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
     // textAlign: 'center',
-    padding: '24px 16px',
+    padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
@@ -204,7 +206,9 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, edita
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Add Banking Details</div>
-        <CloseIcon onClick={handleClose} />
+        <IconButton onClick={handleClose}  size='small'>
+          <CloseIcon />
+        </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
@@ -362,14 +366,14 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, edita
           </div>
           {
             !editable &&
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => { setAddNewRow(true); setValues({}) }}
-              style={{ marginBottom: 12 }}
-            >
-              Add Bank
-            </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => { setAddNewRow(true); setValues({}) }}
+                style={{ marginBottom: 12 }}
+              >
+                Add Bank
+              </Button>
           }
         </div>
       </div>

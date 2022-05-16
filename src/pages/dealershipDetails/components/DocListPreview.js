@@ -1,8 +1,8 @@
-import { InfoCircleOutlined } from '@ant-design/icons';
 import { Badge, Button, Typography, Dialog, DialogContent, DialogContentText, Collapse } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
 import AddIcon from '@material-ui/icons/Add';
+import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
 import { format } from 'date-fns';
@@ -104,7 +104,7 @@ const DocPreview = ({ fileType, url, DocName, updatedDateTime, file_name, fileId
                 }
                 {
                   !editable &&
-                  <div className={classes.attachmentDelete} onClick={(e) => {e.stopPropagation(); setDeleteModal({open:true, fileId: fileId})}}><DeleteIcon width={16} /></div>
+                    <div className={classes.attachmentDelete} onClick={(e) => {e.stopPropagation(); setDeleteModal({open:true, fileId: fileId})}}><DeleteIcon width={16} /></div>
                 }
               </div>
               <h5 style={{ width: 100, whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden', marginLeft: 15 }}>{file_name}</h5>
@@ -159,9 +159,9 @@ const DocListPreview = ({ docName, upload, file, id, dealershipId, editable }) =
         </div>
         {
           !editable &&
-          <div className={classes.titleBtns}>
-            <Button size='small' style={{ marginLeft: 15 }} variant='outlined' onClick={upload} color='primary' startIcon={<AddIcon style={{ fontSize: 'small' }} />}>Upload</Button>
-          </div>
+            <div className={classes.titleBtns}>
+              <Button size='small' style={{ marginLeft: 15 }} variant='outlined' onClick={upload} color='primary' startIcon={<AddIcon style={{ fontSize: 'small' }} />}>Upload</Button>
+            </div>
         }
       </div>
       <div

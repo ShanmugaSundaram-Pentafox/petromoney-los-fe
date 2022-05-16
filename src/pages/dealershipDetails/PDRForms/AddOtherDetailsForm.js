@@ -1,3 +1,4 @@
+import { IconButton } from '@material-ui/core'
 import Box from '@material-ui/core/Box';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
@@ -18,13 +19,15 @@ import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
 import { getOmcList } from '../../../services/common.service';
 import { addAdditionalDetails, deleteOtherDetailsByID, updateAdditionalDetails } from '../../../services/PDReport.services';
+import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
     // textAlign: 'center',
-    padding: '24px 16px',
+    padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
@@ -90,6 +93,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
   const [omcs, setOmcs] = useState([])
   const [addNew, setAddNew] = useState(data ? false : true)
   const [editRow, setEditRow] = useState(false);
+  const [initData, setInitData] = useState({})
 
   const handleClose = () => {
     callback();
@@ -102,7 +106,6 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
         setOmcs(data);
       })
       .catch((e) => {
-        console.log(e);
       });
   })
 
@@ -117,10 +120,17 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
       mobile: Yup.string().nullable('Enter sales officer name').matches(/^\d{10}$/, 'Invalid mobile number').required('Enter valid mobile number'),
     }),
     onSubmit: values => {
+      let obj = {};
       if (editRow) {
-        updateAdditionalDetails(values, dealer_id)
+        obj = compareObject(initData, values)
+      }
+      else {
+        obj = { ...values }
+      } 
+      const edit_value = { ...obj, id: values.id}
+      if (editRow) {
+        updateAdditionalDetails(edit_value, dealer_id)
           .then(res => {
-            console.log(res)
             enqueueSnackbar(res, {
               anchorOrigin: {
                 vertical: 'top',
@@ -166,7 +176,6 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
               },
               variant: 'error',
             });
-            console.log(e);
           })
       }
     }
@@ -179,6 +188,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
   const editOthersRow = (rowData, rowIndex) => {
     setEditRow(true)
     setValues(rowData)
+    setInitData(rowData)
   }
   const deleteOthersRow = (row, index) => {
     deleteOtherDetailsByID(row, dealer_id)
@@ -208,13 +218,15 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Add Other Bunk Details</div>
-        <CloseIcon onClick={handleClose} />
+        <IconButton onClick={handleClose}  size='small'>
+          <CloseIcon />
+        </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
           {
             data?.length || addNew ? null :
-              <Typography className={classes.typography}>No bunks found,Click 'Add other bunk' to add.</Typography>
+              <Typography className={classes.typography}>No bunks found,Click &apos Add other bunk &apos to add.</Typography>
           }
           {
             addNew || editRow ? (
@@ -319,7 +331,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
               <Grid container spacing={2}>{
                 data.map((item, i) => {
                   return (
-                    <Grid item md={6}>
+                    <Grid key={i} item md={6}>
                       <PreviewCard
                         onEdit={() => { editOthersRow(item, i) }}
                         onDelete={() => deleteOthersRow(item, i)}
@@ -364,14 +376,14 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
           </div>
           {
             !editable &&
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => { setAddNew(true); setValues({}) }}
-              style={{ marginBottom: 12 }}
-            >
-              Add other bunk
-            </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => { setAddNew(true); setValues({}) }}
+                style={{ marginBottom: 12 }}
+              >
+                Add other bunk
+              </Button>
           }
         </div>
       </div>

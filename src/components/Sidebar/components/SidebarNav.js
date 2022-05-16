@@ -5,6 +5,7 @@ import Collapse from '@material-ui/core/Collapse';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
 import AssignmentIcon from '@material-ui/icons/Assignment';
+import BarChartOutlinedIcon from '@material-ui/icons/BarChartOutlined';
 import BookIcon from '@material-ui/icons/Book';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 // import ChatIcon from '@material-ui/icons/Chat';
@@ -355,6 +356,22 @@ const SidebarNav = props => {
                   >
                     <div className={classes.icon}><TimelineIcon /></div>
                     {'Projection Report'}
+                  </Button>
+                </ListItem>
+                <ListItem
+                  className={classes.itemSub}
+                  disableGutters
+                  key={'projection'}
+                >
+                  <Button
+                    className={classes.button}
+                    activeClassName={classes.active}
+                    component={CustomRouterLink}
+                    to={'/reports/opportunities'}
+                    exact
+                  >
+                    <div className={classes.icon}><BarChartOutlinedIcon /></div>
+                    {'Opportunity Report'}
                   </Button>
                 </ListItem>
               </Collapse>

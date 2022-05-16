@@ -1,3 +1,4 @@
+import { IconButton } from '@material-ui/core'
 import Box from '@material-ui/core/Box';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
@@ -18,13 +19,15 @@ import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
 import { getLoanTypes } from '../../../services/common.service';
 import { addLoanDetailsByID, deleteLoanDetailsByID, getLoanDetailsbyID, updateLoanDetailsByID } from '../../../services/PDReport.services';
+import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
     // textAlign: 'center',
-    padding: '24px 16px',
+    padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
@@ -132,21 +135,20 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
   const [loanTypes, setLoanTypes] = useState([])
   const [addNew, setAddNew] = useState(loanData ? false : true)
   const [editRow, setEditRow] = useState(false);
-
+  const [initData, setInitData] = useState({})
+  
   useMount(() => {
     getLoanDetailsbyID(dealer_id)
       .then(data => {
         setLoanData(data)
       })
       .catch((e) => {
-        console.log(e);
       })
     getLoanTypes()
       .then(data => {
         setLoanTypes(data)
       })
       .catch((e) => {
-        console.log(e)
       })
   })
   const handleClose = () => {
@@ -164,10 +166,17 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
 
     }),
     onSubmit: values => {
+      let obj = {};
       if (editRow) {
-        updateLoanDetailsByID(values, dealer_id)
+        obj = compareObject(initData, values)
+      }
+      else {
+        obj = { ...values }
+      }
+      const data = { ...obj, loan_id:initData.loan_id}
+      if (editRow) {
+        updateLoanDetailsByID(data, dealer_id)
           .then(res => {
-            console.log(res)
             enqueueSnackbar(res, {
               anchorOrigin: {
                 vertical: 'top',
@@ -195,7 +204,6 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
       else {
         addLoanDetailsByID(values, dealer_id)
           .then(res => {
-            console.log(res)
             enqueueSnackbar(res, {
               anchorOrigin: {
                 vertical: 'top',
@@ -230,6 +238,7 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
   const editLoanRow = (rowData, rowIndex) => {
     setEditRow(true)
     setValues(rowData)
+    setInitData(rowData)
   }
   const deleteLoanRow = (row, index) => {
     deleteLoanDetailsByID(row, dealer_id)
@@ -247,7 +256,6 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
         }, 1500);
       })
       .catch((e) => {
-        console.log(e);
         enqueueSnackbar(e, {
           anchorOrigin: {
             vertical: 'top',
@@ -262,7 +270,9 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Add Loan Details</div>
-        <CloseIcon onClick={handleClose} />
+        <IconButton onClick={handleClose}  size='small'>
+          <CloseIcon />
+        </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
@@ -384,14 +394,14 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
           </div>
           {
             !editable &&
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => { setAddNew(true); setValues({}) }}
-              style={{ marginBottom: 12 }}
-            >
-              Add Loan
-            </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => { setAddNew(true); setValues({}) }}
+                style={{ marginBottom: 12 }}
+              >
+                Add Loan
+              </Button>
           }
         </div>
       </div>

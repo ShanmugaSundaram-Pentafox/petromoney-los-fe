@@ -6,7 +6,7 @@ import { DateRange } from 'react-date-range';
 import { useQuery } from 'react-query';
 import Select, { components } from 'react-select'
 import { useMount } from 'react-use';
-import { getAllRegions, getProducts, getZones } from '../../../services/common.service';
+import { getAllRegions, getFilteredProducts, getZones } from '../../../services/common.service';
 import { getCreditStats, getLoanStats } from '../../../services/loans.service';
 import { getTypeOfAccount } from '../../../services/users.service';
 
@@ -227,7 +227,7 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans, filterType, f
 
   useMount(() => {
     if(filters.includes('product')) {
-      getProducts()
+      getFilteredProducts()
         .then(setProducts)
         .catch(() => null)
     } 

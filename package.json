@@ -60,7 +60,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "yarn public-css && react-scripts build",
+    "build": "react-scripts build",
     "build-uat": "env-cmd -f .env.development yarn build",
     "build-prod": "env-cmd -f .env.production yarn build",
     "test": "react-scripts test",

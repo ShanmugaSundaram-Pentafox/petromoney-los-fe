@@ -18,7 +18,6 @@ import TextInput from '../TextInput/TextInput';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
-    // textAlign: 'center',
     padding: '24px 16px',
     display: 'flex',
     justifyContent: 'space-between',
@@ -61,9 +60,10 @@ const AddNewUserForm = ({ callback, action }) => {
   const [apiStatus, setApiStatus] = useState({});
   const [userRoles, setUserRoles] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [type, setType] = useState('')
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-
+  let isDealership = {};
   useMount(() => {
     getAllUserRoles()
       .then((data) => {
@@ -73,7 +73,11 @@ const AddNewUserForm = ({ callback, action }) => {
         console.log(e);
       });
   });
-
+  if(type.role_id == 13){
+    isDealership= {
+      dealership_id: Yup.string().nullable('Enter dealership id').required('Enter valid dealership id')
+    };
+  }
   const {
     values,
     errors,
@@ -92,12 +96,15 @@ const AddNewUserForm = ({ callback, action }) => {
       mobile: Yup.string().nullable('Enter mobile number').matches(/^\d{10}$/, 'Enter valid mobile number').required('Enter mobile number'),
       email: Yup.string().nullable('Enter email').email('Enter valid email').required('Enter email'),
       password: Yup.string(),
-    }),
+      ...isDealership,
+    }
+    ),
     onSubmit: (formData) => {
       setLoading(true);
       const userType = userRoles.find(
         (role) => role.id === Number(formData.role_id)
       );
+      Object.keys(formData).forEach(k => (formData[k] === '') && delete formData[k]);
       addNewUser(formData, userType.role_name)
         .then((message) => {
           setLoading(false);
@@ -109,20 +116,19 @@ const AddNewUserForm = ({ callback, action }) => {
             variant: 'success',
           });
           callback &&
-            setTimeout(() => {
-              callback();
-            }, 1000);
+          setTimeout(() => {
+            callback();
+          }, 1000);
         })
         .catch((e) => {
           setLoading(false);
-          enqueueSnackbar('Something went wrong, Please try Again!', {
+          enqueueSnackbar(e, {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',
             },
             variant: 'error',
           });
-          console.log(e);
         });
     },
   });
@@ -131,6 +137,7 @@ const AddNewUserForm = ({ callback, action }) => {
     alignTop: true,
     onChange: handleChange,
   };
+    
 
   return (
     <div className={classes.sidePanelFormWrapper}>
@@ -150,16 +157,18 @@ const AddNewUserForm = ({ callback, action }) => {
                     labelText='User Role'
                     name='role_id'
                     value={values.role_id}
+                    
                     error={errors.role_id}
                     helperText={errors.role_id}
                     SelectProps={{
                       native: true,
                     }}
                   >
-                    <option value=''>Choose user role</option>
+                    <option value=''  >Choose user role</option>
+                    {(values.role_id) && type != values && setType(values)}
                     {userRoles.map((userRole) => (
-                      <option key={userRole.role_name} value={userRole.id}>
-                        ({userRole.role_name}) - {userRole.name}
+                      <option key={userRole.role_name} value={userRole.id}  >
+                        ({userRole.role_name}) - {userRole.name} 
                       </option>
                     ))}
                   </TextInput>
@@ -184,6 +193,20 @@ const AddNewUserForm = ({ callback, action }) => {
                     helperText={errors.last_name}
                   />
                 </Grid>
+                {
+                  (values.role_id == 13) &&
+                    <Grid item md={6}>
+                      <TextInput
+                        {...inputProps}
+                        type='number'
+                        name='dealership_id'
+                        labelText='Dealership ID'
+                        value={values.dealership_id}
+                        error={errors.dealership_id}
+                        helperText={errors.dealership_id}
+                      />
+                    </Grid>
+                }
                 <Grid item md={6}>
                   <TextInput
                     {...inputProps}
@@ -219,16 +242,6 @@ const AddNewUserForm = ({ callback, action }) => {
                     }
                   />
                 </Grid>
-                {/* <Grid item xs={12} justify="flex-end" alignItems="flex-end">
-            <Button
-              size="large"
-              type="submit"
-              color="primary"
-              variant="contained"
-            >
-              Create New User
-            </Button>
-          </Grid> */}
               </Grid>
             </form>
             {apiStatus.type && (

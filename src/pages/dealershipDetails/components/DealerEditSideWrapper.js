@@ -1,3 +1,4 @@
+import { IconButton } from '@material-ui/core'
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
@@ -31,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
     padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333',
   },
@@ -94,6 +96,7 @@ const DealerEditSideWrapper = ({
   const [selectedDate, setSelectedDate] = useState();
   const [selectedState, setSelectedState] = useState();
   const [panValidateData, setPanValidateData] = useState({icon: false})
+  const [aadharValidateData, setAadharValidateData] = useState({icon: false})
   const { enqueueSnackbar } = useSnackbar();
 
   const handleEdit = () => {
@@ -132,7 +135,7 @@ const DealerEditSideWrapper = ({
       .required('Enter PAN')
       .uppercase(),
     aadhar: Yup.string()
-      .nullable('Enter GST')
+      .nullable('Enter Aadhar')
       .matches(/^(\d{12})$|^(\d{16})$/, 'Invalid aadhar')
       .required('Enter valid aadhar'),
     ...coApplicantFields,
@@ -316,7 +319,9 @@ const DealerEditSideWrapper = ({
               ? 'Guarantor Edit Form'
               : 'CoApplicant Edit Form'}
         </div>
-        <CloseIcon onClick={onClose} />
+        <IconButton onClick={onClose} size='small'>
+          <CloseIcon />
+        </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
         <Stepper
@@ -340,6 +345,8 @@ const DealerEditSideWrapper = ({
               setFieldValue={setFieldValue}
               setPanValidateData={setPanValidateData}
               panValidateData={panValidateData}
+              setAadharValidateData={setAadharValidateData}
+              aadharValidateData={aadharValidateData}
               validateField={validateField}
             />
           </Step>

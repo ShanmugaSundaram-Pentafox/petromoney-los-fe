@@ -54,6 +54,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
   const [user, setUser] = useState([]);
   const [userRole, setUserRole] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState();
+  const readOnly = permissionCheck(currentUser.role_name, rulesList.external_view);
   const { enqueueSnackbar } = useSnackbar();
   const { data: loanData = [], isLoading } = useQuery(['dealership-loans', id], () => getDealershipLoansById(id), {refetchOnWindowFocus: false})
   const { data: status } = useQuery(['dealership-status', id], () => getApplicationStatusById(id), {refetchOnWindowFocus: false})
@@ -192,6 +193,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
                       native
                       placeholder={'Select status'}
                       value={selectedStatus?.id}
+                      disabled={readOnly}
                       onChange={e => {
                         const d = status?.find(i => i.id == e.target.value)
                         setSelectedStatus(d)

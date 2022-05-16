@@ -1,3 +1,4 @@
+import { IconButton } from '@material-ui/core'
 import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
@@ -16,13 +17,15 @@ import * as Yup from 'yup';
 import Button from '../../../components/CommonComponents/Button/Button';
 import TextInput from '../../../components/TextInput/TextInput';
 import { addNewFleetOperator, updateFleetOperator } from '../../../services/transports.service';
+import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
     // textAlign: 'center',
-    padding: '24px 16px',
+    padding: '12px 16px',
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
   },
@@ -126,8 +129,15 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable }
     }),
     onSubmit: values => {
       if (data) {
+        let obj = {};
+        if (!readOnly) {
+          obj = compareObject(data, values)
+        }
+        else {
+          obj = { ...values }
+        } 
         setLoading(true)
-        updateFleetOperator(values, dealer_id, data.id)
+        updateFleetOperator(obj, dealer_id, data.id)
           .then(res => {
             setLoading(false)
             enqueueSnackbar(res, {
@@ -144,7 +154,6 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable }
 
           })
           .catch(e => {
-            console.log(e)
             setLoading(false)
             enqueueSnackbar('Something went wrong, Please try Again!', {
               anchorOrigin: {
@@ -175,7 +184,6 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable }
             }, 1500);
           })
           .catch(e => {
-            console.log(e)
             setLoading(false)
             enqueueSnackbar('Something went wrong, Please try Again!', {
               anchorOrigin: {
@@ -195,7 +203,9 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable }
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Fleet Operator Information</div>
-        <CloseIcon onClick={handleClose} />
+        <IconButton onClick={handleClose}  size='small'>
+          <CloseIcon />
+        </IconButton>
       </Typography>
       {
         readOnly ? (
@@ -460,16 +470,16 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable }
               )
             ) : (
               !editable &&
-              <Button
-                variant="contained"
-                type="submit"
-                className={clsx(classes.btn, classes.editButton)}
-                startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                // disabled={loading}
-                onClick={loading ? () => null : handleEdit}
-              >
-                Edit
-              </Button>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  className={clsx(classes.btn, classes.editButton)}
+                  startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
+                  // disabled={loading}
+                  onClick={loading ? () => null : handleEdit}
+                >
+                  Edit
+                </Button>
             )
           }
         </div>

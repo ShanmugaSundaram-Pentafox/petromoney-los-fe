@@ -11,6 +11,7 @@ import * as Yup from 'yup';
 import Button from '../../../../components/CommonComponents/Button/Button';
 import TextInput from '../../../../components/TextInput/TextInput';
 import { addExpenseDetailsByID } from '../../../../services/PDReport.services';
+import { compareObject } from '../../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -57,14 +58,14 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 
-const AddExpenseForm = ({ data, isEdit, id, handleClose }) => {
+const AddExpenseForm = ({ data:init_data, isEdit, id, handleClose }) => {
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles()
 
 
 
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
-    initialValues: { ...data },
+    initialValues: { ...init_data },
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
@@ -72,10 +73,16 @@ const AddExpenseForm = ({ data, isEdit, id, handleClose }) => {
       expense_amount: Yup.number().nullable('Enter expenses amount').required('Enter expenses amount')
     }),
     onSubmit: values => {
-      const data = { ...values, is_pdr: 1 }
+      let obj = {};
+      if (isEdit) {
+        obj = compareObject(init_data, values)
+      }
+      else {
+        obj = { ...values }
+      } 
+      const data = { ...obj, id: values.id, is_pdr: 1 }
       addExpenseDetailsByID(data, id, isEdit)
         .then(res => {
-          console.log(res)
           enqueueSnackbar(res, {
             anchorOrigin: {
               vertical: 'top',

@@ -76,8 +76,8 @@ const DealershipInfo = ({ data, className, currentUser }) => {
       validateId(action, id)
         .then((res) => {
           action === 'pan' ?
-            setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}}) :
-            setGstValidateData({icon: true, loading: false, idType: 'GST', details: res?.details || {}})
+            setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}, is_verified: res?.is_verified}) :
+            setGstValidateData({icon: true, loading: false, idType: 'GST', details: res?.details || {}, is_verified: res?.is_verified})
           !values?.name && setFieldValue('name', res?.details?.tradeNam);
           setFieldValue('address', res?.details?.pradr?.adr);
         })
@@ -249,7 +249,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
         {
         valid?.icon ?
         valid?.loading ? <CircularProgress size={15}/> :
-        valid?.details ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{color:'#4caf50'}} /></Tooltip> :
+        valid?.is_verified ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{color:'#4caf50'}} /></Tooltip> :
         <Tooltip title={`Invalid ${valid.idType}`} ><CancelOutlinedIcon fontSize='small' color='error' /></Tooltip> : null
         }
       </div>
@@ -282,7 +282,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                     if (type.id == values?.business_type)
                       return true;
                   })?.name} />
-                  {values?.gst_verified ? <ViewData title='Legal Business Name' value={gstDetails?.mbr} /> : null}
+                  {values?.gst_verified ? <ViewData title='Legal Business Name' value={gstDetails?.lgnm} /> : null}
                   {values?.gst_verified ? <ViewData title='GSTIN Status' value={gstDetails?.sts} /> : null}
                   {values?.gst_verified ? <ViewData title='Legal Trade Name' value={gstDetails?.tradeNam} /> : null}
                 </Grid>
@@ -465,7 +465,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                         <ViewData title='Taxpayer Type' value={gstDetails?.dty || gstValidateData?.details?.dty} />
                       </Grid>
                       <Grid item md={3}>
-                        <ViewData title='Legal Business Name' value={gstDetails?.mbr || gstValidateData?.details?.mbr} />
+                        <ViewData title='Legal Business Name' value={gstDetails?.lgnm || gstValidateData?.details?.lgnm} />
                       </Grid>
                       <Grid item md={3}>
                         <ViewData title='GSTIN Status' value={gstDetails?.sts || gstValidateData?.details?.sts} />

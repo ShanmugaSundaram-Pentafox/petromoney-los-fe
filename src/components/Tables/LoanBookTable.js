@@ -3,9 +3,8 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from 'mui-datatables';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { connect } from 'react-redux';
-import { useMount } from 'react-use';
 import { getLoanBookData } from '../../services/loans.service';
 import { setLoanBook } from '../../store/loans/loans.actions';
 import Currency from '../Number/Currency';
@@ -18,23 +17,21 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const LoanBookTable = ({ title, loanBookData, setLoanBookData }) => {
+const LoanBookTable = ({ title, loanBookData, setLoanBookData, view }) => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
 
-  useMount(() => {
-    if (!loanBookData || !loanBookData.length) {
-      setLoading(true);
-      getLoanBookData()
-        .then(data => {
-          setLoanBookData(data);
-          setLoading(false);
-        })
-        .catch(e => {
-          setLoading(false);
-        })
-    }
-  });
+  useEffect(() => {
+    setLoading(true);
+    getLoanBookData(view)
+      .then(data => {
+        setLoanBookData(data);
+        setLoading(false);
+      })
+      .catch(e => {
+        setLoading(false);
+      })
+  },[view]);
 
   const columns = useMemo(() => {
     return [

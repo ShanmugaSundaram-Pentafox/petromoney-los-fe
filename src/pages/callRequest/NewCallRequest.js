@@ -25,7 +25,7 @@ const NewCallRequest = ({callbackData}) => {
   const [rowData, setRowData] = useState()
   const [remark, setRemark] = useState()
 
-  const { mutate: resolve } = useMutation(data => resolveCallbackRequest(data, rowData[5]) , {
+  const { mutate: resolve } = useMutation(data => resolveCallbackRequest(data, rowData[7]) , {
     onSuccess: (message) => {
       setRowData()
       queryClient.invalidateQueries('new-request')
@@ -74,8 +74,8 @@ const NewCallRequest = ({callbackData}) => {
               <div style={{display: 'flex'}}>
                 <Typography variant='body1'>{value?.toUpperCase()}</Typography>
                 {
-                  tableMeta.rowData[7] > 1 &&
-                    <Typography variant='body2' className={classes.pill}><strong>{tableMeta.rowData[7]}</strong></Typography>
+                  tableMeta.rowData[9] > 1 &&
+                    <Typography variant='body2' className={classes.pill}><strong>{tableMeta.rowData[9]}</strong></Typography>
                 }
               </div>
             )

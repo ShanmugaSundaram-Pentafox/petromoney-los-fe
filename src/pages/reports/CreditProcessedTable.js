@@ -104,14 +104,23 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
         }
       },
       {
+        name: 'origin',
+        label: 'Origin',
+        options: {
+          customBodyRender: (value, tableMeta) => {
+            return <div>{value?.toUpperCase()}</div>
+          }
+        }
+      },
+      {
         name: 'status',
         label: 'Status',
         options: {
           customBodyRender: (value, tableMeta) => {
             if (value === 'Declined') {
               return (
-                tableMeta?.rowData[10] ? (
-                  <Tooltip title={tableMeta.rowData[10]}>
+                tableMeta?.rowData[11] ? (
+                  <Tooltip title={tableMeta.rowData[11]}>
                     <div><CustomToken label={value} variant='error' icon='cross' /></div>
                   </Tooltip>
                 ) : (
@@ -121,8 +130,8 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
             }
             else if (value === 'Disbursed') {
               return (
-                tableMeta?.rowData[10] ? (
-                  <Tooltip title={tableMeta.rowData[10]}>
+                tableMeta?.rowData[11] ? (
+                  <Tooltip title={tableMeta.rowData[11]}>
                     <div><CustomToken label={value} variant='success' icon='tick' /></div>
                   </Tooltip>
                 ) : (
@@ -147,7 +156,7 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
     rowsPerPage: 15,
     rowsPerPageOptions: [15, 20, 30],
     setRowProps: (row, dataIndex) => {
-      if(row[12]){
+      if(row[13]){
         return{ style: {backgroundColor: '#ffec9bba'}}
       }
     },

@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogContentText, Button, CircularProgress } from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, Button } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/CloseRounded';
 import Alert from '@material-ui/lab/Alert';
@@ -11,11 +11,11 @@ import { useMount } from 'react-use';
 import DealershipData from './DealershipData';
 import DrawerFooter from './DrawerFooter';
 import LoanInfo from './LoanInfo';
+import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { getUserRoleForReview } from '../../../services/common.service';
 import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import SalesInfo from '../components/SalesInfo';
-import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 
 
 const useStyles = makeStyles(theme => ({

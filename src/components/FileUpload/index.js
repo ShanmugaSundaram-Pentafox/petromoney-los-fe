@@ -5,6 +5,7 @@ export const FILE_FORMAT_IMG = [ 'image/jpeg', 'image/jpg', 'image/png' ]
 export const FILE_FORMAT_PDF = [ '.pdf' ]
 export const FILE_FORMAT_XLS = [ '.xls', '.xlsx', '.csv' ]
 export const FILE_FORMAT_AUDIO = [ '.mp3', '.m4a', '.wav' ]
+export const FILE_FORMAT_ALL = [ ...FILE_FORMAT_IMG, ...FILE_FORMAT_PDF, ...FILE_FORMAT_XLS, ...FILE_FORMAT_AUDIO ]
 
 export const FILE_FORMAT_DEFAULT = [ ...FILE_FORMAT_IMG, ...FILE_FORMAT_PDF, ...FILE_FORMAT_XLS ]
 

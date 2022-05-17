@@ -16,6 +16,7 @@ import { deleteDocsImage } from '../../../services/dealerships.service';
 
 const imgFileTypes = ['jfif', 'pjpeg', 'jpeg', 'pjp', 'jpg', 'png'];
 const csvFileTypes = ['csv', 'xls', 'xlsx'];
+const audioFileTypes = ['mp3', 'wav', '.m4a']
 const useStyles = makeStyles((theme) => ({
   root: {
     padding: 10,
@@ -94,14 +95,14 @@ const DocPreview = ({ fileType, url, DocName, updatedDateTime, file_name, fileId
           <Tooltip title={`${file_name} (${updatedDateTime})`}>
             <span>
               <div className={classes.container}
-                onClick={() => csvFileTypes.includes(fileType) ? window.open(url) : setImageModal({ open: true, image: url, type: fileType })}
+                onClick={() => csvFileTypes.includes(fileType) ? window.open(url) : audioFileTypes.includes(fileType) ? window.open(url) : setImageModal({ open: true, image: url, type: fileType })}
               >
                 {
                   imgFileTypes.includes(fileType) ?
                     <img src={url} height="100%" width="100%" style={{ borderRadius: 6, padding: 1, objectFit: 'cover' }} alt={url} />
                     : fileType === 'pdf' ?
                       <PictureAsPdfIcon style={{ color: '#63686E' }} /> 
-                      : fileType === '.mp3' || fileType === '.m4a' || fileType === '.wav' || fileType === '.wma' || fileType === '.aac' ? 
+                      : fileType === 'mp3' || fileType === 'm4a' || fileType === 'wav' ? 
                         <AudiotrackIcon style={{ color: '#63686E' }} />
                         : <ListAltIcon style={{ color: '#63686E'}} />
                 }

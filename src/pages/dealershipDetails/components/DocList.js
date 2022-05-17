@@ -3,7 +3,7 @@ import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import DocListPreview from './DocListPreview';
-import FileUpload, { FILE_FORMAT_AUDIO } from '../../../components/FileUpload';
+import FileUpload, { FILE_FORMAT_ALL } from '../../../components/FileUpload';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
@@ -119,7 +119,7 @@ const DocList = ({ id, currentUser }) => {
 
   return (
     <div className={classes.wrapper}>
-      {showUpload && <FileUpload handleSave={handleSave} id={id} data={rowData} title='Upload Dealership Document' open={showUpload} onCloseUploader={onCloseUploader} FILE_FORMAT={rowData.doc_id == '17' ? FILE_FORMAT_AUDIO : undefined} />}
+      {showUpload && <FileUpload handleSave={handleSave} id={id} data={rowData} title='Upload Dealership Document' open={showUpload} onCloseUploader={onCloseUploader} FILE_FORMAT={rowData.doc_id == '17' ? FILE_FORMAT_ALL : undefined} />}
       <Typography variant="h5" align={'Left'} className={classes.title}>
         Dealership Documents
       </Typography>

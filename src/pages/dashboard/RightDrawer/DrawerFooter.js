@@ -4,6 +4,7 @@ import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 import CloseIcon from '@material-ui/icons/CloseRounded';
 import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
+import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
@@ -96,6 +97,7 @@ const DrawerFooter = ({
   const [rejectReason, setRejectReason] = useState([])
   const [displayReason, setDisplayReason] = useState([])
   const [loading, setLoading] = useState(false)
+  const [errorMsg, setErrorMsg] = useState();
   const { enqueueSnackbar } = useSnackbar();
 
   useMount(() => {
@@ -149,6 +151,7 @@ const DrawerFooter = ({
     setDisplayReason(displayReason.filter(label => label.label !== item.label))
   }
   const handleReasonChange = (event) => {
+    if(errorMsg) setErrorMsg()
     let reasonArray = [...displayReason, { label: event.target.name, value: event.target.value }];
     let arrayCheck = [...rejectReason, event.target.value];
     if (rejectReason.includes(event.target.value)) {
@@ -160,35 +163,39 @@ const DrawerFooter = ({
   }
 
   const updateLoanStatus = () => {
-    setLoading(true)
     let reqBody = {
       user_id: currentUser.id,
       reason_id: rejectReason,
     }
-    updateLoanApprovalStatusById(id, loanData.id, 'reject', reqBody)
-      .then(res => {
-        enqueueSnackbar(res.message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
+    if(rejectReason?.length){
+      setLoading(true)
+      updateLoanApprovalStatusById(id, loanData.id, 'reject', reqBody)
+        .then(res => {
+          enqueueSnackbar(res.message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
+          setTimeout(() => {
+            window.location.reload();
+            setLoading(false)
+          }, 1500)
         })
-        setTimeout(() => {
-          window.location.reload();
+        .catch(err => {
           setLoading(false)
-        }, 1500)
-      })
-      .catch(err => {
-        setLoading(false)
-        enqueueSnackbar(err, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
+          enqueueSnackbar(err, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
         })
-      })
+    } else {
+      setErrorMsg('Please Select a reason to reject this loan')
+    }
 
   }
   return (
@@ -329,7 +336,11 @@ const DrawerFooter = ({
           {
             <>
               <div>
-                <Typography style={{ marginBottom: 20 }} variant='body1'>Choose category and reasons for rejection.</Typography>
+                {
+                  errorMsg &&
+                    <Alert severity='error' style={{marginBottom: 12}}>{errorMsg}</Alert>
+                }
+                <Typography style={{ marginBottom: 16 }} variant='body1'>Choose category and reasons for rejection.</Typography>
                 <Typography variant='body2'>Category</Typography>
                 {
                   optionsData.map((item, i) => {

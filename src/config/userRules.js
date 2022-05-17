@@ -19,7 +19,8 @@ export const rulesList = {
   'projection_report': 'projection:report',
   'applicant_delete': 'applicant:delete',
   'external_view': 'external:view',
-  'dealership_view': 'dealership:view'
+  'dealership_view': 'dealership:view',
+  'external_lms': 'external:lms'
 }
 
 export const rulesForUserRoles = {
@@ -34,6 +35,7 @@ export const rulesForUserRoles = {
       rulesList.financial_view,
       rulesList.upload_statement,
       rulesList.projection_report,
+      rulesList.external_lms
     ]
   },
   CDO: {
@@ -47,6 +49,7 @@ export const rulesForUserRoles = {
       rulesList.financial_view,
       rulesList.upload_statement,
       rulesList.projection_report,
+      rulesList.external_lms
     ]
   },
   CFO: {
@@ -62,6 +65,7 @@ export const rulesForUserRoles = {
       rulesList.financial_view,
       rulesList.upload_statement,
       rulesList.projection_report,
+      rulesList.external_lms
     ]
   },
   CREDIT_HEAD: {
@@ -95,6 +99,7 @@ export const rulesForUserRoles = {
       rulesList.upload_statement,
       rulesList.projection_report,
       rulesList.applicant_delete,
+      rulesList.external_lms
     ]
   },
   CREDIT_EXEC: {
@@ -121,6 +126,7 @@ export const rulesForUserRoles = {
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
+      rulesList.external_lms
     ]
   },
   OPS_MANAGER: {
@@ -132,6 +138,7 @@ export const rulesForUserRoles = {
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
+      rulesList.external_lms
     ]
   },
   CREDIT: {

@@ -99,7 +99,7 @@ const useStyles = makeStyles(theme => ({
     cursor: 'pointer',
     borderRadius: 4,
     marginRight: 2,
-    padding: '2px 4px',
+    padding: '4px 6px',
     minWidth: 50,
     textAlign: 'center',
     border: 'none',
@@ -126,7 +126,7 @@ const useStyles = makeStyles(theme => ({
     }
   },
   creditBookHeader: {
-    display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between'
+    display: 'flex', alignItems: 'center'
   },
   label: {
     color: 'hsl(0,0%,75%)'
@@ -300,9 +300,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                         {
                           !permissionCheck(currentUser.role_name, rulesList.external_view) && permissionCheck(currentUser.role_name, rulesList.external_lms) &&
                             <div className={classes.creditView}>
-                              <Box style={{marginRight: 8}}>
-                                <label className={classes.label}>View</label>
-                              </Box>
+                              
                               <Box>
                                 <div className={classes.filterWrapper}>
                                   <div role="button" className={`${classes.filterItem} ${creditBook === 'Petromoney' && 'active'}`} onClick={() => onCreditBookChange('Petromoney')} onKeyDown>Petromoney</div>

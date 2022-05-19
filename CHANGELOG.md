@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.14.2](https://gitlab.com/vignesh3/petromall-fe/compare/v2.14.1...v2.14.2) (2022-05-18)
+
+### [2.14.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.14.0...v2.14.1) (2022-05-16)
+
+
+### Bug Fixes
+
+* **change-log:** conflict resolve ([af2e6c5](https://gitlab.com/vignesh3/petromall-fe/commit/af2e6c5d3a16e8702394f67b0926468a36d0001a))
+* **opportunity-report:** name and potential wise sorting ([c427e81](https://gitlab.com/vignesh3/petromall-fe/commit/c427e81fb0a019886da749cabecc149d2c4e6c25))
+
 ## [2.14.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.13.6...v2.14.0) (2022-05-14)
 
 

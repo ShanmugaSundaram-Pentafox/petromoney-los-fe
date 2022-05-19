@@ -298,7 +298,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                       <div className={classes.creditBookHeader}>
                         <Typography variant="h5" style={{width: 120}}>Credit Book</Typography>
                         {
-                          !permissionCheck(currentUser.role_name, rulesList.external_view) &&
+                          !permissionCheck(currentUser.role_name, rulesList.external_view) && permissionCheck(currentUser.role_name, rulesList.external_lms) &&
                             <div className={classes.creditView}>
                               <Box style={{marginRight: 8}}>
                                 <label className={classes.label}>View</label>

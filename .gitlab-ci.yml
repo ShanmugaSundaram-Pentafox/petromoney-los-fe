@@ -5,7 +5,8 @@ variables:
   REACT_APP_API_BASE: $REACT_APP_API_BASE
   REACT_APP_API_BASE_PROD: $REACT_APP_API_BASE_PROD
   REACT_APP_OTP_ONLY_DOMAINS: $REACT_APP_OTP_ONLY_DOMAINS
-  S3_BUCKET_NAME: $S3_BUCKET_NAME
+  S3_BUCKET_NAME_UAT: $S3_BUCKET_NAME_UAT
+  S3_BUCKET_NAME_PROD: $S3_BUCKET_NAME_PROD
   S3_BUCKET_NAME_PORTAL: $S3_BUCKET_NAME_PORTAL
   AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
   AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
@@ -55,7 +56,7 @@ deploy-uat:
     - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
     - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
     - aws configure set default.region $AWS_DEFAULT_REGION
-    - aws s3 sync ./build/ s3://$S3_BUCKET_NAME --delete
+    - aws s3 sync ./build/ s3://$S3_BUCKET_NAME_UAT --delete
 
 build-portal:
   image: node:14
@@ -97,7 +98,7 @@ deploy-portal:
     - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
     - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
     - aws configure set default.region $AWS_DEFAULT_REGION
-    - aws s3 sync ./build/ s3://$S3_BUCKET_NAME_PROD --delete
+    - aws s3 sync ./build/ s3://$S3_BUCKET_NAME_PORTAL --delete
 
 build-prod:
   image: node:14

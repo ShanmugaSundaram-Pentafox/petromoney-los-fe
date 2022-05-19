@@ -99,7 +99,7 @@ const useStyles = makeStyles(theme => ({
     cursor: 'pointer',
     borderRadius: 4,
     marginRight: 2,
-    padding: '4px 6px',
+    padding: '4px 10px',
     minWidth: 50,
     textAlign: 'center',
     border: 'none',

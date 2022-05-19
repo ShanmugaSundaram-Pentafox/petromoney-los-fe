@@ -77,77 +77,6 @@ export const TextEditor = ({ setJSON, toolBar, remarkData, editable, style }) =>
     content: remarkData,
     editable: editable
   });
-        
-  const MenuBar = ({ editor }) => {
-    if (!editor) {
-      return null
-    }
-
-    return(
-      <div className={classes.actions}>
-        <Tooltip title='Paragraph'>
-          <button
-            onClick={() => editor.chain().focus().setParagraph().run()}
-            className={editor.isActive('paragraph') ? classes.active : classes.btn}
-          ><strong>P</strong></button>
-        </Tooltip>
-        <Tooltip title='Bold'>
-          <button
-            onClick={() => editor.chain().focus().toggleBold().run()}
-            className={editor.isActive('bold') ? classes.active : classes.btn}
-          ><strong>B</strong></button>
-        </Tooltip>
-        <Tooltip title='Italic'>
-          <button
-            onClick={() => editor.chain().focus().toggleItalic().run()}
-            className={editor.isActive('italic') ? classes.active : classes.btn}
-          ><i>I</i></button>
-        </Tooltip>
-        <Tooltip title='Underline'>
-          <button
-            onClick={() => editor.chain().focus().toggleUnderline().run()}
-            className={editor.isActive('underline') ? classes.active : classes.btn}
-          ><u>U</u></button>
-        </Tooltip>
-        <Tooltip title='Large'>
-          <button
-            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-            className={editor.isActive('heading', { level: 2 }) ? classes.active : classes.btn}
-          >H1</button>
-        </Tooltip>
-        <Tooltip title='Medium'>
-          <button
-            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-            className={editor.isActive('heading', { level: 3 }) ? classes.active : classes.btn}
-          >H2</button>
-        </Tooltip>
-        <Tooltip title='Small'>
-          <button
-            onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
-            className={editor.isActive('heading', { level: 4 }) ? classes.active : classes.btn}
-          >H3</button>
-        </Tooltip>
-        <Tooltip title='Bullet'>
-          <button
-            onClick={() => editor.chain().focus().toggleBulletList().run()}
-            className={editor.isActive('bulletList') ? classes.active : classes.btn}
-          ><FormatListBulletedIcon fontSize='small' /></button>
-        </Tooltip>
-        <Tooltip title='Numbers'>
-          <button
-            onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            className={editor.isActive('orderedList') ? classes.active : classes.btn}
-          ><FormatListNumberedIcon fontSize='small' /></button>
-        </Tooltip>
-        <Tooltip title='Break'>
-          <button
-            onClick={() => editor.chain().focus().setHardBreak().run()}
-            className={editor.isActive('hardBreak') ? classes.active : classes.btn}
-          >Br</button>
-        </Tooltip>
-      </div>
-    )
-  }
 
   return (
     <div className={classes.root} id='rooter' style={style}>
@@ -156,6 +85,78 @@ export const TextEditor = ({ setJSON, toolBar, remarkData, editable, style }) =>
           <MenuBar editor={editor} />
       }
       <EditorContent editor={editor} className={classes.content}/>
+    </div>
+  )
+}
+
+export const MenuBar = ({ editor }) => {
+  const classes = useStyles();
+  if (!editor) {
+    return null
+  }
+
+  return(
+    <div className={classes.actions}>
+      <Tooltip title='Paragraph'>
+        <button
+          onClick={() => editor.chain().focus().setParagraph().run()}
+          className={editor.isActive('paragraph') ? classes.active : classes.btn}
+        ><strong>P</strong></button>
+      </Tooltip>
+      <Tooltip title='Bold'>
+        <button
+          onClick={() => editor.chain().focus().toggleBold().run()}
+          className={editor.isActive('bold') ? classes.active : classes.btn}
+        ><strong>B</strong></button>
+      </Tooltip>
+      <Tooltip title='Italic'>
+        <button
+          onClick={() => editor.chain().focus().toggleItalic().run()}
+          className={editor.isActive('italic') ? classes.active : classes.btn}
+        ><i>I</i></button>
+      </Tooltip>
+      <Tooltip title='Underline'>
+        <button
+          onClick={() => editor.chain().focus().toggleUnderline().run()}
+          className={editor.isActive('underline') ? classes.active : classes.btn}
+        ><u>U</u></button>
+      </Tooltip>
+      <Tooltip title='Large'>
+        <button
+          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          className={editor.isActive('heading', { level: 2 }) ? classes.active : classes.btn}
+        >H1</button>
+      </Tooltip>
+      <Tooltip title='Medium'>
+        <button
+          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+          className={editor.isActive('heading', { level: 3 }) ? classes.active : classes.btn}
+        >H2</button>
+      </Tooltip>
+      <Tooltip title='Small'>
+        <button
+          onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
+          className={editor.isActive('heading', { level: 4 }) ? classes.active : classes.btn}
+        >H3</button>
+      </Tooltip>
+      <Tooltip title='Bullet'>
+        <button
+          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          className={editor.isActive('bulletList') ? classes.active : classes.btn}
+        ><FormatListBulletedIcon fontSize='small' /></button>
+      </Tooltip>
+      <Tooltip title='Numbers'>
+        <button
+          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          className={editor.isActive('orderedList') ? classes.active : classes.btn}
+        ><FormatListNumberedIcon fontSize='small' /></button>
+      </Tooltip>
+      <Tooltip title='Break'>
+        <button
+          onClick={() => editor.chain().focus().setHardBreak().run()}
+          className={editor.isActive('hardBreak') ? classes.active : classes.btn}
+        >Br</button>
+      </Tooltip>
     </div>
   )
 }

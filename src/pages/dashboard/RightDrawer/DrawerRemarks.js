@@ -78,7 +78,7 @@ const DrawerRemarks = ({ loanData, readOnly, label }) => {
               <Typography variant='body1' style={{color: 'rgb(0,0,0,0.3)', marginTop: 8}}>No Remarks</Typography>
           }
           {
-            loanData?.length >= 300 ? (
+            loanData?.length >= 150 ? (
               <ViewMoreBtn
                 onClick={() => setShowRemarksModal(loanData)}
               >

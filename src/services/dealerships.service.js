@@ -251,18 +251,20 @@ export const deleteDealershipSalesById = (id, body) => {
 
 export const getDealershipCheckList = (id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`${URL.checklist}/${id}`)
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          const result = data.filter(item => item.doc_type === 'dealership');
-          resolve(result);
-        } else {
-          reject(message);
-        }
-      })
-      .catch((e) => {
-        reject(e.message);
-      });
+    if(id) {
+      apiCall(`${URL.checklist}/${id}`)
+        .then(({ status, data, message }) => {
+          if (status === 'SUCCESS') {
+            const result = data.filter(item => item.doc_type === 'dealership');
+            resolve(result);
+          } else {
+            reject(message);
+          }
+        })
+        .catch((e) => {
+          reject(e.message);
+        });
+    }
   });
 };
 

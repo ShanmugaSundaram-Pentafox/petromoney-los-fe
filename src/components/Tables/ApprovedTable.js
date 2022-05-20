@@ -11,13 +11,11 @@ import clsx from 'clsx';
 import moment from 'moment';
 import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState, useEffect } from 'react';
-import { useQuery } from 'react-query';
 import { connect } from 'react-redux';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { rulesList } from '../../config/userRules';
 import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
 import { ReactComponent as LoanAgreementIcon } from '../../icons/loan_agreement.svg';
-import { getDealershipCheckList } from '../../services/dealerships.service';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
@@ -66,7 +64,6 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
-  const { data: checkListData = [] } = useQuery(['doc-checklist', dealershipId], () => getDealershipCheckList(dealershipId), { refetchOnWindowFocus: false })
 
   const actionable = !permissionCheck(currentUser.role_name, rulesList.external_view);
 
@@ -175,8 +172,8 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
         }
       },
       {
-        label: 'Document',
-        name: 'dealership_id',
+        label: 'Attachment',
+        name: 'attachment',
         options: {
           filter: false,
           sort: true,
@@ -185,7 +182,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
               <>
                 <div>
                   <Tooltip title="click to view documents checklist">
-                    <LinkIcon onClick={(event) => {
+                    <LinkIcon style={{color:'grey'}} onClick={(event) => {
                       setAnchorEl(event.currentTarget);
                       setDealershipId(value)
                     }}/>
@@ -237,7 +234,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
     isRowSelectable: () => false,
     onCellClick: (colData, cellMeta) => {
       setRowData(loans[cellMeta.dataIndex])
-      if (cellMeta.colIndex !== 7) {
+      if (cellMeta.colIndex <= 6) {
         onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'approved')
       }
     },
@@ -246,11 +243,6 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
       return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
     }
   };
-  let data= checkListData.map(item => {
-    return (
-      [item?.description,item.file_data[0]?.file_url]
-    )}
-  )
   
   return (
     <div className={classes.root}>
@@ -292,7 +284,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
           horizontal: 'right',
         }}
       >
-        <DocCheckListDetailsTable title={rowData} data={data} />
+        <DocCheckListDetailsTable title={rowData} />
       </Popover>
     </div>
   )

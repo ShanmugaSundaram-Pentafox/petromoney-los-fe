@@ -7,25 +7,43 @@ import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import DoneIcon from '@material-ui/icons/Done';
+import { makeStyles } from '@material-ui/styles';
 import React from 'react'
+import { useQuery } from 'react-query';
+import { getDealershipCheckList } from '../../services/dealerships.service';
 
-const DocCheckListDetailsTable = ({ title, data }) => {
+const useStyles = makeStyles(theme => ({
+  title: {
+    display: 'flex', 
+    justifyContent: 'space-between'
+  },
+  titlename: {
+    width:'200px',
+    height:'20px', 
+    whiteSpace: 'nowrap', 
+    textOverflow:'ellipsis', 
+    overflow: 'hidden'
+  },
+  tablebody: {
+    display: 'flex', 
+    justifyContent: 'flex-start'
+  }
+}))
+
+const DocCheckListDetailsTable = ({ title }) => {
+  const classes = useStyles();
+  const { data: checkListData = [] } = useQuery(['doc-checklist', title?.dealership_id], () => getDealershipCheckList(title?.dealership_id), { refetchOnWindowFocus: false })
 
   return (
     <div>
-      <div style={{ minHeight: 150, minWidth: 300, padding: 20 }}>
+      <div style={{ minHeight: 150, width: 380, padding: 20 }}>
         <div style={{ marginBottom: 12 }}>
-          <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
-            <Typography variant='subtitle2'>Dealership ID - </Typography>
+          <div className={classes.title}>
+            <Typography variant='body1' className={classes.titlename}>{title?.name}</Typography>
+            <Typography variant='caption' style={{ color:'rgb(0,0,0,0.4)' }}>&nbsp;{title?.region}</Typography>
+          </div>
+          <div className={classes.tablebody}>
             <Typography variant='body1'> {title?.dealership_id}</Typography>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
-            <Typography variant='subtitle2'>Name &nbsp;-  </Typography>
-            <Typography variant='body1'> &nbsp; {title?.name}</Typography>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
-            <Typography variant='subtitle2'>Region - </Typography>
-            <Typography variant='body1'>&nbsp;{title?.region}</Typography>
           </div>
         </div>
         <div>
@@ -33,11 +51,11 @@ const DocCheckListDetailsTable = ({ title, data }) => {
             <Table >
               <TableBody >
                 {
-                  data?.map((item, i) => {
+                  checkListData?.map((item, i) => {
                     return (
                       <TableRow key={i}>
-                        <TableCell style={{ padding: 0 }}>{item[0]}</TableCell>
-                        <TableCell>{item[1] !== '' ? <DoneIcon style={{ color: green[400], fontSize: 15 }} /> : <CloseIcon style={{ color: grey[200], fontSize: 15 }} />}</TableCell>
+                        <TableCell style={{ paddingLeft: 0 }}>{item.file_data[0]?.file_url !== '' ? <DoneIcon style={{ color: green[400], fontSize: 15 }} /> : <CloseIcon style={{ color: grey[200], fontSize: 15 }} />}</TableCell>
+                        <TableCell style={{ padding: 0 }}>{item.description}</TableCell>
                       </TableRow>
                     )
                   })

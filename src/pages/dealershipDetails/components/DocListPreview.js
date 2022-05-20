@@ -102,7 +102,7 @@ const DocPreview = ({ fileType, url, DocName, updatedDateTime, file_name, fileId
                     <img src={url} height="100%" width="100%" style={{ borderRadius: 6, padding: 1, objectFit: 'cover' }} alt={url} />
                     : fileType === 'pdf' ?
                       <PictureAsPdfIcon style={{ color: '#63686E' }} /> 
-                      : fileType === audioFileTypes.includes(fileType) ? 
+                      : audioFileTypes.includes(fileType) ? 
                         <AudiotrackIcon style={{ color: '#63686E' }} />
                         : <ListAltIcon style={{ color: '#63686E'}} />
                 }

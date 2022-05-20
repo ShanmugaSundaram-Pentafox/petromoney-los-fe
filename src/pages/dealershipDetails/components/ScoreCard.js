@@ -204,7 +204,7 @@ const ScoreCard = ({currentUser, dealership_id}) => {
           }
         </div>
         <div>
-          { external &&
+          {
             metaData?.file_url &&
             <Tooltip title="Download Score Card">
               <IconButton size="small" style={{marginRight: 12}} onClick={handleDownload}>

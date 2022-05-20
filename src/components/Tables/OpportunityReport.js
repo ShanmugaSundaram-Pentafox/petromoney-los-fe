@@ -16,6 +16,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
+import { makeStyles } from '@material-ui/core/styles';
 import { Formik } from 'formik';
 import { head } from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -29,8 +30,41 @@ import LoaderButton from '../CommonComponents/Button/LoaderButton';
 import { ViewData } from '../CommonComponents/FilePreview';
 import Currency from '../Number/Currency';
 
+const useStyles = makeStyles(theme => ({
+  totalamount: {
+    padding: '20px 30px 20px 30px',
+    backgroundColor: '#FfFfFf',
+    borderRadius: 4,
+    minWidth: '170px'
+  },
+  getdata: {
+    padding: '30px 30px 30px 30px',
+    backgroundColor: '#FfFfFf',
+    borderRadius: 4,
+    flexGrow: '2'
+  },
+  currencyvalue: {
+    fontSize: '2rem', 
+    color: '#3f51b5'
+  },
+  crs: {
+    color: '#a9a9a9', 
+    fontWeight: '900', 
+    fontSize: '1.3rem', 
+    alignSelf: 'flex-end', 
+    marginBottom: '3px'
+  },
+  title: {
+    display: 'flex', 
+    justifyContent: 'center', 
+    fontSize: '10px', 
+    color: '#888'
+  }
+}))
+
 const OpportunityReport = () => {
   usePageTitle('Opportunity Report');
+  const classes = useStyles();
   const [view, setView] = useState('state');
   const [potentialOpportunity, setPotentialOpportunity] = useState([]);
   const [rowData, setRowData] = useState([]);
@@ -100,14 +134,24 @@ const OpportunityReport = () => {
           <Paper
             style={{
               margin: 8,
-              padding: 16,
               borderRadius: 4,
               display: 'flex',
-              justifyContent: 'space-between',
               alignItems: 'center',
+              backgroundColor: '#f3f3f3',
+              gap: '18px'
             }}
           >
-            <div>
+            <div className={classes.totalamount}>
+                {/* title="Potential Opportunity" */}
+                  <span style={{ display: 'flex', gap: '5px' }}>
+                    <strong style={{ alignSelf: 'flex-end' }}>
+                      <Currency value={total?.total_average_ticket_count} className={classes.currencyvalue}/>
+                    </strong>
+                    <span className={classes.crs}>Crs</span>
+                  </span>
+                  <span className={classes.title}>Potential Opportunity</span>
+            </div>
+            <div className={classes.getdata}>
               <TextField
                 name="conversion_ratio"
                 type="number"
@@ -151,17 +195,7 @@ const OpportunityReport = () => {
                 Get Data
               </LoaderButton>
             </div>
-            <ViewData
-              title="Potential Opportunity"
-              value={
-                <span style={{ fontSize: '1.4rem', color: '#3f51b5' }}>
-                  <strong>
-                    <Currency value={total?.total_average_ticket_count} />
-                  </strong>
-                  {' Crs'}
-                </span>
-              }
-            />
+            
           </Paper>
         )}
       </Formik>

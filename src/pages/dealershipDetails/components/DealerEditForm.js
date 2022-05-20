@@ -17,7 +17,7 @@ import React, { useState, useEffect } from 'react';
 import { DocAttachment } from '../../../components/Attachment/DocAttachment';
 import CustomToken from '../../../components/CommonComponents/CustomToken';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
-import FileUpload from '../../../components/FileUpload';
+import FileUpload, { FILE_FORMAT_IMG, FILE_FORMAT_PDF } from '../../../components/FileUpload';
 import TextInput from '../../../components/TextInput/TextInput';
 import { logger } from '../../../config/logger';
 import { deleteProfileDoc, getPincodeDetails } from '../../../services/dealers.service';
@@ -675,6 +675,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                     handleSave(value, fileType)
                     showUpload && setShowUpload(false);
                   }}
+                  FILE_FORMAT={[...FILE_FORMAT_IMG, ...FILE_FORMAT_PDF]}
                   title='Upload Documents'
                   open={showUpload} onCloseUploader={() => { setShowUpload(false) }} />
               }

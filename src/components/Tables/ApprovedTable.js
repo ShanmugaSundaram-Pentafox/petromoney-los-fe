@@ -1,9 +1,11 @@
+import { Popover } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import DescriptionIcon from '@material-ui/icons/Description';
+import LinkIcon from '@material-ui/icons/Link';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import moment from 'moment';
@@ -13,11 +15,11 @@ import { connect } from 'react-redux';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { rulesList } from '../../config/userRules';
 import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
-// import { createStructuredSelector } from 'reselect';
 import { ReactComponent as LoanAgreementIcon } from '../../icons/loan_agreement.svg';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
+import DocCheckListDetailsTable from '../Attachment/DocCheckListDetailsTable';
 import SignRequestLayout from '../Leegality/SignRequestLayout';
 import Currency from '../Number/Currency';
 import { permissionCheck } from '../UserCan/UserCan';
@@ -58,6 +60,11 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
   const [loanId, setloanId] = useState();
   const [type, setType] = useState('');
   const [productTypeId, setProductTypeId] = useState();
+  const [rowData, setRowData] = useState();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
+
   const actionable = !permissionCheck(currentUser.role_name, rulesList.external_view);
 
   useEffect(() => {
@@ -71,6 +78,10 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
         setLoading(false);
       })
   }, [filterQry])
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const getLoansTable = () => {
     setLoading(true);
@@ -161,6 +172,28 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
         }
       },
       {
+        label: 'Attachment',
+        name: 'attachment',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: (value) => {
+            return (
+              <>
+                <div>
+                  <Tooltip title="click to view documents checklist">
+                    <LinkIcon style={{color:'grey'}} onClick={(event) => {
+                      setAnchorEl(event.currentTarget);
+                      setDealershipId(value)
+                    }}/>
+                  </Tooltip>
+                </div>
+              </>
+            )
+          },
+        }
+      },
+      {
         label: 'Documents',
         name: 'dealership_id',
         options: {
@@ -172,14 +205,14 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
           }),
           customBodyRender: (value, r) => {
             return (
-              <div style={{minWidth: 70}}>
+              <div style={{ minWidth: 70 }}>
                 <Tooltip title="Sanction Letter">
                   <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType('sanction'); setModalVisible(true); }}>
-                    <DescriptionIcon style={{width:19}} />
+                    <DescriptionIcon style={{ width: 19 }} />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Loan Agreement">
-                  <IconButton style={{marginRight:3}} size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['amount_approved']); setProductTypeId(loans?.[r.rowIndex]['product_id'])}}>
+                  <IconButton style={{ marginRight: 3 }} size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['amount_approved']); setProductTypeId(loans?.[r.rowIndex]['product_id']) }}>
                     <LoanAgreementIcon width={12} />
                   </IconButton>
                 </Tooltip>
@@ -195,13 +228,13 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
       }
     ]
   }, [loans]);
-
   const options = {
     selectableRowsHeader: false,
     selectableRows: 'none',
     isRowSelectable: () => false,
     onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex !== 7) {
+      setRowData(loans[cellMeta.dataIndex])
+      if (cellMeta.colIndex <= 6) {
         onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'approved')
       }
     },
@@ -210,6 +243,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
       return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
     }
   };
+  
   return (
     <div className={classes.root}>
       {
@@ -236,6 +270,22 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
         onClose={() => setModalVisible(false)}
         callback={getLoansTable}
       />
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+      >
+        <DocCheckListDetailsTable title={rowData} />
+      </Popover>
     </div>
   )
 }

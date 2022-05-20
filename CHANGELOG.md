@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.15.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.14.2...v2.15.0) (2022-05-20)
+
+
+### Features
+
+* **approved-table:** option to view doc checklist in dashboard table ([d644106](https://gitlab.com/vignesh3/petromall-fe/commit/d6441062f10498173211721b9b63eb8dbc5f0722))
+
+
+### Bug Fixes
+
+* **changelog:** conflict fix ([af12bbd](https://gitlab.com/vignesh3/petromall-fe/commit/af12bbdf3bfba1ea9b54150c00dd85af872dabd6))
+* **cicd:** gitlab deployment config fix ([64139d5](https://gitlab.com/vignesh3/petromall-fe/commit/64139d58f4b199f5018da059835a618dd768455f))
+* **external-scorecard:** External scorecard upload permission ([47ccf59](https://gitlab.com/vignesh3/petromall-fe/commit/47ccf595c74c2f492af6252f27da3c35c3a3f720))
+* **External:** external can download scorecard ([9981b63](https://gitlab.com/vignesh3/petromall-fe/commit/9981b6350b792cb522dca14b055c9535a9adefa5))
+* **textEditor:** Aadhar payload time removed and text editor issue fixed ([3140714](https://gitlab.com/vignesh3/petromall-fe/commit/3140714dd6e1493dae960ceea76a8dd1c2945c00))
+
 ### [2.14.2](https://gitlab.com/vignesh3/petromall-fe/compare/v2.14.1...v2.14.2) (2022-05-18)
 
 ### [2.14.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.14.0...v2.14.1) (2022-05-16)

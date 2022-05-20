@@ -11,6 +11,7 @@ import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
+import { useMount } from 'react-use';
 import * as Yup from 'yup';
 import { DocAttachment } from '../../../components/Attachment/DocAttachment';
 import Button from '../../../components/CommonComponents/Button/Button';
@@ -22,7 +23,7 @@ import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { logger } from '../../../config/logger';
 import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
-import { getBusinessTypes, getRegionById, getActiveStates } from '../../../services/common.service';
+import { getBusinessTypes, getRegionById, getActiveStates, getOmcList } from '../../../services/common.service';
 import { cryptoEncrypt } from '../../../services/crypto.service';
 import { deleteDealershipDocument, validateId } from '../../../services/dealerships.service';
 import { compareObject } from '../../../utils/compareObject.util';
@@ -63,6 +64,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
   const [panValidateData, setPanValidateData] = useState({icon: false})
   const [gstValidateData, setGstValidateData] = useState({icon: false})
   const [gstDetails, setGstDetails] = useState({})
+  const [omcs, setOmcs] = useState([])
   const [fileType, setFileType] = useState('');
   const businessTypes = useQuery('business-types', getBusinessTypes, { cacheTime: 300000 })
   const states = useQuery('state', getActiveStates, { cacheTime: 300000 })
@@ -91,6 +93,15 @@ const DealershipInfo = ({ data, className, currentUser }) => {
       action === 'pan' ? validateField('pan') : validateField('gst')
     }
   }
+  useMount(() => {
+    getOmcList()
+      .then((data) => {
+        setOmcs(data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  });
   useEffect(() => {
     setValues(data)
     setGstDetails(data?.gst_verified ? JSON.parse(data?.gst_details) || {} : {})
@@ -267,6 +278,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                   <ViewData title='Address' value={values?.address ? values.address + '' : '' + (values?.pincode ? values?.pincode : '')} />
                   <ViewData title='PAN' value={values?.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success': 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'}/>} />
                   {values?.gst_verified ? <ViewData title='Effective Date of registration' value={gstDetails?.rgdt}/> : null}
+                  {values?.gst_verified ? <ViewData title='Legal Trade Name' value={gstDetails?.tradeNam} /> : null}
                 </Grid>
                 <Grid md={4}>
                   <ViewData title='State' value={(states?.data?.find(function (state, index) {
@@ -282,9 +294,9 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                     if (type.id == values?.business_type)
                       return true;
                   })?.name} />
+                  <ViewData title='OMC' value={omcs?.find(item => {return item?.id === values?.omc})?.name} />
                   {values?.gst_verified ? <ViewData title='Legal Business Name' value={gstDetails?.lgnm} /> : null}
                   {values?.gst_verified ? <ViewData title='GSTIN Status' value={gstDetails?.sts} /> : null}
-                  {values?.gst_verified ? <ViewData title='Legal Trade Name' value={gstDetails?.tradeNam} /> : null}
                 </Grid>
               </Grid>
               {

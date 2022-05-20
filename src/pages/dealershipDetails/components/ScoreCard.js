@@ -18,6 +18,8 @@ import OmcSaleTable from '../ScoreCardTables/OmcSaleTable';
 import OtherInputsTable from '../ScoreCardTables/OtherInputsTable';
 import ScoreCardInputTable from '../ScoreCardTables/ScoreCardInputTable';
 import { head } from 'lodash';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -83,6 +85,7 @@ const ScoreCard = ({currentUser, dealership_id}) => {
   const { enqueueSnackbar } = useSnackbar();
   const { data: scoreCardData = [] } = useQuery('scorecard', () => getScoreCard(dealership_id), {refetchOnWindowFocus: false})
   const metaData = head(scoreCardData?.metadata?.scorecard_meta)
+  const external = !permissionCheck(currentUser.role_name, rulesList.external_view)
 
   const scoreCardTabs = [
     'OMC Sale Data',
@@ -201,7 +204,7 @@ const ScoreCard = ({currentUser, dealership_id}) => {
           }
         </div>
         <div>
-          {
+          { external &&
             metaData?.file_url &&
             <Tooltip title="Download Score Card">
               <IconButton size="small" style={{marginRight: 12}} onClick={handleDownload}>
@@ -209,22 +212,25 @@ const ScoreCard = ({currentUser, dealership_id}) => {
               </IconButton>
             </Tooltip>
           }
-          <Button
-            variant='outlined'
-            color='primary'
-            name='csv'
-            id='file'
-            component="label"
-            disabled={loading}
-            startIcon={loading ? <CircularProgress size={14} /> : <PublishIcon fontSize='small' />}
-          >Upload score card
-            <input
-              type="file"
-              hidden
-              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-              onChange={onChangeHandler}
-            />
-          </Button>
+          {
+            external &&
+            <Button
+              variant='outlined'
+              color='primary'
+              name='csv'
+              id='file'
+              component="label"
+              disabled={loading}
+              startIcon={loading ? <CircularProgress size={14} /> : <PublishIcon fontSize='small' />}
+            >Upload score card
+              <input
+                type="file"
+                hidden
+                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                onChange={onChangeHandler}
+              />
+            </Button>
+          }
         </div>
       </div>
       <div className={classes.tabsRoot}>

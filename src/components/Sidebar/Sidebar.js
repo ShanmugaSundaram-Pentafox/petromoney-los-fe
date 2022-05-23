@@ -287,6 +287,7 @@ const Sidebar = props => {
         <SidebarNav
           className={classes.nav}
           pages={pages}
+          currentUser={currentUser}
         />
         <div>
           <List>

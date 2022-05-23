@@ -73,9 +73,19 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/reports" component={DealersDueReport} />
       <ProtectedRoute allow exact path="/reports/remarks" component={CollectionRemarks} />
       <ProtectedRoute allow exact path="/reports/dpd" component={DpdReport} />
-      <ProtectedRoute allow exact path="/reports/projection" component={ProjectionReport} />
-      <ProtectedRoute allow exact path="/reports/opportunities" component={OpportunityReport} />
 
+      <ProtectedRoute 
+        exact 
+        path="/reports/projection" 
+        component={ProjectionReport} 
+        allow={permissionCheck(currentUser?.role_name, rulesList.projection_report)} 
+      />
+      <ProtectedRoute 
+        exact 
+        path="/reports/opportunities" 
+        component={OpportunityReport} 
+        allow={permissionCheck(currentUser?.role_name, rulesList.opportunity_report)} 
+      />
       <ProtectedRoute
         exact
         path="/customer/callback"

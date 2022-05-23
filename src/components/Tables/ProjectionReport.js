@@ -1,10 +1,8 @@
 import { Grid, makeStyles, Paper, Table, TableBody, TableCell, TableRow } from '@material-ui/core'
 import React, {useState} from 'react'
 import { useMount } from 'react-use'
-import { rulesList } from '../../config/userRules'
 import { LineChart } from '../../pages/dashboard/components/MetricsComponents'
 import { getProjectionReport } from '../../services/loans.service'
-import { permissionCheck } from '../UserCan/UserCan'
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -66,50 +64,49 @@ const ProjectionReport = ({currentUser}) => {
   return (
     <div>
       {
-        permissionCheck(currentUser.role_name, rulesList.projection_report) &&
-          <>
-            <Grid item md={12} style={{marginBottom: 20}}>
-              <Paper>
-                <LineChart chartData={LineChartData} title="Projection Graph" xAxis="Date" />
-                <div className={classes.horizondalTable}>
-                  <Table>
-                    <TableBody>
-                      <TableRow>
-                        <TableCell className={classes.tableHead}><strong>Date</strong></TableCell>
-                        {
+        <>
+          <Grid item md={12} style={{marginBottom: 20}}>
+            <Paper>
+              <LineChart chartData={LineChartData} title="Projection Graph" xAxis="Date" />
+              <div className={classes.horizondalTable}>
+                <Table>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell className={classes.tableHead}><strong>Date</strong></TableCell>
+                      {
                       projectionTableData?.map((item, i) => {
                         return(
                           <TableCell key={i} className={classes.item}>{item.due_date}</TableCell>
                         )
                       })
-                        }
-                      </TableRow>
-                      <TableRow>
-                        <TableCell className={classes.tableHead}><strong>Day</strong></TableCell>
-                        {
+                      }
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className={classes.tableHead}><strong>Day</strong></TableCell>
+                      {
                       projectionTableData?.map((item, i) => {
                         return(
                           <TableCell key={i} className={classes.item}>{item.day}</TableCell>
                         )
                       })
-                        }
-                      </TableRow>
-                      <TableRow>
-                        <TableCell className={classes.tableHead}><strong>Due Amount</strong></TableCell>
-                        {
+                      }
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className={classes.tableHead}><strong>Due Amount</strong></TableCell>
+                      {
                       projectionTableData?.map((item, i) => {
                         return(
                           <TableCell key={i} className={classes.item}>{currencyFormat(item.due_amount)}</TableCell>
                         )
                       })
-                        }
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </div>
-              </Paper>
-            </Grid>
-          </>
+                      }
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+            </Paper>
+          </Grid>
+        </>
       }
     </div>
   )

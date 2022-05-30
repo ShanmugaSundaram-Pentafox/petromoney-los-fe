@@ -198,6 +198,7 @@ const DrawerFooter = ({
     }
 
   }
+
   return (
     <div>
       <div className={classes.actionButtonsWrapper}>
@@ -209,7 +210,7 @@ const DrawerFooter = ({
             Back
           </Button>
           {
-            editable && status && ['loan_review', 'loan_approval', 'approved', 'rejected'].includes(status.toLowerCase()) && (
+            editable && status && ['loan_review', 'loan_approval', 'approved', 'rejected', 'disbursed'].includes(status.toLowerCase()) && (
               <UserCan
                 role={currentUser.role_name}
                 perform={rulesList.loan_approval}

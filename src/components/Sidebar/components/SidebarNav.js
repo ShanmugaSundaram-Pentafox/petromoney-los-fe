@@ -23,9 +23,11 @@ import PropTypes from 'prop-types';
 import React, { useState, forwardRef, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { NavLink as RouterLink } from 'react-router-dom';
+import { rulesList } from '../../../config/userRules';
 // import { getAllExceptions, getTransportsExceptions } from '../../../services/loans.service';
 import { resetCurrentUser } from '../../../store/user/user.actions';
 // import { getAllWithheldLoans } from '../../../services/withheld.services';
+import { permissionCheck } from '../../UserCan/UserCan';
 
 
 const useStyles = makeStyles(theme => ({
@@ -99,7 +101,7 @@ const CustomRouterLink = forwardRef((props, ref) => (
 ));
 
 const SidebarNav = props => {
-  const { pages, className, logout, ...rest } = props;
+  const { pages, className, logout, currentUser, ...rest } = props;
   const classes = useStyles();
   const [checked, setChecked] = React.useState(false);
   const [tap, setTap] = React.useState(false);
@@ -347,32 +349,38 @@ const SidebarNav = props => {
                   disableGutters
                   key={'projection'}
                 >
-                  <Button
-                    className={classes.button}
-                    activeClassName={classes.active}
-                    component={CustomRouterLink}
-                    to={'/reports/projection'}
-                    exact
-                  >
-                    <div className={classes.icon}><TimelineIcon /></div>
-                    {'Projection Report'}
-                  </Button>
+                  {
+                    permissionCheck(currentUser.role_name, rulesList.projection_report) &&
+                      <Button
+                        className={classes.button}
+                        activeClassName={classes.active}
+                        component={CustomRouterLink}
+                        to={'/reports/projection'}
+                        exact
+                      >
+                        <div className={classes.icon}><TimelineIcon /></div>
+                        {'Projection Report'}
+                      </Button>
+                  }
                 </ListItem>
                 <ListItem
                   className={classes.itemSub}
                   disableGutters
                   key={'projection'}
-                >
-                  <Button
-                    className={classes.button}
-                    activeClassName={classes.active}
-                    component={CustomRouterLink}
-                    to={'/reports/opportunities'}
-                    exact
-                  >
-                    <div className={classes.icon}><BarChartOutlinedIcon /></div>
-                    {'Opportunity Report'}
-                  </Button>
+                > 
+                  {
+                    permissionCheck(currentUser.role_name, rulesList.opportunity_report) &&
+                      <Button
+                        className={classes.button}
+                        activeClassName={classes.active}
+                        component={CustomRouterLink}
+                        to={'/reports/opportunities'}
+                        exact
+                      >
+                        <div className={classes.icon}><BarChartOutlinedIcon /></div>
+                        {'Opportunity Report'}
+                      </Button>
+                  }
                 </ListItem>
               </Collapse>
 

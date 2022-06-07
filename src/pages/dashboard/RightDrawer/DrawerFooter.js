@@ -1,4 +1,4 @@
-import { Dialog, DialogActions, DialogContent, FormGroup, Checkbox, Tooltip, FormControlLabel, Button, Typography, Chip, IconButton, CircularProgress } from '@material-ui/core';
+import { Dialog, DialogActions, DialogContent, FormGroup, Checkbox, Tooltip, FormControlLabel, Button, Typography, Chip, IconButton, CircularProgress, DialogContentText } from '@material-ui/core';
 import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';
 import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 import CloseIcon from '@material-ui/icons/CloseRounded';
@@ -13,6 +13,7 @@ import { useQuery } from 'react-query';
 import { Link as RouterLink } from 'react-router-dom';
 import { useMount } from 'react-use';
 import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
+import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import UserCan from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { getLoanById, getLoanRejectReason, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
@@ -50,6 +51,10 @@ const useStyles = makeStyles(theme => ({
     '&.MuiButton-contained': {
       backgroundColor: theme.palette.error.main,
       color: theme.palette.white
+    },
+    '&.MuiButton-outlined': {
+      color:  theme.palette.error.main,
+      borderColor:  theme.palette.error.main
     },
     '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.error.dark
@@ -90,6 +95,8 @@ const DrawerFooter = ({
   const classes = useStyles();
   const [reLoader, setReloader] = useState(false);
   const [rejectModal, setRejectModal] = useState(false);
+  const [pushback, setPushback] = useState(false);
+  const [pushbackRemarks, setPushbackRemarks] = useState();
   const [optionsData, setOptionsData] = useState([])
   const [selectedCategory, setSelectedCategory] = useState();
   const [activeTab, setActiveTab] = useState();
@@ -99,7 +106,14 @@ const DrawerFooter = ({
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState();
   const { enqueueSnackbar } = useSnackbar();
-
+  var pushback_condition = [ 'loan_approval', 'disbursement_approval', 'disbursement_approved' ];
+  /* The pushback_condition array is to check the condition for the pushback button, 
+  The push back button want to show for all the user expect the Approved field, 
+  Only the admin has the permission for the Approved field. */
+  if(currentUser.role_id == '1'){
+    /* The role_id = 1 is for Admin */
+    pushback_condition.push('approved')
+  }
   useMount(() => {
     getLoanRejectReason()
       .then(data => {
@@ -145,6 +159,41 @@ const DrawerFooter = ({
       .catch(() => {
         setReloader(false);
       })
+  }
+  const handlePushBack = () => {
+    let reqBody = {
+      user_id: currentUser.id,
+      pushback_remarks: pushbackRemarks,
+    }
+    if(pushbackRemarks?.length){
+      setLoading(true)
+      updateLoanApprovalStatusById(id, loanData.id, 'pushback', reqBody)
+        .then(res => {
+          enqueueSnackbar(res.message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
+          setTimeout(() => {
+            window.location.reload();
+            setLoading(false)
+          }, 1500)
+        })
+        .catch(err => {
+          setLoading(false)
+          enqueueSnackbar(err, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
+        })
+    } else {
+      setErrorMsg('Please enter the Remarks')
+    }
   }
   const removeItem = (item) => {
     setRejectReason(rejectReason.filter(value => value !== item.value))
@@ -198,7 +247,6 @@ const DrawerFooter = ({
     }
 
   }
-
   return (
     <div>
       <div className={classes.actionButtonsWrapper}>
@@ -216,11 +264,27 @@ const DrawerFooter = ({
                 perform={rulesList.loan_approval}
                 yes={() => (
                   <LoaderButton
-                    variant="contained"
+                    variant={status=='loan_review' ? 'outlined' : 'contained'}
                     className={clsx(classes.btn, classes.btnError)}
                     isLoading={reLoader}
                     onClick={handleResubmit}
-                    loadingText='submitting...'>Re-submit</LoaderButton>
+                    loadingText='submitting...'>{status=='loan_review' ? 'Push Back' : 'Re-Submit'}</LoaderButton>
+                  /* Checking if the user in the loan_review state then the Re-submit button will be displayed as Push Back, Because............ */
+                )}
+              />)
+          }
+          {
+            editable && status && pushback_condition.includes(status.toLowerCase()) && (
+              <UserCan
+                role={currentUser.role_name}
+                perform={rulesList.loan_approval}
+                yes={() => (
+                  <LoaderButton
+                    variant="outlined"
+                    className={clsx(classes.btn, classes.btnError)}
+                    isLoading={reLoader}
+                    onClick={() => setPushback(true)}
+                    loadingText='pushing back...'>Push Back</LoaderButton>
                 )}
               />)
           }
@@ -408,6 +472,31 @@ const DrawerFooter = ({
             <Button color='primary' variant='outlined' onClick={updateLoanStatus}>{loading ? <CircularProgress size={22} /> : 'Confirm'}</Button>
           </div>
         </DialogActions>
+      </Dialog>
+      <Dialog
+        open={pushback}
+        onClose={() => setPushback(false)}
+      >
+        <DialogContent>
+          <DialogContentText>
+            Please Enter the reason for Push back.
+          </DialogContentText>
+          <TextEditor setJSON={setPushbackRemarks} toolBar={true} />
+          {
+            errorMsg && 
+              <Alert severity="error" style={{padding: '0px 16px'}}>{errorMsg}</Alert>
+          }
+          <div style={{display: 'flex', justifyContent: 'center', marginTop: 8, marginBottom: 5}}>
+            <Button variant='outlined' style={{marginRight: 8}} onClick={() => setPushback(false)}>Cancel</Button>
+            <LoaderButton 
+              color='primary'
+              variant='contained'
+              isLoading={loading}
+              loadingText='Submitting...'
+              onClick={handlePushBack}
+            >Confirm</LoaderButton>
+          </div>
+        </DialogContent>
       </Dialog>
     </div >
   )

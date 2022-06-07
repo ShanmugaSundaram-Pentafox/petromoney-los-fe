@@ -1,4 +1,4 @@
-import { IconButton, Paper, Tooltip } from '@material-ui/core';
+import { Dialog, IconButton, Paper, Tooltip } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
@@ -227,14 +227,15 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
       }
-      <SignRequestLayout
-        open={modalVisible}
-        dealershipId={dealershipId}
-        loanId={loanId}
-        type={type}
-        title={'eSign Application Form'}
-        onClose={() => setModalVisible(false)}
-      />
+      <Dialog fullWidth maxWidth="md" open={modalVisible} onClose={() => setModalVisible(false)}>
+        <SignRequestLayout
+          dealershipId={dealershipId}
+          loanId={loanId}
+          type={type}
+          title={'eSign Application Form'}
+          onClose={() => setModalVisible(false)}
+        />
+      </Dialog>
     </div>
   )
 }

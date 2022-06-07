@@ -1,3 +1,4 @@
+import { Dialog } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
@@ -215,14 +216,15 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry, cur
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
       }
-      <SignRequestLayout
-        open={modalVisible}
-        dealershipId={dealershipId}
-        loanId={loanId}
-        type={type}
-        title={'eSign Application Form'}
-        onClose={() => setModalVisible(false)}
-      />
+      <Dialog fullWidth maxWidth="md" open={modalVisible} onClose={() => setModalVisible(false)}>
+        <SignRequestLayout
+          dealershipId={dealershipId}
+          loanId={loanId}
+          type={type}
+          title={'eSign Application Form'}
+          onClose={() => setModalVisible(false)}
+        />
+      </Dialog>
     </div>
   )
 }

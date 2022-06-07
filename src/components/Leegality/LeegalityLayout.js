@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { Backdrop, CircularProgress, Typography } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
@@ -68,6 +68,7 @@ const LeegalityLayout = ({ docId, dealershipId }) => {
   const [auditTrails, setAuditTrails] = useState([]);
   const [docDetails, setDocDetails] = useState({});
   const [successStatus, setSuccessStatus] = useState(false);
+  const [loading, setLoading] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState(null);
   // const [signUrl, setSignUrl] = useState();
   const { enqueueSnackbar } = useSnackbar();
@@ -80,23 +81,37 @@ const LeegalityLayout = ({ docId, dealershipId }) => {
 
   const handleClose = () => {
     setAnchorEl(null);
+    setDocDetails();
+    setAuditTrails();
   };
 
 
   useEffect(() => {
-
+    setLoading(true)
     apiCall(`dealership/${dealershipId}/document/${docId}`)
       .then(res => {
         if (res.status === 'SUCCESS') {
           if (res.data?.status) {
+            setLoading(false)
             setDocDetails(res?.data?.data)
           }
         } else {
+          setLoading(false)
           console.log('>> Document Details status error >> ', res)
+          setDocDetails()
         }
       })
       .catch(err => {
+        setLoading(false)
+        enqueueSnackbar(err.message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
         console.log(err)
+        setDocDetails()
       });
 
     apiCall(`document/trail/${docId}`)
@@ -107,16 +122,17 @@ const LeegalityLayout = ({ docId, dealershipId }) => {
           }
         } else {
           console.log('>> Document Trail Status error >> ', res);
+          setAuditTrails()
         }
       })
       .catch(err => {
         console.log(err)
+        setAuditTrails()
       });
   }, [])
 
   const ResendNotification = (signUrl) => {
     apiCall('document/resend', {
-
       method: 'POST',
       body: { 'sign_url': signUrl },
     })
@@ -138,32 +154,41 @@ const LeegalityLayout = ({ docId, dealershipId }) => {
       })
   }
   const ActivateDealer = () => {
+    setLoading(true)
     apiCall(`document/reactivate/${docId}`)
       .then(res => {
         apiCall(`dealership/${dealershipId}/document/${docId}`)
           .then(res => {
             if (res.status === 'SUCCESS') {
               if (res.data?.status) {
+                setLoading(false)
                 setDocDetails(res?.data?.data)
               }
             } else {
+              setLoading(false)
               console.log('>> Document Details status error >> ', res)
+              setDocDetails()
             }
           })
           .catch(err => {
             console.log(err)
+            setLoading(false)
+            setDocDetails()
           });
-
       })
       .catch(err => {
+        setLoading(false)
         console.log(err)
       })
   }
   return (
     <Box bgcolor="#fbfbfb">
       <Grid container spacing={2}>
-        <Grid item sm={6}>
-          {docDetails?.file && <PdfViewer title="Some Random File" file={docDetails.file} showDownload />}
+        <Grid item sm={6} style={{position: 'relative'}}>
+          {docId && docDetails?.file && <PdfViewer title="Some Random File" file={docDetails?.file} showDownload />}
+          <Backdrop open={loading} style={{position: 'absolute', zIndex: '2'}}>
+            <CircularProgress size={25} style={{color: 'white'}} />
+          </Backdrop>
         </Grid>
         <Grid item sm={3}>
           <Box pt={2}>

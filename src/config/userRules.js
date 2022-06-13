@@ -21,7 +21,8 @@ export const rulesList = {
   'applicant_delete': 'applicant:delete',
   'external_view': 'external:view',
   'dealership_view': 'dealership:view',
-  'external_lms': 'external:lms'
+  'external_lms': 'external:lms',
+  'phone_call' : 'phonecall:pdr',
 }
 
 export const rulesForUserRoles = {
@@ -104,6 +105,7 @@ export const rulesForUserRoles = {
       rulesList.projection_report,
       rulesList.applicant_delete,
       rulesList.external_lms,
+      rulesList.phone_call,
       rulesList.opportunity_report
     ]
   },

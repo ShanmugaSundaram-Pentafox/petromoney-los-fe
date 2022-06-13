@@ -123,7 +123,7 @@ const AddCreditPdForm = ({ data, dealer_id, callback, currentUser, editable }) =
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
-        <div>Add  Remarks</div>
+        <div>Add Remarks</div>
         <IconButton onClick={callback}  size='small'>
           <CloseIcon />
         </IconButton>

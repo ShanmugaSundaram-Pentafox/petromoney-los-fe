@@ -127,7 +127,7 @@ const DealerEditSideWrapper = ({
       .matches(/^\d{10}$/, 'Invalid mobile number')
       .required('Enter valid mobile number'),
     residing_since: Yup.number().nullable('Enter the year').required('Enter the year'),
-    marital_status: Yup.string('Enter your Marital status'),
+    marital_status: Yup.string().nullable('Enter your Marital status').required('Enter your Marital status'),
     pincode: Yup.string().nullable('Enter pincode').matches(/^[1-9][0-9]{5}$/, 'Invalid pincode').required('Enter pincode'),
     pan: Yup.string()
       .nullable('Enter PAN')

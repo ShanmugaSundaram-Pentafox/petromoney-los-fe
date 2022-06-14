@@ -1,7 +1,6 @@
 import { Grid, Typography, Drawer } from '@material-ui/core';
 import DialogContent from '@material-ui/core/DialogContent';
 import Tooltip from '@material-ui/core/Tooltip';
-import ContactPhoneOutlinedIcon from '@material-ui/icons/ContactPhoneOutlined';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
@@ -15,6 +14,7 @@ import { ReactComponent as AssetIcon } from '../../../icons/assets.svg';
 import { ReactComponent as BankIcon } from '../../../icons/bankIcon.svg';
 import { ReactComponent as BunkIcon } from '../../../icons/bunk.svg';
 import { ReactComponent as BusinessIcon } from '../../../icons/business.svg';
+import { ReactComponent as ContactsIcon } from '../../../icons/contacts.svg';
 import { ReactComponent as CreditIcon } from '../../../icons/credits_pd.svg';
 import { ReactComponent as IncomeIcon } from '../../../icons/income.svg';
 import { ReactComponent as InfrastructureIcon } from '../../../icons/infrastructure.svg';
@@ -367,7 +367,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
               <Grid item md={2}>
                 <Tooltip title="click to Call">
                   <div className={classes.content} onClick={() => setOpenPhonecall(true)}>
-                    <ContactPhoneOutlinedIcon width={30} className={classes.phone} />
+                    <ContactsIcon width={30} className={classes.icons} />
                     <Typography variant="h5" align='center' className={classes.title} >Call logs</Typography>
                   </div>
                 </Tooltip>

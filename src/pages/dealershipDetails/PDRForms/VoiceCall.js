@@ -185,7 +185,7 @@ const VoiceCall = ({ id, callback }) => {
       To: item.mobile,
       type: type,
     }
-    makeVoiceCallById(item.dealership_id, item.id, data)
+    makeVoiceCallById(item.dealership_id, data)
       .then(res => {
         setOpenDialog(false);
         enqueueSnackbar(res, {
@@ -260,7 +260,7 @@ const VoiceCall = ({ id, callback }) => {
                                 id == item.applicant_id && (
                                   <TableRow>
                                     <TableCell style={{ color: '#363637' }}>{`${item.to_mobile} (${item.to_user_name})`}</TableCell>
-                                    <TableCell><span>{item.start_date ? item.start_date : '-'}</span><span>{item.start_time && item.start_time}</span></TableCell>
+                                    <TableCell><span>{item.start_date ? item.start_date : '-'}</span> <span>{item.start_time && item.start_time}</span></TableCell>
                                     <TableCell>{item.duration ? item.duration + 's' : '-'}</TableCell>
                                     <TableCell>{item.status}</TableCell>
                                     <TableCell>

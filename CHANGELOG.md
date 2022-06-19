@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.16.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.15.0...v2.16.0) (2022-06-19)
+
+
+### Features
+
+* **push back:** add pushback option for loan application stages ([3100ae5](https://gitlab.com/vignesh3/petromall-fe/commit/3100ae54c64f569621a729a1e32a6bfe28756aac))
+* **voice-call:** add voice call feature in PDR ([e236376](https://gitlab.com/vignesh3/petromall-fe/commit/e236376bf4c5f7e85f2c6146caca4baf7181ed0b))
+
+
+### Bug Fixes
+
+* error msg ([508a278](https://gitlab.com/vignesh3/petromall-fe/commit/508a2783436de8bc2bf491652dfcfb112b29356e))
+* **Leegality:** fix Error Handling ([c1aeac4](https://gitlab.com/vignesh3/petromall-fe/commit/c1aeac4f7098bc801e58bf2dc8ab69d7df756a04))
+
 ## [2.15.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.14.2...v2.15.0) (2022-05-20)
 
 

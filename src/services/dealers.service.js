@@ -223,12 +223,10 @@ export const getPincodeDetails = (pincode) => {
 
 export const getKycStatus = (type, dealershipId, applicantId) => {
   return new Promise((resolve, reject) => {
-    apiCall(`vkyc/${dealershipId}/${applicantId}/initiation`, {
-      body: { type: type },
-    })
-      .then(({ status, data, message }) => {
+    apiCall(`vkyc/${dealershipId}/${applicantId}/initiation?type=${type}`)
+      .then(({ status, is_initiated, message }) => {
         if (status === 'SUCCESS') {
-          resolve(data);
+          resolve(is_initiated);
         } else {
           reject(message);
         }
@@ -241,11 +239,10 @@ export const getKycStatus = (type, dealershipId, applicantId) => {
 
 export const initiateKYC = (type, dealershipId, applicantId) => {
   return new Promise((resolve, reject) => {
-    apiCall(`vkyc/${dealershipId}/${applicantId}/initiation`, {
+    apiCall(`vkyc/${dealershipId}/${applicantId}/initiation?type=${type}`, {
       method: 'POST',
-      body: { type: type },
     })
-      .then(({ status, message }) => {
+      .then(({ status,is_initiated ,message }) => {
         if (status === 'SUCCESS') {
           resolve(message);
         } else {
@@ -257,20 +254,3 @@ export const initiateKYC = (type, dealershipId, applicantId) => {
       })
   });
 }
-
-// export const getSanctionLetterPdf = (loan_id,id) => {
-//   return new Promise((resolve, reject) => {
-//     apiCall(`loans/${loan_id}/${id}/sanction`)
-//       .then(({ status, data, message }) => {
-//         if (status === "SUCCESS") {
-//           resolve(data);
-
-//         } else {
-//           reject(message);
-//         }
-//       })
-//       .catch(e => {
-//         reject(e.message);
-//       })
-//   });
-// }

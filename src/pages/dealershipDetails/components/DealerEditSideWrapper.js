@@ -98,6 +98,7 @@ const DealerEditSideWrapper = ({
   const [selectedState, setSelectedState] = useState();
   const [panValidateData, setPanValidateData] = useState({ icon: false })
   const [aadharValidateData, setAadharValidateData] = useState({ icon: false })
+  const [kycStatus, setKycStatus] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   const handleEdit = () => {
@@ -106,11 +107,12 @@ const DealerEditSideWrapper = ({
 
   useEffect(() => {
     getKycStatus(modelType.toLowerCase(), values.dealership_id, values.id)
-      .then((message) => {
-        console.log('message >>>', message)
+      .then((data) => {
+        if(data === 1)
+          setKycStatus(true)
       })
       .catch((e) => {
-        console.log('error >>>', e)
+        console.log(e)
       })
   }, [modelType, data.dealership_id, data.id])
 
@@ -324,10 +326,24 @@ const DealerEditSideWrapper = ({
   const handleInitiateKYC = () => {
     initiateKYC(modelType.toLowerCase(), values.dealership_id, values.id)
       .then((message) => {
-        console.log('mess >>', message)
+        setKycStatus(true);
+        enqueueSnackbar(message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        });
       })
       .catch((err) => {
-        console.log('err >>>', err)
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+        logger(err);
       })
   }
 
@@ -438,7 +454,7 @@ const DealerEditSideWrapper = ({
                       className={clsx(classes.btn, classes.editButton)}
                       disabled={loading}
                       onClick={
-                        loading ? () => null : handleInitiateKYC
+                        kycStatus ? () => null : handleInitiateKYC
                       }
                     >
                       Initiate video KYC

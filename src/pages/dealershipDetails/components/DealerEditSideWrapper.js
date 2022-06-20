@@ -15,7 +15,7 @@ import clsx from 'clsx';
 import { format, parse } from 'date-fns';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import DealerEditForm from './DealerEditForm';
@@ -23,6 +23,7 @@ import { API } from '../../../config/api';
 import { logger } from '../../../config/logger';
 import { URL } from '../../../config/serverUrls';
 import { cryptoEncrypt } from '../../../services/crypto.service';
+import { getKycStatus, initiateKYC } from '../../../services/dealers.service';
 import { validateId } from '../../../services/dealerships.service';
 import { compareObject } from '../../../utils/compareObject.util';
 
@@ -95,13 +96,23 @@ const DealerEditSideWrapper = ({
   const [apiCallMessage, setApiCallMessage] = useState('');
   const [selectedDate, setSelectedDate] = useState();
   const [selectedState, setSelectedState] = useState();
-  const [panValidateData, setPanValidateData] = useState({icon: false})
-  const [aadharValidateData, setAadharValidateData] = useState({icon: false})
+  const [panValidateData, setPanValidateData] = useState({ icon: false })
+  const [aadharValidateData, setAadharValidateData] = useState({ icon: false })
   const { enqueueSnackbar } = useSnackbar();
 
   const handleEdit = () => {
     setReadOnly(!readOnly);
   };
+
+  useEffect(() => {
+    getKycStatus(modelType.toLowerCase(), values.dealership_id, values.id)
+      .then((message) => {
+        console.log('message >>>', message)
+      })
+      .catch((e) => {
+        console.log('error >>>', e)
+      })
+  }, [modelType, data.dealership_id, data.id])
 
   let coApplicantFields = {};
   if (modelType === 'COAPPLICANT') {
@@ -199,10 +210,10 @@ const DealerEditSideWrapper = ({
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: (values) => {
-      if(isAdd === 'Add'){
+      if (isAdd === 'Add') {
         validateId('pan', values?.pan)
           .then((res) => {
-            setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}})
+            setPanValidateData({ icon: true, loading: false, idType: 'PAN', details: res?.details || {} })
             !values?.first_name && setFieldValue('first_name', res?.details?.firstName)
             !values?.last_name && setFieldValue('last_name', res?.details?.lastName)
             res?.details?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
@@ -212,7 +223,7 @@ const DealerEditSideWrapper = ({
           })
           .catch(e => {
             console.log(e);
-            setPanValidateData({icon: true, idType: 'PAN'})
+            setPanValidateData({ icon: true, idType: 'PAN' })
           })
       }
       values.first_name = values.first_name.toUpperCase();
@@ -264,7 +275,7 @@ const DealerEditSideWrapper = ({
         })
         .then((res) => {
           setLoading(false);
-          if(res.status === 'SUCCESS'){
+          if (res.status === 'SUCCESS') {
             setApicallStatus('success');
             enqueueSnackbar(res.message, {
               anchorOrigin: {
@@ -275,8 +286,8 @@ const DealerEditSideWrapper = ({
             });
             onClose();
             modelType === 'DEALER' &&
-            queryClient.invalidateQueries(['dealers-coapplicant', id])
-  
+              queryClient.invalidateQueries(['dealers-coapplicant', id])
+
             modelType === 'COAPPLICANT' ?
               queryClient.invalidateQueries(['co-applicants', id]) : queryClient.invalidateQueries(['guarantors', id])
           } else {
@@ -309,6 +320,17 @@ const DealerEditSideWrapper = ({
   const handleStateChange = (state) => {
     setSelectedState(state);
   };
+
+  const handleInitiateKYC = () => {
+    initiateKYC(modelType.toLowerCase(), values.dealership_id, values.id)
+      .then((message) => {
+        console.log('mess >>', message)
+      })
+      .catch((err) => {
+        console.log('err >>>', err)
+      })
+  }
+
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant='h4'>
@@ -411,6 +433,16 @@ const DealerEditSideWrapper = ({
               {
                 !viewOnly &&
                   <div>
+                    <Button
+                      variant='outlined'
+                      className={clsx(classes.btn, classes.editButton)}
+                      disabled={loading}
+                      onClick={
+                        loading ? () => null : handleInitiateKYC
+                      }
+                    >
+                      Initiate video KYC
+                    </Button>
                     <Button
                       variant='contained'
                       className={clsx(classes.btn, classes.editButton)}

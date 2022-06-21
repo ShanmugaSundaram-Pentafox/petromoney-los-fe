@@ -150,7 +150,7 @@ const VoiceCall = ({ id, callback }) => {
   const [audio, setAudio] = useState(false)
   const [playing, setPlaying] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const { data: CallLogs = [], refetch } = useQuery('voice-call-log', () => getVoiceCallLogsById(id), { refetchOnWindowFocus: false })
+  const { data: CallLogs = [], refetch } = useQuery([id,'voice-call-log'], () => getVoiceCallLogsById(id), { refetchOnWindowFocus: false })
 
 
 

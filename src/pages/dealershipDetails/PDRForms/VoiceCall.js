@@ -150,7 +150,7 @@ const VoiceCall = ({ id, callback }) => {
   const [audio, setAudio] = useState(false)
   const [playing, setPlaying] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const { data: CallLogs = [], refetch } = useQuery('voice-call-log', () => getVoiceCallLogsById(id), { refetchOnWindowFocus: false })
+  const { data: CallLogs = [], refetch } = useQuery([id,'voice-call-log'], () => getVoiceCallLogsById(id), { refetchOnWindowFocus: false })
 
 
 
@@ -309,11 +309,11 @@ const VoiceCall = ({ id, callback }) => {
                   <Divider orientation='vertical' />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'row', marginTop: 12, width: '100%', justifyContent: 'space-between' }}>
-                  <CardWrapper title={'Co-applicants'} type={'dealer'} data={coapplicants} callback={handleVoiceCall} />
+                  <CardWrapper title={'Co-applicants'} type={'coapplicant'} data={coapplicants} callback={handleVoiceCall} />
                   <Divider orientation='vertical' />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'row', marginTop: 12, width: '100%', justifyContent: 'space-between' }}>
-                  <CardWrapper title={'Guarantors'} type={'dealer'} data={guarantors} callback={handleVoiceCall} />
+                  <CardWrapper title={'Guarantors'} type={'guarantor'} data={guarantors} callback={handleVoiceCall} />
                 </div>
               </div>
             </div>

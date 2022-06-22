@@ -140,7 +140,7 @@ const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, 
             <DrawerRemarks label={'Reviewer remarks'} loanData={loanData?.approval_remarks} readOnly={readOnly} />
             <DrawerRemarks label={'Approver remarks'} loanData={loanData?.remarks} readOnly={readOnly} />
             <DrawerRemarks label={'Recommendation remarks'} loanData={loanData?.disbursement_recommendation_remarks} readOnly={readOnly} />
-            {loanData?.pushback_remarks && <DrawerRemarks label={'Push back Remarks'} loanData={loanData?.pushback_remarks} readOnly={readOnly} />}
+            {/* {loanData?.pushback_remarks && <DrawerRemarks label={'Push back Remarks'} loanData={loanData?.pushback_remarks} readOnly={readOnly} />} */}
           </>
         </div>
         <div>

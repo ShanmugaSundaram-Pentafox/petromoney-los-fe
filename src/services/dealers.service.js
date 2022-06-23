@@ -226,7 +226,7 @@ export const getKycStatus = (type, dealershipId, applicantId) => {
     apiCall(`vkyc/${dealershipId}/${applicantId}/initiation?type=${type}`)
       .then(({ status, is_initiated, message }) => {
         if (status === 'SUCCESS') {
-          resolve(is_initiated);
+          resolve({status, is_initiated, message });
         } else {
           reject(message);
         }

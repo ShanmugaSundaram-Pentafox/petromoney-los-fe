@@ -264,16 +264,16 @@ const DrawerFooter = ({
                 perform={rulesList.loan_approval}
                 yes={() => (
                   <LoaderButton
-                    variant={status=='loan_review' ? 'outlined' : 'contained'}
+                    variant={'contained'}
                     className={clsx(classes.btn, classes.btnError)}
                     isLoading={reLoader}
                     onClick={handleResubmit}
-                    loadingText='submitting...'>{status=='loan_review' ? 'Push Back' : 'Re-Submit'}</LoaderButton>
+                    loadingText='submitting...'>{'Re-Submit'}</LoaderButton>
                   /* Checking if the user in the loan_review state then the Re-submit button will be displayed as Push Back, Because............ */
                 )}
               />)
           }
-          {
+          {/* {
             editable && status && pushback_condition.includes(status.toLowerCase()) && (
               <UserCan
                 role={currentUser.role_name}
@@ -287,7 +287,8 @@ const DrawerFooter = ({
                     loadingText='pushing back...'>Push Back</LoaderButton>
                 )}
               />)
-          }
+          } */}
+          {/* Push back API is not merged */}
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Button

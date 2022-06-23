@@ -1,10 +1,12 @@
 import { IconButton } from '@material-ui/core'
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { green } from '@material-ui/core/colors';
 import Divider from '@material-ui/core/Divider';
 import Step from '@material-ui/core/Step';
 import Stepper from '@material-ui/core/Stepper';
 import Typography from '@material-ui/core/Typography';
+import CheckRoundedIcon from '@material-ui/icons/CheckRounded';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
@@ -26,6 +28,7 @@ import { cryptoEncrypt } from '../../../services/crypto.service';
 import { getKycStatus, initiateKYC } from '../../../services/dealers.service';
 import { validateId } from '../../../services/dealerships.service';
 import { compareObject } from '../../../utils/compareObject.util';
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -108,8 +111,8 @@ const DealerEditSideWrapper = ({
   useEffect(() => {
     getKycStatus(modelType.toLowerCase(), values.dealership_id, values.id)
       .then((data) => {
-        if(data === 1)
-          setKycStatus(true)
+        if (data?.is_initiated === 1)
+          setKycStatus(true);
       })
       .catch((e) => {
         console.log(e)
@@ -448,17 +451,26 @@ const DealerEditSideWrapper = ({
               </div>
               {
                 !viewOnly &&
-                  <div>
-                    <Button
-                      variant='outlined'
-                      className={clsx(classes.btn, classes.editButton)}
-                      disabled={loading}
-                      onClick={
-                        kycStatus ? () => null : handleInitiateKYC
-                      }
-                    >
-                      Initiate video KYC
-                    </Button>
+                  <div style={{display:'flex',alignItems:'center'}}>
+                    {
+                      kycStatus ? (
+                        <div style={{display:'flex',alignItems:'center',marginRight:12,backgroundColor:green[100],padding:4,paddingRight:12,borderRadius:14}}>
+                          <CheckRoundedIcon style={{ color: green[400],marginRight:8 }} />
+                          <Typography style={{color:green[800]}}>VKYC already initiated</Typography>
+                        </div>
+                      ) : (
+                        <Button
+                          variant='outlined'
+                          className={clsx(classes.btn, classes.editButton)}
+                          disabled={loading}
+                          onClick={
+                            kycStatus ? () => null : handleInitiateKYC
+                          }
+                        >
+                          Initiate VKYC
+                        </Button>
+                      )
+                    }
                     <Button
                       variant='contained'
                       className={clsx(classes.btn, classes.editButton)}

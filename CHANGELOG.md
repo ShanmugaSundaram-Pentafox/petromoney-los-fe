@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.17.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.16.1...v2.17.0) (2022-06-23)
+
+
+### Features
+
+* **dealership-wrapper:** button for initiating VKYC ([bcf7b07](https://gitlab.com/vignesh3/petromall-fe/commit/bcf7b07fb7b6fcf7d851abbcc7be7dce6f602794))
+
+
+### Bug Fixes
+
+* hided the push back button ([5c660db](https://gitlab.com/vignesh3/petromall-fe/commit/5c660db0a5e181ca613929760e40720bb5b3838c))
+
 ### [2.16.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.16.0...v2.16.1) (2022-06-21)
 
 

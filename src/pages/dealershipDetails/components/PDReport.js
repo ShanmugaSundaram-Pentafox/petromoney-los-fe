@@ -483,7 +483,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       <Drawer
         anchor="right"
         open={openPhonecall}
-        onClose={() => setOpenPhonecall(false)}
+        // onClose={() => setOpenPhonecall(false)}
         variant="temporary"
       >
         <VoiceCall id={id} callback={handleEdit} />

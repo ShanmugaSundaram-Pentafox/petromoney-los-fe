@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.17.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.17.0...v2.17.1) (2022-06-27)
+
+
+### Bug Fixes
+
+* **call-logs:** Play/Pause issue fix and add delete option ([a95571c](https://gitlab.com/vignesh3/petromall-fe/commit/a95571c719544b12c02acdabec7283b296a56dd4))
+
 ## [2.17.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.16.1...v2.17.0) (2022-06-23)
 
 

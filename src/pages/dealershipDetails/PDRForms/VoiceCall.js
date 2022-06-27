@@ -7,7 +7,6 @@ import { makeStyles } from '@material-ui/styles';
 import { Howl } from 'howler';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
-import ReactHowler from 'react-howler';
 import { useQuery } from 'react-query';
 import Button from '../../../components/CommonComponents/Button/Button';
 import { getCoApplicantByDealershipId, getDealersByDealershipId } from '../../../services/dealers.service';
@@ -135,6 +134,16 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 12,
     marginBottom: 36,
     textAlign: 'center'
+  },
+  deleteicon: {
+    visibility: 'hidden',
+  },
+  tableroweffect: {
+    '&:hover': {
+      '& $deleteicon': {
+        visibility: 'visible',
+      },
+    }
   }
 }))
 
@@ -150,6 +159,13 @@ const VoiceCall = ({ id, callback }) => {
   const [audio, setAudio] = useState(false)
   const [playing, setPlaying] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [soundurl, setSoundurl] = useState(null);
+  const sound = new Howl({
+    urls: [soundurl],
+    src: [soundurl],
+    autoplay: true,
+    loop: false
+  })
   const { data: CallLogs = [], refetch } = useQuery([id,'voice-call-log'], () => getVoiceCallLogsById(id), { refetchOnWindowFocus: false })
 
 
@@ -215,23 +231,28 @@ const VoiceCall = ({ id, callback }) => {
     !appli_id.includes(id.applicant_id) && appli_id.push(id.applicant_id) && appli_name.push(id.first_name) && appli_number.push(id.from_mobile) && appli_type.push(id.applicant_type)
   })
 
-  const handleSound = (data, i) => {
-    const sound = new Howl({
-      urls: [data],
-      src: [data],
-      autoplay: true,
-      loop: false
-    })
-    sound.play();
-    setAnchorEl(data)
-    setAudio(true)
+  const handleSound = (data, i, log) => {
+    sound.pause();
+    setSoundurl(data)
+    if(log=='play' && playing.playing==true){
+      playing.playing=false;
+    }
+    else{
+      sound.pause();
+      setPlaying({ id: i, playing: !playing.playing });
+    }
     setPlaying({ id: i, playing: !playing.playing });
   }
+
+  const handleDelete = (data) => {
+    {/* This function is to handle the delete for call logs */}
+  }
+
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
         <div>Call logs</div>
-        <IconButton onClick={callback} size='small'>
+        <IconButton onClick={() => {callback(); handleSound(null, null, 'pause')} } size='small'>
           <CloseIcon />
         </IconButton>
       </Typography>
@@ -253,12 +274,14 @@ const VoiceCall = ({ id, callback }) => {
                             <TableCell>Duration</TableCell>
                             <TableCell>Status</TableCell>
                             <TableCell style={{ width: '12%' }}>Recordings</TableCell>
+                            {/* <TableCell></TableCell> */} {/* this is used to to show the delete option when the pint the row using hover effect */}
+                            {/* call logs API is not ready */}
                           </TableRow>
                           {
                             CallLogs?.map((item, itemIndex) => {
                               return (
                                 id == item.applicant_id && (
-                                  <TableRow>
+                                  <TableRow className={classes.tableroweffect}>
                                     <TableCell style={{ color: '#363637' }}>{`${item.to_mobile} (${item.to_user_name})`}</TableCell>
                                     <TableCell><span>{item.start_date ? item.start_date : '-'}</span> <span>{item.start_time && item.start_time}</span></TableCell>
                                     <TableCell>{item.duration ? item.duration + 's' : '-'}</TableCell>
@@ -267,16 +290,18 @@ const VoiceCall = ({ id, callback }) => {
                                       {
                                         item.recording_url ? (
                                           playing.id == itemIndex && playing.playing ?
-                                            <IconButton onClick={() => { setPlaying({ id: itemIndex, playing: !playing.playing }); setAudio(false) }} style={{ padding: 0 }}>
+                                            <IconButton onClick={() => handleSound(null, itemIndex, 'pause')} style={{ padding: 0 }}>
                                               <PauseIcon className={classes.audioIcon} /> <span className={classes.iconLabel}>{'Pause'}</span>
                                             </IconButton> :
-                                            <IconButton onClick={() => handleSound(item.recording_url, itemIndex)} style={{ padding: 0 }}>
+                                            <IconButton onClick={() => handleSound(item.recording_url, itemIndex, 'play')} style={{ padding: 0 }}>
                                               <PlayArrowIcon className={classes.audioIcon} /> <span className={classes.iconLabel}>{'Play'}</span>
                                             </IconButton>
                                         ) : <Typography style={{ marginLeft: 2 }}>-</Typography>
                                       }
-                                      <ReactHowler playing={audio} src={[anchorEl]} />
                                     </TableCell>
+                                    {/* <TableCell className={classes.deleteicon}>
+                                      <IconButton onClick={() => handleDelete(item)}><DeleteIcon  /></IconButton> 
+                                    </TableCell> */} {/* call logs API is not ready */}
                                   </TableRow>)
                               )
                             })
@@ -327,7 +352,7 @@ const VoiceCall = ({ id, callback }) => {
             variant="contained"
             className={classes.initiateButton}
             startIcon={<PhoneTwoToneIcon />}
-            onClick={() => setOpenDialog(true)}
+            onClick={() => {setOpenDialog(true); handleSound(null, null, 'pause')}}
           >
             Initiate Call
           </Button>

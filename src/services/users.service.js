@@ -429,3 +429,21 @@ export const makeVoiceCallById = (dealershipId, data) => {
       })
   });
 }
+
+export const deleteVoiceCallById = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`voicecall/log/${id}`,{
+      method: 'DELETE'
+    })
+      .then(res => {
+        if (res.status === 'SUCCESS') {
+          resolve(res);
+        } else {
+          reject(res);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

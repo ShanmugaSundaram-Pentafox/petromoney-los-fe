@@ -1,5 +1,6 @@
 import { Dialog, DialogContent, DialogTitle, Divider, Grid, IconButton, Table, TableCell, TableRow, Typography } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
+import DeleteIcon from '@material-ui/icons/Delete';
 import PauseIcon from '@material-ui/icons/Pause';
 import PhoneTwoToneIcon from '@material-ui/icons/PhoneTwoTone';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
@@ -11,7 +12,7 @@ import { useQuery } from 'react-query';
 import Button from '../../../components/CommonComponents/Button/Button';
 import { getCoApplicantByDealershipId, getDealersByDealershipId } from '../../../services/dealers.service';
 import { getAllGuarantor } from '../../../services/leegality.service';
-import { getVoiceCallLogsById, makeVoiceCallById } from '../../../services/users.service';
+import { deleteVoiceCallById, getVoiceCallLogsById, makeVoiceCallById } from '../../../services/users.service';
 
 export const CardWrapper = ({ title, data, callback, type }) => {
   const classes = useStyles();
@@ -244,7 +245,38 @@ const VoiceCall = ({ id, callback }) => {
     setPlaying({ id: i, playing: !playing.playing });
   }
 
-  const handleDelete = (data) => {
+  const handleDelete = (id) => {
+    deleteVoiceCallById(id)
+      .then(res => {
+        console.log(res);
+        if(res.status == 'SUCCESS') {
+          enqueueSnackbar(res.message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          });
+          refetch();
+        } else {
+          enqueueSnackbar(res.message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          });
+        }
+      })
+      .catch((e) => {
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      });
     {/* This function is to handle the delete for call logs */}
   }
 
@@ -274,8 +306,7 @@ const VoiceCall = ({ id, callback }) => {
                             <TableCell>Duration</TableCell>
                             <TableCell>Status</TableCell>
                             <TableCell style={{ width: '12%' }}>Recordings</TableCell>
-                            {/* <TableCell></TableCell> */} {/* this is used to to show the delete option when the pint the row using hover effect */}
-                            {/* call logs API is not ready */}
+                            
                           </TableRow>
                           {
                             CallLogs?.map((item, itemIndex) => {
@@ -299,9 +330,9 @@ const VoiceCall = ({ id, callback }) => {
                                         ) : <Typography style={{ marginLeft: 2 }}>-</Typography>
                                       }
                                     </TableCell>
-                                    {/* <TableCell className={classes.deleteicon}>
-                                      <IconButton onClick={() => handleDelete(item)}><DeleteIcon  /></IconButton> 
-                                    </TableCell> */} {/* call logs API is not ready */}
+                                    <TableCell className={classes.deleteicon}>
+                                      <IconButton onClick={() => handleDelete(item.id)}><DeleteIcon  /></IconButton> 
+                                    </TableCell> {/* shows delete button for call logs by hovering it */}
                                   </TableRow>)
                               )
                             })

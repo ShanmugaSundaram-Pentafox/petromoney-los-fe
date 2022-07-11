@@ -85,6 +85,7 @@ export const rulesForUserRoles = {
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
+      rulesList.phone_call,
     ]
   },
   ADMIN: {
@@ -122,6 +123,7 @@ export const rulesForUserRoles = {
       rulesList.financial_view,
       rulesList.upload_statement,
       rulesList.region_map,
+      rulesList.phone_call,
     ]
   },
   OPS_EXEC: {
@@ -160,6 +162,7 @@ export const rulesForUserRoles = {
       rulesList.financial_view,
       rulesList.upload_statement,
       rulesList.region_map,
+      rulesList.phone_call,
     ]
   },
   SALES_HEAD_STATE: {

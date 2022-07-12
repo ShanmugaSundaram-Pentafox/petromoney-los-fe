@@ -1,6 +1,7 @@
-import { Dialog, DialogContent, DialogTitle, Divider, Grid, IconButton, Table, TableCell, TableRow, Typography } from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, DialogTitle, Divider, Grid, IconButton, Table, TableCell, TableRow, Typography } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import DeleteIcon from '@material-ui/icons/Delete';
+import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
 import PauseIcon from '@material-ui/icons/Pause';
 import PhoneTwoToneIcon from '@material-ui/icons/PhoneTwoTone';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
@@ -161,6 +162,8 @@ const VoiceCall = ({ id, callback }) => {
   const [playing, setPlaying] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [soundurl, setSoundurl] = useState(null);
+  const [deleteModel, setDeleteModel] = useState(false);
+  const [deleteId, setDeleteId] = useState();
   const sound = new Howl({
     urls: [soundurl],
     src: [soundurl],
@@ -168,8 +171,6 @@ const VoiceCall = ({ id, callback }) => {
     loop: false
   })
   const { data: CallLogs = [], refetch } = useQuery([id,'voice-call-log'], () => getVoiceCallLogsById(id), { refetchOnWindowFocus: false })
-
-
 
   useEffect(() => {
     if (id) {
@@ -250,6 +251,7 @@ const VoiceCall = ({ id, callback }) => {
       .then(res => {
         console.log(res);
         if(res.status == 'SUCCESS') {
+          setDeleteModel(false)
           enqueueSnackbar(res.message, {
             anchorOrigin: {
               vertical: 'top',
@@ -259,6 +261,7 @@ const VoiceCall = ({ id, callback }) => {
           });
           refetch();
         } else {
+          setDeleteModel(false)
           enqueueSnackbar(res.message, {
             anchorOrigin: {
               vertical: 'top',
@@ -269,6 +272,7 @@ const VoiceCall = ({ id, callback }) => {
         }
       })
       .catch((e) => {
+        setDeleteModel(false)
         enqueueSnackbar(e, {
           anchorOrigin: {
             vertical: 'top',
@@ -281,115 +285,137 @@ const VoiceCall = ({ id, callback }) => {
   }
 
   return (
-    <div className={classes.sidePanelFormWrapper}>
-      <Typography className={classes.sidePanelTitle} variant="h4">
-        <div>Call logs</div>
-        <IconButton onClick={() => {callback(); handleSound(null, null, 'pause')} } size='small'>
-          <CloseIcon />
-        </IconButton>
-      </Typography>
-      <div className={classes.sidePanelFormContentWrapper}>
-        <div className={classes.stepperRoot}>
-          <Grid container spacing={2}>
-            <Grid item md={12}>
-              {
-                appli_id.length > 0 ?
-                  (appli_id?.map((id, idIndex) => {
-                    return (
-                      <div key={idIndex} style={{ marginTop: '20px' }}>
-                        <Typography variant='h4' style={{ marginLeft: '10px' }}>{`${appli_name[idIndex]} (${appli_number[idIndex]})`}</Typography>
-                        <Typography variant='h4' style={{ marginLeft: 10, marginBottom: 4, color: '#969696' }}>{appli_type[idIndex]}</Typography>
-                        <Table>
-                          <TableRow>
-                            <TableCell style={{ width: '30%' }}>From</TableCell>
-                            <TableCell>Time</TableCell>
-                            <TableCell>Duration</TableCell>
-                            <TableCell>Status</TableCell>
-                            <TableCell style={{ width: '12%' }}>Recordings</TableCell>
-                            
-                          </TableRow>
-                          {
-                            CallLogs?.map((item, itemIndex) => {
-                              return (
-                                id == item.applicant_id && (
-                                  <TableRow className={classes.tableroweffect}>
-                                    <TableCell style={{ color: '#363637' }}>{`${item.to_mobile} (${item.to_user_name})`}</TableCell>
-                                    <TableCell><span>{item.start_date ? item.start_date : '-'}</span> <span>{item.start_time && item.start_time}</span></TableCell>
-                                    <TableCell>{item.duration ? item.duration + 's' : '-'}</TableCell>
-                                    <TableCell>{item.status}</TableCell>
-                                    <TableCell>
-                                      {
-                                        item.recording_url ? (
-                                          playing.id == itemIndex && playing.playing ?
-                                            <IconButton onClick={() => handleSound(null, itemIndex, 'pause')} style={{ padding: 0 }}>
-                                              <PauseIcon className={classes.audioIcon} /> <span className={classes.iconLabel}>{'Pause'}</span>
-                                            </IconButton> :
-                                            <IconButton onClick={() => handleSound(item.recording_url, itemIndex, 'play')} style={{ padding: 0 }}>
-                                              <PlayArrowIcon className={classes.audioIcon} /> <span className={classes.iconLabel}>{'Play'}</span>
-                                            </IconButton>
-                                        ) : <Typography style={{ marginLeft: 2 }}>-</Typography>
-                                      }
-                                    </TableCell>
-                                    <TableCell className={classes.deleteicon}>
-                                      <IconButton onClick={() => handleDelete(item.id)}><DeleteIcon  /></IconButton> 
-                                    </TableCell> {/* shows delete button for call logs by hovering it */}
-                                  </TableRow>)
-                              )
-                            })
-                          }
-                        </Table>
-                      </div>
-                    )
-                  })) : <Typography className={classes.typo}>No logs found...</Typography>
-              }
+    <>
+      <div className={classes.sidePanelFormWrapper}>
+        <Typography className={classes.sidePanelTitle} variant="h4">
+          <div>Call logs</div>
+          <IconButton onClick={() => {callback(); handleSound(null, null, 'pause')} } size='small'>
+            <CloseIcon />
+          </IconButton>
+        </Typography>
+        <div className={classes.sidePanelFormContentWrapper}>
+          <div className={classes.stepperRoot}>
+            <Grid container spacing={2}>
+              <Grid item md={12}>
+                {
+                  appli_id.length > 0 ?
+                    (appli_id?.map((id, idIndex) => {
+                      return (
+                        <div key={idIndex} style={{ marginTop: '20px' }}>
+                          <Typography variant='h4' style={{ marginLeft: '10px' }}>{`${appli_name[idIndex]} (${appli_number[idIndex]})`}</Typography>
+                          <Typography variant='h4' style={{ marginLeft: 10, marginBottom: 4, color: '#969696' }}>{appli_type[idIndex]}</Typography>
+                          <Table>
+                            <TableRow>
+                              <TableCell style={{ width: '30%' }}>From</TableCell>
+                              <TableCell>Time</TableCell>
+                              <TableCell>Duration</TableCell>
+                              <TableCell>Status</TableCell>
+                              <TableCell style={{ width: '12%' }}>Recordings</TableCell>
+                              
+                            </TableRow>
+                            {
+                              CallLogs?.map((item, itemIndex) => {
+                                return (
+                                  id == item.applicant_id && (
+                                    <TableRow className={classes.tableroweffect}>
+                                      <TableCell style={{ color: '#363637' }}>{`${item.to_mobile} (${item.to_user_name})`}</TableCell>
+                                      <TableCell><span>{item.start_date ? item.start_date : '-'}</span> <span>{item.start_time && item.start_time}</span></TableCell>
+                                      <TableCell>{item.duration ? item.duration + 's' : '-'}</TableCell>
+                                      <TableCell>{item.status}</TableCell>
+                                      <TableCell>
+                                        {
+                                          item.recording_url ? (
+                                            playing.id == itemIndex && playing.playing ?
+                                              <IconButton onClick={() => handleSound(null, itemIndex, 'pause')} style={{ padding: 0 }}>
+                                                <PauseIcon className={classes.audioIcon} /> <span className={classes.iconLabel}>{'Pause'}</span>
+                                              </IconButton> :
+                                              <IconButton onClick={() => handleSound(item.recording_url, itemIndex, 'play')} style={{ padding: 0 }}>
+                                                <PlayArrowIcon className={classes.audioIcon} /> <span className={classes.iconLabel}>{'Play'}</span>
+                                              </IconButton>
+                                          ) : <Typography style={{ marginLeft: 2 }}>-</Typography>
+                                        }
+                                      </TableCell>
+                                      <TableCell className={classes.deleteicon}>
+                                        <IconButton onClick={() => {setDeleteModel(true); setDeleteId(item.id)} }><DeleteIcon  /></IconButton> 
+                                      </TableCell> {/* shows delete button for call logs by hovering it */}
+                                    </TableRow>)
+                                )
+                              })
+                            }
+                          </Table>
+                        </div>
+                      )
+                    })) : <Typography className={classes.typo}>No logs found...</Typography>
+                }
+              </Grid>
             </Grid>
-          </Grid>
+          </div>
         </div>
-      </div>
-      <div>
-        <Dialog onClose={() => setOpenDialog(false)} open={openDialog} maxWidth='md' fullWidth>
-          <DialogTitle>
-            <div className={classes.callboxtitle}>
-              <Typography variant="h3">Initiate Call</Typography>
-              <IconButton onClick={() => setOpenDialog(false)} size='small'>
-                <CloseIcon />
-              </IconButton>
-            </div>
-          </DialogTitle>
-          <DialogContent>
-            <Divider />
-            <div className={classes.dialogWrapper}>
-              <div className={classes.dialogcontent}>
-                <div style={{ display: 'flex', flexDirection: 'row', marginTop: 12, width: '100%', justifyContent: 'space-between' }}>
-                  <CardWrapper title={'Dealers'} type={'dealer'} data={dealers} callback={handleVoiceCall} />
-                  <Divider orientation='vertical' />
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'row', marginTop: 12, width: '100%', justifyContent: 'space-between' }}>
-                  <CardWrapper title={'Co-applicants'} type={'coapplicant'} data={coapplicants} callback={handleVoiceCall} />
-                  <Divider orientation='vertical' />
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'row', marginTop: 12, width: '100%', justifyContent: 'space-between' }}>
-                  <CardWrapper title={'Guarantors'} type={'guarantor'} data={guarantors} callback={handleVoiceCall} />
+        <div>
+          <Dialog onClose={() => setOpenDialog(false)} open={openDialog} maxWidth='md' fullWidth>
+            <DialogTitle>
+              <div className={classes.callboxtitle}>
+                <Typography variant="h3">Initiate Call</Typography>
+                <IconButton onClick={() => setOpenDialog(false)} size='small'>
+                  <CloseIcon />
+                </IconButton>
+              </div>
+            </DialogTitle>
+            <DialogContent>
+              <Divider />
+              <div className={classes.dialogWrapper}>
+                <div className={classes.dialogcontent}>
+                  <div style={{ display: 'flex', flexDirection: 'row', marginTop: 12, width: '100%', justifyContent: 'space-between' }}>
+                    <CardWrapper title={'Dealers'} type={'dealer'} data={dealers} callback={handleVoiceCall} />
+                    <Divider orientation='vertical' />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'row', marginTop: 12, width: '100%', justifyContent: 'space-between' }}>
+                    <CardWrapper title={'Co-applicants'} type={'coapplicant'} data={coapplicants} callback={handleVoiceCall} />
+                    <Divider orientation='vertical' />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'row', marginTop: 12, width: '100%', justifyContent: 'space-between' }}>
+                    <CardWrapper title={'Guarantors'} type={'guarantor'} data={guarantors} callback={handleVoiceCall} />
+                  </div>
                 </div>
               </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </div>
-      <div className={classes.actionFooter}>
-        <Divider />
-        <div className={classes.actionButtonsWrapper}>
-          <Button
-            variant="contained"
-            className={classes.initiateButton}
-            startIcon={<PhoneTwoToneIcon />}
-            onClick={() => {setOpenDialog(true); handleSound(null, null, 'pause')}}
-          >
-            Initiate Call
-          </Button>
+            </DialogContent>
+          </Dialog>
+        </div>
+        <div className={classes.actionFooter}>
+          <Divider />
+          <div className={classes.actionButtonsWrapper}>
+            <Button
+              variant="contained"
+              className={classes.initiateButton}
+              startIcon={<PhoneTwoToneIcon />}
+              onClick={() => {setOpenDialog(true); handleSound(null, null, 'pause')}}
+            >
+              Initiate Call
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+      <Dialog 
+        open={deleteModel}
+        onClose={() => setDeleteModel(false)}
+        maxWidth='xs'
+        fullWidth
+      >
+        <DialogContent>
+          <div style={{textAlign: 'center', marginBottom: 16}}>
+            <InfoCircleOutlined style={{fontSize: 48, color: 'rgb(255,59,48)', margin: 16, marginBottom: 20}} />
+            <Typography variant='h3'>Are you sure?</Typography>
+          </div>
+          <DialogContentText style={{textAlign: 'center'}}>Need to Delete this log</DialogContentText>
+        </DialogContent>
+        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: 19}}>
+          <Button size='medium' variant='outlined' onClick={() => setDeleteModel(false)}>Cancel</Button>
+          <Button variant='contained' size='medium' style={{backgroundColor: 'rgb(255,59,48)', color: 'white', marginLeft: 16}} onClick={() => handleDelete(deleteId) }>
+            Delete
+          </Button>
+        </div>
+      </Dialog>
+    </>
   )
 }
 

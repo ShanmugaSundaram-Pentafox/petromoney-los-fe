@@ -1,7 +1,5 @@
-import { Dialog, DialogContent, DialogContentText, DialogTitle, Divider, Grid, IconButton, Table, TableCell, TableRow, Typography } from '@material-ui/core';
+import { Dialog, DialogContent, DialogTitle, Divider, Grid, IconButton, Table, TableCell, TableRow, Typography } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
-import DeleteIcon from '@material-ui/icons/Delete';
-import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
 import PauseIcon from '@material-ui/icons/Pause';
 import PhoneTwoToneIcon from '@material-ui/icons/PhoneTwoTone';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
@@ -11,6 +9,7 @@ import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import Button from '../../../components/CommonComponents/Button/Button';
+import DeleteButton from '../../../components/CommonComponents/Button/DeleteButton';
 import { getCoApplicantByDealershipId, getDealersByDealershipId } from '../../../services/dealers.service';
 import { getAllGuarantor } from '../../../services/leegality.service';
 import { deleteVoiceCallById, getVoiceCallLogsById, makeVoiceCallById } from '../../../services/users.service';
@@ -170,7 +169,7 @@ const VoiceCall = ({ id, callback }) => {
     autoplay: true,
     loop: false
   })
-  const { data: CallLogs = [], refetch } = useQuery([id,'voice-call-log'], () => getVoiceCallLogsById(id), { refetchOnWindowFocus: false })
+  const { data: CallLogs = [], refetch } = useQuery([id,'voice-call-log'], () => id && getVoiceCallLogsById(id), { refetchOnWindowFocus: false })
 
   useEffect(() => {
     if (id) {
@@ -229,7 +228,7 @@ const VoiceCall = ({ id, callback }) => {
   const appli_name = [];
   const appli_number = [];
   const appli_type = [];
-  CallLogs.map(id => {
+  var type = CallLogs?.map(id => {
     !appli_id.includes(id.applicant_id) && appli_id.push(id.applicant_id) && appli_name.push(id.first_name) && appli_number.push(id.from_mobile) && appli_type.push(id.applicant_type)
   })
 
@@ -336,7 +335,7 @@ const VoiceCall = ({ id, callback }) => {
                                         }
                                       </TableCell>
                                       <TableCell className={classes.deleteicon}>
-                                        <IconButton onClick={() => {setDeleteModel(true); setDeleteId(item.id)} }><DeleteIcon  /></IconButton> 
+                                        <DeleteButton alertText=  {`Do you really want to delete this call log from ${item.to_user_name}`} deleteAction={handleDelete(item.id)} deleteModal={deleteModel} setDeleteModal={setDeleteModel} id={item.id} />
                                       </TableCell> {/* shows delete button for call logs by hovering it */}
                                     </TableRow>)
                                 )
@@ -395,26 +394,6 @@ const VoiceCall = ({ id, callback }) => {
           </div>
         </div>
       </div>
-      <Dialog 
-        open={deleteModel}
-        onClose={() => setDeleteModel(false)}
-        maxWidth='xs'
-        fullWidth
-      >
-        <DialogContent>
-          <div style={{textAlign: 'center', marginBottom: 16}}>
-            <InfoCircleOutlined style={{fontSize: 48, color: 'rgb(255,59,48)', margin: 16, marginBottom: 20}} />
-            <Typography variant='h3'>Are you sure?</Typography>
-          </div>
-          <DialogContentText style={{textAlign: 'center'}}>Need to Delete this log</DialogContentText>
-        </DialogContent>
-        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: 19}}>
-          <Button size='medium' variant='outlined' onClick={() => setDeleteModel(false)}>Cancel</Button>
-          <Button variant='contained' size='medium' style={{backgroundColor: 'rgb(255,59,48)', color: 'white', marginLeft: 16}} onClick={() => handleDelete(deleteId) }>
-            Delete
-          </Button>
-        </div>
-      </Dialog>
     </>
   )
 }

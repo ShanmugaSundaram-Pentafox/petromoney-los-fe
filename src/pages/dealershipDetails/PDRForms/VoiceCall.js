@@ -169,7 +169,7 @@ const VoiceCall = ({ id, callback }) => {
     autoplay: true,
     loop: false
   })
-  const { data: CallLogs = [], refetch } = useQuery([id,'voice-call-log'], () => id && getVoiceCallLogsById(id), { refetchOnWindowFocus: false })
+  const { data: CallLogs = [], refetch } = useQuery(['voice-call-log', id], () => getVoiceCallLogsById(id), { refetchOnWindowFocus: false })
 
   useEffect(() => {
     if (id) {
@@ -248,7 +248,6 @@ const VoiceCall = ({ id, callback }) => {
   const handleDelete = (id) => {
     deleteVoiceCallById(id)
       .then(res => {
-        console.log(res);
         if(res.status == 'SUCCESS') {
           setDeleteModel(false)
           enqueueSnackbar(res.message, {
@@ -335,7 +334,7 @@ const VoiceCall = ({ id, callback }) => {
                                         }
                                       </TableCell>
                                       <TableCell className={classes.deleteicon}>
-                                        <DeleteButton alertText=  {`Do you really want to delete this call log from ${item.to_user_name}`} deleteAction={handleDelete(item.id)} deleteModal={deleteModel} setDeleteModal={setDeleteModel} id={item.id} />
+                                        <DeleteButton alertText=  {`Do you really want to delete this call log from ${item.to_user_name} (${item.to_mobile})`} deleteAction={() => handleDelete(item.id)} deleteModal={deleteModel} setDeleteModal={setDeleteModel} id={itemIndex} buttonType='icon' />
                                       </TableCell> {/* shows delete button for call logs by hovering it */}
                                     </TableRow>)
                                 )

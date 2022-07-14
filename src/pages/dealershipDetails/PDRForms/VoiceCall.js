@@ -9,9 +9,10 @@ import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import Button from '../../../components/CommonComponents/Button/Button';
+import DeleteButton from '../../../components/CommonComponents/Button/DeleteButton';
 import { getCoApplicantByDealershipId, getDealersByDealershipId } from '../../../services/dealers.service';
 import { getAllGuarantor } from '../../../services/leegality.service';
-import { getVoiceCallLogsById, makeVoiceCallById } from '../../../services/users.service';
+import { deleteVoiceCallById, getVoiceCallLogsById, makeVoiceCallById } from '../../../services/users.service';
 
 export const CardWrapper = ({ title, data, callback, type }) => {
   const classes = useStyles();
@@ -160,15 +161,15 @@ const VoiceCall = ({ id, callback }) => {
   const [playing, setPlaying] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [soundurl, setSoundurl] = useState(null);
+  const [deleteModel, setDeleteModel] = useState(false);
+  const [deleteId, setDeleteId] = useState();
   const sound = new Howl({
     urls: [soundurl],
     src: [soundurl],
     autoplay: true,
     loop: false
   })
-  const { data: CallLogs = [], refetch } = useQuery([id,'voice-call-log'], () => getVoiceCallLogsById(id), { refetchOnWindowFocus: false })
-
-
+  const { data: CallLogs = [], refetch } = useQuery(['voice-call-log', id], () => getVoiceCallLogsById(id), { refetchOnWindowFocus: false })
 
   useEffect(() => {
     if (id) {
@@ -227,7 +228,7 @@ const VoiceCall = ({ id, callback }) => {
   const appli_name = [];
   const appli_number = [];
   const appli_type = [];
-  CallLogs.map(id => {
+  var type = CallLogs?.map(id => {
     !appli_id.includes(id.applicant_id) && appli_id.push(id.applicant_id) && appli_name.push(id.first_name) && appli_number.push(id.from_mobile) && appli_type.push(id.applicant_type)
   })
 
@@ -244,121 +245,155 @@ const VoiceCall = ({ id, callback }) => {
     setPlaying({ id: i, playing: !playing.playing });
   }
 
-  const handleDelete = (data) => {
+  const handleDelete = (id) => {
+    deleteVoiceCallById(id)
+      .then(res => {
+        if(res.status == 'SUCCESS') {
+          setDeleteModel(false)
+          enqueueSnackbar(res.message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          });
+          refetch();
+        } else {
+          setDeleteModel(false)
+          enqueueSnackbar(res.message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          });
+        }
+      })
+      .catch((e) => {
+        setDeleteModel(false)
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      });
     {/* This function is to handle the delete for call logs */}
   }
 
   return (
-    <div className={classes.sidePanelFormWrapper}>
-      <Typography className={classes.sidePanelTitle} variant="h4">
-        <div>Call logs</div>
-        <IconButton onClick={() => {callback(); handleSound(null, null, 'pause')} } size='small'>
-          <CloseIcon />
-        </IconButton>
-      </Typography>
-      <div className={classes.sidePanelFormContentWrapper}>
-        <div className={classes.stepperRoot}>
-          <Grid container spacing={2}>
-            <Grid item md={12}>
-              {
-                appli_id.length > 0 ?
-                  (appli_id?.map((id, idIndex) => {
-                    return (
-                      <div key={idIndex} style={{ marginTop: '20px' }}>
-                        <Typography variant='h4' style={{ marginLeft: '10px' }}>{`${appli_name[idIndex]} (${appli_number[idIndex]})`}</Typography>
-                        <Typography variant='h4' style={{ marginLeft: 10, marginBottom: 4, color: '#969696' }}>{appli_type[idIndex]}</Typography>
-                        <Table>
-                          <TableRow>
-                            <TableCell style={{ width: '30%' }}>From</TableCell>
-                            <TableCell>Time</TableCell>
-                            <TableCell>Duration</TableCell>
-                            <TableCell>Status</TableCell>
-                            <TableCell style={{ width: '12%' }}>Recordings</TableCell>
-                            {/* <TableCell></TableCell> */} {/* this is used to to show the delete option when the pint the row using hover effect */}
-                            {/* call logs API is not ready */}
-                          </TableRow>
-                          {
-                            CallLogs?.map((item, itemIndex) => {
-                              return (
-                                id == item.applicant_id && (
-                                  <TableRow className={classes.tableroweffect}>
-                                    <TableCell style={{ color: '#363637' }}>{`${item.to_mobile} (${item.to_user_name})`}</TableCell>
-                                    <TableCell><span>{item.start_date ? item.start_date : '-'}</span> <span>{item.start_time && item.start_time}</span></TableCell>
-                                    <TableCell>{item.duration ? item.duration + 's' : '-'}</TableCell>
-                                    <TableCell>{item.status}</TableCell>
-                                    <TableCell>
-                                      {
-                                        item.recording_url ? (
-                                          playing.id == itemIndex && playing.playing ?
-                                            <IconButton onClick={() => handleSound(null, itemIndex, 'pause')} style={{ padding: 0 }}>
-                                              <PauseIcon className={classes.audioIcon} /> <span className={classes.iconLabel}>{'Pause'}</span>
-                                            </IconButton> :
-                                            <IconButton onClick={() => handleSound(item.recording_url, itemIndex, 'play')} style={{ padding: 0 }}>
-                                              <PlayArrowIcon className={classes.audioIcon} /> <span className={classes.iconLabel}>{'Play'}</span>
-                                            </IconButton>
-                                        ) : <Typography style={{ marginLeft: 2 }}>-</Typography>
-                                      }
-                                    </TableCell>
-                                    {/* <TableCell className={classes.deleteicon}>
-                                      <IconButton onClick={() => handleDelete(item)}><DeleteIcon  /></IconButton> 
-                                    </TableCell> */} {/* call logs API is not ready */}
-                                  </TableRow>)
-                              )
-                            })
-                          }
-                        </Table>
-                      </div>
-                    )
-                  })) : <Typography className={classes.typo}>No logs found...</Typography>
-              }
+    <>
+      <div className={classes.sidePanelFormWrapper}>
+        <Typography className={classes.sidePanelTitle} variant="h4">
+          <div>Call logs</div>
+          <IconButton onClick={() => {callback(); handleSound(null, null, 'pause')} } size='small'>
+            <CloseIcon />
+          </IconButton>
+        </Typography>
+        <div className={classes.sidePanelFormContentWrapper}>
+          <div className={classes.stepperRoot}>
+            <Grid container spacing={2}>
+              <Grid item md={12}>
+                {
+                  appli_id.length > 0 ?
+                    (appli_id?.map((id, idIndex) => {
+                      return (
+                        <div key={idIndex} style={{ marginTop: '20px' }}>
+                          <Typography variant='h4' style={{ marginLeft: '10px' }}>{`${appli_name[idIndex]} (${appli_number[idIndex]})`}</Typography>
+                          <Typography variant='h4' style={{ marginLeft: 10, marginBottom: 4, color: '#969696' }}>{appli_type[idIndex]}</Typography>
+                          <Table>
+                            <TableRow>
+                              <TableCell style={{ width: '30%' }}>From</TableCell>
+                              <TableCell>Time</TableCell>
+                              <TableCell>Duration</TableCell>
+                              <TableCell>Status</TableCell>
+                              <TableCell style={{ width: '12%' }}>Recordings</TableCell>
+                              
+                            </TableRow>
+                            {
+                              CallLogs?.map((item, itemIndex) => {
+                                return (
+                                  id == item.applicant_id && (
+                                    <TableRow className={classes.tableroweffect}>
+                                      <TableCell style={{ color: '#363637' }}>{`${item.to_mobile} (${item.to_user_name})`}</TableCell>
+                                      <TableCell><span>{item.start_date ? item.start_date : '-'}</span> <span>{item.start_time && item.start_time}</span></TableCell>
+                                      <TableCell>{item.duration ? item.duration + 's' : '-'}</TableCell>
+                                      <TableCell>{item.status}</TableCell>
+                                      <TableCell>
+                                        {
+                                          item.recording_url ? (
+                                            playing.id == itemIndex && playing.playing ?
+                                              <IconButton onClick={() => handleSound(null, itemIndex, 'pause')} style={{ padding: 0 }}>
+                                                <PauseIcon className={classes.audioIcon} /> <span className={classes.iconLabel}>{'Pause'}</span>
+                                              </IconButton> :
+                                              <IconButton onClick={() => handleSound(item.recording_url, itemIndex, 'play')} style={{ padding: 0 }}>
+                                                <PlayArrowIcon className={classes.audioIcon} /> <span className={classes.iconLabel}>{'Play'}</span>
+                                              </IconButton>
+                                          ) : <Typography style={{ marginLeft: 2 }}>-</Typography>
+                                        }
+                                      </TableCell>
+                                      <TableCell className={classes.deleteicon}>
+                                        <DeleteButton alertText=  {`Do you really want to delete this call log from ${item.to_user_name} (${item.to_mobile})`} deleteAction={() => handleDelete(item.id)} deleteModal={deleteModel} setDeleteModal={setDeleteModel} id={itemIndex} buttonType='icon' />
+                                      </TableCell> {/* shows delete button for call logs by hovering it */}
+                                    </TableRow>)
+                                )
+                              })
+                            }
+                          </Table>
+                        </div>
+                      )
+                    })) : <Typography className={classes.typo}>No logs found...</Typography>
+                }
+              </Grid>
             </Grid>
-          </Grid>
+          </div>
         </div>
-      </div>
-      <div>
-        <Dialog onClose={() => setOpenDialog(false)} open={openDialog} maxWidth='md' fullWidth>
-          <DialogTitle>
-            <div className={classes.callboxtitle}>
-              <Typography variant="h3">Initiate Call</Typography>
-              <IconButton onClick={() => setOpenDialog(false)} size='small'>
-                <CloseIcon />
-              </IconButton>
-            </div>
-          </DialogTitle>
-          <DialogContent>
-            <Divider />
-            <div className={classes.dialogWrapper}>
-              <div className={classes.dialogcontent}>
-                <div style={{ display: 'flex', flexDirection: 'row', marginTop: 12, width: '100%', justifyContent: 'space-between' }}>
-                  <CardWrapper title={'Dealers'} type={'dealer'} data={dealers} callback={handleVoiceCall} />
-                  <Divider orientation='vertical' />
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'row', marginTop: 12, width: '100%', justifyContent: 'space-between' }}>
-                  <CardWrapper title={'Co-applicants'} type={'coapplicant'} data={coapplicants} callback={handleVoiceCall} />
-                  <Divider orientation='vertical' />
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'row', marginTop: 12, width: '100%', justifyContent: 'space-between' }}>
-                  <CardWrapper title={'Guarantors'} type={'guarantor'} data={guarantors} callback={handleVoiceCall} />
+        <div>
+          <Dialog onClose={() => setOpenDialog(false)} open={openDialog} maxWidth='md' fullWidth>
+            <DialogTitle>
+              <div className={classes.callboxtitle}>
+                <Typography variant="h3">Initiate Call</Typography>
+                <IconButton onClick={() => setOpenDialog(false)} size='small'>
+                  <CloseIcon />
+                </IconButton>
+              </div>
+            </DialogTitle>
+            <DialogContent>
+              <Divider />
+              <div className={classes.dialogWrapper}>
+                <div className={classes.dialogcontent}>
+                  <div style={{ display: 'flex', flexDirection: 'row', marginTop: 12, width: '100%', justifyContent: 'space-between' }}>
+                    <CardWrapper title={'Dealers'} type={'dealer'} data={dealers} callback={handleVoiceCall} />
+                    <Divider orientation='vertical' />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'row', marginTop: 12, width: '100%', justifyContent: 'space-between' }}>
+                    <CardWrapper title={'Co-applicants'} type={'coapplicant'} data={coapplicants} callback={handleVoiceCall} />
+                    <Divider orientation='vertical' />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'row', marginTop: 12, width: '100%', justifyContent: 'space-between' }}>
+                    <CardWrapper title={'Guarantors'} type={'guarantor'} data={guarantors} callback={handleVoiceCall} />
+                  </div>
                 </div>
               </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </div>
-      <div className={classes.actionFooter}>
-        <Divider />
-        <div className={classes.actionButtonsWrapper}>
-          <Button
-            variant="contained"
-            className={classes.initiateButton}
-            startIcon={<PhoneTwoToneIcon />}
-            onClick={() => {setOpenDialog(true); handleSound(null, null, 'pause')}}
-          >
-            Initiate Call
-          </Button>
+            </DialogContent>
+          </Dialog>
+        </div>
+        <div className={classes.actionFooter}>
+          <Divider />
+          <div className={classes.actionButtonsWrapper}>
+            <Button
+              variant="contained"
+              className={classes.initiateButton}
+              startIcon={<PhoneTwoToneIcon />}
+              onClick={() => {setOpenDialog(true); handleSound(null, null, 'pause')}}
+            >
+              Initiate Call
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.18.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.17.1...v2.18.0) (2022-07-15)
+
+
+### Features
+
+* added delete to voice call logs ([e74c9c0](https://gitlab.com/vignesh3/petromall-fe/commit/e74c9c078629bcc3efee295a2443048d79328127))
+
 ### [2.17.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.17.0...v2.17.1) (2022-06-27)
 
 

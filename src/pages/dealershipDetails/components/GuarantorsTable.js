@@ -1,5 +1,6 @@
-import { Drawer } from '@material-ui/core';
+import { Drawer, Tooltip } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
+import { green, grey } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
 // import { useMount } from 'react-use';
 import Table from '@material-ui/core/Table';
@@ -8,13 +9,15 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
+import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import CreditInfoSideWrapper from './CreditInfoSideWrapper';
 import DeleteButton from '../../../components/CommonComponents/Button/DeleteButton';
 import { logger } from '../../../config/logger';
-import { deleteApplicantById } from '../../../services/dealers.service';
+import { URL } from '../../../config/serverUrls';
+
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -50,12 +53,29 @@ const GuarantorsTable = ({ id, editable, guarantorsData, titleAlign, getExperian
   const { enqueueSnackbar } = useSnackbar();
   const [rowData, setRowData] = useState();
   const [deleteModal, setDeleteModal] = useState(false);
-  
-  const DeleteApplicant = (row_data) => {
-    deleteApplicantById(id, row_data?.id, row_data?.userType)
+
+  const DeleteApplicant = (values) => {
+    const formData = new FormData();
+    let obj = {};
+    Object.keys(obj).forEach((key) => {
+      formData.append(key, obj[key]);
+    });
+    formData.append('is_active', 0)
+    const apiURL = URL.guarantor
+    let url = `${apiURL}/${id}`;
+    if (values.id) {
+      url += `/${values.id}`;
+    }
+    fetch(`${URL.base}${url}`, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${currentUser.token}`,
+      },
+    })
       .then(res => {
         queryClient.invalidateQueries(['guarantors', id])
-        setDeleteModal(false)
+        // setDeleteModal(false)
         enqueueSnackbar(res.message, {
           anchorOrigin: {
             vertical: 'top',
@@ -74,6 +94,28 @@ const GuarantorsTable = ({ id, editable, guarantorsData, titleAlign, getExperian
         })
         logger(e)
       })
+    // deleteApplicantById(id, row_data?.id, row_data?.userType)
+    //   .then(res => {
+    //     queryClient.invalidateQueries(['guarantors', id])
+    //     setDeleteModal(false)
+    //     enqueueSnackbar(res.message, {
+    //       anchorOrigin: {
+    //         vertical: 'top',
+    //         horizontal: 'right',
+    //       },
+    //       variant: 'success',
+    //     })
+    //   })
+    //   .catch(e => {
+    //     enqueueSnackbar(e, {
+    //       anchorOrigin: {
+    //         vertical: 'top',
+    //         horizontal: 'right',
+    //       },
+    //       variant: 'error',
+    //     })
+    //     logger(e)
+    //   })
   }
 
   if (!guarantorsData || !guarantorsData.length)
@@ -137,8 +179,23 @@ const GuarantorsTable = ({ id, editable, guarantorsData, titleAlign, getExperian
               {
                 editable || viewOnly ?
                   <TableCell align="right" onClick={e => e.stopPropagation()}>
-                    <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>
-                    {deletable && <DeleteButton alertText={`Do you really want to delete this guarantor named ${row?.first_name}?`} deleteAction={() => DeleteApplicant(row)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={index} buttonType='icon' />}
+                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                      <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>
+                      <div style={{ marginLeft: 12 }} onClick={() => DeleteApplicant(row)}>
+                        {
+                          row.is_active == 0 ? (
+                            <Tooltip title='Active'>
+                              <CheckCircleTwoToneIcon style={{ color: green[200] }} />
+                            </Tooltip>
+                          ) : (
+                            <Tooltip title='Inactive'>
+                              <CheckCircleTwoToneIcon style={{ color: grey[500] }} />
+                            </Tooltip>
+                          )
+                        }
+                      </div>
+                      {deletable && <DeleteButton alertText={`Do you really want to delete this guarantor named ${row?.first_name}?`} deleteAction={() => DeleteApplicant(row)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={index} buttonType='icon' />}
+                    </div>
                   </TableCell> : null
               }
             </TableRow>

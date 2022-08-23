@@ -14,8 +14,6 @@ import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import CreditInfoSideWrapper from './CreditInfoSideWrapper';
-import DeleteButton from '../../../components/CommonComponents/Button/DeleteButton';
-import { logger } from '../../../config/logger';
 import { URL } from '../../../config/serverUrls';
 
 
@@ -60,7 +58,13 @@ const GuarantorsTable = ({ id, editable, guarantorsData, titleAlign, getExperian
     Object.keys(obj).forEach((key) => {
       formData.append(key, obj[key]);
     });
-    formData.append('is_active', 0)
+    if (values.is_active == 1) {
+      formData.append('is_active', 0)
+    }
+    else {
+      formData.append('is_active', 1)
+    }
+
     const apiURL = URL.guarantor
     let url = `${apiURL}/${id}`;
     if (values.id) {
@@ -74,48 +78,41 @@ const GuarantorsTable = ({ id, editable, guarantorsData, titleAlign, getExperian
       },
     })
       .then(res => {
-        queryClient.invalidateQueries(['guarantors', id])
-        // setDeleteModal(false)
-        enqueueSnackbar(res.message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
-        })
+        return res.json()
+      })
+      .then(({ status, message, data }) => {
+        if (status == 'SUCCESS') {
+          queryClient.invalidateQueries(['guarantors', id])
+          enqueueSnackbar(message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          }
+          )
+        }
+        else {
+          enqueueSnackbar(message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          }
+          )
+        }
       })
       .catch(e => {
-        enqueueSnackbar(e, {
+        enqueueSnackbar(e.message, {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',
           },
           variant: 'error',
-        })
-        logger(e)
+        }
+        )
       })
-    // deleteApplicantById(id, row_data?.id, row_data?.userType)
-    //   .then(res => {
-    //     queryClient.invalidateQueries(['guarantors', id])
-    //     setDeleteModal(false)
-    //     enqueueSnackbar(res.message, {
-    //       anchorOrigin: {
-    //         vertical: 'top',
-    //         horizontal: 'right',
-    //       },
-    //       variant: 'success',
-    //     })
-    //   })
-    //   .catch(e => {
-    //     enqueueSnackbar(e, {
-    //       anchorOrigin: {
-    //         vertical: 'top',
-    //         horizontal: 'right',
-    //       },
-    //       variant: 'error',
-    //     })
-    //     logger(e)
-    //   })
   }
 
   if (!guarantorsData || !guarantorsData.length)
@@ -184,17 +181,17 @@ const GuarantorsTable = ({ id, editable, guarantorsData, titleAlign, getExperian
                       <div style={{ marginLeft: 12 }} onClick={() => DeleteApplicant(row)}>
                         {
                           row.is_active == 0 ? (
-                            <Tooltip title='Active'>
-                              <CheckCircleTwoToneIcon style={{ color: green[200] }} />
+                            <Tooltip title='Activate'>
+                              <CheckCircleTwoToneIcon style={{ color: grey[500] }} />
                             </Tooltip>
                           ) : (
-                            <Tooltip title='Inactive'>
-                              <CheckCircleTwoToneIcon style={{ color: grey[500] }} />
+                            <Tooltip title='Deactivate'>
+                              <CheckCircleTwoToneIcon style={{ color: green[200] }} />
                             </Tooltip>
                           )
                         }
                       </div>
-                      {deletable && <DeleteButton alertText={`Do you really want to delete this guarantor named ${row?.first_name}?`} deleteAction={() => DeleteApplicant(row)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={index} buttonType='icon' />}
+                      {/* {deletable && <DeleteButton alertText={`Do you really want to delete this guarantor named ${row?.first_name}?`} deleteAction={() => DeleteApplicant(row)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={index} buttonType='icon' />} */}
                     </div>
                   </TableCell> : null
               }

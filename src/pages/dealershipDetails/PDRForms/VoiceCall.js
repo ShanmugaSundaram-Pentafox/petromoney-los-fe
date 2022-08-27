@@ -310,6 +310,7 @@ const VoiceCall = ({ id, callback }) => {
                               <TableCell>Duration</TableCell>
                               <TableCell>Status</TableCell>
                               <TableCell>Origin</TableCell>
+                              <TableCell>Module</TableCell>
                               <TableCell style={{ width: '12%' }}>Recordings</TableCell>
 
                             </TableRow>
@@ -324,6 +325,7 @@ const VoiceCall = ({ id, callback }) => {
                                       <TableCell>{item.duration ? item.duration + 's' : '-'}</TableCell>
                                       <TableCell>{item.status ? item?.status : '-'}</TableCell>
                                       <TableCell>{item?.application_type ? item?.application_type : '-'}</TableCell>
+                                      <TableCell>{item?.module ? item?.module : '-'}</TableCell>
                                       <TableCell>
                                         {
                                           item.recording_url ? (

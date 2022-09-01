@@ -201,6 +201,7 @@ const VoiceCall = ({ id, callback }) => {
     var data = {
       To: item.mobile,
       type: type,
+      module: 'pdr'
     }
     makeVoiceCallById(item.dealership_id, data)
       .then(res => {
@@ -235,10 +236,10 @@ const VoiceCall = ({ id, callback }) => {
   const handleSound = (data, i, log) => {
     sound.pause();
     setSoundurl(data)
-    if(log=='play' && playing.playing==true){
-      playing.playing=false;
+    if (log == 'play' && playing.playing == true) {
+      playing.playing = false;
     }
-    else{
+    else {
       sound.pause();
       setPlaying({ id: i, playing: !playing.playing });
     }
@@ -248,7 +249,7 @@ const VoiceCall = ({ id, callback }) => {
   const handleDelete = (id) => {
     deleteVoiceCallById(id)
       .then(res => {
-        if(res.status == 'SUCCESS') {
+        if (res.status == 'SUCCESS') {
           setDeleteModel(false)
           enqueueSnackbar(res.message, {
             anchorOrigin: {
@@ -279,7 +280,7 @@ const VoiceCall = ({ id, callback }) => {
           variant: 'error',
         });
       });
-    {/* This function is to handle the delete for call logs */}
+    {/* This function is to handle the delete for call logs */ }
   }
 
   return (
@@ -287,7 +288,7 @@ const VoiceCall = ({ id, callback }) => {
       <div className={classes.sidePanelFormWrapper}>
         <Typography className={classes.sidePanelTitle} variant="h4">
           <div>Call logs</div>
-          <IconButton onClick={() => {callback(); handleSound(null, null, 'pause')} } size='small'>
+          <IconButton onClick={() => { callback(); handleSound(null, null, 'pause') }} size='small'>
             <CloseIcon />
           </IconButton>
         </Typography>
@@ -308,18 +309,23 @@ const VoiceCall = ({ id, callback }) => {
                               <TableCell>Time</TableCell>
                               <TableCell>Duration</TableCell>
                               <TableCell>Status</TableCell>
+                              <TableCell>Origin</TableCell>
+                              <TableCell>Module</TableCell>
                               <TableCell style={{ width: '12%' }}>Recordings</TableCell>
-                              
+
                             </TableRow>
                             {
                               CallLogs?.map((item, itemIndex) => {
+                                // if (item?.module == 'pdr') {
                                 return (
                                   id == item.applicant_id && (
                                     <TableRow className={classes.tableroweffect}>
                                       <TableCell style={{ color: '#363637' }}>{`${item.to_mobile} (${item.to_user_name})`}</TableCell>
                                       <TableCell><span>{item.start_date ? item.start_date : '-'}</span> <span>{item.start_time && item.start_time}</span></TableCell>
                                       <TableCell>{item.duration ? item.duration + 's' : '-'}</TableCell>
-                                      <TableCell>{item.status}</TableCell>
+                                      <TableCell>{item.status ? item?.status : '-'}</TableCell>
+                                      <TableCell>{item?.application_type ? item?.application_type : '-'}</TableCell>
+                                      <TableCell>{item?.module ? item?.module : '-'}</TableCell>
                                       <TableCell>
                                         {
                                           item.recording_url ? (
@@ -334,10 +340,11 @@ const VoiceCall = ({ id, callback }) => {
                                         }
                                       </TableCell>
                                       <TableCell className={classes.deleteicon}>
-                                        <DeleteButton alertText=  {`Do you really want to delete this call log from ${item.to_user_name} (${item.to_mobile})`} deleteAction={() => handleDelete(item.id)} deleteModal={deleteModel} setDeleteModal={setDeleteModel} id={itemIndex} buttonType='icon' />
+                                        <DeleteButton alertText={`Do you really want to delete this call log from ${item.to_user_name} (${item.to_mobile})`} deleteAction={() => handleDelete(item.id)} deleteModal={deleteModel} setDeleteModal={setDeleteModel} id={itemIndex} buttonType='icon' />
                                       </TableCell> {/* shows delete button for call logs by hovering it */}
                                     </TableRow>)
                                 )
+                                // }
                               })
                             }
                           </Table>
@@ -386,7 +393,7 @@ const VoiceCall = ({ id, callback }) => {
               variant="contained"
               className={classes.initiateButton}
               startIcon={<PhoneTwoToneIcon />}
-              onClick={() => {setOpenDialog(true); handleSound(null, null, 'pause')}}
+              onClick={() => { setOpenDialog(true); handleSound(null, null, 'pause') }}
             >
               Initiate Call
             </Button>

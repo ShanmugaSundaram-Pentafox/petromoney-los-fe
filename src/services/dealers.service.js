@@ -226,7 +226,7 @@ export const getKycStatus = (type, dealershipId, applicantId) => {
     apiCall(`vkyc/${dealershipId}/${applicantId}/initiation?type=${type}`)
       .then(({ status, is_initiated, message }) => {
         if (status === 'SUCCESS') {
-          resolve({status, is_initiated, message });
+          resolve({ status, is_initiated, message });
         } else {
           reject(message);
         }
@@ -237,12 +237,13 @@ export const getKycStatus = (type, dealershipId, applicantId) => {
   });
 }
 
-export const initiateKYC = (type, dealershipId, applicantId) => {
+export const initiateKYC = (type, dealershipId, applicantId, agentId) => {
   return new Promise((resolve, reject) => {
-    apiCall(`vkyc/${dealershipId}/${applicantId}/initiation?type=${type}`, {
+    apiCall(`vkyc/${dealershipId}/${applicantId}/initiation`, {
       method: 'POST',
+      body: { type: type, agent_id: agentId }
     })
-      .then(({ status,is_initiated ,message }) => {
+      .then(({ status, message }) => {
         if (status === 'SUCCESS') {
           resolve(message);
         } else {
@@ -251,6 +252,22 @@ export const initiateKYC = (type, dealershipId, applicantId) => {
       })
       .catch(e => {
         reject(e);
+      })
+  });
+}
+
+export const getKycAgents = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('vkyc/agent/list')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
       })
   });
 }

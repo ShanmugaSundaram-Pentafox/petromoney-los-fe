@@ -359,6 +359,7 @@ const DealerEditSideWrapper = ({
       initiateKYC(modelType.toLowerCase(), values.dealership_id, values.id, agentId)
         .then((message) => {
           setKycStatus(true);
+          handleClose();
           enqueueSnackbar(message, {
             anchorOrigin: {
               vertical: 'top',
@@ -535,7 +536,7 @@ const DealerEditSideWrapper = ({
                 <TextInput
                   select
                   label='Choose Agent'
-                  value={agentId}
+                  value={agentId?.value}
                   onChange={handleIdChange}
                   InputLabelProps={{ shrink: true }}
                 >

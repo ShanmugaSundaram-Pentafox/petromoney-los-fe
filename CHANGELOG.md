@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.19.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.19.0...v2.19.1) (2022-09-06)
+
+
+### Bug Fixes
+
+* **vkyc:** agent ID value fix ([a6213d8](https://gitlab.com/vignesh3/petromall-fe/commit/a6213d8107274ae216ac6991fc4ff3d560ef206d))
+
 ## [2.19.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.18.0...v2.19.0) (2022-09-06)
 
 

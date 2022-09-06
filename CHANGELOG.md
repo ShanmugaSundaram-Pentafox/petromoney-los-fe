@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.19.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.18.0...v2.19.0) (2022-09-06)
+
+
+### Features
+
+* **applicants:** show all the applicants for admin ([b031939](https://gitlab.com/vignesh3/petromall-fe/commit/b0319394525230bbfb8b1be6a6993e4d94478e9d))
+
 ## [2.18.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.17.1...v2.18.0) (2022-07-15)
 
 

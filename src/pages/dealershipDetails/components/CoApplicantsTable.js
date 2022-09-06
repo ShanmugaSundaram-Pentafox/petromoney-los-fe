@@ -197,11 +197,11 @@ const CoApplicantsTable = ({ id, editable, coApplicantsData, titleAlign, onClick
                         {
                           row.is_active == 0 ? (
                             <Tooltip title='Deactivate'>
-                              <CheckCircleTwoToneIcon style={{ color: green[200] }} />
+                              <CheckCircleTwoToneIcon style={{ color: grey[500] }} />
                             </Tooltip>
                           ) : (
                             <Tooltip title='Activate'>
-                              <CheckCircleTwoToneIcon style={{ color: grey[500] }} />
+                              <CheckCircleTwoToneIcon style={{ color: green[200] }} />
                             </Tooltip>
                           )
                         }

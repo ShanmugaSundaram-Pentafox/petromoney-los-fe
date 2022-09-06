@@ -356,7 +356,7 @@ const DealerEditSideWrapper = ({
 
   const handleInitiateKYC = () => {
     if (agentId?.value) {
-      initiateKYC(modelType.toLowerCase(), values.dealership_id, values.id, agentId)
+      initiateKYC(modelType.toLowerCase(), values.dealership_id, values.id, agentId?.value)
         .then((message) => {
           setKycStatus(true);
           handleClose();

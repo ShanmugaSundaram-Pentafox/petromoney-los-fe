@@ -1,4 +1,5 @@
 import { Divider, Drawer, List, ListItem, Button } from '@material-ui/core';
+import { Repeat } from '@material-ui/icons';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import AssignmentLateRoundedIcon from '@material-ui/icons/AssignmentLateRounded';
 import CachedIcon from '@material-ui/icons/Cached';
@@ -112,6 +113,11 @@ const Sidebar = props => {
       title: 'Withheld',
       href: '/withheld',
       icon: <AssignmentLateRoundedIcon />
+    },
+    {
+      title: 'Renewal',
+      href: '/renewal',
+      icon: <Repeat />
     },
     {
       title: 'Dealerships',

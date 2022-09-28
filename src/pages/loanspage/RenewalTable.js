@@ -109,7 +109,7 @@ const RenewalTable = ({ currentUser }) => {
       },
       {
         label: 'Type',
-        name: 'type',
+        name: 'product_name',
         options: {
           filter: true,
           sort: true,
@@ -124,7 +124,6 @@ const RenewalTable = ({ currentUser }) => {
           sort: true,
           customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
         }
-
       },
       {
         label: 'Approved Amount',
@@ -137,7 +136,7 @@ const RenewalTable = ({ currentUser }) => {
       },
       {
         label: 'Approved Date',
-        name: 'loan_approved_rejected_date',
+        name: 'approved_date',
         options: {
           filter: false,
           sort: true,

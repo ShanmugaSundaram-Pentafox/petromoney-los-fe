@@ -227,7 +227,7 @@ const RenewalTable = ({ currentUser }) => {
             columns={columns}
             options={options}
           />
-        ) : (!loading && <Paper style={{ padding: 10 }}>No Approved Applications</Paper>)
+        ) : (!loading && <Paper style={{ padding: 10 }}>No Renewal Applications</Paper>)
       }
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>

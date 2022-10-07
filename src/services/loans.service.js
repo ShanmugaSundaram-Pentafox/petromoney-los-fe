@@ -364,6 +364,22 @@ export const getProjectionReport = () => {
   });
 }
 
+export const getVivProjectionReport = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('projection?external=1')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
 export const getCreditStats = (qryStr = {}) => {
   return new Promise((resolve, reject) => {
     const { region, from, to, account, zone } = qryStr;

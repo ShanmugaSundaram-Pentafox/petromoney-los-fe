@@ -2,7 +2,7 @@ import { Grid, makeStyles, Paper, Table, TableBody, TableCell, TableRow } from '
 import React, {useState} from 'react'
 import { useMount } from 'react-use'
 import { LineChart } from '../../pages/dashboard/components/MetricsComponents'
-import { getProjectionReport } from '../../services/loans.service'
+import { getProjectionReport, getVivProjectionReport } from '../../services/loans.service'
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -43,7 +43,9 @@ const currencyFormat = (value) => {
 const ProjectionReport = ({currentUser}) => {
   const classes = useStyles();
   const [LineChartData, setLineChartData] = useState();
+  const [vivLineChartData, setVivLineChartData] = useState();
   const [projectionTableData, setProjectionTableData] = useState();
+  const [vivProjectionTableData, setVivProjectionTableData] = useState();
 
   useMount(() => {
     getProjectionReport()
@@ -59,6 +61,19 @@ const ProjectionReport = ({currentUser}) => {
         setLineChartData(testData);
       })
       .catch(e => console.log(e))
+    getVivProjectionReport()
+      .then(data => {
+        setVivProjectionTableData(data)
+        let testData = data.reduce((temp, item, i) => {
+          if (i === 0) {
+            temp[i] = ['Date', 'Due Amount', { role: 'tooltip', type: 'string', p: { html: true }}];
+          }
+          temp[i+1] = [`${item.due_date.split('-')[0]}/${item.due_date.split('-')[1]}`,item.due_amount ,CustomToolTip(item.due_date, item.short_day, item.due_amount, item.short_amount)]
+          return temp
+        }, [])
+        setVivLineChartData(testData);
+      })
+      .catch(e => console.log(e))
   });
 
   return (
@@ -67,7 +82,7 @@ const ProjectionReport = ({currentUser}) => {
         <>
           <Grid item md={12} style={{marginBottom: 20}}>
             <Paper>
-              <LineChart chartData={LineChartData} title="Projection Graph" xAxis="Date" />
+              <LineChart chartData={LineChartData} title="Projection Graph - Green Malabar Finance Ventures Limited" xAxis="Date" />
               <div className={classes.horizondalTable}>
                 <Table>
                   <TableBody>
@@ -95,6 +110,47 @@ const ProjectionReport = ({currentUser}) => {
                       <TableCell className={classes.tableHead}><strong>Due Amount</strong></TableCell>
                       {
                       projectionTableData?.map((item, i) => {
+                        return(
+                          <TableCell key={i} className={classes.item}>{currencyFormat(item.due_amount)}</TableCell>
+                        )
+                      })
+                      }
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+            </Paper>
+          </Grid>
+          <Grid item md={12} style={{marginBottom: 20}}>
+            <Paper>
+              <LineChart chartData={vivLineChartData} title="Projection Graph - Vivriti Capital Private limited" xAxis="Date" />
+              <div className={classes.horizondalTable}>
+                <Table>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell className={classes.tableHead}><strong>Date</strong></TableCell>
+                      {
+                      vivProjectionTableData?.map((item, i) => {
+                        return(
+                          <TableCell key={i} className={classes.item}>{item.due_date}</TableCell>
+                        )
+                      })
+                      }
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className={classes.tableHead}><strong>Day</strong></TableCell>
+                      {
+                      vivProjectionTableData?.map((item, i) => {
+                        return(
+                          <TableCell key={i} className={classes.item}>{item.day}</TableCell>
+                        )
+                      })
+                      }
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className={classes.tableHead}><strong>Due Amount</strong></TableCell>
+                      {
+                      vivProjectionTableData?.map((item, i) => {
                         return(
                           <TableCell key={i} className={classes.item}>{currencyFormat(item.due_amount)}</TableCell>
                         )

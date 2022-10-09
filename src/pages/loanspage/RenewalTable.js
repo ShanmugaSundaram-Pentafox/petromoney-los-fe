@@ -1,4 +1,4 @@
-import { Popover } from '@material-ui/core';
+import { Dialog, Popover } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
@@ -232,16 +232,18 @@ const RenewalTable = ({ currentUser }) => {
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
       }
-      <SignRequestLayout
-        open={modalVisible}
-        dealershipId={dealershipId}
-        loanId={loanId}
-        loanAmount={loanAmount}
-        productId={productTypeId}
-        type={type}
-        title={type === 'application' ? 'eSign Application Form' : 'Sanction Letter'}
-        onClose={() => setModalVisible(false)}
-      />
+      <Dialog fullWidth maxWidth="md" open={modalVisible} onClose={() => setModalVisible(false)}>
+        <SignRequestLayout
+          open={modalVisible}
+          dealershipId={dealershipId}
+          loanId={loanId}
+          loanAmount={loanAmount}
+          productId={productTypeId}
+          type={type}
+          title={type === 'application' ? 'eSign Application Form' : 'Sanction Letter'}
+          onClose={() => setModalVisible(false)}
+        />
+      </Dialog>
       <Popover
         id={id}
         open={open}

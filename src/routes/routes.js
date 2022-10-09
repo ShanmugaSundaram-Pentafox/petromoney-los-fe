@@ -19,6 +19,7 @@ import DealershipDetails from '../pages/dealershipDetails/dealershipDetails';
 import BlacklistTable from '../pages/loanspage/BlacklistTable';
 import LmsLos from '../pages/loanspage/lmsLosTable';
 import Loans from '../pages/loanspage/loans'
+import RenewalTable from '../pages/loanspage/RenewalTable';
 import Login from '../pages/login/login';
 import NotFound from '../pages/NotFound/NotFound';
 import Profile from '../pages/profile/Profile';
@@ -70,6 +71,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/owners/:id?" component={OwnerDetails} />
       <ProtectedRoute allow exact path="/profile" component={Profile} />
       <ProtectedRoute allow exact path="/withheld" component={BlacklistTable} />
+      <ProtectedRoute allow exact path="/renewal" component={RenewalTable} />
       <ProtectedRoute allow exact path="/reports" component={DealersDueReport} />
       <ProtectedRoute allow exact path="/reports/remarks" component={CollectionRemarks} />
       <ProtectedRoute allow exact path="/reports/dpd" component={DpdReport} />

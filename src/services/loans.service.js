@@ -132,6 +132,22 @@ export const getLoanBookData = (view) => {
   });
 }
 
+export const getRenewalLoans = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('loans/renewal')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
 export const getLoansByStatus = (status, filterQry) => {
   return new Promise((resolve, reject) => {
     const { region, from, to, products, zone } = filterQry;

@@ -126,7 +126,7 @@ const DocList = ({ id, currentUser }) => {
       <Table className={classes.table} size="small" aria-label="Dealers">
         <TableBody>
           {Array.isArray(checkListData) && checkListData.map((row, i) => row.doc_type !== 'dealer' && (
-            <DocListPreview docName={row.description} upload={() => onDocUpload(row)} file={row.file_data} id={i + 1} dealershipId={id} editable={editable} />
+            <DocListPreview docName={row.description} upload={() => onDocUpload(row)} file={row.file_data} docId={row?.doc_id} id={i + 1} dealershipId={id} editable={editable} />
           ))}
         </TableBody>
       </Table>

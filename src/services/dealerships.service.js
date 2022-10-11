@@ -359,7 +359,6 @@ export const deleteDocsImage = (data, id) => {
   });
 }
 export const editDocsImage = (dealershipId, docId, data) => {
-  console.log('data >>>>>>>>>>>', data)
   return new Promise((resolve, reject) => {
     apiCall(`${URL.checklist}/${dealershipId}/doc/${docId}/${data?.file_id}`, {
       method: 'POST',

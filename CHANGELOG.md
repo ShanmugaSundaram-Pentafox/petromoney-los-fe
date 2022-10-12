@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.20.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.19.1...v2.20.0) (2022-10-12)
+
+
+### Features
+
+* add projection report for Viviriti ([b681f37](https://gitlab.com/vignesh3/petromall-fe/commit/b681f375dd5c4a7d094ee54672ff96e419a9ff23))
+* created renewal loan tabel and inmlemented the api ([0734e97](https://gitlab.com/vignesh3/petromall-fe/commit/0734e97f89b2b294e2952ddd77aac4a436cbc8bc))
+
 ### [2.19.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.19.0...v2.19.1) (2022-09-06)
 
 

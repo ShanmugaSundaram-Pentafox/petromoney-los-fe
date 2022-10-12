@@ -1,10 +1,12 @@
-import { IconButton } from '@material-ui/core'
+import { Dialog, DialogActions, DialogContent, DialogContentText, Grid, IconButton } from '@material-ui/core'
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { green } from '@material-ui/core/colors';
 import Divider from '@material-ui/core/Divider';
 import Step from '@material-ui/core/Step';
 import Stepper from '@material-ui/core/Stepper';
 import Typography from '@material-ui/core/Typography';
+import CheckRoundedIcon from '@material-ui/icons/CheckRounded';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
@@ -15,16 +17,19 @@ import clsx from 'clsx';
 import { format, parse } from 'date-fns';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import DealerEditForm from './DealerEditForm';
+import TextInput from '../../../components/TextInput/TextInput';
 import { API } from '../../../config/api';
 import { logger } from '../../../config/logger';
 import { URL } from '../../../config/serverUrls';
 import { cryptoEncrypt } from '../../../services/crypto.service';
+import { getKycAgents, getKycStatus, initiateKYC } from '../../../services/dealers.service';
 import { validateId } from '../../../services/dealerships.service';
 import { compareObject } from '../../../utils/compareObject.util';
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -72,6 +77,10 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.success.dark,
     },
   },
+  button: {
+    color: green[800],
+    marginLeft:12
+  }
 }));
 
 const DealerEditSideWrapper = ({
@@ -95,13 +104,38 @@ const DealerEditSideWrapper = ({
   const [apiCallMessage, setApiCallMessage] = useState('');
   const [selectedDate, setSelectedDate] = useState();
   const [selectedState, setSelectedState] = useState();
-  const [panValidateData, setPanValidateData] = useState({icon: false})
-  const [aadharValidateData, setAadharValidateData] = useState({icon: false})
+  const [panValidateData, setPanValidateData] = useState({ icon: false })
+  const [aadharValidateData, setAadharValidateData] = useState({ icon: false })
+  const [kycStatus, setKycStatus] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [agentId, setAgentId] = useState();
+  const [agentIdList, setAgentIdList] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
 
   const handleEdit = () => {
     setReadOnly(!readOnly);
   };
+
+  useEffect(() => {
+    getKycStatus(modelType.toLowerCase(), values.dealership_id, values.id)
+      .then((data) => {
+        if (data?.is_initiated === 1)
+          setKycStatus(true);
+      })
+      .catch((e) => {
+        console.log(e)
+      })
+    if (open) {
+      getKycAgents()
+        .then((data) => {
+          setAgentIdList(data)
+        })
+        .catch((e) => {
+          console.log(e)
+        })
+    }
+  }, [modelType, data.dealership_id, data.id, open])
+
 
   let coApplicantFields = {};
   if (modelType === 'COAPPLICANT') {
@@ -127,7 +161,7 @@ const DealerEditSideWrapper = ({
       .matches(/^\d{10}$/, 'Invalid mobile number')
       .required('Enter valid mobile number'),
     residing_since: Yup.number().nullable('Enter the year').required('Enter the year'),
-    marital_status: Yup.string('Enter your Marital status'),
+    marital_status: Yup.string().nullable('Enter your Marital status').required('Enter your Marital status'),
     pincode: Yup.string().nullable('Enter pincode').matches(/^[1-9][0-9]{5}$/, 'Invalid pincode').required('Enter pincode'),
     pan: Yup.string()
       .nullable('Enter PAN')
@@ -140,6 +174,11 @@ const DealerEditSideWrapper = ({
       .required('Enter valid aadhar'),
     ...coApplicantFields,
   });
+
+  const handleIdChange = (e) => {
+    const { value } = e.target;
+    setAgentId({ ...agentId, value: value })
+  }
 
   const deleteFile = (type) => {
     const allTypes = {
@@ -199,10 +238,10 @@ const DealerEditSideWrapper = ({
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: (values) => {
-      if(isAdd === 'Add'){
+      if (isAdd === 'Add') {
         validateId('pan', values?.pan)
           .then((res) => {
-            setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}})
+            setPanValidateData({ icon: true, loading: false, idType: 'PAN', details: res?.details || {} })
             !values?.first_name && setFieldValue('first_name', res?.details?.firstName)
             !values?.last_name && setFieldValue('last_name', res?.details?.lastName)
             res?.details?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
@@ -212,7 +251,7 @@ const DealerEditSideWrapper = ({
           })
           .catch(e => {
             console.log(e);
-            setPanValidateData({icon: true, idType: 'PAN'})
+            setPanValidateData({ icon: true, idType: 'PAN' })
           })
       }
       values.first_name = values.first_name.toUpperCase();
@@ -264,7 +303,7 @@ const DealerEditSideWrapper = ({
         })
         .then((res) => {
           setLoading(false);
-          if(res.status === 'SUCCESS'){
+          if (res.status === 'SUCCESS') {
             setApicallStatus('success');
             enqueueSnackbar(res.message, {
               anchorOrigin: {
@@ -275,8 +314,8 @@ const DealerEditSideWrapper = ({
             });
             onClose();
             modelType === 'DEALER' &&
-            queryClient.invalidateQueries(['dealers-coapplicant', id])
-  
+              queryClient.invalidateQueries(['dealers-coapplicant', id])
+
             modelType === 'COAPPLICANT' ?
               queryClient.invalidateQueries(['co-applicants', id]) : queryClient.invalidateQueries(['guarantors', id])
           } else {
@@ -309,6 +348,42 @@ const DealerEditSideWrapper = ({
   const handleStateChange = (state) => {
     setSelectedState(state);
   };
+
+  const handleClose = () => {
+    setOpen(!open);
+    setAgentId({})
+  };
+
+  const handleInitiateKYC = () => {
+    if (agentId?.value) {
+      initiateKYC(modelType.toLowerCase(), values.dealership_id, values.id, agentId?.value)
+        .then((message) => {
+          setKycStatus(true);
+          handleClose();
+          enqueueSnackbar(message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          });
+        })
+        .catch((err) => {
+          enqueueSnackbar(err, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          });
+          logger(err);
+        })
+    }
+    else {
+      setAgentId({ ...agentId, error: 'Please choose agent to initiate VKYC' })
+    }
+  }
+
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant='h4'>
@@ -410,7 +485,24 @@ const DealerEditSideWrapper = ({
               </div>
               {
                 !viewOnly &&
-                  <div>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    {
+                      kycStatus ? (
+                        <div style={{ display: 'flex', alignItems: 'center', marginRight: 12, backgroundColor: green[100], padding: 4, paddingRight: 12, borderRadius: 14 }}>
+                          <CheckRoundedIcon style={{ color: green[400], marginRight: 8 }} />
+                          <Typography style={{ color: green[800] }}>VKYC already initiated</Typography>
+                        </div>
+                      ) : (
+                        <Button
+                          variant='outlined'
+                          className={clsx(classes.btn, classes.editButton)}
+                          disabled={loading}
+                          onClick={handleClose}
+                        >
+                          Initiate VKYC
+                        </Button>
+                      )
+                    }
                     <Button
                       variant='contained'
                       className={clsx(classes.btn, classes.editButton)}
@@ -430,6 +522,50 @@ const DealerEditSideWrapper = ({
           )}
         </div>
       </div>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogContent>
+          <DialogContentText className={classes.text}>Initiate VKYC</DialogContentText>
+          <div style={{ width: '25vw', marginTop: 20, marginBottom: 20 }}>
+            <Grid container spacing={2}>
+              <Grid item md={12}>
+                <TextInput
+                  select
+                  label='Choose Agent'
+                  value={agentId?.value}
+                  onChange={handleIdChange}
+                  InputLabelProps={{ shrink: true }}
+                >
+                  {
+                    <option value={' '}>choose agent</option>
+                  }
+                  {
+                    agentIdList.length && agentIdList?.map((item, i) => {
+                      return (
+                        <option key={i} value={item?.id}>{item?.name}</option>
+                      )
+                    })
+                  }
+                </TextInput>
+              </Grid>
+            </Grid>
+            {
+              agentId?.error &&
+                <Alert severity="error" style={{ padding: '0px 16px', marginTop: 12 }}>{agentId?.error}</Alert>
+            }
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <div>
+            <Button onClick={handleClose} variant="contained" >Cancel</Button>
+            <Button onClick={kycStatus ? () => null : handleInitiateKYC} className={classes.button} >Initiate Video KYC</Button>
+          </div>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

@@ -69,7 +69,7 @@ const useStyles = makeStyles(theme => ({
 
 const PendingApprovalDrawer = ({ id, selectedLoanData, status, currentUser, readOnly, editable, data, onClose }) => {
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
-  const [info, setInfo] = useState({})
+  const [info, setInfo] = useState({ amount_approved: selectedLoanData?.amount_approved })
   const [openModal, setOpenModal] = useState(false)
   const [loading, setLoading] = useState(false)
   const classes = useStyles();
@@ -78,7 +78,7 @@ const PendingApprovalDrawer = ({ id, selectedLoanData, status, currentUser, read
   const { enqueueSnackbar } = useSnackbar();
 
   const updateLoanStatus = () => {
-    if(remarks){
+    if (remarks) {
       setLoading(true)
       let reqBody = {
         user_id: currentUser.id,
@@ -152,6 +152,7 @@ const PendingApprovalDrawer = ({ id, selectedLoanData, status, currentUser, read
           <>
             <DrawerRemarks label={'Remarks'} loanData={loanData?.review_remarks} readOnly={readOnly} />
             <DrawerRemarks label={'Reviewer remarks'} loanData={loanData?.approval_remarks} readOnly={readOnly} />
+            {/* {loanData?.pushback_remarks && <DrawerRemarks label={'Push back Remarks'} loanData={loanData?.pushback_remarks} readOnly={readOnly} />} */}
           </>
         </div>
         <div>
@@ -167,15 +168,15 @@ const PendingApprovalDrawer = ({ id, selectedLoanData, status, currentUser, read
             <DialogContentText id="approval-remarks-desc">
               Please enter your remarks for approval.
             </DialogContentText>
-            <TextEditor setJSON={setRemarks} toolBar={true}/>
+            <TextEditor setJSON={setRemarks} toolBar={true} />
             {
-              errorStatus && 
-                <Alert severity="error" style={{padding: '0px 16px'}}>{errorStatus}</Alert>
+              errorStatus &&
+                <Alert severity="error" style={{ padding: '0px 16px' }}>{errorStatus}</Alert>
             }
           </div>
-          <div style={{display: 'flex', justifyContent: 'center', margin: '8px 0px 5px 0px'}}>
-            <Button variant='outlined' style={{marginRight:8}} onClick={handlePendingApprovalModal}>Cancel</Button>
-            <LoaderButton 
+          <div style={{ display: 'flex', justifyContent: 'center', margin: '8px 0px 5px 0px' }}>
+            <Button variant='outlined' style={{ marginRight: 8 }} onClick={handlePendingApprovalModal}>Cancel</Button>
+            <LoaderButton
               variant='contained'
               color='primary'
               loadingText='Submitting...'

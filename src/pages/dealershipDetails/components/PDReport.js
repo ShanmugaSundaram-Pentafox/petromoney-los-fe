@@ -5,6 +5,8 @@ import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useMount } from 'react-use';
+import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
+import EmptySidewrapper from '../../../components/CommonComponents/EmptySidewrapper';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
@@ -12,6 +14,7 @@ import { ReactComponent as AssetIcon } from '../../../icons/assets.svg';
 import { ReactComponent as BankIcon } from '../../../icons/bankIcon.svg';
 import { ReactComponent as BunkIcon } from '../../../icons/bunk.svg';
 import { ReactComponent as BusinessIcon } from '../../../icons/business.svg';
+import { ReactComponent as ContactsIcon } from '../../../icons/contacts.svg';
 import { ReactComponent as CreditIcon } from '../../../icons/credits_pd.svg';
 import { ReactComponent as IncomeIcon } from '../../../icons/income.svg';
 import { ReactComponent as InfrastructureIcon } from '../../../icons/infrastructure.svg';
@@ -32,9 +35,7 @@ import AddNewOutletDetailsForm from '../PDRForms/AddNewOutletDetailsForm';
 import AddOmcDetailsForm from '../PDRForms/AddOmcDetailsForm';
 import AddOtherDetailsForm from '../PDRForms/AddOtherDetailsForm';
 import AddReferenceForm from '../PDRForms/AddReferenceForm';
-import EmptySidewrapper from '../../../components/CommonComponents/EmptySidewrapper';
-import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
-import AssessmentIcon from '@material-ui/icons/Assessment';
+import VoiceCall from '../PDRForms/VoiceCall';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -72,6 +73,10 @@ const useStyles = makeStyles((theme) => ({
   },
   icons: {
     textAlign: 'center',
+  },
+  phone: {
+    fontSize: '40px',
+    color: 'gray',
   },
   btnSuccess: {
     '&.MuiButton-contained': {
@@ -122,6 +127,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
   const [fileCode, setFileCode] = useState()
   const [openDialog, setOpenDialog] = useState(false)
   const [dealershipData, setDealershipData] = useState()
+  const [openPhonecall, setOpenPhonecall] = useState(false)
 
   const handleEdit = () => {
     setOpenOmcForm(false)
@@ -135,6 +141,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
     setOpenReferenceForm(false)
     setOpenIncomeForm(false)
     setOpenCreditPdForm(false)
+    setOpenPhonecall(false)
   }
   useMount(() => {
     getOmcDetailsById(id)
@@ -219,6 +226,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
   const credit_permission = permissionCheck(currentUser.role_name, rulesList.credit_view);
   const sales_permission = permissionCheck(currentUser.role_name, rulesList.pdr_view);
   const externalView = permissionCheck(currentUser.role_name, rulesList.external_view);
+  const phonecall_permission = permissionCheck(currentUser.role_name, rulesList.phone_call);
   return (
 
     <div>
@@ -226,7 +234,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         <div className={classes.header}>
           <Typography style={{ width: '70%' }} variant="h4" align={textAlign} className={classes.WrapperTitle} >Personal Discussion Report</Typography>
           <LoaderButton
-            variant='contained' size='small' className={classes.btnSuccess} onClick={handleDownload} isLoading={loading} 
+            variant='contained' size='small' className={classes.btnSuccess} onClick={handleDownload} isLoading={loading}
             loadingText='Loading...'
           >Report</LoaderButton>
         </div>
@@ -238,7 +246,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         >
           <div className={classes.dialogBox} >
             <DialogContent className={classes.frame}>
-              <iframe src={fileCode} height="900" width="500" frameBorder="0" />
+              <iframe title="Report" src={fileCode} height="900" width="500" frameBorder="0" />
             </DialogContent>
           </div>
         </FormDialog>
@@ -295,7 +303,6 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                     <div className={classes.content} onClick={() => setOpenBankingForm(true)}>
                       <BankIcon width={30} className={classes.icons} />
                       <Typography variant="h5" align='center' className={classes.title} >Bank details</Typography>
-
                     </div>
                   </Tooltip>
                 </Grid>
@@ -355,6 +362,17 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                 </Tooltip>
               </Grid>
           }
+          {
+            phonecall_permission &&
+              <Grid item md={2}>
+                <Tooltip title="click to Call">
+                  <div className={classes.content} onClick={() => setOpenPhonecall(true)}>
+                    <ContactsIcon width={30} className={classes.icons} />
+                    <Typography variant="h5" align='center' className={classes.title} >Call logs</Typography>
+                  </div>
+                </Tooltip>
+              </Grid>
+          }
         </Grid>
       </div>
 
@@ -366,8 +384,8 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       >
         {
           externalView && !omcEdit ?
-          <EmptySidewrapper title="OMC Details" callback={handleEdit} /> :
-          <AddOmcDetailsForm dealer_id={id} isEdit={omcEdit ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={omcData} editable={externalView} />
+            <EmptySidewrapper title="OMC Details" callback={handleEdit} /> :
+            <AddOmcDetailsForm dealer_id={id} isEdit={omcEdit ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={omcData} editable={externalView} />
         }
       </Drawer>
       <Drawer
@@ -378,8 +396,8 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       >
         {
           externalView && !outletData ?
-          <EmptySidewrapper title="Outlet Details" callback={handleEdit} /> :
-          <AddNewOutletDetailsForm dealer_id={id} isEdit={outletData ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={outletData} editable={externalView} />
+            <EmptySidewrapper title="Outlet Details" callback={handleEdit} /> :
+            <AddNewOutletDetailsForm dealer_id={id} isEdit={outletData ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={outletData} editable={externalView} />
         }
       </Drawer>
       <Drawer
@@ -390,8 +408,8 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       >
         {
           externalView && !businessData ?
-          <EmptySidewrapper title="Business Details" callback={handleEdit} /> :
-          <AddBusinessDetailsForm dealer_id={id} isEdit={businessData ? null : 'Edit'} callback={handleEdit} data={businessData} currentUser={currentUser} editable={externalView} />
+            <EmptySidewrapper title="Business Details" callback={handleEdit} /> :
+            <AddBusinessDetailsForm dealer_id={id} isEdit={businessData ? null : 'Edit'} callback={handleEdit} data={businessData} currentUser={currentUser} editable={externalView} />
         }
       </Drawer>
       <Drawer
@@ -402,8 +420,8 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       >
         {
           externalView && !infrastructureDetails ?
-          <EmptySidewrapper title="Infrastructure Details" callback={handleEdit} /> :
-          <AddInfrastructureDetailsForm dealer_id={id} isEdit={infrastructureDetails ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={infrastructureDetails} editable={externalView} />
+            <EmptySidewrapper title="Infrastructure Details" callback={handleEdit} /> :
+            <AddInfrastructureDetailsForm dealer_id={id} isEdit={infrastructureDetails ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={infrastructureDetails} editable={externalView} />
         }
       </Drawer>
       <Drawer
@@ -461,6 +479,15 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         variant="temporary"
       >
         <AddCreditPdForm dealer_id={id} isEdit='Edit' data={dealershipData} callback={handleEdit} currentUser={currentUser} editable={externalView} />
+      </Drawer>
+      <Drawer
+        anchor="right"
+        open={openPhonecall}
+        // onClose={() => setOpenPhonecall(false)}
+        variant="temporary"
+      >
+        <VoiceCall id={id} callback={handleEdit} />
+        {/* <AddPhoneCall dealer_id={id} data={dealershipData} callback={handleEdit} currentUser={currentUser} editable={externalView} /> */}
       </Drawer>
     </div >
   );

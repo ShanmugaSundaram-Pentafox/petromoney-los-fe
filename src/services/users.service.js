@@ -393,3 +393,57 @@ export const updateProductMapById = (role_id, data, action) => {
       })
   });
 }
+
+export const getVoiceCallLogsById = (dealershipId) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`voicecall/logs/${dealershipId}`)
+      .then(res => {
+        if (res.status === 'SUCCESS') {
+          resolve(res.data); 
+        } else {
+          reject(res);
+        }
+      })
+      .catch(e => {
+        reject(e.data);
+      
+      })
+  });
+}
+
+export const makeVoiceCallById = (dealershipId, data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${dealershipId}/applicant/voicecall`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const deleteVoiceCallById = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`voicecall/log/${id}`,{
+      method: 'DELETE'
+    })
+      .then(res => {
+        if (res.status === 'SUCCESS') {
+          resolve(res);
+        } else {
+          reject(res);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

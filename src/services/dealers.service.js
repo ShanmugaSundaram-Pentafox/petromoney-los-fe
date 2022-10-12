@@ -134,7 +134,7 @@ export const getDealerTransportsList = () => {
   });
 }
 export const deleteProfileDoc = (data, dealership_id, dealer_id, type) => {
-  let apiURL = type === 'DEALER' ? 'dealers' : type === 'COAPPLICANT' ? 'coapplicants': 'guarantors'
+  let apiURL = type === 'DEALER' ? 'dealers' : type === 'COAPPLICANT' ? 'coapplicants' : 'guarantors'
   return new Promise((resolve, reject) => {
     apiCall(`${apiURL}/${dealer_id}/${dealership_id}`, {
       method: 'DELETE',
@@ -186,14 +186,14 @@ export const updateCreditInfo = (data, id) => {
 }
 
 export const deleteApplicantById = (dealership_id, dealer_id, type) => {
-  let apiURL = type === 'Dealer' ? 'dealers' : type === 'Co-Applicant' ? 'coapplicants': 'guarantors'
+  let apiURL = type === 'Dealer' ? 'dealers' : type === 'Co-Applicant' ? 'coapplicants' : 'guarantors'
   return new Promise((resolve, reject) => {
     apiCall(`${apiURL}/${dealership_id}/${dealer_id}`, {
       method: 'DELETE',
-      body: {is_active: 0}
+      body: { is_active: 0 }
     })
       .then(async ({ res, status, message }) => {
-        if(status === 'SUCCESS') {
+        if (status === 'SUCCESS') {
           resolve({ res, message });
         } else {
           reject(message)
@@ -221,19 +221,53 @@ export const getPincodeDetails = (pincode) => {
   });
 }
 
-// export const getSanctionLetterPdf = (loan_id,id) => {
-//   return new Promise((resolve, reject) => {
-//     apiCall(`loans/${loan_id}/${id}/sanction`)
-//       .then(({ status, data, message }) => {
-//         if (status === "SUCCESS") {
-//           resolve(data);
+export const getKycStatus = (type, dealershipId, applicantId) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`vkyc/${dealershipId}/${applicantId}/initiation?type=${type}`)
+      .then(({ status, is_initiated, message }) => {
+        if (status === 'SUCCESS') {
+          resolve({ status, is_initiated, message });
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
 
-//         } else {
-//           reject(message);
-//         }
-//       })
-//       .catch(e => {
-//         reject(e.message);
-//       })
-//   });
-// }
+export const initiateKYC = (type, dealershipId, applicantId, agentId) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`vkyc/${dealershipId}/${applicantId}/initiation`, {
+      method: 'POST',
+      body: { type: type, agent_id: agentId }
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e);
+      })
+  });
+}
+
+export const getKycAgents = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('vkyc/agent/list')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

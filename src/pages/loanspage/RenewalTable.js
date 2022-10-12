@@ -11,18 +11,16 @@ import clsx from 'clsx';
 import moment from 'moment';
 import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState, useEffect } from 'react';
-import { connect } from 'react-redux';
 import { NavLink as RouterLink } from 'react-router-dom';
+import DocCheckListDetailsTable from '../../components/Attachment/DocCheckListDetailsTable';
+import SignRequestLayout from '../../components/Leegality/SignRequestLayout';
+import Currency from '../../components/Number/Currency';
+import { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
 import { ReactComponent as LoanAgreementIcon } from '../../icons/loan_agreement.svg';
-import { getLoansByStatus } from '../../services/loans.service';
-import { setLoansByStatus } from '../../store/loans/loans.actions';
+import { getRenewalLoans } from '../../services/loans.service';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
-import DocCheckListDetailsTable from '../Attachment/DocCheckListDetailsTable';
-import SignRequestLayout from '../Leegality/SignRequestLayout';
-import Currency from '../Number/Currency';
-import { permissionCheck } from '../UserCan/UserCan';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -51,7 +49,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, currentUser }) => {
+const RenewalTable = ({ currentUser }) => {
   const classes = useStyles();
   const [loanAmount, setLoanAmount] = useState();
   const [dealershipId, setDealershipId] = useState();
@@ -61,6 +59,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
   const [type, setType] = useState('');
   const [productTypeId, setProductTypeId] = useState();
   const [rowData, setRowData] = useState();
+  const [loans, setLoans] = useState();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
@@ -68,32 +67,21 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
   const actionable = !permissionCheck(currentUser.role_name, rulesList.external_view);
 
   useEffect(() => {
-    setLoading(true);
-    getLoansByStatus('approved', filterQry)
-      .then(data => {
-        setLoansData('approved', data);
-        setLoading(false);
+    setLoading(true)
+    getRenewalLoans()
+      .then((data) => {
+        setLoans(data)
+        setLoading(false)
       })
-      .catch(e => {
-        setLoading(false);
+      .catch((e) => {
+        setLoading(false)
+        console.log(e);
       })
-  }, [filterQry])
+  }, [])
 
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  const getLoansTable = () => {
-    setLoading(true);
-    getLoansByStatus('approved')
-      .then(data => {
-        setLoansData('approved', data);
-        setLoading(false);
-      })
-      .catch(e => {
-        setLoading(false);
-      })
-  }
 
   const columns = useMemo(() => {
     return [
@@ -121,7 +109,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
       },
       {
         label: 'Type',
-        name: 'type',
+        name: 'product_name',
         options: {
           filter: true,
           sort: true,
@@ -136,7 +124,6 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
           sort: true,
           customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
         }
-
       },
       {
         label: 'Approved Amount',
@@ -149,7 +136,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
       },
       {
         label: 'Approved Date',
-        name: 'loan_approved_rejected_date',
+        name: 'approved_date',
         options: {
           filter: false,
           sort: true,
@@ -158,17 +145,6 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
               {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
             </div>
           }
-        }
-      },
-      {
-        label: 'Approved by',
-        name: 'approver',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase() || '-'}</>
-          },
         }
       },
       {
@@ -207,17 +183,17 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
             return (
               <div style={{ minWidth: 70 }}>
                 <Tooltip title="Sanction Letter">
-                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType('sanction'); setModalVisible(true); }}>
+                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setDealershipId(value); setType('sanction'); setModalVisible(true); }}>
                     <DescriptionIcon style={{ width: 19 }} />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Loan Agreement">
-                  <IconButton style={{ marginRight: 3 }} size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['amount_approved']); setProductTypeId(loans?.[r.rowIndex]['product_id']) }}>
+                  <IconButton style={{ marginRight: 3 }} size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['amount_approved']); setProductTypeId(loans?.[r.rowIndex]['product_id']) }}>
                     <LoanAgreementIcon width={12} />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="eSign Application">
-                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setType('application'); setDealershipId(value); setModalVisible(true); }}>
+                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setType('application'); setDealershipId(value); setModalVisible(true); }}>
                     <ESignIcon width={17} />
                   </IconButton>
                 </Tooltip>
@@ -234,9 +210,6 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
     isRowSelectable: () => false,
     onCellClick: (colData, cellMeta) => {
       setRowData(loans[cellMeta.dataIndex])
-      if (cellMeta.colIndex <= 6) {
-        onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'approved')
-      }
     },
     customSort: (data, dataIndex, rowIndex) => {
       let dateIndex = 5
@@ -249,18 +222,19 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
       {
         Array.isArray(loans) && loans.length !== 0 ? (
           <MUIDataTable
-            title={title ? <Typography className={classes.title} variant="h4" component="h4">{title} ({loans.length})</Typography> : null}
+            title={<Typography className={classes.title} variant="h4" component="h4">{'Renewal Applications'} ({loans.length})</Typography>}
             data={loans}
             columns={columns}
             options={options}
           />
-        ) : (!loading && <Paper style={{ padding: 10 }}>No Approved Applications</Paper>)
+        ) : (!loading && <Paper style={{ padding: 10 }}>No Renewal Applications</Paper>)
       }
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
       }
       <Dialog fullWidth maxWidth="md" open={modalVisible} onClose={() => setModalVisible(false)}>
         <SignRequestLayout
+          open={modalVisible}
           dealershipId={dealershipId}
           loanId={loanId}
           loanAmount={loanAmount}
@@ -268,7 +242,6 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
           type={type}
           title={type === 'application' ? 'eSign Application Form' : 'Sanction Letter'}
           onClose={() => setModalVisible(false)}
-          callback={getLoansTable}
         />
       </Dialog>
       <Popover
@@ -291,12 +264,4 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
   )
 }
 
-const mapStateToProps = ({ loans }) => ({
-  loans: loans.approved
-});
-
-const mapDispatchToProps = dispatch => ({
-  setLoansData: (status, data) => dispatch(setLoansByStatus(status, data))
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(ApprovedTable);
+export default RenewalTable;

@@ -2,6 +2,76 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.20.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.19.1...v2.20.0) (2022-10-12)
+
+
+### Features
+
+* add projection report for Viviriti ([b681f37](https://gitlab.com/vignesh3/petromall-fe/commit/b681f375dd5c4a7d094ee54672ff96e419a9ff23))
+* created renewal loan tabel and inmlemented the api ([0734e97](https://gitlab.com/vignesh3/petromall-fe/commit/0734e97f89b2b294e2952ddd77aac4a436cbc8bc))
+
+### [2.19.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.19.0...v2.19.1) (2022-09-06)
+
+
+### Bug Fixes
+
+* **vkyc:** agent ID value fix ([a6213d8](https://gitlab.com/vignesh3/petromall-fe/commit/a6213d8107274ae216ac6991fc4ff3d560ef206d))
+
+## [2.19.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.18.0...v2.19.0) (2022-09-06)
+
+
+### Features
+
+* **applicants:** show all the applicants for admin ([b031939](https://gitlab.com/vignesh3/petromall-fe/commit/b0319394525230bbfb8b1be6a6993e4d94478e9d))
+
+## [2.18.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.17.1...v2.18.0) (2022-07-15)
+
+
+### Features
+
+* added delete to voice call logs ([e74c9c0](https://gitlab.com/vignesh3/petromall-fe/commit/e74c9c078629bcc3efee295a2443048d79328127))
+
+### [2.17.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.17.0...v2.17.1) (2022-06-27)
+
+
+### Bug Fixes
+
+* **call-logs:** Play/Pause issue fix and add delete option ([a95571c](https://gitlab.com/vignesh3/petromall-fe/commit/a95571c719544b12c02acdabec7283b296a56dd4))
+
+## [2.17.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.16.1...v2.17.0) (2022-06-23)
+
+
+### Features
+
+* **dealership-wrapper:** button for initiating VKYC ([bcf7b07](https://gitlab.com/vignesh3/petromall-fe/commit/bcf7b07fb7b6fcf7d851abbcc7be7dce6f602794))
+
+
+### Bug Fixes
+
+* hided the push back button ([5c660db](https://gitlab.com/vignesh3/petromall-fe/commit/5c660db0a5e181ca613929760e40720bb5b3838c))
+
+### [2.16.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.16.0...v2.16.1) (2022-06-21)
+
+
+### Bug Fixes
+
+* **pending_approval:** amount filed error fix ([452434f](https://gitlab.com/vignesh3/petromall-fe/commit/452434fd3e82cb4fa1ad076d2f749950fcbea4a2))
+* **voice-call:** update applicant type ([42bc6eb](https://gitlab.com/vignesh3/petromall-fe/commit/42bc6eb5c633a89473b63f324dfdf992f9cda1d6))
+
+## [2.16.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.15.0...v2.16.0) (2022-06-19)
+
+
+### Features
+
+* **push back:** add pushback option for loan application stages ([3100ae5](https://gitlab.com/vignesh3/petromall-fe/commit/3100ae54c64f569621a729a1e32a6bfe28756aac))
+* **voice-call:** add voice call feature in PDR ([e236376](https://gitlab.com/vignesh3/petromall-fe/commit/e236376bf4c5f7e85f2c6146caca4baf7181ed0b))
+
+
+### Bug Fixes
+
+* error msg ([508a278](https://gitlab.com/vignesh3/petromall-fe/commit/508a2783436de8bc2bf491652dfcfb112b29356e))
+* **Leegality:** fix Error Handling ([c1aeac4](https://gitlab.com/vignesh3/petromall-fe/commit/c1aeac4f7098bc801e58bf2dc8ab69d7df756a04))
+
 ## [2.15.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.14.2...v2.15.0) (2022-05-20)
 
 

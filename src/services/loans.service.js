@@ -132,6 +132,22 @@ export const getLoanBookData = (view) => {
   });
 }
 
+export const getRenewalLoans = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('loans/renewal')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
 export const getLoansByStatus = (status, filterQry) => {
   return new Promise((resolve, reject) => {
     const { region, from, to, products, zone } = filterQry;
@@ -351,6 +367,22 @@ export const getPotentialOpportunity = (view, body) => {
 export const getProjectionReport = () => {
   return new Promise((resolve, reject) => {
     apiCall('projection')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const getVivProjectionReport = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('projection?external=1')
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data);

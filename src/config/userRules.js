@@ -17,10 +17,12 @@ export const rulesList = {
   'financial_view': 'financial:view',
   'upload_statement': 'upload:statement',
   'projection_report': 'projection:report',
+  'opportunity_report': 'opportunity:report',
   'applicant_delete': 'applicant:delete',
   'external_view': 'external:view',
   'dealership_view': 'dealership:view',
-  'external_lms': 'external:lms'
+  'external_lms': 'external:lms',
+  'phone_call' : 'phonecall:pdr',
 }
 
 export const rulesForUserRoles = {
@@ -35,7 +37,8 @@ export const rulesForUserRoles = {
       rulesList.financial_view,
       rulesList.upload_statement,
       rulesList.projection_report,
-      rulesList.external_lms
+      rulesList.external_lms,
+      rulesList.opportunity_report
     ]
   },
   CDO: {
@@ -49,7 +52,8 @@ export const rulesForUserRoles = {
       rulesList.financial_view,
       rulesList.upload_statement,
       rulesList.projection_report,
-      rulesList.external_lms
+      rulesList.external_lms,
+      rulesList.opportunity_report
     ]
   },
   CFO: {
@@ -65,7 +69,8 @@ export const rulesForUserRoles = {
       rulesList.financial_view,
       rulesList.upload_statement,
       rulesList.projection_report,
-      rulesList.external_lms
+      rulesList.external_lms,
+      rulesList.opportunity_report
     ]
   },
   CREDIT_HEAD: {
@@ -80,6 +85,7 @@ export const rulesForUserRoles = {
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
+      rulesList.phone_call,
     ]
   },
   ADMIN: {
@@ -99,7 +105,9 @@ export const rulesForUserRoles = {
       rulesList.upload_statement,
       rulesList.projection_report,
       rulesList.applicant_delete,
-      rulesList.external_lms
+      rulesList.external_lms,
+      rulesList.phone_call,
+      rulesList.opportunity_report
     ]
   },
   CREDIT_EXEC: {
@@ -115,6 +123,7 @@ export const rulesForUserRoles = {
       rulesList.financial_view,
       rulesList.upload_statement,
       rulesList.region_map,
+      rulesList.phone_call,
     ]
   },
   OPS_EXEC: {
@@ -153,6 +162,7 @@ export const rulesForUserRoles = {
       rulesList.financial_view,
       rulesList.upload_statement,
       rulesList.region_map,
+      rulesList.phone_call,
     ]
   },
   SALES_HEAD_STATE: {

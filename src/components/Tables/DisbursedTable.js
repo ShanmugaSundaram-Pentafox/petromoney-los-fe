@@ -8,7 +8,6 @@ import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { NavLink as RouterLink } from 'react-router-dom';
-// import { createStructuredSelector } from 'reselect';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
@@ -84,6 +83,17 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
         }
       },
       {
+        label: 'Customer code',
+        name: 'applicant_code',
+        options: {
+          filter: true,
+          sort: true,
+          customBodyRender: (value) => {
+            return <>{value}</>
+          },
+        }
+      },
+      {
         label: 'Name',
         name: 'name',
         options: {
@@ -123,6 +133,18 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
         }
       },
       {
+        label: 'Sanctioned Date',
+        name: 'loan_approved_rejected_date',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: value => {
+            return <div>{value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}</div>
+          }
+        }
+      },
+      
+      {
         label: 'Disbursed Amount',
         name: 'actual_amount_disbursed',
         options: {
@@ -155,16 +177,14 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
   }, []);
 
   const options = {
-    // filterType: 'checkbox',
     selectableRowsHeader: false,
     selectableRows: 'none',
     isRowSelectable: () => false,
     onRowClick: (rowData, { dataIndex }) => {
-      // console.log(rowData, rowMeta);
       onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'disbursed')
     },
     customSort: (data, dataIndex, rowIndex) => {
-      let dateIndex = 6
+      let dateIndex = 7
       return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
     }
   };

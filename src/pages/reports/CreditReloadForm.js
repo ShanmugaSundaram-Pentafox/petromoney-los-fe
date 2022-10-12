@@ -87,6 +87,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 const CreditReloadForm = ({ data, callback, currentUser, view }) => {
   const [accountId, setAccountId] = useState();
+  const [repaymentType, setRepaymentType] = useState();
   const [amount, setAmount] = useState();
   const [selectedValue, setSelectedValue] = useState(!view ? null : currentUser.dealership_id);
   const classes = useStyles();
@@ -94,7 +95,7 @@ const CreditReloadForm = ({ data, callback, currentUser, view }) => {
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
-  const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setFieldValue } = useFormik({
+  const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setFieldValue, setFieldError } = useFormik({
     initialValues: {
       amount: amount,
     },
@@ -105,7 +106,7 @@ const CreditReloadForm = ({ data, callback, currentUser, view }) => {
       amount: Yup.number().nullable('Enter Amount').required('Enter Amount').moreThan(0, 'Invalid Amount').test('maxDigits', 'Request Amount Invalid', (value) => String(value) >= 50000 && String(value) <= 3000000)
     }),
     onSubmit: (values) => {
-      const d = { ...values, request_source: 'mdm', account_id: accountId?.id }
+      const d = { ...values, request_source: 'mdm', account_id: accountId?.id, repayment_made: repaymentType?.value }
       const formData = new FormData();
       Object.keys(d).forEach((key) => {
         formData.append(key, d[key]);
@@ -204,7 +205,7 @@ const CreditReloadForm = ({ data, callback, currentUser, view }) => {
                           placeholder='Search Dealership ID or Name'
                         />
                       ) : (
-                        <Typography variant='h6' style={{marginTop: 7}}>{selectedValue}</Typography>
+                        <Typography variant='h6' style={{ marginTop: 7 }}>{selectedValue}</Typography>
                       )
                     }
                   </Grid>
@@ -213,6 +214,18 @@ const CreditReloadForm = ({ data, callback, currentUser, view }) => {
                   <Grid item md={8} style={{ marginBottom: 10 }}>
                     <label style={{ marginBottom: 8 }}>Account Type</label>
                     <Select isClearable onChange={setAccountId} options={data} />
+                  </Grid>
+                </Grid>
+                <Grid container spacing={2}>
+                  <Grid item md={8} style={{ marginBottom: 10 }}>
+                    <label style={{ marginBottom: 8 }}>Repayment Made</label>
+                    <Select
+                      isClearable
+                      onChange={setRepaymentType}
+                      options={[
+                        { label: 'Today', value: 'today' },
+                        { label: 'Earlier today', value: 'earlier today' },
+                      ]} />
                   </Grid>
                 </Grid>
                 <Grid container spacing={2}>
@@ -248,7 +261,7 @@ const CreditReloadForm = ({ data, callback, currentUser, view }) => {
                           />
                           <label htmlFor='proof1'>
                             <div style={{
-                              border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center'
+                              border: '1px dashed grey', height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center', borderColor: errors.proof_1_file ? 'red' : 'grey'
                             }}>
                               {
                                 values?.proof_1_file ? (
@@ -362,7 +375,14 @@ const CreditReloadForm = ({ data, callback, currentUser, view }) => {
                   isLoading={loading}
                   loadingText='Submitting...'
                   type='submit'
-                  onClick={handleSubmit}
+                  onClick={() => {
+                    if (repaymentType?.value == 'today') {
+                      !values?.proof_1_file ? setFieldError('proof_1_file', 'Please add proof') : handleSubmit();
+                    }
+                    else {
+                      handleSubmit();
+                    }
+                  }}
                 >Submit</LoaderButton>
               }
             </div>

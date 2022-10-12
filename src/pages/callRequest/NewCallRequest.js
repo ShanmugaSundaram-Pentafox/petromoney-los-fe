@@ -18,14 +18,15 @@ const useStyles = makeStyles({
   }
 })
 
-const NewCallRequest = ({callbackData}) => {
+const NewCallRequest = ({ callbackData }) => {
   const classes = useStyles();
   const queryClient = useQueryClient()
   const { enqueueSnackbar } = useSnackbar();
   const [rowData, setRowData] = useState()
   const [remark, setRemark] = useState()
+  const [error, setError] = useState();
 
-  const { mutate: resolve } = useMutation(data => resolveCallbackRequest(data, rowData[7]) , {
+  const { mutate: resolve } = useMutation(data => resolveCallbackRequest(data, rowData[7]), {
     onSuccess: (message) => {
       setRowData()
       queryClient.invalidateQueries('new-request')
@@ -50,8 +51,15 @@ const NewCallRequest = ({callbackData}) => {
   })
 
   const handleResolve = () => {
-    let body = {is_processed: 1, remarks: remark}
-    resolve(body)
+    let body = { is_processed: 1, remarks: remark }
+    if (!remark) {
+      setError('Please enter valid remarks')
+    }
+    else {
+      resolve(body);
+      setRemark();
+      setError();
+    }
   }
 
   const columns = useMemo(() => {
@@ -71,7 +79,7 @@ const NewCallRequest = ({callbackData}) => {
         options: {
           customBodyRender: (value, tableMeta) => {
             return (
-              <div style={{display: 'flex'}}>
+              <div style={{ display: 'flex' }}>
                 <Typography variant='body1'>{value?.toUpperCase()}</Typography>
                 {
                   tableMeta.rowData[9] > 1 &&
@@ -114,7 +122,7 @@ const NewCallRequest = ({callbackData}) => {
       {
         name: 'request_id',
         label: 'Request ID',
-        options: { 
+        options: {
           filter: false,
           display: false
         }
@@ -125,7 +133,7 @@ const NewCallRequest = ({callbackData}) => {
         setCellProps: () => ({
           align: 'right',
         }),
-        options: { 
+        options: {
           filter: false,
           customBodyRender: (value, tableValue) => {
             return <Button variant='outlined' size='small' color='secondary' onClick={() => setRowData(tableValue?.rowData)}>Resolve</Button>
@@ -135,7 +143,7 @@ const NewCallRequest = ({callbackData}) => {
       {
         name: 'count',
         label: 'Count',
-        options: { 
+        options: {
           filter: false,
           display: false
         }
@@ -159,9 +167,9 @@ const NewCallRequest = ({callbackData}) => {
         options={options}
         data={callbackData}
       />
-      <Dialog onClose={() => setRowData()} open={rowData} maxWidth='xs' fullWidth>
+      <Dialog onClose={() => { setRowData(); setRemark(); setError() }} open={rowData} maxWidth='xs' fullWidth>
         <DialogContent>
-          <Typography variant='h5' style={{textAlign: 'center', marginBottom: 8}}>Add Remarks</Typography>
+          <Typography variant='h5' style={{ textAlign: 'center', marginBottom: 8 }}>Add Remarks</Typography>
           <TextInput
             fullWidth
             placeholder='Enter remarks and resolve...'
@@ -169,10 +177,12 @@ const NewCallRequest = ({callbackData}) => {
             multiline
             rows={4}
             value={remark}
+            error={error}
+            helperText={error}
             onChange={e => setRemark(e.target.value)}
           />
-          <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom:10, marginTop:12}}>
-            <Button onClick={() => setRowData()} variant='outlined' style={{marginRight: 16}}>Cancel</Button>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: 10, marginTop: 12 }}>
+            <Button onClick={() => { setRowData(); setRemark(); setError() }} variant='outlined' style={{ marginRight: 16 }}>Cancel</Button>
             <Button onClick={handleResolve} variant="contained" color="secondary">Resolve</Button>
           </div>
         </DialogContent>

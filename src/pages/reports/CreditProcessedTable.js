@@ -39,7 +39,7 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
         console.log(e);
       })
   });
-  
+
   const columns = useMemo(() => {
     return [
       {
@@ -66,6 +66,16 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
         name: 'request_id',
         label: 'Request ID',
         options: { filter: false }
+      },
+      {
+        name: 'utr',
+        label: 'UTR',
+        options: {
+          filter: false,
+          customBodyRender: (value) => {
+            return <div>{value || '-'}</div>
+          }
+        }
       },
       {
         name: 'created_date',
@@ -146,7 +156,7 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
       },
       { name: 'remarks', options: { display: 'excluded', filter: false } },
       { name: 'role_name', options: { display: 'excluded', filter: false } },
-      { name: 'is_withheld', options: { display: 'excluded', filter: false}}
+      { name: 'is_withheld', options: { display: 'excluded', filter: false } }
     ];
   }, [data]);
   const options = {
@@ -156,8 +166,8 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
     rowsPerPage: 15,
     rowsPerPageOptions: [15, 20, 30],
     setRowProps: (row, dataIndex) => {
-      if(row[13]){
-        return{ style: {backgroundColor: '#ffec9bba'}}
+      if (row[13]) {
+        return { style: { backgroundColor: '#ffec9bba' } }
       }
     },
     customToolbar: () => {

@@ -12,6 +12,7 @@ import CreatableSelect from 'react-select/creatable';
 import { useMount } from 'react-use';
 import FilePreview, { ViewData } from '../../components/CommonComponents/FilePreview';
 import FormDialog from '../../components/CommonComponents/FormDialog/FormDialog';
+import TextInput from '../../components/TextInput/TextInput';
 import { addCreditReport } from '../../services/creditreport.service';
 import { getAllWithheldRemarks } from '../../services/withheld.services';
 
@@ -87,6 +88,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
   const [remarks, setRemarks] = useState();
   const [newRemarks, setNewRemarks] = useState()
   const [imageModal, setImageModal] = useState({})
+  const [utrNumber, setUtrNumber] = useState();
   const [disburseLoading, setDisburseLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
@@ -133,16 +135,20 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
             const submitData = { 'remarks_id': newRemarks, 'is_status': 0 }
             postApiCall(submitData)
           } else {
-            const submitData = { 'is_status': 1 }
-            postApiCall(submitData)
+            if (utrNumber) {
+              const submitData = { 'is_status': 1, 'utr': utrNumber }
+              postApiCall(submitData)
+            }
           }
         } else {
           if (status === 'decline') {
             const submitData = { 'remarks': newRemarks, 'is_status': 0 }
             postApiCall(submitData)
           } else {
-            const submitData = { 'is_status': 1 }
-            postApiCall(submitData)
+            if (utrNumber) {
+              const submitData = { 'is_status': 1, 'utr': utrNumber }
+              postApiCall(submitData)
+            }
           }
         }
       }
@@ -207,19 +213,19 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
                 </Grid>
                 {
                   !rowData?.payment_proof_attachment?.proof_1_url ? (
-                    <div style={{display: 'flex', width: '100%', justifyContent: 'center', marginTop: 5}}>
+                    <div style={{ display: 'flex', width: '100%', justifyContent: 'center', marginTop: 5 }}>
                       <Typography variant='h7'>No Attachments Found</Typography>
                     </div>
                   ) : (
-                    <div style={{ display: 'flex', width: '80%', marginLeft: 30}}>
+                    <div style={{ display: 'flex', width: '80%', marginLeft: 30 }}>
                       <Grid item md={4}>
-                        <div style={{ width: 125}}>
-                          { 
+                        <div style={{ width: 125 }}>
+                          {
                             !rowData?.payment_proof_attachment.proof_1_url?.endsWith('.pdf') ? (
                               rowData?.payment_proof_attachment?.proof_1_url && (
                                 <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_1_url, type: rowData?.payment_proof_attachment.proof_1_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', width: 120, height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                   <img alt="document" src={`${rowData?.payment_proof_attachment.proof_1_url}`} height="100%" width="100%" className={classes.image} />
-                                </div> )
+                                </div>)
                             ) : (
                               rowData?.payment_proof_attachment?.proof_1_url && (
                                 <div onClick={() => setImageModal({ open: true, image: rowData?.payment_proof_attachment.proof_1_url, type: rowData?.payment_proof_attachment.proof_1_url?.endsWith('.pdf') })} style={{ border: '1px dashed grey', width: 120, height: 75, borderRadius: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -236,7 +242,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
                         </div>
                       </Grid>
                       <Grid item md={4}>
-                        <div style={{ width: 125}}>
+                        <div style={{ width: 125 }}>
                           {
                             !rowData?.payment_proof_attachment.proof_2_url?.endsWith('.pdf') ? (
                               rowData?.payment_proof_attachment?.proof_2_url && (
@@ -260,7 +266,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
                         </div>
                       </Grid>
                       <Grid item md={4}>
-                        <div style={{ width: 125}}>
+                        <div style={{ width: 125 }}>
                           {
                             !rowData?.payment_proof_attachment.proof_3_url?.endsWith('.pdf') ? (
                               rowData?.payment_proof_attachment?.proof_3_url && (
@@ -303,6 +309,16 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
                         />
                         <FormHelperText style={{ color: '#FF5C58', marginLeft: 5 }}>{!newRemarks && status === 'decline' ? 'Need a Remark to Proceed!' : null}</FormHelperText>
                       </Grid>
+                      <Grid item md={8} style={{ display: 'flex', flexDirection: 'column' }}>
+                        <TextInput
+                          direction='column'
+                          alignTop={true}
+                          labelText="UTR"
+                          value={utrNumber}
+                          onChange={e => setUtrNumber((e.target.value).toUpperCase())}
+                        />
+                        <FormHelperText style={{ color: '#FF5C58', marginLeft: 5 }}>{!utrNumber && status === 'disburse' ? 'Need UTR to Proceed!' : null}</FormHelperText>
+                      </Grid>
                     </Grid>
                   </>
                 )
@@ -326,7 +342,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
           {
             !view && (
               (rowData.status != 'Disbursed' && rowData.status != 'Declined') && (
-                <div style={{ display: 'flex', justifyContent: 'center'}}>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
                   <Button
                     variant='contained'
                     type='submit'

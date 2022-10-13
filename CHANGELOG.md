@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.21.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.20.0...v2.21.0) (2022-10-13)
+
+
+### Features
+
+* rename documents in doc checklist ([67463f9](https://gitlab.com/vignesh3/petromall-fe/commit/67463f9d3c02852dc759a53706bcb8d67175952b))
+
 ## [2.20.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.19.1...v2.20.0) (2022-10-12)
 
 

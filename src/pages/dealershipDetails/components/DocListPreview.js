@@ -76,7 +76,7 @@ const usePreviewStyles = makeStyles((theme) => ({
   attachmentEdit: {
     position: 'absolute', width: 25, height: 23, bottom: 0, left: 0, backgroundColor: '#308dff', borderRadius: '0px 5px 0px 5px', display: 'flex', justifyContent: 'center', alignItems: 'center', visibility: 'hidden',
     '&:hover': {
-      border: '2px solid #308dff'
+      border: '2px solid #30b0ff'
     }
   },
   deleteModal: {
@@ -101,8 +101,8 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
         console.log(err);
       });
   }
-  const handleDocNameDelete = () => {
-    const d = { file_id: editModal?.fileId, file_url: editModal?.fileUrl, file_name: editModal?.name+'.'+fileType, file_type: fileType }
+  const handleDocNameEdit = () => {
+    const d = { file_id: editModal?.fileId, file_url: editModal?.fileUrl, file_name: editModal?.name + '.' + fileType, file_type: fileType }
     editDocsImage(dealershipId, docId, d)
       .then((res) => {
         queryClient.invalidateQueries(['doc-checklist', dealershipId])
@@ -117,6 +117,13 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
       })
       .catch((err) => {
         console.log(err);
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        });
       });
   }
 
@@ -179,6 +186,7 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
           </Button>
         </div>
       </Dialog>
+      {/* The modal is to edit the file name of the documents */}
       <Dialog
         open={editModal?.open}
         onClose={() => setEditModal({ open: false })}
@@ -187,22 +195,19 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
       >
         <DialogTitle>{editModal?.fileName}</DialogTitle>
         <DialogContent dividers>
-          <Typography>File name</Typography>
+          <Typography>Enter File name</Typography>
           <TextInput
             fullWidth
             placeholder='Enter file name...'
-            name="remarks"
             rows={4}
             value={editModal.name}
-            // error={error}
-            // helperText={error}
             onChange={e => setEditModal({ ...editModal, name: e.target.value })}
           />
         </DialogContent>
         <DialogActions>
           <div>
-            <Button size='medium' variant='outlined' onClick={() => setDeleteModal({ open: false })}>Cancel</Button>
-            <Button variant='contained' size='medium' color='primary' style={{ color: 'white', marginLeft: 15 }} onClick={handleDocNameDelete}>Save</Button>
+            <Button size='medium' variant='outlined' onClick={() => setEditModal({ open: false })}>Cancel</Button>
+            <Button variant='contained' size='medium' color='primary' style={{ color: 'white', marginLeft: 15 }} onClick={handleDocNameEdit}>Save</Button>
           </div>
         </DialogActions>
       </Dialog>

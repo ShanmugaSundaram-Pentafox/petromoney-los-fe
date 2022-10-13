@@ -1,18 +1,21 @@
-import { Badge, Button, Typography, Dialog, DialogContent, DialogContentText, Collapse } from '@material-ui/core'
+import { Badge, Button, Typography, Dialog, DialogContent, DialogContentText, Collapse, DialogTitle, DialogActions } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
 import AddIcon from '@material-ui/icons/Add';
 import AudiotrackIcon from '@material-ui/icons/Audiotrack';
+import EditIcon from '@material-ui/icons/Edit';
 import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
 import { format } from 'date-fns';
+import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import FilePreview from '../../../components/CommonComponents/FilePreview';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
-import { ReactComponent as DeleteIcon } from '../../../icons/deleteIcon.svg'
-import { deleteDocsImage } from '../../../services/dealerships.service';
+import TextInput from '../../../components/TextInput/TextInput';
+import { ReactComponent as DeleteIcon } from '../../../icons/deleteIcon.svg';
+import { deleteDocsImage, editDocsImage } from '../../../services/dealerships.service';
 
 const imgFileTypes = ['jfif', 'pjpeg', 'jpeg', 'pjp', 'jpg', 'png'];
 const csvFileTypes = ['csv', 'xls', 'xlsx'];
@@ -39,6 +42,9 @@ const usePreviewStyles = makeStyles((theme) => ({
       backgroundColor: '#fcfcfc',
       '& $attachmentDelete': {
         visibility: 'visible'
+      },
+      '& $attachmentEdit': {
+        visibility: 'visible'
       }
     },
     border: '1px dashed grey',
@@ -62,26 +68,52 @@ const usePreviewStyles = makeStyles((theme) => ({
     color: '#999'
   },
   attachmentDelete: {
-    position: 'absolute', width: 25, height:23, bottom: 0, right: 0, backgroundColor: 'rgb(255,59,48)', borderRadius: '5px 0px 5px 0px', display: 'flex', justifyContent: 'center', alignItems: 'center', visibility: 'hidden',
+    position: 'absolute', width: 25, height: 23, bottom: 0, right: 0, backgroundColor: 'rgb(255,59,48)', borderRadius: '5px 0px 5px 0px', display: 'flex', justifyContent: 'center', alignItems: 'center', visibility: 'hidden',
     '&:hover': {
       border: '2px solid #F19C9C'
     }
   },
+  attachmentEdit: {
+    position: 'absolute', width: 25, height: 23, bottom: 0, left: 0, backgroundColor: '#308dff', borderRadius: '0px 5px 0px 5px', display: 'flex', justifyContent: 'center', alignItems: 'center', visibility: 'hidden',
+    '&:hover': {
+      border: '2px solid #308dff'
+    }
+  },
   deleteModal: {
-    display: 'flex',justifyContent: 'center', alignItems: 'center',marginBottom: 19, width: '100%'
+    display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 19, width: '100%'
   }
 }))
-const DocPreview = ({ fileType, url, DocName, updatedDateTime, file_name, fileId, dealershipId, editable }) => {
+const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name, fileId, dealershipId, editable }) => {
   const queryClient = useQueryClient()
   const [imageModal, setImageModal] = useState({});
   const classes = usePreviewStyles();
-  const [deleteModal, setDeleteModal] = useState({open: false})
+  const [deleteModal, setDeleteModal] = useState({ open: false })
+  const [editModal, setEditModal] = useState({ open: false })
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleDocDelete = (fileId) => {
     deleteDocsImage([fileId], dealershipId)
       .then((res) => {
         queryClient.invalidateQueries(['doc-checklist', dealershipId])
-        setDeleteModal({open:false})
+        setDeleteModal({ open: false })
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+  const handleDocNameDelete = () => {
+    const d = { file_id: editModal?.fileId, file_url: editModal?.fileUrl, file_name: editModal?.name+'.'+fileType, file_type: fileType }
+    editDocsImage(dealershipId, docId, d)
+      .then((res) => {
+        queryClient.invalidateQueries(['doc-checklist', dealershipId])
+        setEditModal({ open: false })
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -101,14 +133,18 @@ const DocPreview = ({ fileType, url, DocName, updatedDateTime, file_name, fileId
                   imgFileTypes.includes(fileType) ?
                     <img src={url} height="100%" width="100%" style={{ borderRadius: 6, padding: 1, objectFit: 'cover' }} alt={url} />
                     : fileType === 'pdf' ?
-                      <PictureAsPdfIcon style={{ color: '#63686E' }} /> 
-                      : audioFileTypes.includes(fileType) ? 
+                      <PictureAsPdfIcon style={{ color: '#63686E' }} />
+                      : audioFileTypes.includes(fileType) ?
                         <AudiotrackIcon style={{ color: '#63686E' }} />
-                        : <ListAltIcon style={{ color: '#63686E'}} />
+                        : <ListAltIcon style={{ color: '#63686E' }} />
                 }
                 {
                   !editable &&
-                    <div className={classes.attachmentDelete} onClick={(e) => {e.stopPropagation(); setDeleteModal({open:true, fileId: fileId})}}><DeleteIcon width={16} /></div>
+                    <div className={classes.attachmentDelete} onClick={(e) => { e.stopPropagation(); setDeleteModal({ open: true, fileId: fileId }) }}><DeleteIcon width={16} /></div>
+                }
+                {
+                  !editable &&
+                    <div className={classes.attachmentEdit} onClick={(e) => { e.stopPropagation(); setEditModal({ open: true, fileId: fileId, fileUrl: url, fileName: file_name }) }}><EditIcon fontSize='small' style={{ color: 'white' }} /></div>
                 }
               </div>
               <h5 style={{ width: 100, whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden', marginLeft: 15 }}>{file_name}</h5>
@@ -125,29 +161,56 @@ const DocPreview = ({ fileType, url, DocName, updatedDateTime, file_name, fileId
       </FormDialog>
       <Dialog
         open={deleteModal?.open}
-        onClose={() => setDeleteModal({open:false})}
+        onClose={() => setDeleteModal({ open: false })}
         maxWidth='xs'
         fullWidth
       >
         <DialogContent>
-          <div style={{textAlign: 'center', marginBottom: 15}}>
-            <InfoCircleOutlined style={{fontSize: 48, color: 'rgb(255,59,48)', margin: 16, marginBottom: 20}} />
+          <div style={{ textAlign: 'center', marginBottom: 15 }}>
+            <InfoCircleOutlined style={{ fontSize: 48, color: 'rgb(255,59,48)', margin: 16, marginBottom: 20 }} />
             <Typography variant='h3'>Are you sure?</Typography>
           </div>
-          <DialogContentText style={{textAlign: 'center'}}>Do you really want to delete this document? This process cannot be undone!</DialogContentText>
+          <DialogContentText style={{ textAlign: 'center' }}>Do you really want to delete this document? This process cannot be undone!</DialogContentText>
         </DialogContent>
         <div className={classes.deleteModal}>
-          <Button size='medium' variant='outlined' onClick={() => setDeleteModal({open:false})}>Cancel</Button>
-          <Button variant='contained' size='medium' style={{backgroundColor: 'rgb(255,59,48)', color: 'white', marginLeft: 15}} onClick={() => handleDocDelete(deleteModal?.fileId)}>
+          <Button size='medium' variant='outlined' onClick={() => setDeleteModal({ open: false })}>Cancel</Button>
+          <Button variant='contained' size='medium' style={{ backgroundColor: 'rgb(255,59,48)', color: 'white', marginLeft: 15 }} onClick={() => handleDocDelete(deleteModal?.fileId)}>
             Delete
           </Button>
         </div>
+      </Dialog>
+      <Dialog
+        open={editModal?.open}
+        onClose={() => setEditModal({ open: false })}
+        maxWidth='xs'
+        fullWidth
+      >
+        <DialogTitle>{editModal?.fileName}</DialogTitle>
+        <DialogContent dividers>
+          <Typography>File name</Typography>
+          <TextInput
+            fullWidth
+            placeholder='Enter file name...'
+            name="remarks"
+            rows={4}
+            value={editModal.name}
+            // error={error}
+            // helperText={error}
+            onChange={e => setEditModal({ ...editModal, name: e.target.value })}
+          />
+        </DialogContent>
+        <DialogActions>
+          <div>
+            <Button size='medium' variant='outlined' onClick={() => setDeleteModal({ open: false })}>Cancel</Button>
+            <Button variant='contained' size='medium' color='primary' style={{ color: 'white', marginLeft: 15 }} onClick={handleDocNameDelete}>Save</Button>
+          </div>
+        </DialogActions>
       </Dialog>
     </>
   )
 }
 
-const DocListPreview = ({ docName, upload, file, id, dealershipId, editable }) => {
+const DocListPreview = ({ docName, upload, file, id, docId, dealershipId, editable }) => {
   const classes = useStyles();
   const [collapse, setCollapse] = useState(false);
 
@@ -175,7 +238,7 @@ const DocListPreview = ({ docName, upload, file, id, dealershipId, editable }) =
           file.map((data, i) => {
             return (
               <Collapse in={!collapse} key={i}>
-                <DocPreview fileId={data?.file_id} dealershipId={dealershipId} fileType={data.file_type} file_name={data.file_name} url={data.file_url} DocName={docName} updatedDateTime={format(new Date(data?.created_date || data?.modified_date), 'dd/MM/yyyy hh:mm a')} editable={editable} />
+                <DocPreview fileId={data?.file_id} docId={docId} dealershipId={dealershipId} fileType={data.file_type} file_name={data.file_name} url={data.file_url} DocName={docName} updatedDateTime={format(new Date(data?.created_date || data?.modified_date), 'dd/MM/yyyy hh:mm a')} editable={editable} />
               </Collapse>
             )
           })

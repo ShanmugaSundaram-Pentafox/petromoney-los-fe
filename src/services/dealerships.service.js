@@ -251,7 +251,7 @@ export const deleteDealershipSalesById = (id, body) => {
 
 export const getDealershipCheckList = (id) => {
   return new Promise((resolve, reject) => {
-    if(id) {
+    if (id) {
       apiCall(`${URL.checklist}/${id}`)
         .then(({ status, data, message }) => {
           if (status === 'SUCCESS') {
@@ -349,6 +349,26 @@ export const deleteDocsImage = (data, id) => {
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+export const editDocsImage = (dealershipId, docId, data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${URL.checklist}/${dealershipId}/doc/${docId}/${data?.file_id}`, {
+      method: 'POST',
+      body: {
+        ...data
+      }
+    })
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
         } else {
           reject(message);
         }
@@ -595,9 +615,9 @@ export const validateId = (action, id, body) => {
   return new Promise((resolve, reject) => {
     apiCall(`${action}/${id}`, {
       method: 'POST',
-      body: body ? {name: body} : {}
+      body: body ? { name: body } : {}
     })
-      .then(({status, data, message}) => {
+      .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data[0] || [])
         } else {

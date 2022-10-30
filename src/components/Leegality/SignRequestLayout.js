@@ -103,7 +103,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
         })
         .catch(err => {
           setPdfLoading(false)
-          console.log('getPdfContent >> ', err);                  
+          console.log('getPdfContent >> ', err);
           enqueueSnackbar(err, {
             anchorOrigin: {
               vertical: 'top',
@@ -121,22 +121,25 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
         })
       getDealersByDealershipId(dealershipId)
         .then(res => {
-          setDealers(res);
+          const result = res?.filter(d => d?.is_active == 1)
+          setDealers(result);
         })
         .catch(err => {
           console.log('getDealersByDealershipId >> ', err);
         });
       getCoApplicantByDealershipId(dealershipId)
         .then(res => {
-          setApplicants(res);
+          const result = res?.filter(d => d?.is_active == 1)
+          setApplicants(result);
         })
         .catch(err => {
           console.log('getCoApplicantByDealershipId >> ', err)
         })
-  
+
       getAllGuarantor(dealershipId)
         .then(res => {
-          setGuarantor(res);
+          const result = res?.filter(d => d?.is_active == 1)
+          setGuarantor(result);
         })
         .catch(err => {
           console.log('getAllGuarantor >>', err)
@@ -262,7 +265,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
         <CloseIcon />
       </IconButton>
       {
-        loansData?.is_signed ? 
+        loansData?.is_signed ?
           (
             <SignedLayout loansData={loansData}/>
           ) : (
@@ -278,7 +281,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
                       type === 'sanction' || type === 'application' ? (
                         <LeegalityPdfView pdfUrl={pdfUrl} loading={pdfLoading} />
                       ) : (
-                        <LeegalityAgreementTable 
+                        <LeegalityAgreementTable
                           loanAmount={loanAmount}
                           dealership={dealership}
                           dealers={dealers}

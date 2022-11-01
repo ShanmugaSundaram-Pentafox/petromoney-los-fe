@@ -79,7 +79,7 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     color: green[800],
-    marginLeft:12
+    marginLeft: 12
   }
 }));
 
@@ -148,6 +148,7 @@ const DealerEditSideWrapper = ({
   const validationSchema = Yup.object().shape({
     first_name: Yup.string().nullable('Enter first name').required('Enter first name'),
     last_name: Yup.string().nullable('Enter last name').required('Enter last name'),
+    father_name: Yup.string().nullable('Enter your father\'s name').required('Enter your father\'s name'),
     gender: Yup.string().nullable('Choose gender').required('Enter gender'),
     email: Yup.string().nullable('Enter email').email('Invalid email').required('Enter email'),
     city: Yup.string().nullable('Enter City').required('Enter City'),

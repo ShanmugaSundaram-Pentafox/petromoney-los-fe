@@ -236,8 +236,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
     { label: 'Principal', value: 'PRINCIPAL' },
     { label: 'Others', value: 'OTHERS' }
   ]
-  console.log('PAN details >>>>>>>', data?.pan_details)
-
+  
   return (
     <>
       {

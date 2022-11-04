@@ -13,6 +13,7 @@ export const rulesList = {
   'region_map': 'region:map',
   'settings_view': 'settings:view',
   'credit_view': 'credit:view',
+  'credit_refresh': 'credit:refresh',
   'pdr_view': 'sales:view',
   'financial_view': 'financial:view',
   'upload_statement': 'upload:statement',
@@ -82,6 +83,7 @@ export const rulesForUserRoles = {
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
       rulesList.credit_view,
+      rulesList.credit_refresh,
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
@@ -100,6 +102,7 @@ export const rulesForUserRoles = {
       rulesList.region_map,
       rulesList.settings_view,
       rulesList.credit_view,
+      rulesList.credit_refresh,
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
@@ -107,7 +110,7 @@ export const rulesForUserRoles = {
       rulesList.applicant_delete,
       rulesList.external_lms,
       rulesList.phone_call,
-      rulesList.opportunity_report
+      rulesList.opportunity_report,
     ]
   },
   CREDIT_EXEC: {
@@ -119,6 +122,7 @@ export const rulesForUserRoles = {
       rulesList.dealer_credit_edit,
       rulesList.dealership_credit_edit,
       rulesList.credit_view,
+      rulesList.credit_refresh,
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
@@ -158,6 +162,7 @@ export const rulesForUserRoles = {
       rulesList.dealer_credit_edit,
       rulesList.dealership_credit_edit,
       rulesList.credit_view,
+      rulesList.credit_refresh,
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,

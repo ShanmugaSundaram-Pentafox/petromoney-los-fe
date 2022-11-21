@@ -236,7 +236,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
     { label: 'Principal', value: 'PRINCIPAL' },
     { label: 'Others', value: 'OTHERS' }
   ]
-  
+
   return (
     <>
       {
@@ -269,8 +269,8 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
             <Typography variant="h6" style={{ marginTop: 8 }}>KYC Details</Typography>
             <Grid container spacing={2} className={classes.readOnlyWrapper}>
               <Grid title='Click to view PAN details' item md={6}>
-                <Tooltip title='Click to view PAN details'>
-                  <div onClick={((event) => { setAnchorEl(event.currentTarget) })}>
+                <Tooltip title={values?.pan_verified ? 'Click to view PAN details' : 'Verify your PAN to get the details'}>
+                  <div onClick={(event) => values?.pan_verified == 1 ? setAnchorEl(event.currentTarget) : null}>
                     <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success' : 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'} />} />
                   </div>
                 </Tooltip>

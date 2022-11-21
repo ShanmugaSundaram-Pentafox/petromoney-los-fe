@@ -89,8 +89,6 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
   const { enqueueSnackbar } = useSnackbar();
   const [selectedDate, setSelectedDate] = useState(data?.dob && parse(data?.dob, 'dd-MM-yyyy', new Date()))
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
 
   const handleDateChange = (date) => {
     setSelectedDate(date)
@@ -711,8 +709,8 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
       }
       {/* This popup is to show the actual pan details returned from the external API */}
       <Popover
-        id={id}
-        open={open}
+        id={anchorEl ? 'simple-popover' : undefined}
+        open={Boolean(anchorEl)}
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{

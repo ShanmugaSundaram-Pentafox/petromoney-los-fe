@@ -314,7 +314,7 @@ const FcEligibilityTable = ({ data }) => {
               <TableRow>
                 <TableCell colSpan={2}>Total</TableCell>
                 {/* sumBy return the sum of the columns in an array if the column contains a string value it will concat the valuse so the values are passed throug a function */}
-                <TableCell><Currency value={sumBy(data?.fc_addtional_business_income_data,item => Number(item.amount_per_annum))} /></TableCell>
+                <TableCell><Currency value={sumBy(data?.fc_addtional_business_income_data, item => Number(item.amount_per_annum))} /></TableCell>
               </TableRow>
             </TableFooter>
           </Table>
@@ -350,15 +350,27 @@ const FcEligibilityTable = ({ data }) => {
                     <TableCell>{field?.LFR_charges}</TableCell>
                     <TableCell>{field?.total_msd_hsd_sales}</TableCell>
                     <TableCell>{field?.LFR_charges_KL}</TableCell>
-                    
+
                   </TableRow>
                 ))
               }
             </TableBody>
             <TableFooter>
               <TableRow>
-                <TableCell colSpan={2}>Average LFR Charges </TableCell>
-                <TableCell><Currency value={sumBy(data?.fc_addtional_business_income_data,item => Number(item.amount_per_annum))} /></TableCell>
+                <TableCell colSpan={4} align={'right'}>Average LFR Charges per KL</TableCell>
+                <TableCell>{((sumBy(data?.fc_LFR_charges_calculation_data, item => Number((item.LFR_charges_KL)))) / data?.fc_LFR_charges_calculation_data.length).toFixed(2)}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell colSpan={4} align={'right'}>Annual MS + HSD sales (KL)  </TableCell>
+                <TableCell>{(sumBy(data?.fc_LFR_charges_calculation_data, item => Number((item.total_msd_hsd_sales))))}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell colSpan={4} align={'right'}>LF Charges Calculated</TableCell>
+                <TableCell>{((sumBy(data?.fc_LFR_charges_calculation_data, item => Number((item.LFR_charges_KL)))) / data?.fc_LFR_charges_calculation_data.length) * (sumBy(data?.fc_LFR_charges_calculation_data, item => Number((item.total_msd_hsd_sales))))}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell colSpan={4} align={'right'}>LF charges override if any</TableCell>
+                <TableCell>{data.fc_eligibility_LFR_tot_data[0]?.lfr_charges_considered_if_any}</TableCell>
               </TableRow>
             </TableFooter>
           </Table>

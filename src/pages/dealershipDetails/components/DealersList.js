@@ -115,10 +115,11 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
     if (e.target.tagName === 'A') {
       return null;
     }
+    const d = { ...row, pan_details: typeof (row.pan_details) === 'string' ? JSON.parse(row.pan_details) : (row.pan_details || {}) }
     setModelType(type);
     setFormType('Edit');
     setShowDealerEditForm(true);
-    setRowData(row);
+    setRowData(d);
   }
 
   const editFormClose = (type) => {
@@ -185,7 +186,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         onClickAddMenu={onClickAddMenu}
         currentUser={currentUser}
         showDealerEditForm={showDealerEditForm} />
-      
+
       <Drawer
         anchor="right"
         open={showDealerEditForm}

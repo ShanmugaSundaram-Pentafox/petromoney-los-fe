@@ -9,6 +9,8 @@ import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
+import UserCan from '../../../components/UserCan/UserCan';
+import { rulesList } from '../../../config/userRules';
 import { getCibilReport, updatePanApplicant } from '../../../services/creditreport.service';
 
 const useStyles = makeStyles({
@@ -117,9 +119,21 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
           <>
             {
               !editable &&
-                <Grid {...gridItem} md={4}>
-                  {<Button variant='outlined' color='primary' style={{marginTop: 10}} onClick={CIBILReport} startIcon={<SpeedOutlinedIcon />}>Check CIBIL Score</Button>}
-                </Grid>
+                <UserCan
+                  role={currentUser.role_name}
+                  perform={rulesList.credit_refresh}
+                  yes={() => (
+                    <Grid {...gridItem} md={4}>
+                      <Button variant='outlined' color='primary' style={{marginTop: 10}} onClick={CIBILReport} startIcon={<SpeedOutlinedIcon />}>Check CIBIL Score</Button>
+                    </Grid>
+                  )}
+                  no={() => (
+                    <Alert severity='info'>
+                      <AlertTitle>Info</AlertTitle>
+                      Only Credit team can check/refresh CIBIL. Kindly contact Credit team.
+                    </Alert>
+                  )}
+                />
             }
             <Grid {...gridItem} md={2}style={{marginTop:15}}>
               {ValidateProps(cibilLoading)}

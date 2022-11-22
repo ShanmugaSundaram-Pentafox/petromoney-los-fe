@@ -18,7 +18,7 @@ import { useQuery, useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import DealerCreditInfoForm from './DealerCreditInfoForm';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
-import { permissionCheck } from '../../../components/UserCan/UserCan';
+import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { getCibilReport } from '../../../services/creditreport.service';
 import { getCreditInfo, updateCreditInfo } from '../../../services/dealers.service';
@@ -190,7 +190,18 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
                 <Grid item md={12} style={{display: 'flex', justifyContent: 'space-between'}}>
                   <div style={{display: 'flex', alignItems: 'center'}}>
                     <Typography variant='h6'>CIBIL Extract</Typography>
-                    <Button variant='text' color='primary' startIcon={<RotateLeftOutlinedIcon />} style={{marginLeft: 8}} onClick={CIBILReport}>Refresh CIBIL Report</Button>
+                    <UserCan
+                      role={currentUser.role_name}
+                      perform={rulesList.credit_refresh}
+                      yes={() => (
+                        <Button variant='text' color='primary' startIcon={<RotateLeftOutlinedIcon />} style={{marginLeft: 8}} onClick={CIBILReport}>Refresh CIBIL Report</Button>
+                      )}
+                      no={() => (
+                        <Alert severity='info'>
+                          Only Credit team can check/refresh CIBIL. Kindly contact Credit team.
+                        </Alert>
+                      )}
+                    />
                   </div>
                   { apiData?.cibil_file_url && <div><Button size='small' variant='outlined' color='primary' onClick={handleDownload} startIcon={<DownloadOutlined/>}>Download Report</Button></div> }
                 </Grid>

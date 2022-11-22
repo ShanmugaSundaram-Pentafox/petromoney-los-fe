@@ -13,7 +13,6 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableRow from '@material-ui/core/TableRow';
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 import CheckCircleOutlineRoundedIcon from '@material-ui/icons/CheckCircleOutlineRounded';
-import DeleteIcon from '@material-ui/icons/Delete';
 import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
 import LinkIcon from '@material-ui/icons/Link';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -77,12 +76,6 @@ const LeegalityLayout = ({ docId, dealershipId }) => {
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-    setDocDetails();
-    setAuditTrails();
   };
 
 
@@ -259,7 +252,7 @@ const LeegalityLayout = ({ docId, dealershipId }) => {
                         // id={id}
                         open={Boolean(anchorEl)}
                         anchorEl={anchorEl}
-                        onClose={handleClose}
+                        onClose={()=>setAnchorEl(null)}
                         anchorOrigin={{
                           vertical: 'bottom',
                           horizontal: 'center',
@@ -270,10 +263,14 @@ const LeegalityLayout = ({ docId, dealershipId }) => {
                         }}
                       >
                         <div className={classes.popover}>
-                          <div className={classes.icon}>
+
+                          {/* There is no onClick functionality for this icon so hidding this */}
+
+
+                          {/* <div className={classes.icon}>
                             <DeleteIcon fontSize='small' />
                             <Typography className={classes.text}>Delete</Typography>
-                          </div>
+                          </div> */}
                           <div className={classes.icon} onClick={() => navigator.clipboard.writeText(item.signUrl)}>
                             <LinkIcon fontSize='small' />
                             <Typography className={classes.text}>Copy link</Typography>

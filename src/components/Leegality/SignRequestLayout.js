@@ -237,6 +237,13 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
             }, 3000);
           } else {
             setHideSend(false)
+            enqueueSnackbar(res.message, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            })
             console.log('>> Document Details status error >> ', res)
           }
         })

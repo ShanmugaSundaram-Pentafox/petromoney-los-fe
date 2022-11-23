@@ -1,4 +1,4 @@
-import { Backdrop, CircularProgress, Typography } from '@material-ui/core';
+import { Backdrop, CircularProgress, Tooltip, Typography } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
@@ -13,8 +13,8 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableRow from '@material-ui/core/TableRow';
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 import CheckCircleOutlineRoundedIcon from '@material-ui/icons/CheckCircleOutlineRounded';
+import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
-import LinkIcon from '@material-ui/icons/Link';
 import SettingsIcon from '@material-ui/icons/Settings';
 import moment from 'moment';
 import { useSnackbar } from 'notistack';
@@ -51,15 +51,16 @@ const Card = styled.div`
 const useStyles = makeStyles((theme) => ({
   popover: {
     padding: theme.spacing(2),
-    paddingBottom:0,
-    minWidth:'40px',
+    paddingBottom: 0,
+    minWidth: '40px',
   },
   icon: {
     display: 'flex',
-    marginBottom:theme.spacing(2),
+    marginBottom: theme.spacing(2),
+    cursor: 'pointer',
   },
   text: {
-    marginLeft:theme.spacing(1),
+    marginLeft: theme.spacing(1),
   }
 }));
 
@@ -70,6 +71,7 @@ const LeegalityLayout = ({ docId, dealershipId }) => {
   const [loading, setLoading] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState(null);
   // const [signUrl, setSignUrl] = useState();
+  const [copyTooltip, setCopTooltip] = useState();
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
 
@@ -90,6 +92,13 @@ const LeegalityLayout = ({ docId, dealershipId }) => {
           }
         } else {
           setLoading(false)
+          enqueueSnackbar(res.message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
           console.log('>> Document Details status error >> ', res)
           setDocDetails()
         }
@@ -240,19 +249,23 @@ const LeegalityLayout = ({ docId, dealershipId }) => {
                       </Box>
                     </div>
                     <div className="card-footer">
-                      {
-                        item.active ?
-                          <Button variant="outlined" color="secondary" onClick={() => ResendNotification(item.signUrl)} size="small">Resend Notification</Button>
-                          :
-                          <Button variant="outlined" color="secondary" onClick={ActivateDealer} size="small">Activate</Button>
-                      }
+                      <div>
+                        {
+                          item.active ?
+                            <Button variant="outlined" color="secondary" onClick={() => ResendNotification(item.signUrl)} size="small">Resend Notification</Button>
+                            :
+                            <Button variant="outlined" color="secondary" onClick={ActivateDealer} size="small">Activate</Button>
+                        }
+                      </div>
+                      <div style={{ cursor: 'pointer' }}>
+                        <SettingsIcon fontSize={'small'} color={'action'} onClick={handleClick} />
+                      </div>
                       {/* <Button variant="outlined" color="secondary" size="small">Details</Button> */}
-                      <SettingsIcon fontSize={'small'} color={'action'} onClick={handleClick} />
                       <Popover
                         // id={id}
                         open={Boolean(anchorEl)}
                         anchorEl={anchorEl}
-                        onClose={()=>setAnchorEl(null)}
+                        onClose={() => setAnchorEl(null)}
                         anchorOrigin={{
                           vertical: 'bottom',
                           horizontal: 'center',
@@ -271,10 +284,25 @@ const LeegalityLayout = ({ docId, dealershipId }) => {
                             <DeleteIcon fontSize='small' />
                             <Typography className={classes.text}>Delete</Typography>
                           </div> */}
-                          <div className={classes.icon} onClick={() => navigator.clipboard.writeText(item.signUrl)}>
-                            <LinkIcon fontSize='small' />
-                            <Typography className={classes.text}>Copy link</Typography>
-                          </div>
+                          <Tooltip title={copyTooltip ? copyTooltip : 'Click to copy'}>
+                            <div className={classes.icon} onClick={() => navigator.clipboard.writeText(item.signUrl).then(
+                              () => {
+                                setCopTooltip('Copied!')
+                                setTimeout(() => {
+                                  setAnchorEl(null);
+                                  setTimeout(() => {
+                                    setCopTooltip('')
+                                  }, 800)
+                                }, 200)
+                              },
+                              () => {
+                                setCopTooltip('Copy failed!')
+                              }
+                            )}>
+                              <FileCopyOutlinedIcon fontSize='small' color={'action'} />
+                              <Typography className={classes.text}>Copy link</Typography>
+                            </div>
+                          </Tooltip>
                         </div>
                       </Popover>
                     </div>

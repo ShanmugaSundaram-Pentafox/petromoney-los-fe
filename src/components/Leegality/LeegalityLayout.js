@@ -70,8 +70,6 @@ const LeegalityLayout = ({ docId, dealershipId }) => {
   const [successStatus, setSuccessStatus] = useState(false);
   const [loading, setLoading] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState(null);
-  // const [signUrl, setSignUrl] = useState();
-  const [copyTooltip, setCopTooltip] = useState();
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
 
@@ -284,19 +282,26 @@ const LeegalityLayout = ({ docId, dealershipId }) => {
                             <DeleteIcon fontSize='small' />
                             <Typography className={classes.text}>Delete</Typography>
                           </div> */}
-                          <Tooltip title={copyTooltip ? copyTooltip : 'Click to copy'}>
+                          <Tooltip title={'Click to copy'}>
                             <div className={classes.icon} onClick={() => navigator.clipboard.writeText(item.signUrl).then(
                               () => {
-                                setCopTooltip('Copied!')
-                                setTimeout(() => {
-                                  setAnchorEl(null);
-                                  setTimeout(() => {
-                                    setCopTooltip('')
-                                  }, 800)
-                                }, 200)
+                                setAnchorEl(null)
+                                enqueueSnackbar('Sign URL copied successfully', {
+                                  anchorOrigin: {
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                  },
+                                  variant: 'success',
+                                })
                               },
                               () => {
-                                setCopTooltip('Copy failed!')
+                                enqueueSnackbar('Copy failed', {
+                                  anchorOrigin: {
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                  },
+                                  variant: 'error',
+                                })
                               }
                             )}>
                               <FileCopyOutlinedIcon fontSize='small' color={'action'} />

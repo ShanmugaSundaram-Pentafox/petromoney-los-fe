@@ -58,3 +58,24 @@ export const getPdfContent = (loanId, dealerId, type) => {
       })
   });
 }
+
+export const deleteRequestUrl = (url) => {
+  return new Promise((resolve, reject) => {
+    apiCall('document/delete/invitation', {
+      method: 'POST',
+      body: {
+        signUrl: url,
+      },
+    })
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};

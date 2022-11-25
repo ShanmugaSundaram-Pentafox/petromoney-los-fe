@@ -13,6 +13,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableRow from '@material-ui/core/TableRow';
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 import CheckCircleOutlineRoundedIcon from '@material-ui/icons/CheckCircleOutlineRounded';
+import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
 import LinkIcon from '@material-ui/icons/Link';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -21,6 +22,7 @@ import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ActivityBox from './components/ActivityBox';
+import { deleteRequestUrl } from '../../services/leegality.service';
 import apiCall from '../../utils/api.util';
 import PdfViewer from '../CommonComponents/PdfViewer/PdfViewer';
 
@@ -51,15 +53,16 @@ const Card = styled.div`
 const useStyles = makeStyles((theme) => ({
   popover: {
     padding: theme.spacing(2),
-    paddingBottom:0,
-    minWidth:'40px',
+    paddingBottom: 0,
+    minWidth: '40px',
   },
   icon: {
     display: 'flex',
-    marginBottom:theme.spacing(2),
+    marginBottom: theme.spacing(2),
+    cursor:'pointer',
   },
   text: {
-    marginLeft:theme.spacing(1),
+    marginLeft: theme.spacing(1),
   }
 }));
 
@@ -146,6 +149,18 @@ const LeegalityLayout = ({ docId, dealershipId }) => {
         console.log(err)
       })
   }
+
+  const handleDelete = (url) => {
+    console.log('url >>>>>>>>>>>>',url)
+    deleteRequestUrl(url)
+      .then((res) => {
+        console.log('res >>>>>>>>>>>>>>>>', res)
+      })
+      .catch((err) => {
+        console.log('err >>>>>>>>>>>>>', err)
+      })
+  }
+
   const ActivateDealer = () => {
     setLoading(true)
     apiCall(`document/reactivate/${docId}`)
@@ -177,10 +192,10 @@ const LeegalityLayout = ({ docId, dealershipId }) => {
   return (
     <Box bgcolor="#fbfbfb">
       <Grid container spacing={2}>
-        <Grid item sm={6} style={{position: 'relative'}}>
+        <Grid item sm={6} style={{ position: 'relative' }}>
           {docId && docDetails?.file && <PdfViewer title="Some Random File" file={docDetails?.file} showDownload />}
-          <Backdrop open={loading} style={{position: 'absolute', zIndex: '2'}}>
-            <CircularProgress size={25} style={{color: 'white'}} />
+          <Backdrop open={loading} style={{ position: 'absolute', zIndex: '2' }}>
+            <CircularProgress size={25} style={{ color: 'white' }} />
           </Backdrop>
         </Grid>
         <Grid item sm={3}>
@@ -252,7 +267,7 @@ const LeegalityLayout = ({ docId, dealershipId }) => {
                         // id={id}
                         open={Boolean(anchorEl)}
                         anchorEl={anchorEl}
-                        onClose={()=>setAnchorEl(null)}
+                        onClose={() => setAnchorEl(null)}
                         anchorOrigin={{
                           vertical: 'bottom',
                           horizontal: 'center',
@@ -267,10 +282,10 @@ const LeegalityLayout = ({ docId, dealershipId }) => {
                           {/* There is no onClick functionality for this icon so hidding this */}
 
 
-                          {/* <div className={classes.icon}>
-                            <DeleteIcon fontSize='small' />
+                          <div className={classes.icon} onClick={() => handleDelete(item?.signUrl)}>
+                            <DeleteOutlineOutlinedIcon fontSize='small' />
                             <Typography className={classes.text}>Delete</Typography>
-                          </div> */}
+                          </div>
                           <div className={classes.icon} onClick={() => navigator.clipboard.writeText(item.signUrl)}>
                             <LinkIcon fontSize='small' />
                             <Typography className={classes.text}>Copy link</Typography>

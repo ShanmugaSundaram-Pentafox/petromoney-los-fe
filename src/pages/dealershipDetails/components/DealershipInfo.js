@@ -1,4 +1,4 @@
-import { Tooltip, Typography } from '@material-ui/core';
+import { Drawer, Tooltip, Typography } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -13,6 +13,7 @@ import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useMount } from 'react-use';
 import * as Yup from 'yup';
+import CrimeInfoSideWrapper from './CrimeInfoSideWrapper';
 import { DocAttachment } from '../../../components/Attachment/DocAttachment';
 import Button from '../../../components/CommonComponents/Button/Button';
 import CustomToken from '../../../components/CommonComponents/CustomToken';
@@ -53,7 +54,7 @@ const useStyles = makeStyles(theme => ({
     marginRight: 16,
   },
   attachmentContainer: {
-    display: 'flex', width: '39vw',marginLeft: 8, paddingRight: 12, flexWrap: 'wrap'
+    display: 'flex', width: '39vw', marginLeft: 8, paddingRight: 12, flexWrap: 'wrap'
   }
 }));
 
@@ -61,11 +62,12 @@ const DealershipInfo = ({ data, className, currentUser }) => {
   const [readOnly, setReadOnly] = useState(true);
   const [loading, setLoading] = useState();
   const [showUpload, setShowUpload] = useState(false);
-  const [panValidateData, setPanValidateData] = useState({icon: false})
-  const [gstValidateData, setGstValidateData] = useState({icon: false})
+  const [panValidateData, setPanValidateData] = useState({ icon: false })
+  const [gstValidateData, setGstValidateData] = useState({ icon: false })
   const [gstDetails, setGstDetails] = useState({})
   const [omcs, setOmcs] = useState([])
   const [fileType, setFileType] = useState('');
+  const [crimeData, setCrimeData] = useState();
   const businessTypes = useQuery('business-types', getBusinessTypes, { cacheTime: 300000 })
   const states = useQuery('state', getActiveStates, { cacheTime: 300000 })
   const { enqueueSnackbar } = useSnackbar();
@@ -73,21 +75,21 @@ const DealershipInfo = ({ data, className, currentUser }) => {
   const viewOnly = permissionCheck(currentUser.role_name, rulesList.dealership_view);
 
   const handleValidate = (action, id) => {
-    if(id) {
-      action === 'pan' ? setPanValidateData({icon:true, loading: true}) : setGstValidateData({icon:true, loading: true})
+    if (id) {
+      action === 'pan' ? setPanValidateData({ icon: true, loading: true }) : setGstValidateData({ icon: true, loading: true })
       validateId(action, id)
         .then((res) => {
           action === 'pan' ?
-            setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}, is_verified: res?.is_verified}) :
-            setGstValidateData({icon: true, loading: false, idType: 'GST', details: res?.details || {}, is_verified: res?.is_verified})
+            setPanValidateData({ icon: true, loading: false, idType: 'PAN', details: res?.details || {}, is_verified: res?.is_verified }) :
+            setGstValidateData({ icon: true, loading: false, idType: 'GST', details: res?.details || {}, is_verified: res?.is_verified })
           !values?.name && setFieldValue('name', res?.details?.tradeNam);
           setFieldValue('address', res?.details?.pradr?.adr);
         })
         .catch(e => {
           console.log(e);
           action === 'pan' ?
-            setPanValidateData({icon: true, idType: 'PAN'}) :
-            setGstValidateData({icon: true, idType: 'GST'})
+            setPanValidateData({ icon: true, idType: 'PAN' }) :
+            setGstValidateData({ icon: true, idType: 'GST' })
         })
     } else {
       action === 'pan' ? validateField('pan') : validateField('gst')
@@ -255,13 +257,13 @@ const DealershipInfo = ({ data, className, currentUser }) => {
   }
 
   const ValidateProps = (valid, key) => {
-    return({
-      endAdornment: <div style={{marginRight: 6, marginTop: 4, cursor: 'pointer'}}>
+    return ({
+      endAdornment: <div style={{ marginRight: 6, marginTop: 4, cursor: 'pointer' }}>
         {
-        valid?.icon ?
-        valid?.loading ? <CircularProgress size={15}/> :
-        valid?.is_verified ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{color:'#4caf50'}} /></Tooltip> :
-        <Tooltip title={`Invalid ${valid.idType}`} ><CancelOutlinedIcon fontSize='small' color='error' /></Tooltip> : null
+          valid?.icon ?
+            valid?.loading ? <CircularProgress size={15} /> :
+              valid?.is_verified ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{ color: '#4caf50' }} /></Tooltip> :
+                <Tooltip title={`Invalid ${valid.idType}`} ><CancelOutlinedIcon fontSize='small' color='error' /></Tooltip> : null
         }
       </div>
     })
@@ -276,8 +278,8 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                 <Grid md={4}>
                   <ViewData title='Name' value={values?.name} />
                   <ViewData title='Address' value={values?.address ? values.address + '' : '' + (values?.pincode ? values?.pincode : '')} />
-                  <ViewData title='PAN' value={values?.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success': 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'}/>} />
-                  {values?.gst_verified ? <ViewData title='Effective Date of registration' value={gstDetails?.rgdt}/> : null}
+                  <ViewData title='PAN' value={values?.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success' : 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'} />} />
+                  {values?.gst_verified ? <ViewData title='Effective Date of registration' value={gstDetails?.rgdt} /> : null}
                   {values?.gst_verified ? <ViewData title='Legal Trade Name' value={gstDetails?.tradeNam} /> : null}
                 </Grid>
                 <Grid md={4}>
@@ -286,7 +288,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                       return true;
                   }))?.name} />
                   <ViewData title='Region' value={values?.region_name} />
-                  <ViewData title='GST' value={values?.gst} endIcon={<CustomToken variant={values?.gst_verified ? 'success': 'error'} label={values?.gst_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.gst_verified ? 'tick' : 'cross'} />} />
+                  <ViewData title='GST' value={values?.gst} endIcon={<CustomToken variant={values?.gst_verified ? 'success' : 'error'} label={values?.gst_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.gst_verified ? 'tick' : 'cross'} />} />
                   {values?.gst_verified ? <ViewData title='Taxpayer Type' value={gstDetails?.dty} /> : null}
                 </Grid>
                 <Grid md={4}>
@@ -294,7 +296,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                     if (type.id == values?.business_type)
                       return true;
                   })?.name} />
-                  <ViewData title='OMC' value={omcs?.find(item => {return item?.id === values?.omc})?.name} />
+                  <ViewData title='OMC' value={omcs?.find(item => { return item?.id === values?.omc })?.name} />
                   {values?.gst_verified ? <ViewData title='Legal Business Name' value={gstDetails?.lgnm} /> : null}
                   {values?.gst_verified ? <ViewData title='GSTIN Status' value={gstDetails?.sts} /> : null}
                 </Grid>
@@ -305,8 +307,8 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                     <div className={classes.readOnlyWrapper}>
                       <Typography variant='h4'>Attachments</Typography>
                       <div style={{ marginTop: 16, display: 'flex', width: '39vw' }}>
-                        {values.pan_file_url && <DocAttachment tooltip='View PAN' imgUrl={values?.pan_file_url} docName='PAN Card' style={{marginRight: 10}} />}
-                        {values.gst_file_url && <DocAttachment tooltip='View GST' imgUrl={values?.gst_file_url} docName='GST' style={{marginRight: 10}} />}
+                        {values.pan_file_url && <DocAttachment tooltip='View PAN' imgUrl={values?.pan_file_url} docName='PAN Card' style={{ marginRight: 10 }} />}
+                        {values.gst_file_url && <DocAttachment tooltip='View GST' imgUrl={values?.gst_file_url} docName='GST' style={{ marginRight: 10 }} />}
                       </div>
                     </div>
                   ) : (
@@ -349,8 +351,8 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                     {...fieldProps}
                   />
                   {
-                    !values?.gst_verified || values?.gst !== data?.gst?
-                      <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={() => handleValidate('gst', values?.gst)}>Validate GST</Typography> : null
+                    !values?.gst_verified || values?.gst !== data?.gst ?
+                      <Typography variant="caption" style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleValidate('gst', values?.gst)}>Validate GST</Typography> : null
                   }
                 </Grid>
                 <Grid {...gridProps} md={6}>
@@ -367,7 +369,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                   />
                   {
                     !values?.pan_verified || values?.pan !== data?.pan ?
-                      <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={() => handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
+                      <Typography variant="caption" style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
                   }
                 </Grid>
                 <Grid {...gridProps} md={6}>
@@ -471,7 +473,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                   gstDetails?.gstin || gstValidateData?.details ?
                     <>
                       <Grid item md={3}>
-                        <ViewData title='Effective Date of registration' value={gstDetails?.rgdt || gstValidateData?.details?.rgdt}/>
+                        <ViewData title='Effective Date of registration' value={gstDetails?.rgdt || gstValidateData?.details?.rgdt} />
                       </Grid>
                       <Grid item md={3}>
                         <ViewData title='Taxpayer Type' value={gstDetails?.dty || gstValidateData?.details?.dty} />
@@ -491,8 +493,8 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                   <Typography variant="title"><strong>Attachments</strong></Typography>
                 </Grid>
                 <div className={classes.attachmentContainer}>
-                  <DocAttachment action={true} imgUrl={values?.pan_file_url} docName='PAN Card' onUpload={() => docUpload('PAN')} onDelete={() => onDocDelete({pan_file_url:''})} disabled={!values?.pan_file_url} style={{marginRight: 15}} />
-                  <DocAttachment action={true} imgUrl={values?.gst_file_url} docName='GST' onUpload={() => docUpload('GST')} onDelete={() => onDocDelete({gst_file_url:''})} disabled={!values?.gst_file_url} style={{marginRight: 15}} />
+                  <DocAttachment action={true} imgUrl={values?.pan_file_url} docName='PAN Card' onUpload={() => docUpload('PAN')} onDelete={() => onDocDelete({ pan_file_url: '' })} disabled={!values?.pan_file_url} style={{ marginRight: 15 }} />
+                  <DocAttachment action={true} imgUrl={values?.gst_file_url} docName='GST' onUpload={() => docUpload('GST')} onDelete={() => onDocDelete({ gst_file_url: '' })} disabled={!values?.gst_file_url} style={{ marginRight: 15 }} />
                 </div>
               </Grid>
             </>
@@ -519,14 +521,35 @@ const DealershipInfo = ({ data, className, currentUser }) => {
             ) : <CircularProgress size={20} />
           ) : (
             !viewOnly &&
-              <Button
-                disabled={!editable}
-                color="primary"
-                variant="contained"
-                size="small"
-                onClick={() => { setReadOnly(false); }}>Edit Details</Button>
+            (
+              <>
+                <Button
+                  disabled={!editable}
+                  color="primary"
+                  variant="contained"
+                  size="small"
+                  onClick={() => { setReadOnly(false); }}>Edit Details</Button>
+                <Button
+                  disabled={!editable}
+                  color="primary"
+                  variant="contained"
+                  size="small"
+                  onClick={() => setCrimeData({ ...crimeData, userType: 'dealership', id: data?.id, first_name: data?.name })}>Crime check</Button>
+              </>
+            )
           )}
         </CardActions>
+        <Drawer
+          anchor="right"
+          open={crimeData}
+          variant="temporary"
+        >
+          <div className={classes.sidePanelWrapper}>
+            {
+              <CrimeInfoSideWrapper dealershipId={data?.id} data={crimeData} currentUser={currentUser} onClose={() => setCrimeData()} />
+            }
+          </div>
+        </Drawer>
       </div>
     </Card >
   );

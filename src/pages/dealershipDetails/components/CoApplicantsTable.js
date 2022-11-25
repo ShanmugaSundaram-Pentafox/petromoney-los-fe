@@ -13,6 +13,7 @@ import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import CreditInfoSideWrapper from './CreditInfoSideWrapper';
+import CrimeInfoSideWrapper from './CrimeInfoSideWrapper';
 import { URL } from '../../../config/serverUrls';
 
 const useStyles = makeStyles(theme => ({
@@ -64,6 +65,7 @@ const CoApplicantsTable = ({ id, editable, coApplicantsData, titleAlign, onClick
   const { enqueueSnackbar } = useSnackbar();
   const [rowData, setRowData] = useState();
   const [deleteModal, setDeleteModal] = useState(false);
+  const [crimeData, setCrimeData] = useState();
 
 
   const DeleteApplicant = (values) => {
@@ -192,6 +194,7 @@ const CoApplicantsTable = ({ id, editable, coApplicantsData, titleAlign, onClick
                 editable || viewOnly ?
                   <TableCell align="right" onClick={e => e.stopPropagation()}>
                     <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                      <Button style={{ marginRight: 12 }} size='small' variant='outlined' color='secondary' onClick={() => setCrimeData(row)}>Crime check</Button>
                       <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>
                       <div style={{ marginLeft: 12 }} onClick={() => DeleteApplicant(row)}>
                         {
@@ -223,6 +226,17 @@ const CoApplicantsTable = ({ id, editable, coApplicantsData, titleAlign, onClick
           {
             // !dealerData?.isLoading && !coApplicantsData?.isLoading &&
             <CreditInfoSideWrapper dealershipId={id} data={rowData} currentUser={currentUser} onClose={() => setRowData()} />
+          }
+        </div>
+      </Drawer>
+      <Drawer
+        anchor="right"
+        open={crimeData}
+        variant="temporary"
+      >
+        <div className={classes.sidePanelWrapper}>
+          {
+            <CrimeInfoSideWrapper dealershipId={id} data={crimeData} currentUser={currentUser} onClose={() => setCrimeData()} />
           }
         </div>
       </Drawer>

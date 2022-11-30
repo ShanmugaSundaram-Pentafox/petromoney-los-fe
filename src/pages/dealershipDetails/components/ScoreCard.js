@@ -1,14 +1,17 @@
 import { Typography, makeStyles, Button, Tabs, Tab, Box, CircularProgress, AppBar, Backdrop, IconButton, Tooltip } from '@material-ui/core';
+import GetAppIcon from '@material-ui/icons/GetApp';
 import PublishIcon from '@material-ui/icons/Publish';
+import head  from 'lodash-es/head';
 import { useSnackbar } from 'notistack';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { URL } from '../../../config/serverUrls';
+import { rulesList } from '../../../config/userRules';
 import { getScoreCard } from '../../../services/common.service';
 import BankingInputsTable from '../ScoreCardTables/BankingInputsTable';
 import BureauInputTable from '../ScoreCardTables/BureauInputTable';
-import GetAppIcon from '@material-ui/icons/GetApp';
 import CamInputTable from '../ScoreCardTables/CamInputTable';
 import CoappTable from '../ScoreCardTables/CoappTable';
 import DeviationsInputTable from '../ScoreCardTables/DeviationsInputTable';
@@ -17,9 +20,6 @@ import FixedObligationsTable from '../ScoreCardTables/FixedObligationsTable';
 import OmcSaleTable from '../ScoreCardTables/OmcSaleTable';
 import OtherInputsTable from '../ScoreCardTables/OtherInputsTable';
 import ScoreCardInputTable from '../ScoreCardTables/ScoreCardInputTable';
-import { head } from 'lodash';
-import { permissionCheck } from '../../../components/UserCan/UserCan';
-import { rulesList } from '../../../config/userRules';
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -100,7 +100,7 @@ const ScoreCard = ({currentUser, dealership_id}) => {
   ]
 
   const delay = async (ms = 1000) =>
-  new Promise(resolve => setTimeout(resolve, ms))
+    new Promise(resolve => setTimeout(resolve, ms))
 
   const loaderNotifications = [
     'Analyzing OMC Sale Data...',
@@ -116,6 +116,8 @@ const ScoreCard = ({currentUser, dealership_id}) => {
     d.type === 'co_app_1' && scoreCardTabs.push('Bureau-Ind Co-app 1')
     d.type === 'co_app_2' && scoreCardTabs.push('Bureau-Ind Co-app 2')
     d.type === 'co_app_3' && scoreCardTabs.push('Bureau-Ind Co-app 3')
+    d.type === 'co_app_4' && scoreCardTabs.push('Bureau-Ind Co-app 4')
+    d.type === 'co_app_5' && scoreCardTabs.push('Bureau-Ind Co-app 5')
   })
 
   const handleChange = (event, newValue) => {
@@ -196,40 +198,40 @@ const ScoreCard = ({currentUser, dealership_id}) => {
           <Typography variant="h5">Eligibility Score Card</Typography>
           {
             metaData?.uploaded_date &&
-            <Typography variant="caption" className={classes.caption}>Uploaded On: {metaData?.uploaded_date || '-'}</Typography>
+              <Typography variant="caption" className={classes.caption}>Uploaded On: {metaData?.uploaded_date || '-'}</Typography>
           }
           {
             metaData?.uploaded_by &&
-            <Typography variant="caption" className={classes.caption}>Uploaded By: {metaData?.uploaded_by || '-'}</Typography>
+              <Typography variant="caption" className={classes.caption}>Uploaded By: {metaData?.uploaded_by || '-'}</Typography>
           }
         </div>
         <div>
           {
             metaData?.file_url &&
-            <Tooltip title="Download Score Card">
-              <IconButton size="small" style={{marginRight: 12}} onClick={handleDownload}>
-                <GetAppIcon />
-              </IconButton>
-            </Tooltip>
+              <Tooltip title="Download Score Card">
+                <IconButton size="small" style={{marginRight: 12}} onClick={handleDownload}>
+                  <GetAppIcon />
+                </IconButton>
+              </Tooltip>
           }
           {
             external &&
-            <Button
-              variant='outlined'
-              color='primary'
-              name='csv'
-              id='file'
-              component="label"
-              disabled={loading}
-              startIcon={loading ? <CircularProgress size={14} /> : <PublishIcon fontSize='small' />}
-            >Upload score card
-              <input
-                type="file"
-                hidden
-                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                onChange={onChangeHandler}
-              />
-            </Button>
+              <Button
+                variant='outlined'
+                color='primary'
+                name='csv'
+                id='file'
+                component="label"
+                disabled={loading}
+                startIcon={loading ? <CircularProgress size={14} /> : <PublishIcon fontSize='small' />}
+              >Upload score card
+                <input
+                  type="file"
+                  hidden
+                  accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                  onChange={onChangeHandler}
+                />
+              </Button>
           }
         </div>
       </div>
@@ -287,6 +289,12 @@ const ScoreCard = ({currentUser, dealership_id}) => {
         </TabPanel>
         <TabPanel value={tabValue} index={11}>
           <CoappTable data={scoreCardData?.co_app_sheet} type='co_app_3' />
+        </TabPanel>
+        <TabPanel value={tabValue} index={12}>
+          <CoappTable data={scoreCardData?.co_app_sheet} type='co_app_4' />
+        </TabPanel>
+        <TabPanel value={tabValue} index={13}>
+          <CoappTable data={scoreCardData?.co_app_sheet} type='co_app_5' />
         </TabPanel>
       </div>
       <Backdrop open={loading} className={classes.backdrop} >

@@ -1,4 +1,12 @@
-import { Backdrop, CircularProgress, Typography } from '@material-ui/core';
+import {
+  Backdrop,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  Typography,
+} from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
@@ -26,13 +34,12 @@ import { deleteRequestUrl } from '../../services/leegality.service';
 import apiCall from '../../utils/api.util';
 import PdfViewer from '../CommonComponents/PdfViewer/PdfViewer';
 
-
 const Card = styled.div`
   background-color: #fff;
   margin-bottom: 20px;
   border-radius: 4px;
   position: relative;
-  box-shadow: 0 1px 5px 0 rgba(0,0,0,.4);
+  box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.4);
 
   .card-body {
     display: flex;
@@ -59,177 +66,207 @@ const useStyles = makeStyles((theme) => ({
   icon: {
     display: 'flex',
     marginBottom: theme.spacing(2),
-    cursor:'pointer',
+    cursor: 'pointer',
   },
   text: {
     marginLeft: theme.spacing(1),
-  }
+  },
 }));
 
-const LeegalityLayout = ({ docId, dealershipId }) => {
+const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
   const [auditTrails, setAuditTrails] = useState([]);
   const [docDetails, setDocDetails] = useState({});
   const [successStatus, setSuccessStatus] = useState(false);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [open, setOpen] = useState(false);
   // const [signUrl, setSignUrl] = useState();
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
-
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     apiCall(`dealership/${dealershipId}/document/${docId}`)
-      .then(res => {
+      .then((res) => {
         if (res.status === 'SUCCESS') {
           if (res.data?.status) {
-            setLoading(false)
-            setDocDetails(res?.data?.data)
+            setLoading(false);
+            setDocDetails(res?.data?.data);
           }
         } else {
-          setLoading(false)
-          console.log('>> Document Details status error >> ', res)
-          setDocDetails()
+          setLoading(false);
+          console.log('>> Document Details status error >> ', res);
+          setDocDetails();
         }
       })
-      .catch(err => {
-        setLoading(false)
+      .catch((err) => {
+        setLoading(false);
         enqueueSnackbar(err.message, {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',
           },
           variant: 'error',
-        })
-        console.log(err)
-        setDocDetails()
+        });
+        console.log(err);
+        setDocDetails();
       });
 
     apiCall(`document/trail/${docId}`)
-      .then(res => {
+      .then((res) => {
         if (res.status === 'SUCCESS') {
           if (res.data?.status) {
-            setAuditTrails(res?.data?.data.auditTrails)
+            setAuditTrails(res?.data?.data.auditTrails);
           }
         } else {
           console.log('>> Document Trail Status error >> ', res);
-          setAuditTrails()
+          setAuditTrails();
         }
       })
-      .catch(err => {
-        console.log(err)
-        setAuditTrails()
+      .catch((err) => {
+        console.log(err);
+        setAuditTrails();
       });
-  }, [])
+  }, []);
 
   const ResendNotification = (signUrl) => {
     apiCall('document/resend', {
       method: 'POST',
-      body: { 'sign_url': signUrl },
+      body: { sign_url: signUrl },
     })
-      .then(res => {
+      .then((res) => {
         enqueueSnackbar(res.message, {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',
           },
           variant: 'success',
-        }
-        )
+        });
         // setTimeout(() => {
         //   setSuccessStatus(res.message || 'Notification send successfully')
         // }, 1500)
       })
-      .catch(err => {
-        console.log(err)
-      })
-  }
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const handleDelete = (url) => {
-    console.log('url >>>>>>>>>>>>',url)
-    deleteRequestUrl(url)
+    let value = { signUrl: url, document_id: docDetails?.documentId };
+    deleteRequestUrl(value)
       .then((res) => {
-        console.log('res >>>>>>>>>>>>>>>>', res)
+        setOpen(false)
+        console.log('res >>>>>>>>>>>>>>>>>>>>>>>>>>',res)
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        });
+        console.log(res);
       })
       .catch((err) => {
-        console.log('err >>>>>>>>>>>>>', err)
-      })
-  }
+        console.log('err >>>>>>>>>>>>>>>>>>>>>>>>>>',err)
+
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      });
+  };
 
   const ActivateDealer = () => {
-    setLoading(true)
+    setLoading(true);
     apiCall(`document/reactivate/${docId}`)
-      .then(res => {
+      .then((res) => {
         apiCall(`dealership/${dealershipId}/document/${docId}`)
-          .then(res => {
+          .then((res) => {
             if (res.status === 'SUCCESS') {
               if (res.data?.status) {
-                setLoading(false)
-                setDocDetails(res?.data?.data)
+                setLoading(false);
+                setDocDetails(res?.data?.data);
               }
             } else {
-              setLoading(false)
-              console.log('>> Document Details status error >> ', res)
-              setDocDetails()
+              setLoading(false);
+              console.log('>> Document Details status error >> ', res);
+              setDocDetails();
             }
           })
-          .catch(err => {
-            console.log(err)
-            setLoading(false)
-            setDocDetails()
+          .catch((err) => {
+            console.log(err);
+            setLoading(false);
+            setDocDetails();
           });
       })
-      .catch(err => {
-        setLoading(false)
-        console.log(err)
-      })
-  }
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
+  };
   return (
     <Box bgcolor="#fbfbfb">
       <Grid container spacing={2}>
         <Grid item sm={6} style={{ position: 'relative' }}>
-          {docId && docDetails?.file && <PdfViewer title="Some Random File" file={docDetails?.file} showDownload />}
-          <Backdrop open={loading} style={{ position: 'absolute', zIndex: '2' }}>
+          {docId && docDetails?.file && (
+            <PdfViewer
+              title="Some Random File"
+              file={docDetails?.file}
+              showDownload
+            />
+          )}
+          <Backdrop
+            open={loading}
+            style={{ position: 'absolute', zIndex: '2' }}
+          >
             <CircularProgress size={25} style={{ color: 'white' }} />
           </Backdrop>
         </Grid>
-        <Grid item sm={3}>
-          <Box pt={2}>
-            <TableContainer>
-              <Table aria-label="leegality table">
-                <TableBody>
-                  <TableRow>
-                    <TableCell>Document ID</TableCell>
-                    <TableCell>{docDetails?.documentId}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>{docDetails?.documentName}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>Last Active Date</TableCell>
-                    <TableCell>{docDetails?.creationDate && moment(docDetails?.creationDate?.split(' ')[0], 'DD-MM-YYYY').format('MMM DD, YYYY')}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>Status</TableCell>
-                    <TableCell>{docDetails?.status}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>Internal Reference no</TableCell>
-                    <TableCell>{docDetails?.irn}</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
+        {docDetails?.file ? (
+          <Grid item sm={3}>
+            <Box pt={2}>
+              <TableContainer>
+                <Table aria-label="leegality table">
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>Document ID</TableCell>
+                      <TableCell>{docDetails?.documentId}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Name</TableCell>
+                      <TableCell>{docDetails?.documentName}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Last Active Date</TableCell>
+                      <TableCell>
+                        {docDetails?.creationDate &&
+                          moment(
+                            docDetails?.creationDate?.split(' ')[0],
+                            'DD-MM-YYYY'
+                          ).format('MMM DD, YYYY')}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Status</TableCell>
+                      <TableCell>{docDetails?.status}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Internal Reference no</TableCell>
+                      <TableCell>{docDetails?.irn}</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
 
-            <Box mt={2}>
-              {
-                docDetails?.invitations?.map((item, i) => (
+              <Box mt={2}>
+                {docDetails?.invitations?.map((item, i) => (
                   <Card key={`inv-${i}`}>
                     <div className="card-body">
                       <Box pr={2}>
@@ -238,31 +275,106 @@ const LeegalityLayout = ({ docId, dealershipId }) => {
                         </Avatar>
                       </Box>
                       <Box>
-                        <p><strong>{item.name}</strong></p>
-                        {item.email && <p><small>{item.email}</small></p>}
-                        {item.phone && <p><small>{item.phone}</small></p>}
-                        <div style={{ flex: 1, justifyContent: 'space-between' }}>
-                          <Chip style={{ marginRight: 10, border: 0 }} variant="outlined" size="small" label="Signed" icon={item.signed ? <CheckCircleOutlineRoundedIcon style={{ color: 'green' }} /> : <HighlightOffRoundedIcon style={{ color: 'red' }} />} />
-                          {
-                            !item.signed && (
-                              <>
-                                <Chip style={{ marginRight: 10, border: 0 }} variant="outlined" size="small" label="Active" icon={item.active ? <CheckCircleOutlineRoundedIcon style={{ color: 'green' }} /> : <HighlightOffRoundedIcon style={{ color: 'red' }} />} />
-                                <Chip style={{ marginRight: 10, border: 0 }} variant="outlined" size="small" label="Expired" icon={item.expired ? <CheckCircleOutlineRoundedIcon style={{ color: 'green' }} /> : <HighlightOffRoundedIcon style={{ color: 'red' }} />} />
-                              </>
-                            )
-                          }
+                        <p>
+                          <strong>{item.name}</strong>
+                        </p>
+                        {item.email && (
+                          <p>
+                            <small>{item.email}</small>
+                          </p>
+                        )}
+                        {item.phone && (
+                          <p>
+                            <small>{item.phone}</small>
+                          </p>
+                        )}
+                        <div
+                          style={{ flex: 1, justifyContent: 'space-between' }}
+                        >
+                          <Chip
+                            style={{ marginRight: 10, border: 0 }}
+                            variant="outlined"
+                            size="small"
+                            label="Signed"
+                            icon={
+                              item.signed ? (
+                                <CheckCircleOutlineRoundedIcon
+                                  style={{ color: 'green' }}
+                                />
+                              ) : (
+                                <HighlightOffRoundedIcon
+                                  style={{ color: 'red' }}
+                                />
+                              )
+                            }
+                          />
+                          {!item.signed && (
+                            <>
+                              <Chip
+                                style={{ marginRight: 10, border: 0 }}
+                                variant="outlined"
+                                size="small"
+                                label="Active"
+                                icon={
+                                  item.active ? (
+                                    <CheckCircleOutlineRoundedIcon
+                                      style={{ color: 'green' }}
+                                    />
+                                  ) : (
+                                    <HighlightOffRoundedIcon
+                                      style={{ color: 'red' }}
+                                    />
+                                  )
+                                }
+                              />
+                              <Chip
+                                style={{ marginRight: 10, border: 0 }}
+                                variant="outlined"
+                                size="small"
+                                label="Expired"
+                                icon={
+                                  item.expired ? (
+                                    <CheckCircleOutlineRoundedIcon
+                                      style={{ color: 'green' }}
+                                    />
+                                  ) : (
+                                    <HighlightOffRoundedIcon
+                                      style={{ color: 'red' }}
+                                    />
+                                  )
+                                }
+                              />
+                            </>
+                          )}
                         </div>
                       </Box>
                     </div>
                     <div className="card-footer">
-                      {
-                        item.active ?
-                          <Button variant="outlined" color="secondary" onClick={() => ResendNotification(item.signUrl)} size="small">Resend Notification</Button>
-                          :
-                          <Button variant="outlined" color="secondary" onClick={ActivateDealer} size="small">Activate</Button>
-                      }
+                      {item.active ? (
+                        <Button
+                          variant="outlined"
+                          color="secondary"
+                          onClick={() => ResendNotification(item.signUrl)}
+                          size="small"
+                        >
+                          Resend Notification
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="outlined"
+                          color="secondary"
+                          onClick={ActivateDealer}
+                          size="small"
+                        >
+                          Activate
+                        </Button>
+                      )}
                       {/* <Button variant="outlined" color="secondary" size="small">Details</Button> */}
-                      <SettingsIcon fontSize={'small'} color={'action'} onClick={handleClick} />
+                      <SettingsIcon
+                        fontSize={'small'}
+                        color={'action'}
+                        onClick={handleClick}
+                      />
                       <Popover
                         // id={id}
                         open={Boolean(anchorEl)}
@@ -278,46 +390,85 @@ const LeegalityLayout = ({ docId, dealershipId }) => {
                         }}
                       >
                         <div className={classes.popover}>
-
-                          {/* There is no onClick functionality for this icon so hidding this */}
-
-
-                          <div className={classes.icon} onClick={() => handleDelete(item?.signUrl)}>
-                            <DeleteOutlineOutlinedIcon fontSize='small' />
-                            <Typography className={classes.text}>Delete</Typography>
-                          </div>
-                          <div className={classes.icon} onClick={() => navigator.clipboard.writeText(item.signUrl)}>
-                            <LinkIcon fontSize='small' />
-                            <Typography className={classes.text}>Copy link</Typography>
+                          {currentUser?.role_id == 1 ? (
+                            <div
+                              className={classes.icon}
+                              onClick={() => {
+                                setOpen(true);
+                              }}
+                            >
+                              <DeleteOutlineOutlinedIcon fontSize="small" />
+                              <Typography className={classes.text}>
+                                Delete
+                              </Typography>
+                            </div>
+                          ) : null}
+                          <div
+                            className={classes.icon}
+                            onClick={() =>
+                              navigator.clipboard.writeText(item.signUrl)
+                            }
+                          >
+                            <LinkIcon fontSize="small" />
+                            <Typography className={classes.text}>
+                              Copy link
+                            </Typography>
                           </div>
                         </div>
                       </Popover>
                     </div>
+                    <Dialog
+                      open={open}
+                      onClose={() => {
+                        setOpen(false);
+                      }}
+                      aria-labelledby="alert-dialog-title"
+                      aria-describedby="alert-dialog-description"
+                    >
+                      <DialogContent>
+                        <DialogContentText className={classes.text}>
+                          Do you want to disable the user?
+                        </DialogContentText>
+                      </DialogContent>
+                      <DialogActions>
+                        <Button
+                          onClick={() => {
+                            setOpen(false);
+                          }}
+                          variant="contained"
+                        >
+                          No
+                        </Button>
+                        <Button
+                          onClick={() => handleDelete(item?.signUrl)}
+                          className={classes.button}
+                        >
+                          Yes
+                        </Button>
+                      </DialogActions>
+                    </Dialog>
                   </Card>
-                ))
-              }
+                ))}
+              </Box>
             </Box>
-          </Box>
-        </Grid>
+          </Grid>
+        ) : null}
+
         <Grid item sm={3}>
           <Box>
-            {
-              auditTrails.map((item, i) => (
-                <ActivityBox key={'act-' + i} {...item} />
-              ))
-            }
-            {
-              successStatus && (
-                <Box pt={2} pl={3} color="success.main"  >
-                  {successStatus}
-                </Box>
-              )
-            }
+            {auditTrails.map((item, i) => (
+              <ActivityBox key={'act-' + i} {...item} />
+            ))}
+            {successStatus && (
+              <Box pt={2} pl={3} color="success.main">
+                {successStatus}
+              </Box>
+            )}
           </Box>
         </Grid>
       </Grid>
     </Box>
-  )
-}
+  );
+};
 
 export default LeegalityLayout;

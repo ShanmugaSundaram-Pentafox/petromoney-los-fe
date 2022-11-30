@@ -223,6 +223,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry, cur
           type={type}
           title={'eSign Application Form'}
           onClose={() => setModalVisible(false)}
+          currentUser={currentUser}
         />
       </Dialog>
     </div>

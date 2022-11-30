@@ -234,6 +234,7 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
           type={type}
           title={'eSign Application Form'}
           onClose={() => setModalVisible(false)}
+          currentUser={currentUser}
         />
       </Dialog>
     </div>

@@ -269,6 +269,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
           title={type === 'application' ? 'eSign Application Form' : 'Sanction Letter'}
           onClose={() => setModalVisible(false)}
           callback={getLoansTable}
+          currentUser={currentUser}
         />
       </Dialog>
       <Popover

@@ -242,6 +242,7 @@ const RenewalTable = ({ currentUser }) => {
           type={type}
           title={type === 'application' ? 'eSign Application Form' : 'Sanction Letter'}
           onClose={() => setModalVisible(false)}
+          currentUser={currentUser}
         />
       </Dialog>
       <Popover

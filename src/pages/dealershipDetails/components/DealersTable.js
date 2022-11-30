@@ -224,6 +224,7 @@ const DealersTable = ({ id, editable, data, titleAlign, onClickAddMenu, currentU
       <Drawer
         anchor="right"
         open={crimeData}
+        onClose={()=> {setCrimeData()}}
         variant="temporary"
       >
         <div className={classes.sidePanelWrapper}>

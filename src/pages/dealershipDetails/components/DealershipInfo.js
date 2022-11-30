@@ -53,6 +53,10 @@ const useStyles = makeStyles(theme => ({
   icons: {
     marginRight: 16,
   },
+  sidePanelWrapper: {
+    width: '40vw',
+    minWidth: 300
+  },
   attachmentContainer: {
     display: 'flex', width: '39vw', marginLeft: 8, paddingRight: 12, flexWrap: 'wrap'
   }
@@ -542,6 +546,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
         <Drawer
           anchor="right"
           open={crimeData}
+          onClose={()=> {setCrimeData()}}
           variant="temporary"
         >
           <div className={classes.sidePanelWrapper}>

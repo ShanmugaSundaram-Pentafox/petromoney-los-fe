@@ -232,6 +232,7 @@ const CoApplicantsTable = ({ id, editable, coApplicantsData, titleAlign, onClick
       <Drawer
         anchor="right"
         open={crimeData}
+        onClose={()=> {setCrimeData()}}
         variant="temporary"
       >
         <div className={classes.sidePanelWrapper}>

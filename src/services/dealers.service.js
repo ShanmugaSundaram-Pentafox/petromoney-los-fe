@@ -182,14 +182,14 @@ export const getCrimeInfo = (applicantId, applicantType) => {
   });
 }
 
-export const getCrimeReport = (applicantId, applicantType) => {
+export const getCrimeReport = (url) => {
   return new Promise((resolve, reject) => {
-    apiCall(`${applicantId}/crimecheck?type=${applicantType}`, {
+    apiCall(url, {
       method: 'POST',
     })
-      .then(({ status, data, message }) => {
+      .then(({ status, message }) => {
         if (status === 'SUCCESS') {
-          resolve(data[0] || {});
+          resolve(message);
         } else {
           reject(message);
         }

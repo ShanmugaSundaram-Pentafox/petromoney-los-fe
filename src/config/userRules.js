@@ -24,6 +24,7 @@ export const rulesList = {
   'dealership_view': 'dealership:view',
   'external_lms': 'external:lms',
   'phone_call' : 'phonecall:pdr',
+  'ops_view' :'ops:view',
 }
 
 export const rulesForUserRoles = {
@@ -103,6 +104,7 @@ export const rulesForUserRoles = {
       rulesList.dealership_credit_edit,
       rulesList.users_view,
       rulesList.region_map,
+      rulesList.ops_view,
       rulesList.settings_view,
       rulesList.credit_view,
       rulesList.credit_refresh,
@@ -143,7 +145,8 @@ export const rulesForUserRoles = {
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
-      rulesList.external_lms
+      rulesList.external_lms,
+      rulesList.ops_view,
     ]
   },
   OPS_MANAGER: {
@@ -156,7 +159,8 @@ export const rulesForUserRoles = {
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
-      rulesList.external_lms
+      rulesList.external_lms,
+      rulesList.ops_view,
     ]
   },
   CREDIT: {

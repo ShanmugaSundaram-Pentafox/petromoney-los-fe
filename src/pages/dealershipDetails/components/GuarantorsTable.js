@@ -14,7 +14,9 @@ import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import CreditInfoSideWrapper from './CreditInfoSideWrapper';
 import CrimeInfoSideWrapper from './CrimeInfoSideWrapper';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { URL } from '../../../config/serverUrls';
+import { rulesList } from '../../../config/userRules';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -66,6 +68,8 @@ const GuarantorsTable = ({
   const [rowData, setRowData] = useState();
   const [deleteModal, setDeleteModal] = useState(false);
   const [crimeData, setCrimeData] = useState();
+  const credit_permission = permissionCheck(currentUser.role_name, rulesList.credit_view);
+
 
   const DeleteApplicant = (values) => {
     const formData = new FormData();
@@ -247,7 +251,7 @@ const GuarantorsTable = ({
                       alignItems: 'center',
                     }}
                   >
-                    <Button
+                    { credit_permission && <Button
                       style={{ marginRight: 12 }}
                       size="small"
                       variant="outlined"
@@ -255,7 +259,7 @@ const GuarantorsTable = ({
                       onClick={() => setCrimeData(row)}
                     >
                       Crime check
-                    </Button>
+                    </Button>}
                     <Button
                       size="small"
                       variant="outlined"

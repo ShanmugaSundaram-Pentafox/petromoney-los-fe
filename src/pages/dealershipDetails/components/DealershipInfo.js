@@ -77,6 +77,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
   const { enqueueSnackbar } = useSnackbar();
   const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit);
   const viewOnly = permissionCheck(currentUser.role_name, rulesList.dealership_view);
+  const credit_permission = permissionCheck(currentUser.role_name, rulesList.credit_view);
 
   const handleValidate = (action, id) => {
     if (id) {
@@ -533,12 +534,16 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                   variant="contained"
                   size="small"
                   onClick={() => { setReadOnly(false); }}>Edit Details</Button>
-                <Button
-                  disabled={!editable}
-                  color="primary"
-                  variant="contained"
-                  size="small"
-                  onClick={() => setCrimeData({ ...crimeData, userType: 'dealership', id: data?.id, first_name: data?.name })}>Crime check</Button>
+                {
+                  credit_permission &&
+                    <Button
+                      disabled={!editable}
+                      color="primary"
+                      variant="contained"
+                      size="small"
+                      onClick={() => setCrimeData({ ...crimeData, userType: 'dealership', id: data?.id, first_name: data?.name })}>Crime check</Button>
+
+                }
               </>
             )
           )}

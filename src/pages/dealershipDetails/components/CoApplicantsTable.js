@@ -14,7 +14,9 @@ import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import CreditInfoSideWrapper from './CreditInfoSideWrapper';
 import CrimeInfoSideWrapper from './CrimeInfoSideWrapper';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { URL } from '../../../config/serverUrls';
+import { rulesList } from '../../../config/userRules';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -66,6 +68,8 @@ const CoApplicantsTable = ({ id, editable, coApplicantsData, titleAlign, onClick
   const [rowData, setRowData] = useState();
   const [deleteModal, setDeleteModal] = useState(false);
   const [crimeData, setCrimeData] = useState();
+  const credit_permission = permissionCheck(currentUser.role_name, rulesList.credit_view);
+
 
 
   const DeleteApplicant = (values) => {
@@ -194,7 +198,7 @@ const CoApplicantsTable = ({ id, editable, coApplicantsData, titleAlign, onClick
                 editable || viewOnly ?
                   <TableCell align="right" onClick={e => e.stopPropagation()}>
                     <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                      <Button style={{ marginRight: 12 }} size='small' variant='outlined' color='secondary' onClick={() => setCrimeData(row)}>Crime check</Button>
+                      { credit_permission && <Button style={{ marginRight: 12 }} size='small' variant='outlined' color='secondary' onClick={() => setCrimeData(row)}>Crime check</Button>}
                       <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>
                       <div style={{ marginLeft: 12 }} onClick={() => DeleteApplicant(row)}>
                         {

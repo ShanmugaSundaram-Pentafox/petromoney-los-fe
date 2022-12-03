@@ -78,14 +78,16 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
   const [docDetails, setDocDetails] = useState({});
   const [successStatus, setSuccessStatus] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedItemData, setSelectedItemData] = useState({});
   const [open, setOpen] = useState(false);
   // const [signUrl, setSignUrl] = useState();
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
 
-  const handleClick = (event) => {
+  const handleClick = (event, cardData) => {
     setAnchorEl(event.currentTarget);
+    setSelectedItemData(cardData)
   };
 
   useEffect(() => {
@@ -133,10 +135,10 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
       });
   }, []);
 
-  const ResendNotification = (signUrl) => {
+  const ResendNotification = () => {
     apiCall('document/resend', {
       method: 'POST',
-      body: { sign_url: signUrl },
+      body: { sign_url: selectedItemData.signUrl },
     })
       .then((res) => {
         enqueueSnackbar(res.message, {
@@ -155,12 +157,11 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
       });
   };
 
-  const handleDelete = (url) => {
-    let value = { signUrl: url, document_id: docDetails?.documentId };
+  const handleDelete = () => {
+    let value = { signUrl: selectedItemData.url, document_id: docDetails?.documentId };
     deleteRequestUrl(value)
       .then((res) => {
         setOpen(false)
-        console.log('res >>>>>>>>>>>>>>>>>>>>>>>>>>',res)
         enqueueSnackbar(res, {
           anchorOrigin: {
             vertical: 'top',
@@ -168,11 +169,8 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
           },
           variant: 'success',
         });
-        console.log(res);
       })
       .catch((err) => {
-        console.log('err >>>>>>>>>>>>>>>>>>>>>>>>>>',err)
-
         enqueueSnackbar(err, {
           anchorOrigin: {
             vertical: 'top',
@@ -266,189 +264,193 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
               </TableContainer>
 
               <Box mt={2}>
-                {docDetails?.invitations?.map((item, i) => (
-                  <Card key={`inv-${i}`}>
-                    <div className="card-body">
-                      <Box pr={2}>
-                        <Avatar>
-                          <AccountCircleRoundedIcon />
-                        </Avatar>
-                      </Box>
-                      <Box>
-                        <p>
-                          <strong>{item.name}</strong>
-                        </p>
-                        {item.email && (
+                {docDetails?.invitations?.map((item, i) => {
+                  return (
+                    <Card key={`inv-${i}`}>
+                      <div className="card-body">
+                        <Box pr={2}>
+                          <Avatar>
+                            <AccountCircleRoundedIcon />
+                          </Avatar>
+                        </Box>
+                        <Box>
                           <p>
-                            <small>{item.email}</small>
+                            <strong>{item.name}</strong>
                           </p>
-                        )}
-                        {item.phone && (
-                          <p>
-                            <small>{item.phone}</small>
-                          </p>
-                        )}
-                        <div
-                          style={{ flex: 1, justifyContent: 'space-between' }}
-                        >
-                          <Chip
-                            style={{ marginRight: 10, border: 0 }}
-                            variant="outlined"
-                            size="small"
-                            label="Signed"
-                            icon={
-                              item.signed ? (
-                                <CheckCircleOutlineRoundedIcon
-                                  style={{ color: 'green' }}
-                                />
-                              ) : (
-                                <HighlightOffRoundedIcon
-                                  style={{ color: 'red' }}
-                                />
-                              )
-                            }
-                          />
-                          {!item.signed && (
-                            <>
-                              <Chip
-                                style={{ marginRight: 10, border: 0 }}
-                                variant="outlined"
-                                size="small"
-                                label="Active"
-                                icon={
-                                  item.active ? (
-                                    <CheckCircleOutlineRoundedIcon
-                                      style={{ color: 'green' }}
-                                    />
-                                  ) : (
-                                    <HighlightOffRoundedIcon
-                                      style={{ color: 'red' }}
-                                    />
-                                  )
-                                }
-                              />
-                              <Chip
-                                style={{ marginRight: 10, border: 0 }}
-                                variant="outlined"
-                                size="small"
-                                label="Expired"
-                                icon={
-                                  item.expired ? (
-                                    <CheckCircleOutlineRoundedIcon
-                                      style={{ color: 'green' }}
-                                    />
-                                  ) : (
-                                    <HighlightOffRoundedIcon
-                                      style={{ color: 'red' }}
-                                    />
-                                  )
-                                }
-                              />
-                            </>
+                          {item.email && (
+                            <p>
+                              <small>{item.email}</small>
+                            </p>
                           )}
-                        </div>
-                      </Box>
-                    </div>
-                    <div className="card-footer">
-                      {item.active ? (
-                        <Button
-                          variant="outlined"
-                          color="secondary"
-                          onClick={() => ResendNotification(item.signUrl)}
-                          size="small"
+                          {item.phone && (
+                            <p>
+                              <small>{item.phone}</small>
+                            </p>
+                          )}
+                          <div
+                            style={{ flex: 1, justifyContent: 'space-between' }}
+                          >
+                            <Chip
+                              style={{ marginRight: 10, border: 0 }}
+                              variant="outlined"
+                              size="small"
+                              label="Signed"
+                              icon={
+                                item.signed ? (
+                                  <CheckCircleOutlineRoundedIcon
+                                    style={{ color: 'green' }}
+                                  />
+                                ) : (
+                                  <HighlightOffRoundedIcon
+                                    style={{ color: 'red' }}
+                                  />
+                              )
+                              }
+                            />
+                            {!item.signed && (
+                              <>
+                                <Chip
+                                  style={{ marginRight: 10, border: 0 }}
+                                  variant="outlined"
+                                  size="small"
+                                  label="Active"
+                                  icon={
+                                    item.active ? (
+                                      <CheckCircleOutlineRoundedIcon
+                                        style={{ color: 'green' }}
+                                      />
+                                    ) : (
+                                      <HighlightOffRoundedIcon
+                                        style={{ color: 'red' }}
+                                      />
+                                  )
+                                  }
+                                />
+                                <Chip
+                                  style={{ marginRight: 10, border: 0 }}
+                                  variant="outlined"
+                                  size="small"
+                                  label="Expired"
+                                  icon={
+                                    item.expired ? (
+                                      <CheckCircleOutlineRoundedIcon
+                                        style={{ color: 'green' }}
+                                      />
+                                    ) : (
+                                      <HighlightOffRoundedIcon
+                                        style={{ color: 'red' }}
+                                      />
+                                  )
+                                  }
+                                />
+                              </>
+                            )}
+                          </div>
+                        </Box>
+                      </div>
+                      <div className="card-footer">
+                        {item.active ? (
+                          <Button
+                            variant="outlined"
+                            color="secondary"
+                            onClick={ResendNotification}
+                            size="small"
+                          >
+                            Resend Notification
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="outlined"
+                            color="secondary"
+                            onClick={ActivateDealer}
+                            size="small"
+                          >
+                            Activate
+                          </Button>
+                        )}
+                        {/* <Button variant="outlined" color="secondary" size="small">Details</Button> */}
+                        <SettingsIcon
+                          fontSize={'small'}
+                          color={'action'}
+                          onClick={(e) => handleClick(e, item)}
+                        />
+                        <Popover
+                          // id={id}
+                          open={Boolean(anchorEl)}
+                          anchorEl={anchorEl}
+                          onClose={() => {
+                            setAnchorEl(null)
+                            setSelectedItemData({})
+                          }}
+                          anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'center',
+                          }}
+                          transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'center',
+                          }}
                         >
-                          Resend Notification
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="outlined"
-                          color="secondary"
-                          onClick={ActivateDealer}
-                          size="small"
-                        >
-                          Activate
-                        </Button>
-                      )}
-                      {/* <Button variant="outlined" color="secondary" size="small">Details</Button> */}
-                      <SettingsIcon
-                        fontSize={'small'}
-                        color={'action'}
-                        onClick={handleClick}
-                      />
-                      <Popover
-                        // id={id}
-                        open={Boolean(anchorEl)}
-                        anchorEl={anchorEl}
-                        onClose={() => setAnchorEl(null)}
-                        anchorOrigin={{
-                          vertical: 'bottom',
-                          horizontal: 'center',
-                        }}
-                        transformOrigin={{
-                          vertical: 'top',
-                          horizontal: 'center',
-                        }}
-                      >
-                        <div className={classes.popover}>
-                          {currentUser?.role_id == 1 ? (
+                          <div className={classes.popover}>
+                            {currentUser?.role_id == 1 ? (
+                              <div
+                                className={classes.icon}
+                                onClick={() => {
+                                  setOpen(true);
+                                }}
+                              >
+                                <DeleteOutlineOutlinedIcon fontSize="small" />
+                                <Typography className={classes.text}>
+                                  Delete
+                                </Typography>
+                              </div>
+                            ) : null}
                             <div
                               className={classes.icon}
-                              onClick={() => {
-                                setOpen(true);
-                              }}
+                              onClick={() =>
+                                navigator.clipboard.writeText(selectedItemData.signUrl)
+                              }
                             >
-                              <DeleteOutlineOutlinedIcon fontSize="small" />
+                              <LinkIcon fontSize="small" />
                               <Typography className={classes.text}>
-                                Delete
+                                Copy link
                               </Typography>
                             </div>
-                          ) : null}
-                          <div
-                            className={classes.icon}
-                            onClick={() =>
-                              navigator.clipboard.writeText(item.signUrl)
-                            }
-                          >
-                            <LinkIcon fontSize="small" />
-                            <Typography className={classes.text}>
-                              Copy link
-                            </Typography>
                           </div>
-                        </div>
-                      </Popover>
-                    </div>
-                    <Dialog
-                      open={open}
-                      onClose={() => {
-                        setOpen(false);
-                      }}
-                      aria-labelledby="alert-dialog-title"
-                      aria-describedby="alert-dialog-description"
-                    >
-                      <DialogContent>
-                        <DialogContentText className={classes.text}>
-                          Do you want to disable the user?
-                        </DialogContentText>
-                      </DialogContent>
-                      <DialogActions>
-                        <Button
-                          onClick={() => {
-                            setOpen(false);
-                          }}
-                          variant="contained"
-                        >
-                          No
-                        </Button>
-                        <Button
-                          onClick={() => handleDelete(item?.signUrl)}
-                          className={classes.button}
-                        >
-                          Yes
-                        </Button>
-                      </DialogActions>
-                    </Dialog>
-                  </Card>
-                ))}
+                        </Popover>
+                      </div>
+                      <Dialog
+                        open={open}
+                        onClose={() => {
+                          setOpen(false);
+                        }}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                      >
+                        <DialogContent>
+                          <DialogContentText className={classes.text}>
+                            Do you want to disable the user?
+                          </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                          <Button
+                            onClick={() => {
+                              setOpen(false);
+                            }}
+                          >
+                            No
+                          </Button>
+                          <Button
+                            onClick={handleDelete}
+                            className={classes.button}
+                            variant="contained"
+                          >
+                            Yes
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
+                    </Card>
+                  )})}
               </Box>
             </Box>
           </Grid>

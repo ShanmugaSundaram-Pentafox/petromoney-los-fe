@@ -21,6 +21,7 @@ import LmsLos from '../pages/loanspage/lmsLosTable';
 import Loans from '../pages/loanspage/loans'
 import RenewalTable from '../pages/loanspage/RenewalTable';
 import Login from '../pages/login/login';
+import NOCertificateRequestTable from '../pages/noc/NOCertificateRequestTable';
 import NotFound from '../pages/NotFound/NotFound';
 import Profile from '../pages/profile/Profile';
 import CollectionRemarks from '../pages/reports/CollectionRemarks';
@@ -75,6 +76,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/reports" component={DealersDueReport} />
       <ProtectedRoute allow exact path="/reports/remarks" component={CollectionRemarks} />
       <ProtectedRoute allow exact path="/reports/dpd" component={DpdReport} />
+      <ProtectedRoute allow exact path="/noc" component={NOCertificateRequestTable} />
 
       <ProtectedRoute 
         exact 

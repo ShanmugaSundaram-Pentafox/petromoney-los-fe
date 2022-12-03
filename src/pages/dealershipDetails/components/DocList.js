@@ -117,6 +117,8 @@ const DocList = ({ id, currentUser }) => {
       })
   };
 
+  console.log('checklist data >>>>>>',checkListData)
+
   return (
     <div className={classes.wrapper}>
       {showUpload && <FileUpload handleSave={handleSave} id={id} data={rowData} title='Upload Dealership Document' open={showUpload} onCloseUploader={onCloseUploader} FILE_FORMAT={rowData.doc_id == '17' ? FILE_FORMAT_ALL : undefined} />}

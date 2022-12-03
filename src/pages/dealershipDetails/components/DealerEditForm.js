@@ -250,16 +250,17 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   <ViewData title='State' value={values.state_name} />
                   <ViewData title='Marital Status' value={values.marital_status} />
                   <ViewData title='Mobile' value={values.mobile} />
+                  <ViewData title='Email' value={values.email} />
                 </Box>
               </Grid>
               <Grid item md={6}>
                 <Box className={classes.box} >
                   <ViewData title='Name' value={`${values.first_name} ${values.last_name}`} />
+                  <ViewData title={'Father\'s Name'} value={values.father_name} />
                   <ViewData title='Gender' value={values.gender} />
                   <ViewData title='City' value={values.city_name} />
                   <ViewData title='Pincode' value={values.pincode} />
                   <ViewData title='Residing since' value={values.residing_since} />
-                  <ViewData title='Email' value={values.email} />
                 </Box>
               </Grid>
             </Grid>

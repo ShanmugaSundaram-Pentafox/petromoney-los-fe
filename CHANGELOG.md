@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.22.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.21.1...v2.22.0) (2022-12-03)
+
+
+### Features
+
+* **crime check:** crime check feature for dealership and applicants ([b046489](https://gitlab.com/vignesh3/petromall-fe/commit/b0464893fa0cb7405cdf6300b143447806830e87))
+* noc letter generation ([c7b2f47](https://gitlab.com/vignesh3/petromall-fe/commit/c7b2f475fb9ce161e3e9d1292e3b795cc7a4c2c2))
+
+
+### Bug Fixes
+
+* **cibil:** cibil check & refresh only to credit roles and admin ([669cf70](https://gitlab.com/vignesh3/petromall-fe/commit/669cf70010da02b856953bd463428a1452ae8e9d))
+* **cibil:** cibil check made available for everyone ([e852f6e](https://gitlab.com/vignesh3/petromall-fe/commit/e852f6e198809d0dc95b7d791dd854002fe03b18))
+* **cibil:** cibil check made available for everyone ([9c83baf](https://gitlab.com/vignesh3/petromall-fe/commit/9c83baff7275d5edd99bb0bfab7616a494e473bc))
+* leegality delete issue ([3afd259](https://gitlab.com/vignesh3/petromall-fe/commit/3afd259cb397396e721e146e1af5a4f462565c86))
+* **leegality:** update delete option issue ([d0fcd25](https://gitlab.com/vignesh3/petromall-fe/commit/d0fcd253176bb5f677d3d688368abe8a79c4c981))
+* loan stats total count issue in dashboard ([9cf193f](https://gitlab.com/vignesh3/petromall-fe/commit/9cf193f906cf34a984fe8a0cc3bca08c8c4965fd))
+* **score-card:** added missing tables in score card ([bfc3abe](https://gitlab.com/vignesh3/petromall-fe/commit/bfc3abe7dec23c72e3c50ad58967dc16636c708b))
+
 ### [2.21.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.21.0...v2.21.1) (2022-10-30)
 
 

@@ -264,7 +264,7 @@ const DealershipDetails = ({ currentUser, match }) => {
         onClose={() => setLeegalityModalVisible(false)}
       >
         <DialogContent>
-          <LeegalityLayout />
+          <LeegalityLayout currentUser={currentUser} />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setLeegalityModalVisible(false)} color="primary">

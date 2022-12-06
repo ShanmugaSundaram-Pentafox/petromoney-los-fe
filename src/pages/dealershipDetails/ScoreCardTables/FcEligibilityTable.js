@@ -358,7 +358,7 @@ const FcEligibilityTable = ({ data }) => {
             <TableFooter>
               <TableRow>
                 <TableCell colSpan={4} align={'right'}>Average LFR Charges per KL</TableCell>
-                <TableCell>{((sumBy(data?.fc_LFR_charges_calculation_data, item => Number((item.LFR_charges_KL)))) / data?.fc_LFR_charges_calculation_data.length).toFixed(2)}</TableCell>
+                <TableCell>{((sumBy(data?.fc_LFR_charges_calculation_data, item => Number((item.LFR_charges_KL)))) / data?.fc_LFR_charges_calculation_data?.length).toFixed(2)}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell colSpan={4} align={'right'}>Annual MS + HSD sales (KL)  </TableCell>
@@ -366,11 +366,11 @@ const FcEligibilityTable = ({ data }) => {
               </TableRow>
               <TableRow>
                 <TableCell colSpan={4} align={'right'}>LF Charges Calculated</TableCell>
-                <TableCell>{((sumBy(data?.fc_LFR_charges_calculation_data, item => Number((item.LFR_charges_KL)))) / data?.fc_LFR_charges_calculation_data.length) * (sumBy(data?.fc_LFR_charges_calculation_data, item => Number((item.total_msd_hsd_sales))))}</TableCell>
+                <TableCell>{((sumBy(data?.fc_LFR_charges_calculation_data, item => Number((item.LFR_charges_KL)))) / data?.fc_LFR_charges_calculation_data?.length) * (sumBy(data?.fc_LFR_charges_calculation_data, item => Number((item.total_msd_hsd_sales))))}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell colSpan={4} align={'right'}>LF charges override if any</TableCell>
-                <TableCell>{data.fc_eligibility_LFR_tot_data[0]?.lfr_charges_considered_if_any}</TableCell>
+                <TableCell>{data?.fc_eligibility_LFR_tot_data[0]?.lfr_charges_considered_if_any}</TableCell>
               </TableRow>
             </TableFooter>
           </Table>

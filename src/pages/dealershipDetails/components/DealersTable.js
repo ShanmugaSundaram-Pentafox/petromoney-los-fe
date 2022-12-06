@@ -13,7 +13,10 @@ import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import CreditInfoSideWrapper from './CreditInfoSideWrapper';
+import CrimeInfoSideWrapper from './CrimeInfoSideWrapper';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { URL } from '../../../config/serverUrls';
+import { rulesList } from '../../../config/userRules';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -55,11 +58,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+
 const DealersTable = ({ id, editable, data, titleAlign, onClickAddMenu, currentUser, dealersClickRow, viewOnly }) => {
   const classes = useStyles();
   const queryClient = useQueryClient()
   const { enqueueSnackbar } = useSnackbar();
   const [rowData, setRowData] = useState();
+  const [crimeData, setCrimeData] = useState();
+  const credit_permission = permissionCheck(currentUser.role_name, rulesList.credit_view);
 
   const DeleteApplicant = (values) => {
     const formData = new FormData();
@@ -185,6 +191,7 @@ const DealersTable = ({ id, editable, data, titleAlign, onClickAddMenu, currentU
                 editable || viewOnly ?
                   <TableCell align="right" onClick={e => e.stopPropagation()}>
                     <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                      { credit_permission && <Button style={{ marginRight: 12 }} size='small' variant='outlined' color='secondary' onClick={() => setCrimeData(row)}>Crime check</Button>}
                       <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>
                       <div style={{ marginLeft: 12 }} onClick={() => DeleteApplicant(row)}>
                         {
@@ -215,6 +222,18 @@ const DealersTable = ({ id, editable, data, titleAlign, onClickAddMenu, currentU
         <div className={classes.sidePanelWrapper}>
           {
             <CreditInfoSideWrapper dealershipId={id} data={rowData} currentUser={currentUser} onClose={() => setRowData()} />
+          }
+        </div>
+      </Drawer>
+      <Drawer
+        anchor="right"
+        open={crimeData}
+        onClose={()=> {setCrimeData()}}
+        variant="temporary"
+      >
+        <div className={classes.sidePanelWrapper}>
+          {
+            <CrimeInfoSideWrapper dealershipId={id} data={crimeData} currentUser={currentUser} onClose={() => setCrimeData()} />
           }
         </div>
       </Drawer>

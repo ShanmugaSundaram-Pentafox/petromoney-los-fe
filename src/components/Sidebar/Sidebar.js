@@ -250,6 +250,13 @@ const Sidebar = props => {
       icon: <SettingsIcon />
     })
   }
+  if (permissionCheck(currentUser.role_name, rulesList.ops_view)) {
+    pages.push({
+      title: 'NOC Letter',
+      href: '/noc',
+      icon: <AccountBoxIcon />
+    })
+  }
 
   return (
     <Drawer

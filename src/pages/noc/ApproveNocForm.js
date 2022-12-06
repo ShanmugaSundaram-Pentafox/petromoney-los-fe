@@ -47,6 +47,13 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     padding: '12px 16px',
   },
+  btnError: {
+    '&.MuiButton-contained': {
+      marginRight: '8px',
+      backgroundColor: theme.palette.error.main,
+      color: theme.palette.white
+    },
+  },
   editButton: {
     marginRight: '8px',
     '&.MuiButton-contained': {
@@ -142,7 +149,7 @@ const ApproveNocForm = ({ data, callback, currentUser, view }) => {
                 {
                   <LoaderButton
                     variant="contained"
-                    className={clsx(classes.btn, classes.editButton)}
+                    className={clsx(classes.btn, classes.btnError)}
                     isLoading={loading}
                     loadingText="Submitting..."
                     type="submit"

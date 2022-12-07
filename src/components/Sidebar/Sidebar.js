@@ -212,6 +212,13 @@ const Sidebar = props => {
     )
   }
 
+  if (permissionCheck(currentUser.role_name, rulesList.credit_view)) {
+    pages.push({
+      title: 'Pre Submit',
+      href: '/pre-submit',
+      icon: <AccountBoxIcon />
+    })
+  }
   if (permissionCheck(currentUser.role_name, rulesList.transporter_view)) {
     pages = [
       {

@@ -148,7 +148,11 @@ const DealerEditSideWrapper = ({
   let adminFields = {};
   if (currentUser?.role_id != 1) {
     adminFields = {
-      pan: Yup.string().required('Enter PAN')
+      pan: Yup.string()
+        .required('Enter PAN')
+        .nullable('Enter PAN')
+        .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
+        .uppercase(),
     }
   }
 

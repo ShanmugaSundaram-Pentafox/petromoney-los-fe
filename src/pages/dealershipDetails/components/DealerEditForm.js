@@ -76,7 +76,7 @@ const useStyles = makeStyles({
   },
 });
 
-const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave, setFieldValue, setPanValidateData, panValidateData, validateField, setAadharValidateData, aadharValidateData }) => {
+const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave, setFieldValue, setPanValidateData, panValidateData, validateField, setAadharValidateData, aadharValidateData,currentUser }) => {
   const readOnly = readOnlyProps;
   const classes = useStyles();
   const [city, setCity] = useState([]);
@@ -311,7 +311,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   label="PAN Number"
                   name="pan"
                   value={values.pan?.toUpperCase()}
-                  disabled={panValidateData?.loading || values?.pan_verified}
+                  disabled={(currentUser.role_id !== 1) && (panValidateData?.loading || values?.pan_verified)}
                   error={errors.pan}
                   helperText={errors.pan}
                   readOnly={readOnly}

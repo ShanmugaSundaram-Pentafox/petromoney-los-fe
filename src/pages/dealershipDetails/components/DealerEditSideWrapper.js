@@ -145,6 +145,17 @@ const DealerEditSideWrapper = ({
     };
   }
 
+  let adminFields = {};
+  if (currentUser?.role_id != 1) {
+    adminFields = {
+      pan: Yup.string()
+        .required('Enter PAN')
+        .nullable('Enter PAN')
+        .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
+        .uppercase(),
+    }
+  }
+
   const validationSchema = Yup.object().shape({
     first_name: Yup.string().nullable('Enter first name').required('Enter first name'),
     last_name: Yup.string().nullable('Enter last name').required('Enter last name'),
@@ -164,16 +175,16 @@ const DealerEditSideWrapper = ({
     residing_since: Yup.number().nullable('Enter the year').required('Enter the year'),
     marital_status: Yup.string().nullable('Enter your Marital status').required('Enter your Marital status'),
     pincode: Yup.string().nullable('Enter pincode').matches(/^[1-9][0-9]{5}$/, 'Invalid pincode').required('Enter pincode'),
-    pan: Yup.string()
-      .nullable('Enter PAN')
-      .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
-      .required('Enter PAN')
-      .uppercase(),
     aadhar: Yup.string()
       .nullable('Enter Aadhar')
       .matches(/^(\d{12})$|^(\d{16})$/, 'Invalid aadhar')
       .required('Enter valid aadhar'),
+    pan: Yup.string()
+      .nullable('Enter PAN')
+      .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
+      .uppercase(),
     ...coApplicantFields,
+    ...adminFields,
   });
 
   const handleIdChange = (e) => {
@@ -425,6 +436,7 @@ const DealerEditSideWrapper = ({
               setAadharValidateData={setAadharValidateData}
               aadharValidateData={aadharValidateData}
               validateField={validateField}
+              currentUser={currentUser}
             />
           </Step>
         </Stepper>

@@ -318,6 +318,7 @@ const AddBusinessDetailsForm = ({ data: init_data, dealer_id, isEdit, callback, 
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
+                      number
                       labelText="Monthly average HSD sale(in KL)"
                       name="monthly_avg_sale_hsd"
                       value={values.monthly_avg_sale_hsd}
@@ -391,6 +392,7 @@ const AddBusinessDetailsForm = ({ data: init_data, dealer_id, isEdit, callback, 
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
+                      number
                       className={classes.number}
                       labelText="Average realization period"
                       name="avg_realization_period"

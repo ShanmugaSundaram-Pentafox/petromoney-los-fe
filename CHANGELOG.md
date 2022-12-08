@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.23.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.22.0...v2.23.0) (2022-12-08)
+
+
+### Features
+
+* new status as pre-submit where credit & admins role move to submitted queue ([916dcc8](https://gitlab.com/vignesh3/petromall-fe/commit/916dcc8e4da70b2a50f80947472b3e38246e7250))
+
+
+### Bug Fixes
+
+* empty response handle ([27afb10](https://gitlab.com/vignesh3/petromall-fe/commit/27afb10b7280f45c5cb568f21a33f67865b58d2e))
+* **pdr:** allow integer to fields in business details form ([572db8d](https://gitlab.com/vignesh3/petromall-fe/commit/572db8dae19f3cd2ef43f79a08d4f2e7500605cc))
+
 ## [2.22.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.21.1...v2.22.0) (2022-12-03)
 
 

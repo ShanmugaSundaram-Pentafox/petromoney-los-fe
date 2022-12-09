@@ -212,7 +212,7 @@ const Sidebar = props => {
     )
   }
 
-  if (permissionCheck(currentUser.role_name, rulesList.credit_view)) {
+  if (permissionCheck(currentUser.role_name, rulesList.pre_submit_view)) {
     pages.push({
       title: 'Pre Submit',
       href: '/pre-submit',

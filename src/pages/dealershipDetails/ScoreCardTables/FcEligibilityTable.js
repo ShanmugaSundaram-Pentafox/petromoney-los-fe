@@ -78,7 +78,7 @@ const FcEligibilityTable = ({ data }) => {
     { item: 'V', label: 'Maximum Fuel Credit Limit Based on KL Sales', key: 'maximum_fuel_credit_limit_based_on_kl_sales', input: null },
     { item: 'W', label: 'Fuel Credit Amount to be given (Rs)', key: 'fuel_credit_amount_to_be_given', input: null },
     { item: 'X', label: 'Annual Interest on Fuel Credit Amount (Rs)', key: 'annual_interest_on_fuel_credit_amount', input: null },
-    { item: 'Y', label: 'FOIR % for Fuel credit', key: 'foir_percent_for_fuel_credit', input: null },
+    { item: 'Y', label: 'FOIR % for Fuel credit', key: 'foir_percent_for_fuel_credit', input: null,color:'#B4CFB0' },
     { item: 'Z', label: 'Eligibility', key: 'eligibility', input: null },
   ]
 
@@ -107,7 +107,7 @@ const FcEligibilityTable = ({ data }) => {
                 {
                   eligibilityFuelCredit?.map((item, index) => {
                     return (
-                      <TableRow key={index}>
+                      <TableRow key={index} style={{ backgroundColor: item.color ? item.color : null }}>
                         <TableCell><strong>{item?.item}</strong></TableCell>
                         <TableCell>{item?.label}</TableCell>
                         <TableCell>{fc_summary_data?.[item?.key]}<span style={{ cursor: 'pointer', color: '#1976d2', textDecoration: 'underlined', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }} onClick={() => setTableView(item?.input)}>{item?.input && '>>'}</span></TableCell>
@@ -347,9 +347,9 @@ const FcEligibilityTable = ({ data }) => {
                   <TableRow key={index}>
                     <TableCell>{index + 1}</TableCell>
                     <TableCell>{moment(new Date(field?.month)).format('MMM')}</TableCell>
-                    <TableCell>{field?.LFR_charges}</TableCell>
+                    <TableCell>{field?.lfr_charges}</TableCell>
                     <TableCell>{field?.total_msd_hsd_sales}</TableCell>
-                    <TableCell>{field?.LFR_charges_KL}</TableCell>
+                    <TableCell>{field?.lfr_charges_kl}</TableCell>
 
                   </TableRow>
                 ))
@@ -358,7 +358,7 @@ const FcEligibilityTable = ({ data }) => {
             <TableFooter>
               <TableRow>
                 <TableCell colSpan={4} align={'right'}>Average LFR Charges per KL</TableCell>
-                <TableCell>{((sumBy(data?.fc_LFR_charges_calculation_data, item => Number((item.LFR_charges_KL)))) / data?.fc_LFR_charges_calculation_data?.length).toFixed(2)}</TableCell>
+                <TableCell>{((sumBy(data?.fc_LFR_charges_calculation_data, item => Number((item.lfr_charges_kl)))) / data?.fc_LFR_charges_calculation_data?.length).toFixed(2)}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell colSpan={4} align={'right'}>Annual MS + HSD sales (KL)  </TableCell>
@@ -366,7 +366,7 @@ const FcEligibilityTable = ({ data }) => {
               </TableRow>
               <TableRow>
                 <TableCell colSpan={4} align={'right'}>LF Charges Calculated</TableCell>
-                <TableCell>{((sumBy(data?.fc_LFR_charges_calculation_data, item => Number((item.LFR_charges_KL)))) / data?.fc_LFR_charges_calculation_data?.length) * (sumBy(data?.fc_LFR_charges_calculation_data, item => Number((item.total_msd_hsd_sales))))}</TableCell>
+                <TableCell>{((sumBy(data?.fc_LFR_charges_calculation_data, item => Number((item.lfr_charges_kl)))) / data?.fc_LFR_charges_calculation_data?.length) * (sumBy(data?.fc_LFR_charges_calculation_data, item => Number((item.total_msd_hsd_sales))))}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell colSpan={4} align={'right'}>LF charges override if any</TableCell>

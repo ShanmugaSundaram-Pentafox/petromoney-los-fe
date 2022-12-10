@@ -44,6 +44,7 @@ export const rulesForUserRoles = {
       rulesList.external_lms,
       rulesList.opportunity_report,
       rulesList.pre_submit_view,
+      rulesList.dealership_view,
     ]
   },
   CDO: {
@@ -61,6 +62,7 @@ export const rulesForUserRoles = {
       rulesList.external_lms,
       rulesList.pre_submit_view,
       rulesList.opportunity_report,
+      rulesList.dealership_view,
     ]
   },
   CFO: {
@@ -80,6 +82,7 @@ export const rulesForUserRoles = {
       rulesList.external_lms,
       rulesList.opportunity_report,
       rulesList.pre_submit_view,
+      rulesList.dealership_view,
     ]
   },
   CREDIT_HEAD: {
@@ -122,6 +125,7 @@ export const rulesForUserRoles = {
       rulesList.phone_call,
       rulesList.opportunity_report,
       rulesList.pre_submit_view,
+      rulesList.dealership_view,
     ]
   },
   CREDIT_EXEC: {
@@ -140,6 +144,7 @@ export const rulesForUserRoles = {
       rulesList.region_map,
       rulesList.phone_call,
       rulesList.pre_submit_view,
+      rulesList.dealership_view,
     ]
   },
   OPS_EXEC: {
@@ -154,6 +159,7 @@ export const rulesForUserRoles = {
       rulesList.upload_statement,
       rulesList.external_lms,
       rulesList.ops_view,
+      rulesList.dealership_view,
     ]
   },
   OPS_MANAGER: {
@@ -168,6 +174,7 @@ export const rulesForUserRoles = {
       rulesList.upload_statement,
       rulesList.external_lms,
       rulesList.ops_view,
+      rulesList.dealership_view,
     ]
   },
   CREDIT: {
@@ -185,6 +192,7 @@ export const rulesForUserRoles = {
       rulesList.region_map,
       rulesList.phone_call,
       rulesList.pre_submit_view,
+      rulesList.dealership_view,
     ]
   },
   SALES_HEAD_STATE: {

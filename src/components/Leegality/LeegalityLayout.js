@@ -108,7 +108,6 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
             },
             variant: 'error',
           })
-          console.log('>> Document Details status error >> ', res)
           setDocDetails()
         }
       })
@@ -121,7 +120,6 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
           },
           variant: 'error',
         });
-        console.log(err);
         setDocDetails();
       });
 

@@ -26,14 +26,10 @@ const useStyles = makeStyles(theme => ({
   drawer: {
     width: 240,
     [theme.breakpoints.up('lg')]: {
-      // marginTop: 64,
       height: '100%'
     }
   },
   root: {
-    // backgroundColor: theme.palette.white,
-    // backgroundColor: "#050712",
-
     backgroundColor: '#FFF',
     color: theme.palette.black,
     display: 'flex',
@@ -42,7 +38,6 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2)
   },
   divider: {
-    // color: theme.palette.blueGreyLight,
     margin: theme.spacing(2, 0)
   },
   nav: {
@@ -54,9 +49,6 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: 0
   },
   button: {
-    // color: colors.blueGrey[200],
-    // color: 'rgba(173, 173, 173, 1)',
-    // color: "rgba(34, 36, 68, 1)",
     padding: '10px 8px',
     justifyContent: 'flex-start',
     textTransform: 'none',
@@ -69,7 +61,6 @@ const useStyles = makeStyles(theme => ({
     color: 'rgba(34, 36, 68, 1)'
   },
   icon: {
-    // color: theme.palette.icon,
     color: 'rgba(34, 36, 68, 1)',
     width: 24,
     height: 24,
@@ -94,11 +85,6 @@ const Sidebar = props => {
       href: '/',
       icon: <DashboardIcon />
     },
-    // {
-    //   title: 'Solar',
-    //   href: '/solar',
-    //   icon: <WbSunnyRoundedIcon />
-    // },
     {
       title: 'Loans',
       href: '/loans',
@@ -120,11 +106,6 @@ const Sidebar = props => {
       icon: <Repeat />
     },
     {
-      title: 'Dealerships',
-      href: '/dealership',
-      icon: <PeopleIcon />
-    },
-    {
       title: 'Transports',
       href: '/transports',
       icon: <LocalShippingIcon />
@@ -144,19 +125,9 @@ const Sidebar = props => {
       href: '/loans',
       icon: <AccountBoxIcon />
     },
-    // {
-    //   title: 'Account',
-    //   href: '/account',
-    //   icon: <AccountBoxIcon />
-    // },
-    // {
-    //   title: 'Settings',
-    //   href: '/settings',
-    //   icon: <SettingsIcon />
-    // }
   ];
 
-  if(permissionCheck(currentUser.role_name, rulesList.external_view)) {
+  if (permissionCheck(currentUser.role_name, rulesList.external_view)) {
     pages = [
       {
         title: 'Dashboard',
@@ -171,14 +142,19 @@ const Sidebar = props => {
     ]
   }
 
+  if (permissionCheck(currentUser.role_name, rulesList.dealership_view)) {
+    pages.push(
+      {
+        title: 'Dealerships',
+        href: '/dealership',
+        icon: <PeopleIcon />
+      },
+    )
+  }
+
   if (permissionCheck(currentUser.role_name, rulesList.dealer_view)) {
     pages.splice(1, pages.length + 1)
     pages.push(
-      // {
-      //   title: 'Loan Report',
-      //   href: '/reports',
-      //   icon: <LocalShippingIcon />
-      // },
       {
         title: 'Profile',
         href: `/dealership/${currentUser.dealership_id}`,
@@ -199,19 +175,16 @@ const Sidebar = props => {
         href: '/statements',
         icon: <ListAltIcon />
       },
-      // {
-      //   title: 'Transports',
-      //   href: '/transports',
-      //   icon: <LocalShippingIcon />
-      // },
-      // {
-      //   title: 'Loan Report',
-      //   href: '/reports',
-      //   icon: <LocalShippingIcon />
-      // },
     )
   }
 
+  if (permissionCheck(currentUser.role_name, rulesList.pre_submit_view)) {
+    pages.push({
+      title: 'Pre Submit',
+      href: '/pre-submit',
+      icon: <AccountBoxIcon />
+    })
+  }
   if (permissionCheck(currentUser.role_name, rulesList.transporter_view)) {
     pages = [
       {
@@ -277,7 +250,6 @@ const Sidebar = props => {
             height="108px"
           />
         </div>
-        {/* <Profile user={currentUser} /> */}
         <Divider light className={classes.divider} />
         <div>
           <List>

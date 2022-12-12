@@ -16,6 +16,7 @@ import OwnerDetails from '../pages/dashboard/components/OwnerDetails';
 import Dashboard from '../pages/dashboard/dashboard';
 import Dealership from '../pages/dealership/dealership';
 import DealershipDetails from '../pages/dealershipDetails/dealershipDetails';
+import PresubmitLoansTable from '../pages/loans/PresubmitLoansTable';
 import BlacklistTable from '../pages/loanspage/BlacklistTable';
 import LmsLos from '../pages/loanspage/lmsLosTable';
 import Loans from '../pages/loanspage/loans'
@@ -77,6 +78,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/reports/remarks" component={CollectionRemarks} />
       <ProtectedRoute allow exact path="/reports/dpd" component={DpdReport} />
       <ProtectedRoute allow exact path="/noc" component={NOCertificateRequestTable} />
+      <ProtectedRoute allow exact path="/pre-submit" component={PresubmitLoansTable} />
 
       <ProtectedRoute 
         exact 

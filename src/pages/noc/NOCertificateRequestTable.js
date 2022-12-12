@@ -62,7 +62,6 @@ const NOCertificateRequestTable = ({ currentUser }) => {
     currentUser.role_name,
     rulesList.external_view
   );
-  console.log('open Viewer >>>', openViewer);
   useEffect(() => {
     setLoading(true);
     getAllNocRequest()
@@ -216,33 +215,34 @@ const NOCertificateRequestTable = ({ currentUser }) => {
     onCellClick: (colData, cellMeta) => {
       if (cellMeta.colIndex !== 6) {
         currentUser.role_id == 1 &&
-        onRowClick(list[cellMeta.dataIndex].dealership_id, list[cellMeta.dataIndex]);
+          onRowClick(list[cellMeta.dataIndex].dealership_id, list[cellMeta.dataIndex]);
       }
     },
   };
 
   return (
     <div className={classes.root}>
-      {Array.isArray(list) && list.length !== 0 ? (
-        <MUIDataTable
-          title={
-            <Typography className={classes.title} variant="h4" component="h4">
-              {'NOC Applications'} ({list.length})
-            </Typography>
-          }
-          data={list}
-          columns={columns}
-          options={options}
-        />
-      ) : (
-        !loading && <Paper style={{ padding: 10 }}>No Request found</Paper>
-      )}
-      {loading && (
-        <div style={{ textAlign: 'center' }}>
-          {' '}
-          <CircularProgress />
-        </div>
-      )}
+      {
+        Array.isArray(list) ? (
+          <MUIDataTable
+            title={
+              <Typography className={classes.title} variant="h4" component="h4">
+                {'NOC Applications'} ({list.length})
+              </Typography>
+            }
+            data={list}
+            columns={columns}
+            options={options}
+          />
+        ) : (
+          !loading && <Paper style={{ padding: 10 }}>No Request found</Paper>
+        )
+      }
+      {
+        loading && (
+          <div style={{ textAlign: 'center' }}><CircularProgress /></div>
+        )
+      }
       <Drawer
         anchor="right"
         open={openModal}

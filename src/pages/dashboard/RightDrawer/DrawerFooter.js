@@ -321,6 +321,25 @@ const DrawerFooter = ({
                 )} />
           }
           {
+            status && ['pre_submit'].includes(status.toLowerCase()) &&
+              <UserCan
+                role={currentUser.role_name}
+                perform={rulesList?.loan_approval}
+                yes={() => (
+                  < div >
+                    <Button
+                      variant="contained"
+                      disabled={loanData?.isLoading}
+                      className={clsx(classes.btn, classes.btnSuccess)}
+                      startIcon={<ThumbUpAltIcon />}
+                      onClick={handleReviewModal}
+                    >
+                      Submit
+                    </Button>
+                  </div>
+                )} />
+          }
+          {
             editable && status && ['loan_approval', 'loan_review', 'disbursement_approval'].includes(status.toLowerCase()) &&
               <UserCan
                 role={currentUser.role_name}

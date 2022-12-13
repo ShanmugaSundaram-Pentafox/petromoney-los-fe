@@ -26,7 +26,7 @@ const WorkingSheetTable = ({ data }) => {
     <>
       {
         data?.ws_summary_data?.length ?
-          <TableContainer>
+          <TableContainer style={{ maxHeight: '50vh' }}>
             {/* Summary data table */}
             <Table style={{ width: '100%' }}>
               <div style={{ display: 'flex', justifyContent: 'space-around' }}>

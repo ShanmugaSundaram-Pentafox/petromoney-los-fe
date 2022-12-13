@@ -9,13 +9,12 @@ import {
   withStyles,
 } from '@material-ui/core';
 import { format } from 'date-fns';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import {
   getOmcList,
   getProductsMaster,
 } from '../../../services/common.service';
-
 import { numInWords } from '../../../utils/commonFunctions.util';
 import { ViewData } from '../../CommonComponents/FilePreview';
 import Currency from '../../Number/Currency';
@@ -28,13 +27,14 @@ const TableCell = withStyles(() => ({
 
 const LeegalityAgreementTable = ({ loanAmount, dealership, dealers, applicants, guarantor, productId }) => {
   const [product, setProduct] = useState()
-  const { data: products = [] } = useQuery(['products'], () => getProductsMaster(), {refetchOnWindowFocus: false})
-  const { data: omcs = [] } = useQuery('omcs', () => getOmcList(), {refetchOnWindowFocus: false})
-
-  useEffect(() => {
-    setProduct(products.find(item => item.product_id === productId))
-  }, [productId])
-
+  const { data: products = [] } = useQuery(['products', productId], () => getProductsMaster(),
+    {
+      refetchOnWindowFocus: false,
+      onSuccess: (data) => {
+        setProduct(data.find(item => item.product_id === productId))
+      }
+    })
+  const { data: omcs = [] } = useQuery('omcs', () => getOmcList(), { refetchOnWindowFocus: false })
   return (
     <Grid item md={8}>
       <Grid container spacing={2}>

@@ -8,7 +8,7 @@ import DrawerFooter from './DrawerFooter';
 import DrawerRemarks from './DrawerRemarks';
 import LoanInfo from './LoanInfo';
 import { getLoanById } from '../../../services/loans.service';
-import SalesInfo from '../components/SalesInfo';
+import WorkingSheetDrawer from '../../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
 
 
 const useStyles = makeStyles(theme => ({
@@ -70,14 +70,13 @@ const RejectedDrawer = ({ id, selectedLoanData, status, currentUser, editable, d
       </div>
       <div className={classes.contentWrapper}>
         <DealershipData data={data} readOnly={true} />
-        <SalesInfo id={id} currentUser={currentUser} readOnly={true} />
+        <WorkingSheetDrawer id={id} />
         <LoanInfo viewable={true} status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} />
         <>
           <DrawerRemarks label={'Remarks'} loanData={loanData?.review_remarks} readOnly={readOnly} />
           <DrawerRemarks label={'Reviewer remarks'} loanData={loanData?.approval_remarks} readOnly={readOnly} />
           <DrawerRemarks label={'Approver remarks'} loanData={loanData?.remarks} readOnly={readOnly} />
           <DrawerRemarks label={'Remarks(Pending disbursement)'} loanData={loanData?.disbursement_approval_remarks} readOnly={readOnly} />
-          {/* {loanData?.pushback_remarks && <DrawerRemarks label={'Push back Remarks'} loanData={loanData?.pushback_remarks} readOnly={readOnly} />} */}
         </>
       </div>
       <div>

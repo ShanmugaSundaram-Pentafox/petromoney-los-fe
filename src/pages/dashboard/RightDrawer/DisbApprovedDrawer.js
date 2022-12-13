@@ -9,8 +9,8 @@ import DrawerFooter from './DrawerFooter';
 import DrawerRemarks from './DrawerRemarks';
 import LoanInfo from './LoanInfo';
 import { getLoanById } from '../../../services/loans.service';
+import WorkingSheetDrawer from '../../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
 import DispApprovedDataTable from '../components/DispApprovedDataTable';
-import SalesInfo from '../components/SalesInfo';
 
 
 const useStyles = makeStyles(theme => ({
@@ -75,7 +75,7 @@ const DisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, readOnl
       </div>
       <div className={classes.contentWrapper}>
         <DealershipData data={data} readOnly={true} />
-        <SalesInfo id={id} currentUser={currentUser} readOnly={true} />
+        <WorkingSheetDrawer id={id} />
         <LoanInfo viewable={true} status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} />
         <>
           <DrawerRemarks label={'Remarks'} loanData={loanData?.review_remarks} readOnly={readOnly} />
@@ -83,7 +83,6 @@ const DisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, readOnl
           <DrawerRemarks label={'Approver remarks'} loanData={loanData?.remarks} readOnly={readOnly} />
           <DrawerRemarks label={'Recommendation Remarks'} loanData={loanData?.disbursement_recommendation_remarks} readOnly={readOnly} />
           <DrawerRemarks label={'Disbursement Approved Remarks'} loanData={loanData?.disbursement_approval_remarks} readOnly={readOnly} />
-          {/* {loanData?.pushback_remarks && <DrawerRemarks label={'Push back Remarks'} loanData={loanData?.pushback_remarks} readOnly={readOnly} />} */}
         </>
         {
           loanData?.isLoading ? <Skeleton variant="rect" width="100%" height={400} /> : <DispApprovedDataTable id={id} editable={editable} loanData={loanData} />

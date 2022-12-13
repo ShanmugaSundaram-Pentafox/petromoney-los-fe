@@ -16,7 +16,8 @@ import LoaderButton from '../../../components/CommonComponents/Button/LoaderButt
 import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { getUserRoleForReview } from '../../../services/common.service';
 import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
-import SalesInfo from '../components/SalesInfo';
+import WorkingSheetDrawer from '../../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
+
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -101,7 +102,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
     setApprovalModal(!approvalModal)
   }
   const updateLoanStatus = () => {
-    if(user && remarks){
+    if (user && remarks) {
       setLoading(true)
       let reqBody = {
         user_id: currentUser.id,
@@ -152,7 +153,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
         </div>
         <div className={classes.contentWrapper}>
           <DealershipData data={data} readOnly={true} />
-          <SalesInfo id={id} currentUser={currentUser} readOnly={true} />
+          <WorkingSheetDrawer id={id} />
           <LoanInfo status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} updateNewLoanInfo={updateNewLoanInfo} />
           <>
             <DrawerRemarks label={'Reviewer Remarks'} loanData={loanData?.review_remarks} readOnly={readOnly} />
@@ -185,7 +186,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
               <Select
                 isClearable
                 name='user_approve'
-                onChange={(data) => {setUser(data); setErrorStatus();}}
+                onChange={(data) => { setUser(data); setErrorStatus(); }}
                 options={userRole}
                 menuPlacement='bottom'
                 menuPosition='fixed'
@@ -197,13 +198,13 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
             </DialogContentText>
             <TextEditor setJSON={setRemarks} toolBar={true} />
             {
-              errorStatus && 
-                <Alert severity="error" style={{padding: '0px 16px'}}>{errorStatus}</Alert>
+              errorStatus &&
+                <Alert severity="error" style={{ padding: '0px 16px' }}>{errorStatus}</Alert>
             }
           </div>
-          <div style={{display: 'flex', justifyContent: 'center', marginTop: 8, marginBottom: 5}}>
-            <Button variant='outlined' style={{marginRight: 8}} onClick={handleApprovalModal}>Cancel</Button>
-            <LoaderButton 
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 8, marginBottom: 5 }}>
+            <Button variant='outlined' style={{ marginRight: 8 }} onClick={handleApprovalModal}>Cancel</Button>
+            <LoaderButton
               color='primary'
               variant='contained'
               isLoading={loading}

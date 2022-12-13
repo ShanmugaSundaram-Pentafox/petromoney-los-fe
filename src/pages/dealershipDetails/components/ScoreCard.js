@@ -20,6 +20,7 @@ import FixedObligationsTable from '../ScoreCardTables/FixedObligationsTable';
 import OmcSaleTable from '../ScoreCardTables/OmcSaleTable';
 import OtherInputsTable from '../ScoreCardTables/OtherInputsTable';
 import ScoreCardInputTable from '../ScoreCardTables/ScoreCardInputTable';
+import WorkingSheetTable from '../ScoreCardTables/WorkingSheetTable';
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -32,7 +33,7 @@ const useStyles = makeStyles(() => ({
     flexGrow: 1,
     display: 'flex',
     flexDirection: 'column',
-    width: '65vw',
+    width: '60vw',
     marginTop: 16
   },
   buttonRipple: {
@@ -96,7 +97,8 @@ const ScoreCard = ({currentUser, dealership_id}) => {
     'FC Eligibility',
     'Deviations',
     'CAM',
-    'Score Card'
+    'Score Card',
+    'Working sheet',
   ]
 
   const delay = async (ms = 1000) =>
@@ -282,18 +284,21 @@ const ScoreCard = ({currentUser, dealership_id}) => {
           <ScoreCardInputTable data={scoreCardData?.scorecard_sheet} />
         </TabPanel>
         <TabPanel value={tabValue} index={9}>
-          <CoappTable data={scoreCardData?.co_app_sheet} type='co_app_1' />
+          <WorkingSheetTable data={scoreCardData?.working_sheet} />
         </TabPanel>
         <TabPanel value={tabValue} index={10}>
-          <CoappTable data={scoreCardData?.co_app_sheet} type='co_app_2' />
+          <CoappTable data={scoreCardData?.co_app_sheet} type='co_app_1' />
         </TabPanel>
         <TabPanel value={tabValue} index={11}>
-          <CoappTable data={scoreCardData?.co_app_sheet} type='co_app_3' />
+          <CoappTable data={scoreCardData?.co_app_sheet} type='co_app_2' />
         </TabPanel>
         <TabPanel value={tabValue} index={12}>
-          <CoappTable data={scoreCardData?.co_app_sheet} type='co_app_4' />
+          <CoappTable data={scoreCardData?.co_app_sheet} type='co_app_3' />
         </TabPanel>
         <TabPanel value={tabValue} index={13}>
+          <CoappTable data={scoreCardData?.co_app_sheet} type='co_app_4' />
+        </TabPanel>
+        <TabPanel value={tabValue} index={14}>
           <CoappTable data={scoreCardData?.co_app_sheet} type='co_app_5' />
         </TabPanel>
       </div>

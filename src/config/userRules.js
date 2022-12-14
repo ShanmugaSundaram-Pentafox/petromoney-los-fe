@@ -206,6 +206,7 @@ export const rulesForUserRoles = {
       rulesList.credit_refresh,
       rulesList.financial_view,
       rulesList.upload_statement,
+      rulesList.pre_submit_view,
     ]
   },
   SALES_HEAD_REGIONAL: {
@@ -219,6 +220,7 @@ export const rulesForUserRoles = {
       rulesList.credit_refresh,
       rulesList.financial_view,
       rulesList.upload_statement,
+      rulesList.pre_submit_view,
     ]
   },
   FIELD_OFFICER: {

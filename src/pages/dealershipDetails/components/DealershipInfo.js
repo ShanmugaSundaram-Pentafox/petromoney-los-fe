@@ -525,7 +525,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
               </>
             ) : <CircularProgress size={20} />
           ) : (
-            !viewOnly &&
+            viewOnly &&
             (
               <>
                 <Button

@@ -116,6 +116,7 @@ export const rulesForUserRoles = {
       rulesList.dealership_view,
       rulesList.vkyc_edit,
       rulesList.crime_check,
+      rulesList.cibil_edit,
     ]
   },
   ADMIN: {
@@ -167,6 +168,7 @@ export const rulesForUserRoles = {
       rulesList.dealership_view,
       rulesList.vkyc_edit,
       rulesList.crime_check,
+      rulesList.cibil_edit,
     ]
   },
   OPS_EXEC: {
@@ -222,6 +224,7 @@ export const rulesForUserRoles = {
       rulesList.pre_submit_view,
       rulesList.dealership_view,
       rulesList.crime_check,
+      rulesList.cibil_edit,
     ]
   },
   SALES_HEAD_STATE: {

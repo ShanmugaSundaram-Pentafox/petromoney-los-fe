@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.23.4](https://gitlab.com/vignesh3/petromall-fe/compare/v2.23.3...v2.23.4) (2022-12-16)
+
+
+### Bug Fixes
+
+* **cibil-permission:** allow credit to refresh cibil data ([8d00570](https://gitlab.com/vignesh3/petromall-fe/commit/8d005708e2ce4183815eb9c76934f6b7d7d95e98))
+
 ### [2.23.3](https://gitlab.com/vignesh3/petromall-fe/compare/v2.23.2...v2.23.3) (2022-12-16)
 
 

@@ -22,9 +22,11 @@ import { useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import DealerEditForm from './DealerEditForm';
 import TextInput from '../../../components/TextInput/TextInput';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { API } from '../../../config/api';
 import { logger } from '../../../config/logger';
 import { URL } from '../../../config/serverUrls';
+import { rulesList } from '../../../config/userRules';
 import { cryptoEncrypt } from '../../../services/crypto.service';
 import { getKycAgents, getKycStatus, initiateKYC } from '../../../services/dealers.service';
 import { validateId } from '../../../services/dealerships.service';
@@ -93,7 +95,6 @@ const DealerEditSideWrapper = ({
   currentUser,
   onClose,
   id,
-  viewOnly,
 }) => {
   const classes = useStyles();
   const queryClient = useQueryClient()
@@ -111,6 +112,8 @@ const DealerEditSideWrapper = ({
   const [agentId, setAgentId] = useState();
   const [agentIdList, setAgentIdList] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
+  const vkyc_permission = permissionCheck(currentUser.role_name, rulesList.vkyc_edit);
+
 
   const handleEdit = () => {
     setReadOnly(!readOnly);
@@ -234,9 +237,7 @@ const DealerEditSideWrapper = ({
     errors,
     handleSubmit,
     handleChange,
-    handleReset,
     setFieldValue,
-    setValues,
     validateField
   } = useFormik({
     initialValues: {
@@ -498,15 +499,15 @@ const DealerEditSideWrapper = ({
                 </Button>
               </div>
               {
-                !viewOnly &&
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    {
-                      kycStatus ? (
-                        <div style={{ display: 'flex', alignItems: 'center', marginRight: 12, backgroundColor: green[100], padding: 4, paddingRight: 12, borderRadius: 14 }}>
-                          <CheckRoundedIcon style={{ color: green[400], marginRight: 8 }} />
-                          <Typography style={{ color: green[800] }}>VKYC already initiated</Typography>
-                        </div>
-                      ) : (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  {
+                    kycStatus ? (
+                      <div style={{ display: 'flex', alignItems: 'center', marginRight: 12, backgroundColor: green[100], padding: 4, paddingRight: 12, borderRadius: 14 }}>
+                        <CheckRoundedIcon style={{ color: green[400], marginRight: 8 }} />
+                        <Typography style={{ color: green[800] }}>VKYC already initiated</Typography>
+                      </div>
+                    ) : (
+                      vkyc_permission &&
                         <Button
                           variant='outlined'
                           className={clsx(classes.btn, classes.editButton)}
@@ -515,22 +516,22 @@ const DealerEditSideWrapper = ({
                         >
                           Initiate VKYC
                         </Button>
-                      )
+                    )
+                  }
+                  <Button
+                    variant='contained'
+                    className={clsx(classes.btn, classes.editButton)}
+                    startIcon={
+                      !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
                     }
-                    <Button
-                      variant='contained'
-                      className={clsx(classes.btn, classes.editButton)}
-                      startIcon={
-                        !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
-                      }
-                      disabled={loading}
-                      onClick={
-                        loading ? () => null : readOnly ? handleEdit : handleSubmit
-                      }
-                    >
-                      Edit
-                    </Button>
-                  </div>
+                    disabled={loading}
+                    onClick={
+                      loading ? () => null : readOnly ? handleEdit : handleSubmit
+                    }
+                  >
+                    Edit
+                  </Button>
+                </div>
               }
             </>
           )}

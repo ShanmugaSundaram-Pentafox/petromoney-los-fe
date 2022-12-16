@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.23.3](https://gitlab.com/vignesh3/petromall-fe/compare/v2.23.2...v2.23.3) (2022-12-16)
+
+
+### Bug Fixes
+
+* **dealership-permission:** fix permission issue for all the roles ([b00e5a6](https://gitlab.com/vignesh3/petromall-fe/commit/b00e5a6a375825511349022eae052440e0321aff))
+
 ### [2.23.2](https://gitlab.com/vignesh3/petromall-fe/compare/v2.23.1...v2.23.2) (2022-12-14)
 
 

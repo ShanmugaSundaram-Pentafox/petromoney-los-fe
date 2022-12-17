@@ -269,6 +269,8 @@ export const rulesForUserRoles = {
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
+      rulesList.pre_submit_view,
+      rulesList.cibil_edit,
     ]
   },
   DEALER: {

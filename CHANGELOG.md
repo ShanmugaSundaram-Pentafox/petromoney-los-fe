@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.23.5](https://gitlab.com/vignesh3/petromall-fe/compare/v2.23.4...v2.23.5) (2022-12-17)
+
+
+### Bug Fixes
+
+* **permissions & label:** rename remarks to recommendation & allow FO to view pre-submit ([2db07ae](https://gitlab.com/vignesh3/petromall-fe/commit/2db07ae49e29112074f8046047976109939fde14))
+
 ### [2.23.4](https://gitlab.com/vignesh3/petromall-fe/compare/v2.23.3...v2.23.4) (2022-12-16)
 
 

@@ -21,7 +21,6 @@ const TableCell = withStyles(() => ({
 
 const WorkingSheetTable = ({ data }) => {
   const classes = useStyles();
-
   return (
     <>
       {
@@ -57,6 +56,16 @@ const WorkingSheetTable = ({ data }) => {
               </div>
 
             </Table>
+            {/* Remarks */}
+            <Typography variant='h6' className={classes.title}>Remarks</Typography>
+            {
+              ((data?.ws_summary_data[0]?.profile_of_customer_and_business).split('\n'))?.map(item => (
+                <>
+                  <br />
+                  <Typography variant='body'>{`${item}`}</Typography>
+                </>
+              ))
+            }
             {/* demographics data table */}
             {
               data?.ws_demographics_data?.length ? (
@@ -78,8 +87,8 @@ const WorkingSheetTable = ({ data }) => {
                       {
                         data?.ws_demographics_data?.map((item, i) => (
                           <TableRow key={i}>
-                            <TableCell>{item?.demographics}</TableCell>
-                            <TableCell>{item?.name}</TableCell>
+                            <TableCell>{item?.applicant_type}</TableCell>
+                            <TableCell>{item?.applicant_name}</TableCell>
                             <TableCell>{item?.age}</TableCell>
                             <TableCell>{item?.contact_details}</TableCell>
                             <TableCell>{item?.cibil_score}</TableCell>
@@ -112,7 +121,7 @@ const WorkingSheetTable = ({ data }) => {
                       {
                         data?.ws_shareholding_data?.map((item, i) => (
                           <TableRow key={i}>
-                            <TableCell>{item?.shareholding_pattern}</TableCell>
+                            <TableCell>{item?.partner_director_type}</TableCell>
                             <TableCell>{item?.name}</TableCell>
                             <TableCell>{item?.designation}</TableCell>
                             <TableCell>{item?.stake}</TableCell>
@@ -146,7 +155,7 @@ const WorkingSheetTable = ({ data }) => {
                       {
                         data?.ws_business_data?.map((item, i) => (
                           <TableRow key={i}>
-                            <TableCell>{item?.year}</TableCell>
+                            <TableCell>{item?.financial_year}</TableCell>
                             <TableCell>{item?.itr_filled_date}</TableCell>
                             <TableCell>{item?.turn_over}</TableCell>
                             <TableCell>{item?.net_profit}</TableCell>
@@ -178,7 +187,7 @@ const WorkingSheetTable = ({ data }) => {
                       {
                         data?.ws_sales_data?.map((item, i) => (
                           <TableRow key={i}>
-                            <TableCell>{item?.sale_in_kl}</TableCell>
+                            <TableCell>{item?.product_type}</TableCell>
                             <TableCell>{item?.average_sales}</TableCell>
                             <TableCell>{item?.cash_sales}</TableCell>
                             <TableCell>{item?.credit_sales}</TableCell>
@@ -214,18 +223,22 @@ const WorkingSheetTable = ({ data }) => {
                     <TableHead>
                       <TableRow />
                       <TableRow>
-                        <TableCell>Faculty for sales.</TableCell>
-                        <TableCell>MS</TableCell>
-                        <TableCell>HSD</TableCell>
+                        <TableCell>Sales Type</TableCell>
+                        <TableCell>No of Nozzle</TableCell>
+                        <TableCell>Margin per litre</TableCell>
+                        <TableCell>Average sales per day (KL)</TableCell>
+                        <TableCell>Storage tank capacity</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
                       {
                         data?.ws_faculty_sales_data?.map((item, i) => (
                           <TableRow key={i}>
-                            <TableCell>{item?.faculty_for_sales}</TableCell>
-                            <TableCell>{item?.ms}</TableCell>
-                            <TableCell>{item?.hsd}</TableCell>
+                            <TableCell>{(item?.sales_type).toUpperCase()}</TableCell>
+                            <TableCell>{item?.no_of_nozzle}</TableCell>
+                            <TableCell>{item?.margin_per_liter}</TableCell>
+                            <TableCell>{item?.average_sales_per_day_in_kl}</TableCell>
+                            <TableCell>{item?.storage_tank_capacity}</TableCell>
                           </TableRow>
                         ))
                       }
@@ -243,20 +256,52 @@ const WorkingSheetTable = ({ data }) => {
                     <TableHead>
                       <TableRow />
                       <TableRow>
-                        <TableCell></TableCell>
-                        <TableCell>No of Packs</TableCell>
-                        <TableCell>No of Shifts</TableCell>
-                        <TableCell>Total</TableCell>
+                        <TableCell>Work schedule</TableCell>
+                        <TableCell>Manager</TableCell>
+                        <TableCell>Cashier/supervisor</TableCell>
+                        <TableCell>Driver</TableCell>
+                        <TableCell>Pump boys</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
                       {
                         data?.ws_bunk_data?.map((item, i) => (
                           <TableRow key={i}>
-                            <TableCell>{item?.name}</TableCell>
-                            <TableCell>{item?.no_of_pax}</TableCell>
-                            <TableCell>{item?.no_of_shifts}</TableCell>
-                            <TableCell>{(item?.no_of_pax * item?.no_of_shifts)}</TableCell>
+                            <TableCell>{item?.work_schedule}</TableCell>
+                            <TableCell>{item?.manager}</TableCell>
+                            <TableCell>{item?.cashier_or_supervisor}</TableCell>
+                            <TableCell>{item?.driver}</TableCell>
+                            <TableCell>{item?.pump_boys}</TableCell>
+                          </TableRow>
+                        ))
+                      }
+                    </TableBody>
+                  </Table>
+                </>
+              ) : null
+            }
+            {
+              data?.ws_faculty_bank_details?.length ? (
+                <>
+                  <Typography variant='h6' className={classes.title}>Bank Account details</Typography>
+                  <Table>
+                    <TableHead>
+                      <TableRow />
+                      <TableRow>
+                        <TableCell>Bank Name</TableCell>
+                        <TableCell>Type of account ( EDFS / OD/CC/CA)</TableCell>
+                        <TableCell>Limit</TableCell>
+                        <TableCell>ROI %</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {
+                        data?.ws_faculty_bank_details?.map((item, i) => (
+                          <TableRow key={i}>
+                            <TableCell>{item?.main_bank}</TableCell>
+                            <TableCell>{item?.type_of_account}</TableCell>
+                            <TableCell>{item?.max_limit}</TableCell>
+                            <TableCell>{item?.roi_in_percent}</TableCell>
                           </TableRow>
                         ))
                       }
@@ -398,13 +443,13 @@ export default WorkingSheetTable;
 // splitted the data from single array only for clear UI need
 
 let workingSheetSummary1 = [
-  { label: 'Date of Incorporation / OMC date', key: 'doi' },
+  { label: 'Date of Incorporation / OMC date', key: 'omc_date' },
   { label: 'OMC', key: 'omc' },
   { label: 'PD done by', key: 'pd_done_by' },
   { label: 'Loan Amount', key: 'loan_amount' },
-  { label: 'Rate of Interest %', key: 'rate_of_interest' },
-  { label: 'FOIR as per policy', key: 'foir' },
-  { label: 'Leverage as per Policy', key: 'leverage' },
+  { label: 'Rate of Interest %', key: 'rate_of_interest_in_percent' },
+  { label: 'FOIR as per policy', key: 'actual_foir' },
+  { label: 'Leverage as per Policy', key: 'leverage_as_per_policy' },
 ]
 
 let workingSheetSummary2 = [
@@ -412,7 +457,7 @@ let workingSheetSummary2 = [
   { label: 'Type of Entity', key: 'type_of_entity' },
   { label: 'PD date', key: 'pd_date' },
   { label: 'Loan Scheme', key: 'loan_scheme' },
-  { label: 'Processing Key %', key: 'processing_fee' },
+  { label: 'Processing Key %', key: 'processing_fee_in_percent' },
   { label: 'Actual FOIR character', key: 'actual_foir' },
 ]
 
@@ -420,8 +465,8 @@ let workingSheetSummary2 = [
 let workingSheetSummary3 = [
   { label: 'Total regular customer bases', key: 'total_regular_customer_bases' },
   { label: 'Main customer (transports / Institutions )', key: 'main_customers' },
-  { label: 'Max credit period days / limit', key: 'max_credit_period' },
-  { label: 'bad_debts', key: 'bad debts ( yearly)' },
+  { label: 'Max credit period days / limit', key: 'max_credit_period_days' },
+  { label: 'bad debts ( yearly)', key: 'bad_debts_yearly' },
   { label: 'Mode of collection ( cash / transfer)', key: 'mode_of_collection' },
   { label: 'Total receivables ( latest) Rs.', key: 'total_receivables' },
 ]
@@ -429,21 +474,22 @@ let workingSheetSummary3 = [
 let scoreCardReference = [
   { label: 'Reference 1', key: 'ref1' },
   { label: 'Reference 2', key: 'ref2' },
-  { label: 'OMC official name and No', key: 'omc_official_name' },
-  { label: 'Other information', key: 'additional_info' },
-  { label: 'Any recent public developments which may impact sales ( road development / any other)', key: 'public_development' },
-  { label: 'No of loads purchased per month', key: 'loads_pur_per_month' },
+  { label: 'OMC official name and No', key: 'omc_official_name_and_no' },
+  { label: 'Other information', key: 'additional_information' },
+  { label: 'Any recent public developments which may impact sales ( road development / any other)', key: 'public_development_or_any_other' },
+  { label: 'No of loads purchased per month', key: 'loads_purchased_per_month' },
+  { label: 'No of outlets within 3 Kms', key: 'no_of_outlets_with_in_3km' },
 ]
 
 let cibilAnalysis = [
-  { label: 'Type ( thick / thin)', key: 'name' },
-  { label: 'Vintage in CIBIL', key: 'type_thick_thin' },
+  { label: 'Type ( thick / thin)', key: 'applicant_name' },
+  { label: 'Vintage in CIBIL', key: 'type_thick_or_thin' },
   { label: 'Vintage in CIBIL', key: 'vintage_cibil' },
   { label: 'Score', key: 'score' },
-  { label: 'total No of DPD ( up to 30 days) in last 12 months', key: 'dpd_upto_30days' },
-  { label: 'total No of DPD ( > 30 up to 90 days) in last 12 months', key: 'dpd_30_to_90days' },
-  { label: 'total No of DPD ( > 90 days) in last 12 months', key: 'dpd_greater_90days' },
+  { label: 'total No of DPD ( up to 30 days) in last 12 months', key: 'no_of_dpd_upto_30days_in_last_12_months' },
+  { label: 'total No of DPD ( > 30 up to 90 days) in last 12 months', key: 'no_of_dpd_30_to_90days_in_last_12_months' },
+  { label: 'total No of DPD ( > 90 days) in last 12 months', key: 'no_of_dpd_greater_90days_in_last_12_months' },
   { label: 'Loans / Credi card - WO/ Settled <=50K', key: 'settled' },
-  { label: 'Enquiries in the last 6 months', key: 'enquiries' },
+  { label: 'Enquiries in the last 6 months', key: 'enquiries_in_last_6_months' },
 
 ]

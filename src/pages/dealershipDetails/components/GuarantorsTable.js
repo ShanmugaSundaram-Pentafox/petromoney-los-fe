@@ -27,7 +27,6 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: 8,
   },
   table: {
-    // minWidth: 650,
     padding: 8,
   },
   header: {
@@ -51,24 +50,19 @@ const GuarantorsTable = ({
   editable,
   guarantorsData,
   titleAlign,
-  getExperianData,
   onClickAddMenu,
-  formType,
-  openCloseCreditForm,
   currentUser,
-  showDealerEditForm,
   dealersClickRow,
-  editFormClose,
-  deletable,
-  viewOnly,
 }) => {
   const classes = useStyles();
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
   const [rowData, setRowData] = useState();
-  const [deleteModal, setDeleteModal] = useState(false);
   const [crimeData, setCrimeData] = useState();
-  const credit_permission = permissionCheck(currentUser.role_name, rulesList.credit_view);
+  const adminOnlyEdit = permissionCheck(currentUser.role_name, rulesList.admin_edit);
+  const cibil_permission = permissionCheck(currentUser.role_name, rulesList.cibil_edit);
+  const crime_permission = permissionCheck(currentUser.role_name, rulesList.crime_check);
+
 
 
   const DeleteApplicant = (values) => {
@@ -135,18 +129,16 @@ const GuarantorsTable = ({
         <Typography variant="h5" align={titleAlign} className={classes.title}>
           No Guarantors Found
         </Typography>
-        {editable && (
-          <div style={{ textAlign: 'center', marginTop: 8 }}>
-            <Button
-              color="primary"
-              variant="outlined"
-              size="small"
-              onClick={() => onClickAddMenu('GUARANTOR')}
-            >
-              Add Guarantor
-            </Button>
-          </div>
-        )}
+        <div style={{ textAlign: 'center', marginTop: 8 }}>
+          <Button
+            color="primary"
+            variant="outlined"
+            size="small"
+            onClick={() => onClickAddMenu('GUARANTOR')}
+          >
+            Add Guarantor
+          </Button>
+        </div>
       </div>
     );
 
@@ -168,9 +160,7 @@ const GuarantorsTable = ({
             <TableCell>Guarantor Name</TableCell>
             <TableCell align="center">Mobile</TableCell>
             <TableCell align="center">Documents</TableCell>
-            {editable || viewOnly ? (
-              <TableCell align="center">Action</TableCell>
-            ) : null}
+            <TableCell align="center">Action</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -178,17 +168,12 @@ const GuarantorsTable = ({
             <TableRow
               className={classes.tableRow}
               key={row.id}
-              onClick={(e) =>
-                editable || viewOnly
-                  ? dealersClickRow(e, row, 'GUARANTOR')
-                  : null
-              }
-            >
+              onClick={(e) => dealersClickRow(e, row, 'GUARANTOR')}>
               <TableCell>{row.first_name}&nbsp;&nbsp;</TableCell>
               <TableCell
                 align="center"
                 onClick={(e) =>
-                  editable || (viewOnly && dealersClickRow(e, row, 'GUARANTOR'))
+                  editable || (dealersClickRow(e, row, 'GUARANTOR'))
                 }
               >
                 {row.mobile}
@@ -241,55 +226,40 @@ const GuarantorsTable = ({
                   </TableCell>
                 )}
               </TableCell>
-              {editable || viewOnly ? (
-                <TableCell align="right" onClick={(e) => e.stopPropagation()}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}
-                  >
-                    { credit_permission && <Button
-                      style={{ marginRight: 12 }}
-                      size="small"
-                      variant="outlined"
-                      color="secondary"
-                      onClick={() => setCrimeData(row)}
-                    >
-                      Crime check
-                    </Button>}
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      color="secondary"
-                      onClick={() => setRowData(row)}
-                    >
-                      Credit Info
-                    </Button>
-                    <div
-                      style={{ marginLeft: 12 }}
-                      onClick={() => DeleteApplicant(row)}
-                    >
-                      {row.is_active == 0 ? (
-                        <Tooltip title="Activate">
-                          <CheckCircleTwoToneIcon
-                            style={{ color: grey[500] }}
-                          />
-                        </Tooltip>
-                      ) : (
-                        <Tooltip title="Deactivate">
-                          <CheckCircleTwoToneIcon
-                            style={{ color: green[200] }}
-                          />
-                        </Tooltip>
-                      )}
-                    </div>
-                    {/* {deletable && <DeleteButton alertText={`Do you really want to delete this guarantor named ${row?.first_name}?`} deleteAction={() => DeleteApplicant(row)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={index} buttonType='icon' />} */}
-                  </div>
-                </TableCell>
-              ) : null}
+
+              <TableCell align="right" onClick={(e) => e.stopPropagation()}>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  {crime_permission && <Button style={{ marginRight: 12 }} size="small" variant="outlined" color="secondary" onClick={() => setCrimeData(row)}>Crime check</Button>}
+                  {cibil_permission && <Button size="small" variant="outlined" color="secondary" onClick={() => setRowData(row)}>Credit Info</Button>}
+                  {
+                    adminOnlyEdit &&
+                      <div style={{ marginLeft: 12 }} onClick={() => DeleteApplicant(row)}>
+                        {
+                          row.is_active == 0 ? (
+                            <Tooltip title="Activate">
+                              <CheckCircleTwoToneIcon
+                                style={{ color: grey[500] }}
+                              />
+                            </Tooltip>
+                          ) : (
+                            <Tooltip title="Deactivate">
+                              <CheckCircleTwoToneIcon
+                                style={{ color: green[200] }}
+                              />
+                            </Tooltip>
+                          )
+                        }
+                      </div>
+                  }
+                </div>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

@@ -75,8 +75,6 @@ const DealershipInfo = ({ data, className, currentUser }) => {
   const businessTypes = useQuery('business-types', getBusinessTypes, { cacheTime: 300000 })
   const states = useQuery('state', getActiveStates, { cacheTime: 300000 })
   const { enqueueSnackbar } = useSnackbar();
-  const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit);
-  const viewOnly = permissionCheck(currentUser.role_name, rulesList.dealership_view);
   const credit_permission = permissionCheck(currentUser.role_name, rulesList.credit_view);
 
   const handleValidate = (action, id) => {
@@ -525,27 +523,22 @@ const DealershipInfo = ({ data, className, currentUser }) => {
               </>
             ) : <CircularProgress size={20} />
           ) : (
-            !viewOnly &&
-            (
-              <>
-                <Button
-                  disabled={!editable}
-                  color="primary"
-                  variant="contained"
-                  size="small"
-                  onClick={() => { setReadOnly(false); }}>Edit Details</Button>
-                {
-                  credit_permission &&
-                    <Button
-                      disabled={!editable}
-                      color="primary"
-                      variant="contained"
-                      size="small"
-                      onClick={() => setCrimeData({ ...crimeData, userType: 'dealership', id: data?.id, first_name: data?.name })}>Crime check</Button>
+            <>
+              <Button
+                color="primary"
+                variant="contained"
+                size="small"
+                onClick={() => { setReadOnly(false); }}>Edit Details</Button>
+              {
+                credit_permission &&
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    size="small"
+                    onClick={() => setCrimeData({ ...crimeData, userType: 'dealership', id: data?.id, first_name: data?.name })}>Crime check</Button>
 
-                }
-              </>
-            )
+              }
+            </>
           )}
         </CardActions>
         <Drawer

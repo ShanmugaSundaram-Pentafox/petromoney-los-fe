@@ -58,7 +58,6 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   const classes = useStyles();
   const [showCreditForm, setShowCreditForm] = useState(false);
   const [showDealerEditForm, setShowDealerEditForm] = useState(false);
-  const [experianData, setExperianData] = useState({});
   const [formType, setFormType] = useState('');
   const [modelType, setModelType] = useState('');
   const [rowData, setRowData] = useState({});
@@ -126,21 +125,15 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
     setShowDealerEditForm(false)
   }
 
-  const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit);
   const deletable = permissionCheck(currentUser.role_name, rulesList.applicant_delete);
-  const viewOnly = permissionCheck(currentUser.role_name, rulesList.dealership_view);
   return (
     <>
-      {
-        editable && <div className={classes.addButton}>
-          <AddIconButon onClickAddMenu={onClickAddMenu} />
-        </div>
-      }
+      <div className={classes.addButton}>
+        <AddIconButon onClickAddMenu={onClickAddMenu} />
+      </div>
       <DealersTable
         id={id}
-        editable={editable}
         deletable={deletable}
-        viewOnly={viewOnly}
         data={dealerData}
         formType={formType}
         rowData={rowData}
@@ -155,9 +148,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
 
       <CoApplicantsTable
         id={id}
-        editable={editable}
         deletable={deletable}
-        viewOnly={viewOnly}
         titleAlign={titleAlign}
         coApplicantsData={coApplicantsData}
         formType={formType}
@@ -172,9 +163,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
 
       <GuarantorsTable
         id={id}
-        editable={editable}
         deletable={deletable}
-        viewOnly={viewOnly}
         titleAlign={titleAlign}
         guarantorsData={guarantorsData}
         formType={formType}
@@ -197,7 +186,6 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
           <DealerEditSideWrapper
             id={id}
             dealersList={dealerData}
-            viewOnly={viewOnly}
             isAdd={formType}
             modelType={modelType}
             dealershipId={id}

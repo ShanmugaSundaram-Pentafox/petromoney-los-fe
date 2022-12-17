@@ -2,6 +2,47 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.23.5](https://gitlab.com/vignesh3/petromall-fe/compare/v2.23.4...v2.23.5) (2022-12-17)
+
+
+### Bug Fixes
+
+* **permissions & label:** rename remarks to recommendation & allow FO to view pre-submit ([2db07ae](https://gitlab.com/vignesh3/petromall-fe/commit/2db07ae49e29112074f8046047976109939fde14))
+
+### [2.23.4](https://gitlab.com/vignesh3/petromall-fe/compare/v2.23.3...v2.23.4) (2022-12-16)
+
+
+### Bug Fixes
+
+* **cibil-permission:** allow credit to refresh cibil data ([8d00570](https://gitlab.com/vignesh3/petromall-fe/commit/8d005708e2ce4183815eb9c76934f6b7d7d95e98))
+
+### [2.23.3](https://gitlab.com/vignesh3/petromall-fe/compare/v2.23.2...v2.23.3) (2022-12-16)
+
+
+### Bug Fixes
+
+* **dealership-permission:** fix permission issue for all the roles ([b00e5a6](https://gitlab.com/vignesh3/petromall-fe/commit/b00e5a6a375825511349022eae052440e0321aff))
+
+### [2.23.2](https://gitlab.com/vignesh3/petromall-fe/compare/v2.23.1...v2.23.2) (2022-12-14)
+
+
+### Bug Fixes
+
+* **dealership-details:** allow admin to edit dealership details ([ac41f6c](https://gitlab.com/vignesh3/petromall-fe/commit/ac41f6cc4088cea9182eca4b9da8e23a3cd86e26))
+
+### [2.23.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.23.0...v2.23.1) (2022-12-14)
+
+
+### Bug Fixes
+
+* allow only credit and admin to user pre-submit ([96f4ba0](https://gitlab.com/vignesh3/petromall-fe/commit/96f4ba0b13ffb7a93676738ba85064ad161944dd))
+* merge branch development into dealer-details ([d189311](https://gitlab.com/vignesh3/petromall-fe/commit/d18931190dabf02ea80614537cbb12c75d9915ea))
+* Merge remote-tracking branch 'origin' into refactor/deler-details ([837efd7](https://gitlab.com/vignesh3/petromall-fe/commit/837efd7efb9c35ba747884f15f575167a9154942))
+* **pre-submit:** allow presubmit for sales ([702d058](https://gitlab.com/vignesh3/petromall-fe/commit/702d058e82d6ec848af45b841636ab9c7d634b6b))
+* remove dealership list access for all the sales roles ([c923452](https://gitlab.com/vignesh3/petromall-fe/commit/c923452bb24f4d237e3c8b297917c6a38dc08fdd))
+* **score_card:** updated variable declaration outside the component ([8a8e909](https://gitlab.com/vignesh3/petromall-fe/commit/8a8e9090fe8cebd264dc86a2de06b8364c37dfaa))
+* **score-card:** added missing values ([c6a0ffb](https://gitlab.com/vignesh3/petromall-fe/commit/c6a0ffbd88da42181a1ab44ee9e2b60922d06b8b))
+
 ## [2.23.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.22.0...v2.23.0) (2022-12-08)
 
 

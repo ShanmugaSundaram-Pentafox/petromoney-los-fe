@@ -187,7 +187,7 @@ const WorkingSheetTable = ({ data }) => {
                       {
                         data?.ws_sales_data?.map((item, i) => (
                           <TableRow key={i}>
-                            <TableCell>{item?.product_type}</TableCell>
+                            <TableCell>{item?.fuel_type}</TableCell>
                             <TableCell>{item?.average_sales}</TableCell>
                             <TableCell>{item?.cash_sales}</TableCell>
                             <TableCell>{item?.credit_sales}</TableCell>
@@ -234,7 +234,7 @@ const WorkingSheetTable = ({ data }) => {
                       {
                         data?.ws_faculty_sales_data?.map((item, i) => (
                           <TableRow key={i}>
-                            <TableCell>{(item?.sales_type).toUpperCase()}</TableCell>
+                            <TableCell>{(item?.fuel_type).toUpperCase()}</TableCell>
                             <TableCell>{item?.no_of_nozzle}</TableCell>
                             <TableCell>{item?.margin_per_liter}</TableCell>
                             <TableCell>{item?.average_sales_per_day_in_kl}</TableCell>

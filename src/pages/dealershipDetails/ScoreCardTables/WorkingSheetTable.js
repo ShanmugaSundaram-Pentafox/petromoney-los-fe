@@ -482,8 +482,8 @@ let scoreCardReference = [
 ]
 
 let cibilAnalysis = [
-  { label: 'Type ( thick / thin)', key: 'applicant_name' },
-  { label: 'Vintage in CIBIL', key: 'type_thick_or_thin' },
+  { label: 'Applicant name', key: 'applicant_name' },
+  { label: 'Type ( thick / thin)', key: 'type_thick_or_thin' },
   { label: 'Vintage in CIBIL', key: 'vintage_cibil' },
   { label: 'Score', key: 'score' },
   { label: 'total No of DPD ( up to 30 days) in last 12 months', key: 'no_of_dpd_upto_30days_in_last_12_months' },

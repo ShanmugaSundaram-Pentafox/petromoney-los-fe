@@ -9,8 +9,8 @@ import DrawerFooter from './DrawerFooter';
 import DrawerRemarks from './DrawerRemarks';
 import LoanInfo from './LoanInfo';
 import { getLoanById } from '../../../services/loans.service';
+import WorkingSheetDrawer from '../../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
 import DispApprovedDataTable from '../components/DispApprovedDataTable';
-import SalesInfo from '../components/SalesInfo';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -72,7 +72,7 @@ const DisbursedDrawer = ({ id, selectedLoanData, status, currentUser, readOnly, 
       </div>
       <div className={classes.contentWrapper}>
         <DealershipData data={data} readOnly={true} />
-        <SalesInfo id={id} currentUser={currentUser} readOnly={true} />
+        <WorkingSheetDrawer id={id} />
         <LoanInfo viewable={true} status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} />
         <>
           <DrawerRemarks label={'Recommendation'} loanData={loanData?.review_remarks} readOnly={readOnly} />

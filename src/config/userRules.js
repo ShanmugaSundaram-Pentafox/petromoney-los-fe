@@ -276,6 +276,7 @@ export const rulesForUserRoles = {
   DEALER: {
     static: [
       rulesList.dealer_view,
+      rulesList.dealership_view,
     ]
   },
   TRANSPORTER: {

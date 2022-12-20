@@ -57,14 +57,20 @@ const WorkingSheetTable = ({ data }) => {
 
             </Table>
             {/* Remarks */}
-            <Typography variant='h6' className={classes.title}>Remarks</Typography>
             {
-              ((data?.ws_summary_data[0]?.profile_of_customer_and_business).split('\n'))?.map(item => (
+              data?.ws_summary_data[0]?.profile_of_customer_and_business && (
                 <>
-                  <br />
-                  <Typography variant='body'>{`${item}`}</Typography>
+                  <Typography variant='h6' className={classes.title}>Remarks</Typography>
+                  {
+                    ((data?.ws_summary_data[0]?.profile_of_customer_and_business)?.split('\n'))?.map(item => (
+                      <>
+                        <br />
+                        <Typography variant='body'>{`${item}`}</Typography>
+                      </>
+                    ))
+                  }
                 </>
-              ))
+              )
             }
             {/* demographics data table */}
             {

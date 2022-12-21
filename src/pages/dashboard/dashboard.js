@@ -20,6 +20,7 @@ import { rulesList } from '../../config/userRules';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getDealerDetails } from '../../services/dealers.service';
 import { getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd } from '../../services/loans.service';
+import { isAllowed } from '../../utils/cerbos';
 // import { getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd } from '../../services/loans.service';
 
 const currencyFormat = (value) => {
@@ -298,16 +299,16 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                       <div className={classes.creditBookHeader}>
                         <Typography variant="h5" style={{width: 120}}>Credit Book</Typography>
                         {
-                          !permissionCheck(currentUser.role_name, rulesList.external_view) && permissionCheck(currentUser.role_name, rulesList.external_lms) &&
-                            <div className={classes.creditView}>
-                              
-                              <Box>
-                                <div className={classes.filterWrapper}>
-                                  <div role="button" className={`${classes.filterItem} ${creditBook === 'Petromoney' && 'active'}`} onClick={() => onCreditBookChange('Petromoney')} onKeyDown>Petromoney</div>
-                                  <div role="button" className={`${classes.filterItem} ${creditBook === 'External' && 'active'}`} onClick={() => onCreditBookChange('External')} onKeyDown>Vivriti</div>
-                                </div>
-                              </Box>
-                            </div>
+                          // Access control for show and hide external charts switch in LMS
+                          isAllowed(currentUser?.access,'dashboard','vivriti') &&
+                          <div className={classes.creditView}>
+                            <Box>
+                              <div className={classes.filterWrapper}>
+                                <div role="button" className={`${classes.filterItem} ${creditBook === 'Petromoney' && 'active'}`} onClick={() => onCreditBookChange('Petromoney')} onKeyDown>Petromoney</div>
+                                <div role="button" className={`${classes.filterItem} ${creditBook === 'External' && 'active'}`} onClick={() => onCreditBookChange('External')} onKeyDown>Vivriti</div>
+                              </div>
+                            </Box>
+                          </div>
                         }
                       </div>
                       <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">

@@ -15,6 +15,7 @@ import { getOTP, resendOTP, resetPassword } from '../../services/login.service';
 import { setCurrentUser } from '../../store/user/user.actions';
 import apiCall from '../../utils/api.util';
 import { Typography } from '@material-ui/core';
+import Cerboss from '../../utils/cerbos';
 
 const packageJSON = require('../../../package.json');
 
@@ -178,7 +179,12 @@ const Login = ({ setCurrentUser }) => {
           .then(({ status, data, message }) => {
             // logger(status, data);
             if (status == 'SUCCESS') {
-              setCurrentUser(data);
+              // setCurrentUser(data);
+              Cerboss('https://api-uat.petromoney.in/api/user/access', data)
+              .then(({results}) => {
+                setCurrentUser({...data, access: results})
+              })
+              .catch(e => console.log(e))
             }
             setApiStatus({ type: status, message })
           })

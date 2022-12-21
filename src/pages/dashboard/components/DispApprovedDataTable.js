@@ -33,6 +33,7 @@ import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput
 import { logger } from '../../../config/logger';
 import { updateLoanApprovalStatusById, deleteLoanDisbursementRecord } from '../../../services/loans.service';
 import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
+import { isAllowed } from '../../../utils/cerbos';
 
 
 
@@ -79,7 +80,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const DispApprovedDataTable = ({ id, loanData, editable }) => {
+const DispApprovedDataTable = ({ id, loanData, editable, currentUser }) => {
   const classes = useStyles();
   const [dispHistory, setDispHistory] = useState({});
   const [modalData, setModalData] = useState({});
@@ -199,7 +200,7 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
           <TableRow>
             <TableCell colSpan={4} align="center">
               {
-                editable &&
+                isAllowed(currentUser?.access,'dashboard','add_disb_amt') &&
                   <Button variant="outlined" size="medium" color="secondary" onClick={() => setModalData({ open: true })} startIcon={<AddRoundedIcon fontSize="small" />}>Add Disbursed Amount</Button>
               }
             </TableCell>

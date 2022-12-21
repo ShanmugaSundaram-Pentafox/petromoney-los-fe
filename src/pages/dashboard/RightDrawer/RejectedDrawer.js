@@ -70,6 +70,7 @@ const RejectedDrawer = ({ id, selectedLoanData, status, currentUser, editable, d
       </div>
       <div className={classes.contentWrapper}>
         <DealershipData data={data} readOnly={true} />
+        <Typography variant='h4' style={{ cursor: 'pointer' }}>Working sheet</Typography>
         <WorkingSheetDrawer id={id} />
         <LoanInfo viewable={true} status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} />
         <>

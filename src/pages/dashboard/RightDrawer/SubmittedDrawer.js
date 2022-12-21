@@ -151,6 +151,7 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
         </div>
         <div className={classes.contentWrapper}>
           <DealershipData data={data} readOnly={true} />
+          <Typography variant='h4' style={{ marginTop: 20 }}>Working sheet</Typography>
           <WorkingSheetDrawer id={id} />
           <LoanInfo status={status} viewable={false} currentUser={currentUser} newInfo={loanData} editable={editable} data={selectedLoanData} updateNewLoanInfo={updateNewLoanInfo} />
         </div>
@@ -184,11 +185,11 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
             <TextEditor setJSON={setRemarks} toolBar={true} />
             {
               errorStatus &&
-                <Alert severity="error" style={{padding: '0px 16px'}}>{errorStatus}</Alert>
+                <Alert severity="error" style={{ padding: '0px 16px' }}>{errorStatus}</Alert>
             }
           </div>
-          <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 8, marginBottom: 5}}>
-            <Button variant='outlined' onClick={handleReviewModal} style={{marginRight: 8}}>Cancel</Button>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 8, marginBottom: 5 }}>
+            <Button variant='outlined' onClick={handleReviewModal} style={{ marginRight: 8 }}>Cancel</Button>
             <LoaderButton
               variant='contained'
               color='primary'

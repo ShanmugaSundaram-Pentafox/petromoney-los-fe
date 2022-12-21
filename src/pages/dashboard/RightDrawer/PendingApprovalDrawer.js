@@ -146,6 +146,7 @@ const PendingApprovalDrawer = ({ id, selectedLoanData, status, currentUser, read
         </div>
         <div className={classes.contentWrapper}>
           <DealershipData data={data} readOnly={true} />
+          <Typography variant='h4' style={{ cursor: 'pointer' }}>Working sheet</Typography>
           <WorkingSheetDrawer id={id} />
           <DeviationsTable id={id} />
           <LoanInfo status={status} currentUser={currentUser} viewable={true} editable={editable} data={selectedLoanData} updateNewLoanInfo={updateNewLoanInfo} />

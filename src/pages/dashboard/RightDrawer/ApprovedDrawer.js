@@ -71,6 +71,7 @@ const ApprovedDrawer = ({ id, selectedLoanData, status, currentUser, readOnly, e
       </div>
       <div className={classes.contentWrapper}>
         <DealershipData data={data} readOnly={true} />
+        <Typography variant='h4' style={{ cursor: 'pointer' }}>Working sheet</Typography>
         <WorkingSheetDrawer id={id} />
         <LoanInfo viewable={true} status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} />
         <>

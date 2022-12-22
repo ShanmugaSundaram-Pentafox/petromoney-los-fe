@@ -22,8 +22,8 @@ import TableRow from '@material-ui/core/TableRow';
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 import CheckCircleOutlineRoundedIcon from '@material-ui/icons/CheckCircleOutlineRounded';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
+import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
-import LinkIcon from '@material-ui/icons/Link';
 import SettingsIcon from '@material-ui/icons/Settings';
 import moment from 'moment';
 import { useSnackbar } from 'notistack';
@@ -100,9 +100,15 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
             setDocDetails(res?.data?.data);
           }
         } else {
-          setLoading(false);
-          console.log('>> Document Details status error >> ', res);
-          setDocDetails();
+          setLoading(false)
+          enqueueSnackbar(res.message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
+          setDocDetails()
         }
       })
       .catch((err) => {
@@ -114,7 +120,6 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
           },
           variant: 'error',
         });
-        console.log(err);
         setDocDetails();
       });
 
@@ -148,9 +153,6 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
           },
           variant: 'success',
         });
-        // setTimeout(() => {
-        //   setSuccessStatus(res.message || 'Notification send successfully')
-        // }, 1500)
       })
       .catch((err) => {
         console.log(err);
@@ -304,7 +306,7 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
                                   <HighlightOffRoundedIcon
                                     style={{ color: 'red' }}
                                   />
-                              )
+                                )
                               }
                             />
                             {!item.signed && (
@@ -323,7 +325,7 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
                                       <HighlightOffRoundedIcon
                                         style={{ color: 'red' }}
                                       />
-                                  )
+                                    )
                                   }
                                 />
                                 <Chip
@@ -340,7 +342,7 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
                                       <HighlightOffRoundedIcon
                                         style={{ color: 'red' }}
                                       />
-                                  )
+                                    )
                                   }
                                 />
                               </>
@@ -405,16 +407,29 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
                                 </Typography>
                               </div>
                             ) : null}
-                            <div
-                              className={classes.icon}
-                              onClick={() =>
-                                navigator.clipboard.writeText(selectedItemData.signUrl)
+                            <div className={classes.icon} onClick={() => navigator.clipboard.writeText(selectedItemData?.signUrl).then(
+                              () => {
+                                setAnchorEl(null)
+                                enqueueSnackbar('Sign URL copied successfully', {
+                                  anchorOrigin: {
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                  },
+                                  variant: 'success',
+                                })
+                              },
+                              () => {
+                                enqueueSnackbar('Copy failed', {
+                                  anchorOrigin: {
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                  },
+                                  variant: 'error',
+                                })
                               }
-                            >
-                              <LinkIcon fontSize="small" />
-                              <Typography className={classes.text}>
-                                Copy link
-                              </Typography>
+                            )}>
+                              <FileCopyOutlinedIcon fontSize='small' color={'action'} />
+                              <Typography className={classes.text}>Copy link</Typography>
                             </div>
                           </div>
                         </Popover>
@@ -429,7 +444,7 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
                       >
                         <DialogContent>
                           <DialogContentText className={classes.text}>
-                            Do you want to disable the user?
+                            Do you want to delete the document?
                           </DialogContentText>
                         </DialogContent>
                         <DialogActions>
@@ -450,10 +465,11 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
                         </DialogActions>
                       </Dialog>
                     </Card>
-                  )})}
+                  )
+                })}
               </Box>
-            </Box>
-          </Grid>
+            </Box >
+          </Grid >
         ) : null}
 
         <Grid item sm={3}>
@@ -468,8 +484,8 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
             )}
           </Box>
         </Grid>
-      </Grid>
-    </Box>
+      </Grid >
+    </Box >
   );
 };
 

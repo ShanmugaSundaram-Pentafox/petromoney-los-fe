@@ -11,17 +11,18 @@ import React, { Fragment, useState } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
+import { resources_id } from '../../config/accessControl';
 import { rulesList } from '../../config/userRules';
 import { ReactComponent as DownloadIcon } from '../../icons/downloadIcon.svg';
 import SendEmailAction from '../../pages/reports/SendEmailAction';
 import { getPassbookDetails, refreshRedis } from '../../services/common.service';
 import { setDashboardView } from '../../store/common/common.actions';
 import { resetCurrentUser } from '../../store/user/user.actions';
+import { isAllowed } from '../../utils/cerbos';
 import AddNewUserAction from '../AddNewUser/AddNewUserAction';
 import LoginUserInfo from '../CommonComponents/LoginUserInfo';
 import NotificationSidebar from '../CommonComponents/NotificationSidebar';
 import { permissionCheck } from '../UserCan/UserCan';
-import { isAllowed } from '../../utils/cerbos';
 
 const useStyles = makeStyles(theme => {
   return ({
@@ -192,7 +193,7 @@ const Topbar = (props) => {
               </>
             )}
             {
-              typeof pageTitle === 'string' && pageTitle?.toLowerCase() == 'dashboard' && isAllowed(user?.access,'dashboard','los_switch') ? (
+              typeof pageTitle === 'string' && pageTitle?.toLowerCase() == 'dashboard' && isAllowed(user?.access,resources_id.dashboard,'los_switch') ? (
                 <span className={classes.optionsContainer}>
                   <RadioGroup onChange={(e, v) => updateDashboardView(v)} row aria-label="dashboard-view-type" name="dashboard-view-type" defaultValue={dashboardView}>
                     <Tooltip title="Loan Origination System">

@@ -12,10 +12,12 @@ import AsyncSelect from 'react-select/async';
 import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 import Currency from '../../../components/Number/Currency';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
 import usePageTitle from '../../../hooks/usePageTitle';
 import apiCall from '../../../utils/api.util';
+import { isAllowed } from '../../../utils/cerbos';
 
 
 const useStyles = makeStyles({
@@ -618,27 +620,36 @@ function FastTagPassbook( {currentUser} ) {
             >
               Search
             </Button>
-            <Button
-              variant='outlined'
-              color='primary'
-              type='submit'
-              onClick={handleDownload}
-              startIcon={<GetAppIcon/>}
-            >
-              Download
-            </Button>
-            <Button
-              variant='outlined'
-              color='primary'
-              type='submit'
-              style={{marginLeft: 10 }}
-              onClick={handleShare}
-            >
-              <ShareIcon fontSize='small' style={{margin: 1.2}}/>
-            </Button>
+            {
+              // Passbook statement download permission
+              isAllowed(currentUser?.access, resources_id?.transportPassbook, action_id?.transportPassbook?.download) ?
+                <Button
+                  variant='outlined'
+                  color='primary'
+                  type='submit'
+                  onClick={handleDownload}
+                  startIcon={<GetAppIcon/>}
+                >
+                  Download
+                </Button> : null
+            }
+            {
+              // Passbook statement share permission
+              isAllowed(currentUser?.access, resources_id?.transportPassbook, action_id?.transportPassbook?.share) ?
+                <Button
+                  variant='outlined'
+                  color='primary'
+                  type='submit'
+                  style={{marginLeft: 10 }}
+                  onClick={handleShare}
+                >
+                  <ShareIcon fontSize='small' style={{margin: 1.2}}/>
+                </Button> : null
+            }
           </div>
           {
-            uploadPermission && (
+            // statement Upload permission
+            isAllowed(currentUser?.access, resources_id?.transportPassbook, action_id?.transportPassbook?.upload) && (
               <div className={classes.icon}>
                 <input
                   type='file'

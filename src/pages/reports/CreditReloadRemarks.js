@@ -13,8 +13,10 @@ import { useMount } from 'react-use';
 import FilePreview, { ViewData } from '../../components/CommonComponents/FilePreview';
 import FormDialog from '../../components/CommonComponents/FormDialog/FormDialog';
 import TextInput from '../../components/TextInput/TextInput';
+import { action_id, resources_id } from '../../config/accessControl';
 import { addCreditReport } from '../../services/creditreport.service';
 import { getAllWithheldRemarks } from '../../services/withheld.services';
+import { isAllowed } from '../../utils/cerbos';
 
 
 
@@ -295,7 +297,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
               </Grid>
             </>
             {
-              !view && (
+              isAllowed(currentUser?.access, resources_id?.creditReload, action_id?.creditReload?.disburse) && (
                 rowData.status == 'Disbursed' || rowData.status == 'Declined' ? null : (
                   <>
                     <Grid container spacing={2}>
@@ -340,35 +342,34 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
             </Button>
           </div>
           {
-            !view && (
-              (rowData.status != 'Disbursed' && rowData.status != 'Declined') && (
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <Button
-                    variant='contained'
-                    type='submit'
-                    onClick={declineSubmit}
-                    className={clsx(classes.btn, classes.declineButton)}
-                  >
-                    Decline
-                  </Button>
-                  <Button
-                    variant='contained'
-                    type='submit'
-                    color='primary'
-                    onClick={disburseSubmit}
-                    className={clsx(classes.btn, classes.editButton)}
-                  >
-                    Disburse
-                  </Button>
-                  {/* {
-                    disburseLoading ? (
-                      <CircularProgress size={20} />
-                    ) : (
-                    )
-                  } */}
-                </div>
-              )
-            )
+            rowData.status != 'Disbursed' && rowData.status != 'Declined' &&
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                {
+                // Credit Reload decline permission check
+                  isAllowed(currentUser?.access, resources_id?.creditReload, action_id?.creditReload?.decline) ?
+                    <Button
+                      variant='contained'
+                      type='submit'
+                      onClick={declineSubmit}
+                      className={clsx(classes.btn, classes.declineButton)}
+                    >
+                      Decline
+                    </Button> : null
+                }
+                {
+                // Credit Reload disburse permission check
+                  isAllowed(currentUser?.access, resources_id?.creditReload, action_id?.creditReload?.disburse) ?
+                    <Button
+                      variant='contained'
+                      type='submit'
+                      color='primary'
+                      onClick={disburseSubmit}
+                      className={clsx(classes.btn, classes.editButton)}
+                    >
+                      Disburse
+                    </Button> : null
+                }
+              </div>
           }
           {
             <FormDialog className={classes.dialogBox} title='Payment Reference' onDownload={imageModal.image} open={imageModal.open} onClose={() => setImageModal({ open: false })}>

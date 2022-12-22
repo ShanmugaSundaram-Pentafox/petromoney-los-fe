@@ -12,9 +12,10 @@ import { useQuery, useQueryClient } from 'react-query';
 import { useMount } from 'react-use';
 import AddBlackListForm from './AddBlackListForm';
 import Button from '../../components/CommonComponents/Button/Button';
+import { action_id, resources_id } from '../../config/accessControl';
 import { getAllDealership } from '../../services/dealerships.service';
 import { deleteRemarks, getAllWithheldLoans, resolveRemarks } from '../../services/withheld.services';
-
+import { isAllowed } from '../../utils/cerbos';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -23,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const UnresolvedTable = () => {
+const UnresolvedTable = ({currentUser}) => {
   const queryClient = useQueryClient()
   const [openModal, setOpenModal] = useState(false);
   const [dealershipData, setDealershipData] = useState([]);
@@ -139,16 +140,24 @@ const UnresolvedTable = () => {
                 return (
                   <div style={{ marginBottom: 12, display: 'flex' }} key={i}>
                     <div style={{ minWidth: 250, maxWidth: 250 }}>{remark.remarks} {remark.comment && '- ' + remark.comment}</div>
-                    <div onClick={() => handleResolve(remark.id)} style={{ marginLeft: 12 }}>
-                      <Tooltip title="Click to resolve">
-                        <CheckOutlinedIcon style={{ color: green[200] }} fontSize={'small'} />
-                      </Tooltip>
-                    </div>
-                    <div onClick={() => { handleDelete(remark.id) }} style={{ marginLeft: 12 }}>
-                      <Tooltip title='Click to delete'>
-                        <DeleteOutlineRounded style={{ color: '#ff6666' }} fontSize={'small'} />
-                      </Tooltip>
-                    </div>
+                    {
+                      // Withheld resolve permission check
+                      isAllowed(currentUser?.access, resources_id?.withheld, action_id?.withheld?.resolve) ?
+                        <div onClick={() => handleResolve(remark.id)} style={{ marginLeft: 12 }}>
+                          <Tooltip title="Click to resolve">
+                            <CheckOutlinedIcon style={{ color: green[200] }} fontSize={'small'} />
+                          </Tooltip>
+                        </div> : null
+                    }
+                    {
+                      // withheld delete permission check
+                      isAllowed(currentUser?.access, resources_id?.withheld, action_id?.withheld?.delete) ?
+                        <div onClick={() => { handleDelete(remark.id) }} style={{ marginLeft: 12 }}>
+                          <Tooltip title='Click to delete'>
+                            <DeleteOutlineRounded style={{ color: '#ff6666' }} fontSize={'small'} />
+                          </Tooltip>
+                        </div> : null
+                    }
                   </div>
                 )
               })
@@ -167,15 +176,18 @@ const UnresolvedTable = () => {
     download: true,
     filter: true,
     isRowSelectable: () => false,
-    customToolbar: () => {
+    customToolbar: () => 
+    {
       return (
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={() => setOpenModal(true)}
-        >
-          Add
-        </Button>
+        // Withheld create permission check
+        isAllowed(currentUser?.access, resources_id?.withheld, action_id?.withheld?.create) ?
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={() => setOpenModal(true)}
+          >
+            Add
+          </Button> : null
       );
     },
     onDownload: (buildHead, buildBody, columns, data) => {

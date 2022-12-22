@@ -28,10 +28,12 @@ import InfoBox from '../../components/CommonComponents/InfoBox';
 import { tabA11yProps, TabPanel } from '../../components/CommonComponents/Tabs/TabPanel';
 import LeegalityLayout from '../../components/Leegality/LeegalityLayout';
 import { permissionCheck } from '../../components/UserCan/UserCan';
+import { action_id, resources_id } from '../../config/accessControl';
 import { rulesList } from '../../config/userRules';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getDealersByDealershipId } from '../../services/dealers.service';
 import { getDealershipById } from '../../services/dealerships.service';
+import { isAllowed } from '../../utils/cerbos';
 import SalesInfo from '../dashboard/components/SalesInfo';
 
 const useStyles = makeStyles((theme) => ({
@@ -81,24 +83,49 @@ const DealershipDetails = ({ currentUser, match }) => {
   const [leegalityModalVisible, setLeegalityModalVisible] = useState(false);
   const history = useHistory();
   const financialReport_permission = permissionCheck(currentUser.role_name, rulesList.financial_view);
+  const pageData = [
+    {
+      id: action_id?.dealershipNavigation?.dealership,
+      name: 'Dealership',
+    },
+    {
+      id: action_id?.dealershipNavigation?.dealers,
+      name: 'Dealers',
+    },
+    {
+      id: action_id?.dealershipNavigation?.scoreCard,
+      name: 'Score Card',
+    },
+    {
+      id: action_id?.dealershipNavigation?.loansList,
+      name: 'Loans List',
+    },
+    {
+      id: action_id?.dealershipNavigation?.personalDiscussion,
+      name: 'Personal Discussion',
+    },
+    {
+      id: action_id?.dealershipNavigation?.docChecklist,
+      name: 'Document Checklist',
+    },
+    {
+      id: action_id?.dealershipNavigation?.transporters,
+      name: 'Transporters',
+    },
+    {
+      id: action_id?.dealershipNavigation?.fleetOperator,
+      name: 'Fleet Operators',
+    },
+  ]
 
-  const tabs = [
-    'Dealership',
-    'Dealers',
-    // 'Bank Statement Analysis',
-    // 'Deviations',
-    // 'Sales History',
-    'Score Card',
-    'Loans List',
-    'Personal Discussion',
-    'Document Checklist',
-    'Transporters',
-    'Fleet Operators'
-  ];
+  let tabs = [];
 
-  // if (financialReport_permission) {
-  //   tabs.splice(2, 0, 'Financial Report')
-  // }
+  // Allowed navigations inside dealership 
+  for (const page in pageData) {
+    if(isAllowed(currentUser?.access, resources_id?.dealershipNavigation, pageData[page]?.id)) {
+      tabs.push(pageData[page]?.name)
+    }
+  }
 
   const {
     url,

@@ -125,6 +125,11 @@ const Sidebar = props => {
       href: '/loans',
       icon: <AccountBoxIcon />
     },
+    {
+      title: 'Referral module',
+      href: '/referral',
+      icon: <AccountBoxIcon />
+    },
   ];
 
   if (permissionCheck(currentUser.role_name, rulesList.external_view)) {

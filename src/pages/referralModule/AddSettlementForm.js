@@ -36,24 +36,10 @@ const useStyles = makeStyles((theme) => ({
     padding: 16,
     paddingTop: 8
   },
-  inputFile: {
-    width: '0.1px',
-    height: '0.1px',
-    opacity: 0,
-    overflow: 'hidden',
-    position: 'absolute',
-    zIndex: -1,
-  },
   actionButtonsWrapper: {
     display: 'flex',
     justifyContent: 'space-between',
     padding: '12px 16px'
-  },
-  dropdown: {
-    boxShadow: '1px 1px 4px -3px #333'
-  },
-  option: {
-    padding: 6,
   },
   editButton: {
     marginRight: '8px',
@@ -65,35 +51,20 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.success.dark
     }
   },
-  image: {
-    borderRadius: 6,
-    padding: 1
-  },
-  number: {
-    backgroundColor: 'white',
-    '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
-      '-webkit-appearance': 'none',
-      margin: 0
-    }
-  },
-  grid: {
-    marginLeft: 4,
-    marginRight: 4,
-    marginTop: 2
-  }
 }));
-const AddSettlementForm = ({ id, data, callback, currentUser, view }) => {
+const AddSettlementForm = ({ dealershipId, rowData, callback }) => {
   const [settlementType, setSettlementType] = useState();
   const [reference, setReference] = useState('');
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState();
   const { enqueueSnackbar } = useSnackbar();
-
   const handleSubmit = () => {
     if (reference && settlementType) {
-      postReferralData(id, { settlement_type: settlementType?.value, referrence_number: reference })
+      setLoading(true);
+      postReferralData(dealershipId, { settlement_type: settlementType?.value, referrence_number: reference },rowData?.id)
         .then((res) => {
+          setLoading(false);
           enqueueSnackbar(res, {
             anchorOrigin: {
               vertical: 'top',
@@ -104,6 +75,7 @@ const AddSettlementForm = ({ id, data, callback, currentUser, view }) => {
           callback();
         })
         .catch((err) => {
+          setLoading(false);
           enqueueSnackbar(err, {
             anchorOrigin: {
               vertical: 'top',

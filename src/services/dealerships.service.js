@@ -646,13 +646,13 @@ export const getDealershipReferral = (id) => {
   });
 };
 
-export const postReferralData = (dealershipID, data) => {
+export const postReferralData = (dealershipID, data, id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`dealership/${dealershipID}/referral`, {
+    apiCall(`dealership/${dealershipID}/referral/${id}`, {
       method: 'POST',
       body: data
     })
-      .then(({ data,status,message }) => {
+      .then(({ data, status, message }) => {
         if (status == 'SUCCESS')
           resolve(message);
         else

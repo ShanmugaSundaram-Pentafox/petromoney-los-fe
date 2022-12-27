@@ -37,6 +37,7 @@ const ReferralTable = ({ currentUser }) => {
   const [loading, setLoading] = useState(false);
   const [loans, setLoans] = useState([]);
   const [open, setOpen] = useState(false);
+  const [rowData, setRowData] = useState();
 
   const fetchData = () => {
     setLoading(true);
@@ -51,7 +52,7 @@ const ReferralTable = ({ currentUser }) => {
   }
 
   useMount(() => {
-    fetchData() 
+    fetchData()
   })
 
   const columns = useMemo(() => {
@@ -170,7 +171,12 @@ const ReferralTable = ({ currentUser }) => {
     customSort: (data, dataIndex, rowIndex) => {
       let dateIndex = 5
       return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-    }
+    },
+    onCellClick: (colData, cellMeta) => {
+      if (cellMeta.colIndex === 9) {
+        setRowData(loans[cellMeta.dataIndex])
+      }
+    },
   };
 
   return (
@@ -197,7 +203,7 @@ const ReferralTable = ({ currentUser }) => {
         variant={'temporary'}
       >
         <div className={classes.sidePanelWrapper}>
-          <AddSettlementForm id={open?.id} data={loans} callback={() => {setOpen({ ...open, open: false });fetchData()}} currentUser={currentUser} />
+          <AddSettlementForm dealershipId={open?.id} data={loans} rowData={rowData} callback={() => { setOpen({ ...open, open: false }); fetchData() }} currentUser={currentUser} />
         </div>
       </Drawer>
     </div>

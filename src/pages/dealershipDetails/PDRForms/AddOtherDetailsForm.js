@@ -17,8 +17,10 @@ import Button from '../../../components/CommonComponents/Button/Button';
 import PreviewCard from '../../../components/CommonComponents/Cards/PreviewCard';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { getOmcList } from '../../../services/common.service';
 import { addAdditionalDetails, deleteOtherDetailsByID, updateAdditionalDetails } from '../../../services/PDReport.services';
+import { isAllowed } from '../../../utils/cerbos';
 import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
@@ -89,7 +91,7 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) => {
+const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable, currentUser }) => {
   const [omcs, setOmcs] = useState([])
   const [addNew, setAddNew] = useState(data ? false : true)
   const [editRow, setEditRow] = useState(false);
@@ -335,7 +337,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
                       <PreviewCard
                         onEdit={() => { editOthersRow(item, i) }}
                         onDelete={() => deleteOthersRow(item, i)}
-                        action={!editable}
+                        action={isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.bunkEdit)}
                       >
                         <Grid container spacing={2}>
                           <Grid item md={6}>
@@ -375,7 +377,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable }) =>
             </Button>
           </div>
           {
-            !editable &&
+            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.bunkAdd) &&
               <Button
                 variant="contained"
                 color="primary"

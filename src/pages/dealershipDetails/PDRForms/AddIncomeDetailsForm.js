@@ -16,6 +16,8 @@ import PreviewCard from '../../../components/CommonComponents/Cards/PreviewCard'
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import { getBusinessTypes } from '../../../services/common.service';
 import { deleteExpenseDetailsByID, deleteIncomeDetailsByID, getExpensesDetailsById, getIncomeDetailsById } from '../../../services/PDReport.services';
+import { isAllowed } from '../../../utils/cerbos';
+import { action_id, resources_id } from '../../../config/accessControl';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -70,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const AddIncomeDetailsForm = ({ dealer_id, callback, editable }) => {
+const AddIncomeDetailsForm = ({ dealer_id, callback, editable, currentUser }) => {
   const [businessTypes, setBusinessTypes] = useState([{}, {}, {}, {}, {}]);
   const [incomeData, setIncomeData] = useState([]);
   const [expenseData, setExpenseData] = useState([]);
@@ -199,7 +201,7 @@ const AddIncomeDetailsForm = ({ dealer_id, callback, editable }) => {
                           <PreviewCard
                             onEdit={() => { handleIncomeEdit(item, i) }}
                             onDelete={() => handleIncomeDelete(item, i)}
-                            action={!editable}
+                            action={isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.incomeEdit)}
                           >
                             <Grid container spacing={2}>
                               <Grid item md={6}>
@@ -234,7 +236,7 @@ const AddIncomeDetailsForm = ({ dealer_id, callback, editable }) => {
                           <PreviewCard
                             onEdit={() => { handleExpenseEdit(item, i) }}
                             onDelete={() => { handleExpenseDelete(item, i) }}
-                            action={!editable}
+                            action={isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.expenceEdit)}
                           >
                             <Grid container spacing={2}>
                               <Grid item md={6}>
@@ -274,25 +276,28 @@ const AddIncomeDetailsForm = ({ dealer_id, callback, editable }) => {
               Back
             </Button>
           </div>
-          {
-            !editable &&
-              <div>
-                <Button
-                  variant="contained"
-                  className={clsx(classes.btn, classes.editButton)}
-                  onClick={() => { setAddIncome(true); setAddExpense(false) }}
-                >
-                  Add income
-                </Button>
-                <Button
-                  variant="contained"
-                  className={clsx(classes.btn, classes.editButton)}
-                  onClick={() => { setAddExpense(true); setAddIncome(false) }}
-                >
-                  Add expense
-                </Button>
-              </div>
-          }
+          <div>
+            {
+              isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.incomeAdd) &&
+              <Button
+                variant="contained"
+                className={clsx(classes.btn, classes.editButton)}
+                onClick={() => { setAddIncome(true); setAddExpense(false) }}
+              >
+                Add income
+              </Button>
+            }
+            {
+              isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.expenceAdd) &&
+              <Button
+                variant="contained"
+                className={clsx(classes.btn, classes.editButton)}
+                onClick={() => { setAddExpense(true); setAddIncome(false) }}
+              >
+                Add expense
+              </Button>
+            }
+          </div>
         </div>
       </div>
     </div >

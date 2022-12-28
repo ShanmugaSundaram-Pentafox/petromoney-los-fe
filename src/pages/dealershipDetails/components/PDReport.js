@@ -9,6 +9,7 @@ import LoaderButton from '../../../components/CommonComponents/Button/LoaderButt
 import EmptySidewrapper from '../../../components/CommonComponents/EmptySidewrapper';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { rulesList } from '../../../config/userRules';
 import { ReactComponent as AssetIcon } from '../../../icons/assets.svg';
 import { ReactComponent as BankIcon } from '../../../icons/bankIcon.svg';
@@ -24,6 +25,7 @@ import { ReactComponent as OutletIcon } from '../../../icons/outlet.svg';
 import { ReactComponent as ReferenceIcon } from '../../../icons/reference.svg';
 import { getDealershipById } from '../../../services/dealerships.service';
 import { downloadPDReport, getAssetDetailsById, getBusinessDetailsbyID, getInfrastructureDetailsById, getOmcDetailsById, getOtherDetailsbyID, getOutletDetailsById, getReferenceDetailsbyID } from '../../../services/PDReport.services';
+import { isAllowed } from '../../../utils/cerbos';
 import AddAssetDetailsForm from '../PDRForms/AddAssetDetailsForm';
 import AddBankingDetailsForm from '../PDRForms/AddBankingDetailsForm';
 import AddBusinessDetailsForm from '../PDRForms/AddBusinessDetailsForm';
@@ -251,127 +253,138 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
           </div>
         </FormDialog>
 
-        <Grid container spacing={1} className={classes.root} >
+        <Grid container spacing={1} className={classes.root}>
           {
-            sales_permission &&
-              <>
-                <Grid item md={2}>
-                  <Tooltip title="click to edit OMC details">
-                    <div className={classes.content} onClick={() => setOpenOmcForm(true)}>
-                      <BunkIcon width={30} className={classes.icons} />
-                      <Typography variant="h5" align='center' className={classes.title} >OMC details</Typography>
-                    </div>
-                  </Tooltip>
-                </Grid>
-                <Grid item md={2}>
-                  <Tooltip title="click to edit Business details">
-                    <div className={classes.content} onClick={() => setOpenBusinessForm(true)}>
-                      <BusinessIcon width={30} className={classes.icons} />
-                      <Typography variant="h6" align='center' className={classes.title} >Business details</Typography>
-                    </div>
-                  </Tooltip>
-                </Grid>
-                <Grid item md={2}>
-                  <Tooltip title="click to edit Outlet details">
-                    <div className={classes.content} onClick={() => setOpenOutletForm(true)}>
-                      <OutletIcon width={30} className={classes.icons} />
-                      <Typography variant="h6" align='center' className={classes.title} >Outlet details</Typography>
-
-                    </div>
-                  </Tooltip>
-                </Grid>
-                <Grid item md={2}>
-                  <Tooltip title="click to edit Infrastructure details">
-                    <div className={classes.content} onClick={() => setOpenInfrastructureForm(true)}>
-                      <InfrastructureIcon width={30} className={classes.icons} />
-                      <Typography variant="h6" align='center' className={classes.title} >Infrastructure details</Typography>
-
-                    </div>
-                  </Tooltip>
-                </Grid>
-                <Grid item md={2}>
-                  <Tooltip title="click to edit Asset details">
-                    <div className={classes.content} onClick={() => setOpenAssetForm(true)}>
-                      <AssetIcon width={30} />
-                      <Typography variant="h5" align='center' className={classes.title} >Asset details</Typography>
-
-                    </div>
-                  </Tooltip>
-                </Grid>
-                <Grid item md={2}>
-                  <Tooltip title="click to edit Bank details">
-                    <div className={classes.content} onClick={() => setOpenBankingForm(true)}>
-                      <BankIcon width={30} className={classes.icons} />
-                      <Typography variant="h5" align='center' className={classes.title} >Bank details</Typography>
-                    </div>
-                  </Tooltip>
-                </Grid>
-              </>
+            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.omcView) &&
+            <Grid item md={2}>
+              <Tooltip title="click to edit OMC details">
+                <div className={classes.content} onClick={() => setOpenOmcForm(true)}>
+                  <BunkIcon width={30} className={classes.icons} />
+                  <Typography variant="h5" align='center' className={classes.title} >OMC details</Typography>
+                </div>
+              </Tooltip>
+            </Grid>
           }
           {
-            credit_permission && (
-              <>
-                <Grid item md={2}>
-                  <Tooltip title="click to edit Loan details">
-                    <div className={classes.content} onClick={() => setOpenLoanForm(true)}>
-                      <LoanIcon width={30} className={classes.icons} />
-                      <Typography variant="h5" align='center' className={classes.title} >Loan Details</Typography>
-                    </div>
-                  </Tooltip>
-                </Grid>
-                <Grid item md={2}>
-                  <Tooltip title="click to edit income details">
-                    <div className={classes.content} onClick={() => setOpenIncomeForm(true)}>
-                      <IncomeIcon width={30} className={classes.icons} />
-                      <Typography variant="h5" align='center' className={classes.title} >Income/Expenses Details</Typography>
-                    </div>
-                  </Tooltip>
-                </Grid>
-              </>
-            )
+            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.businessView) &&
+            <Grid item md={2}>
+              <Tooltip title="click to edit Business details">
+                <div className={classes.content} onClick={() => setOpenBusinessForm(true)}>
+                  <BusinessIcon width={30} className={classes.icons} />
+                  <Typography variant="h6" align='center' className={classes.title} >Business details</Typography>
+                </div>
+              </Tooltip>
+            </Grid>
           }
           {
-            sales_permission &&
-              <>
-                <Grid item md={2}>
-                  <Tooltip title="click to edit reference details">
-                    <div className={classes.content} onClick={() => setOpenReferenceForm(true)}>
-                      <ReferenceIcon width={30} className={classes.icons} />
-                      <Typography variant="h5" align='center' className={classes.title} >Third party verification</Typography>
-                    </div>
-                  </Tooltip>
-                </Grid>
-                <Grid item md={2}>
-                  <Tooltip title="click to edit other details">
-                    <div className={classes.content} onClick={() => setOpenOtherForm(true)}>
-                      <OtherIcon width={30} className={classes.icons} />
-                      <Typography variant="h5" align='center' className={classes.title} >Other Details</Typography>
-                    </div>
-                  </Tooltip>
-                </Grid>
-              </>
+            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.outletView) &&
+            <Grid item md={2}>
+              <Tooltip title="click to edit Outlet details">
+                <div className={classes.content} onClick={() => setOpenOutletForm(true)}>
+                  <OutletIcon width={30} className={classes.icons} />
+                  <Typography variant="h6" align='center' className={classes.title} >Outlet details</Typography>
+                </div>
+              </Tooltip>
+            </Grid>
           }
           {
-            credit_permission &&
-              <Grid item md={2}>
-                <Tooltip title="click to edit other details">
-                  <div className={classes.content} onClick={() => setOpenCreditPdForm(true)}>
-                    <CreditIcon width={30} className={classes.icons} />
-                    <Typography variant="h5" align='center' className={classes.title} >Credit PD</Typography>
-                  </div>
-                </Tooltip>
-              </Grid>
+            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.infrastructureView) &&
+            <Grid item md={2}>
+              <Tooltip title="click to edit Infrastructure details">
+                <div className={classes.content} onClick={() => setOpenInfrastructureForm(true)}>
+                  <InfrastructureIcon width={30} className={classes.icons} />
+                  <Typography variant="h6" align='center' className={classes.title} >Infrastructure details</Typography>
+                </div>
+              </Tooltip>
+            </Grid>
           }
           {
-            phonecall_permission &&
-              <Grid item md={2}>
-                <Tooltip title="click to Call">
-                  <div className={classes.content} onClick={() => setOpenPhonecall(true)}>
-                    <ContactsIcon width={30} className={classes.icons} />
-                    <Typography variant="h5" align='center' className={classes.title} >Call logs</Typography>
-                  </div>
-                </Tooltip>
-              </Grid>
+            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.assetView) &&
+            <Grid item md={2}>
+              <Tooltip title="click to edit Asset details">
+                <div className={classes.content} onClick={() => setOpenAssetForm(true)}>
+                  <AssetIcon width={30} />
+                  <Typography variant="h5" align='center' className={classes.title} >Asset details</Typography>
+                </div>
+              </Tooltip>
+            </Grid>
+          }
+          {
+            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.bankView) &&
+            <Grid item md={2}>
+              <Tooltip title="click to edit Bank details">
+                <div className={classes.content} onClick={() => setOpenBankingForm(true)}>
+                  <BankIcon width={30} className={classes.icons} />
+                  <Typography variant="h5" align='center' className={classes.title} >Bank details</Typography>
+                </div>
+              </Tooltip>
+            </Grid>
+          }
+          {
+            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.loanView) &&
+            <Grid item md={2}>
+              <Tooltip title="click to edit Loan details">
+                <div className={classes.content} onClick={() => setOpenLoanForm(true)}>
+                  <LoanIcon width={30} className={classes.icons} />
+                  <Typography variant="h5" align='center' className={classes.title} >Loan Details</Typography>
+                </div>
+              </Tooltip>
+            </Grid>
+          }
+          {
+            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.incomeExpenceView) &&
+            <Grid item md={2}>
+              <Tooltip title="click to edit income details">
+                <div className={classes.content} onClick={() => setOpenIncomeForm(true)}>
+                  <IncomeIcon width={30} className={classes.icons} />
+                  <Typography variant="h5" align='center' className={classes.title} >Income/Expenses Details</Typography>
+                </div>
+              </Tooltip>
+            </Grid>
+          }
+          {
+            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.thirdPartyView) &&
+            <Grid item md={2}>
+              <Tooltip title="click to edit reference details">
+                <div className={classes.content} onClick={() => setOpenReferenceForm(true)}>
+                  <ReferenceIcon width={30} className={classes.icons} />
+                  <Typography variant="h5" align='center' className={classes.title} >Third party verification</Typography>
+                </div>
+              </Tooltip>
+            </Grid>
+          }
+          {
+            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.otherView) &&
+            <Grid item md={2}>
+              <Tooltip title="click to edit other details">
+                <div className={classes.content} onClick={() => setOpenOtherForm(true)}>
+                  <OtherIcon width={30} className={classes.icons} />
+                  <Typography variant="h5" align='center' className={classes.title} >Other Details</Typography>
+                </div>
+              </Tooltip>
+            </Grid>
+          }
+          {
+            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.creditPdView) &&
+            <Grid item md={2}>
+              <Tooltip title="click to edit other details">
+                <div className={classes.content} onClick={() => setOpenCreditPdForm(true)}>
+                  <CreditIcon width={30} className={classes.icons} />
+                  <Typography variant="h5" align='center' className={classes.title} >Credit PD</Typography>
+                </div>
+              </Tooltip>
+            </Grid>
+          }
+          {
+            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.callLogView) &&
+            <Grid item md={2}>
+              <Tooltip title="click to Call">
+                <div className={classes.content} onClick={() => setOpenPhonecall(true)}>
+                  <ContactsIcon width={30} className={classes.icons} />
+                  <Typography variant="h5" align='center' className={classes.title} >Call logs</Typography>
+                </div>
+              </Tooltip>
+            </Grid>
           }
         </Grid>
       </div>
@@ -486,7 +499,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         // onClose={() => setOpenPhonecall(false)}
         variant="temporary"
       >
-        <VoiceCall id={id} callback={handleEdit} />
+        <VoiceCall id={id} callback={handleEdit} currentUser={currentUser} />
         {/* <AddPhoneCall dealer_id={id} data={dealershipData} callback={handleEdit} currentUser={currentUser} editable={externalView} /> */}
       </Drawer>
     </div >

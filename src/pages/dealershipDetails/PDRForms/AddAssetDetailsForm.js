@@ -21,6 +21,8 @@ import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
 import { addAssetDetailsById, deleteAssetDetailsById, getAssetDetailsById, getAssetList } from '../../../services/PDReport.services';
 import { compareObject } from '../../../utils/compareObject.util';
+import { action_id, resources_id } from '../../../config/accessControl';
+import { isAllowed, isDenied } from '../../../utils/cerbos';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -377,7 +379,7 @@ const AddAssetDetailsForm = ({ data: init_data, dealer_id, callback, currentUser
                               <PreviewCard
                                 onEdit={() => { editAssetRow(item, i) }}
                                 onDelete={() => deleteAssetRow(item, i)}
-                                action={!editable}
+                                action={isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.assetEdit)}
                               >
                                 <Grid container spacing={2} >
                                   <Grid item md={6}>
@@ -416,7 +418,7 @@ const AddAssetDetailsForm = ({ data: init_data, dealer_id, callback, currentUser
             </Button>
           </div>
           {
-            !editable &&
+            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.assetAdd) &&
               <Button
                 variant="contained"
                 color="primary"

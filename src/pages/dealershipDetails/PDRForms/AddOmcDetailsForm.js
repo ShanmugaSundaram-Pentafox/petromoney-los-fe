@@ -22,7 +22,9 @@ import React, { useState } from 'react';
 import Button from '../../../components/CommonComponents/Button/Button';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { URL } from '../../../config/serverUrls';
+import { isAllowed } from '../../../utils/cerbos';
 import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
@@ -327,7 +329,7 @@ const AddOmcDetailsForm = ({ data: init_data, dealer_id, isEdit, currentUser, ca
             </Button>
           </div>
           {
-            !editable &&
+            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.omcEdit) &&
               <div>
                 <Button
                   variant="contained"

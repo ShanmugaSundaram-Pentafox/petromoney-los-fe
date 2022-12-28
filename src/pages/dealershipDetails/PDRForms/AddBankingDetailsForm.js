@@ -18,6 +18,8 @@ import TextInput from '../../../components/TextInput/TextInput';
 import { URL } from '../../../config/serverUrls';
 import { getBankDetailsbyID, updateBankDetailsByID } from '../../../services/PDReport.services';
 import { compareObject } from '../../../utils/compareObject.util';
+import { action_id, resources_id } from '../../../config/accessControl';
+import { isAllowed } from '../../../utils/cerbos';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -347,7 +349,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, edita
                 </div>
               </>
             ) : (
-              <BankDetailsCard id={dealer_id} data={bankData} editBankDetails={editBankRow} editable={editable} />
+              <BankDetailsCard id={dealer_id} data={bankData} editBankDetails={editBankRow} editable={editable} currentUser={currentUser} />
             )
           }
         </div>
@@ -365,7 +367,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, edita
             </Button>
           </div>
           {
-            !editable &&
+            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.bankAdd) &&
               <Button
                 variant="contained"
                 color="primary"

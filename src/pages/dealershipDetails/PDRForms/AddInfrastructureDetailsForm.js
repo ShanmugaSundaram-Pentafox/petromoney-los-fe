@@ -21,6 +21,8 @@ import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
 import { addInfrastructureDetails } from '../../../services/PDReport.services';
 import { compareObject } from '../../../utils/compareObject.util';
+import { isAllowed } from '../../../utils/cerbos';
+import { action_id, resources_id } from '../../../config/accessControl';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -275,7 +277,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                 </Grid>
             }
             {
-              !editable &&
+              isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.infrastructureEdit) &&
                 <div className={classes.actionFoot}>
                   <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <div>
@@ -326,7 +328,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
             </Button>
           </div>
           {
-            !editable &&
+            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.infrastructureAddTanker) &&
               <Button
                 variant='contained'
                 color='primary'

@@ -18,7 +18,9 @@ import Button from '../../../components/CommonComponents/Button/Button';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { updateBusinessDetailsByID } from '../../../services/PDReport.services';
+import { isAllowed } from '../../../utils/cerbos';
 import { compareObject } from '../../../utils/compareObject.util';
 
 
@@ -463,7 +465,7 @@ const AddBusinessDetailsForm = ({ data: init_data, dealer_id, isEdit, callback, 
             </Button>
           </div>
           {
-            !editable &&
+            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.businessEdit) &&
               <div>
                 <Button
                   variant="contained"

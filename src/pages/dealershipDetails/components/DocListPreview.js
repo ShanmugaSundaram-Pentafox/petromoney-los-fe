@@ -128,7 +128,6 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
         });
       });
   }
-  console.log(isAllowed(currentUser?.access, resources_id?.docChecklist, action_id?.docChecklist?.edit));
   return (
     <>
       {

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import React from 'react';
+import { connect } from 'react-redux';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 import ProtectedRoute from './ProtectedRoute';
@@ -25,6 +25,7 @@ import Login from '../pages/login/login';
 import NOCertificateRequestTable from '../pages/noc/NOCertificateRequestTable';
 import NotFound from '../pages/NotFound/NotFound';
 import Profile from '../pages/profile/Profile';
+import UserControl from '../pages/rbac/UserControl';
 import CollectionRemarks from '../pages/reports/CollectionRemarks';
 import CreditReload from '../pages/reports/CreditReload';
 import DealersDueReport from '../pages/reports/DealersDueReport';
@@ -80,8 +81,9 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/reports/dpd" component={DpdReport} />
       <ProtectedRoute allow={isAllowed(currentUser?.access,'navigation','noc')} exact path="/noc" component={NOCertificateRequestTable} />
       <ProtectedRoute allow={isAllowed(currentUser?.access,'navigation','pre_submit')} exact path="/pre-submit" component={PresubmitLoansTable} />
+      <ProtectedRoute allow exact path="/rbac" component={UserControl} />
 
-      <ProtectedRoute 
+      <ProtectedRoute
         exact 
         path="/reports/projection" 
         component={ProjectionReport} 

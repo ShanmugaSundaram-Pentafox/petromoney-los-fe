@@ -1,6 +1,7 @@
 import { Drawer, Grid, Paper, Tooltip, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import React, {useState} from 'react';
+import { Link } from 'react-router-dom';
 import AssignProducts from './AssignProducts';
 import MasterCity from './MasterCity';
 import MasterCollectionRemarks from './MasterCollectionRemarks';
@@ -154,6 +155,16 @@ function MasterData() {
                   <RemarkIcon className={classes.icons} />
                   <Typography variant="h5" align='center' className={classes.title} >Collection Remark</Typography>
                 </div>
+              </Tooltip>
+            </Grid>
+            <Grid item md={2}>
+              <Tooltip title="RBAC">
+                <Link to='/rbac'>
+                  <div className={classes.content}>
+                    <RemarkIcon className={classes.icons} />
+                    <Typography variant="h5" align='center' className={classes.title} >RBAC</Typography>
+                  </div>
+                </Link>
               </Tooltip>
             </Grid>
           </Grid>

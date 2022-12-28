@@ -11,12 +11,12 @@ const Cerboss = (url, currentUser) => {
     useEffect(() => {
       Cerbos('API URL')
       .then(data => {
-        data?.isAllowed(RESOURCE_ID, ACTION_ID) returns BOOLEAN
-        data?.isDenied(RESOURCE_ID, ACTION_ID) returns BOOLEAN
-        data?.allAllowed(RESOURCE_ID) returns LIST of all allowed action in giver particular resource
-        data?.allAllowed() returns LIST of all allowed actions
-        data?.allDenied(RESOURCE_ID) returns LIST of all allowed action in giver particular resource
-        data?.allDenied() returns LIST of all denied actions
+        isAllowed(DATA, RESOURCE_ID, ACTION_ID) returns BOOLEAN
+        isDenied(DATA, RESOURCE_ID, ACTION_ID) returns BOOLEAN
+        allAllowed(DATA, RESOURCE_ID) returns LIST of all allowed action in giver particular resource
+        allAllowed(DATA) returns LIST of all allowed actions
+        allDenied(DATA, RESOURCE_ID) returns LIST of all allowed action in giver particular resource
+        allDenied(DATA) returns LIST of all denied actions
       })
       .catch(e => console.log(e))
     }, [])
@@ -38,84 +38,90 @@ const Cerboss = (url, currentUser) => {
   });
 };
 
-  const checkValue = (value) => {
-    return value === 'EFFECT_ALLOW' ? true : false;
-  };
+// Check and return boolean based on permission value
+export const checkValue = (value) => {
+  return value === 'EFFECT_ALLOW' ? true : false;
+};
 
-  // Check if action is allowed
-  export const isAllowed = (data=[], resource_id, action_id) => {
-    for (const res of data) {
-      const { resource, actions } = res;
-      if(resource?.kind === resource_id) {
-        for (const key in actions) {
-          if (key === action_id) {
-            return checkValue(actions[key]);
-          }
+// Check and return Crebos permission string based on boolean input
+export const parseValue = (value) => {
+  return value === true ? 'EFFECT_ALLOW' : 'EFFECT_DENY';
+};
+
+// Check if action is allowed
+export const isAllowed = (data=[], resource_id, action_id) => {
+  for (const res of data) {
+    const { resource, actions } = res;
+    if(resource?.kind === resource_id) {
+      for (const key in actions) {
+        if (key === action_id) {
+          return checkValue(actions[key]);
         }
       }
     }
-  };
+  }
+};
 
-  // Check if action is denied
-  export const isDenied = (data, resource_id, action_id) => {
-    for (const res of data) {
-      const { resource, actions } = res;
+// Check if action is denied
+export const isDenied = (data, resource_id, action_id) => {
+  for (const res of data) {
+    const { resource, actions } = res;
+    if (resource?.kind === resource_id) {
+      for (const key in actions) {
+        if (key === action_id) {
+          return !checkValue(actions[key]);
+        }
+      }
+    }
+  }
+};
+
+// Filter all Allowed actions
+export const allAllowed = (data, resource_id) => {
+  const trueValues = [];
+  for (const res of data) {
+    const loop = () => {
+      for (const key in actions) {
+        if (checkValue(actions[key])) {
+          trueValues.push(key);
+        }
+      }
+    }
+    const { resource, actions } = res;
+    if (resource_id) {
       if (resource?.kind === resource_id) {
-        for (const key in actions) {
-          if (key === action_id) {
-            return !checkValue(actions[key]);
-          }
-        }
-      }
-    }
-  };
-
-  // Filter all Allowed actions
-  export const allAllowed = (data, resource_id) => {
-    const trueValues = [];
-    for (const res of data) {
-      const loop = () => {
-        for (const key in actions) {
-          if (checkValue(actions[key])) {
-            trueValues.push(key);
-          }
-        }
-      }
-      const { resource, actions } = res;
-      if (resource_id) {
-        if (resource?.kind === resource_id) {
-          loop()
-        } 
-      }
-      else {
         loop()
-      }
+      } 
     }
-    return trueValues;
-  };
+    else {
+      loop()
+    }
+  }
+  return trueValues;
+};
 
-  // Filter all Denied actions
-  export const allDenied = (data, resource_id) => {
-    const falseValues = [];
-    for (const res of data) {
-      const { resource, actions } = res;
-      const loop = () => {
-        for (const key in actions) {
-          if (!checkValue(actions[key])) {
-            falseValues.push(key);
-          }
+// Filter all Denied actions
+export const allDenied = (data, resource_id) => {
+  const falseValues = [];
+  for (const res of data) {
+    const { resource, actions } = res;
+    const loop = () => {
+      for (const key in actions) {
+        if (!checkValue(actions[key])) {
+          falseValues.push(key);
         }
       }
-      if (resource_id) {
-        if (resource?.kind === resource_id) {
-          loop()
-        } 
-      }
-      else {
-        loop()
-      }
     }
-    return falseValues;
-  };
+    if (resource_id) {
+      if (resource?.kind === resource_id) {
+        loop()
+      } 
+    }
+    else {
+      loop()
+    }
+  }
+  return falseValues;
+};
 
 export default Cerboss;

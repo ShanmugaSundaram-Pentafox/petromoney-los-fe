@@ -26,11 +26,13 @@ import {
 } from '../../../components/CommonComponents/FilePreview';
 import FileUpload from '../../../components/FileUpload';
 import TextInput from '../../../components/TextInput/TextInput';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { URL } from '../../../config/serverUrls';
 import { cryptoEncrypt } from '../../../services/crypto.service';
 import { getPincodeDetails } from '../../../services/dealers.service';
 import { validateId } from '../../../services/dealerships.service';
 import { deleteTransportOwnerProfileDoc } from '../../../services/transports.service';
+import { isAllowed } from '../../../utils/cerbos';
 import { compareObject } from '../../../utils/compareObject.util';
 
 const useStyles = makeStyles((theme) => ({
@@ -928,7 +930,7 @@ const AddNewTransportsOwnerForm = ({
               </div>
             )
           ) : (
-            !editable &&
+            isAllowed(currentUser?.access, resources_id?.transporters, action_id?.transporters?.editOwner) &&
               <div>
                 <Button
                   variant='contained'

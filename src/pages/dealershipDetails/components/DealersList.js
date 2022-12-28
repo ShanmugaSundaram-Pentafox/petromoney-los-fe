@@ -8,9 +8,11 @@ import DealerEditSideWrapper from './DealerEditSideWrapper';
 import DealersTable from './DealersTable';
 import GuarantorsTable from './GuarantorsTable';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { rulesList } from '../../../config/userRules';
 import { getDealersByDealershipId, getCoApplicantByDealershipId } from '../../../services/dealers.service';
 import { getAllGuarantor } from '../../../services/leegality.service';
+import { isAllowed } from '../../../utils/cerbos';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -128,9 +130,12 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   const deletable = permissionCheck(currentUser.role_name, rulesList.applicant_delete);
   return (
     <>
-      <div className={classes.addButton}>
-        <AddIconButon onClickAddMenu={onClickAddMenu} />
-      </div>
+      {
+        isAllowed(currentUser?.access, resources_id?.dealer, action_id?.dealer?.dealerAdd) &&
+          <div className={classes.addButton}>
+            <AddIconButon onClickAddMenu={onClickAddMenu} />
+          </div>
+      }
       <DealersTable
         id={id}
         deletable={deletable}

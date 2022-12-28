@@ -4,9 +4,11 @@ import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react';
 import Button from '../../../components/CommonComponents/Button/Button';
 import FleetOperatorsTable from '../../../components/Tables/FleetOperatorsTable';
-import AddNewFleetOperatorForm from '../../transports/components/AddNewFleetOperatorForm';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { rulesList } from '../../../config/userRules';
+import { isAllowed } from '../../../utils/cerbos';
+import AddNewFleetOperatorForm from '../../transports/components/AddNewFleetOperatorForm';
 
 const useStyles = makeStyles((theme) => ({
 
@@ -50,15 +52,15 @@ const FleetOperatorsDetails = ({ id, currentUser, titleAlign }) => {
         <div className={classes.header}>
           <Typography style={{ width: '70%' }} variant="h5" align={titleAlign} className={classes.title}>Fleet Operator</Typography>
           {
-            !editable &&
-            <Button
-              color="primary"
-              variant="contained"
-              size='small'
-              onClick={() => setOpenModal(true)}
-            >
-              Add Fleet Operator
-            </Button>
+            isAllowed(currentUser?.access, resources_id?.fleetOperator, action_id?.fleetOperator?.add) &&
+              <Button
+                color="primary"
+                variant="contained"
+                size='small'
+                onClick={() => setOpenModal(true)}
+              >
+                Add Fleet Operator
+              </Button>
           }
         </div>
         <div>

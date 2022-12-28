@@ -21,11 +21,13 @@ import AccountStatement from './AccountStatement';
 import Currency from '../../../components/Number/Currency';
 import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { rulesList } from '../../../config/userRules';
 import { getUserRoleForReview } from '../../../services/common.service';
 import { getDealershipLoansById } from '../../../services/dealerships.service';
 import { getApplicationStatusById, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import apiCall from '../../../utils/api.util';
+import { isAllowed, isDenied } from '../../../utils/cerbos';
 
 
 const useStyles = makeStyles({
@@ -116,7 +118,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
       })
   }
 
-  const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit)
+  const editable = isAllowed(currentUser?.access, resources_id?.loansList, action_id?.loansList?.action)
 
   const getRemarks = loan => () => {
     setDialogState({ open: true, data: loan });
@@ -193,7 +195,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
                       native
                       placeholder={'Select status'}
                       value={selectedStatus?.id}
-                      disabled={readOnly}
+                      disabled={isDenied(currentUser?.access, resources_id?.loansList, action_id?.loansList?.applicationStatus)}
                       onChange={e => {
                         const d = status?.find(i => i.id == e.target.value)
                         setSelectedStatus(d)
@@ -267,7 +269,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
         </TableBody>
       </Table>
       {
-        loanData[0]?.status === 'disbursed' &&
+        loanData[0]?.status === 'disbursed' && isAllowed(currentUser?.access, resources_id?.loansList, action_id?.loansList?.statement) &&
           <div style={{marginTop: 18}}>
             <AccountStatement id={id} currentUser={currentUser} />
           </div>

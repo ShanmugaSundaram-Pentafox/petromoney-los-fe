@@ -15,8 +15,10 @@ import { useQueryClient } from 'react-query';
 import CreditInfoSideWrapper from './CreditInfoSideWrapper';
 import CrimeInfoSideWrapper from './CrimeInfoSideWrapper';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
+import { isAllowed } from '../../../utils/cerbos';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -129,16 +131,19 @@ const GuarantorsTable = ({
         <Typography variant="h5" align={titleAlign} className={classes.title}>
           No Guarantors Found
         </Typography>
-        <div style={{ textAlign: 'center', marginTop: 8 }}>
-          <Button
-            color="primary"
-            variant="outlined"
-            size="small"
-            onClick={() => onClickAddMenu('GUARANTOR')}
-          >
-            Add Guarantor
-          </Button>
-        </div>
+        {
+          isAllowed(currentUser?.access, resources_id?.dealer, action_id?.dealer?.guarantorAdd) &&
+            <div style={{ textAlign: 'center', marginTop: 8 }}>
+              <Button
+                color="primary"
+                variant="outlined"
+                size="small"
+                onClick={() => onClickAddMenu('GUARANTOR')}
+              >
+                Add Guarantor
+              </Button>
+            </div>
+        }
       </div>
     );
 
@@ -236,10 +241,11 @@ const GuarantorsTable = ({
                     alignItems: 'center',
                   }}
                 >
-                  {crime_permission && <Button style={{ marginRight: 12 }} size="small" variant="outlined" color="secondary" onClick={() => setCrimeData(row)}>Crime check</Button>}
-                  {cibil_permission && <Button size="small" variant="outlined" color="secondary" onClick={() => setRowData(row)}>Credit Info</Button>}
+                  {isAllowed(currentUser?.access, resources_id?.dealer, action_id?.dealer?.guarantorCrimeCheck) && <Button style={{ marginRight: 12 }} size="small" variant="outlined" color="secondary" onClick={() => setCrimeData(row)}>Crime check</Button>}
+                  {isAllowed(currentUser?.access, resources_id?.dealer, action_id?.dealer?.guarantorCreditCheck) && <Button size="small" variant="outlined" color="secondary" onClick={() => setRowData(row)}>Credit Info</Button>}
                   {
-                    adminOnlyEdit &&
+                    // Guarantor status change permissions
+                    isAllowed(currentUser?.access, resources_id?.dealer, action_id?.dealer?.guarantorStatus) &&
                       <div style={{ marginLeft: 12 }} onClick={() => DeleteApplicant(row)}>
                         {
                           row.is_active == 0 ? (

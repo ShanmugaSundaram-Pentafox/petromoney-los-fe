@@ -23,6 +23,7 @@ import * as Yup from 'yup';
 import DealerEditForm from './DealerEditForm';
 import TextInput from '../../../components/TextInput/TextInput';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { API } from '../../../config/api';
 import { logger } from '../../../config/logger';
 import { URL } from '../../../config/serverUrls';
@@ -30,6 +31,7 @@ import { rulesList } from '../../../config/userRules';
 import { cryptoEncrypt } from '../../../services/crypto.service';
 import { getKycAgents, getKycStatus, initiateKYC } from '../../../services/dealers.service';
 import { validateId } from '../../../services/dealerships.service';
+import { isAllowed } from '../../../utils/cerbos';
 import { compareObject } from '../../../utils/compareObject.util';
 
 
@@ -507,7 +509,7 @@ const DealerEditSideWrapper = ({
                         <Typography style={{ color: green[800] }}>VKYC already initiated</Typography>
                       </div>
                     ) : (
-                      vkyc_permission &&
+                      isAllowed(currentUser?.access, resources_id?.dealer, action_id?.dealer?.Vkyc) &&
                         <Button
                           variant='outlined'
                           className={clsx(classes.btn, classes.editButton)}
@@ -518,19 +520,22 @@ const DealerEditSideWrapper = ({
                         </Button>
                     )
                   }
-                  <Button
-                    variant='contained'
-                    className={clsx(classes.btn, classes.editButton)}
-                    startIcon={
-                      !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
-                    }
-                    disabled={loading}
-                    onClick={
-                      loading ? () => null : readOnly ? handleEdit : handleSubmit
-                    }
-                  >
-                    Edit
-                  </Button>
+                  {
+                    isAllowed(currentUser?.access, resources_id?.dealer, action_id?.dealer?.dealerEdit) &&
+                      <Button
+                        variant='contained'
+                        className={clsx(classes.btn, classes.editButton)}
+                        startIcon={
+                          !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
+                        }
+                        disabled={loading}
+                        onClick={
+                          loading ? () => null : readOnly ? handleEdit : handleSubmit
+                        }
+                      >
+                        Edit
+                      </Button>
+                  }
                 </div>
               }
             </>

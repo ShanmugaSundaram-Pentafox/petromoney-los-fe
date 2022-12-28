@@ -7,9 +7,11 @@ import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
 import { getScoreCard } from '../../../services/common.service';
+import { isAllowed } from '../../../utils/cerbos';
 import BankingInputsTable from '../ScoreCardTables/BankingInputsTable';
 import BureauInputTable from '../ScoreCardTables/BureauInputTable';
 import CamInputTable from '../ScoreCardTables/CamInputTable';
@@ -217,7 +219,8 @@ const ScoreCard = ({currentUser, dealership_id}) => {
               </Tooltip>
           }
           {
-            external &&
+            // scorecard sheet upload permission check
+            isAllowed(currentUser?.access, resources_id?.scoreCard, action_id?.scoreCard?.upload) &&
               <Button
                 variant='outlined'
                 color='primary'

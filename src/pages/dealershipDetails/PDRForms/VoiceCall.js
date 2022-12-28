@@ -10,9 +10,11 @@ import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import Button from '../../../components/CommonComponents/Button/Button';
 import DeleteButton from '../../../components/CommonComponents/Button/DeleteButton';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { getCoApplicantByDealershipId, getDealersByDealershipId } from '../../../services/dealers.service';
 import { getAllGuarantor } from '../../../services/leegality.service';
 import { deleteVoiceCallById, getVoiceCallLogsById, makeVoiceCallById } from '../../../services/users.service';
+import { isAllowed } from '../../../utils/cerbos';
 
 export const CardWrapper = ({ title, data, callback, type }) => {
   const classes = useStyles();
@@ -150,7 +152,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-const VoiceCall = ({ id, callback }) => {
+const VoiceCall = ({ id, callback, currentUser }) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [openDialog, setOpenDialog] = useState(false);
@@ -340,7 +342,10 @@ const VoiceCall = ({ id, callback }) => {
                                         }
                                       </TableCell>
                                       <TableCell className={classes.deleteicon}>
-                                        <DeleteButton alertText={`Do you really want to delete this call log from ${item.to_user_name} (${item.to_mobile})`} deleteAction={() => handleDelete(item.id)} deleteModal={deleteModel} setDeleteModal={setDeleteModel} id={itemIndex} buttonType='icon' />
+                                        {
+                                          isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.callLogDelete) &&
+                                            <DeleteButton alertText={`Do you really want to delete this call log from ${item.to_user_name} (${item.to_mobile})`} deleteAction={() => handleDelete(item.id)} deleteModal={deleteModel} setDeleteModal={setDeleteModel} id={itemIndex} buttonType='icon' />
+                                        }
                                       </TableCell> {/* shows delete button for call logs by hovering it */}
                                     </TableRow>)
                                 )
@@ -389,14 +394,17 @@ const VoiceCall = ({ id, callback }) => {
         <div className={classes.actionFooter}>
           <Divider />
           <div className={classes.actionButtonsWrapper}>
-            <Button
-              variant="contained"
-              className={classes.initiateButton}
-              startIcon={<PhoneTwoToneIcon />}
-              onClick={() => { setOpenDialog(true); handleSound(null, null, 'pause') }}
-            >
-              Initiate Call
-            </Button>
+            {
+              isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.callInitiate) &&
+                <Button
+                  variant="contained"
+                  className={classes.initiateButton}
+                  startIcon={<PhoneTwoToneIcon />}
+                  onClick={() => { setOpenDialog(true); handleSound(null, null, 'pause') }}
+                >
+                  Initiate Call
+                </Button>
+            }
           </div>
         </div>
       </div>

@@ -21,12 +21,14 @@ import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import FileUpload from '../../../components/FileUpload';
 import TextInput from '../../../components/TextInput/TextInput';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { logger } from '../../../config/logger';
 import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
 import { getBusinessTypes, getRegionById, getActiveStates, getOmcList } from '../../../services/common.service';
 import { cryptoEncrypt } from '../../../services/crypto.service';
 import { deleteDealershipDocument, validateId } from '../../../services/dealerships.service';
+import { isAllowed } from '../../../utils/cerbos';
 import { compareObject } from '../../../utils/compareObject.util';
 
 
@@ -524,19 +526,23 @@ const DealershipInfo = ({ data, className, currentUser }) => {
             ) : <CircularProgress size={20} />
           ) : (
             <>
-              <Button
-                color="primary"
-                variant="contained"
-                size="small"
-                onClick={() => { setReadOnly(false); }}>Edit Details</Button>
               {
-                credit_permission &&
+                // Dealership Edit Permissions
+                isAllowed(currentUser?.access, resources_id?.dealership, action_id?.dealership?.edit) &&
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    size="small"
+                    onClick={() => { setReadOnly(false); }}>Edit Details</Button>
+              }
+              {
+                // Dealership crime check access permission
+                isAllowed(currentUser?.access, resources_id?.dealership, action_id?.dealership?.crimeCheck) &&
                   <Button
                     color="primary"
                     variant="contained"
                     size="small"
                     onClick={() => setCrimeData({ ...crimeData, userType: 'dealership', id: data?.id, first_name: data?.name })}>Crime check</Button>
-
               }
             </>
           )}

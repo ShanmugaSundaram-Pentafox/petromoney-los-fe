@@ -15,8 +15,10 @@ import { useQueryClient } from 'react-query';
 import CreditInfoSideWrapper from './CreditInfoSideWrapper';
 import CrimeInfoSideWrapper from './CrimeInfoSideWrapper';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
+import { isAllowed } from '../../../utils/cerbos';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -131,9 +133,13 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
     return (
       <div className={classes.wrapper}>
         <Typography variant="h5" align={titleAlign} className={classes.title}>No CoApplicants Found</Typography>
-        <div style={{ textAlign: 'center', marginTop: 8 }}>
-          <Button color="primary" variant="outlined" size="small" onClick={() => onClickAddMenu('COAPPLICANT')}>Add CoApplicants</Button>
-        </div>
+        {
+          // coapplicants add permissions
+          isAllowed(currentUser?.access, resources_id?.dealer, action_id?.dealer?.coapplicantAdd) &&
+            <div style={{ textAlign: 'center', marginTop: 8 }}>
+              <Button color="primary" variant="outlined" size="small" onClick={() => onClickAddMenu('COAPPLICANT')}>Add CoApplicants</Button>
+            </div>
+        }
       </div>
     );
 
@@ -180,10 +186,13 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
               </TableCell>
               <TableCell align="right" onClick={e => e.stopPropagation()}>
                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                  {crime_permission && <Button style={{ marginRight: 12 }} size='small' variant='outlined' color='secondary' onClick={() => setCrimeData(row)}>Crime check</Button>}
-                  {cibil_permission && <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>}
+                  {isAllowed(currentUser?.access, resources_id?.dealer, action_id?.dealer?.coapplicantCrimeCheck)
+                  && <Button style={{ marginRight: 12 }} size='small' variant='outlined' color='secondary' onClick={() => setCrimeData(row)}>Crime check</Button>}
+                  {isAllowed(currentUser?.access, resources_id?.dealer, action_id?.dealer?.coapplicantCreditCheck)
+                  && <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>}
                   {
-                    adminOnlyEdit &&
+                    // Coapp status change permission
+                    isAllowed(currentUser?.access, resources_id?.dealer, action_id?.dealer?.coapplicantStatus) &&
                       <div style={{ marginLeft: 12 }} onClick={() => DeleteApplicant(row)}>
                         {
                           row.is_active == 0 ? (

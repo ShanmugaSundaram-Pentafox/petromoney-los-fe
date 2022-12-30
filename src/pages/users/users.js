@@ -7,10 +7,12 @@ import { useMount } from 'react-use';
 import { VictoryPie } from 'victory';
 import UsersTable from './components/UsersTable';
 import ChartCard from '../../components/CommonComponents/ChartCard/ChartCard';
+import { resources_id } from '../../config/accessControl';
 import { CHART_COLORS } from '../../config/constants';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getAllUsers, getUsersByRole } from '../../services/users.service';
 import { setAllUsers } from '../../store/dashboard/dashboard.actions';
+import { isAllowed } from '../../utils/cerbos';
 
 
 const currencies = [ 
@@ -43,8 +45,8 @@ const useStyles = makeStyles((theme) => ({
 const Users = ({ currentUser, allUsers, setAllUsersData }) => {
   usePageTitle('All Users');
   useMount(() => {
-    // allow only if current user is admin
-    if(currentUser.role_id === 1 && !allUsers.length) {
+    // allow only if current user has permission to access users module
+    if(isAllowed(currentUser?.access, resources_id?.navigation, 'users')) {
       getAllUsers()
         .then(data => {
           setAllUsersData(data);

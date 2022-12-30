@@ -1,17 +1,19 @@
 import { Button, Divider, Grid, IconButton, makeStyles, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from '@material-ui/core'
+import AddIcon from '@material-ui/icons/Add';
 import CheckCircleTwoTone from '@material-ui/icons/CheckCircleTwoTone';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import PhoneAndroidIcon from '@material-ui/icons/PhoneAndroid';
-import AddIcon from '@material-ui/icons/Add';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import TextInput from '../../../components/TextInput/TextInput';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { getProductsMaster, updateProductbyId, insertNewProduct } from '../../../services/common.service';
+import { isAllowed } from '../../../utils/cerbos';
 
 
 const useStyles = makeStyles(() => ({
@@ -74,7 +76,7 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
-const Products = ({title, callback}) => {
+const Products = ({title, callback, currentUser}) => {
   const classes = useStyles()
   const queryClient = useQueryClient()
   const [addNewProduct, setAddNewProduct] = useState()
@@ -261,7 +263,10 @@ const Products = ({title, callback}) => {
                     <TableCell>Penal Interest</TableCell>
                     <TableCell>Processing Fee</TableCell>
                     <TableCell>Tenure<br/>(days)</TableCell>
-                    <TableCell align="center">Actions</TableCell>
+                    {
+                      isAllowed(currentUser?.access, resources_id.settings, action_id.settings.productsUpdate) &&
+                        <TableCell align="center">Actions</TableCell>
+                    }
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -274,29 +279,32 @@ const Products = ({title, callback}) => {
                                               <TableCell>{`${item.penal_interest}%`}</TableCell>
                                               <TableCell>{`${item.processing_fee}%`}</TableCell>
                                               <TableCell>{`${item.tenure}`}</TableCell>
-                                              <TableCell>
-                                                <IconButton size="small" className={classes.btn}>
-                                                  <Tooltip title="Edit">
-                                                    <EditIcon fontSize="small" style={{color: 'rgb(0,0,0,0.4)'}} onClick={() => EditItem(item)}/>
-                                                  </Tooltip>
-                                                </IconButton>
-                                                {
-                                                  item.is_active === 1 && (
-                                                    <IconButton size="small" className={classes.btn} onClick={() => handleShow(item.is_show, item.product_id)} >
-                                                      <Tooltip title={ item.is_show !== 0 ? 'Disable on App' : 'Show on App'}>
-                                                        <PhoneAndroidIcon fontSize="small" style={item.is_show === 0 ? { color: '#C9CCD5'} : {color: '#93D9A3'}}></PhoneAndroidIcon>
+                                              {
+                                                isAllowed(currentUser?.access, resources_id.settings, action_id.settings.productsUpdate) &&
+                                                  <TableCell>
+                                                    <IconButton size="small" className={classes.btn}>
+                                                      <Tooltip title="Edit">
+                                                        <EditIcon fontSize="small" style={{color: 'rgb(0,0,0,0.4)'}} onClick={() => EditItem(item)}/>
                                                       </Tooltip>
                                                     </IconButton>
-                                                  )
-                                                }
-                                                <IconButton size="small" className={classes.btn} onClick={() => {
-                                                  handleActive(item.is_active, item.product_id);
-                                                }}>
-                                                  <Tooltip title={item.is_active === 0 ? 'Activate' : 'Deactivate'}>
-                                                    <CheckCircleTwoTone style={item.is_active === 0 ? { color: '#C9CCD5'} :{ color: '#93D9A3' }}/>
-                                                  </Tooltip>
-                                                </IconButton>
-                                              </TableCell>
+                                                    {
+                                                      item.is_active === 1 && (
+                                                        <IconButton size="small" className={classes.btn} onClick={() => handleShow(item.is_show, item.product_id)} >
+                                                          <Tooltip title={ item.is_show !== 0 ? 'Disable on App' : 'Show on App'}>
+                                                            <PhoneAndroidIcon fontSize="small" style={item.is_show === 0 ? { color: '#C9CCD5'} : {color: '#93D9A3'}}></PhoneAndroidIcon>
+                                                          </Tooltip>
+                                                        </IconButton>
+                                                      )
+                                                    }
+                                                    <IconButton size="small" className={classes.btn} onClick={() => {
+                                                      handleActive(item.is_active, item.product_id);
+                                                    }}>
+                                                      <Tooltip title={item.is_active === 0 ? 'Activate' : 'Deactivate'}>
+                                                        <CheckCircleTwoTone style={item.is_active === 0 ? { color: '#C9CCD5'} :{ color: '#93D9A3' }}/>
+                                                      </Tooltip>
+                                                    </IconButton>
+                                                  </TableCell>
+                                              }
                                             </TableRow>
                                           )
                                         })
@@ -319,17 +327,20 @@ const Products = ({title, callback}) => {
               Back
             </Button>
           </div>
-          <div>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<AddIcon  />}
-              onClick={() => { setAddNewProduct(true); }}
-              style={{ marginBottom: 12 }}
-            >
-              Add Product
-            </Button>
-          </div>
+          {
+            isAllowed(currentUser?.access, resources_id.settings, action_id.settings.productsAdd) &&
+              <div>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<AddIcon  />}
+                  onClick={() => { setAddNewProduct(true); }}
+                  style={{ marginBottom: 12 }}
+                >
+                  Add Product
+                </Button>
+              </div>
+          }
         </div>
       </div>
     </div>

@@ -6,7 +6,7 @@ const Settings = ({ currentUser }) => {
   usePageTitle('Settings')
   return (
     <div>
-      <MasterData />
+      <MasterData currentUser={currentUser} />
     </div>
   );
 }

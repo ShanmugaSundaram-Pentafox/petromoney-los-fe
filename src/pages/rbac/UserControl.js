@@ -1,9 +1,11 @@
 import {
+  Box,
   Button,
   Dialog,
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Grid,
   makeStyles,
   Paper,
   Tab,
@@ -21,6 +23,7 @@ import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import AccessControlTable from './AccessControlTable';
+import APIAccessPage from './APIAccessPage';
 import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
 import {
   tabA11yProps,
@@ -34,12 +37,14 @@ import {
 } from '../../services/rbac.service';
 import { getAllUserRoles } from '../../services/users.service';
 import { checkValue } from '../../utils/cerbos';
+import { PaperWrapper } from '../reports/CreditReload';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     height: window.innerHeight / 1.2,
     flexGrow: 1,
     display: 'flex',
+    marginTop: 15
   },
   tabs: {
     borderRight: `1px solid ${theme.palette.divider}`,
@@ -72,11 +77,12 @@ const UserControl = () => {
   const [buffer, setBuffer] = useState([]);
   const [updateLoading, setUpdateLoading] = useState(false);
   const [updateDialog, setUpdateDialog] = useState(false);
+  const [selectedTab, setSelectedTab] = useState('API');
 
   // fetch all resources and action for selected role
   const { data: accessControl = [], isLoading } = useQuery(
-    ['rbac-access', selectedRole],
-    () => getRbacAccessDetails(selectedRole),
+    ['rbac-access', selectedRole, selectedTab],
+    () => getRbacAccessDetails(selectedRole, selectedTab),
     { refetchOnWindowFocus: false }
   );
   
@@ -93,9 +99,6 @@ const UserControl = () => {
     () => getAllUserRoles(),
     { 
       refetchOnWindowFocus: false,
-      // onSuccess: () => {
-      // queryClient.invalidateQueries('rbac-access');
-      // }
     },
   );
 
@@ -129,70 +132,96 @@ const UserControl = () => {
   };
 
   return (
-    <Paper>
-      <div style={{ padding: 20, display: 'flex', alignItems: 'center' }}>
-        <Typography variant="h3" style={{ marginRight: 20 }}>
-          Edit Role Access
-        </Typography>
-        <TextInput
-          select
-          label="Role"
-          name="role"
-          value={selectedRole}
-          onChange={handleRoleChange}
-          SelectProps={{
-            native: true,
-          }}
-          InputLabelProps={{ shrink: true }}
-        >
-          <option value="null">Select a Role</option>
-          {roles?.map((role, i) => (
-            <option key={i} value={role?.id}>
-              {role?.role_name}
-            </option>
-          ))}
-        </TextInput>
-      </div>
-      {selectedRole && (
-        <div className={classes.root}>
-          <Tabs
-            value={tab}
-            orientation="vertical"
-            indicatorColor="primary"
-            scrollButtons="desktop"
-            variant="scrollable"
-            textColor="primary"
-            className={classes.tabs}
-            onChange={(e, val) => setTab(val)}
+    <Grid container spacing={2}>
+      <Grid item md={12}>
+        <Paper style={{ padding: 20, display: 'flex', alignItems: 'center' }}>
+          <Typography variant="h3" style={{ marginRight: 20 }}>
+            Edit Role Access
+          </Typography>
+          <TextInput
+            select
+            label="Role"
+            name="role"
+            value={selectedRole}
+            onChange={handleRoleChange}
+            SelectProps={{
+              native: true,
+            }}
+            InputLabelProps={{ shrink: true }}
           >
-            {resources.map((res, i) => (
-              <Tab key={i} label={res?.resource?.toUpperCase()} {...tabA11yProps(i)} className={classes.tab} />
+            <option value="null">Select a Role</option>
+            {roles?.map((role, i) => (
+              <option key={i} value={role?.id}>
+                {role?.role_name}
+              </option>
             ))}
-          </Tabs>
-          {resources.map((res, i) => (
-            <TabPanel activeTab={tab} index={i} key={i}>
-              <AccessControlTable
-                data={accessControl}
-                selectedResource={resources[tab]?.resource}
-                buffer={buffer}
-                setBuffer={setBuffer}
-                selectedRole={selectedRole}
-              />
-              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Button
-                  variant="contained"
-                  type="submit"
-                  className={clsx(classes.btn, classes.editButton)}
-                  startIcon={<NavigateNextRounded />}
-                  onClick={() => setUpdateDialog(!updateDialog)}
-                >
-                  Save
-                </Button>
-              </div>
-            </TabPanel>
-          ))}
-        </div>
-      )}
+          </TextInput>
+        </Paper>
+      </Grid>
+      {
+        selectedRole && (
+          <Grid item md={12}>
+            <PaperWrapper>
+              <Box borderRadius={4} bgcolor="background.paper">
+                <Grid container>
+                  <Grid onClick={() => { setSelectedTab('API') }} className={selectedTab === 'API' ? 'inactive' : 'active'} style={{ textAlign: 'center', padding: 16 }} item md={6}>
+                    {/* <Badge badgeContent={tableData?.length || 0} style={{ paddingTop: 4, paddingRight: 8 }} color="primary"> */}
+                    <div>API Access</div>
+                    {/* </Badge> */}
+                  </Grid>
+                  <Grid onClick={() => { setSelectedTab('MDM') }} style={{ textAlign: 'center', padding: 16 }} className={selectedTab === 'MDM' ? 'inactive' : 'active'} item md={6}>
+                    <div>UI Access</div>
+                  </Grid>
+                </Grid>
+              </Box>
+            </PaperWrapper>
+            {
+              selectedTab == 'MDM' ? (
+                <Paper className={classes.root}>
+                  <Tabs
+                    value={tab}
+                    orientation="vertical"
+                    indicatorColor="primary"
+                    scrollButtons="desktop"
+                    variant="scrollable"
+                    textColor="primary"
+                    className={classes.tabs}
+                    onChange={(e, val) => setTab(val)}
+                  >
+                    {resources.map((res, i) => (
+                      <Tab key={i} label={res?.resource?.toUpperCase()} {...tabA11yProps(i)} className={classes.tab} />
+                    ))}
+                  </Tabs>
+                  {resources.map((res, i) => (
+                    <TabPanel activeTab={tab} index={i} key={i}>
+                      <AccessControlTable
+                        data={accessControl}
+                        selectedResource={resources[tab]?.resource}
+                        buffer={buffer}
+                        setBuffer={setBuffer}
+                        selectedRole={selectedRole}
+                      />
+                      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <Button
+                          variant="contained"
+                          type="submit"
+                          className={clsx(classes.btn, classes.editButton)}
+                          startIcon={<NavigateNextRounded />}
+                          onClick={() => setUpdateDialog(!updateDialog)}
+                        >
+                          Save
+                        </Button>
+                      </div>
+                    </TabPanel>
+                  ))}
+                </Paper>
+              ) : (
+                <APIAccessPage accessControl={accessControl} selectedRole={selectedRole} accessLoading={isLoading} />
+              )
+            }
+          </Grid>
+        )
+      }
       <Dialog
         open={updateDialog}
         onClose={() => setUpdateDialog(false)}
@@ -258,7 +287,7 @@ const UserControl = () => {
           ) : null}
         </div>
       </Dialog>
-    </Paper>
+    </Grid>
   );
 };
 

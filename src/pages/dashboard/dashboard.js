@@ -227,6 +227,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
       })
   }, [creditBook]);
   useMount(() => {
+    isAllowed(currentUser?.access, 'navigation', 'dashboard:dealer') &&
     getDealerDetails()
       .then((data) => {
         setDealerDetail(data);
@@ -301,14 +302,14 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                         {
                           // Access control for show and hide external charts switch in LMS
                           isAllowed(currentUser?.access,'dashboard','vivriti') &&
-                          <div className={classes.creditView}>
-                            <Box>
-                              <div className={classes.filterWrapper}>
-                                <div role="button" className={`${classes.filterItem} ${creditBook === 'Petromoney' && 'active'}`} onClick={() => onCreditBookChange('Petromoney')} onKeyDown>Petromoney</div>
-                                <div role="button" className={`${classes.filterItem} ${creditBook === 'External' && 'active'}`} onClick={() => onCreditBookChange('External')} onKeyDown>Vivriti</div>
-                              </div>
-                            </Box>
-                          </div>
+                            <div className={classes.creditView}>
+                              <Box>
+                                <div className={classes.filterWrapper}>
+                                  <div role="button" className={`${classes.filterItem} ${creditBook === 'Petromoney' && 'active'}`} onClick={() => onCreditBookChange('Petromoney')} onKeyDown>Petromoney</div>
+                                  <div role="button" className={`${classes.filterItem} ${creditBook === 'External' && 'active'}`} onClick={() => onCreditBookChange('External')} onKeyDown>Vivriti</div>
+                                </div>
+                              </Box>
+                            </div>
                         }
                       </div>
                       <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">

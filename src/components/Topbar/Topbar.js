@@ -223,7 +223,7 @@ const Topbar = (props) => {
             {
               match?.path?.toLowerCase() == '/users' && (
                 <span className={classes.actionsContainer}>
-                  <AddNewUserAction />
+                  <AddNewUserAction currentUser={user} />
                 </span>
               )
             }

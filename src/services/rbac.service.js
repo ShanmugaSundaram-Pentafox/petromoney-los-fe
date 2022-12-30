@@ -1,9 +1,9 @@
 import apiCall from '../utils/api.util';
 
-export const getRbacAccessDetails = (role_id) => {
+export const getRbacAccessDetails = (role_id, type='MDM') => {
   if(typeof(role_id) != 'undefined') {
     return new Promise((resolve, reject) => {
-      apiCall(`role/${role_id}/access?type=MDM`)
+      apiCall(`role/${role_id}/access?type=${type}`)
         .then(({ status, data, message }) => {
           if (status === 'SUCCESS') {
             resolve(data)

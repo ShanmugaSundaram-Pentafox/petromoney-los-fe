@@ -24,6 +24,7 @@ import RenewalTable from '../pages/loanspage/RenewalTable';
 import Login from '../pages/login/login';
 import NOCertificateRequestTable from '../pages/noc/NOCertificateRequestTable';
 import NotFound from '../pages/NotFound/NotFound';
+import RevokedAccess from '../pages/NotFound/RevokedAccess';
 import Profile from '../pages/profile/Profile';
 import UserControl from '../pages/rbac/UserControl';
 import CollectionRemarks from '../pages/reports/CollectionRemarks';
@@ -59,25 +60,25 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/solar/feasibility" component={Solar} />
       <ProtectedRoute allow={isAllowed(currentUser?.access,'navigation','dealerships')} exact path="/dealership" component={Dealership} />
       <ProtectedRoute allow={isAllowed(currentUser?.access,'navigation','loans')} exact path="/loans" component={Loans} />
-      <ProtectedRoute allow exact path="/loans/exceptions" component={LmsLos} />
+      <ProtectedRoute allow={isAllowed(currentUser?.access, 'navigation', 'exception:loans')} exact path="/loans/exceptions" component={LmsLos} />
       <ProtectedRoute allow exact path="/dealership/:id?" component={DealershipDetails} />
       <ProtectedRoute allow={isAllowed(currentUser?.access,'navigation','transports')} exact path='/transports' component={Transport} />
       <ProtectedRoute allow exact path='/transports-field' component={TransportsPortal} />
       <ProtectedRoute allow exact path="/transports/:id?" component={TransportsDetails} />
-      <ProtectedRoute allow exact path='/transport/exceptions' component={TransportException} />
+      <ProtectedRoute allow={isAllowed(currentUser?.access, 'navigation', 'exception:transports')} exact path='/transport/exceptions' component={TransportException} />
       <ProtectedRoute allow exact path="/dealership/:id/credit-form" component={CreditForm} />
       <ProtectedRoute allow={isAllowed(currentUser?.access,'navigation','settings')} exact path="/settings" component={Settings} />
       <ProtectedRoute allow exact path="/reports/due" component={Due} />
-      <ProtectedRoute allow exact path="/transport/fastag/details" component={FastTagPassbook} />
+      <ProtectedRoute allow={isAllowed(currentUser?.access, 'navigation', 'transports:passbook')} exact path="/transport/fastag/details" component={FastTagPassbook} />
       <ProtectedRoute allow exact path="/reports/overdue" component={OverDue} />
-      <ProtectedRoute allow exact path="/reports/credit/reload" component={CreditReload} />
+      <ProtectedRoute allow={isAllowed(currentUser?.access, 'navigation', 'credit_reload')} exact path="/reports/credit/reload" component={CreditReload} />
       <ProtectedRoute allow exact path="/vehicle-loan" component={VehiclesLoanTable} />
       <ProtectedRoute allow exact path="/owners/:id?" component={OwnerDetails} />
       <ProtectedRoute allow exact path="/profile" component={Profile} />
       <ProtectedRoute allow={isAllowed(currentUser?.access,'navigation','withheld')} exact path="/withheld" component={BlacklistTable} />
       <ProtectedRoute allow={isAllowed(currentUser?.access,'navigation','renewal')} exact path="/renewal" component={RenewalTable} />
       <ProtectedRoute allow exact path="/reports" component={DealersDueReport} />
-      <ProtectedRoute allow exact path="/reports/remarks" component={CollectionRemarks} />
+      <ProtectedRoute allow={isAllowed(currentUser?.access, 'navigation', 'collection_remarks')} exact path="/reports/remarks" component={CollectionRemarks} />
       <ProtectedRoute allow exact path="/reports/dpd" component={DpdReport} />
       <ProtectedRoute allow={isAllowed(currentUser?.access,'navigation','noc')} exact path="/noc" component={NOCertificateRequestTable} />
       <ProtectedRoute allow={isAllowed(currentUser?.access,'navigation','pre_submit')} exact path="/pre-submit" component={PresubmitLoansTable} />
@@ -127,12 +128,15 @@ const Routes = ({ currentUser }) => {
         const authUrl = window.sessionStorage.getItem('pm-login-url');
         if (currentUser) {
           window.sessionStorage.setItem('pm-login-url', undefined);
-          return <Redirect to={authUrl || '/'} />
+          return <Redirect to={authUrl != 'undefined' ? authUrl : '/'} />
         }
 
         return <Login {...props} />
       }} />
 
+      <Route exact path="/access/revoke">
+        <RevokedAccess currentUser={currentUser} />
+      </Route>
       <Route component={NotFound} />
     </Switch>
   </>

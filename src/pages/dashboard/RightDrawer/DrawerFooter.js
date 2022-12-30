@@ -14,8 +14,6 @@ import { Link as RouterLink } from 'react-router-dom';
 import { useMount } from 'react-use';
 import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 import { TextEditor } from '../../../components/TextEditor/TextEditor';
-import UserCan from '../../../components/UserCan/UserCan';
-import { rulesList } from '../../../config/userRules';
 import { getLoanById, getLoanRejectReason, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
 import { isAllowed } from '../../../utils/cerbos';
 
@@ -54,8 +52,8 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.white
     },
     '&.MuiButton-outlined': {
-      color:  theme.palette.error.main,
-      borderColor:  theme.palette.error.main
+      color:theme.palette.error.main,
+      borderColor:theme.palette.error.main
     },
     '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.error.dark
@@ -260,12 +258,12 @@ const DrawerFooter = ({
           </Button>
           {
             isAllowed(currentUser?.access,'dashboard', 'loan_resubmit') && status && ['loan_review', 'loan_approval', 'approved', 'rejected', 'disbursed'].includes(status.toLowerCase()) &&
-            <LoaderButton
-              variant={'contained'}
-              className={clsx(classes.btn, classes.btnError)}
-              isLoading={reLoader}
-              onClick={handleResubmit}
-              loadingText='submitting...'>{'Re-Submit'}</LoaderButton>
+              <LoaderButton
+                variant={'contained'}
+                className={clsx(classes.btn, classes.btnError)}
+                isLoading={reLoader}
+                onClick={handleResubmit}
+                loadingText='submitting...'>{'Re-Submit'}</LoaderButton>
           }
           {/* {
             editable && status && pushback_condition.includes(status.toLowerCase()) && (
@@ -297,82 +295,82 @@ const DrawerFooter = ({
           </Button>
           {
             status && ['submitted'].includes(status.toLowerCase()) && isAllowed(currentUser?.access,'dashboard', 'send_for_review') &&
-                  <div>
-                    <Button
-                      variant="contained"
-                      disabled={loanData?.isLoading}
-                      className={clsx(classes.btn, classes.btnSuccess)}
-                      startIcon={<ThumbUpAltIcon />}
-                      onClick={handleReviewModal}
-                    >
-                      Send for Review
-                    </Button>
-                  </div>
+              <div>
+                <Button
+                  variant="contained"
+                  disabled={loanData?.isLoading}
+                  className={clsx(classes.btn, classes.btnSuccess)}
+                  startIcon={<ThumbUpAltIcon />}
+                  onClick={handleReviewModal}
+                >
+                  Send for Review
+                </Button>
+              </div>
           }
           {
             status && ['pre_submit'].includes(status.toLowerCase()) && isAllowed(currentUser?.access,'dashboard', 'loan_submit') &&
-                  <div>
-                    <Button
-                      variant="contained"
-                      disabled={loanData?.isLoading}
-                      className={clsx(classes.btn, classes.btnSuccess)}
-                      startIcon={<ThumbUpAltIcon />}
-                      onClick={handleReviewModal}
-                    >
-                      Submit
-                    </Button>
-                  </div>
+              <div>
+                <Button
+                  variant="contained"
+                  disabled={loanData?.isLoading}
+                  className={clsx(classes.btn, classes.btnSuccess)}
+                  startIcon={<ThumbUpAltIcon />}
+                  onClick={handleReviewModal}
+                >
+                  Submit
+                </Button>
+              </div>
           }
           {
             status && ['loan_approval', 'loan_review', 'disbursement_approval'].includes(status.toLowerCase()) && isAllowed(currentUser?.access,'dashboard', 'loan_reject') &&
-            <Button
-              variant="contained"
-              disabled={loanData?.loading}
-              className={clsx(classes.btn, classes.btnError)}
-              startIcon={<ThumbDownAltIcon />}
-              onClick={() => setRejectModal(true)}
-            >
-              Reject
-            </Button>
+              <Button
+                variant="contained"
+                disabled={loanData?.loading}
+                className={clsx(classes.btn, classes.btnError)}
+                startIcon={<ThumbDownAltIcon />}
+                onClick={() => setRejectModal(true)}
+              >
+                Reject
+              </Button>
           }
           {
             status && ['disbursement_approval'].includes(status.toLowerCase()) && 
             isAllowed(currentUser?.access,'dashboard', 'loan_approve') &&
-            <Button
-              variant="contained"
-              disabled={loanData?.loading}
-              className={clsx(classes.btn, classes.btnSuccess)}
-              startIcon={<ThumbUpAltIcon />}
-              onClick={updateApprovalStatus}
-            >
-              Approve
-            </Button>
+              <Button
+                variant="contained"
+                disabled={loanData?.loading}
+                className={clsx(classes.btn, classes.btnSuccess)}
+                startIcon={<ThumbUpAltIcon />}
+                onClick={updateApprovalStatus}
+              >
+                Approve
+              </Button>
           }
           {
             status && status.toLowerCase() === 'loan_approval' && (currentUser.id == loanData?.approver_id || isAllowed(currentUser?.access,'dashboard', 'loan_approve')) &&
-            <Button
-              variant="contained"
-              disabled={loanData?.loading}
-              className={clsx(classes.btn, classes.btnSuccess)}
-              startIcon={<ThumbUpAltIcon />}
-              onClick={handlePendingApprovalModal}
-            >
-              Approve
-            </Button>
+              <Button
+                variant="contained"
+                disabled={loanData?.loading}
+                className={clsx(classes.btn, classes.btnSuccess)}
+                startIcon={<ThumbUpAltIcon />}
+                onClick={handlePendingApprovalModal}
+              >
+                Approve
+              </Button>
           }
           {
             status && ['loan_review'].includes(status.toLowerCase()) && (currentUser.id == loanData?.reviewer_id || isAllowed(currentUser?.access,'dashboard', 'send_for_approval')) &&
-                  <div>
-                    <Button
-                      variant="contained"
-                      disabled={loanData?.isLoading}
-                      className={clsx(classes.btn, classes.btnSuccess)}
-                      startIcon={<ThumbUpAltIcon />}
-                      onClick={handleApprovalModal}
-                    >
-                      Send for Approval
-                    </Button>
-                  </div>
+              <div>
+                <Button
+                  variant="contained"
+                  disabled={loanData?.isLoading}
+                  className={clsx(classes.btn, classes.btnSuccess)}
+                  startIcon={<ThumbUpAltIcon />}
+                  onClick={handleApprovalModal}
+                >
+                  Send for Approval
+                </Button>
+              </div>
           }
         </div>
       </div>
@@ -466,12 +464,12 @@ const DrawerFooter = ({
           </DialogContentText>
           <TextEditor setJSON={setPushbackRemarks} toolBar={true} />
           {
-            errorMsg && 
+            errorMsg &&
               <Alert severity="error" style={{padding: '0px 16px'}}>{errorMsg}</Alert>
           }
           <div style={{display: 'flex', justifyContent: 'center', marginTop: 8, marginBottom: 5}}>
             <Button variant='outlined' style={{marginRight: 8}} onClick={() => setPushback(false)}>Cancel</Button>
-            <LoaderButton 
+            <LoaderButton
               color='primary'
               variant='contained'
               isLoading={loading}

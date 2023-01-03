@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.23.6](https://gitlab.com/vignesh3/petromall-fe/compare/v2.23.5...v2.23.6) (2022-12-28)
+
+
+### Bug Fixes
+
+* **loan-approval:** allowed ops team to approve loans ([3cf42f8](https://gitlab.com/vignesh3/petromall-fe/commit/3cf42f8c9983eb972675abe3a9260574d3896ef5))
+* Merge branch 'development' ([1059cf1](https://gitlab.com/vignesh3/petromall-fe/commit/1059cf1a5d0d25573993505657d32d7a6645366f))
+* Merge branch 'development' to fix/score-card-wrk-sheet ([14a08ad](https://gitlab.com/vignesh3/petromall-fe/commit/14a08ad46a79f92166e1ad531b5f9adc1f72f3fb))
+* **score-card:** added tooltip for the collapsible ([9b4a620](https://gitlab.com/vignesh3/petromall-fe/commit/9b4a620b90051f5c8013e79a32611fb12fc48ec9))
+* **score-card:** added working sheet table in scorecard ([25db902](https://gitlab.com/vignesh3/petromall-fe/commit/25db902512f9687c1fba4bba305a59daf8e948ec))
+* **score-card:** condition check for remarks ([91f4dd7](https://gitlab.com/vignesh3/petromall-fe/commit/91f4dd7976bf4ab6a7b5b73ec333ea591af91afe))
+* **score-card:** enable inner scroll for working sheet tables in side drawer ([769842f](https://gitlab.com/vignesh3/petromall-fe/commit/769842fad149db12af1e5ca08bbc231ff8051b4a))
+* **score-card:** update label in cibil table ([a627610](https://gitlab.com/vignesh3/petromall-fe/commit/a6276102d07f61bdc9814f3fca402e2f73e8888c))
+* **score-card:** update table keys and allow dealer to edit in portal ([edc34d4](https://gitlab.com/vignesh3/petromall-fe/commit/edc34d41bce4489d4be3fee423763e4e92e9894a))
+* **score-card:** updated response key ([43d680b](https://gitlab.com/vignesh3/petromall-fe/commit/43d680b3956629ee5ff4cba74077d107c61217c8))
+
 ### [2.23.5](https://gitlab.com/vignesh3/petromall-fe/compare/v2.23.4...v2.23.5) (2022-12-17)
 
 

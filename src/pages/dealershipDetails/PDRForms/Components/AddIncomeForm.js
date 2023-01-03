@@ -81,8 +81,8 @@ const AddIncomeForm = ({ data: init_data, isEdit, id, handleClose }) => {
     validationSchema: Yup.object().shape({
       business_name: Yup.string().nullable('Enter business type').required('Enter business type'),
       business_age: Yup.number().nullable('Enter business age').required('Enter business age'),
-      cur_fy_income: Yup.number().nullable('Enter income').required('Enter income'),
       business_type: Yup.string().nullable().required('Choose business type'),
+      cur_fy_income: Yup.number().nullable('Enter income').required('Enter income'),
       cur_fy_profit_loss: Yup.number().nullable().required('Enter profit/loss'),
       cur_fy_turnover: Yup.number().nullable().required('Enter turnover')
     }),

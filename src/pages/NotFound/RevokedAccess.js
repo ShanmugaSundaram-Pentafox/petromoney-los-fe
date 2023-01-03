@@ -2,6 +2,7 @@ import { Button, Container, makeStyles } from '@material-ui/core'
 import React from 'react'
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { action_id, resources_id } from '../../config/accessControl';
 import { resetCurrentUser } from '../../store/user/user.actions';
 import { isAllowed } from '../../utils/cerbos';
 
@@ -61,7 +62,7 @@ const RevokedAccess = ({currentUser}) => {
       </div>
       <div style={{ display: 'flex' }}>
         {
-          isAllowed(currentUser?.access, 'navigation', 'dashboard') &&
+          isAllowed(currentUser?.access, resources_id.navigation, action_id.navigation.dashboard) &&
             <Button
               variant='text'
               color='secondary'

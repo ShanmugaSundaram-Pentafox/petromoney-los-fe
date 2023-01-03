@@ -1,4 +1,6 @@
-const Cerboss = (url, currentUser) => {
+import { URL } from "../config/serverUrls";
+
+const Cerboss = (currentUser) => {
   /*
     This is common cerbos function which fetches resource from API and returns
     allowed actions for the current resource with filter allAllowed actions and allDenied actions
@@ -23,7 +25,7 @@ const Cerboss = (url, currentUser) => {
   */
 
   return new Promise((resolve, reject) => {
-    fetch(url, {
+    fetch(`${URL.base}${URL.cerbos}`, {
       headers: new Headers({
         'Authorization': 'Bearer '+ currentUser?.token
       })

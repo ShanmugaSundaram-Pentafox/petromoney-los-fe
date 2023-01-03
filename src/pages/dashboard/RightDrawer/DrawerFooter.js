@@ -14,6 +14,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { useMount } from 'react-use';
 import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 import { TextEditor } from '../../../components/TextEditor/TextEditor';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { getLoanById, getLoanRejectReason, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
 import { isAllowed } from '../../../utils/cerbos';
 
@@ -257,7 +258,7 @@ const DrawerFooter = ({
             Back
           </Button>
           {
-            isAllowed(currentUser?.access,'dashboard', 'loan_resubmit') && status && ['loan_review', 'loan_approval', 'approved', 'rejected', 'disbursed'].includes(status.toLowerCase()) &&
+            isAllowed(currentUser?.access, resources_id.dashboard, 'loan_resubmit') && status && ['loan_review', 'loan_approval', 'approved', 'rejected', 'disbursed'].includes(status.toLowerCase()) &&
               <LoaderButton
                 variant={'contained'}
                 className={clsx(classes.btn, classes.btnError)}
@@ -294,7 +295,7 @@ const DrawerFooter = ({
             View more
           </Button>
           {
-            status && ['submitted'].includes(status.toLowerCase()) && isAllowed(currentUser?.access,'dashboard', 'send_for_review') &&
+            status && ['submitted'].includes(status.toLowerCase()) && isAllowed(currentUser?.access, resources_id.dashboard, 'send_for_review') &&
               <div>
                 <Button
                   variant="contained"
@@ -308,7 +309,7 @@ const DrawerFooter = ({
               </div>
           }
           {
-            status && ['pre_submit'].includes(status.toLowerCase()) && isAllowed(currentUser?.access,'dashboard', 'loan_submit') &&
+            status && ['pre_submit'].includes(status.toLowerCase()) && isAllowed(currentUser?.access, resources_id.dashboard, 'loan_submit') &&
               <div>
                 <Button
                   variant="contained"
@@ -322,7 +323,7 @@ const DrawerFooter = ({
               </div>
           }
           {
-            status && ['loan_approval', 'loan_review', 'disbursement_approval'].includes(status.toLowerCase()) && isAllowed(currentUser?.access,'dashboard', 'loan_reject') &&
+            status && ['loan_approval', 'loan_review', 'disbursement_approval'].includes(status.toLowerCase()) && isAllowed(currentUser?.access, resources_id.dashboard, 'loan_reject') &&
               <Button
                 variant="contained"
                 disabled={loanData?.loading}
@@ -335,7 +336,7 @@ const DrawerFooter = ({
           }
           {
             status && ['disbursement_approval'].includes(status.toLowerCase()) && 
-            isAllowed(currentUser?.access,'dashboard', 'loan_approve') &&
+            isAllowed(currentUser?.access, resources_id.dashboard, 'loan_approve') &&
               <Button
                 variant="contained"
                 disabled={loanData?.loading}
@@ -347,7 +348,7 @@ const DrawerFooter = ({
               </Button>
           }
           {
-            status && status.toLowerCase() === 'loan_approval' && (currentUser.id == loanData?.approver_id || isAllowed(currentUser?.access,'dashboard', 'loan_approve')) &&
+            status && status.toLowerCase() === 'loan_approval' && (currentUser.id == loanData?.approver_id || isAllowed(currentUser?.access, resources_id.dashboard, 'loan_approve')) &&
               <Button
                 variant="contained"
                 disabled={loanData?.loading}
@@ -359,7 +360,7 @@ const DrawerFooter = ({
               </Button>
           }
           {
-            status && ['loan_review'].includes(status.toLowerCase()) && (currentUser.id == loanData?.reviewer_id || isAllowed(currentUser?.access,'dashboard', 'send_for_approval')) &&
+            status && ['loan_review'].includes(status.toLowerCase()) && (currentUser.id == loanData?.reviewer_id || isAllowed(currentUser?.access, resources_id.dashboard, 'send_for_approval')) &&
               <div>
                 <Button
                   variant="contained"

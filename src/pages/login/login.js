@@ -180,7 +180,7 @@ const Login = ({ setCurrentUser }) => {
             // logger(status, data);
             if (status == 'SUCCESS') {
               // setCurrentUser(data);
-              Cerboss('https://api-uat.petromoney.in/api/user/access', data)
+              Cerboss(data)
               .then(({results}) => {
                 setCurrentUser({...data, access: results})
               })

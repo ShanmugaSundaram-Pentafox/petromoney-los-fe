@@ -9,9 +9,10 @@ import styled from 'styled-components';
 import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
 import UserCan from '../../../components/UserCan/UserCan';
+import { resources_id } from '../../../config/accessControl';
 import { rulesList } from '../../../config/userRules';
 import { getProductsMaster } from '../../../services/common.service';
-import { isAllowed } from '../../../utils/cerbos';
+import { isAllowed, isDenied } from '../../../utils/cerbos';
 
 const LoanInfoWrapper = styled.div`
   padding: 12px;
@@ -73,7 +74,7 @@ const LoanInfo = ({
                   native
                   placeholder={'Select Loan Product'}
                   value={selectedProduct?.product_id}
-                  disabled={selectedProduct?.disabled || !isAllowed(currentUser?.access,'dashboard','edit_loantype')}
+                  disabled={selectedProduct?.disabled || isDenied(currentUser?.access, resources_id.dashboard,'edit_loantype')}
                   onChange={e => {
                     const d = products.find(i => i.product_id == e.target.value)
                     setSelectedProduct(d)

@@ -40,6 +40,7 @@ const AccessControlTable = ({ data, selectedResource, buffer, setBuffer, selecte
     );
     value.permission = parseValue(checkbox.checked);
     value['resource_id'] = ResourceFilter?.resource?.id;
+    value['resource_name'] = ResourceFilter?.resource?.kind;
     if (!buffer.includes(value)) {
       setBuffer([...buffer, value]);
     } else {

@@ -104,7 +104,10 @@ const DocList = ({ id, currentUser }) => {
     
     fetch(`${URL.base}${URL.checklist}/${dealerShipId}/doc/${docID}`, {
       method: 'POST',
-      body: formData
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${currentUser.token}`,
+      },
     })
       .then(data => {
         enqueueSnackbar('File Upload Success', { variant: 'success' });

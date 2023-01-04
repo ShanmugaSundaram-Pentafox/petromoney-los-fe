@@ -18,7 +18,7 @@ import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import React from 'react';
 import SidebarNav from './components/SidebarNav';
-import { resources_id } from '../../config/accessControl';
+import { action_id, resources_id } from '../../config/accessControl';
 import { isAllowed } from '../../utils/cerbos';
 const packageJSON = require('../../../package.json');
 
@@ -82,127 +82,127 @@ const Sidebar = props => {
 
   const pageData = [
     {
-      id: 'dashboard',
+      id: action_id?.navigation.dashboard,
       title: 'Dashboard',
       href: '/',
       icon: <DashboardIcon />
     },
     {
-      id: 'dashboard:dealer',
+      id: action_id?.navigation.dashboardDealer,
       title: 'Dashboard',
       href: '/reports',
       icon: <DashboardIcon />
     },
     {
-      id: 'loans',
+      id: action_id?.navigation.loans,
       title: 'Loans',
       href: '/loans',
       icon: <AccountBoxIcon />
     },
     {
-      id: 'credit_reload',
+      id: action_id?.navigation.credit_reload,
       title: 'Credit Reload',
       href: '/reports/credit/reload',
       icon: <CachedIcon />
     },
     {
-      id: 'withheld',
+      id: action_id?.navigation.withheld,
       title: 'Withheld',
       href: '/withheld',
       icon: <AssignmentLateRoundedIcon />
     },
     {
-      id: 'renewal',
+      id: action_id?.navigation.renewal,
       title: 'Renewal',
       href: '/renewal',
       icon: <Repeat />
     },
     {
-      id: 'dealerships',
+      id: action_id?.navigation.dealerships,
       title: 'Dealerships',
       href: '/dealership',
       icon: <PeopleIcon />
     },
     {
-      id: 'transports',
+      id: action_id?.navigation.transports,
       title: 'Transports',
       href: '/transports',
       icon: <LocalShippingIcon />
     },
     {
-      id: 'profile:dealer',
+      id: action_id?.navigation.profileDealer,
       title: 'Profile',
       href: `/dealership/${currentUser.dealership_id}`,
       icon: <PersonOutlineIcon />
     },
     {
-      id: 'profile:transports',
+      id: action_id?.navigation.profileTransports,
       title: 'Profile',
       href: '/transports-field',
       icon: <PersonOutlineIcon />
     },
     {
-      id: 'collection_remarks',
+      id: action_id?.navigation.collection_remarks,
       title: 'Collection Remarks',
       href: '/reports/remarks',
       icon: <ChatIcon />
     },
     {
-      id: 'report',
+      id: action_id?.navigation.report,
       title: 'Report',
       href: '/reports',
       icon: <LocalShippingIcon />
     },
     {
-      id: 'exception',
+      id: action_id?.navigation.exception,
       title: 'Exception',
       href: '/loans',
       icon: <AccountBoxIcon />
     },
     {
-      id: 'passbook',
+      id: action_id.navigation.profileDealer,
       title: 'Passbook',
       href: '/passbook',
       icon: <ListIcon />
     },
     {
-      id: 'account_statement',
+      id: action_id?.navigation.account_statement,
       title: 'Account Statement',
       href: '/statements',
       icon: <ListAltIcon />
     },
     {
-      id: 'pre_submit',
+      id: action_id?.navigation.pre_submit,
       title: 'Pre Submit',
       href: '/pre-submit',
       icon: <AccountBoxIcon />
     },
     {
-      id: 'passbook:fastag',
+      id: action_id?.navigation.profileTransports,
       title: 'FASTag Passbook',
       href: '/transport/fastag/details',
       icon: <ListIcon />
     },
     {
-      id: 'users',
+      id: action_id?.navigation.users,
       title: 'Users',
       href: '/users',
       icon: <AccountBoxIcon />
     },
     {
-      id: 'call_request',
+      id: action_id?.navigation.call_request,
       title: 'Call Request',
       href: '/customer/callback',
       icon: <PermPhoneMsgIcon />
     },
     {
-      id: 'settings',
+      id: action_id?.navigation.settings,
       title: 'Settings',
       href: '/settings',
       icon: <SettingsIcon />
     },
     {
-      id: 'noc',
+      id: action_id?.navigation.noc,
       title: 'NOC Letter',
       href: '/noc',
       icon: <AccountBoxIcon />

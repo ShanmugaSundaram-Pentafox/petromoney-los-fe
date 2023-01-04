@@ -122,22 +122,24 @@ const DealerEditSideWrapper = ({
   };
 
   useEffect(() => {
-    getKycStatus(modelType.toLowerCase(), values.dealership_id, values.id)
-      .then((data) => {
-        if (data?.is_initiated === 1)
-          setKycStatus(true);
-      })
-      .catch((e) => {
-        console.log(e)
-      })
-    if (open) {
-      getKycAgents()
+    if(isAllowed(currentUser?.access, resources_id.dealer, action_id.dealer.Vkyc)){
+      getKycStatus(modelType.toLowerCase(), values.dealership_id, values.id)
         .then((data) => {
-          setAgentIdList(data)
+          if (data?.is_initiated === 1)
+            setKycStatus(true);
         })
         .catch((e) => {
           console.log(e)
         })
+      if (open) {
+        getKycAgents()
+          .then((data) => {
+            setAgentIdList(data)
+          })
+          .catch((e) => {
+            console.log(e)
+          })
+      }
     }
   }, [modelType, data.dealership_id, data.id, open])
 

@@ -64,20 +64,22 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
     if (!isLoading) {
       if (loanData.length) {
         let val = loanData[0].status === 'submitted' ? 'is_review=1' : 'is_approve=1'
-        getUserRoleForReview(val)
-          .then(res => {
-            let d = [];
-            res.forEach((item, i) => {
-              d.push({
-                label: <div>{item.first_name} {item.last_name}</div>,
-                value: item.id
+        if(isAllowed(currentUser?.access, resources_id.dashboard, action_id.dashboard.send_for_review)) {
+          getUserRoleForReview(val)
+            .then(res => {
+              let d = [];
+              res.forEach((item, i) => {
+                d.push({
+                  label: <div>{item.first_name} {item.last_name}</div>,
+                  value: item.id
+                })
               })
+              setUserRole(d);
             })
-            setUserRole(d);
-          })
-          .catch(e => {
-            console.log(e);
-          })
+            .catch(e => {
+              console.log(e);
+            })
+        }
       }
     }
     if (loanData[0]?.application_state_id) {

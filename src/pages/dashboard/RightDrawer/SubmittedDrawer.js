@@ -84,7 +84,7 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
   const { enqueueSnackbar } = useSnackbar();
 
   useMount(() => {
-    if(isAllowed(currentUser?.access, resources_id.dashboard, action_id.dashboard.submitted_send_for_review)) {
+    if(isAllowed(currentUser?.access, resources_id.dashboard, action_id.dashboard.send_for_review)) {
       getUserRoleForReview('is_review=1')
         .then(res => {
           let d = [];

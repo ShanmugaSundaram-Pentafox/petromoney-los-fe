@@ -5,10 +5,12 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import MUIDataTable from 'mui-datatables';
+import { useSnackbar } from 'notistack';
 import React, { useMemo, useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { useMount } from 'react-use';
 import AddSettlementForm from './AddSettlementForm';
+import EditReferralDataForm from './EditReferralDataForm';
 import Currency from '../../components/Number/Currency';
 import { getDealershipReferral } from '../../services/dealerships.service';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
@@ -38,6 +40,7 @@ const ReferralTable = ({ currentUser }) => {
   const [loans, setLoans] = useState([]);
   const [open, setOpen] = useState(false);
   const [rowData, setRowData] = useState();
+  const { enqueueSnackbar } = useSnackbar();
 
   const fetchData = () => {
     setLoading(true);
@@ -54,6 +57,27 @@ const ReferralTable = ({ currentUser }) => {
   useMount(() => {
     fetchData()
   })
+
+  const onRowClick = (dealershipId, rowData) => {
+    if (!rowData?.settlement_type) {
+      setOpen({
+        ...open,
+        open: true,
+        id: dealershipId,
+        is_edit: true,
+      });
+      setRowData(rowData);
+    }
+    else {
+      enqueueSnackbar('You are not allowed to edit, settlement is already made', {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'error',
+      })
+    }
+  };
 
   const columns = useMemo(() => {
     return [
@@ -176,6 +200,10 @@ const ReferralTable = ({ currentUser }) => {
       if (cellMeta.colIndex === 9) {
         setRowData(loans[cellMeta.dataIndex])
       }
+      else {
+        currentUser.role_id == 1 &&
+          onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex]);
+      }
     },
   };
 
@@ -203,7 +231,10 @@ const ReferralTable = ({ currentUser }) => {
         variant={'temporary'}
       >
         <div className={classes.sidePanelWrapper}>
-          <AddSettlementForm dealershipId={open?.id} data={loans} rowData={rowData} callback={() => { setOpen({ ...open, open: false }); fetchData() }} currentUser={currentUser} />
+          {open?.is_edit ?
+            <EditReferralDataForm dealershipId={open?.id} rowData={rowData} callback={() => { setOpen({ ...open, open: false, is_edit: false }); fetchData() }} currentUser={currentUser} /> :
+            <AddSettlementForm dealershipId={open?.id} rowData={rowData} callback={() => { setOpen({ ...open, open: false }); fetchData() }} currentUser={currentUser} />
+          }
         </div>
       </Drawer>
     </div>

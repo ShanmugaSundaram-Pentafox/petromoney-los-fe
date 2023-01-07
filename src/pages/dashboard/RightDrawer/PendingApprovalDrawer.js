@@ -13,7 +13,6 @@ import LoanInfo from './LoanInfo';
 import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
-import { DeviationsTable } from '../../dealershipDetails/components/Deviations';
 import WorkingSheetDrawer from '../../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
 
 const useStyles = makeStyles(theme => ({
@@ -147,7 +146,6 @@ const PendingApprovalDrawer = ({ id, selectedLoanData, status, currentUser, read
         <div className={classes.contentWrapper}>
           <DealershipData data={data} readOnly={true} />
           <WorkingSheetDrawer id={id} />
-          <DeviationsTable id={id} />
           <LoanInfo status={status} currentUser={currentUser} viewable={true} editable={editable} data={selectedLoanData} updateNewLoanInfo={updateNewLoanInfo} />
           <>
             <DrawerRemarks label={'Recommendation'} loanData={loanData?.review_remarks} readOnly={readOnly} />

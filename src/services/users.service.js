@@ -277,7 +277,7 @@ export const getCreditReloadById = (id) => {
 
 export const getTypeOfAccount = () => {
   return new Promise((resolve, reject) => {
-    apiCall('credit/reload/account/type')
+    apiCall('credit/reload/typeofaccount')
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data)

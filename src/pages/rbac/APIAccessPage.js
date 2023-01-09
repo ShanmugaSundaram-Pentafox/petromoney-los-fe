@@ -165,7 +165,7 @@ const APIAccessPage = ({ accessControl, selectedRole, accessLoading }) => {
                     {accessLoading ? <Skeleton variant='text' /> : access?.resource?.kind}
                   </TableCell>
                   <TableCell>
-                    {/* {access?.action?.find(val => val.action_id === 1)?.description} */}
+                    {access?.resource?.description}
                   </TableCell>
                   {
                     ['read', 'edit', 'delete'].map((act, i) => (

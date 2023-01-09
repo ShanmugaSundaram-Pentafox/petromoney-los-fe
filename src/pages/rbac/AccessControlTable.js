@@ -1,5 +1,6 @@
 import {
   Checkbox,
+  IconButton,
   makeStyles,
   Table,
   TableBody,
@@ -7,8 +8,14 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
 } from '@material-ui/core';
-import React from 'react';
+import { Check, Close } from '@material-ui/icons';
+import EditIcon from '@material-ui/icons/Edit';
+import React, { useState } from 'react';
+import { useQueryClient } from 'react-query';
+import TextInput from '../../components/TextInput/TextInput';
+import { updateRbacActionsDescription } from '../../services/rbac.service';
 import { checkValue, parseValue } from '../../utils/cerbos';
 
 const useStyles = makeStyles((theme) => ({
@@ -22,10 +29,24 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.success.dark,
     },
   },
+  rowItem: {
+    '&:hover': {
+      backgroundColor: '#EEEEEE',
+      '& $btn': {
+        visibility: 'visible',
+      },
+    },
+  },
+  btn: {
+    visibility: 'hidden',
+    color: '#687980',
+  },
 }));
 
 const AccessControlTable = ({ data, selectedResource, buffer, setBuffer, selectedRole }) => {
   const classes = useStyles();
+  const [rowData, setRowData] = useState({edit: false});
+  const queryClient = useQueryClient();
 
   // Filtered selected resource
   const ResourceFilter = data?.find(
@@ -49,6 +70,22 @@ const AccessControlTable = ({ data, selectedResource, buffer, setBuffer, selecte
     }
   };
 
+  const handleDescriptionChange = (event) => {
+    setRowData({...rowData, data: {...rowData?.data, description: event.target.value}});
+  }
+
+  const handleDescriptionSave = () => {
+    const body = {
+      description: rowData?.data?.description
+    }
+    updateRbacActionsDescription(body, rowData?.data?.action_id)
+      .then(() => {
+        queryClient.invalidateQueries('rbac-access')
+        setRowData({edit: false})
+      })
+      .catch((e) => console.log(e))
+  }
+
   return (
     <div>
       <TableContainer
@@ -59,11 +96,12 @@ const AccessControlTable = ({ data, selectedResource, buffer, setBuffer, selecte
             <TableCell align="center">Access</TableCell>
             <TableCell>Action Name</TableCell>
             <TableCell>Description</TableCell>
+            <TableCell>Action</TableCell>
           </TableHead>
           <TableBody>
             {ResourceFilter?.actions?.map((action, index) => {
               return (
-                <TableRow hover key={index}>
+                <TableRow className={classes.rowItem} key={index}>
                   <TableCell align="center">
                     <Checkbox
                       onChange={handleAccess}
@@ -75,7 +113,41 @@ const AccessControlTable = ({ data, selectedResource, buffer, setBuffer, selecte
                     />
                   </TableCell>
                   <TableCell>{action?.action_name}</TableCell>
-                  <TableCell>{action?.desc}</TableCell>
+                  <TableCell>
+                    {
+                      rowData?.edit && rowData?.data?.action_id === action?.action_id ?
+                        <div>
+                          <TextInput
+                            name="description"
+                            value={rowData?.data?.description}
+                            onChange={handleDescriptionChange}
+                            InputProps={{
+                              endAdornment: 
+                          <div style={{padding: 8, display: 'flex'}}>
+                            <IconButton size='small' onClick={handleDescriptionSave}>
+                              <Tooltip title="Save" >
+                                <Check fontSize='small' style={{color: '#4caf50'}} />
+                              </Tooltip>
+                            </IconButton>
+                            <IconButton size='small' onClick={() => setRowData({edit: false})}>
+                              <Tooltip title="Cancel" >
+                                <Close fontSize='small' color='error' />
+                              </Tooltip>
+                            </IconButton>
+                          </div>
+                            }}
+                          />
+                        </div> :
+                      action?.description
+                    }
+                  </TableCell>
+                  <TableCell>
+                    <IconButton size="small" className={classes.btn} onClick={() => setRowData({edit: true, data: action})}>
+                      <Tooltip title="Edit">
+                        <EditIcon fontSize="small" style={{color: 'rgb(0,0,0,0.4)'}}/>
+                      </Tooltip>
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
               );
             })}

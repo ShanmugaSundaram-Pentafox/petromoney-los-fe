@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Drawer,
   Grid,
   makeStyles,
   Paper,
@@ -24,6 +25,7 @@ import React, { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import AccessControlTable from './AccessControlTable';
 import APIAccessPage from './APIAccessPage';
+import CreateResourceForm from './CreateResourceForm';
 import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
 import {
   tabA11yProps,
@@ -77,7 +79,8 @@ const UserControl = () => {
   const [buffer, setBuffer] = useState([]);
   const [updateLoading, setUpdateLoading] = useState(false);
   const [updateDialog, setUpdateDialog] = useState(false);
-  const [selectedTab, setSelectedTab] = useState('API');
+  const [selectedTab, setSelectedTab] = useState('MDM');
+  const [createResource, setCreateResource] = useState(false);
 
   // fetch all resources and action for selected role
   const { data: accessControl = [], isLoading } = useQuery(
@@ -134,28 +137,37 @@ const UserControl = () => {
   return (
     <Grid container spacing={2}>
       <Grid item md={12}>
-        <Paper style={{ padding: 20, display: 'flex', alignItems: 'center' }}>
-          <Typography variant="h3" style={{ marginRight: 20 }}>
-            Edit Role Access
-          </Typography>
-          <TextInput
-            select
-            label="Role"
-            name="role"
-            value={selectedRole}
-            onChange={handleRoleChange}
-            SelectProps={{
-              native: true,
-            }}
-            InputLabelProps={{ shrink: true }}
+        <Paper style={{ padding: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{display: 'flex', alignItems: 'center'}}>
+            <Typography variant="h3" style={{ marginRight: 20 }}>
+              Edit Role Access
+            </Typography>
+            <TextInput
+              select
+              label="Role"
+              name="role"
+              value={selectedRole}
+              onChange={handleRoleChange}
+              SelectProps={{
+                native: true,
+              }}
+              InputLabelProps={{ shrink: true }}
+            >
+              <option value="null">Select a Role</option>
+              {roles?.map((role, i) => (
+                <option key={i} value={role?.id}>
+                  {role?.role_name}
+                </option>
+              ))}
+            </TextInput>
+          </div>
+          <Button
+            variant='contained'
+            color='primary'
+            onClick={() => setCreateResource(!createResource)}
           >
-            <option value="null">Select a Role</option>
-            {roles?.map((role, i) => (
-              <option key={i} value={role?.id}>
-                {role?.role_name}
-              </option>
-            ))}
-          </TextInput>
+            Create Resource
+          </Button>
         </Paper>
       </Grid>
       {
@@ -164,13 +176,11 @@ const UserControl = () => {
             <PaperWrapper>
               <Box borderRadius={4} bgcolor="background.paper">
                 <Grid container>
-                  <Grid onClick={() => { setSelectedTab('API') }} className={selectedTab === 'API' ? 'inactive' : 'active'} style={{ textAlign: 'center', padding: 16 }} item md={6}>
-                    {/* <Badge badgeContent={tableData?.length || 0} style={{ paddingTop: 4, paddingRight: 8 }} color="primary"> */}
-                    <div>API Access</div>
-                    {/* </Badge> */}
-                  </Grid>
                   <Grid onClick={() => { setSelectedTab('MDM') }} style={{ textAlign: 'center', padding: 16 }} className={selectedTab === 'MDM' ? 'inactive' : 'active'} item md={6}>
                     <div>UI Access</div>
+                  </Grid>
+                  <Grid onClick={() => { setSelectedTab('API') }} className={selectedTab === 'API' ? 'inactive' : 'active'} style={{ textAlign: 'center', padding: 16 }} item md={6}>
+                    <div>API Access</div>
                   </Grid>
                 </Grid>
               </Box>
@@ -287,6 +297,14 @@ const UserControl = () => {
           ) : null}
         </div>
       </Dialog>
+      <Drawer
+        anchor="right"
+        open={createResource}
+        onClose={() => setCreateResource(false)}
+        variant="temporary"
+      >
+        <CreateResourceForm roles={roles} close={() => setCreateResource(false)} />
+      </Drawer>
     </Grid>
   );
 };

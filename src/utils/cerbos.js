@@ -1,6 +1,6 @@
 import { URL } from "../config/serverUrls";
 
-const Cerboss = (currentUser) => {
+const AccessPermission = (currentUser) => {
   /*
     This is common cerbos function which fetches resource from API and returns
     allowed actions for the current resource with filter allAllowed actions and allDenied actions
@@ -55,51 +55,13 @@ export const isAllowed = (data=[], resource_id, action_id) => {
   for (const res of data) {
     const { resource, actions } = res;
     if(resource?.kind === resource_id) {
-      for (const key in actions) {
-        if (key === action_id) {
-          return checkValue(actions[key]);
-        }
+      if(actions.hasOwnProperty(action_id)) {
+        return checkValue(actions[action_id])
+      } else {
+        return false
       }
     }
   }
-};
-
-// Check if action is denied
-export const isDenied = (data, resource_id, action_id) => {
-  for (const res of data) {
-    const { resource, actions } = res;
-    if (resource?.kind === resource_id) {
-      for (const key in actions) {
-        if (key === action_id) {
-          return !checkValue(actions[key]);
-        }
-      }
-    }
-  }
-};
-
-// Filter all Allowed actions
-export const allAllowed = (data, resource_id) => {
-  const trueValues = [];
-  for (const res of data) {
-    const loop = () => {
-      for (const key in actions) {
-        if (checkValue(actions[key])) {
-          trueValues.push(key);
-        }
-      }
-    }
-    const { resource, actions } = res;
-    if (resource_id) {
-      if (resource?.kind === resource_id) {
-        loop()
-      } 
-    }
-    else {
-      loop()
-    }
-  }
-  return trueValues;
 };
 
 // Filter all Denied actions
@@ -126,4 +88,4 @@ export const allDenied = (data, resource_id) => {
   return falseValues;
 };
 
-export default Cerboss;
+export default AccessPermission;

@@ -197,7 +197,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
                       native
                       placeholder={'Select status'}
                       value={selectedStatus?.id}
-                      disabled={isDenied(currentUser?.access, resources_id?.loansList, action_id?.loansList?.applicationStatus)}
+                      disabled={!isAllowed(currentUser?.access, resources_id?.loansList, action_id?.loansList?.applicationStatus)}
                       onChange={e => {
                         const d = status?.find(i => i.id == e.target.value)
                         setSelectedStatus(d)

@@ -15,7 +15,7 @@ import { getOTP, resendOTP, resetPassword } from '../../services/login.service';
 import { setCurrentUser } from '../../store/user/user.actions';
 import apiCall from '../../utils/api.util';
 import { Typography } from '@material-ui/core';
-import Cerboss from '../../utils/cerbos';
+import AccessPermission from '../../utils/cerbos';
 
 const packageJSON = require('../../../package.json');
 
@@ -180,7 +180,7 @@ const Login = ({ setCurrentUser }) => {
             // logger(status, data);
             if (status == 'SUCCESS') {
               // setCurrentUser(data);
-              Cerboss(data)
+              AccessPermission(data)
               .then(({results}) => {
                 setCurrentUser({...data, access: results})
               })

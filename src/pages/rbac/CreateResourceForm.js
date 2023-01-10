@@ -25,7 +25,7 @@ import {
 const init = {
   actions: [
     {
-      allowed_roles: [],
+      allowed_roles: ['ADMIN'],
       action: '',
       description: '',
     },
@@ -159,7 +159,13 @@ const CreateResourceForm = ({ roles, close }) => {
         });
     },
     validationSchema: Yup.object().shape({
-      resource: Yup.string().nullable().required('Enter Resource name'),
+      resource: Yup.string()
+        .nullable()
+        .matches(
+          /^[a-zA-Z_-]*$/,
+          'Resource should not contain spaces or any special characters'
+        )
+        .required('Enter Resource name'),
       description: Yup.string()
         .nullable()
         .required('Enter Resource description'),
@@ -200,18 +206,26 @@ const CreateResourceForm = ({ roles, close }) => {
                   value={savedResource?.resource}
                 />
               ) : (
-                <CreatableSelect
-                  name="resource"
-                  label="Resource Name"
-                  options={updatedResourceArray}
-                  onChange={(option) => {
-                    if (updatedResourceArray.includes(option)) {
-                      getExistingResourceData(option);
-                    } else {
-                      setFieldValue('resource', option?.value);
-                    }
-                  }}
-                />
+                <>
+                  <CreatableSelect
+                    name="resource"
+                    label="Resource Name"
+                    options={updatedResourceArray}
+                    defaultValue={[updatedResourceArray[0]]}
+                    onChange={(option) => {
+                      if (updatedResourceArray.includes(option)) {
+                        getExistingResourceData(option);
+                      } else {
+                        setFieldValue('resource', option?.value);
+                      }
+                    }}
+                  />
+                  {errors.resource && (
+                    <Typography color="error" variant="caption">
+                      {errors.resource}
+                    </Typography>
+                  )}
+                </>
               )}
             </Grid>
             <Grid item md={6}>
@@ -248,8 +262,27 @@ const CreateResourceForm = ({ roles, close }) => {
                 <Formik
                   initialValues={initialValues}
                   onSubmit={(values) => handleCreateActions(values)}
+                  validationSchema={Yup.object().shape({
+                    actions: Yup.array().of(
+                      Yup.object().shape({
+                        action: Yup.string()
+                          .matches(
+                            /^[a-zA-Z_-]*$/,
+                            'Action name should not contain spaces or any special characters'
+                          )
+                          .required('action name is required'),
+                      })
+                    ),
+                  })}
+                  validateOnChange={false}
                 >
-                  {({ values, handleChange, handleSubmit, setFieldValue }) => (
+                  {({
+                    values,
+                    handleChange,
+                    handleSubmit,
+                    setFieldValue,
+                    errors,
+                  }) => (
                     <>
                       {resourceType === 'MDM' ? (
                         <FieldArray name="actions">
@@ -268,6 +301,10 @@ const CreateResourceForm = ({ roles, close }) => {
                                         label="Action Name"
                                         name={`actions.${index}.action`}
                                         onChange={handleChange}
+                                        error={errors?.actions?.[index]?.action}
+                                        helperText={
+                                          errors?.actions?.[index]?.action
+                                        }
                                       />
                                     </Grid>
                                     <Grid item md={6}>
@@ -286,6 +323,7 @@ const CreateResourceForm = ({ roles, close }) => {
                                             option.map((item) => item.value)
                                           )
                                         }
+                                        defaultValue={updatedArray[0]}
                                         isMulti
                                         options={updatedArray}
                                         closeMenuOnSelect={false}
@@ -319,7 +357,12 @@ const CreateResourceForm = ({ roles, close }) => {
                       ) : (
                         <>
                           {['read', 'edit', 'delete'].map((action, index) => (
-                            <Grid item md={9} style={{ marginTop: 16 }} key={index}>
+                            <Grid
+                              item
+                              md={9}
+                              style={{ marginTop: 16 }}
+                              key={index}
+                            >
                               <label>
                                 {action.charAt(0).toUpperCase() +
                                   action.slice(1)}{' '}
@@ -341,6 +384,7 @@ const CreateResourceForm = ({ roles, close }) => {
                                     `This is ${action}`
                                   );
                                 }}
+                                defaultValue={updatedArray[0]}
                                 isMulti
                                 options={updatedArray}
                                 closeMenuOnSelect={false}

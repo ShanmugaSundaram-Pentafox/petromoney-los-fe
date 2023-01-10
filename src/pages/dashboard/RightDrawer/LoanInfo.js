@@ -74,7 +74,7 @@ const LoanInfo = ({
                   native
                   placeholder={'Select Loan Product'}
                   value={selectedProduct?.product_id}
-                  disabled={selectedProduct?.disabled || isDenied(currentUser?.access, resources_id.dashboard,'edit_loantype')}
+                  disabled={selectedProduct?.disabled || !isAllowed(currentUser?.access, resources_id.dashboard,'edit_loantype')}
                   onChange={e => {
                     const d = products.find(i => i.product_id == e.target.value)
                     setSelectedProduct(d)

@@ -140,7 +140,7 @@ const AddCreditPdForm = ({ data, dealer_id, callback, currentUser, editable }) =
                 multiline
                 rows={20}
                 name='pdr_remarks'
-                disabled={isDenied(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.creditPdEdit)}
+                disabled={!isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.creditPdEdit)}
                 value={values.pdr_remarks}
                 error={errors.pdr_remarks}
                 helperText={errors.pdr_remarks}

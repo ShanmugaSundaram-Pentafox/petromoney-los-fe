@@ -166,6 +166,40 @@ export const getCreditInfo = (dealershipId) => {
   });
 }
 
+export const getCrimeInfo = (applicantId, applicantType) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${applicantId}/crimecheck?type=${applicantType}`)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const getCrimeReport = (url) => {
+  return new Promise((resolve, reject) => {
+    apiCall(url, {
+      method: 'POST',
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  })
+}
+
 export const updateCreditInfo = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.dealership}/${id}/credit/info`, {

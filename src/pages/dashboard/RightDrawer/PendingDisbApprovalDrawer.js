@@ -13,7 +13,7 @@ import LoanInfo from './LoanInfo';
 import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
-import SalesInfo from '../components/SalesInfo';
+import WorkingSheetDrawer from '../../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
 
 
 
@@ -133,7 +133,7 @@ const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, 
         </div>
         <div className={classes.contentWrapper}>
           <DealershipData data={data} readOnly={true} />
-          <SalesInfo id={id} currentUser={currentUser} readOnly={true} />
+          <WorkingSheetDrawer id={id} />
           <LoanInfo viewable={true} status={status} currentUser={currentUser} newInfo={loanData} editable={editable} data={selectedLoanData} updateNewLoanInfo={updateNewLoanInfo} />
           <>
             <DrawerRemarks label={'Remarks'} loanData={loanData?.review_remarks} readOnly={readOnly} />

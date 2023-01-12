@@ -629,3 +629,37 @@ export const validateId = (action, id, body) => {
       })
   });
 }
+
+export const getDealershipReferral = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall('dealership/referral')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
+
+export const postReferralData = (dealershipID, data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${dealershipID}/referral/${id}`, {
+      method: 'POST',
+      body: data
+    })
+      .then(({ data, status, message }) => {
+        if (status == 'SUCCESS')
+          resolve(message);
+        else
+          reject(message)
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};

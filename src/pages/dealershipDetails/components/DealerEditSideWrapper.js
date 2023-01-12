@@ -22,9 +22,11 @@ import { useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import DealerEditForm from './DealerEditForm';
 import TextInput from '../../../components/TextInput/TextInput';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { API } from '../../../config/api';
 import { logger } from '../../../config/logger';
 import { URL } from '../../../config/serverUrls';
+import { rulesList } from '../../../config/userRules';
 import { cryptoEncrypt } from '../../../services/crypto.service';
 import { getKycAgents, getKycStatus, initiateKYC } from '../../../services/dealers.service';
 import { validateId } from '../../../services/dealerships.service';
@@ -79,7 +81,7 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     color: green[800],
-    marginLeft:12
+    marginLeft: 12
   }
 }));
 
@@ -93,7 +95,6 @@ const DealerEditSideWrapper = ({
   currentUser,
   onClose,
   id,
-  viewOnly,
 }) => {
   const classes = useStyles();
   const queryClient = useQueryClient()
@@ -111,6 +112,8 @@ const DealerEditSideWrapper = ({
   const [agentId, setAgentId] = useState();
   const [agentIdList, setAgentIdList] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
+  const vkyc_permission = permissionCheck(currentUser.role_name, rulesList.vkyc_edit);
+
 
   const handleEdit = () => {
     setReadOnly(!readOnly);
@@ -145,9 +148,21 @@ const DealerEditSideWrapper = ({
     };
   }
 
+  let adminFields = {};
+  if (currentUser?.role_id != 1) {
+    adminFields = {
+      pan: Yup.string()
+        .required('Enter PAN')
+        .nullable('Enter PAN')
+        .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
+        .uppercase(),
+    }
+  }
+
   const validationSchema = Yup.object().shape({
     first_name: Yup.string().nullable('Enter first name').required('Enter first name'),
     last_name: Yup.string().nullable('Enter last name').required('Enter last name'),
+    father_name: Yup.string().nullable('Enter your father\'s name').required('Enter your father\'s name'),
     gender: Yup.string().nullable('Choose gender').required('Enter gender'),
     email: Yup.string().nullable('Enter email').email('Invalid email').required('Enter email'),
     city: Yup.string().nullable('Enter City').required('Enter City'),
@@ -163,16 +178,16 @@ const DealerEditSideWrapper = ({
     residing_since: Yup.number().nullable('Enter the year').required('Enter the year'),
     marital_status: Yup.string().nullable('Enter your Marital status').required('Enter your Marital status'),
     pincode: Yup.string().nullable('Enter pincode').matches(/^[1-9][0-9]{5}$/, 'Invalid pincode').required('Enter pincode'),
-    pan: Yup.string()
-      .nullable('Enter PAN')
-      .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
-      .required('Enter PAN')
-      .uppercase(),
     aadhar: Yup.string()
       .nullable('Enter Aadhar')
       .matches(/^(\d{12})$|^(\d{16})$/, 'Invalid aadhar')
       .required('Enter valid aadhar'),
+    pan: Yup.string()
+      .nullable('Enter PAN')
+      .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
+      .uppercase(),
     ...coApplicantFields,
+    ...adminFields,
   });
 
   const handleIdChange = (e) => {
@@ -222,9 +237,7 @@ const DealerEditSideWrapper = ({
     errors,
     handleSubmit,
     handleChange,
-    handleReset,
     setFieldValue,
-    setValues,
     validateField
   } = useFormik({
     initialValues: {
@@ -256,6 +269,7 @@ const DealerEditSideWrapper = ({
       }
       values.first_name = values.first_name.toUpperCase();
       values.last_name = values.last_name.toUpperCase();
+      values.father_name = values.father_name.toUpperCase();
       setLoading(true);
       const dob = selectedDate ? format(new Date(selectedDate), 'dd-MM-yyyy') : values.dob ? values.dob : null
       const date_values = { ...values, dob: dob, pan: values.pan.toUpperCase(), is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0 };
@@ -423,6 +437,7 @@ const DealerEditSideWrapper = ({
               setAadharValidateData={setAadharValidateData}
               aadharValidateData={aadharValidateData}
               validateField={validateField}
+              currentUser={currentUser}
             />
           </Step>
         </Stepper>
@@ -484,15 +499,15 @@ const DealerEditSideWrapper = ({
                 </Button>
               </div>
               {
-                !viewOnly &&
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    {
-                      kycStatus ? (
-                        <div style={{ display: 'flex', alignItems: 'center', marginRight: 12, backgroundColor: green[100], padding: 4, paddingRight: 12, borderRadius: 14 }}>
-                          <CheckRoundedIcon style={{ color: green[400], marginRight: 8 }} />
-                          <Typography style={{ color: green[800] }}>VKYC already initiated</Typography>
-                        </div>
-                      ) : (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  {
+                    kycStatus ? (
+                      <div style={{ display: 'flex', alignItems: 'center', marginRight: 12, backgroundColor: green[100], padding: 4, paddingRight: 12, borderRadius: 14 }}>
+                        <CheckRoundedIcon style={{ color: green[400], marginRight: 8 }} />
+                        <Typography style={{ color: green[800] }}>VKYC already initiated</Typography>
+                      </div>
+                    ) : (
+                      vkyc_permission &&
                         <Button
                           variant='outlined'
                           className={clsx(classes.btn, classes.editButton)}
@@ -501,22 +516,22 @@ const DealerEditSideWrapper = ({
                         >
                           Initiate VKYC
                         </Button>
-                      )
+                    )
+                  }
+                  <Button
+                    variant='contained'
+                    className={clsx(classes.btn, classes.editButton)}
+                    startIcon={
+                      !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
                     }
-                    <Button
-                      variant='contained'
-                      className={clsx(classes.btn, classes.editButton)}
-                      startIcon={
-                        !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
-                      }
-                      disabled={loading}
-                      onClick={
-                        loading ? () => null : readOnly ? handleEdit : handleSubmit
-                      }
-                    >
-                      Edit
-                    </Button>
-                  </div>
+                    disabled={loading}
+                    onClick={
+                      loading ? () => null : readOnly ? handleEdit : handleSubmit
+                    }
+                  >
+                    Edit
+                  </Button>
+                </div>
               }
             </>
           )}

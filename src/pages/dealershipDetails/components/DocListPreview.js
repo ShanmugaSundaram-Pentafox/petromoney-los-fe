@@ -83,7 +83,7 @@ const usePreviewStyles = makeStyles((theme) => ({
     display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 19, width: '100%'
   }
 }))
-const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name, fileId, dealershipId, editable }) => {
+const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name, fileId, dealershipId, editable,crimeCheck }) => {
   const queryClient = useQueryClient()
   const [imageModal, setImageModal] = useState({});
   const classes = usePreviewStyles();
@@ -126,12 +126,12 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
         });
       });
   }
-
+  console.log('url >>>>>>>>>>>>>>>>', url)
   return (
     <>
       {
         url ? (
-          <Tooltip title={`${file_name} (${updatedDateTime})`}>
+          <Tooltip title={DocName ? `${file_name} (${updatedDateTime})` : 'click to view'}>
             <span>
               <div className={classes.container}
                 onClick={() => csvFileTypes.includes(fileType) ? window.open(url) : audioFileTypes.includes(fileType) ? window.open(url) : setImageModal({ open: true, image: url, type: fileType })}
@@ -146,11 +146,11 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
                         : <ListAltIcon style={{ color: '#63686E' }} />
                 }
                 {
-                  !editable &&
+                  !editable && DocName &&
                     <div className={classes.attachmentDelete} onClick={(e) => { e.stopPropagation(); setDeleteModal({ open: true, fileId: fileId }) }}><DeleteIcon width={16} /></div>
                 }
                 {
-                  !editable &&
+                  !editable && DocName &&
                     <div className={classes.attachmentEdit} onClick={(e) => { e.stopPropagation(); setEditModal({ open: true, fileId: fileId, fileUrl: url, fileName: file_name }) }}><EditIcon fontSize='small' style={{ color: 'white' }} /></div>
                 }
               </div>
@@ -160,7 +160,11 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
           </Tooltip>
 
         ) : (
-          <Typography variant='h7' style={{ color: '#b5b5b5', marginLeft: 15 }}>No Documents!</Typography>
+          <>
+            {
+              !crimeCheck && (<Typography variant='h6' style={{ color: '#b5b5b5', marginLeft: 15 }}>No Documents!</Typography>)
+            }
+          </>
         )
       }
       <FormDialog maxWidth={'xl'} title={DocName} onDownload={imageModal?.image} open={imageModal?.open} onClose={() => setImageModal({ open: false })}>
@@ -215,22 +219,25 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
   )
 }
 
-const DocListPreview = ({ docName, upload, file, id, docId, dealershipId, editable }) => {
+const DocListPreview = ({ docName, upload, file, id, docId, dealershipId, editable,crimeCheck }) => {
   const classes = useStyles();
   const [collapse, setCollapse] = useState(false);
-
   const handleCollapse = () => {
     setCollapse(!collapse)
   }
   return (
     <div className={classes.root}>
       <div className={classes.titleRow}>
-        <div onClick={() => handleCollapse()} style={{ cursor: 'pointer' }}>
-          <Typography variant='h7' onClick={() => handleCollapse}><strong>{`${id}. ${docName}`}</strong></Typography>
-          <Badge badgeContent={file[0].file_url && file?.length || 0} color="primary" style={{ marginLeft: 15 }} />
-        </div>
         {
-          !editable &&
+          docName && (
+            <div onClick={() => handleCollapse()} style={{ cursor: 'pointer' }}>
+              <Typography variant='h7' onClick={() => handleCollapse}><strong>{`${id}. ${docName}`}</strong></Typography>
+              <Badge badgeContent={file[0].file_url && file?.length || 0} color="primary" style={{ marginLeft: 15 }} />
+            </div>
+          )
+        }
+        {
+          !editable && upload &&
             <div className={classes.titleBtns}>
               <Button size='small' style={{ marginLeft: 15 }} variant='outlined' onClick={upload} color='primary' startIcon={<AddIcon style={{ fontSize: 'small' }} />}>Upload</Button>
             </div>
@@ -240,10 +247,10 @@ const DocListPreview = ({ docName, upload, file, id, docId, dealershipId, editab
         style={{ display: 'flex', flexWrap: 'wrap' }}
       >
         {
-          file.map((data, i) => {
+          file?.map((data, i) => {
             return (
               <Collapse in={!collapse} key={i}>
-                <DocPreview fileId={data?.file_id} docId={docId} dealershipId={dealershipId} fileType={data.file_type} file_name={data.file_name} url={data.file_url} DocName={docName} updatedDateTime={format(new Date(data?.created_date || data?.modified_date), 'dd/MM/yyyy hh:mm a')} editable={editable} />
+                <DocPreview crimeCheck={crimeCheck} fileId={data?.file_id} docId={docId} dealershipId={dealershipId} fileType={data.file_type || 'pdf'} file_name={data.file_name} url={data?.file_url} DocName={docName} updatedDateTime={format(new Date(data?.created_date || data?.modified_date), 'dd/MM/yyyy hh:mm a')} editable={editable} />
               </Collapse>
             )
           })

@@ -13,6 +13,7 @@ export const rulesList = {
   'region_map': 'region:map',
   'settings_view': 'settings:view',
   'credit_view': 'credit:view',
+  'credit_refresh': 'credit:refresh',
   'pdr_view': 'sales:view',
   'financial_view': 'financial:view',
   'upload_statement': 'upload:statement',
@@ -23,6 +24,12 @@ export const rulesList = {
   'dealership_view': 'dealership:view',
   'external_lms': 'external:lms',
   'phone_call' : 'phonecall:pdr',
+  'ops_view' :'ops:view',
+  'pre_submit_view':'pre:submit:view',
+  'admin_edit':'admin:edit',
+  'cibil_edit':'cibil:edit',
+  'vkyc_edit':'vkyc:edit',
+  'crime_check':'crime:check:edit',
 }
 
 export const rulesForUserRoles = {
@@ -33,12 +40,18 @@ export const rulesForUserRoles = {
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
       rulesList.credit_view,
+      rulesList.credit_refresh,
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
       rulesList.projection_report,
       rulesList.external_lms,
-      rulesList.opportunity_report
+      rulesList.opportunity_report,
+      rulesList.pre_submit_view,
+      rulesList.dealership_view,
+      rulesList.cibil_edit,
+      rulesList.vkyc_edit,
+      rulesList.crime_check,
     ]
   },
   CDO: {
@@ -48,12 +61,18 @@ export const rulesForUserRoles = {
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
       rulesList.credit_view,
+      rulesList.credit_refresh,
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
       rulesList.projection_report,
       rulesList.external_lms,
-      rulesList.opportunity_report
+      rulesList.pre_submit_view,
+      rulesList.opportunity_report,
+      rulesList.dealership_view,
+      rulesList.cibil_edit,
+      rulesList.vkyc_edit,
+      rulesList.crime_check,
     ]
   },
   CFO: {
@@ -65,12 +84,18 @@ export const rulesForUserRoles = {
       rulesList.dealer_credit_edit,
       rulesList.dealership_credit_edit,
       rulesList.credit_view,
+      rulesList.credit_refresh,
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
       rulesList.projection_report,
       rulesList.external_lms,
-      rulesList.opportunity_report
+      rulesList.opportunity_report,
+      rulesList.pre_submit_view,
+      rulesList.dealership_view,
+      rulesList.cibil_edit,
+      rulesList.vkyc_edit,
+      rulesList.crime_check,
     ]
   },
   CREDIT_HEAD: {
@@ -82,10 +107,16 @@ export const rulesForUserRoles = {
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
       rulesList.credit_view,
+      rulesList.credit_refresh,
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
       rulesList.phone_call,
+      rulesList.pre_submit_view,
+      rulesList.dealership_view,
+      rulesList.vkyc_edit,
+      rulesList.crime_check,
+      rulesList.cibil_edit,
     ]
   },
   ADMIN: {
@@ -98,8 +129,10 @@ export const rulesForUserRoles = {
       rulesList.dealership_credit_edit,
       rulesList.users_view,
       rulesList.region_map,
+      rulesList.ops_view,
       rulesList.settings_view,
       rulesList.credit_view,
+      rulesList.credit_refresh,
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
@@ -107,7 +140,13 @@ export const rulesForUserRoles = {
       rulesList.applicant_delete,
       rulesList.external_lms,
       rulesList.phone_call,
-      rulesList.opportunity_report
+      rulesList.opportunity_report,
+      rulesList.pre_submit_view,
+      rulesList.dealership_view,
+      rulesList.admin_edit,
+      rulesList.cibil_edit,
+      rulesList.vkyc_edit,
+      rulesList.crime_check,
     ]
   },
   CREDIT_EXEC: {
@@ -119,23 +158,36 @@ export const rulesForUserRoles = {
       rulesList.dealer_credit_edit,
       rulesList.dealership_credit_edit,
       rulesList.credit_view,
+      rulesList.credit_refresh,
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
       rulesList.region_map,
       rulesList.phone_call,
+      rulesList.pre_submit_view,
+      rulesList.dealership_view,
+      rulesList.vkyc_edit,
+      rulesList.crime_check,
+      rulesList.cibil_edit,
     ]
   },
   OPS_EXEC: {
     static: [
       rulesList.dashboard,
       rulesList.dealer_credit_view,
+      rulesList.loan_approval,
       rulesList.dealership_credit_view,
       rulesList.credit_view,
+      rulesList.credit_refresh,
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
-      rulesList.external_lms
+      rulesList.external_lms,
+      rulesList.ops_view,
+      rulesList.dealership_view,
+      rulesList.cibil_edit,
+      rulesList.vkyc_edit,
+      rulesList.crime_check,
     ]
   },
   OPS_MANAGER: {
@@ -143,11 +195,18 @@ export const rulesForUserRoles = {
       rulesList.dashboard,
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
+      rulesList.loan_approval,
       rulesList.credit_view,
+      rulesList.credit_refresh,
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
-      rulesList.external_lms
+      rulesList.external_lms,
+      rulesList.ops_view,
+      rulesList.dealership_view,
+      rulesList.cibil_edit,
+      rulesList.vkyc_edit,
+      rulesList.crime_check,
     ]
   },
   CREDIT: {
@@ -158,11 +217,16 @@ export const rulesForUserRoles = {
       rulesList.dealer_credit_edit,
       rulesList.dealership_credit_edit,
       rulesList.credit_view,
+      rulesList.credit_refresh,
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
       rulesList.region_map,
       rulesList.phone_call,
+      rulesList.pre_submit_view,
+      rulesList.dealership_view,
+      rulesList.crime_check,
+      rulesList.cibil_edit,
     ]
   },
   SALES_HEAD_STATE: {
@@ -171,8 +235,13 @@ export const rulesForUserRoles = {
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
       rulesList.pdr_view,
+      rulesList.dealership_edit,
+      rulesList.credit_view,
+      rulesList.credit_refresh,
       rulesList.financial_view,
       rulesList.upload_statement,
+      rulesList.pre_submit_view,
+      rulesList.cibil_edit,
     ]
   },
   SALES_HEAD_REGIONAL: {
@@ -180,9 +249,14 @@ export const rulesForUserRoles = {
       rulesList.dashboard,
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
+      rulesList.dealership_edit,
       rulesList.pdr_view,
+      rulesList.credit_view,
+      rulesList.credit_refresh,
       rulesList.financial_view,
       rulesList.upload_statement,
+      rulesList.pre_submit_view,
+      rulesList.cibil_edit,
     ]
   },
   FIELD_OFFICER: {
@@ -193,14 +267,18 @@ export const rulesForUserRoles = {
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
       rulesList.credit_view,
+      rulesList.credit_refresh,
       rulesList.pdr_view,
       rulesList.financial_view,
       rulesList.upload_statement,
+      rulesList.pre_submit_view,
+      rulesList.cibil_edit,
     ]
   },
   DEALER: {
     static: [
       rulesList.dealer_view,
+      rulesList.dealership_view,
     ]
   },
   TRANSPORTER: {

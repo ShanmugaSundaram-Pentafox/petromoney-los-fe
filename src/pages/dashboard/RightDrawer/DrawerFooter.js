@@ -53,8 +53,8 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.white
     },
     '&.MuiButton-outlined': {
-      color:  theme.palette.error.main,
-      borderColor:  theme.palette.error.main
+      color:theme.palette.error.main,
+      borderColor:theme.palette.error.main
     },
     '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.error.dark
@@ -302,7 +302,7 @@ const DrawerFooter = ({
             View more
           </Button>
           {
-            status && ['submitted'].includes(status.toLowerCase()) &&
+            status && ['submitted'].includes(status.toLowerCase()) &&![8, 9].includes(currentUser?.role_id) &&
               <UserCan
                 role={currentUser.role_name}
                 perform={rulesList?.loan_approval}
@@ -321,6 +321,25 @@ const DrawerFooter = ({
                 )} />
           }
           {
+            status && ['pre_submit'].includes(status.toLowerCase()) &&
+              <UserCan
+                role={currentUser.role_name}
+                perform={rulesList?.loan_approval}
+                yes={() => (
+                  < div >
+                    <Button
+                      variant="contained"
+                      disabled={loanData?.isLoading}
+                      className={clsx(classes.btn, classes.btnSuccess)}
+                      startIcon={<ThumbUpAltIcon />}
+                      onClick={handleReviewModal}
+                    >
+                      Submit
+                    </Button>
+                  </div>
+                )} />
+          }
+          {
             editable && status && ['loan_approval', 'loan_review', 'disbursement_approval'].includes(status.toLowerCase()) &&
               <UserCan
                 role={currentUser.role_name}
@@ -331,7 +350,7 @@ const DrawerFooter = ({
                       editable && status && ['loan_review', 'loan_approval', 'disbursement_approval'].includes(status.toLowerCase()) &&
                         <>
                           {
-                            (currentUser.id == loanData?.approver_id || currentUser.id == loanData?.reviewer_id || [1,2,3,4].includes(currentUser.role_id)) &&
+                            (currentUser.id == loanData?.approver_id || currentUser.id == loanData?.reviewer_id || [1, 2, 3, 4].includes(currentUser.role_id)) &&
                               <Button
                                 variant="contained"
                                 disabled={loanData?.loading}
@@ -357,7 +376,7 @@ const DrawerFooter = ({
                         </Button>
                     }
                     {
-                      status && status.toLowerCase() === 'loan_approval' && (currentUser.id == loanData?.approver_id || [1,2,3,4].includes(currentUser.role_id)) &&
+                      status && status.toLowerCase() === 'loan_approval' && (currentUser.id == loanData?.approver_id || [1, 2, 3, 4].includes(currentUser.role_id)) &&
                         <Button
                           variant="contained"
                           disabled={loanData?.loading}
@@ -373,7 +392,7 @@ const DrawerFooter = ({
               />
           }
           {
-            editable && status && ['loan_review'].includes(status.toLowerCase()) && (currentUser.id == loanData?.reviewer_id || [1,2,3,4].includes(currentUser.role_id)) &&
+            editable && status && ['loan_review'].includes(status.toLowerCase()) && (currentUser.id == loanData?.reviewer_id || [1, 2, 3, 4].includes(currentUser.role_id)) &&
               < UserCan
                 role={currentUser.role_name}
                 perform={rulesList.loan_approval}
@@ -484,12 +503,12 @@ const DrawerFooter = ({
           </DialogContentText>
           <TextEditor setJSON={setPushbackRemarks} toolBar={true} />
           {
-            errorMsg && 
+            errorMsg &&
               <Alert severity="error" style={{padding: '0px 16px'}}>{errorMsg}</Alert>
           }
           <div style={{display: 'flex', justifyContent: 'center', marginTop: 8, marginBottom: 5}}>
             <Button variant='outlined' style={{marginRight: 8}} onClick={() => setPushback(false)}>Cancel</Button>
-            <LoaderButton 
+            <LoaderButton
               color='primary'
               variant='contained'
               isLoading={loading}

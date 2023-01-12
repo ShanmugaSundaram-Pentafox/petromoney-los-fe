@@ -1,5 +1,5 @@
 import DateFnsUtils from '@date-io/date-fns';
-import { CircularProgress, Divider, Tooltip } from '@material-ui/core';
+import { CircularProgress, Divider, Popover, Tooltip } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Switch from '@material-ui/core/Switch';
@@ -76,7 +76,7 @@ const useStyles = makeStyles({
   },
 });
 
-const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave, setFieldValue, setPanValidateData, panValidateData, validateField, setAadharValidateData, aadharValidateData }) => {
+const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave, setFieldValue, setPanValidateData, panValidateData, validateField, setAadharValidateData, aadharValidateData,currentUser }) => {
   const readOnly = readOnlyProps;
   const classes = useStyles();
   const [city, setCity] = useState([]);
@@ -88,6 +88,8 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
   });
   const { enqueueSnackbar } = useSnackbar();
   const [selectedDate, setSelectedDate] = useState(data?.dob && parse(data?.dob, 'dd-MM-yyyy', new Date()))
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
   const handleDateChange = (date) => {
     setSelectedDate(date)
     handleDate(date)
@@ -95,6 +97,11 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
   useEffect(() => {
     handleState(state)
   })
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const handleChange = (event) => {
     setState({ ...state, [event.target.name]: event.target.checked },);
   };
@@ -129,20 +136,20 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
      * If action is pan, only id is required else pan validateField will be called.
      * If action is aadhar, id and name is required else aadhar validateField and name validateField will be called.
      */
-    if((action === 'pan' && id) || (action === 'aadhar' && id && values?.first_name)){
-      action === 'pan' && setPanValidateData({icon:true, loading: true})
-      action === 'aadhar' && setAadharValidateData({icon:true, loading: true})
+    if ((action === 'pan' && id) || (action === 'aadhar' && id && values?.first_name)) {
+      action === 'pan' && setPanValidateData({ icon: true, loading: true })
+      action === 'aadhar' && setAadharValidateData({ icon: true, loading: true })
       validateId(action, id, data)
         .then((res) => {
-          if(action === 'pan') {
-            setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}, is_verified: res?.is_verified})
+          if (action === 'pan') {
+            setPanValidateData({ icon: true, loading: false, idType: 'PAN', details: res?.details || {}, is_verified: res?.is_verified })
             !values?.first_name && setFieldValue('first_name', res?.details?.firstName)
             !values?.last_name && setFieldValue('last_name', res?.details?.lastName)
             res?.details?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
             !values?.gender && setFieldValue('gender', res?.details?.gender?.toUpperCase())
             !values?.pincode && setFieldValue('pincode', res?.details?.address?.pinCode)
             action === 'pan' && !values?.address && setFieldValue('address', `${res?.details?.address?.buildingName}, ${res?.details?.address?.streetName}, ${res?.details?.address?.city}, ${res?.details?.address?.state} - ${res?.details?.address?.pinCode}`)
-          } else { setAadharValidateData({icon: true, loading: false, idType: 'AADHAR', details: res?.details || {}, is_verified: res?.is_verified}) }
+          } else { setAadharValidateData({ icon: true, loading: false, idType: 'AADHAR', details: res?.details || {}, is_verified: res?.is_verified }) }
         })
         .catch(e => {
           enqueueSnackbar(e, {
@@ -152,8 +159,8 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
             },
             variant: 'error',
           });
-          action === 'pan' && setPanValidateData({icon: true, idType: 'PAN'})
-          action === 'aadhar' && setAadharValidateData({icon: true, idType: 'AADHAR'})
+          action === 'pan' && setPanValidateData({ icon: true, idType: 'PAN' })
+          action === 'aadhar' && setAadharValidateData({ icon: true, idType: 'AADHAR' })
         })
     } else {
       validateField(action)
@@ -162,9 +169,9 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
   }
 
   useEffect(() => {
-    if(/^[1-9][0-9]{5}$/.test(values?.pincode)) {
+    if (/^[1-9][0-9]{5}$/.test(values?.pincode)) {
       getPincodeDetails(values?.pincode)
-        .then(res =>{
+        .then(res => {
           setCity(res)
           setFieldValue('city', res[0]?.city_code)
           setFieldValue('state', res[0]?.state_code)
@@ -173,7 +180,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
           logger(e)
         })
     }
-  },[values?.pincode])
+  }, [values?.pincode])
 
   const gridItem = {
     md: 12,
@@ -182,13 +189,13 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
   };
 
   const ValidateProps = (valid) => {
-    return({
-      endAdornment: <div style={{marginRight: 6, marginTop: 4, cursor: 'pointer'}}>
+    return ({
+      endAdornment: <div style={{ marginRight: 6, marginTop: 4, cursor: 'pointer' }}>
         {
-        valid?.icon ?
-        valid?.loading ? <CircularProgress size={15}/> :
-        valid?.is_verified ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{color:'#4caf50'}} /></Tooltip> :
-        <Tooltip title={`Invalid ${valid.idType}`} ><CancelOutlinedIcon fontSize='small' color='error' /></Tooltip> : null
+          valid?.icon ?
+            valid?.loading ? <CircularProgress size={15} /> :
+              valid?.is_verified ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{ color: '#4caf50' }} /></Tooltip> :
+                <Tooltip title={`Invalid ${valid.idType}`} ><CancelOutlinedIcon fontSize='small' color='error' /></Tooltip> : null
         }
       </div>
     })
@@ -227,12 +234,13 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
     { label: 'Principal', value: 'PRINCIPAL' },
     { label: 'Others', value: 'OTHERS' }
   ]
+
   return (
     <>
       {
         readOnly ? (
           <>
-            <Typography variant="h6" style={{marginTop: 8}}>Personal Details</Typography>
+            <Typography variant="h6" style={{ marginTop: 8 }}>Personal Details</Typography>
             <Grid container spacing={2} className={classes.readOnlyWrapper}>
               <Grid item md={6}>
                 <Box className={classes.box} >
@@ -242,53 +250,58 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   <ViewData title='State' value={values.state_name} />
                   <ViewData title='Marital Status' value={values.marital_status} />
                   <ViewData title='Mobile' value={values.mobile} />
+                  <ViewData title='Email' value={values.email} />
                 </Box>
               </Grid>
               <Grid item md={6}>
                 <Box className={classes.box} >
                   <ViewData title='Name' value={`${values.first_name} ${values.last_name}`} />
+                  <ViewData title={'Father\'s Name'} value={values.father_name} />
                   <ViewData title='Gender' value={values.gender} />
                   <ViewData title='City' value={values.city_name} />
                   <ViewData title='Pincode' value={values.pincode} />
                   <ViewData title='Residing since' value={values.residing_since} />
-                  <ViewData title='Email' value={values.email} />
                 </Box>
               </Grid>
             </Grid>
             <Divider />
-            <Typography variant="h6" style={{marginTop: 8}}>KYC Details</Typography>
+            <Typography variant="h6" style={{ marginTop: 8 }}>KYC Details</Typography>
             <Grid container spacing={2} className={classes.readOnlyWrapper}>
-              <Grid item md={6}>
-                <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success': 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'}/>} />
+              <Grid title='Click to view PAN details' item md={6}>
+                <Tooltip title={values?.pan_verified ? 'Click to view PAN details' : 'Verify your PAN to get the details'}>
+                  <div onClick={(event) => values?.pan_verified == 1 ? setAnchorEl(event.currentTarget) : null}>
+                    <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success' : 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'} />} />
+                  </div>
+                </Tooltip>
               </Grid>
               <Grid item md={6}>
-                <ViewData title='Aadhar' value={values.aadhar} endIcon={<CustomToken variant={values?.aadhar_verified ? 'success': 'error'} label={values?.aadhar_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.aadhar_verified ? 'tick' : 'cross'}/>} />
+                <ViewData title='Aadhar' value={values.aadhar} endIcon={<CustomToken variant={values?.aadhar_verified ? 'success' : 'error'} label={values?.aadhar_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.aadhar_verified ? 'tick' : 'cross'} />} />
               </Grid>
             </Grid>
             <Divider />
             {
               values?.profile_image_url || values?.pan_file_url || values?.aadhar_f_file_url || values?.aadhar_b_file_url ? (
                 <div className={classes.readOnlyWrapper}>
-                  <Typography variant="h6" style={{marginTop: 8}}>Attachments</Typography>
+                  <Typography variant="h6" style={{ marginTop: 8 }}>Attachments</Typography>
                   <div style={{ display: 'flex', marginTop: 16 }}>
-                    {values.profile_image_url && <DocAttachment tooltip='View Profile' imgUrl={values?.profile_image_url} docName='Profile' style={{marginRight: 20}} />}
-                    {values.pan_file_url && <DocAttachment tooltip='View PAN' imgUrl={values?.pan_file_url} docName='PAN' style={{marginRight: 20}} />}
-                    {values.aadhar_f_file_url && <DocAttachment tooltip='View Aadhar Front' imgUrl={values?.aadhar_f_file_url} docName='Aadhar front' style={{marginRight: 20}} />}
-                    {values.aadhar_b_file_url && <DocAttachment tooltip='View Aadhar Back' imgUrl={values?.aadhar_b_file_url} docName='Aadhar back' style={{marginRight: 20}} />}
+                    {values.profile_image_url && <DocAttachment tooltip='View Profile' imgUrl={values?.profile_image_url} docName='Profile' style={{ marginRight: 20 }} />}
+                    {values.pan_file_url && <DocAttachment tooltip='View PAN' imgUrl={values?.pan_file_url} docName='PAN' style={{ marginRight: 20 }} />}
+                    {values.aadhar_f_file_url && <DocAttachment tooltip='View Aadhar Front' imgUrl={values?.aadhar_f_file_url} docName='Aadhar front' style={{ marginRight: 20 }} />}
+                    {values.aadhar_b_file_url && <DocAttachment tooltip='View Aadhar Back' imgUrl={values?.aadhar_b_file_url} docName='Aadhar back' style={{ marginRight: 20 }} />}
                   </div>
                 </div>
               ) : (
                 <div className={classes.readOnlyWrapper}>
                   <Typography variant="h6">Attachments</Typography>
                   <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-                    <Typography variant="h7">No Attachments Found</Typography>
+                    <Typography variant="h6">No Attachments Found</Typography>
                   </div>
                 </div>
               )
             }
           </>
         ) : (
-          <Grid container style={{marginTop: 10}}>
+          <Grid container style={{ marginTop: 10 }}>
             <>
               <Grid {...gridItem} md={12} >
                 <Typography variant="title"><strong>KYC Details</strong></Typography>
@@ -298,7 +311,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   label="PAN Number"
                   name="pan"
                   value={values.pan?.toUpperCase()}
-                  disabled={panValidateData?.loading || values?.pan_verified}
+                  disabled={(currentUser.role_id !== 1) && (panValidateData?.loading || values?.pan_verified)}
                   error={errors.pan}
                   helperText={errors.pan}
                   readOnly={readOnly}
@@ -308,7 +321,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 />
                 {
                   !values?.pan_verified || values?.pan !== data?.pan ?
-                    <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={() => handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
+                    <Typography variant="caption" style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
                 }
               </Grid>
               <Grid {...gridItem} md={6}>
@@ -327,7 +340,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 />
                 {
                   !values?.aadhar_verified || values?.aadhar !== data?.aadhar ?
-                    <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={() => handleValidate('aadhar', values?.aadhar, values?.first_name)}>Validate Aadhar</Typography> : null
+                    <Typography variant="caption" style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleValidate('aadhar', values?.aadhar, values?.first_name)}>Validate Aadhar</Typography> : null
                 }
               </Grid>
               <Grid {...gridItem} md={12} >
@@ -353,6 +366,18 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   error={errors.last_name}
                   helperText={errors.last_name}
                   value={values.last_name?.toUpperCase()}
+                  onChange={onChange}
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid>
+              <Grid {...gridItem} md={6}>
+                <TextInput
+                  label="Father's Name"
+                  name="father_name"
+                  readOnly={readOnly}
+                  error={errors.father_name}
+                  helperText={errors.father_name}
+                  value={values.father_name?.toUpperCase()}
                   onChange={onChange}
                   InputLabelProps={{ shrink: true }}
                 />
@@ -458,7 +483,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   }
                   {
                     city?.map((item, i) => {
-                      return(
+                      return (
                         <option key={i} value={item?.city_code}>{item?.city}</option>
                       )
                     })
@@ -483,8 +508,8 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                       <option value="" disabled>Enter Pincode to select State</option>
                   }
                   {
-                    city?.map((item, i)=> {
-                      return(
+                    city?.map((item, i) => {
+                      return (
                         <option key={i} value={item?.state_code}>{item?.state}</option>
                       )
                     })
@@ -664,10 +689,10 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 <Typography variant="title"><strong>Attachments</strong></Typography>
               </Grid>
               <div className={classes.attachmentContainer}>
-                <DocAttachment action={true} imgUrl={values?.profile_image_url} docName='Profile' onUpload={() => docUpload('Profile')} onDelete={() => onDocDelete({profile_image_url:''})} disabled={!values?.profile_image_url}/>
-                <DocAttachment action={true} imgUrl={values?.pan_file_url} docName='PAN Card' onUpload={() => docUpload('PAN')} onDelete={() => onDocDelete({pan_file_url:''})} disabled={!values?.pan_file_url} />
-                <DocAttachment action={true} imgUrl={values?.aadhar_f_file_url} docName='Aadhar Front' onUpload={() => docUpload('Front')} onDelete={() => onDocDelete({aadhar_f_file_url:''})} disabled={!values?.aadhar_f_file_url} />
-                <DocAttachment action={true} imgUrl={values?.aadhar_b_file_url} docName='Aadhar Back' onUpload={() => docUpload('Back')} onDelete={() => onDocDelete({aadhar_b_file_url:''})} disabled={!values?.aadhar_b_file_url} />
+                <DocAttachment action={true} imgUrl={values?.profile_image_url} docName='Profile' onUpload={() => docUpload('Profile')} onDelete={() => onDocDelete({ profile_image_url: '' })} disabled={!values?.profile_image_url} />
+                <DocAttachment action={true} imgUrl={values?.pan_file_url} docName='PAN Card' onUpload={() => docUpload('PAN')} onDelete={() => onDocDelete({ pan_file_url: '' })} disabled={!values?.pan_file_url} />
+                <DocAttachment action={true} imgUrl={values?.aadhar_f_file_url} docName='Aadhar Front' onUpload={() => docUpload('Front')} onDelete={() => onDocDelete({ aadhar_f_file_url: '' })} disabled={!values?.aadhar_f_file_url} />
+                <DocAttachment action={true} imgUrl={values?.aadhar_b_file_url} docName='Aadhar Back' onUpload={() => docUpload('Back')} onDelete={() => onDocDelete({ aadhar_b_file_url: '' })} disabled={!values?.aadhar_b_file_url} />
               </div>
               {
                 showUpload && <FileUpload
@@ -683,6 +708,35 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
           </Grid>
         )
       }
+      {/* This popup is to show the actual pan details returned from the external API */}
+      <Popover
+        id={anchorEl ? 'simple-popover' : undefined}
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+      >
+        <div style={{ minHeight: 150, width: 380, padding: 20 }}>
+          <div style={{ marginBottom: 12 }}>
+            <Typography align="center" variant='h4' mb={20} className={classes.titlename}>Actual PAN Details</Typography>
+            <div className={classes.title}>
+              <ViewData title='Name' value={data?.pan_details?.name} />
+              <ViewData title='First name' value={data?.pan_details?.firstName} />
+              <ViewData title='Middle name' value={data?.pan_details?.middleName} />
+              <ViewData title='last name' value={data?.pan_details?.lastName} />
+              <ViewData title='DOB' value={data?.pan_details?.dob} />
+              <ViewData title='Address' value={`${data?.pan_details?.address?.buildingName} ${data?.pan_details?.address?.streetName}, ${data?.pan_details?.address?.city}, ${data?.pan_details?.address?.state}, ${data?.pan_details?.address?.pinCode} `} />
+            </div>
+          </div>
+        </div>
+      </Popover>
     </>
   )
 }

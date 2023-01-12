@@ -150,7 +150,7 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
       .then(data => {
         let cdata = [
           { name: 'Submitted', count: data?.submitted_count },
-          { name: 'Pending Review', count: data?.loan_review_count },
+          { name: 'Pending Review', count: data?.loan_review_count,amount: data?.amount_requested_review },
           { name: 'Pending Approval', count: data?.loan_approval_count || 0, amount: data?.amount_requested },
           { name: 'Approved', count: data?.approved_count, amount: data?.amount_approved },
           { name: 'Disb. Approval', count: data?.disbursement_approval_count || 0, amount: data?.amount_disbursement_approval },

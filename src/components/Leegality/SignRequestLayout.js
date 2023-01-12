@@ -55,7 +55,7 @@ const useStyles = makeStyles(theme => ({
 
 }));
 
-const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callback, loanAmount, productId }) => {
+const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callback, loanAmount, productId,currentUser }) => {
   const classes = useStyles();
   const [dealership, setDealership] = useState({})
   const [dealers, setDealers] = useState([])
@@ -237,6 +237,13 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
             }, 3000);
           } else {
             setHideSend(false)
+            enqueueSnackbar(res.message, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            })
             console.log('>> Document Details status error >> ', res)
           }
         })
@@ -274,7 +281,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
                 loading ? (
                   <CircularProgress className="circular-progress-color" variant="determinate" color="green" />
                 ) : (loansData?.document_id ? (
-                  <LeegalityLayout docId={loansData?.document_id} dealershipId={dealershipId} />
+                  <LeegalityLayout docId={loansData?.document_id} dealershipId={dealershipId} currentUser={currentUser} />
                 ) : (
                   <Grid container spacing={2}>
                     {

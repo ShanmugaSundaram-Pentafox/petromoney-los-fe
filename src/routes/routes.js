@@ -16,13 +16,16 @@ import OwnerDetails from '../pages/dashboard/components/OwnerDetails';
 import Dashboard from '../pages/dashboard/dashboard';
 import Dealership from '../pages/dealership/dealership';
 import DealershipDetails from '../pages/dealershipDetails/dealershipDetails';
+import PresubmitLoansTable from '../pages/loans/PresubmitLoansTable';
 import BlacklistTable from '../pages/loanspage/BlacklistTable';
 import LmsLos from '../pages/loanspage/lmsLosTable';
 import Loans from '../pages/loanspage/loans'
 import RenewalTable from '../pages/loanspage/RenewalTable';
 import Login from '../pages/login/login';
+import NOCertificateRequestTable from '../pages/noc/NOCertificateRequestTable';
 import NotFound from '../pages/NotFound/NotFound';
 import Profile from '../pages/profile/Profile';
+import ReferralTable from '../pages/referralModule/ReferralTable';
 import CollectionRemarks from '../pages/reports/CollectionRemarks';
 import CreditReload from '../pages/reports/CreditReload';
 import DealersDueReport from '../pages/reports/DealersDueReport';
@@ -75,6 +78,9 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/reports" component={DealersDueReport} />
       <ProtectedRoute allow exact path="/reports/remarks" component={CollectionRemarks} />
       <ProtectedRoute allow exact path="/reports/dpd" component={DpdReport} />
+      <ProtectedRoute allow exact path="/noc" component={NOCertificateRequestTable} />
+      <ProtectedRoute allow exact path="/pre-submit" component={PresubmitLoansTable} />
+      <ProtectedRoute allow exact path="/referral" component={ReferralTable} />
 
       <ProtectedRoute 
         exact 

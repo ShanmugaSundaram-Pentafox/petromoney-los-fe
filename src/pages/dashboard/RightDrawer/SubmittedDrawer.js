@@ -15,7 +15,7 @@ import LoaderButton from '../../../components/CommonComponents/Button/LoaderButt
 import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { getUserRoleForReview } from '../../../services/common.service';
 import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
-import SalesInfo from '../components/SalesInfo';
+import WorkingSheetDrawer from '../../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
 
 
 const useStyles = makeStyles(theme => ({
@@ -100,16 +100,14 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
   }
 
   const updateLoanStatus = () => {
-    if(user && remarks){
-    
+    if ((user && remarks) || status == 'pre_submit') {
       setLoading(true)
       let reqBody = {
-        user_id: currentUser.id,
-        reviewer_id: user.value,
+        user_id: currentUser?.id,
+        reviewer_id: user?.value,
         review_remarks: remarks,
         product_id: info?.product_id,
       }
-
       updateLoanApprovalStatusById(id, loanData?.id, 'approval', reqBody)
         .then(res => {
           enqueueSnackbar(res.message, {
@@ -153,11 +151,11 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
         </div>
         <div className={classes.contentWrapper}>
           <DealershipData data={data} readOnly={true} />
-          <SalesInfo id={id} currentUser={currentUser} readOnly={true} />
+          <WorkingSheetDrawer id={id} />
           <LoanInfo status={status} viewable={false} currentUser={currentUser} newInfo={loanData} editable={editable} data={selectedLoanData} updateNewLoanInfo={updateNewLoanInfo} />
         </div>
         <div>
-          <DrawerFooter selectedLoanData={selectedLoanData} handleReviewModal={handleReviewModal} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
+          <DrawerFooter selectedLoanData={selectedLoanData} handleReviewModal={status == 'pre_submit' ? updateLoanStatus : handleReviewModal} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
         </div>
       </div >
       <Dialog
@@ -173,7 +171,7 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
               <Select
                 isClearable
                 name='user_approve'
-                onChange={(data) => {setUser(data); setErrorStatus();}}
+                onChange={(data) => { setUser(data); setErrorStatus(); }}
                 options={userRole}
                 menuPlacement='bottom'
                 menuPosition='fixed'
@@ -184,27 +182,14 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
               Please enter your remarks for sending this to review.
             </DialogContentText>
             <TextEditor setJSON={setRemarks} toolBar={true} />
-            {/* <TextInput
-              multiline
-              alignTop
-              direction='column'
-              rows={4}
-              rowsMax={8}
-              labelText="Remarks*"
-              placeholder="Enter your remarks here."
-              value={remarks}
-              onChange={e => {
-                setRemarks(e.target.value); setErrorStatus();
-              }}
-            /> */}
             {
-              errorStatus && 
+              errorStatus &&
                 <Alert severity="error" style={{padding: '0px 16px'}}>{errorStatus}</Alert>
             }
           </div>
           <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 8, marginBottom: 5}}>
             <Button variant='outlined' onClick={handleReviewModal} style={{marginRight: 8}}>Cancel</Button>
-            <LoaderButton 
+            <LoaderButton
               variant='contained'
               color='primary'
               buttonLabel='Confirm'

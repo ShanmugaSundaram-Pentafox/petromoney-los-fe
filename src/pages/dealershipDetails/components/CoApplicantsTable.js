@@ -13,7 +13,10 @@ import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import CreditInfoSideWrapper from './CreditInfoSideWrapper';
+import CrimeInfoSideWrapper from './CrimeInfoSideWrapper';
+import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { URL } from '../../../config/serverUrls';
+import { rulesList } from '../../../config/userRules';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -24,23 +27,15 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 8
   },
   table: {
-    // minWidth: 650,
     padding: 8
   },
   header: {
     display: 'flex',
     marginBottom: 8
   },
-  footer: {
-    paddingTop: 8,
-    textAlign: 'right'
-  },
   sidePanelWrapper: {
     width: '40vw',
     minWidth: 300
-  },
-  actionButtons: {
-    // paddingTop: 8
   },
   tableRow: {
     cursor: 'pointer',
@@ -58,13 +53,15 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const CoApplicantsTable = ({ id, editable, coApplicantsData, titleAlign, onClickAddMenu, currentUser, dealersClickRow, deletable, viewOnly }) => {
+const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, currentUser, dealersClickRow }) => {
   const classes = useStyles();
   const queryClient = useQueryClient()
   const { enqueueSnackbar } = useSnackbar();
   const [rowData, setRowData] = useState();
-  const [deleteModal, setDeleteModal] = useState(false);
-
+  const [crimeData, setCrimeData] = useState();
+  const adminOnlyEdit = permissionCheck(currentUser.role_name, rulesList.admin_edit);
+  const cibil_permission = permissionCheck(currentUser.role_name, rulesList.cibil_edit);
+  const crime_permission = permissionCheck(currentUser.role_name, rulesList.crime_check);
 
   const DeleteApplicant = (values) => {
     const formData = new FormData();
@@ -134,13 +131,9 @@ const CoApplicantsTable = ({ id, editable, coApplicantsData, titleAlign, onClick
     return (
       <div className={classes.wrapper}>
         <Typography variant="h5" align={titleAlign} className={classes.title}>No CoApplicants Found</Typography>
-        {
-          editable && (
-            <div style={{ textAlign: 'center', marginTop: 8 }}>
-              <Button color="primary" variant="outlined" size="small" onClick={() => onClickAddMenu('COAPPLICANT')}>Add CoApplicants</Button>
-            </div>
-          )
-        }
+        <div style={{ textAlign: 'center', marginTop: 8 }}>
+          <Button color="primary" variant="outlined" size="small" onClick={() => onClickAddMenu('COAPPLICANT')}>Add CoApplicants</Button>
+        </div>
       </div>
     );
 
@@ -155,15 +148,12 @@ const CoApplicantsTable = ({ id, editable, coApplicantsData, titleAlign, onClick
             <TableCell>Co Applicant Name</TableCell>
             <TableCell align="center">Mobile</TableCell>
             <TableCell align="center">Documents</TableCell>
-            {
-              editable || viewOnly ?
-                <TableCell align="center">Action</TableCell> : null
-            }
+            <TableCell align="center">Action</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {coApplicantsData.map((row, index) => (
-            <TableRow className={classes.tableRow} key={row.id} onClick={e => editable || viewOnly ? dealersClickRow(e, row, 'COAPPLICANT') : null}>
+            <TableRow className={classes.tableRow} key={row.id} onClick={e => dealersClickRow(e, row, 'COAPPLICANT')}>
               <TableCell>
                 {row.first_name}&nbsp;&nbsp;
               </TableCell>
@@ -188,11 +178,12 @@ const CoApplicantsTable = ({ id, editable, coApplicantsData, titleAlign, onClick
                     -
                   </TableCell>}
               </TableCell>
-              {
-                editable || viewOnly ?
-                  <TableCell align="right" onClick={e => e.stopPropagation()}>
-                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                      <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>
+              <TableCell align="right" onClick={e => e.stopPropagation()}>
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                  {crime_permission && <Button style={{ marginRight: 12 }} size='small' variant='outlined' color='secondary' onClick={() => setCrimeData(row)}>Crime check</Button>}
+                  {cibil_permission && <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>}
+                  {
+                    adminOnlyEdit &&
                       <div style={{ marginLeft: 12 }} onClick={() => DeleteApplicant(row)}>
                         {
                           row.is_active == 0 ? (
@@ -206,10 +197,9 @@ const CoApplicantsTable = ({ id, editable, coApplicantsData, titleAlign, onClick
                           )
                         }
                       </div>
-                    </div>
-                    {/* {deletable && <DeleteButton alertText={`Do you really want to delete this co-applicant named ${row?.first_name}?`} deleteAction={() => DeleteApplicant(row)} deleteModal={deleteModal} setDeleteModal={setDeleteModal} id={index} buttonType='icon' />} */}
-                  </TableCell> : null
-              }
+                  }
+                </div>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -220,10 +210,17 @@ const CoApplicantsTable = ({ id, editable, coApplicantsData, titleAlign, onClick
         variant="temporary"
       >
         <div className={classes.sidePanelWrapper}>
-          {
-            // !dealerData?.isLoading && !coApplicantsData?.isLoading &&
-            <CreditInfoSideWrapper dealershipId={id} data={rowData} currentUser={currentUser} onClose={() => setRowData()} />
-          }
+          <CreditInfoSideWrapper dealershipId={id} data={rowData} currentUser={currentUser} onClose={() => setRowData()} />
+        </div>
+      </Drawer>
+      <Drawer
+        anchor="right"
+        open={crimeData}
+        onClose={() => { setCrimeData() }}
+        variant="temporary"
+      >
+        <div className={classes.sidePanelWrapper}>
+          <CrimeInfoSideWrapper dealershipId={id} data={crimeData} currentUser={currentUser} onClose={() => setCrimeData()} />
         </div>
       </Drawer>
     </div>

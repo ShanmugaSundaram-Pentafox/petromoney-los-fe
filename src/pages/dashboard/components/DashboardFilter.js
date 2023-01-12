@@ -13,7 +13,7 @@ import { getTypeOfAccount } from '../../../services/users.service';
 const Option = (props) => {
   return (
     <components.Option {...props} >
-      <div style={{display: 'flex', alignItems: 'center'}}>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
         <input
           type="checkbox"
           checked={props.isSelected}
@@ -36,13 +36,13 @@ const multiValueContainer = ({ selectProps, data }) => {
 };
 
 export const Selector = ({ options, value, setValue, title }) => {
-  return(
+  return (
     <>
       <Box style={{ width: 180 }}>
         <label style={{ color: 'hsl(0,0%,75%)' }}>{title}</label>
         <Select
           options={options}
-          isMulti = {true}
+          isMulti={true}
           closeMenuOnSelect={false}
           hideSelectedOptions={false}
           isClearable
@@ -53,15 +53,15 @@ export const Selector = ({ options, value, setValue, title }) => {
             Option,
           }}
           onChange={(selectedOption, triggeredAction) => {
-            if(triggeredAction?.action === 'clear'){
-              setValue([{value:0, label: 'ALL'}])
+            if (triggeredAction?.action === 'clear') {
+              setValue([{ value: 0, label: 'ALL' }])
             } else {
               setValue(selectedOption.filter(item => item.label !== 'ALL'))
             }
           }}
           styles={{
             control: (provided) => ({
-              ...provided, 
+              ...provided,
               borderColor: 'hsl(0, 0%, 90%)',
               minHeight: 29,
               marginRight: 10,
@@ -171,7 +171,7 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans, filterType, f
     key: 'range'
   });
 
-  const { data: zones = []} = useQuery('zones', () => {return getZones(1)}, {refetchOnWindowFocus: false})
+  const { data: zones = [] } = useQuery('zones', () => { return getZones(1) }, { refetchOnWindowFocus: false })
 
   const onDatePickerChange = ({ range }) => {
     setDateRange(range)
@@ -226,12 +226,12 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans, filterType, f
   }, [selectedZones])
 
   useMount(() => {
-    if(filters.includes('product')) {
+    if (filters.includes('product')) {
       getFilteredProducts()
         .then(setProducts)
         .catch(() => null)
-    } 
-    if(filters.includes('account')) {
+    }
+    if (filters.includes('account')) {
       getTypeOfAccount()
         .then((data) => {
           setAccountType(
@@ -249,22 +249,22 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans, filterType, f
 
   useEffect(() => {
     let qry = {}
-    if(filters.includes('zone')){
+    if (filters.includes('zone')) {
       let zoneId = []
       selectedZones.forEach(item => zoneId.push(item.value))
-      qry.zone= zoneId.toString()
+      qry.zone = zoneId.toString()
     }
-    if(filters.includes('region')){
+    if (filters.includes('region')) {
       let regionId = []
       selectedRegion.forEach(item => regionId.push(item.value))
       qry.region = regionId.toString()
     }
-    if(filters.includes('product')) {
+    if (filters.includes('product')) {
       let productId = []
       selectedProducts.forEach(item => productId.push(item.value))
       qry.products = productId.toString()
     }
-    if(filters.includes('account')) {
+    if (filters.includes('account')) {
       let accountTypeID = []
       selectedAccountType.forEach(item => accountTypeID.push(item.value))
       qry.account = accountTypeID.toString()
@@ -288,7 +288,7 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans, filterType, f
       .then(data => {
         let cdata = [
           { name: 'Submitted', count: data?.submitted_count },
-          { name: 'Pending Review', count: data?.loan_review_count },
+          { name: 'Pending Review', count: data?.loan_review_count, amount: data?.amount_requested_review },
           { name: 'Pending Approval', count: data?.loan_approval_count || 0, amount: data?.amount_requested },
           { name: 'Approved', count: data?.approved_count, amount: data?.amount_approved },
           { name: 'Disb. Approval', count: data?.disbursement_approval_count || 0, amount: data?.amount_disbursement_approval },
@@ -313,8 +313,8 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans, filterType, f
       .then(data => {
         let cdata = [
           { name: 'Zone', count: selectedZones },
-          { name: 'No.of. New Request', count: data?.new_request?.count},
-          { name: 'Total.Req. Amount', amount: data?.new_request?.amount}
+          { name: 'No.of. New Request', count: data?.new_request?.count },
+          { name: 'Total.Req. Amount', amount: data?.new_request?.amount }
         ]
         setChartData(cdata)
       })
@@ -330,7 +330,7 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans, filterType, f
   }
 
   return (
-    <Box p={3} borderRadius={4} bgcolor="background.paper" style={{padding: 10}}>
+    <Box p={3} borderRadius={4} bgcolor="background.paper" style={{ padding: 10 }}>
       <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
         <Box style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
           {

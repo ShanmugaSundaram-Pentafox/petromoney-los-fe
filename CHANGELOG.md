@@ -2,6 +2,113 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.24.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.23.6...v2.24.0) (2023-01-12)
+
+
+### Features
+
+* **dealer-referral:** added dealer referral screen ([13f2114](https://gitlab.com/vignesh3/petromall-fe/commit/13f2114d89a2aca661f6c86a7a212deba1470cf4))
+* **dealer-referral:** option to update the referred dealership ([3796beb](https://gitlab.com/vignesh3/petromall-fe/commit/3796beb6f2b8d2381edc10bd0795e0f21ba344ab))
+
+
+### Bug Fixes
+
+* **credit-reload:** reverted the changes because raising this in fresh PR ([22f9fb5](https://gitlab.com/vignesh3/petromall-fe/commit/22f9fb5fd974905c58787f04496ee3cfcb190252))
+* **dealer-referral:** updated api url ([d87a682](https://gitlab.com/vignesh3/petromall-fe/commit/d87a6824990928af0a49c6a6e6a8698e4d9943b4))
+* **leegality:** updated data and null  check in agreement table ([e26721f](https://gitlab.com/vignesh3/petromall-fe/commit/e26721f24950a77644ae9aceb71b365bc6a513b1))
+* Merge branch 'development' ([07aed3a](https://gitlab.com/vignesh3/petromall-fe/commit/07aed3a9c8ea12a3e4c090548040827461a1fc0e))
+* **pdr,withheld:** updated validations for forms ([d27bd27](https://gitlab.com/vignesh3/petromall-fe/commit/d27bd27ab6ea348ab04ae7bed610344d79e8db9a))
+* **score-card:** updated incorrect key & added missing value in table ([42fba45](https://gitlab.com/vignesh3/petromall-fe/commit/42fba4592468ab0d0cb69f8beded737032f0eea5))
+
+### [2.23.6](https://gitlab.com/vignesh3/petromall-fe/compare/v2.23.5...v2.23.6) (2022-12-28)
+
+
+### Bug Fixes
+
+* **loan-approval:** allowed ops team to approve loans ([3cf42f8](https://gitlab.com/vignesh3/petromall-fe/commit/3cf42f8c9983eb972675abe3a9260574d3896ef5))
+* Merge branch 'development' ([1059cf1](https://gitlab.com/vignesh3/petromall-fe/commit/1059cf1a5d0d25573993505657d32d7a6645366f))
+* Merge branch 'development' to fix/score-card-wrk-sheet ([14a08ad](https://gitlab.com/vignesh3/petromall-fe/commit/14a08ad46a79f92166e1ad531b5f9adc1f72f3fb))
+* **score-card:** added tooltip for the collapsible ([9b4a620](https://gitlab.com/vignesh3/petromall-fe/commit/9b4a620b90051f5c8013e79a32611fb12fc48ec9))
+* **score-card:** added working sheet table in scorecard ([25db902](https://gitlab.com/vignesh3/petromall-fe/commit/25db902512f9687c1fba4bba305a59daf8e948ec))
+* **score-card:** condition check for remarks ([91f4dd7](https://gitlab.com/vignesh3/petromall-fe/commit/91f4dd7976bf4ab6a7b5b73ec333ea591af91afe))
+* **score-card:** enable inner scroll for working sheet tables in side drawer ([769842f](https://gitlab.com/vignesh3/petromall-fe/commit/769842fad149db12af1e5ca08bbc231ff8051b4a))
+* **score-card:** update label in cibil table ([a627610](https://gitlab.com/vignesh3/petromall-fe/commit/a6276102d07f61bdc9814f3fca402e2f73e8888c))
+* **score-card:** update table keys and allow dealer to edit in portal ([edc34d4](https://gitlab.com/vignesh3/petromall-fe/commit/edc34d41bce4489d4be3fee423763e4e92e9894a))
+* **score-card:** updated response key ([43d680b](https://gitlab.com/vignesh3/petromall-fe/commit/43d680b3956629ee5ff4cba74077d107c61217c8))
+
+### [2.23.5](https://gitlab.com/vignesh3/petromall-fe/compare/v2.23.4...v2.23.5) (2022-12-17)
+
+
+### Bug Fixes
+
+* **permissions & label:** rename remarks to recommendation & allow FO to view pre-submit ([2db07ae](https://gitlab.com/vignesh3/petromall-fe/commit/2db07ae49e29112074f8046047976109939fde14))
+
+### [2.23.4](https://gitlab.com/vignesh3/petromall-fe/compare/v2.23.3...v2.23.4) (2022-12-16)
+
+
+### Bug Fixes
+
+* **cibil-permission:** allow credit to refresh cibil data ([8d00570](https://gitlab.com/vignesh3/petromall-fe/commit/8d005708e2ce4183815eb9c76934f6b7d7d95e98))
+
+### [2.23.3](https://gitlab.com/vignesh3/petromall-fe/compare/v2.23.2...v2.23.3) (2022-12-16)
+
+
+### Bug Fixes
+
+* **dealership-permission:** fix permission issue for all the roles ([b00e5a6](https://gitlab.com/vignesh3/petromall-fe/commit/b00e5a6a375825511349022eae052440e0321aff))
+
+### [2.23.2](https://gitlab.com/vignesh3/petromall-fe/compare/v2.23.1...v2.23.2) (2022-12-14)
+
+
+### Bug Fixes
+
+* **dealership-details:** allow admin to edit dealership details ([ac41f6c](https://gitlab.com/vignesh3/petromall-fe/commit/ac41f6cc4088cea9182eca4b9da8e23a3cd86e26))
+
+### [2.23.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.23.0...v2.23.1) (2022-12-14)
+
+
+### Bug Fixes
+
+* allow only credit and admin to user pre-submit ([96f4ba0](https://gitlab.com/vignesh3/petromall-fe/commit/96f4ba0b13ffb7a93676738ba85064ad161944dd))
+* merge branch development into dealer-details ([d189311](https://gitlab.com/vignesh3/petromall-fe/commit/d18931190dabf02ea80614537cbb12c75d9915ea))
+* Merge remote-tracking branch 'origin' into refactor/deler-details ([837efd7](https://gitlab.com/vignesh3/petromall-fe/commit/837efd7efb9c35ba747884f15f575167a9154942))
+* **pre-submit:** allow presubmit for sales ([702d058](https://gitlab.com/vignesh3/petromall-fe/commit/702d058e82d6ec848af45b841636ab9c7d634b6b))
+* remove dealership list access for all the sales roles ([c923452](https://gitlab.com/vignesh3/petromall-fe/commit/c923452bb24f4d237e3c8b297917c6a38dc08fdd))
+* **score_card:** updated variable declaration outside the component ([8a8e909](https://gitlab.com/vignesh3/petromall-fe/commit/8a8e9090fe8cebd264dc86a2de06b8364c37dfaa))
+* **score-card:** added missing values ([c6a0ffb](https://gitlab.com/vignesh3/petromall-fe/commit/c6a0ffbd88da42181a1ab44ee9e2b60922d06b8b))
+
+## [2.23.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.22.0...v2.23.0) (2022-12-08)
+
+
+### Features
+
+* new status as pre-submit where credit & admins role move to submitted queue ([916dcc8](https://gitlab.com/vignesh3/petromall-fe/commit/916dcc8e4da70b2a50f80947472b3e38246e7250))
+
+
+### Bug Fixes
+
+* empty response handle ([27afb10](https://gitlab.com/vignesh3/petromall-fe/commit/27afb10b7280f45c5cb568f21a33f67865b58d2e))
+* **pdr:** allow integer to fields in business details form ([572db8d](https://gitlab.com/vignesh3/petromall-fe/commit/572db8dae19f3cd2ef43f79a08d4f2e7500605cc))
+
+## [2.22.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.21.1...v2.22.0) (2022-12-03)
+
+
+### Features
+
+* **crime check:** crime check feature for dealership and applicants ([b046489](https://gitlab.com/vignesh3/petromall-fe/commit/b0464893fa0cb7405cdf6300b143447806830e87))
+* noc letter generation ([c7b2f47](https://gitlab.com/vignesh3/petromall-fe/commit/c7b2f475fb9ce161e3e9d1292e3b795cc7a4c2c2))
+
+
+### Bug Fixes
+
+* **cibil:** cibil check & refresh only to credit roles and admin ([669cf70](https://gitlab.com/vignesh3/petromall-fe/commit/669cf70010da02b856953bd463428a1452ae8e9d))
+* **cibil:** cibil check made available for everyone ([e852f6e](https://gitlab.com/vignesh3/petromall-fe/commit/e852f6e198809d0dc95b7d791dd854002fe03b18))
+* **cibil:** cibil check made available for everyone ([9c83baf](https://gitlab.com/vignesh3/petromall-fe/commit/9c83baff7275d5edd99bb0bfab7616a494e473bc))
+* leegality delete issue ([3afd259](https://gitlab.com/vignesh3/petromall-fe/commit/3afd259cb397396e721e146e1af5a4f462565c86))
+* **leegality:** update delete option issue ([d0fcd25](https://gitlab.com/vignesh3/petromall-fe/commit/d0fcd253176bb5f677d3d688368abe8a79c4c981))
+* loan stats total count issue in dashboard ([9cf193f](https://gitlab.com/vignesh3/petromall-fe/commit/9cf193f906cf34a984fe8a0cc3bca08c8c4965fd))
+* **score-card:** added missing tables in score card ([bfc3abe](https://gitlab.com/vignesh3/petromall-fe/commit/bfc3abe7dec23c72e3c50ad58967dc16636c708b))
+
 ### [2.21.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.21.0...v2.21.1) (2022-10-30)
 
 

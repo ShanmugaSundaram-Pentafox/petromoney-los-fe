@@ -116,7 +116,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
       })
   }
 
-  const editable = permissionCheck(currentUser.role_name, rulesList.dealership_edit)
+  const editable = permissionCheck(currentUser.role_name, rulesList.loan_approval)
 
   const getRemarks = loan => () => {
     setDialogState({ open: true, data: loan });

@@ -1,25 +1,21 @@
-import { Dialog } from '@material-ui/core';
+import { Drawer } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
-import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import moment from 'moment';
 import MUIDataTable from 'mui-datatables';
-import React, { useMemo, useState, useEffect } from 'react';
-import { connect } from 'react-redux';
+import React, { useMemo, useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
+import { useMount } from 'react-use';
+import Currency from '../../components/Number/Currency';
+import { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
-import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
+import { getDealershipById } from '../../services/dealerships.service';
 import { getLoansByStatus } from '../../services/loans.service';
-import { setLoansByStatus } from '../../store/loans/loans.actions';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
-import SignRequestLayout from '../Leegality/SignRequestLayout';
-import Currency from '../Number/Currency';
-import { permissionCheck } from '../UserCan/UserCan';
-
+import SubmittedDrawer from '../dashboard/RightDrawer/SubmittedDrawer';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -34,46 +30,41 @@ const useStyles = makeStyles(theme => ({
     minWidth: '30px',
     textAlign: 'center',
   },
-  pills_FUEL: {
-    color: '#d35178',
-    backgroundColor: '#f7eae8'
-  },
-  pills_SOLAR: {
-    color: '#51b37f',
-    backgroundColor: '#e1f8e5',
-  },
-  dTitle: {
-    margin: 0,
-    padding: theme.spacing(2),
-  },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
-    color: theme.palette.grey[500],
+  sidePanelWrapper: {
+    width: '70vw',
+    maxWidth: '80vw'
   },
 }));
 
-const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry, currentUser }) => {
+const PresubmitLoansTable = ({ currentUser }) => {
   const classes = useStyles();
-  const [loanId, setloanId] = useState();
-  const [dealershipId, setDealershipId] = useState();
-  const [modalVisible, setModalVisible] = useState(false);
-  const [type, setType] = useState('');
   const [loading, setLoading] = useState(false);
-  const actionable = !permissionCheck(currentUser.role_name, rulesList.external_view);
+  const [dealershipData, setDealershipData] = useState();
+  const [loansData, setLoansData] = useState();
+  const [loans, setLoans] = useState([]);
+  const [showPanel, setShowPanel] = useState({ status: false, data: '' });
 
-  useEffect(() => {
+  useMount(() => {
     setLoading(true);
-    getLoansByStatus('submitted', filterQry)
+    getLoansByStatus('pre_submit', '')
       .then(data => {
-        setLoansData('submitted', data);
+        setLoans(data);
         setLoading(false);
       })
       .catch(e => {
         setLoading(false);
       })
-  }, [filterQry])
+  })
+
+  const onRowClick = (id, selectedLoanData, status) => {
+    setLoansData(selectedLoanData);
+    getDealershipById(id)
+      .then(data => {
+        setDealershipData(data)
+      })
+      .catch(e => null);
+    setShowPanel({ status: true, data: status, id: id, editable: permissionCheck(currentUser.role_name, rulesList.loan_approval) });
+  }
 
   const columns = useMemo(() => {
     return [
@@ -163,36 +154,16 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry, cur
           }
         }
       },
-      {
-        label: 'Documents',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: false,
-          display: actionable ? true : 'excluded',
-          customBodyRender: (value, r) => {
-            return (
-              <Tooltip title="eSign Application">
-                <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setType('application'); setDealershipId(value); setModalVisible(true); }}>
-                  <div>
-                    <ESignIcon width={24} />
-                  </div>
-                </IconButton>
-              </Tooltip>
-            )
-          }
-        }
-      }
     ]
   }, [loans]);
- 
+
   const options = {
     selectableRowsHeader: false,
     selectableRows: 'none',
     isRowSelectable: () => false,
     onCellClick: (colData, cellMeta) => {
       if (cellMeta.colIndex !== 7) {
-        onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'submitted')
+        onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'pre_submit')
       }
     },
     customSort: (data, dataIndex, rowIndex) => {
@@ -206,36 +177,29 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry, cur
       {
         Array.isArray(loans) && loans.length ? (
           <MUIDataTable
-            title={title ? <Typography className={classes.title} variant="h4" component="h4">{title} ({loans.length})</Typography> : null}
+            title={<Typography className={classes.title} variant="h4" component="h4">{'Pre Submit queue'} ({loans.length})</Typography>}
             data={loans}
             columns={columns}
             options={options}
           />
-        ) : (!loading && <Paper style={{ padding: 10 }}>No Submitted Records</Paper>)
+        ) : (!loading && <Paper style={{ padding: 10 }}>No Records found</Paper>)
       }
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
       }
-      <Dialog fullWidth maxWidth="md" open={modalVisible} onClose={() => setModalVisible(false)}>
-        <SignRequestLayout
-          dealershipId={dealershipId}
-          loanId={loanId}
-          type={type}
-          title={'eSign Application Form'}
-          onClose={() => setModalVisible(false)}
-          currentUser={currentUser}
-        />
-      </Dialog>
+      <Drawer
+        anchor="right"
+        ModalProps={{
+          onBackdropClick: () => { setShowPanel({ status: false, data: '' }) }
+        }}
+        open={showPanel.status}
+        variant={'temporary'}
+      >
+        <div className={classes.sidePanelWrapper}><SubmittedDrawer id={showPanel?.id} status={showPanel?.data} editable={showPanel?.editable} currentUser={currentUser} data={dealershipData} onClose={() => { setShowPanel({ status: false, data: '' }) }} selectedLoanData={loansData} /></div>
+      </Drawer>
     </div>
   )
 }
 
-const mapStateToProps = ({ loans }) => ({
-  loans: loans.submitted
-});
 
-const mapDispatchToProps = dispatch => ({
-  setLoansData: (status, data) => dispatch(setLoansByStatus(status, data))
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(SubmittedTable);
+export default PresubmitLoansTable;

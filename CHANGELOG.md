@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.24.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.23.6...v2.24.0) (2023-01-12)
+
+
+### Features
+
+* **dealer-referral:** added dealer referral screen ([13f2114](https://gitlab.com/vignesh3/petromall-fe/commit/13f2114d89a2aca661f6c86a7a212deba1470cf4))
+* **dealer-referral:** option to update the referred dealership ([3796beb](https://gitlab.com/vignesh3/petromall-fe/commit/3796beb6f2b8d2381edc10bd0795e0f21ba344ab))
+
+
+### Bug Fixes
+
+* **credit-reload:** reverted the changes because raising this in fresh PR ([22f9fb5](https://gitlab.com/vignesh3/petromall-fe/commit/22f9fb5fd974905c58787f04496ee3cfcb190252))
+* **dealer-referral:** updated api url ([d87a682](https://gitlab.com/vignesh3/petromall-fe/commit/d87a6824990928af0a49c6a6e6a8698e4d9943b4))
+* **leegality:** updated data and null  check in agreement table ([e26721f](https://gitlab.com/vignesh3/petromall-fe/commit/e26721f24950a77644ae9aceb71b365bc6a513b1))
+* Merge branch 'development' ([07aed3a](https://gitlab.com/vignesh3/petromall-fe/commit/07aed3a9c8ea12a3e4c090548040827461a1fc0e))
+* **pdr,withheld:** updated validations for forms ([d27bd27](https://gitlab.com/vignesh3/petromall-fe/commit/d27bd27ab6ea348ab04ae7bed610344d79e8db9a))
+* **score-card:** updated incorrect key & added missing value in table ([42fba45](https://gitlab.com/vignesh3/petromall-fe/commit/42fba4592468ab0d0cb69f8beded737032f0eea5))
+
 ### [2.23.6](https://gitlab.com/vignesh3/petromall-fe/compare/v2.23.5...v2.23.6) (2022-12-28)
 
 

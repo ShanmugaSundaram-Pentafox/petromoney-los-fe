@@ -54,16 +54,20 @@ const LeegalityAgreementTable = ({ loanAmount, dealership, dealers, applicants, 
               <Table>
                 <TableBody>
                   <TableRow>
+                    <TableCell>Dealership ID</TableCell>
+                    <TableCell>{dealership?.id}</TableCell>
+                  </TableRow>
+                  <TableRow>
                     <TableCell>Dealership Name</TableCell>
                     <TableCell>{dealership?.name}</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>Dealership Agreement Date</TableCell>
-                    <TableCell>{dealership?.agreement_executed_on}</TableCell>
+                    <TableCell>{dealership?.agreement_executed_on || '-NA-'}</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>Dealership Address</TableCell>
-                    <TableCell>{dealership?.address}</TableCell>
+                    <TableCell>{dealership?.address || '-NA-'}</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>OMC</TableCell>
@@ -71,58 +75,58 @@ const LeegalityAgreementTable = ({ loanAmount, dealership, dealers, applicants, 
                       {
                         omcs.find((item) => {
                           return item.id == dealership?.omc;
-                        })?.name
+                        })?.name || '-'
                       }
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell>Name Of The Borrower</TableCell>
+                    <TableCell>Name of the Borrower</TableCell>
                     <TableCell>
-                      {dealers
-                        .map((item) => {
-                          return item.first_name;
-                        })
-                        .join(', ')}
+                      {
+                        dealers?.map((item) => {
+                          return item?.first_name + ' ' + item?.last_name;
+                        }).join(', ')
+                      }
                     </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>Residence Address</TableCell>
                     <TableCell>
-                      {dealers
-                        ?.map((item) => {
+                      {
+                        dealers?.map((item) => {
                           return item.address;
-                        })
-                        .join(', ')}
+                        }).join(', ')
+                      }
                     </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>Name Of Co-Borrower</TableCell>
                     <TableCell>
-                      {applicants
-                        .map((item) => {
-                          return item.first_name;
-                        })
-                        .join(', ')}
+                      {
+                        applicants.length ? applicants?.map((item) => {
+                          return (item?.first_name ? item?.first_name + ' ' + item?.last_name : '-');
+                        }).join(', ') : '-NA-'
+                      }
                     </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>E-Mail Address Of Co-Borrower</TableCell>
                     <TableCell>
-                      {applicants
-                        .map((item) => {
+                      {
+                        applicants.length ? applicants?.map((item) => {
                           return item.email;
-                        })
-                        .join(', ')}
+                        }).join(', ') : '-NA-'
+                      }
                     </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>Contact Number Of Co-Borrower</TableCell>
                     <TableCell>
-                      {applicants
-                        .map((item) => {
+                      {
+                        applicants?.length ? applicants?.map((item) => {
                           return item.mobile;
-                        })
-                        .join(', ')}
+                        }).join(', ') : '-NA-'
+                      }
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -130,41 +134,41 @@ const LeegalityAgreementTable = ({ loanAmount, dealership, dealers, applicants, 
                       Office/ Residential Address Of Co-Borrower
                     </TableCell>
                     <TableCell>
-                      {applicants
-                        .map((item) => {
+                      {
+                        applicants.length ? applicants?.map((item) => {
                           return item.address;
-                        })
-                        .join(', ')}
+                        }).join(', ') : '-NA-'
+                      }
                     </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>Name Of Guarantor</TableCell>
                     <TableCell>
-                      {guarantor
-                        ?.map((item) => {
-                          return item.first_name;
-                        })
-                        .join(', ')}
+                      {
+                        guarantor?.length ? guarantor?.map((item) => {
+                          return (item?.first_name + ' ' + item?.last_name);
+                        }).join(', ') : '-NA-'
+                      }
                     </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>E-Mail Address Of Guarantor</TableCell>
                     <TableCell>
-                      {guarantor
-                        ?.map((item) => {
+                      {
+                        guarantor?.length ? guarantor?.map((item) => {
                           return item.email;
-                        })
-                        .join(', ')}
+                        }).join(', ') : '-NA-'
+                      }
                     </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>Contact Number Of Guarantor</TableCell>
                     <TableCell>
-                      {guarantor
-                        ?.map((item) => {
+                      {
+                        guarantor.length ? guarantor?.map((item) => {
                           return item.mobile;
-                        })
-                        .join(', ')}
+                        }).join(', ') : '-NA-'
+                      }
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -172,11 +176,11 @@ const LeegalityAgreementTable = ({ loanAmount, dealership, dealers, applicants, 
                       Office/ Residential Address Of Guarantor
                     </TableCell>
                     <TableCell>
-                      {guarantor
-                        ?.map((item) => {
+                      {
+                        guarantor?.length ? guarantor?.map((item) => {
                           return item.address;
-                        })
-                        .join(', ')}
+                        }).join(', ') : '-NA-'
+                      }
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -191,7 +195,7 @@ const LeegalityAgreementTable = ({ loanAmount, dealership, dealers, applicants, 
                   </TableRow>
                   <TableRow>
                     <TableCell>DPN Date</TableCell>
-                    <TableCell>{format(new Date(), 'dd-MM-yyyy')}</TableCell>
+                    <TableCell>{format(new Date(), 'dd-MM-yyyy') || '-NA-'}</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>DPN Loan Amount</TableCell>

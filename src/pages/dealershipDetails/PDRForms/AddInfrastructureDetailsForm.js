@@ -19,10 +19,10 @@ import AddTankerDetails from './AddTankerDetails';
 import Button from '../../../components/CommonComponents/Button/Button';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
-import { addInfrastructureDetails } from '../../../services/PDReport.services';
-import { compareObject } from '../../../utils/compareObject.util';
-import { isAllowed } from '../../../utils/cerbos';
 import { action_id, resources_id } from '../../../config/accessControl';
+import { addInfrastructureDetails } from '../../../services/PDReport.services';
+import { isAllowed } from '../../../utils/cerbos';
+import { compareObject } from '../../../utils/compareObject.util';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -127,7 +127,6 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       no_of_employee: Yup.number().nullable('Enter count').required('Enter valid count'),
-      // no_of_nozzle: Yup.number().nullable('Enter count').required('Enter valid count'),
       no_of_hoarding: Yup.number().nullable('Enter count').required('Enter valid count'),
       no_of_tank: Yup.number().nullable('Enter count').required('Enter valid count'),
       tank_capacity: Yup.number().nullable('Enter tank capacity').required('Enter tank capacity'),

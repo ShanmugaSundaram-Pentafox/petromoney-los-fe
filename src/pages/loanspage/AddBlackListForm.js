@@ -4,6 +4,7 @@ import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography'
 import CloseIcon from '@material-ui/icons/Close';
+import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
@@ -15,7 +16,6 @@ import { useMount } from 'react-use';
 import Button from '../../components/CommonComponents/Button/Button';
 import { getDealershipForSearch } from '../../services/common.service';
 import { getAllWithheldRemarks, updateRemarks } from '../../services/withheld.services';
-
 
 
 const useStyles = makeStyles((theme) => ({
@@ -72,6 +72,7 @@ const AddBlackListForm = ({ data, callback }) => {
   const [dealerID, setDealerID] = useState()
   const [remarks, setRemarks] = useState()
   const [comment, setComment] = useState()
+  const [error, setError] = useState();
   const [value, setValue] = useState()
   const [optionsLoading, setOptionsLoading] = useState(false);
   const classes = useStyles()
@@ -85,7 +86,6 @@ const AddBlackListForm = ({ data, callback }) => {
       .catch((e) => {
         console.log(e);
       })
-
   })
 
   const handleChange = (event) => {
@@ -120,35 +120,44 @@ const AddBlackListForm = ({ data, callback }) => {
     }
   };
   const handleSave = () => {
-    const res = value ? value : newRemarks;
-    let body = {
-      [typeof(res) === 'number' ? 'remarks_id' : 'remarks']: res,
-      comment: comment ? comment : null
+    if ((value || newRemarks) && dealerID) {
+      const res = value ? value : newRemarks;
+      let body = {
+        [typeof (res) === 'number' ? 'remarks_id' : 'remarks']: res,
+        comment: comment ? comment : null
+      }
+      updateRemarks(dealerID, body)
+        .then(res => {
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          })
+          queryClient.invalidateQueries('withheld-loans')
+          callback()
+          setNewRemarks('')
+          setValue('')
+          setError()
+        })
+        .catch(err => {
+          console.log(err)
+          enqueueSnackbar(err, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
+        })
     }
-    updateRemarks(dealerID, body)
-      .then(res => {
-        enqueueSnackbar(res, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
-        })
-        queryClient.invalidateQueries('withheld-loans')
-        callback()
-        setNewRemarks('')
-        setValue('')
-      })
-      .catch(err => {
-        console.log(err)
-        enqueueSnackbar(err, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        })
-      })
+    else {
+      if (!dealerID)
+        setError('Choose dealership ID to add')
+      else
+        setError('Add remarks to save')
+    }
   }
 
   return (
@@ -188,7 +197,7 @@ const AddBlackListForm = ({ data, callback }) => {
                       </Grid>
                       <Grid item md={7}>
                         <label style={{ marginBottom: 8 }}>Comments</label>
-                        <TextField 
+                        <TextField
                           name='comment'
                           fullWidth
                           variant='outlined'
@@ -197,6 +206,10 @@ const AddBlackListForm = ({ data, callback }) => {
                         />
                       </Grid>
                     </Grid>
+                    {
+                      error &&
+                        <Alert severity='error' style={{ margin: 12, marginLeft: 0 }}>{error}</Alert>
+                    }
                   </form>
                 </Box>
               </div>

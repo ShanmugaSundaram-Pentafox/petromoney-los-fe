@@ -8,6 +8,7 @@ import DpdReport from '../components/Tables/DpdReport';
 import OpportunityReport from '../components/Tables/OpportunityReport';
 import ProjectionReport from '../components/Tables/ProjectionReport';
 import { permissionCheck } from '../components/UserCan/UserCan';
+import { action_id, resources_id } from '../config/accessControl';
 import { rulesList } from '../config/userRules';
 import CallRequestPage from '../pages/callRequest/CallRequestPage';
 import CreditForm from '../pages/creditForm/creditForm';
@@ -27,6 +28,7 @@ import NotFound from '../pages/NotFound/NotFound';
 import RevokedAccess from '../pages/NotFound/RevokedAccess';
 import Profile from '../pages/profile/Profile';
 import UserControl from '../pages/rbac/UserControl';
+import ReferralTable from '../pages/referralModule/ReferralTable';
 import CollectionRemarks from '../pages/reports/CollectionRemarks';
 import CreditReload from '../pages/reports/CreditReload';
 import DealersDueReport from '../pages/reports/DealersDueReport';
@@ -45,7 +47,6 @@ import PassbookDetails from '../pages/users/dealer/PassbookDetails';
 import Users from '../pages/users/users';
 import { selectCurrentUser } from '../store/user/user.selector';
 import { isAllowed } from '../utils/cerbos';
-import { action_id, resources_id } from '../config/accessControl';
 
 const Routes = ({ currentUser }) => {
   return (<>
@@ -84,6 +85,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow={isAllowed(currentUser?.access,resources_id.navigation, action_id.navigation.noc)} exact path="/noc" component={NOCertificateRequestTable} />
       <ProtectedRoute allow={isAllowed(currentUser?.access,resources_id.navigation, action_id.navigation.pre_submit)} exact path="/pre-submit" component={PresubmitLoansTable} />
       <ProtectedRoute allow exact path="/rbac" component={UserControl} />
+      <ProtectedRoute allow exact path="/referral" component={ReferralTable} />
 
       <ProtectedRoute
         exact 

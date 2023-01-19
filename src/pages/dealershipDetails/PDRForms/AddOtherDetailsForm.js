@@ -22,6 +22,7 @@ import { getOmcList } from '../../../services/common.service';
 import { addAdditionalDetails, deleteOtherDetailsByID, updateAdditionalDetails } from '../../../services/PDReport.services';
 import { isAllowed } from '../../../utils/cerbos';
 import { compareObject } from '../../../utils/compareObject.util';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -337,7 +338,7 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable, curr
                       <PreviewCard
                         onEdit={() => { editOthersRow(item, i) }}
                         onDelete={() => deleteOthersRow(item, i)}
-                        action={isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.bunkEdit)}
+                        action={isAllowed(currentUser?.permissions, resources_id?.personalDiscussion, action_id?.personalDiscussion?.bunkEdit)}
                       >
                         <Grid container spacing={2}>
                           <Grid item md={6}>
@@ -376,17 +377,16 @@ const AddOtherDetailsForm = ({ data, dealer_id, isEdit, callback, editable, curr
               Back
             </Button>
           </div>
-          {
-            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.bunkAdd) &&
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => { setAddNew(true); setValues({}) }}
-                style={{ marginBottom: 12 }}
-              >
-                Add other bunk
-              </Button>
-          }
+          <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.bunkAdd}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => { setAddNew(true); setValues({}) }}
+              style={{ marginBottom: 12 }}
+            >
+              Add other bunk
+            </Button>
+          </CheckAllowed>
         </div>
       </div>
     </div >

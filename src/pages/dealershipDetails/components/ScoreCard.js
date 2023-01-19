@@ -11,7 +11,7 @@ import { action_id, resources_id } from '../../../config/accessControl';
 import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
 import { getScoreCard } from '../../../services/common.service';
-import { isAllowed } from '../../../utils/cerbos';
+import CheckAllowed from '../../rbac/CheckAllowed';
 import BankingInputsTable from '../ScoreCardTables/BankingInputsTable';
 import BureauInputTable from '../ScoreCardTables/BureauInputTable';
 import CamInputTable from '../ScoreCardTables/CamInputTable';
@@ -218,26 +218,25 @@ const ScoreCard = ({currentUser, dealership_id}) => {
                 </IconButton>
               </Tooltip>
           }
-          {
-            // scorecard sheet upload permission check
-            isAllowed(currentUser?.access, resources_id?.scoreCard, action_id?.scoreCard?.upload) &&
-              <Button
-                variant='outlined'
-                color='primary'
-                name='csv'
-                id='file'
-                component="label"
-                disabled={loading}
-                startIcon={loading ? <CircularProgress size={14} /> : <PublishIcon fontSize='small' />}
-              >Upload score card
-                <input
-                  type="file"
-                  hidden
-                  accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                  onChange={onChangeHandler}
-                />
-              </Button>
-          }
+          {/* // scorecard sheet upload permission check */}
+          <CheckAllowed currentUser={currentUser} resource={resources_id.scoreCard} action={action_id.scoreCard.upload}>
+            <Button
+              variant='outlined'
+              color='primary'
+              name='csv'
+              id='file'
+              component="label"
+              disabled={loading}
+              startIcon={loading ? <CircularProgress size={14} /> : <PublishIcon fontSize='small' />}
+            >Upload score card
+              <input
+                type="file"
+                hidden
+                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                onChange={onChangeHandler}
+              />
+            </Button>
+          </CheckAllowed>
         </div>
       </div>
       <div className={classes.tabsRoot}>

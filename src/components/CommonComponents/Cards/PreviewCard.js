@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react';
 import styled from 'styled-components'
 import { action_id, resources_id } from '../../../config/accessControl';
-import { isAllowed } from '../../../utils/cerbos';
+import CheckAllowed from '../../../pages/rbac/CheckAllowed';
 import DeleteButton from '../Button/DeleteButton';
 
 const Card = styled.div`
@@ -107,7 +107,7 @@ export const PreviewCardBank = ({ children, onEdit, action=true, onDelete, onCus
             <Typography variant='body2' style={{ color: 'rgb(0,0,0,0.4)', margin: '16px 0px' }}>
               {`Last Verified: ${verifiedDate || '-'}`}
             </Typography> :
-            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.bankVerify) &&
+            <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.bankVerify}>
               <Button
                 size="small"
                 variant="outlined"
@@ -119,26 +119,27 @@ export const PreviewCardBank = ({ children, onEdit, action=true, onDelete, onCus
               >
                 {tokenLabel}
               </Button>
+            </CheckAllowed>
         }
         <div className='card-footer'>
-          {
-            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.bankEdit) &&
-              <Button
-                size="small"
-                variant="outlined"
-                color="success"
-                style={{ margin: 4 }}
-                className={classes.btnSuccess}
-                startIcon={<EditIcon color="primary" />}
-                onClick={onEdit}
-              >
-                Edit
-              </Button>
-          }
-          {
-            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.bankDelete) &&
-              <DeleteButton deleteModal={deleteModal} deleteAction={onDelete} setDeleteModal={setDeleteModal} />
-          }
+          <CheckAllowed
+            currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.bankEdit}
+          >
+            <Button
+              size="small"
+              variant="outlined"
+              color="success"
+              style={{ margin: 4 }}
+              className={classes.btnSuccess}
+              startIcon={<EditIcon color="primary" />}
+              onClick={onEdit}
+            >
+              Edit
+            </Button>
+          </CheckAllowed>
+          <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.bankDelete}>
+            <DeleteButton deleteModal={deleteModal} deleteAction={onDelete} setDeleteModal={setDeleteModal} />
+          </CheckAllowed>
         </div>
       </div>
     </Card>

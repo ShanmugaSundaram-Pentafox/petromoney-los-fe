@@ -150,7 +150,7 @@ const CreditNewRequestTable = ({ data, currentUser, view }) => {
     customToolbar: () => {
       return (
       // Credit Reload create action
-        isAllowed(currentUser?.access, resources_id?.creditReload, action_id?.creditReload?.create) ? 
+        isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.create) ?
           <Button
             color='primary'
             variant='contained'

@@ -46,7 +46,7 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
   usePageTitle('All Users');
   useMount(() => {
     // allow only if current user has permission to access users module
-    if(isAllowed(currentUser?.access, resources_id?.navigation, 'users')) {
+    if(isAllowed(currentUser?.permissions, resources_id?.navigation, 'users')) {
       getAllUsers()
         .then(data => {
           setAllUsersData(data);

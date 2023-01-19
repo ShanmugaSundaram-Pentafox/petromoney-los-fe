@@ -206,7 +206,7 @@ const NOCertificateRequestTable = ({ currentUser }) => {
     customToolbar: () => {
       return (
         // noc request raise permissions
-        isAllowed(currentUser?.access, resources_id?.nocLetter, action_id?.nocLetter?.raiseRequest) ?
+        isAllowed(currentUser?.permissions, resources_id?.nocLetter, action_id?.nocLetter?.raiseRequest) ?
           <Button
             color="primary"
             variant="contained"

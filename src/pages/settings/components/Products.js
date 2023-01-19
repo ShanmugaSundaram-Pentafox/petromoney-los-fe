@@ -14,6 +14,7 @@ import TextInput from '../../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { getProductsMaster, updateProductbyId, insertNewProduct } from '../../../services/common.service';
 import { isAllowed } from '../../../utils/cerbos';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 
 const useStyles = makeStyles(() => ({
@@ -264,7 +265,7 @@ const Products = ({title, callback, currentUser}) => {
                     <TableCell>Processing Fee</TableCell>
                     <TableCell>Tenure<br/>(days)</TableCell>
                     {
-                      isAllowed(currentUser?.access, resources_id.settings, action_id.settings.productsUpdate) &&
+                      isAllowed(currentUser?.permissions, resources_id.settings, action_id.settings.productsUpdate) &&
                         <TableCell align="center">Actions</TableCell>
                     }
                   </TableRow>
@@ -279,32 +280,31 @@ const Products = ({title, callback, currentUser}) => {
                                               <TableCell>{`${item.penal_interest}%`}</TableCell>
                                               <TableCell>{`${item.processing_fee}%`}</TableCell>
                                               <TableCell>{`${item.tenure}`}</TableCell>
-                                              {
-                                                isAllowed(currentUser?.access, resources_id.settings, action_id.settings.productsUpdate) &&
-                                                  <TableCell>
-                                                    <IconButton size="small" className={classes.btn}>
-                                                      <Tooltip title="Edit">
-                                                        <EditIcon fontSize="small" style={{color: 'rgb(0,0,0,0.4)'}} onClick={() => EditItem(item)}/>
-                                                      </Tooltip>
-                                                    </IconButton>
-                                                    {
-                                                      item.is_active === 1 && (
-                                                        <IconButton size="small" className={classes.btn} onClick={() => handleShow(item.is_show, item.product_id)} >
-                                                          <Tooltip title={ item.is_show !== 0 ? 'Disable on App' : 'Show on App'}>
-                                                            <PhoneAndroidIcon fontSize="small" style={item.is_show === 0 ? { color: '#C9CCD5'} : {color: '#93D9A3'}}></PhoneAndroidIcon>
-                                                          </Tooltip>
-                                                        </IconButton>
-                                                      )
-                                                    }
-                                                    <IconButton size="small" className={classes.btn} onClick={() => {
-                                                      handleActive(item.is_active, item.product_id);
-                                                    }}>
-                                                      <Tooltip title={item.is_active === 0 ? 'Activate' : 'Deactivate'}>
-                                                        <CheckCircleTwoTone style={item.is_active === 0 ? { color: '#C9CCD5'} :{ color: '#93D9A3' }}/>
-                                                      </Tooltip>
-                                                    </IconButton>
-                                                  </TableCell>
-                                              }
+                                              <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id.settings.productsUpdate}>
+                                                <TableCell>
+                                                  <IconButton size="small" className={classes.btn}>
+                                                    <Tooltip title="Edit">
+                                                      <EditIcon fontSize="small" style={{color: 'rgb(0,0,0,0.4)'}} onClick={() => EditItem(item)}/>
+                                                    </Tooltip>
+                                                  </IconButton>
+                                                  {
+                                                    item.is_active === 1 && (
+                                                      <IconButton size="small" className={classes.btn} onClick={() => handleShow(item.is_show, item.product_id)} >
+                                                        <Tooltip title={ item.is_show !== 0 ? 'Disable on App' : 'Show on App'}>
+                                                          <PhoneAndroidIcon fontSize="small" style={item.is_show === 0 ? { color: '#C9CCD5'} : {color: '#93D9A3'}}></PhoneAndroidIcon>
+                                                        </Tooltip>
+                                                      </IconButton>
+                                                    )
+                                                  }
+                                                  <IconButton size="small" className={classes.btn} onClick={() => {
+                                                    handleActive(item.is_active, item.product_id);
+                                                  }}>
+                                                    <Tooltip title={item.is_active === 0 ? 'Activate' : 'Deactivate'}>
+                                                      <CheckCircleTwoTone style={item.is_active === 0 ? { color: '#C9CCD5'} :{ color: '#93D9A3' }}/>
+                                                    </Tooltip>
+                                                  </IconButton>
+                                                </TableCell>
+                                              </CheckAllowed>
                                             </TableRow>
                                           )
                                         })
@@ -327,20 +327,17 @@ const Products = ({title, callback, currentUser}) => {
               Back
             </Button>
           </div>
-          {
-            isAllowed(currentUser?.access, resources_id.settings, action_id.settings.productsAdd) &&
-              <div>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<AddIcon  />}
-                  onClick={() => { setAddNewProduct(true); }}
-                  style={{ marginBottom: 12 }}
-                >
-                  Add Product
-                </Button>
-              </div>
-          }
+          <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id.settings.productsAdd}>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon  />}
+              onClick={() => { setAddNewProduct(true); }}
+              style={{ marginBottom: 12 }}
+            >
+              Add Product
+            </Button>
+          </CheckAllowed>
         </div>
       </div>
     </div>

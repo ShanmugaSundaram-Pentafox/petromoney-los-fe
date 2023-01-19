@@ -18,8 +18,8 @@ import Button from '../../../components/CommonComponents/Button/Button';
 import TextInput from '../../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { addNewFleetOperator, updateFleetOperator } from '../../../services/transports.service';
-import { isAllowed } from '../../../utils/cerbos';
 import { compareObject } from '../../../utils/compareObject.util';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -471,7 +471,7 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable, 
                 </div>
               )
             ) : (
-              isAllowed(currentUser?.access, resources_id?.fleetOperator, action_id?.fleetOperator?.edit) &&
+              <CheckAllowed currentUser={currentUser} resource={resources_id?.fleetOperator} action={action_id?.fleetOperator?.edit}>
                 <Button
                   variant="contained"
                   type="submit"
@@ -482,6 +482,7 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable, 
                 >
                   Edit
                 </Button>
+              </CheckAllowed>
             )
           }
         </div>

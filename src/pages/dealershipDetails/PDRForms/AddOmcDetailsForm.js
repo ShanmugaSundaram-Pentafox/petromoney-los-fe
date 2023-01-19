@@ -24,8 +24,8 @@ import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { URL } from '../../../config/serverUrls';
-import { isAllowed } from '../../../utils/cerbos';
 import { compareObject } from '../../../utils/compareObject.util';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -320,21 +320,18 @@ const AddOmcDetailsForm = ({ data: init_data, dealer_id, isEdit, currentUser, ca
               Back
             </Button>
           </div>
-          {
-            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.omcEdit) &&
-              <div>
-                <Button
-                  variant="contained"
-                  type="submit"
-                  className={clsx(classes.btn, classes.editButton)}
-                  startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                  onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
-                >
-                  {loading ? <CircularProgress size={20} /> : readOnly ? 'Edit' :
-                    'Save'}
-                </Button>
-              </div>
-          }
+          <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.omcEdit}>
+            <Button
+              variant="contained"
+              type="submit"
+              className={clsx(classes.btn, classes.editButton)}
+              startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
+              onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
+            >
+              {loading ? <CircularProgress size={20} /> : readOnly ? 'Edit' :
+                'Save'}
+            </Button>
+          </CheckAllowed>
         </div>
       </div>
     </div >

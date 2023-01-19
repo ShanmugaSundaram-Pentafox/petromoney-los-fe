@@ -14,9 +14,9 @@ import { NavLink as RouterLink } from 'react-router-dom';
 import { action_id, resources_id } from '../../config/accessControl';
 import { rulesList } from '../../config/userRules';
 import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
+import CheckAllowed from '../../pages/rbac/CheckAllowed';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
-import { isAllowed } from '../../utils/cerbos';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
 import SignRequestLayout from '../Leegality/SignRequestLayout';
 import Currency from '../Number/Currency';
@@ -174,14 +174,15 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry, cur
           display: actionable ? true : 'excluded',
           customBodyRender: (value, r) => {
             return (
-              isAllowed(currentUser?.access, resources_id?.dashboard, action_id?.dashboard?.submitted_documents) ?
+              <CheckAllowed currentUser={currentUser} resource={resources_id?.dashboard} action={action_id?.dashboard?.submitted_documents}>
                 <Tooltip title="eSign Application">
                   <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setType('application'); setDealershipId(value); setModalVisible(true); }}>
                     <div>
                       <ESignIcon width={24} />
                     </div>
                   </IconButton>
-                </Tooltip> : null
+                </Tooltip>
+              </CheckAllowed>
             )
           }
         }

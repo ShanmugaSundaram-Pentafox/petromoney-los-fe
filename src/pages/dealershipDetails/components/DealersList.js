@@ -12,7 +12,7 @@ import { action_id, resources_id } from '../../../config/accessControl';
 import { rulesList } from '../../../config/userRules';
 import { getDealersByDealershipId, getCoApplicantByDealershipId } from '../../../services/dealers.service';
 import { getAllGuarantor } from '../../../services/leegality.service';
-import { isAllowed } from '../../../utils/cerbos';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -131,10 +131,11 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   return (
     <>
       {
-        isAllowed(currentUser?.access, resources_id?.dealer, action_id?.dealer?.dealerAdd) &&
+        <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerAdd}>
           <div className={classes.addButton}>
             <AddIconButon onClickAddMenu={onClickAddMenu} />
           </div>
+        </CheckAllowed>
       }
       <DealersTable
         id={id}

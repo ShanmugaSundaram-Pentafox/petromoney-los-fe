@@ -86,7 +86,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
 
 
   useMount(() => {
-    if(isAllowed(currentUser?.access, resources_id.dashboard, action_id.dashboard.send_for_approval)) {
+    if(isAllowed(currentUser?.permissions, resources_id.dashboard, action_id.dashboard.send_for_approval)) {
       getUserRoleForReview('is_approve=1')
         .then(res => {
           let d = [];

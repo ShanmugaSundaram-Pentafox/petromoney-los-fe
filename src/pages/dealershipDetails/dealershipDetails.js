@@ -122,7 +122,7 @@ const DealershipDetails = ({ currentUser, match }) => {
 
   // Allowed navigations inside dealership 
   for (const page in pageData) {
-    if(isAllowed(currentUser?.access, resources_id?.dealershipNavigation, pageData[page]?.id)) {
+    if(isAllowed(currentUser?.permissions, resources_id?.dealershipNavigation, pageData[page]?.id)) {
       tabs.push(pageData[page]?.name)
     }
   }

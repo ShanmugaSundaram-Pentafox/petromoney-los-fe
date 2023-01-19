@@ -85,7 +85,7 @@ const DataGroup = ({data, setAddForm, currentUser}) => {
     <div className={classes.label}>
       <Typography variant="body1" style={{ paddingLeft: 10 }}>{data.remarks}</Typography>
       {
-        isAllowed(currentUser?.access, resources_id.settings, action_id.settings.collection_remarkUpdate) &&
+        isAllowed(currentUser?.permissions, resources_id.settings, action_id.settings.collection_remarkUpdate) &&
           <Tooltip title='Edit'>
             <IconButton size='small' className={classes.btn} onClick={() => setAddForm({action: 'Edit', remarks: data.remarks, id: data.id})}>
               <EditIcon fontSize='small' />
@@ -202,7 +202,7 @@ const MasterCollectionRemarks = ({ callback, title, currentUser }) => {
             </Button>
           </div>
           {
-            isAllowed(currentUser?.access, resources_id.settings, action_id.settings.collection_remarkAdd) &&
+            isAllowed(currentUser?.permissions, resources_id.settings, action_id.settings.collection_remarkAdd) &&
               <div>
                 <Button
                   variant='contained'

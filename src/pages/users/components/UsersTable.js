@@ -142,7 +142,7 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
         },
       }
     ] :
-      isAllowed(currentUser?.access, resources_id.users, action_id?.users.userStatus) ?
+      isAllowed(currentUser?.permissions, resources_id.users, action_id?.users.userStatus) ?
         [...d, actionColumnData] : [...d]
   }, [withRole])
 
@@ -154,7 +154,7 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
     rowsPerPage: 10,
     isRowSelectable: () => false,
     onRowClick: (rowData, { dataIndex }) => {
-      isAllowed(currentUser?.access, resources_id.users, action_id?.users.userEdit) &&
+      isAllowed(currentUser?.permissions, resources_id.users, action_id?.users.userEdit) &&
       onRowClick(data[dataIndex].dealership_id, data[dataIndex])
     }
   }

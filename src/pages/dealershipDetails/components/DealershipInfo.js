@@ -28,8 +28,8 @@ import { rulesList } from '../../../config/userRules';
 import { getBusinessTypes, getRegionById, getActiveStates, getOmcList } from '../../../services/common.service';
 import { cryptoEncrypt } from '../../../services/crypto.service';
 import { deleteDealershipDocument, validateId } from '../../../services/dealerships.service';
-import { isAllowed } from '../../../utils/cerbos';
 import { compareObject } from '../../../utils/compareObject.util';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 
 const useStyles = makeStyles(theme => ({
@@ -526,24 +526,22 @@ const DealershipInfo = ({ data, className, currentUser }) => {
             ) : <CircularProgress size={20} />
           ) : (
             <>
-              {
-                // Dealership Edit Permissions
-                isAllowed(currentUser?.access, resources_id?.dealership, action_id?.dealership?.edit) &&
-                  <Button
-                    color="primary"
-                    variant="contained"
-                    size="small"
-                    onClick={() => { setReadOnly(false); }}>Edit Details</Button>
-              }
-              {
-                // Dealership crime check access permission
-                isAllowed(currentUser?.access, resources_id?.dealership, action_id?.dealership?.crimeCheck) &&
-                  <Button
-                    color="primary"
-                    variant="contained"
-                    size="small"
-                    onClick={() => setCrimeData({ ...crimeData, userType: 'dealership', id: data?.id, first_name: data?.name })}>Crime check</Button>
-              }
+              {/* // Dealership Edit Permissions */}
+              <CheckAllowed currentUser={currentUser} resource={resources_id?.dealership} action={action_id?.dealership?.edit}>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  size="small"
+                  onClick={() => { setReadOnly(false); }}>Edit Details</Button>
+              </CheckAllowed>
+              {/* // Dealership crime check access permission */}
+              <CheckAllowed currentUser={currentUser} resource={resources_id?.dealership} action={action_id?.dealership?.crimeCheck}>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  size="small"
+                  onClick={() => setCrimeData({ ...crimeData, userType: 'dealership', id: data?.id, first_name: data?.name })}>Crime check</Button>
+              </CheckAllowed>
             </>
           )}
         </CardActions>

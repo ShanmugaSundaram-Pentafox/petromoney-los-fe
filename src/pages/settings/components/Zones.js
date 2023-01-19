@@ -10,7 +10,7 @@ import { action_id, resources_id } from '../../../config/accessControl';
 import { logger } from '../../../config/logger';
 import { addZones, editZones, getZones } from '../../../services/common.service';
 import { getUnmappedStates, getZonesMapById, updateZoneMapById } from '../../../services/master.service';
-import { isAllowed } from '../../../utils/cerbos';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles(() => ({
   sidePanelFormWrapper: {
@@ -219,22 +219,19 @@ const Zones = ({ callback, title, currentUser }) => {
               Back
             </Button>
           </div>
-          {
-            isAllowed(currentUser?.access, resources_id.settings, action_id.settings.zonesAdd) &&
-              <div>
-                <Button
-                  variant='contained'
-                  type='submit'
-                  startIcon={<AddIcon  />}
-                  onClick={() => {
-                    setAddForm({action:'Add'})
-                  }}
-                  color='primary'
-                >
-                  Add
-                </Button>
-              </div>
-          }
+          <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id.settings.zonesAdd}>
+            <Button
+              variant='contained'
+              type='submit'
+              startIcon={<AddIcon  />}
+              onClick={() => {
+                setAddForm({action:'Add'})
+              }}
+              color='primary'
+            >
+              Add
+            </Button>
+          </CheckAllowed>
         </div>
       </div>
     </>

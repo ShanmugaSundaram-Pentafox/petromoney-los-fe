@@ -23,6 +23,7 @@ import { action_id, resources_id } from '../../../config/accessControl';
 import { addInfrastructureDetails } from '../../../services/PDReport.services';
 import { isAllowed } from '../../../utils/cerbos';
 import { compareObject } from '../../../utils/compareObject.util';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -276,7 +277,7 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
                 </Grid>
             }
             {
-              isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.infrastructureEdit) &&
+              isAllowed(currentUser?.permissions, resources_id?.personalDiscussion, action_id?.personalDiscussion?.infrastructureEdit) &&
                 <div className={classes.actionFoot}>
                   <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <div>
@@ -326,18 +327,17 @@ const AddInfrastructureDetailsForm = ({ data, dealer_id, isEdit, callback, curre
               Back
             </Button>
           </div>
-          {
-            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.infrastructureAddTanker) &&
-              <Button
-                variant='contained'
-                color='primary'
-                startIcon={<AddIcon  />}
-                onClick={() => setTankerAdd(true)}
-                style={{ marginRight: 10 }}
-              >
-                Add Tanker
-              </Button>
-          }
+          <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.infrastructureAddTanker}>
+            <Button
+              variant='contained'
+              color='primary'
+              startIcon={<AddIcon  />}
+              onClick={() => setTankerAdd(true)}
+              style={{ marginRight: 10 }}
+            >
+              Add Tanker
+            </Button>
+          </CheckAllowed>
         </div>
       </div>
     </div>

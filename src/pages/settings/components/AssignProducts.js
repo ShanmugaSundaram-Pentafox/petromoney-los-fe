@@ -82,7 +82,7 @@ const UserGroup = ({data, setAddForm, currentUser}) => {
     <div className={classes.label}>
       <Typography variant="body1" style={{ paddingLeft: 10 }}>{`${data.role_name} (${data?.name})`}</Typography>
       {
-        isAllowed(currentUser?.access, resources_id.settings, action_id.settings.assign_role_productsUpdate) &&
+        isAllowed(currentUser?.permissions, resources_id.settings, action_id.settings.assign_role_productsUpdate) &&
           <Tooltip title='Edit'>
             <IconButton size='small' className={classes.btn} onClick={() => setAddForm({action: 'Edit', name: data.role_name, id: data.id, role: data.name})}>
               <EditIcon fontSize='small' />

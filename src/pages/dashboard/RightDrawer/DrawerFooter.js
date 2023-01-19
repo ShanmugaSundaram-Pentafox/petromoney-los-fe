@@ -17,6 +17,7 @@ import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { getLoanById, getLoanRejectReason, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
 import { isAllowed } from '../../../utils/cerbos';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles(theme => ({
   actionButtonsWrapper: {
@@ -258,7 +259,7 @@ const DrawerFooter = ({
             Back
           </Button>
           {
-            isAllowed(currentUser?.access, resources_id.dashboard, 'loan_resubmit') && status && ['loan_review', 'loan_approval', 'approved', 'rejected', 'disbursed'].includes(status.toLowerCase()) &&
+            isAllowed(currentUser?.permissions, resources_id.dashboard, 'loan_resubmit') && status && ['loan_review', 'loan_approval', 'approved', 'rejected', 'disbursed'].includes(status.toLowerCase()) &&
               <LoaderButton
                 variant={'contained'}
                 className={clsx(classes.btn, classes.btnError)}
@@ -295,8 +296,8 @@ const DrawerFooter = ({
             View more
           </Button>
           {
-            status && ['submitted'].includes(status.toLowerCase()) && isAllowed(currentUser?.access, resources_id.dashboard, 'send_for_review') &&
-              <div>
+            status && ['submitted'].includes(status.toLowerCase()) &&
+              <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'send_for_review'}>
                 <Button
                   variant="contained"
                   disabled={loanData?.isLoading}
@@ -306,11 +307,11 @@ const DrawerFooter = ({
                 >
                   Send for Review
                 </Button>
-              </div>
+              </CheckAllowed>
           }
           {
-            status && ['pre_submit'].includes(status.toLowerCase()) && isAllowed(currentUser?.access, resources_id.dashboard, 'loan_submit') &&
-              <div>
+            status && ['pre_submit'].includes(status.toLowerCase()) &&
+              <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_submit'}>
                 <Button
                   variant="contained"
                   disabled={loanData?.isLoading}
@@ -320,10 +321,11 @@ const DrawerFooter = ({
                 >
                   Submit
                 </Button>
-              </div>
+              </CheckAllowed>
           }
           {
-            status && ['loan_approval', 'loan_review', 'disbursement_approval'].includes(status.toLowerCase()) && isAllowed(currentUser?.access, resources_id.dashboard, 'loan_reject') &&
+            status && ['loan_approval', 'loan_review', 'disbursement_approval'].includes(status.toLowerCase()) &&
+            <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_reject'}>
               <Button
                 variant="contained"
                 disabled={loanData?.loading}
@@ -333,10 +335,11 @@ const DrawerFooter = ({
               >
                 Reject
               </Button>
+            </CheckAllowed>
           }
           {
             status && ['disbursement_approval'].includes(status.toLowerCase()) && 
-            isAllowed(currentUser?.access, resources_id.dashboard, 'loan_approve') &&
+            <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_approve'}>
               <Button
                 variant="contained"
                 disabled={loanData?.loading}
@@ -346,9 +349,10 @@ const DrawerFooter = ({
               >
                 Approve
               </Button>
+            </CheckAllowed>
           }
           {
-            status && status.toLowerCase() === 'loan_approval' && (currentUser.id == loanData?.approver_id || isAllowed(currentUser?.access, resources_id.dashboard, 'loan_approve')) &&
+            status && status.toLowerCase() === 'loan_approval' && (currentUser.id == loanData?.approver_id || isAllowed(currentUser?.permissions, resources_id.dashboard, 'loan_approve')) &&
               <Button
                 variant="contained"
                 disabled={loanData?.loading}
@@ -360,7 +364,7 @@ const DrawerFooter = ({
               </Button>
           }
           {
-            status && ['loan_review'].includes(status.toLowerCase()) && (currentUser.id == loanData?.reviewer_id || isAllowed(currentUser?.access, resources_id.dashboard, 'send_for_approval')) &&
+            status && ['loan_review'].includes(status.toLowerCase()) && (currentUser.id == loanData?.reviewer_id || isAllowed(currentUser?.permissions, resources_id.dashboard, 'send_for_approval')) &&
               <div>
                 <Button
                   variant="contained"

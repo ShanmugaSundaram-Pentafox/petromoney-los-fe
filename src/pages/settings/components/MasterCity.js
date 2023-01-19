@@ -74,7 +74,7 @@ const DataGroup = ({data, setAddForm, currentUser}) => {
     <div className={classes.label}>
       <Typography variant="body1" style={{ paddingLeft: 10 }}>{data.name}</Typography>
       {
-        isAllowed(currentUser?.access, resources_id.settings, action_id.settings.cityUpdate) &&
+        isAllowed(currentUser?.permissions, resources_id.settings, action_id.settings.cityUpdate) &&
           <Tooltip title='Edit'>
             <IconButton size='small' className={classes.btn} onClick={() => setAddForm({action: 'Edit', name: data.name, id: data.id, state_code: data?.state_code})}>
               <EditIcon fontSize='small' />
@@ -245,7 +245,7 @@ const MasterCity = ({ callback, title, currentUser }) => {
             </Button>
           </div>
           {
-            isAllowed(currentUser?.access, resources_id.settings, action_id.settings.cityAdd) &&
+            isAllowed(currentUser?.permissions, resources_id.settings, action_id.settings.cityAdd) &&
               <div>
                 <Button
                   variant='contained'

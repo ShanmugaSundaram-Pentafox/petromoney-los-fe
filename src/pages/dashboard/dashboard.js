@@ -22,6 +22,7 @@ import { getDealerDetails } from '../../services/dealers.service';
 import { getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd } from '../../services/loans.service';
 import { isAllowed } from '../../utils/cerbos';
 import { action_id, resources_id } from '../../config/accessControl';
+import CheckAllowed from '../rbac/CheckAllowed';
 // import { getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd } from '../../services/loans.service';
 
 const currencyFormat = (value) => {
@@ -228,7 +229,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
       })
   }, [creditBook]);
   useMount(() => {
-    isAllowed(currentUser?.access, resources_id.navigation, action_id.navigation.dashboardDealer) &&
+    isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.dashboardDealer) &&
     getDealerDetails()
       .then((data) => {
         setDealerDetail(data);
@@ -302,7 +303,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                         <Typography variant="h5" style={{width: 120}}>Credit Book</Typography>
                         {
                           // Access control for show and hide external charts switch in LMS
-                          isAllowed(currentUser?.access,resources_id.dashboard,'vivriti') &&
+                          <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'vivriti'}>
                             <div className={classes.creditView}>
                               <Box>
                                 <div className={classes.filterWrapper}>
@@ -311,6 +312,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                                 </div>
                               </Box>
                             </div>
+                          </CheckAllowed>
                         }
                       </div>
                       <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">

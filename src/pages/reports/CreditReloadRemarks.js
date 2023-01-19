@@ -297,7 +297,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
               </Grid>
             </>
             {
-              isAllowed(currentUser?.access, resources_id?.creditReload, action_id?.creditReload?.disburse) && (
+              isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.disburse) && (
                 rowData.status == 'Disbursed' || rowData.status == 'Declined' ? null : (
                   <>
                     <Grid container spacing={2}>
@@ -346,7 +346,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
               <div style={{ display: 'flex', justifyContent: 'center' }}>
                 {
                 // Credit Reload decline permission check
-                  isAllowed(currentUser?.access, resources_id?.creditReload, action_id?.creditReload?.decline) ?
+                  isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.decline) ?
                     <Button
                       variant='contained'
                       type='submit'
@@ -358,7 +358,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
                 }
                 {
                 // Credit Reload disburse permission check
-                  isAllowed(currentUser?.access, resources_id?.creditReload, action_id?.creditReload?.disburse) ?
+                  isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.disburse) ?
                     <Button
                       variant='contained'
                       type='submit'

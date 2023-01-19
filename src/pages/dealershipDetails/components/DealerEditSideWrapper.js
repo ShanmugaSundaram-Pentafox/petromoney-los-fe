@@ -33,6 +33,7 @@ import { getKycAgents, getKycStatus, initiateKYC } from '../../../services/deale
 import { validateId } from '../../../services/dealerships.service';
 import { isAllowed } from '../../../utils/cerbos';
 import { compareObject } from '../../../utils/compareObject.util';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 
 
@@ -122,7 +123,7 @@ const DealerEditSideWrapper = ({
   };
 
   useEffect(() => {
-    if(isAllowed(currentUser?.access, resources_id.dealer, action_id.dealer.Vkyc)){
+    if(isAllowed(currentUser?.permissions, resources_id.dealer, action_id.dealer.Vkyc)){
       getKycStatus(modelType.toLowerCase(), values.dealership_id, values.id)
         .then((data) => {
           if (data?.is_initiated === 1)
@@ -511,7 +512,7 @@ const DealerEditSideWrapper = ({
                         <Typography style={{ color: green[800] }}>VKYC already initiated</Typography>
                       </div>
                     ) : (
-                      isAllowed(currentUser?.access, resources_id?.dealer, action_id?.dealer?.Vkyc) &&
+                      <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.Vkyc}>
                         <Button
                           variant='outlined'
                           className={clsx(classes.btn, classes.editButton)}
@@ -520,24 +521,24 @@ const DealerEditSideWrapper = ({
                         >
                           Initiate VKYC
                         </Button>
+                      </CheckAllowed>
                     )
                   }
-                  {
-                    isAllowed(currentUser?.access, resources_id?.dealer, action_id?.dealer?.dealerEdit) &&
-                      <Button
-                        variant='contained'
-                        className={clsx(classes.btn, classes.editButton)}
-                        startIcon={
-                          !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
-                        }
-                        disabled={loading}
-                        onClick={
-                          loading ? () => null : readOnly ? handleEdit : handleSubmit
-                        }
-                      >
-                        Edit
-                      </Button>
-                  }
+                  <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerEdit}>
+                    <Button
+                      variant='contained'
+                      className={clsx(classes.btn, classes.editButton)}
+                      startIcon={
+                        !readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />
+                      }
+                      disabled={loading}
+                      onClick={
+                        loading ? () => null : readOnly ? handleEdit : handleSubmit
+                      }
+                    >
+                      Edit
+                    </Button>
+                  </CheckAllowed>
                 </div>
               }
             </>

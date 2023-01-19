@@ -42,26 +42,30 @@ const AccessPermission = (currentUser) => {
 
 // Check and return boolean based on permission value
 export const checkValue = (value) => {
-  return value === 'EFFECT_ALLOW' ? true : false;
+  return value === 'EFFECT_ALLOW'
 };
 
 // Check and return Crebos permission string based on boolean input
 export const parseValue = (value) => {
-  return value === true ? 'EFFECT_ALLOW' : 'EFFECT_DENY';
+  return value === 'EFFECT_ALLOW'
 };
 
 // Check if action is allowed
+// export const isAllowed = (data=[], resource_id, action_id) => {
+//   for (const res of data) {
+//     const { resource, actions } = res;
+//     if(resource?.kind === resource_id) {
+//       if(actions.hasOwnProperty(action_id)) {
+//         return checkValue(actions[action_id])
+//       } else {
+//         return false
+//       }
+//     }
+//   }
+// };
+
 export const isAllowed = (data=[], resource_id, action_id) => {
-  for (const res of data) {
-    const { resource, actions } = res;
-    if(resource?.kind === resource_id) {
-      if(actions.hasOwnProperty(action_id)) {
-        return checkValue(actions[action_id])
-      } else {
-        return false
-      }
-    }
-  }
+  return data[`${resource_id}_${action_id}`] === 'EFFECT_ALLOW';
 };
 
 // Filter all Denied actions
@@ -69,7 +73,7 @@ export const allDenied = (data, resource_id) => {
   const falseValues = [];
   for (const res of data) {
     const { resource, actions } = res;
-    const loop = () => {
+    const iteratePermission = () => {
       for (const key in actions) {
         if (!checkValue(actions[key])) {
           falseValues.push(key);
@@ -78,11 +82,11 @@ export const allDenied = (data, resource_id) => {
     }
     if (resource_id) {
       if (resource?.kind === resource_id) {
-        loop()
+        iteratePermission()
       } 
     }
     else {
-      loop()
+      iteratePermission()
     }
   }
   return falseValues;

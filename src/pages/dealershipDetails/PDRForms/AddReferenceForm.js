@@ -19,6 +19,7 @@ import TextInput from '../../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { addReferenceDetails, deleteReferenceDetailsByID, updateReferenceById } from '../../../services/PDReport.services';
 import { isAllowed } from '../../../utils/cerbos';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -312,7 +313,7 @@ const AddReferenceForm = ({ data: init_data, dealer_id, isEdit, callback, editab
                       <PreviewCard
                         onEdit={() => { editRefRow(item, i) }}
                         onDelete={() => deleteRefRow(item, i)}
-                        action={isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.referenceEdit)}
+                        action={isAllowed(currentUser?.permissions, resources_id?.personalDiscussion, action_id?.personalDiscussion?.referenceEdit)}
                       >
                         <Grid container spacing={2}>
                           <Grid item md={6}>
@@ -345,17 +346,16 @@ const AddReferenceForm = ({ data: init_data, dealer_id, isEdit, callback, editab
               Back
             </Button>
           </div>
-          {
-            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.referenceAdd) &&
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => { setAddNew(true); setValues({}) }}
-                style={{ marginBottom: 12 }}
-              >
-                Add Reference
-              </Button>
-          }
+          <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.referenceAdd}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => { setAddNew(true); setValues({}) }}
+              style={{ marginBottom: 12 }}
+            >
+              Add Reference
+            </Button>
+          </CheckAllowed>
         </div>
       </div>
     </div >

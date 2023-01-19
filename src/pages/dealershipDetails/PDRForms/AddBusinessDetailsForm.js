@@ -20,8 +20,8 @@ import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { updateBusinessDetailsByID } from '../../../services/PDReport.services';
-import { isAllowed } from '../../../utils/cerbos';
 import { compareObject } from '../../../utils/compareObject.util';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -464,21 +464,18 @@ const AddBusinessDetailsForm = ({ data: init_data, dealer_id, isEdit, callback, 
               Back
             </Button>
           </div>
-          {
-            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.businessEdit) &&
-              <div>
-                <Button
-                  variant="contained"
-                  type="submit"
-                  className={clsx(classes.btn, classes.editButton)}
-                  startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                  onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
-                >
-                  {loading ? <CircularProgress size={20} /> : readOnly ? 'Edit' :
-                    'Save'}
-                </Button>
-              </div>
-          }
+          <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion.businessEdit}>
+            <Button
+              variant="contained"
+              type="submit"
+              className={clsx(classes.btn, classes.editButton)}
+              startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
+              onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
+            >
+              {loading ? <CircularProgress size={20} /> : readOnly ? 'Edit' :
+                'Save'}
+            </Button>
+          </CheckAllowed>
         </div>
       </div>
     </div >

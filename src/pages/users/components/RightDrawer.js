@@ -31,7 +31,7 @@ import { logger } from '../../../config/logger';
 import { rulesList } from '../../../config/userRules';
 import { updateUserDetails } from '../../../services/common.service';
 import { deleteUser, getAllUserRoles } from '../../../services/users.service';
-import { isAllowed } from '../../../utils/cerbos';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles(theme => ({
 
@@ -317,9 +317,9 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
           {
-            !editProfile && isAllowed(currentUser?.access, resources_id.users, action_id.users.userEdit) && (
+            !editProfile &&
               <Box className={classes.button}>
-                {
+                <CheckAllowed currentUser={currentUser} resource={resources_id.users} action={action_id.users.userEdit}>
                   <Button
                     variant="contained"
                     size="small"
@@ -329,12 +329,9 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                       setReadOnly(false);
                       setEditPassword(false);
                       data.status === 'Active' ? setEditProfile(true) : activationAlert()
-
                     }}>Edit</Button>
-                }
+                </CheckAllowed>
               </Box>
-            )
-
           }
           <>
             {
@@ -456,24 +453,21 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
               !editPassword ? (
                 <>
                   <Divider />
-                  {
-                    isAllowed(currentUser?.access, resources_id.users, action_id.users.userChange_password) &&
-                      <div className={classes.passwordSection}>
-                        {
-                          <Box className={classes.button}>
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              size="small"
-                              startIcon={<VpnKeyIcon  />}
-                              onClick={() => {
-                                setReadOnly(false);
-                                data.status === 'Active' ? setEditPassword(true) : activationAlert()
-                              }}>Change password</Button>
-                          </Box>
-                        }
-                      </div>
-                  }
+                  <div className={classes.passwordSection}>
+                    <Box className={classes.button}>
+                      <CheckAllowed currentUser={currentUser} resource={resources_id.users} action={action_id.users.userChange_password}>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          size="small"
+                          startIcon={<VpnKeyIcon  />}
+                          onClick={() => {
+                            setReadOnly(false);
+                            data.status === 'Active' ? setEditPassword(true) : activationAlert()
+                          }}>Change password</Button>
+                      </CheckAllowed>
+                    </Box>
+                  </div>
                 </>
               ) : (
                 editPassword && <PasswordForm data={data} callback={() => { setEditPassword(false) }} loading={passLoading} setLoading={setpassLoading} />

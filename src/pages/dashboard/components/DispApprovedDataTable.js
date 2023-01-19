@@ -33,8 +33,8 @@ import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput
 import { logger } from '../../../config/logger';
 import { updateLoanApprovalStatusById, deleteLoanDisbursementRecord } from '../../../services/loans.service';
 import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
-import { isAllowed } from '../../../utils/cerbos';
 import { resources_id } from '../../../config/accessControl';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 
 
@@ -201,8 +201,9 @@ const DispApprovedDataTable = ({ id, loanData, editable, currentUser }) => {
           <TableRow>
             <TableCell colSpan={4} align="center">
               {
-                isAllowed(currentUser?.access, resources_id.dashboard,'add_disb_amt') &&
+                <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'add_disb_amt'}>
                   <Button variant="outlined" size="medium" color="secondary" onClick={() => setModalData({ open: true })} startIcon={<AddRoundedIcon fontSize="small" />}>Add Disbursed Amount</Button>
+                </CheckAllowed>
               }
             </TableCell>
           </TableRow>

@@ -19,7 +19,7 @@ import { URL } from '../../../config/serverUrls';
 import { getBankDetailsbyID, updateBankDetailsByID } from '../../../services/PDReport.services';
 import { compareObject } from '../../../utils/compareObject.util';
 import { action_id, resources_id } from '../../../config/accessControl';
-import { isAllowed } from '../../../utils/cerbos';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -366,17 +366,16 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, edita
               Back
             </Button>
           </div>
-          {
-            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.bankAdd) &&
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => { setAddNewRow(true); setValues({}) }}
-                style={{ marginBottom: 12 }}
-              >
-                Add Bank
-              </Button>
-          }
+          <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion.bankAdd}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => { setAddNewRow(true); setValues({}) }}
+              style={{ marginBottom: 12 }}
+            >
+              Add Bank
+            </Button>
+          </CheckAllowed>
         </div>
       </div>
     </div >

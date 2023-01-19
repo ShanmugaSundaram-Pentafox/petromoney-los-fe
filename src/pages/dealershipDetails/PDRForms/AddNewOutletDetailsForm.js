@@ -20,8 +20,8 @@ import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { addOutletDetails } from '../../../services/PDReport.services';
-import { isAllowed } from '../../../utils/cerbos';
 import { compareObject } from '../../../utils/compareObject.util';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -395,8 +395,7 @@ const AddNewOutletDetailsForm = ({ data: init_data, dealer_id, isEdit, callback,
               Back
             </Button>
           </div>
-          {
-            isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.outletEdit) &&
+          <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.outletEdit}>
             <Button
               variant="contained"
               type="submit"
@@ -407,7 +406,7 @@ const AddNewOutletDetailsForm = ({ data: init_data, dealer_id, isEdit, callback,
               {loading ? <CircularProgress size={20} /> : readOnly ? 'Edit' :
                 'Save'}
             </Button>
-          }
+          </CheckAllowed>
         </div>
       </div>
     </div>

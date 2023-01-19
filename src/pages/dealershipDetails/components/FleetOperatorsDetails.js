@@ -7,7 +7,7 @@ import FleetOperatorsTable from '../../../components/Tables/FleetOperatorsTable'
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { rulesList } from '../../../config/userRules';
-import { isAllowed } from '../../../utils/cerbos';
+import CheckAllowed from '../../rbac/CheckAllowed';
 import AddNewFleetOperatorForm from '../../transports/components/AddNewFleetOperatorForm';
 
 const useStyles = makeStyles((theme) => ({
@@ -51,17 +51,16 @@ const FleetOperatorsDetails = ({ id, currentUser, titleAlign }) => {
       <div className={classes.wrapper}>
         <div className={classes.header}>
           <Typography style={{ width: '70%' }} variant="h5" align={titleAlign} className={classes.title}>Fleet Operator</Typography>
-          {
-            isAllowed(currentUser?.access, resources_id?.fleetOperator, action_id?.fleetOperator?.add) &&
-              <Button
-                color="primary"
-                variant="contained"
-                size='small'
-                onClick={() => setOpenModal(true)}
-              >
-                Add Fleet Operator
-              </Button>
-          }
+          <CheckAllowed currentUser={currentUser} resource={resources_id?.fleetOperator} action={action_id?.fleetOperator?.add}>
+            <Button
+              color="primary"
+              variant="contained"
+              size='small'
+              onClick={() => setOpenModal(true)}
+            >
+              Add Fleet Operator
+            </Button>
+          </CheckAllowed>
         </div>
         <div>
           <FleetOperatorsTable id={id} dealersClickRow={handleClick} />

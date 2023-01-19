@@ -212,7 +212,7 @@ const Sidebar = props => {
   let pages = []
 
   for (let i = 0; i < pageData.length; i++) {
-    if(isAllowed(currentUser?.access, resources_id?.navigation, pageData[i]?.id)) {
+    if(isAllowed(currentUser?.permissions, resources_id?.navigation, pageData[i]?.id)) {
       pages.push(pageData[i])
     }
   }

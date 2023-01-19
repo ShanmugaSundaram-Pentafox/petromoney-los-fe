@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { action_id, resources_id } from '../../config/accessControl';
 import { resetCurrentUser } from '../../store/user/user.actions';
-import { isAllowed } from '../../utils/cerbos';
+import CheckAllowed from '../rbac/CheckAllowed';
 
 const useStyles = makeStyles(() => ({
   label: {
@@ -61,18 +61,17 @@ const RevokedAccess = ({currentUser}) => {
         <h4 className={classes.text}>Unfortunately your access has been revoked, please contact your admin and check back later.</h4>
       </div>
       <div style={{ display: 'flex' }}>
-        {
-          isAllowed(currentUser?.access, resources_id.navigation, action_id.navigation.dashboard) &&
-            <Button
-              variant='text'
-              color='secondary'
-              className={classes.button}
-              onClick={() => history.push('/')}
-              size='large'
-            >
-              Back to Dashboard
-            </Button>
-        }
+        <CheckAllowed currentUser={currentUser} resource={resources_id.navigation} action={action_id.navigation.dashboard}>
+          <Button
+            variant='text'
+            color='secondary'
+            className={classes.button}
+            onClick={() => history.push('/')}
+            size='large'
+          >
+            Back to Dashboard
+          </Button>
+        </CheckAllowed>
         <Button
           variant='text'
           color='primary'

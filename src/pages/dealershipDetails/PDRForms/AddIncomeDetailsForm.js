@@ -18,6 +18,7 @@ import { getBusinessTypes } from '../../../services/common.service';
 import { deleteExpenseDetailsByID, deleteIncomeDetailsByID, getExpensesDetailsById, getIncomeDetailsById } from '../../../services/PDReport.services';
 import { isAllowed } from '../../../utils/cerbos';
 import { action_id, resources_id } from '../../../config/accessControl';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -201,7 +202,7 @@ const AddIncomeDetailsForm = ({ dealer_id, callback, editable, currentUser }) =>
                           <PreviewCard
                             onEdit={() => { handleIncomeEdit(item, i) }}
                             onDelete={() => handleIncomeDelete(item, i)}
-                            action={isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.incomeEdit)}
+                            action={isAllowed(currentUser?.permissions, resources_id?.personalDiscussion, action_id?.personalDiscussion?.incomeEdit)}
                           >
                             <Grid container spacing={2}>
                               <Grid item md={6}>
@@ -236,7 +237,7 @@ const AddIncomeDetailsForm = ({ dealer_id, callback, editable, currentUser }) =>
                           <PreviewCard
                             onEdit={() => { handleExpenseEdit(item, i) }}
                             onDelete={() => { handleExpenseDelete(item, i) }}
-                            action={isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.expenceEdit)}
+                            action={isAllowed(currentUser?.permissions, resources_id?.personalDiscussion, action_id?.personalDiscussion?.expenceEdit)}
                           >
                             <Grid container spacing={2}>
                               <Grid item md={6}>
@@ -277,8 +278,7 @@ const AddIncomeDetailsForm = ({ dealer_id, callback, editable, currentUser }) =>
             </Button>
           </div>
           <div>
-            {
-              isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.incomeAdd) &&
+            <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion.incomeAdd}>
               <Button
                 variant="contained"
                 className={clsx(classes.btn, classes.editButton)}
@@ -286,9 +286,8 @@ const AddIncomeDetailsForm = ({ dealer_id, callback, editable, currentUser }) =>
               >
                 Add income
               </Button>
-            }
-            {
-              isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.expenceAdd) &&
+            </CheckAllowed>
+            <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion.expenceAdd}>
               <Button
                 variant="contained"
                 className={clsx(classes.btn, classes.editButton)}
@@ -296,7 +295,7 @@ const AddIncomeDetailsForm = ({ dealer_id, callback, editable, currentUser }) =>
               >
                 Add expense
               </Button>
-            }
+            </CheckAllowed>
           </div>
         </div>
       </div>

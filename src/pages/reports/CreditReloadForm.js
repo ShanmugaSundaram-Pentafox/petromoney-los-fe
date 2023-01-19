@@ -195,7 +195,7 @@ const CreditReloadForm = ({ data, callback, currentUser, view }) => {
                   <Grid item md={8} style={{ marginBottom: 10 }}>
                     <label style={{ marginBottom: 8 }}>Dealership</label>
                     {
-                      isAllowed(currentUser?.access,resources_id?.creditReload,action_id?.creditReload?.disburse) ?
+                      isAllowed(currentUser?.permissions,resources_id?.creditReload,action_id?.creditReload?.disburse) ?
                         (
                           <AsyncSelect
                             components={optionsLoading ? null : { LoadingIndicator: null }}

@@ -14,7 +14,7 @@ import { action_id, resources_id } from '../../../config/accessControl';
 import { getCoApplicantByDealershipId, getDealersByDealershipId } from '../../../services/dealers.service';
 import { getAllGuarantor } from '../../../services/leegality.service';
 import { deleteVoiceCallById, getVoiceCallLogsById, makeVoiceCallById } from '../../../services/users.service';
-import { isAllowed } from '../../../utils/cerbos';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 export const CardWrapper = ({ title, data, callback, type }) => {
   const classes = useStyles();
@@ -342,10 +342,9 @@ const VoiceCall = ({ id, callback, currentUser }) => {
                                         }
                                       </TableCell>
                                       <TableCell className={classes.deleteicon}>
-                                        {
-                                          isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.callLogDelete) &&
-                                            <DeleteButton alertText={`Do you really want to delete this call log from ${item.to_user_name} (${item.to_mobile})`} deleteAction={() => handleDelete(item.id)} deleteModal={deleteModel} setDeleteModal={setDeleteModel} id={itemIndex} buttonType='icon' />
-                                        }
+                                        <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.callLogDelete}>
+                                          <DeleteButton alertText={`Do you really want to delete this call log from ${item.to_user_name} (${item.to_mobile})`} deleteAction={() => handleDelete(item.id)} deleteModal={deleteModel} setDeleteModal={setDeleteModel} id={itemIndex} buttonType='icon' />
+                                        </CheckAllowed>
                                       </TableCell> {/* shows delete button for call logs by hovering it */}
                                     </TableRow>)
                                 )
@@ -394,17 +393,16 @@ const VoiceCall = ({ id, callback, currentUser }) => {
         <div className={classes.actionFooter}>
           <Divider />
           <div className={classes.actionButtonsWrapper}>
-            {
-              isAllowed(currentUser?.access, resources_id?.personalDiscussion, action_id?.personalDiscussion?.callInitiate) &&
-                <Button
-                  variant="contained"
-                  className={classes.initiateButton}
-                  startIcon={<PhoneTwoToneIcon />}
-                  onClick={() => { setOpenDialog(true); handleSound(null, null, 'pause') }}
-                >
-                  Initiate Call
-                </Button>
-            }
+            <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.callInitiate}>
+              <Button
+                variant="contained"
+                className={classes.initiateButton}
+                startIcon={<PhoneTwoToneIcon />}
+                onClick={() => { setOpenDialog(true); handleSound(null, null, 'pause') }}
+              >
+                Initiate Call
+              </Button>
+            </CheckAllowed>
           </div>
         </div>
       </div>

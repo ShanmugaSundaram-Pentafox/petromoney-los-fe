@@ -6,8 +6,8 @@ import AddNewUserForm from './AddNewUserForm';
 import { action_id, resources_id } from '../../config/accessControl';
 import { getAllUsers } from '../../services/users.service';
 import { setAllUsers } from '../../store/dashboard/dashboard.actions';
-import { isAllowed } from '../../utils/cerbos';
 import Button from '../CommonComponents/Button/Button';
+import CheckAllowed from '../../pages/rbac/CheckAllowed';
 
 
 const AddNewUserAction = ({currentUser}) => {
@@ -34,16 +34,15 @@ const AddNewUserAction = ({currentUser}) => {
 
   return (
     <div>
-      {
-        isAllowed(currentUser?.access, resources_id?.users, action_id?.users.userCreate) &&
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={() => setOpenModal(true)}
-          >
-            Create New User
-          </Button>
-      }
+      <CheckAllowed currentUser={currentUser} resource={resources_id?.users} action={action_id?.users.userCreate}>
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={() => setOpenModal(true)}
+        >
+          Create New User
+        </Button>
+      </CheckAllowed>
       <Drawer
         anchor="right"
         open={openModal}

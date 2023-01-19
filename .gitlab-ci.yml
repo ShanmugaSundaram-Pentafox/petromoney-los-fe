@@ -8,6 +8,9 @@ variables:
   S3_BUCKET_NAME_UAT: $S3_BUCKET_NAME_UAT
   S3_BUCKET_NAME_PROD: $S3_BUCKET_NAME_PROD
   S3_BUCKET_NAME_PORTAL: $S3_BUCKET_NAME_PORTAL
+  DISTRIBUTION_UAT: $DISTRIBUTION_UAT
+  DISTRIBUTION_PROD: $DISTRIBUTION_PROD
+  DISTRIBUTION_PORTAL: $DISTRIBUTION_PORTAL
   AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
   AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
   AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
@@ -57,6 +60,7 @@ deploy-uat:
     - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
     - aws configure set default.region $AWS_DEFAULT_REGION
     - aws s3 sync ./build/ s3://$S3_BUCKET_NAME_UAT --delete
+    - aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_UAT --paths "/*"
 
 build-portal:
   image: node:14
@@ -99,6 +103,7 @@ deploy-portal:
     - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
     - aws configure set default.region $AWS_DEFAULT_REGION
     - aws s3 sync ./build/ s3://$S3_BUCKET_NAME_PORTAL --delete
+    - aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_PORTAL --paths "/*"
 
 build-prod:
   image: node:14
@@ -141,3 +146,4 @@ deploy-prod:
     - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
     - aws configure set default.region $AWS_DEFAULT_REGION
     - aws s3 sync ./build/ s3://$S3_BUCKET_NAME_PROD --delete
+    - aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_PROD --paths "/*"

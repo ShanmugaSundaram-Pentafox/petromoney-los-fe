@@ -168,9 +168,10 @@ const DealerEditSideWrapper = ({
     city: Yup.string().nullable('Enter City').required('Enter City'),
     state: Yup.string().nullable('Enter State').required('Enter State'),
     address: Yup.string()
+      .required('Enter address')
       .nullable('Enter address')
       .min(6, 'address must be atleast 6 characters')
-      .required('Enter address'),
+      .test('Invalid characters', 'Please don\'t use _ # $ % ^ & * @ ( ) < > ! ~ { } = : ; " ? ', value => !/[_#$%^&*@()<>!~{}=:;"?]/.test(value)),
     mobile: Yup.string()
       .nullable('Enter mobile number')
       .matches(/^\d{10}$/, 'Invalid mobile number')

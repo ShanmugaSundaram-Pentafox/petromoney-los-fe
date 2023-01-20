@@ -11,7 +11,6 @@ import { permissionCheck } from '../components/UserCan/UserCan';
 import { action_id, resources_id } from '../config/accessControl';
 import { rulesList } from '../config/userRules';
 import CallRequestPage from '../pages/callRequest/CallRequestPage';
-import CreditForm from '../pages/creditForm/creditForm';
 import DealersAccountStatement from '../pages/dashboard/components/DealersAccountStatement';
 import OwnerDetails from '../pages/dashboard/components/OwnerDetails';
 import Dashboard from '../pages/dashboard/dashboard';
@@ -68,7 +67,6 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path='/transports-field' component={TransportsPortal} />
       <ProtectedRoute allow exact path="/transports/:id?" component={TransportsDetails} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.exceptionTransports)} exact path='/transport/exceptions' component={TransportException} />
-      <ProtectedRoute allow exact path="/dealership/:id/credit-form" component={CreditForm} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.settings)} exact path="/settings" component={Settings} />
       <ProtectedRoute allow exact path="/reports/due" component={Due} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.transportsPassbook)} exact path="/transport/fastag/details" component={FastTagPassbook} />

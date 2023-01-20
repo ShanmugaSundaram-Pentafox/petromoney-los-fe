@@ -9,6 +9,7 @@ import Contain from './MasterDataTable';
 import Products from './Products';
 import Zones from './Zones';
 import {resources_id, action_id} from '../../../config/accessControl';
+import { ReactComponent as AccessIcon } from '../../../icons/accessIcon.svg';
 import { ReactComponent as AssetIcon } from '../../../icons/assets.svg';
 import { ReactComponent as BunkIcon } from '../../../icons/bunk.svg';
 import { ReactComponent as BusinessIcon } from '../../../icons/business.svg';
@@ -185,7 +186,7 @@ function MasterData({currentUser}) {
               <Tooltip title="RBAC">
                 <Link to='/rbac'>
                   <div className={classes.content}>
-                    <RemarkIcon className={classes.icons} />
+                    <AccessIcon className={classes.icons} />
                     <Typography variant="h5" align='center' className={classes.title} >RBAC</Typography>
                   </div>
                 </Link>

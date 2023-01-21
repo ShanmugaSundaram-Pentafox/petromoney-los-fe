@@ -10,7 +10,6 @@ import ProjectionReport from '../components/Tables/ProjectionReport';
 import { permissionCheck } from '../components/UserCan/UserCan';
 import { rulesList } from '../config/userRules';
 import CallRequestPage from '../pages/callRequest/CallRequestPage';
-import CreditForm from '../pages/creditForm/creditForm';
 import DealersAccountStatement from '../pages/dashboard/components/DealersAccountStatement';
 import OwnerDetails from '../pages/dashboard/components/OwnerDetails';
 import Dashboard from '../pages/dashboard/dashboard';
@@ -25,6 +24,7 @@ import Login from '../pages/login/login';
 import NOCertificateRequestTable from '../pages/noc/NOCertificateRequestTable';
 import NotFound from '../pages/NotFound/NotFound';
 import Profile from '../pages/profile/Profile';
+import ReferralTable from '../pages/referralModule/ReferralTable';
 import CollectionRemarks from '../pages/reports/CollectionRemarks';
 import CreditReload from '../pages/reports/CreditReload';
 import DealersDueReport from '../pages/reports/DealersDueReport';
@@ -63,7 +63,6 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path='/transports-field' component={TransportsPortal} />
       <ProtectedRoute allow exact path="/transports/:id?" component={TransportsDetails} />
       <ProtectedRoute allow exact path='/transport/exceptions' component={TransportException} />
-      <ProtectedRoute allow exact path="/dealership/:id/credit-form" component={CreditForm} />
       <ProtectedRoute allow exact path="/settings" component={Settings} />
       <ProtectedRoute allow exact path="/reports/due" component={Due} />
       <ProtectedRoute allow exact path="/transport/fastag/details" component={FastTagPassbook} />
@@ -79,6 +78,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/reports/dpd" component={DpdReport} />
       <ProtectedRoute allow exact path="/noc" component={NOCertificateRequestTable} />
       <ProtectedRoute allow exact path="/pre-submit" component={PresubmitLoansTable} />
+      <ProtectedRoute allow exact path="/referral" component={ReferralTable} />
 
       <ProtectedRoute 
         exact 

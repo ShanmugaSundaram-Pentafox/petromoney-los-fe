@@ -175,6 +175,7 @@ export const rulesForUserRoles = {
     static: [
       rulesList.dashboard,
       rulesList.dealer_credit_view,
+      rulesList.loan_approval,
       rulesList.dealership_credit_view,
       rulesList.credit_view,
       rulesList.credit_refresh,
@@ -194,6 +195,7 @@ export const rulesForUserRoles = {
       rulesList.dashboard,
       rulesList.dealer_credit_view,
       rulesList.dealership_credit_view,
+      rulesList.loan_approval,
       rulesList.credit_view,
       rulesList.credit_refresh,
       rulesList.pdr_view,

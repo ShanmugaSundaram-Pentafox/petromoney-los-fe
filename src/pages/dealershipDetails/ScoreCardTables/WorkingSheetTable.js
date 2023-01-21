@@ -184,7 +184,7 @@ let workingSheetSummary1 = [
   { label: 'PD done by', key: 'pd_done_by' },
   { label: 'Loan Amount', key: 'loan_amount' },
   { label: 'Rate of Interest %', key: 'rate_of_interest_in_percent' },
-  { label: 'FOIR as per policy', key: 'actual_foir' },
+  { label: 'FOIR as per policy %', key: 'foir_as_per_policy' },
   { label: 'Leverage as per Policy', key: 'leverage_as_per_policy' },
 ]
 
@@ -195,6 +195,7 @@ let workingSheetSummary2 = [
   { label: 'Loan Scheme', key: 'loan_scheme' },
   { label: 'Processing Key %', key: 'processing_fee_in_percent' },
   { label: 'Actual FOIR character', key: 'actual_foir' },
+  { label: 'Actual Leverage', key: 'actual_leverage' },
 ]
 
 

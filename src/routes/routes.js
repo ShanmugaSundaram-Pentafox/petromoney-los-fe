@@ -10,7 +10,6 @@ import ProjectionReport from '../components/Tables/ProjectionReport';
 import { permissionCheck } from '../components/UserCan/UserCan';
 import { rulesList } from '../config/userRules';
 import CallRequestPage from '../pages/callRequest/CallRequestPage';
-import CreditForm from '../pages/creditForm/creditForm';
 import DealersAccountStatement from '../pages/dashboard/components/DealersAccountStatement';
 import OwnerDetails from '../pages/dashboard/components/OwnerDetails';
 import Dashboard from '../pages/dashboard/dashboard';
@@ -64,7 +63,6 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path='/transports-field' component={TransportsPortal} />
       <ProtectedRoute allow exact path="/transports/:id?" component={TransportsDetails} />
       <ProtectedRoute allow exact path='/transport/exceptions' component={TransportException} />
-      <ProtectedRoute allow exact path="/dealership/:id/credit-form" component={CreditForm} />
       <ProtectedRoute allow exact path="/settings" component={Settings} />
       <ProtectedRoute allow exact path="/reports/due" component={Due} />
       <ProtectedRoute allow exact path="/transport/fastag/details" component={FastTagPassbook} />

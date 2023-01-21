@@ -3,7 +3,6 @@ import Collapse from '@material-ui/core/Collapse';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import Drawer from '@material-ui/core/Drawer';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import { makeStyles } from '@material-ui/styles';
@@ -12,27 +11,21 @@ import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { useMount } from 'react-use';
-import CreditReportSideWrapper from './components/CreditReportSideWrapper';
 import DealershipInfo from './components/DealershipInfo';
 import DealershipTransport from './components/DealershipTransport';
 import DealersList from './components/DealersList';
-import Deviations from './components/Deviations';
 import DealershipDoc from './components/DocList';
 import FleetOperatorsDetails from './components/FleetOperatorsDetails';
 import LoansList from './components/LoansList';
 import PersonalDiscussionReport from './components/PDReport';
 import ScoreCard from './components/ScoreCard';
 import SolarEnquiryForm from './components/SolarEnquiryForm';
-import StatementAnalysis from './components/StatementAnalysis';
 import InfoBox from '../../components/CommonComponents/InfoBox';
 import { tabA11yProps, TabPanel } from '../../components/CommonComponents/Tabs/TabPanel';
 import LeegalityLayout from '../../components/Leegality/LeegalityLayout';
-import { permissionCheck } from '../../components/UserCan/UserCan';
-import { rulesList } from '../../config/userRules';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getDealersByDealershipId } from '../../services/dealers.service';
 import { getDealershipById } from '../../services/dealerships.service';
-import SalesInfo from '../dashboard/components/SalesInfo';
 
 const useStyles = makeStyles((theme) => ({
 
@@ -76,18 +69,13 @@ const DealershipDetails = ({ currentUser, match }) => {
   const classes = useStyles();
   const [activeTab, setActiveTab] = useState(0);
   const [solarTab, setSolarTab] = useState(-1);
-  const [showCreditReport, setShowCreditReport] = useState();
   const [showSolarForm, setShowSolarForm] = useState();
   const [leegalityModalVisible, setLeegalityModalVisible] = useState(false);
   const history = useHistory();
-  const financialReport_permission = permissionCheck(currentUser.role_name, rulesList.financial_view);
 
   const tabs = [
     'Dealership',
     'Dealers',
-    // 'Bank Statement Analysis',
-    // 'Deviations',
-    // 'Sales History',
     'Score Card',
     'Loans List',
     'Personal Discussion',
@@ -95,10 +83,6 @@ const DealershipDetails = ({ currentUser, match }) => {
     'Transporters',
     'Fleet Operators'
   ];
-
-  // if (financialReport_permission) {
-  //   tabs.splice(2, 0, 'Financial Report')
-  // }
 
   const {
     url,
@@ -115,10 +99,6 @@ const DealershipDetails = ({ currentUser, match }) => {
   const onChangeTab = (e, newTab) => {
     setActiveTab(newTab);
     history.replace(`?t=${newTab}`)
-  }
-
-  const toggleCreditReport = () => {
-    setShowCreditReport(!showCreditReport);
   }
 
   useMount(() => {
@@ -159,35 +139,13 @@ const DealershipDetails = ({ currentUser, match }) => {
         </div>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Dealership')}>
           {!dealershipData.isLoading && activeTab == tabs.indexOf('Dealership') && (
-            <DealershipInfo data={dealershipData.data} currentUser={currentUser} toggleCreditReport={toggleCreditReport} />
+            <DealershipInfo data={dealershipData.data} currentUser={currentUser} />
           )}
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Dealers')}>
           {
             activeTab == tabs.indexOf('Dealers') &&
               <DealersList id={id} titleAlign="left" currentUser={currentUser} />
-          }
-        </TabPanel>
-        <TabPanel activeTab={activeTab} index={tabs.indexOf('Deviations')}>
-          {
-            activeTab == tabs.indexOf('Deviations') &&
-              <Deviations id={id} currentUser={currentUser} />
-          }
-        </TabPanel>
-        {
-          financialReport_permission && (
-            <TabPanel activeTab={activeTab} index={tabs.indexOf('Financial Report')}>
-              {
-                activeTab == tabs.indexOf('Financial Report') &&
-                  <CreditReportSideWrapper dealershipId={id} data={{}} currentUser={currentUser} />
-              }
-            </TabPanel>
-          )
-        }
-        <TabPanel activeTab={activeTab} index={tabs.indexOf('Sales History')}>
-          {
-            activeTab == tabs.indexOf('Sales History') &&
-              <SalesInfo id={id} titleAlign="left" currentUser={currentUser} column />
           }
         </TabPanel>
         <TabPanel activeTab={activeTab} index={tabs.indexOf('Score Card')}>
@@ -226,12 +184,6 @@ const DealershipDetails = ({ currentUser, match }) => {
               <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
           }
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={tabs.indexOf('Bank Statement Analysis')}>
-          {
-            activeTab == tabs.indexOf('Bank Statement Analysis') &&
-              <StatementAnalysis id={id} textAlign="left" currentUser={currentUser} />
-          }
-        </TabPanel>
         <SolarEnquiryForm
           dealershipId={id}
           mainApplicant={mainApplicant}
@@ -241,21 +193,6 @@ const DealershipDetails = ({ currentUser, match }) => {
           onClose={() => setShowSolarForm(false)}
         />
       </div>
-
-      <Drawer
-        anchor="right"
-        open={showCreditReport}
-        variant="temporary"
-      >
-        <div className={classes.sidePanelWrapper}>
-          <CreditReportSideWrapper
-            dealershipId={id}
-            data={{}}
-            currentUser={currentUser}
-            onClose={toggleCreditReport}
-          />
-        </div>
-      </Drawer>
 
       <Dialog
         fullScreen

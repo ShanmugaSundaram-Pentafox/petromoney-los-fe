@@ -1,6 +1,4 @@
-// import { API } from "../config/api"
 import { URL } from '../config/serverUrls';
-// import { store } from "../store";
 import apiCall from '../utils/api.util';
 
 export const getBusinessTypes = () => {
@@ -35,45 +33,6 @@ export const getOmcList = () => {
   });
 };
 
-export const getExperianReportById = (id, type) => {
-  return new Promise((resolve, reject) => {
-    apiCall(`experian/report/${id}/${type}`)
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          resolve(data);
-        } else {
-          reject(message);
-        }
-      })
-      .catch((e) => {
-        reject(e.message);
-      });
-  });
-};
-
-export const refreshExperianReportById = (id, type) => {
-  // const currentUser = store.getState().user.currentUser;
-  return new Promise((resolve, reject) => {
-    /**
-     * , {
-      headers: {
-        'Authorization': `Bearer ${currentUser.token}`
-      }
-    }
-     */
-    apiCall(`refresh/experian/report/consumer/${id}`)
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          resolve(data);
-        } else {
-          reject(message);
-        }
-      })
-      .catch((e) => {
-        reject(e.message);
-      });
-  });
-};
 
 export const downloadPDF = ({ file, isBase64, name }) => {
   const linkSource = isBase64 ? `data:application/pdf;base64,${file}` : file;
@@ -314,21 +273,6 @@ export const getMenuItemsCount = () => {
       });
   });
 };
-// export const getMasterRegionById = (res) => {
-//   return new Promise((resolve, reject) => {
-//     apiCall(`master/regions/${res}`)
-//       .then(({ status, data, message }) => {
-//         if (status === "SUCCESS") {
-//           resolve(data);
-//         } else {
-//           reject(message);
-//         }
-//       })
-//       .catch(err => {
-//         reject(err.message);
-//       })
-//   })
-// }
 
 export const getRegionById = (res) => {
   return new Promise((resolve, reject) => {

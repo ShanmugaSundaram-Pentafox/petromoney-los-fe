@@ -168,8 +168,8 @@ const AddNewTransportsForm = ({
   const [gstDetails, setGstDetails] = useState({})
   const [checked, setChecked] = useState(false);
   const [selectedDate, setSelectedDate] = useState(data?.doi && parse(data?.doi, 'dd-MM-yyyy', new Date()));
-  const [panValidateData, setPanValidateData] = useState({icon: false})
-  const [gstValidateData, setGstValidateData] = useState({icon: false})
+  const [panValidateData, setPanValidateData] = useState({ icon: false })
+  const [gstValidateData, setGstValidateData] = useState({ icon: false })
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -189,12 +189,12 @@ const AddNewTransportsForm = ({
     setSelectedDate(e);
   };
   const handleValidate = (action, id) => {
-    action === 'pan' ? setPanValidateData({icon:true, loading: true}) : setGstValidateData({icon:true, loading: true})
+    action === 'pan' ? setPanValidateData({ icon: true, loading: true }) : setGstValidateData({ icon: true, loading: true })
     validateId(action, id)
       .then((res) => {
         action === 'pan' ?
-          setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}, is_verified: res?.is_verified}) :
-          setGstValidateData({icon: true, loading: false, idType: 'GST', details: res?.details || {}, is_verified: res?.is_verified})
+          setPanValidateData({ icon: true, loading: false, idType: 'PAN', details: res?.details || {}, is_verified: res?.is_verified }) :
+          setGstValidateData({ icon: true, loading: false, idType: 'GST', details: res?.details || {}, is_verified: res?.is_verified })
         !values?.name && setFieldValue('name', res?.details?.tradeNam)
         setFieldValue('address', res?.details?.pradr?.adr)
         !values?.business_type && setFieldValue('business_type', res?.details?.ctb)
@@ -202,8 +202,8 @@ const AddNewTransportsForm = ({
       .catch(e => {
         console.log(e);
         action === 'pan' ?
-          setPanValidateData({icon: true, idType: 'PAN'}) :
-          setGstValidateData({icon: true, idType: 'GST'})
+          setPanValidateData({ icon: true, idType: 'PAN' }) :
+          setGstValidateData({ icon: true, idType: 'GST' })
       })
   }
 
@@ -254,7 +254,10 @@ const AddNewTransportsForm = ({
       omc: Yup.string().required('Please Choose OMC').nullable('Choose OMC'),
       business_type: Yup.string().required('Please choose bussiness type').nullable('Choose business type'),
       region: Yup.string().required('Please choose region').nullable('Choose region'),
-      address: Yup.string().required('Please enter address').nullable('Enter address'),
+      address: Yup.string()
+        .required('Please enter address')
+        .nullable('Enter address')
+        .test('Invalid characters', 'Invalid characters', value => !/[_#$%^&*@()<>!~{}=:;"'?]/.test(value)),
       state: Yup.string().required('Please choose state').nullable('Choose state'),
       city: Yup.string().nullable('Enter City').required('Enter City'),
       pincode: Yup.string().nullable('Enter pincode').matches(/^[1-9][0-9]{5}$/, 'Invalid pincode').required('Enter pincode'),
@@ -266,14 +269,14 @@ const AddNewTransportsForm = ({
       gst: Yup.string().nullable('Enter GST').matches(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/, 'Invalid GST').required('Enter GST').uppercase(),
     }),
     onSubmit: (values) => {
-      if(isAdd === 'Add'){
+      if (isAdd === 'Add') {
         handleValidate('pan', values?.pan)
         handleValidate('gst', values?.gst)
       }
       setLoading(true);
       values.name = values.name.toUpperCase();
       const doi = selectedDate ? format(selectedDate, 'dd-MM-yyyy') : values?.doi
-      const data_values = { ...values, doi: doi, t_owner_id: id, pan: values.pan?.toUpperCase(), gst: values.gst?.toUpperCase(), omc: omcs.find(item => {return item.name === values.omc})?.id };
+      const data_values = { ...values, doi: doi, t_owner_id: id, pan: values.pan?.toUpperCase(), gst: values.gst?.toUpperCase(), omc: omcs.find(item => { return item.name === values.omc })?.id };
 
       let obj = {};
       if (values.transporter_id) {
@@ -304,7 +307,7 @@ const AddNewTransportsForm = ({
             return res.json();
           })
 
-          .then(({status, message}) => {
+          .then(({ status, message }) => {
             setLoading(false);
             if (status === 'SUCCESS') {
               enqueueSnackbar(message, {
@@ -431,9 +434,9 @@ const AddNewTransportsForm = ({
       });
   };
   useEffect(() => {
-    if(/^[1-9][0-9]{5}$/.test(values?.pincode)) {
+    if (/^[1-9][0-9]{5}$/.test(values?.pincode)) {
       getPincodeDetails(values?.pincode)
-        .then(res =>{
+        .then(res => {
           setCity(res)
           setFieldValue('city', res[0]?.city_code)
           setFieldValue('state', res[0]?.state_code)
@@ -442,20 +445,20 @@ const AddNewTransportsForm = ({
           console.log(e);
         })
     }
-  },[values?.pincode])
+  }, [values?.pincode])
   const inputProps = {
     direction: 'column',
     alignTop: true,
     onChange: handleChange,
   };
   const ValidateProps = (valid) => {
-    return({
-      endAdornment: <div style={{marginRight: 6, marginTop: 4, cursor: 'pointer'}}>
+    return ({
+      endAdornment: <div style={{ marginRight: 6, marginTop: 4, cursor: 'pointer' }}>
         {
-        valid?.icon ?
-        valid?.loading ? <CircularProgress size={15}/> :
-        valid?.is_verified ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{color:'#4caf50'}} /></Tooltip> :
-        <Tooltip title={`Invalid ${valid.idType}`} ><CancelOutlinedIcon fontSize='small' color='error' /></Tooltip> : null
+          valid?.icon ?
+            valid?.loading ? <CircularProgress size={15} /> :
+              valid?.is_verified ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{ color: '#4caf50' }} /></Tooltip> :
+                <Tooltip title={`Invalid ${valid.idType}`} ><CancelOutlinedIcon fontSize='small' color='error' /></Tooltip> : null
         }
       </div>
     })
@@ -505,7 +508,7 @@ const AddNewTransportsForm = ({
         <div className={classes.stepperRoot}>
           {readOnly ? (
             <>
-              <Typography variant="h6" style={{marginTop: 8}}>Transport Details</Typography>
+              <Typography variant="h6" style={{ marginTop: 8 }}>Transport Details</Typography>
               <Grid container spacing={2} className={classes.readOnlyWrapper}>
                 <Grid item md={6}>
                   <Box className={classes.box}>
@@ -514,7 +517,7 @@ const AddNewTransportsForm = ({
                       value={values.transporter_id}
                     />
                     <ViewData title='Mobile' value={values.mobile} />
-                    <ViewData title='OMC' value={values?.omc_value || omcs.find(item => {return item.name === values.omc})?.name} />
+                    <ViewData title='OMC' value={values?.omc_value || omcs.find(item => { return item.name === values.omc })?.name} />
                     <ViewData title='Pincode' value={values.pincode} />
                     <ViewData title='City' value={values.city_name} />
                     <ViewData title='Date of Incoporation' value={values?.doi} />
@@ -527,27 +530,27 @@ const AddNewTransportsForm = ({
                   <Box className={classes.box}>
                     <ViewData title='Transport Name' value={values.name} />
                     <ViewData title='Address' value={values.address} />
-                    <ViewData title='Business Type' value={businessType.find(item => {return item.name === values?.business_type})?.name} />
+                    <ViewData title='Business Type' value={businessType.find(item => { return item.name === values?.business_type })?.name} />
                     <ViewData title='State' value={values.state_name} />
                     <ViewData title='Region' value={(regionList.find(function (region) {
                       if (region.id == values.region)
                         return true;
                     }))?.name} />
                     {values?.gst_verified ? <ViewData title='Legal Business Name' value={gstDetails?.mbr} /> : null}
-                    {values?.gst_verified ? <ViewData title='Effective Date of registration' value={gstDetails?.rgdt}/> : null}
+                    {values?.gst_verified ? <ViewData title='Effective Date of registration' value={gstDetails?.rgdt} /> : null}
                     {values?.gst_verified ? <ViewData title='Taxpayer Type' value={gstDetails?.dty} /> : null}
 
                   </Box>
                 </Grid>
               </Grid>
               <Divider />
-              <Typography variant="h6" style={{marginTop: 8}}>KYC Details</Typography>
+              <Typography variant="h6" style={{ marginTop: 8 }}>KYC Details</Typography>
               <Grid container spacing={2} className={classes.readOnlyWrapper}>
                 <Grid item md={6}>
-                  <ViewData title='GST' value={values.gst} endIcon={<CustomToken variant={values?.gst_verified ? 'success': 'error'} label={values?.gst_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.gst_verified ? 'tick' : 'cross'}/>} />
+                  <ViewData title='GST' value={values.gst} endIcon={<CustomToken variant={values?.gst_verified ? 'success' : 'error'} label={values?.gst_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.gst_verified ? 'tick' : 'cross'} />} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success': 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'}/>} />
+                  <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success' : 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'} />} />
                 </Grid>
               </Grid>
               <Divider />
@@ -556,8 +559,8 @@ const AddNewTransportsForm = ({
                   <div className={classes.readOnlyWrapper}>
                     <Typography variant='h4'>Attachments</Typography>
                     <div style={{ display: 'flex', marginTop: 16 }}>
-                      {values.pan_file_url && <DocAttachment tooltip='View PAN' imgUrl={values?.pan_file_url} docName='PAN' style={{marginRight: 20}} />}
-                      {values.gst_file_url && <DocAttachment tooltip='View GST' imgUrl={values?.gst_file_url} docName='GST' style={{marginRight: 20}} />}
+                      {values.pan_file_url && <DocAttachment tooltip='View PAN' imgUrl={values?.pan_file_url} docName='PAN' style={{ marginRight: 20 }} />}
+                      {values.gst_file_url && <DocAttachment tooltip='View GST' imgUrl={values?.gst_file_url} docName='GST' style={{ marginRight: 20 }} />}
                     </div>
                   </div>
                 ) : (
@@ -630,8 +633,8 @@ const AddNewTransportsForm = ({
                       InputProps={ValidateProps(gstValidateData)}
                     />
                     {
-                      !values?.gst_verified || values?.gst !== data?.gst?
-                        <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={()=> values?.gst && handleValidate('gst', values?.gst)}>Validate GST</Typography> : null
+                      !values?.gst_verified || values?.gst !== data?.gst ?
+                        <Typography variant="caption" style={{ color: 'blue', cursor: 'pointer' }} onClick={() => values?.gst && handleValidate('gst', values?.gst)}>Validate GST</Typography> : null
                     }
                   </Grid>
                   <Grid item md={6}>
@@ -648,7 +651,7 @@ const AddNewTransportsForm = ({
                     />
                     {
                       !values?.pan_verified || values?.pan !== data?.pan ?
-                        <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={()=> values?.pan && handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
+                        <Typography variant="caption" style={{ color: 'blue', cursor: 'pointer' }} onClick={() => values?.pan && handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
                     }
                   </Grid>
                   <Grid item md={12}>
@@ -717,8 +720,8 @@ const AddNewTransportsForm = ({
                           <option value="" disabled>Enter Pincode to select State</option>
                       }
                       {
-                        city?.map((item, i)=> {
-                          return(
+                        city?.map((item, i) => {
+                          return (
                             <option key={i} value={item?.state_code}>{item?.state}</option>
                           )
                         })
@@ -743,7 +746,7 @@ const AddNewTransportsForm = ({
                       }
                       {
                         city?.map((item, i) => {
-                          return(
+                          return (
                             <option key={i} value={item?.city_code}>{item?.city}</option>
                           )
                         })
@@ -777,7 +780,7 @@ const AddNewTransportsForm = ({
                         select
                         labelText="OMC"
                         name="omc"
-                        value={values?.omc || omcs.find(item => {return item.name === values.omc})?.name}
+                        value={values?.omc || omcs.find(item => { return item.name === values.omc })?.name}
                         readOnly={readOnly}
                         disabled={readOnly}
                         error={errors.omc}
@@ -843,7 +846,7 @@ const AddNewTransportsForm = ({
                     gstDetails?.gstin || gstValidateData?.details ?
                       <>
                         <Grid item md={3}>
-                          <ViewData title='Effective Date of registration' value={gstDetails?.rgdt || gstValidateData?.details?.rgdt}/>
+                          <ViewData title='Effective Date of registration' value={gstDetails?.rgdt || gstValidateData?.details?.rgdt} />
                         </Grid>
                         <Grid item md={3}>
                           <ViewData title='Taxpayer Type' value={gstDetails?.dty || gstValidateData?.details?.dty} />
@@ -863,8 +866,8 @@ const AddNewTransportsForm = ({
                     <Typography variant='h6'>Attachments</Typography>
                   </Grid>
                   <div className={classes.attachmentContainer}>
-                    <DocAttachment action={true} imgUrl={values?.pan_file_url} docName='PAN Card' onUpload={() => docUpload('PAN')} onDelete={() => onDocDelete({pan_file_url:''})} disabled={!values?.pan_file_url} style={{marginRight: 25}} />
-                    <DocAttachment action={true} imgUrl={values?.gst_file_url} docName='GST' onUpload={() => docUpload('GST')} onDelete={() => onDocDelete({gst_file_url:''})} disabled={!values?.gst_file_url} style={{marginRight: 25}} />
+                    <DocAttachment action={true} imgUrl={values?.pan_file_url} docName='PAN Card' onUpload={() => docUpload('PAN')} onDelete={() => onDocDelete({ pan_file_url: '' })} disabled={!values?.pan_file_url} style={{ marginRight: 25 }} />
+                    <DocAttachment action={true} imgUrl={values?.gst_file_url} docName='GST' onUpload={() => docUpload('GST')} onDelete={() => onDocDelete({ gst_file_url: '' })} disabled={!values?.gst_file_url} style={{ marginRight: 25 }} />
                   </div>
                 </Grid>
               </form>

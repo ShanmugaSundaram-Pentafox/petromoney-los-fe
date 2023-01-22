@@ -27,34 +27,7 @@ const WorkingSheetTable = ({ data }) => {
         data?.ws_summary_data?.length ?
           <TableContainer style={{ maxHeight: '50vh' }}>
             {/* Summary data table */}
-            <Table style={{ width: '100%' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-                <TableBody>
-                  {
-                    workingSheetSummary1?.map((item, i) => {
-                      return (
-                        <TableRow key={i}>
-                          <TableCell>{item?.label}</TableCell>
-                          <TableCell>{head(data?.ws_summary_data)?.[item?.key]}</TableCell>
-                        </TableRow>
-                      )
-                    })
-                  }
-                </TableBody>
-                <TableBody>
-                  {
-                    workingSheetSummary2?.map((item, i) => {
-                      return (
-                        <TableRow key={i}>
-                          <TableCell>{item?.label}</TableCell>
-                          <TableCell>{head(data?.ws_summary_data)?.[item?.key]}</TableCell>
-                        </TableRow>
-                      )
-                    })
-                  }
-                </TableBody>
-              </div>
-            </Table>
+            <SummaryDataTable data={data} />
             {
               data?.ws_summary_data[0]?.profile_of_customer_and_business && (
                 <>
@@ -99,20 +72,6 @@ const WorkingSheetTable = ({ data }) => {
                 </>
               ) : null
             }
-            <Table style={{ width: '60%' }}>
-              <TableBody>
-                {
-                  workingSheetSummary3?.map((item, i) => {
-                    return (
-                      <TableRow key={i}>
-                        <TableCell>{item?.label}</TableCell>
-                        <TableCell>{head(data?.ws_summary_data)?.[item?.key]}</TableCell>
-                      </TableRow>
-                    )
-                  })
-                }
-              </TableBody>
-            </Table>
             {
               data?.ws_faculty_sales_data?.length ? (
                 <>
@@ -186,6 +145,9 @@ let workingSheetSummary1 = [
   { label: 'Rate of Interest %', key: 'rate_of_interest_in_percent' },
   { label: 'FOIR as per policy %', key: 'foir_as_per_policy' },
   { label: 'Leverage as per Policy', key: 'leverage_as_per_policy' },
+  { label: 'Total regular customer bases', key: 'total_regular_customer_bases' },
+  { label: 'Max credit period days / limit', key: 'max_credit_period_days' },
+  { label: 'Total receivables ( latest) Rs.', key: 'total_receivables' },
 ]
 
 let workingSheetSummary2 = [
@@ -196,16 +158,9 @@ let workingSheetSummary2 = [
   { label: 'Processing Key %', key: 'processing_fee_in_percent' },
   { label: 'Actual FOIR character', key: 'actual_foir' },
   { label: 'Actual Leverage', key: 'actual_leverage' },
-]
-
-
-let workingSheetSummary3 = [
-  { label: 'Total regular customer bases', key: 'total_regular_customer_bases' },
   { label: 'Main customer (transports / Institutions )', key: 'main_customers' },
-  { label: 'Max credit period days / limit', key: 'max_credit_period_days' },
   { label: 'bad debts ( yearly)', key: 'bad_debts_yearly' },
   { label: 'Mode of collection ( cash / transfer)', key: 'mode_of_collection' },
-  { label: 'Total receivables ( latest) Rs.', key: 'total_receivables' },
 ]
 
 let scoreCardReference = [
@@ -233,12 +188,13 @@ let cibilAnalysis = [
 
 export const RemarksTable = ({ data }) => {
   return (
-    (data?.ws_summary_data[0]?.profile_of_customer_and_business)?.split('\n'))?.map(item => (
-      <>
-      <br />
-      <Typography variant='body'>{`${item}`}</Typography>
-    </>
-  )
+    data.length ? (
+      ((data?.ws_summary_data[0]?.profile_of_customer_and_business)?.split('\n'))?.map((item, i) => (
+        <div key={i}>
+          <br />
+          <Typography variant='body'>{`${item}`}</Typography>
+        </div>
+      ))) : <p style={{ textAlign: 'center' }}>No remarks found</p>
   )
 }
 
@@ -562,6 +518,39 @@ export const ReferrenceTable = ({ data }) => {
           })
         }
       </TableBody>
+    </Table>
+  )
+}
+
+export const SummaryDataTable = ({ data }) => {
+  return (
+    <Table style={{ width: '100%' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+        <TableBody>
+          {
+            workingSheetSummary1?.map((item, i) => {
+              return (
+                <TableRow key={i}>
+                  <TableCell>{item?.label}</TableCell>
+                  <TableCell>{head(data?.ws_summary_data)?.[item?.key]}</TableCell>
+                </TableRow>
+              )
+            })
+          }
+        </TableBody>
+        <TableBody>
+          {
+            workingSheetSummary2?.map((item, i) => {
+              return (
+                <TableRow key={i}>
+                  <TableCell>{item?.label}</TableCell>
+                  <TableCell>{head(data?.ws_summary_data)?.[item?.key]}</TableCell>
+                </TableRow>
+              )
+            })
+          }
+        </TableBody>
+      </div>
     </Table>
   )
 }

@@ -151,7 +151,6 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
         </div>
         <div className={classes.contentWrapper}>
           <DealershipData data={data} readOnly={true} />
-          <Typography variant='h4' style={{ marginTop: 20 }}>Working sheet</Typography>
           <WorkingSheetDrawer id={id} />
           <LoanInfo status={status} viewable={false} currentUser={currentUser} newInfo={loanData} editable={editable} data={selectedLoanData} updateNewLoanInfo={updateNewLoanInfo} />
         </div>

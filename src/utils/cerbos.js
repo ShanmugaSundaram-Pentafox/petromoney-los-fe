@@ -1,4 +1,4 @@
-import { URL } from "../config/serverUrls";
+import { URL } from '../config/serverUrls';
 
 const AccessPermission = (currentUser) => {
   /*
@@ -47,7 +47,7 @@ export const checkValue = (value) => {
 
 // Check and return Crebos permission string based on boolean input
 export const parseValue = (value) => {
-  return value === 'EFFECT_ALLOW'
+  return value ? 'EFFECT_ALLOW' : 'EFFECT_DENY'
 };
 
 // Check if action is allowed

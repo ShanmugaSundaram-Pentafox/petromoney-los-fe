@@ -119,7 +119,10 @@ const DealershipInfo = ({ data, className, currentUser }) => {
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       name: Yup.string().nullable('Please enter dealership name').required('Please enter Dealership name').matches(/^[aA-zZ.,&/-\s]+$/, 'Only alphabets are allowed for this field ').max(50),
-      address: Yup.string().nullable('Please enter address').required('Please enter address'),
+      address: Yup.string()
+        .nullable('Please enter address')
+        .required('Please enter address')
+        .test('Invalid characters', 'Please don\'t use _ # $ % ^ & * @ ( ) < > ! ~ { } = : ; " ? ', value => !/[_#$%^&*@()<>!~{}=:;"?]/.test(value)),
       state: Yup.string().nullable('Please choose state').required('Please choose state'),
       district: Yup.string().nullable('Please enter district').required('Please enter district'),
       pincode: Yup.string().nullable('Enter pincode').matches(/^[1-9][0-9]{5}$/, 'Invalid pincode').required('Enter pincode'),

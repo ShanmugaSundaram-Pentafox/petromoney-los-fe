@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.24.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.24.0...v2.24.1) (2023-01-21)
+
+
+### Bug Fixes
+
+* **form-validation:** updated regex for address field ([442451d](https://gitlab.com/vignesh3/petromall-fe/commit/442451dc46cdce1216e5a3fc90080ca633d6818c))
+* removed unused components ([3ee49be](https://gitlab.com/vignesh3/petromall-fe/commit/3ee49beb308f86e8cbfe19724249df2249aa5b24))
+
 ## [2.24.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.23.6...v2.24.0) (2023-01-12)
 
 

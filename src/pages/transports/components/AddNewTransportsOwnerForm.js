@@ -1,5 +1,5 @@
 import DateFnsUtils from '@date-io/date-fns';
-import { Box, CircularProgress, Divider, Grid, Switch, Tooltip, Typography,IconButton } from '@material-ui/core';
+import { Box, CircularProgress, Divider, Grid, Switch, Tooltip, Typography, IconButton } from '@material-ui/core';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
 import CloseIcon from '@material-ui/icons/Close';
@@ -154,8 +154,8 @@ const AddNewTransportsOwnerForm = ({
   const [loading, setLoading] = useState(false);
   const [city, setCity] = useState([]);
   const [showUpload, setShowUpload] = useState(false);
-  const [panValidateData, setPanValidateData] = useState({icon: false})
-  const [aadharValidateData, setAadharValidateData] = useState({icon: false})
+  const [panValidateData, setPanValidateData] = useState({ icon: false })
+  const [aadharValidateData, setAadharValidateData] = useState({ icon: false })
   const [fileType, setFileType] = useState('');
   const [state, setState] = React.useState({
     checkedA: true,
@@ -163,13 +163,13 @@ const AddNewTransportsOwnerForm = ({
   });
   const [selectedDate, setSelectedDate] = useState(rowData?.dob && parse(rowData?.dob, 'dd-MM-yyyy', new Date()));
   const handleValidate = (action, id, data) => {
-    if(action === 'pan' ? id : id && values?.first_name){
-      action === 'pan' && setPanValidateData({icon:true, loading: true})
-      action === 'aadhar' && setAadharValidateData({icon:true, loading: true})
+    if (action === 'pan' ? id : id && values?.first_name) {
+      action === 'pan' && setPanValidateData({ icon: true, loading: true })
+      action === 'aadhar' && setAadharValidateData({ icon: true, loading: true })
       validateId(action, id, data)
         .then((res) => {
-          if(action === 'pan') {
-            setPanValidateData({icon: true, loading: false, idType: 'PAN', details: res?.details || {}, is_verified: res?.is_verified})
+          if (action === 'pan') {
+            setPanValidateData({ icon: true, loading: false, idType: 'PAN', details: res?.details || {}, is_verified: res?.is_verified })
             !values?.first_name && setFieldValue('first_name', res?.details?.firstName)
             !values?.last_name && setFieldValue('last_name', res?.details?.lastName)
             res?.details?.dob && setSelectedDate(parse(res?.details?.dob, 'yyyy-MM-dd', new Date()))
@@ -177,7 +177,7 @@ const AddNewTransportsOwnerForm = ({
             !values?.pincode && setFieldValue('pincode', res?.details?.address?.pinCode)
             !values?.address && setFieldValue('address', `${res?.details?.address?.buildingName}, ${res?.details?.address?.streetName}, ${res?.details?.address?.city}, ${res?.details?.address?.state} - ${res?.details?.address?.pinCode}`)
           } else {
-            setAadharValidateData({icon: true, loading: false, idType: 'AADHAR', details: res?.details || {}, is_verified: res?.is_verified})
+            setAadharValidateData({ icon: true, loading: false, idType: 'AADHAR', details: res?.details || {}, is_verified: res?.is_verified })
           }
         })
         .catch(e => {
@@ -188,8 +188,8 @@ const AddNewTransportsOwnerForm = ({
             },
             variant: 'error',
           });
-          action === 'pan' && setPanValidateData({icon: true, idType: 'PAN'})
-          action === 'aadhar' && setAadharValidateData({icon: true, idType: 'AADHAR'})
+          action === 'pan' && setPanValidateData({ icon: true, idType: 'PAN' })
+          action === 'aadhar' && setAadharValidateData({ icon: true, idType: 'AADHAR' })
         })
     } else {
       validateField(action)
@@ -209,13 +209,13 @@ const AddNewTransportsOwnerForm = ({
     callback();
   };
   const ValidateProps = (valid) => {
-    return({
-      endAdornment: <div style={{marginRight: 6, marginTop: 4, cursor: 'pointer'}}>
+    return ({
+      endAdornment: <div style={{ marginRight: 6, marginTop: 4, cursor: 'pointer' }}>
         {
-        valid?.icon ?
-        valid?.loading ? <CircularProgress size={15}/> :
-        valid?.is_verified ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{color:'#4caf50'}} /></Tooltip> :
-        <Tooltip title={`Invalid ${valid.idType}`} ><CancelOutlinedIcon fontSize='small' color='error' /></Tooltip> : null
+          valid?.icon ?
+            valid?.loading ? <CircularProgress size={15} /> :
+              valid?.is_verified ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{ color: '#4caf50' }} /></Tooltip> :
+                <Tooltip title={`Invalid ${valid.idType}`} ><CancelOutlinedIcon fontSize='small' color='error' /></Tooltip> : null
         }
       </div>
     })
@@ -246,7 +246,10 @@ const AddNewTransportsOwnerForm = ({
       last_name: Yup.string().required('Please enter transporter name').nullable('Please enter transporter name'),
       email: Yup.string().email('Enter valid mail id').nullable('Enter valid mail id'),
       mobile: Yup.number().required('Enter mobile number').nullable('Enter mobile number').test('maxDigits', 'Mobile Number mush have 10 digits', (number) => String(number).length === 10),
-      address: Yup.string().required('Please enter address').nullable('Please enter address'),
+      address: Yup.string()
+        .required('Please enter address')
+        .nullable('Please enter address')
+        .test('Invalid characters', 'Invalid characters', value => !/[_#$%^&*@()<>!~{}=:;"'?]/.test(value)),
       pincode: Yup.string().nullable('Enter pincode').matches(/^[1-9][0-9]{5}$/, 'Invalid pincode').required('Enter pincode'),
       pan: Yup.string().nullable('Enter PAN').matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN').required('Enter PAN').uppercase(),
       city: Yup.string().nullable('Enter City').required('Enter City'),
@@ -254,8 +257,8 @@ const AddNewTransportsOwnerForm = ({
       aadhar: Yup.string().nullable('Enter GST').matches(/^(\d{12})$|^(\d{16})$/, 'Invalid aadhar').required('Enter valid aadhar'),
     }),
     onSubmit: (values) => {
-      if(isAdd === 'Add'){
-        handleValidate('pan',values?.pan)
+      if (isAdd === 'Add') {
+        handleValidate('pan', values?.pan)
       }
       values.first_name = values.first_name.toUpperCase();
       values.last_name = values.last_name.toUpperCase();
@@ -277,11 +280,11 @@ const AddNewTransportsOwnerForm = ({
 
       const data = new FormData();
       Object.keys(obj).forEach((key) => {
-        if( key === 'pan' ){
+        if (key === 'pan') {
           let pan = obj?.pan ? cryptoEncrypt(obj.pan) : obj?.pan;
           data.append(key, pan);
         }
-        else if( key === 'aadhar' ){
+        else if (key === 'aadhar') {
           let aadhar = obj?.aadhar ? cryptoEncrypt(obj.aadhar) : obj?.aadhar;
           data.append(key, aadhar);
         } else {
@@ -388,9 +391,9 @@ const AddNewTransportsOwnerForm = ({
   });
 
   useEffect(() => {
-    if(/^[1-9][0-9]{5}$/.test(values?.pincode)) {
+    if (/^[1-9][0-9]{5}$/.test(values?.pincode)) {
       getPincodeDetails(values?.pincode)
-        .then(res =>{
+        .then(res => {
           setCity(res)
           setFieldValue('city', res[0]?.city_code)
           setFieldValue('state', res[0]?.state_code)
@@ -399,7 +402,7 @@ const AddNewTransportsOwnerForm = ({
           console.log(e);
         })
     }
-  },[values?.pincode])
+  }, [values?.pincode])
 
   const onCloseUploader = () => {
     setShowUpload(false);
@@ -449,7 +452,7 @@ const AddNewTransportsOwnerForm = ({
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant='h4'>
         <div>Owner Information</div>
-        <IconButton onClick={handleClose}  size='small'>
+        <IconButton onClick={handleClose} size='small'>
           <CloseIcon />
         </IconButton>
       </Typography>
@@ -457,7 +460,7 @@ const AddNewTransportsOwnerForm = ({
         <div className={classes.stepperRoot}>
           {readOnly ? (
             <>
-              <Typography variant="h6" style={{marginTop: 8}}>Personal Details</Typography>
+              <Typography variant="h6" style={{ marginTop: 8 }}>Personal Details</Typography>
               <Grid container spacing={2} className={classes.readOnlyWrapper}>
                 <Grid item md={6}>
                   <Box className={classes.box}>
@@ -481,13 +484,13 @@ const AddNewTransportsOwnerForm = ({
                 </Grid>
               </Grid>
               <Divider />
-              <Typography variant="h6" style={{marginTop: 8}}>KYC Details</Typography>
+              <Typography variant="h6" style={{ marginTop: 8 }}>KYC Details</Typography>
               <Grid container spacing={2} className={classes.readOnlyWrapper}>
                 <Grid item md={6}>
-                  <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success': 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'}/>}/>
+                  <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success' : 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'} />} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='Aadhar' value={values.aadhar} endIcon={<CustomToken variant={values?.aadhar_verified ? 'success': 'error'} label={values?.aadhar_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.aadhar_verified ? 'tick' : 'cross'}/>} />
+                  <ViewData title='Aadhar' value={values.aadhar} endIcon={<CustomToken variant={values?.aadhar_verified ? 'success' : 'error'} label={values?.aadhar_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.aadhar_verified ? 'tick' : 'cross'} />} />
                 </Grid>
               </Grid>
               <Divider />
@@ -503,10 +506,10 @@ const AddNewTransportsOwnerForm = ({
                         marginTop: 16,
                       }}
                     >
-                      {values.profile_image_url && <DocAttachment tooltip='View Profile' imgUrl={values?.profile_image_url} docName='Profile' style={{marginRight: 20}} />}
-                      {values.pan_file_url && <DocAttachment tooltip='View PAN' imgUrl={values?.pan_file_url} docName='PAN' style={{marginRight: 20}} />}
-                      {values.aadhar_f_file_url && <DocAttachment tooltip='View Aadhar Front' imgUrl={values?.aadhar_f_file_url} docName='Aadhar front' style={{marginRight: 20}} />}
-                      {values.aadhar_b_file_url && <DocAttachment tooltip='View Aadhar Back' imgUrl={values?.aadhar_b_file_url} docName='Aadhar back' style={{marginRight: 20}} />}
+                      {values.profile_image_url && <DocAttachment tooltip='View Profile' imgUrl={values?.profile_image_url} docName='Profile' style={{ marginRight: 20 }} />}
+                      {values.pan_file_url && <DocAttachment tooltip='View PAN' imgUrl={values?.pan_file_url} docName='PAN' style={{ marginRight: 20 }} />}
+                      {values.aadhar_f_file_url && <DocAttachment tooltip='View Aadhar Front' imgUrl={values?.aadhar_f_file_url} docName='Aadhar front' style={{ marginRight: 20 }} />}
+                      {values.aadhar_b_file_url && <DocAttachment tooltip='View Aadhar Back' imgUrl={values?.aadhar_b_file_url} docName='Aadhar back' style={{ marginRight: 20 }} />}
                     </div>
                   </div>
                 ) : (
@@ -546,7 +549,7 @@ const AddNewTransportsOwnerForm = ({
                     />
                     {
                       !values?.pan_verified || values?.pan !== rowData?.pan ?
-                        <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={() => handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
+                        <Typography variant="caption" style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
                     }
                   </Grid>
                   <Grid item md={6}>
@@ -564,7 +567,7 @@ const AddNewTransportsOwnerForm = ({
                     />
                     {
                       !values?.aadhar_verified || values?.aadhar !== rowData?.aadhar ?
-                        <Typography variant="caption" style={{color: 'blue', cursor: 'pointer'}} onClick={() => handleValidate('aadhar', values?.aadhar, values?.first_name)}>Validate Aadhar</Typography> : null
+                        <Typography variant="caption" style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleValidate('aadhar', values?.aadhar, values?.first_name)}>Validate Aadhar</Typography> : null
                     }
                   </Grid>
                   <Grid item md={12} >
@@ -613,7 +616,7 @@ const AddNewTransportsOwnerForm = ({
                         margin='normal'
                         id='date-picker'
                         autoOk={true}
-                        value={selectedDate? selectedDate : null}
+                        value={selectedDate ? selectedDate : null}
                         onChange={handleDateChange}
                         InputLabelProps={{ shrink: true }}
                         keyboardButtonProps={{
@@ -693,7 +696,7 @@ const AddNewTransportsOwnerForm = ({
                       }
                       {
                         city?.map((item, i) => {
-                          return(
+                          return (
                             <option key={i} value={item?.city_code}>{item?.city}</option>
                           )
                         })
@@ -718,8 +721,8 @@ const AddNewTransportsOwnerForm = ({
                           <option value="" disabled>Enter Pincode to select State</option>
                       }
                       {
-                        city?.map((item, i)=> {
-                          return(
+                        city?.map((item, i) => {
+                          return (
                             <option key={i} value={item?.state_code}>{item?.state}</option>
                           )
                         })
@@ -869,11 +872,11 @@ const AddNewTransportsOwnerForm = ({
                     </Typography>
                   </Grid>
                   <div className={classes.attachmentContainer}>
-                    <DocAttachment action={true} imgUrl={values?.profile_image_url} docName='Profile' onUpload={() => docUpload('Profile')} onDelete={() => onDocDelete({profile_image_url:''})} disabled={!values?.profile_image_url}/>
-                    <DocAttachment action={true} imgUrl={values?.pan_file_url} docName='PAN Card' onUpload={() => docUpload('PAN')} onDelete={() => onDocDelete({pan_file_url:''})} disabled={!values?.pan_file_url} />
-                    <DocAttachment action={true} imgUrl={values?.aadhar_f_file_url} docName='Aadhar Front' onUpload={() => docUpload('Front')} onDelete={() => onDocDelete({aadhar_f_file_url:''})} disabled={!values?.aadhar_f_file_url} />
-                    <DocAttachment action={true} imgUrl={values?.aadhar_b_file_url} docName='Aadhar Back' onUpload={() => docUpload('Back')} onDelete={() => onDocDelete({aadhar_b_file_url:''})} disabled={!values?.aadhar_b_file_url} />
-                  </div>                  
+                    <DocAttachment action={true} imgUrl={values?.profile_image_url} docName='Profile' onUpload={() => docUpload('Profile')} onDelete={() => onDocDelete({ profile_image_url: '' })} disabled={!values?.profile_image_url} />
+                    <DocAttachment action={true} imgUrl={values?.pan_file_url} docName='PAN Card' onUpload={() => docUpload('PAN')} onDelete={() => onDocDelete({ pan_file_url: '' })} disabled={!values?.pan_file_url} />
+                    <DocAttachment action={true} imgUrl={values?.aadhar_f_file_url} docName='Aadhar Front' onUpload={() => docUpload('Front')} onDelete={() => onDocDelete({ aadhar_f_file_url: '' })} disabled={!values?.aadhar_f_file_url} />
+                    <DocAttachment action={true} imgUrl={values?.aadhar_b_file_url} docName='Aadhar Back' onUpload={() => docUpload('Back')} onDelete={() => onDocDelete({ aadhar_b_file_url: '' })} disabled={!values?.aadhar_b_file_url} />
+                  </div>
                 </Grid>
               </form>
             </Box>

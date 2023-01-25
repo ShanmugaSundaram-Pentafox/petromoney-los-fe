@@ -8,11 +8,13 @@ import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
+import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
-import WhatsAppIcon from '@material-ui/icons/WhatsApp';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
+import WhatsAppIcon from '@material-ui/icons/WhatsApp';
 import ToggleButton from '@material-ui/lab/ToggleButton';
+import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack'
 import React, { useState } from 'react';
@@ -24,12 +26,12 @@ import Button from '../../../components/CommonComponents/Button/Button';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
 import UserCan from '../../../components/UserCan/UserCan';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { logger } from '../../../config/logger';
 import { rulesList } from '../../../config/userRules';
 import { updateUserDetails } from '../../../services/common.service';
 import { deleteUser, getAllUserRoles } from '../../../services/users.service';
-import clsx from 'clsx';
-import EditIcon from '@material-ui/icons/Edit';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles(theme => ({
 
@@ -315,9 +317,9 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
           {
-            !editProfile && (
+            !editProfile &&
               <Box className={classes.button}>
-                {
+                <CheckAllowed currentUser={currentUser} resource={resources_id.users} action={action_id.users.userEdit}>
                   <Button
                     variant="contained"
                     size="small"
@@ -327,12 +329,9 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                       setReadOnly(false);
                       setEditPassword(false);
                       data.status === 'Active' ? setEditProfile(true) : activationAlert()
-
                     }}>Edit</Button>
-                }
+                </CheckAllowed>
               </Box>
-            )
-
           }
           <>
             {
@@ -455,8 +454,8 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                 <>
                   <Divider />
                   <div className={classes.passwordSection}>
-                    {
-                      <Box className={classes.button}>
+                    <Box className={classes.button}>
+                      <CheckAllowed currentUser={currentUser} resource={resources_id.users} action={action_id.users.userChange_password}>
                         <Button
                           variant="contained"
                           color="primary"
@@ -466,8 +465,8 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                             setReadOnly(false);
                             data.status === 'Active' ? setEditPassword(true) : activationAlert()
                           }}>Change password</Button>
-                      </Box>
-                    }
+                      </CheckAllowed>
+                    </Box>
                   </div>
                 </>
               ) : (

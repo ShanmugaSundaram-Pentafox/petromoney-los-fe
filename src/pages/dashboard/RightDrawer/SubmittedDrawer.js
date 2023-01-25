@@ -13,8 +13,10 @@ import DrawerFooter from './DrawerFooter';
 import LoanInfo from './LoanInfo';
 import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 import { TextEditor } from '../../../components/TextEditor/TextEditor';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { getUserRoleForReview } from '../../../services/common.service';
 import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
+import { isAllowed } from '../../../utils/cerbos';
 import WorkingSheetDrawer from '../../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
 
 
@@ -82,18 +84,20 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
   const { enqueueSnackbar } = useSnackbar();
 
   useMount(() => {
-    getUserRoleForReview('is_review=1')
-      .then(res => {
-        let d = [];
-        res.forEach((item) => {
-          d.push({
-            label: `${item.first_name} ${item.last_name}`,
-            value: item.id
+    if(isAllowed(currentUser?.permissions, resources_id.dashboard, action_id.dashboard.send_for_review)) {
+      getUserRoleForReview('is_review=1')
+        .then(res => {
+          let d = [];
+          res.forEach((item) => {
+            d.push({
+              label: `${item.first_name} ${item.last_name}`,
+              value: item.id
+            })
           })
+          setUserRole(d);
         })
-        setUserRole(d);
-      })
-      .catch(() => null)
+        .catch(() => null)
+    }
   })
   const handleReviewModal = () => {
     setReviewModal(!reviewModal)

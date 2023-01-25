@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const BankDetailsCard = ({ id, data, editBankDetails, editable }) => {
+const BankDetailsCard = ({ id, data, editBankDetails, editable, currentUser }) => {
   const queryClient = useQueryClient()
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles()
@@ -109,6 +109,7 @@ const BankDetailsCard = ({ id, data, editBankDetails, editable }) => {
               customIcon={<AccountBalanceOutlinedIcon color='primary' />}
               action={!editable}
               verifiedDate={item?.last_verified_date}
+              currentUser={currentUser}
             >
               <span className={classNames(classes.token, item?.bank_verified ? classes.tokenSuccess : classes.tokenError)}><CustomToken variant={item?.bank_verified ? 'success' : 'error'} label={item?.bank_verified ? 'verified' : 'unverified'} icon={item?.bank_verified ? 'tick' : 'cross'} /></span>
               <Grid container spacing={2} style={{ marginTop: 4 }}>
@@ -132,9 +133,9 @@ const BankDetailsCard = ({ id, data, editBankDetails, editable }) => {
       })
     }
       <Dialog
-        fullWidth
-        maxWidth={'sm'}
-        open={bankVerify}
+      fullWidth
+      maxWidth={'sm'}
+      open={bankVerify}
       >
         <DialogContent>
           <Typography variant="h5" style={{textAlign: 'center', marginBottom: 8}}>Account Verification</Typography>

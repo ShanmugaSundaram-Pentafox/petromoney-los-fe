@@ -18,8 +18,10 @@ import Button from '../../../components/CommonComponents/Button/Button';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { updateBusinessDetailsByID } from '../../../services/PDReport.services';
 import { compareObject } from '../../../utils/compareObject.util';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -462,21 +464,18 @@ const AddBusinessDetailsForm = ({ data: init_data, dealer_id, isEdit, callback, 
               Back
             </Button>
           </div>
-          {
-            !editable &&
-              <div>
-                <Button
-                  variant="contained"
-                  type="submit"
-                  className={clsx(classes.btn, classes.editButton)}
-                  startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                  onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
-                >
-                  {loading ? <CircularProgress size={20} /> : readOnly ? 'Edit' :
-                    'Save'}
-                </Button>
-              </div>
-          }
+          <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion.businessEdit}>
+            <Button
+              variant="contained"
+              type="submit"
+              className={clsx(classes.btn, classes.editButton)}
+              startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
+              onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
+            >
+              {loading ? <CircularProgress size={20} /> : readOnly ? 'Edit' :
+                'Save'}
+            </Button>
+          </CheckAllowed>
         </div>
       </div>
     </div >

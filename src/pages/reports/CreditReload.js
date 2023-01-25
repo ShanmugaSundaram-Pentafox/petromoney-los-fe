@@ -13,7 +13,7 @@ import {
 } from '../../services/users.service';
 import DashboardFilter from '../dashboard/components/DashboardFilter';
 
-const PaperWrapper = styled.div`
+export const PaperWrapper = styled.div`
 margin-bottom:10px;
 font-size:16px;
 background-color: #f1f1f1;

@@ -26,12 +26,14 @@ import {
 } from '../../../components/CommonComponents/FilePreview';
 import FileUpload from '../../../components/FileUpload';
 import TextInput from '../../../components/TextInput/TextInput';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { URL } from '../../../config/serverUrls';
 import { cryptoEncrypt } from '../../../services/crypto.service';
 import { getPincodeDetails } from '../../../services/dealers.service';
 import { validateId } from '../../../services/dealerships.service';
 import { deleteTransportOwnerProfileDoc } from '../../../services/transports.service';
 import { compareObject } from '../../../utils/compareObject.util';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -931,19 +933,18 @@ const AddNewTransportsOwnerForm = ({
               </div>
             )
           ) : (
-            !editable &&
-              <div>
-                <Button
-                  variant='contained'
-                  type='submit'
-                  className={clsx(classes.btn, classes.editButton)}
-                  startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                  disabled={loading}
-                  onClick={loading ? () => null : handleEdit}
-                >
-                  Edit
-                </Button>
-              </div>
+            <CheckAllowed currentUser={currentUser} resource={resources_id?.transporters} action={action_id?.transporters?.editOwner}>
+              <Button
+                variant='contained'
+                type='submit'
+                className={clsx(classes.btn, classes.editButton)}
+                startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
+                disabled={loading}
+                onClick={loading ? () => null : handleEdit}
+              >
+                Edit
+              </Button>
+            </CheckAllowed>
           )}
         </div>
       </div>

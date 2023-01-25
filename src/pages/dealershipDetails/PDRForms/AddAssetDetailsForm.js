@@ -21,6 +21,9 @@ import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
 import { addAssetDetailsById, deleteAssetDetailsById, getAssetDetailsById, getAssetList } from '../../../services/PDReport.services';
 import { compareObject } from '../../../utils/compareObject.util';
+import { action_id, resources_id } from '../../../config/accessControl';
+import { isAllowed, isDenied } from '../../../utils/cerbos';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -377,7 +380,7 @@ const AddAssetDetailsForm = ({ data: init_data, dealer_id, callback, currentUser
                               <PreviewCard
                                 onEdit={() => { editAssetRow(item, i) }}
                                 onDelete={() => deleteAssetRow(item, i)}
-                                action={!editable}
+                                action={isAllowed(currentUser?.permissions, resources_id?.personalDiscussion, action_id?.personalDiscussion?.assetEdit)}
                               >
                                 <Grid container spacing={2} >
                                   <Grid item md={6}>
@@ -415,17 +418,16 @@ const AddAssetDetailsForm = ({ data: init_data, dealer_id, callback, currentUser
               Back
             </Button>
           </div>
-          {
-            !editable &&
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => { setAddNewAsset(true); }}
-                style={{ marginBottom: 12 }}
-              >
-                Add asset
-              </Button>
-          }
+          <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion.assetAdd}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => { setAddNewAsset(true); }}
+              style={{ marginBottom: 12 }}
+            >
+              Add asset
+            </Button>
+          </CheckAllowed>
         </div>
       </div>
     </div >

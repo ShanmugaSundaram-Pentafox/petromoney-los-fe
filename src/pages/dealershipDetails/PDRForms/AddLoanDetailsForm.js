@@ -17,9 +17,12 @@ import Button from '../../../components/CommonComponents/Button/Button';
 import PreviewCard from '../../../components/CommonComponents/Cards/PreviewCard';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import TextInput from '../../../components/TextInput/TextInput';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { getLoanTypes } from '../../../services/common.service';
 import { addLoanDetailsByID, deleteLoanDetailsByID, getLoanDetailsbyID, updateLoanDetailsByID } from '../../../services/PDReport.services';
+import { isAllowed } from '../../../utils/cerbos';
 import { compareObject } from '../../../utils/compareObject.util';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -355,7 +358,7 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
                       <PreviewCard
                         onEdit={() => { editLoanRow(item, i) }}
                         onDelete={() => deleteLoanRow(item, i)}
-                        action={!editable}
+                        action={isAllowed(currentUser?.permissions, resources_id?.personalDiscussion, action_id?.personalDiscussion?.loanEdit)}
                       >
                         <Grid container spacing={2}>
                           <Grid item md={6}>
@@ -392,17 +395,16 @@ const AddLoanDetailsForm = ({ data, dealer_id, isEdit, callback, currentUser, ed
               Back
             </Button>
           </div>
-          {
-            !editable &&
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => { setAddNew(true); setValues({}) }}
-                style={{ marginBottom: 12 }}
-              >
-                Add Loan
-              </Button>
-          }
+          <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion.loanAdd}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => { setAddNew(true); setValues({}) }}
+              style={{ marginBottom: 12 }}
+            >
+              Add Loan
+            </Button>
+          </CheckAllowed>
         </div>
       </div>
     </div >

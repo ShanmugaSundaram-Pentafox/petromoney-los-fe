@@ -13,7 +13,10 @@ import React from 'react';
 import * as Yup from 'yup';
 import Button from '../../../components/CommonComponents/Button/Button';
 import TextInput from '../../../components/TextInput/TextInput';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { URL } from '../../../config/serverUrls';
+import { isAllowed } from '../../../utils/cerbos';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -138,7 +141,7 @@ const AddCreditPdForm = ({ data, dealer_id, callback, currentUser, editable }) =
                 multiline
                 rows={20}
                 name='pdr_remarks'
-                disabled={editable}
+                disabled={!isAllowed(currentUser?.permissions, resources_id?.personalDiscussion, action_id?.personalDiscussion?.creditPdEdit)}
                 value={values.pdr_remarks}
                 error={errors.pdr_remarks}
                 helperText={errors.pdr_remarks}
@@ -161,17 +164,16 @@ const AddCreditPdForm = ({ data, dealer_id, callback, currentUser, editable }) =
               Back
             </Button>
           </div>
-          {
-            !editable &&
-              <Button
-                variant="contained"
-                className={clsx(classes.btn, classes.editButton)}
-                startIcon={<NavigateNextRounded />}
-                onClick={handleSubmit}
-              >
-                Save
-              </Button>
-          }
+          <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.creditPdEdit}>
+            <Button
+              variant="contained"
+              className={clsx(classes.btn, classes.editButton)}
+              startIcon={<NavigateNextRounded />}
+              onClick={handleSubmit}
+            >
+              Save
+            </Button>
+          </CheckAllowed>
         </div>
       </div>
     </div >

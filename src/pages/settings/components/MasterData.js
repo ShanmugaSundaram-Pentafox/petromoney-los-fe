@@ -1,12 +1,15 @@
 import { Drawer, Grid, Paper, Tooltip, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import React, {useState} from 'react';
+import { Link } from 'react-router-dom';
 import AssignProducts from './AssignProducts';
 import MasterCity from './MasterCity';
 import MasterCollectionRemarks from './MasterCollectionRemarks';
 import Contain from './MasterDataTable';
 import Products from './Products';
 import Zones from './Zones';
+import {resources_id, action_id} from '../../../config/accessControl';
+import { ReactComponent as AccessIcon } from '../../../icons/accessIcon.svg';
 import { ReactComponent as AssetIcon } from '../../../icons/assets.svg';
 import { ReactComponent as BunkIcon } from '../../../icons/bunk.svg';
 import { ReactComponent as BusinessIcon } from '../../../icons/business.svg';
@@ -18,6 +21,7 @@ import { ReactComponent as OtherIcon } from '../../../icons/other_icons.svg';
 import { ReactComponent as RemarkIcon } from '../../../icons/remarkIcon.svg';
 import { ReactComponent as RolesIcon } from '../../../icons/rolesIcon.svg';
 import { ReactComponent as ZoneIcon } from '../../../icons/zoneIcon.svg';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles({
   root: {
@@ -58,7 +62,7 @@ const useStyles = makeStyles({
   },
 })
 
-function MasterData() {
+function MasterData({currentUser}) {
   const classes = useStyles();
   const [openForm, setOpenForm] = useState()
   const [customForm, setCustomForm] = useState()
@@ -69,91 +73,123 @@ function MasterData() {
         <div style={{marginLeft: 20, width: '95%'}}>
           <Grid container spacing={1} className={classes.root}>
             <Grid item md={2}>
-              <Tooltip title="Zone">
-                <div className={classes.content} onClick={() => setCustomForm('Zone')}>
-                  <ZoneIcon width={35} className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title} >Zones</Typography>
-                </div>
-              </Tooltip>
+              <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id.settings.zones}>
+                <Tooltip title="Zone">
+                  <div className={classes.content} onClick={() => setCustomForm('Zone')}>
+                    <ZoneIcon width={35} className={classes.icons} />
+                    <Typography variant="h5" align='center' className={classes.title} >Zones</Typography>
+                  </div>
+                </Tooltip>
+              </CheckAllowed>
             </Grid>
             <Grid item md={2}>
-              <Tooltip title="States">
-                <div className={classes.content} onClick={() => setOpenForm('State')}>
-                  <InfrastructureIcon width={35} className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title}>States</Typography>
-                </div>
-              </Tooltip>
+              <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id.settings.states}>
+                <Tooltip title="States">
+                  <div className={classes.content} onClick={() => setOpenForm('State')}>
+                    <InfrastructureIcon width={35} className={classes.icons} />
+                    <Typography variant="h5" align='center' className={classes.title}>States</Typography>
+                  </div>
+                </Tooltip>
+              </CheckAllowed>
             </Grid>
             <Grid item md={2}>
-              <Tooltip title="Regions">
-                <div className={classes.content} onClick={() => setOpenForm('Region')}>
-                  <OtherIcon width={35} className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title}>Regions</Typography>
-                </div>
-              </Tooltip>
+              <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id.settings.regions}>
+                <Tooltip title="Regions">
+                  <div className={classes.content} onClick={() => setOpenForm('Region')}>
+                    <OtherIcon width={35} className={classes.icons} />
+                    <Typography variant="h5" align='center' className={classes.title}>Regions</Typography>
+                  </div>
+                </Tooltip>
+              </CheckAllowed>
             </Grid>
             <Grid item md={2}>
-              <Tooltip title="City">
-                <div className={classes.content} onClick={() => setCustomForm('city')}>
-                  <CityIcon className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title} >City</Typography>
-                </div>
-              </Tooltip>
+              <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id.settings.city}>
+                <Tooltip title="City">
+                  <div className={classes.content} onClick={() => setCustomForm('city')}>
+                    <CityIcon className={classes.icons} />
+                    <Typography variant="h5" align='center' className={classes.title} >City</Typography>
+                  </div>
+                </Tooltip>
+              </CheckAllowed>
             </Grid>
             <Grid item md={2}>
-              <Tooltip title="OMC details">
-                <div className={classes.content} onClick={() => setOpenForm('OMCs')}>
-                  <BunkIcon width={35} className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title} >OMCs</Typography>
-                </div>
-              </Tooltip>
+              <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id.settings.omcs}>
+                <Tooltip title="OMC details">
+                  <div className={classes.content} onClick={() => setOpenForm('OMCs')}>
+                    <BunkIcon width={35} className={classes.icons} />
+                    <Typography variant="h5" align='center' className={classes.title} >OMCs</Typography>
+                  </div>
+                </Tooltip>
+              </CheckAllowed>
             </Grid>
             <Grid item md={2}>
-              <Tooltip title="Business Type">
-                <div className={classes.content} onClick={() => setOpenForm('Business Type')}>
-                  <BusinessIcon width={35} className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title} >Business</Typography>
-                </div>
-              </Tooltip>
+              <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id.settings.business}>
+                <Tooltip title="Business Type">
+                  <div className={classes.content} onClick={() => setOpenForm('Business Type')}>
+                    <BusinessIcon width={35} className={classes.icons} />
+                    <Typography variant="h5" align='center' className={classes.title} >Business</Typography>
+                  </div>
+                </Tooltip>
+              </CheckAllowed>
             </Grid>
             <Grid item md={2}>
-              <Tooltip title="Loan Type">
-                <div className={classes.content} onClick={() => setOpenForm('Loan Type')}>
-                  <LoanIcon width={35} className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title} >Loan</Typography>
-                </div>
-              </Tooltip>
+              <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id.settings.loan}>
+                <Tooltip title="Loan Type">
+                  <div className={classes.content} onClick={() => setOpenForm('Loan Type')}>
+                    <LoanIcon width={35} className={classes.icons} />
+                    <Typography variant="h5" align='center' className={classes.title} >Loan</Typography>
+                  </div>
+                </Tooltip>
+              </CheckAllowed>
             </Grid>
             <Grid item md={2}>
-              <Tooltip title="Asset Type">
-                <div className={classes.content} onClick={() => setOpenForm('Asset Type')}>
-                  <AssetIcon width={35} className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title} >Asset</Typography>
-                </div>
-              </Tooltip>
+              <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id.settings.asset}>
+                <Tooltip title="Asset Type">
+                  <div className={classes.content} onClick={() => setOpenForm('Asset Type')}>
+                    <AssetIcon width={35} className={classes.icons} />
+                    <Typography variant="h5" align='center' className={classes.title} >Asset</Typography>
+                  </div>
+                </Tooltip>
+              </CheckAllowed>
             </Grid>
             <Grid item md={2}>
-              <Tooltip title="Products">
-                <div className={classes.content} onClick={() => setCustomForm('Products')}>
-                  <FuelIcon width={40} className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title} >Products</Typography>
-                </div>
-              </Tooltip>
+              <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id.settings.products}>
+                <Tooltip title="Products">
+                  <div className={classes.content} onClick={() => setCustomForm('Products')}>
+                    <FuelIcon width={40} className={classes.icons} />
+                    <Typography variant="h5" align='center' className={classes.title} >Products</Typography>
+                  </div>
+                </Tooltip>
+              </CheckAllowed>
             </Grid>
             <Grid item md={2}>
-              <Tooltip title="Role Products">
-                <div className={classes.content} onClick={() => setCustomForm('assign_products')}>
-                  <RolesIcon className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title} >Assign Role Products</Typography>
-                </div>
-              </Tooltip>
+              <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id.settings.assign_role_products}>
+                <Tooltip title="Role Products">
+                  <div className={classes.content} onClick={() => setCustomForm('assign_products')}>
+                    <RolesIcon className={classes.icons} />
+                    <Typography variant="h5" align='center' className={classes.title} >Assign Role Products</Typography>
+                  </div>
+                </Tooltip>
+              </CheckAllowed>
             </Grid>
             <Grid item md={2}>
-              <Tooltip title="Collection Remarks">
-                <div className={classes.content} onClick={() => setCustomForm('collection_remark')}>
-                  <RemarkIcon className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title} >Collection Remark</Typography>
-                </div>
+              <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id.settings.collectionRemark}>
+                <Tooltip title="Collection Remarks">
+                  <div className={classes.content} onClick={() => setCustomForm('collection_remark')}>
+                    <RemarkIcon className={classes.icons} />
+                    <Typography variant="h5" align='center' className={classes.title} >Collection Remark</Typography>
+                  </div>
+                </Tooltip>
+              </CheckAllowed>
+            </Grid>
+            <Grid item md={2}>
+              <Tooltip title="RBAC">
+                <Link to='/rbac'>
+                  <div className={classes.content}>
+                    <AccessIcon className={classes.icons} />
+                    <Typography variant="h5" align='center' className={classes.title} >RBAC</Typography>
+                  </div>
+                </Link>
               </Tooltip>
             </Grid>
           </Grid>
@@ -173,7 +209,7 @@ function MasterData() {
           onClose={() => setCustomForm()}
           variant="temporary"
         >
-          <Products title={customForm} callback={setCustomForm}/>
+          <Products currentUser={currentUser} title={customForm} callback={setCustomForm}/>
         </Drawer>
         <Drawer
           anchor="right"
@@ -181,7 +217,7 @@ function MasterData() {
           onClose={() => setCustomForm()}
           variant="temporary"
         >
-          <Zones title={customForm} callback={setCustomForm}/>
+          <Zones currentUser={currentUser} title={customForm} callback={setCustomForm}/>
         </Drawer>
         <Drawer
           anchor="right"
@@ -189,7 +225,7 @@ function MasterData() {
           onClose={() => setCustomForm()}
           variant="temporary"
         >
-          <AssignProducts title='Select Role to Assign Product' callback={setCustomForm} />
+          <AssignProducts currentUser={currentUser} title='Select Role to Assign Product' callback={setCustomForm} />
         </Drawer>
         <Drawer
           anchor="right"
@@ -197,7 +233,7 @@ function MasterData() {
           onClose={() => setCustomForm()}
           variant="temporary"
         >
-          <MasterCity title='City' callback={setCustomForm} />
+          <MasterCity currentUser={currentUser} title='City' callback={setCustomForm} />
         </Drawer>
         <Drawer
           anchor="right"
@@ -205,7 +241,7 @@ function MasterData() {
           onClose={() => setCustomForm()}
           variant="temporary"
         >
-          <MasterCollectionRemarks title='Collection Remarks' callback={setCustomForm} />
+          <MasterCollectionRemarks currentUser={currentUser} title='Collection Remarks' callback={setCustomForm} />
         </Drawer>
       </Paper>
 

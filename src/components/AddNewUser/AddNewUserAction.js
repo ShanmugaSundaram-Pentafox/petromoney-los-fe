@@ -3,12 +3,14 @@ import React, { useState } from 'react';
 // import FormDialog from '../CommonComponents/FormDialog/FormDialog';
 import { useDispatch } from 'react-redux';
 import AddNewUserForm from './AddNewUserForm';
+import { action_id, resources_id } from '../../config/accessControl';
 import { getAllUsers } from '../../services/users.service';
 import { setAllUsers } from '../../store/dashboard/dashboard.actions';
 import Button from '../CommonComponents/Button/Button';
+import CheckAllowed from '../../pages/rbac/CheckAllowed';
 
 
-const AddNewUserAction = () => {
+const AddNewUserAction = ({currentUser}) => {
   const [openModal, setOpenModal] = useState(false);
   const dispatch = useDispatch();
   // const classes = useStyles()
@@ -32,13 +34,15 @@ const AddNewUserAction = () => {
 
   return (
     <div>
-      <Button
-        color="primary"
-        variant="contained"
-        onClick={() => setOpenModal(true)}
-      >
-        Create New User
-      </Button>
+      <CheckAllowed currentUser={currentUser} resource={resources_id?.users} action={action_id?.users.userCreate}>
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={() => setOpenModal(true)}
+        >
+          Create New User
+        </Button>
+      </CheckAllowed>
       <Drawer
         anchor="right"
         open={openModal}

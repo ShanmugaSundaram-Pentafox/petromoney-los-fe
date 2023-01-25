@@ -104,7 +104,10 @@ const DocList = ({ id, currentUser }) => {
     
     fetch(`${URL.base}${URL.checklist}/${dealerShipId}/doc/${docID}`, {
       method: 'POST',
-      body: formData
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${currentUser.token}`,
+      },
     })
       .then(data => {
         enqueueSnackbar('File Upload Success', { variant: 'success' });
@@ -117,8 +120,6 @@ const DocList = ({ id, currentUser }) => {
       })
   };
 
-  console.log('checklist data >>>>>>',checkListData)
-
   return (
     <div className={classes.wrapper}>
       {showUpload && <FileUpload handleSave={handleSave} id={id} data={rowData} title='Upload Dealership Document' open={showUpload} onCloseUploader={onCloseUploader} FILE_FORMAT={rowData.doc_id == '17' ? FILE_FORMAT_ALL : undefined} />}
@@ -128,7 +129,7 @@ const DocList = ({ id, currentUser }) => {
       <Table className={classes.table} size="small" aria-label="Dealers">
         <TableBody>
           {Array.isArray(checkListData) && checkListData.map((row, i) => row.doc_type !== 'dealer' && (
-            <DocListPreview docName={row.description} upload={() => onDocUpload(row)} file={row.file_data} docId={row?.doc_id} id={i + 1} dealershipId={id} editable={editable} />
+            <DocListPreview currentUser={currentUser} docName={row.description} upload={() => onDocUpload(row)} file={row.file_data} docId={row?.doc_id} id={i + 1} dealershipId={id} editable={editable} />
           ))}
         </TableBody>
       </Table>

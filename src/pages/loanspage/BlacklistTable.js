@@ -1,8 +1,6 @@
 // import { useMount } from 'react-use';
-import { Grid } from '@material-ui/core';
-import { Box } from '@material-ui/core';
+import { Grid, Box, Badge } from '@material-ui/core';
 // import { getAllWithheldLoans } from '../../services/withheld.services';
-import { Badge } from '@material-ui/core';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import ResolvedTable from './ResolvedTable';
@@ -25,7 +23,7 @@ background-color: #f1f1f1;
   }
 `;
 
-const BlacklistTable = () => {
+const BlacklistTable = ({currentUser}) => {
   // const [loading, setLoading] = useState(false);
   const [resolvedData, setResolvedData] = useState([])
   const [unresolvedData, setUnresolvedData] = useState([])
@@ -63,7 +61,7 @@ const BlacklistTable = () => {
         </Box>
       </PaperWrapper>
       {
-        selectedTab === 'unresolved' ? <UnresolvedTable /> : <ResolvedTable />
+        selectedTab === 'unresolved' ? <UnresolvedTable currentUser={currentUser} /> : <ResolvedTable />
       }
     </>
   )

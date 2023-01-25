@@ -27,7 +27,7 @@ const ProtectedRoute = ({ component: Component, currentUser, allow, ...rest }) =
               // return <Redirect to={`/dealership/${currentUser.dealership_id}`} />
               return <Redirect to={'/reports'} />
             }
-            return <Redirect to="/" />
+            return <Redirect to="/access/revoke" />
           }
         }
         // store url for redirection after login

@@ -14,8 +14,10 @@ import { useQueryClient } from 'react-query';
 import FilePreview from '../../../components/CommonComponents/FilePreview';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import TextInput from '../../../components/TextInput/TextInput';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { ReactComponent as DeleteIcon } from '../../../icons/deleteIcon.svg';
 import { deleteDocsImage, editDocsImage } from '../../../services/dealerships.service';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 const imgFileTypes = ['jfif', 'pjpeg', 'jpeg', 'pjp', 'jpg', 'png'];
 const csvFileTypes = ['csv', 'xls', 'xlsx'];
@@ -83,7 +85,7 @@ const usePreviewStyles = makeStyles((theme) => ({
     display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 19, width: '100%'
   }
 }))
-const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name, fileId, dealershipId, editable,crimeCheck }) => {
+const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name, fileId, dealershipId, editable,crimeCheck, currentUser }) => {
   const queryClient = useQueryClient()
   const [imageModal, setImageModal] = useState({});
   const classes = usePreviewStyles();
@@ -126,7 +128,6 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
         });
       });
   }
-  console.log('url >>>>>>>>>>>>>>>>', url)
   return (
     <>
       {
@@ -146,12 +147,16 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
                         : <ListAltIcon style={{ color: '#63686E' }} />
                 }
                 {
-                  !editable && DocName &&
+                  DocName &&
+                  <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.delete}>
                     <div className={classes.attachmentDelete} onClick={(e) => { e.stopPropagation(); setDeleteModal({ open: true, fileId: fileId }) }}><DeleteIcon width={16} /></div>
+                  </CheckAllowed>
                 }
                 {
-                  !editable && DocName &&
+                  DocName &&
+                  <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.edit}>
                     <div className={classes.attachmentEdit} onClick={(e) => { e.stopPropagation(); setEditModal({ open: true, fileId: fileId, fileUrl: url, fileName: file_name }) }}><EditIcon fontSize='small' style={{ color: 'white' }} /></div>
+                  </CheckAllowed>
                 }
               </div>
               <h5 style={{ width: 100, whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden', marginLeft: 15 }}>{file_name}</h5>
@@ -219,7 +224,7 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
   )
 }
 
-const DocListPreview = ({ docName, upload, file, id, docId, dealershipId, editable,crimeCheck }) => {
+const DocListPreview = ({ docName, upload, file, id, docId, dealershipId, editable,crimeCheck, currentUser }) => {
   const classes = useStyles();
   const [collapse, setCollapse] = useState(false);
   const handleCollapse = () => {
@@ -237,10 +242,12 @@ const DocListPreview = ({ docName, upload, file, id, docId, dealershipId, editab
           )
         }
         {
-          !editable && upload &&
-            <div className={classes.titleBtns}>
+          upload &&
+          <div className={classes.titleBtns}>
+            <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.upload}>
               <Button size='small' style={{ marginLeft: 15 }} variant='outlined' onClick={upload} color='primary' startIcon={<AddIcon style={{ fontSize: 'small' }} />}>Upload</Button>
-            </div>
+            </CheckAllowed>
+          </div>
         }
       </div>
       <div
@@ -250,7 +257,7 @@ const DocListPreview = ({ docName, upload, file, id, docId, dealershipId, editab
           file?.map((data, i) => {
             return (
               <Collapse in={!collapse} key={i}>
-                <DocPreview crimeCheck={crimeCheck} fileId={data?.file_id} docId={docId} dealershipId={dealershipId} fileType={data.file_type || 'pdf'} file_name={data.file_name} url={data?.file_url} DocName={docName} updatedDateTime={format(new Date(data?.created_date || data?.modified_date), 'dd/MM/yyyy hh:mm a')} editable={editable} />
+                <DocPreview currentUser={currentUser} crimeCheck={crimeCheck} fileId={data?.file_id} docId={docId} dealershipId={dealershipId} fileType={data.file_type || 'pdf'} file_name={data.file_name} url={data?.file_url} DocName={docName} updatedDateTime={format(new Date(data?.created_date || data?.modified_date), 'dd/MM/yyyy hh:mm a')} editable={editable} />
               </Collapse>
             )
           })

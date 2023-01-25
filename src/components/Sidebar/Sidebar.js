@@ -18,8 +18,8 @@ import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import React from 'react';
 import SidebarNav from './components/SidebarNav';
-import { rulesList } from '../../config/userRules';
-import { permissionCheck } from '../UserCan/UserCan';
+import { action_id, resources_id } from '../../config/accessControl';
+import { isAllowed } from '../../utils/cerbos';
 const packageJSON = require('../../../package.json');
 
 const useStyles = makeStyles(theme => ({
@@ -79,161 +79,142 @@ const useStyles = makeStyles(theme => ({
 const Sidebar = props => {
   const { open, variant, onClose, className, user, logout, currentUser, ...rest } = props;
   const classes = useStyles();
-  let pages = [
+
+  const pageData = [
     {
+      id: action_id?.navigation.dashboard,
       title: 'Dashboard',
       href: '/',
       icon: <DashboardIcon />
     },
     {
+      id: action_id?.navigation.dashboardDealer,
+      title: 'Dashboard',
+      href: '/reports',
+      icon: <DashboardIcon />
+    },
+    {
+      id: action_id?.navigation.loans,
       title: 'Loans',
       href: '/loans',
       icon: <AccountBoxIcon />
     },
     {
+      id: action_id?.navigation.credit_reload,
       title: 'Credit Reload',
       href: '/reports/credit/reload',
       icon: <CachedIcon />
     },
     {
+      id: action_id?.navigation.withheld,
       title: 'Withheld',
       href: '/withheld',
       icon: <AssignmentLateRoundedIcon />
     },
     {
+      id: action_id?.navigation.renewal,
       title: 'Renewal',
       href: '/renewal',
       icon: <Repeat />
     },
     {
+      id: action_id?.navigation.dealerships,
+      title: 'Dealerships',
+      href: '/dealership',
+      icon: <PeopleIcon />
+    },
+    {
+      id: action_id?.navigation.transports,
       title: 'Transports',
       href: '/transports',
       icon: <LocalShippingIcon />
     },
     {
+      id: action_id?.navigation.profileDealer,
+      title: 'Profile',
+      href: `/dealership/${currentUser.dealership_id}`,
+      icon: <PersonOutlineIcon />
+    },
+    {
+      id: action_id?.navigation.profileTransports,
+      title: 'Profile',
+      href: '/transports-field',
+      icon: <PersonOutlineIcon />
+    },
+    {
+      id: action_id?.navigation.collection_remarks,
       title: 'Collection Remarks',
       href: '/reports/remarks',
       icon: <ChatIcon />
     },
     {
+      id: action_id?.navigation.report,
       title: 'Report',
       href: '/reports',
       icon: <LocalShippingIcon />
     },
     {
+      id: action_id?.navigation.exception,
       title: 'Exception',
       href: '/loans',
       icon: <AccountBoxIcon />
     },
     {
-      title: 'Referral module',
-      href: '/referral',
-      icon: <AccountBoxIcon />
+      id: action_id.navigation.profileDealer,
+      title: 'Passbook',
+      href: '/passbook',
+      icon: <ListIcon />
     },
-  ];
-
-  if (permissionCheck(currentUser.role_name, rulesList.external_view)) {
-    pages = [
-      {
-        title: 'Dashboard',
-        href: '/',
-        icon: <DashboardIcon />
-      },
-      {
-        title: 'Dealerships',
-        href: '/dealership',
-        icon: <PeopleIcon />
-      },
-    ]
-  }
-
-  if (permissionCheck(currentUser.role_name, rulesList.dealership_view)) {
-    pages.push(
-      {
-        title: 'Dealerships',
-        href: '/dealership',
-        icon: <PeopleIcon />
-      },
-    )
-  }
-
-  if (permissionCheck(currentUser.role_name, rulesList.dealer_view)) {
-    pages.splice(1, pages.length + 1)
-    pages.push(
-      {
-        title: 'Profile',
-        href: `/dealership/${currentUser.dealership_id}`,
-        icon: <PersonOutlineIcon />
-      },
-      {
-        title: 'Passbook',
-        href: '/passbook',
-        icon: <ListIcon />
-      },
-      {
-        title: 'Credit Reload',
-        href: '/reports/credit/reload',
-        icon: <CachedIcon />
-      },
-      {
-        title: 'Account Statement',
-        href: '/statements',
-        icon: <ListAltIcon />
-      },
-    )
-  }
-
-  if (permissionCheck(currentUser.role_name, rulesList.pre_submit_view)) {
-    pages.push({
+    {
+      id: action_id?.navigation.account_statement,
+      title: 'Account Statement',
+      href: '/statements',
+      icon: <ListAltIcon />
+    },
+    {
+      id: action_id?.navigation.pre_submit,
       title: 'Pre Submit',
       href: '/pre-submit',
       icon: <AccountBoxIcon />
-    })
-  }
-  if (permissionCheck(currentUser.role_name, rulesList.transporter_view)) {
-    pages = [
-      {
-        title: 'Profile',
-        href: '/transports-field',
-        icon: <PersonOutlineIcon />
-      },
-      {
-        title: 'FASTag Passbook',
-        href: '/transport/fastag/details',
-        icon: <ListIcon />
-      }
-    ]
-  }
-
-  if (permissionCheck(currentUser.role_name, rulesList.users_view)) {
-    pages.push({
+    },
+    {
+      id: action_id?.navigation.profileTransports,
+      title: 'FASTag Passbook',
+      href: '/transport/fastag/details',
+      icon: <ListIcon />
+    },
+    {
+      id: action_id?.navigation.users,
       title: 'Users',
       href: '/users',
       icon: <AccountBoxIcon />
-    })
-  }
-
-  if (permissionCheck(currentUser.role_name, rulesList.users_view)) {
-    pages.push({
+    },
+    {
+      id: action_id?.navigation.call_request,
       title: 'Call Request',
       href: '/customer/callback',
       icon: <PermPhoneMsgIcon />
-    })
-  }
-
-  if (permissionCheck(currentUser.role_name, rulesList.settings_view)) {
-    pages.push({
+    },
+    {
+      id: action_id?.navigation.settings,
       title: 'Settings',
       href: '/settings',
       icon: <SettingsIcon />
-    })
-  }
-  if (permissionCheck(currentUser.role_name, rulesList.ops_view)) {
-    pages.push({
+    },
+    {
+      id: action_id?.navigation.noc,
       title: 'NOC Letter',
       href: '/noc',
       icon: <AccountBoxIcon />
-    })
+    }
+  ]
+
+  let pages = []
+
+  for (let i = 0; i < pageData.length; i++) {
+    if(isAllowed(currentUser?.permissions, resources_id?.navigation, pageData[i]?.id)) {
+      pages.push(pageData[i])
+    }
   }
 
   return (

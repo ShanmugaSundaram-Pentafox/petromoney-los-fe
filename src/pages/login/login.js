@@ -15,6 +15,7 @@ import { getOTP, resendOTP, resetPassword } from '../../services/login.service';
 import { setCurrentUser } from '../../store/user/user.actions';
 import apiCall from '../../utils/api.util';
 import { Typography } from '@material-ui/core';
+import AccessPermission from '../../utils/cerbos';
 
 const packageJSON = require('../../../package.json');
 
@@ -176,9 +177,19 @@ const Login = ({ setCurrentUser }) => {
           body: values
         })
           .then(({ status, data, message }) => {
-            // logger(status, data);
             if (status == 'SUCCESS') {
-              setCurrentUser(data);
+              AccessPermission(data)
+              .then(({results}) => {
+                let permissions = {}
+                  for (const res of results) {
+                    const { resource, actions } = res;
+                    for (let key in actions) {
+                      permissions[`${resource?.kind}_${key}`] = actions[key];
+                    }
+                  }
+                setCurrentUser({...data, access: results, permissions: permissions})
+              })
+              .catch(e => console.log(e))
             }
             setApiStatus({ type: status, message })
           })

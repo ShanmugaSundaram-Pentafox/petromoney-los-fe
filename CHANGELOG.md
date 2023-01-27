@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.25.0](https://gitlab.com/vignesh3/petromall-fe/compare/v2.24.1...v2.25.0) (2023-01-27)
+
+
+### Features
+
+* access control conflict fixed at drawer footer ([c76a499](https://gitlab.com/vignesh3/petromall-fe/commit/c76a499b610aa58ed3bc5fc7f1884d9563de1090))
+* **dealership:** dealership modules implemented with access control ([09e4423](https://gitlab.com/vignesh3/petromall-fe/commit/09e442340d806a4ba4c714f0ca68e570d22e7c04))
+* **master:** rbac master page for UI implemented ([003fdaf](https://gitlab.com/vignesh3/petromall-fe/commit/003fdaf4ca019533213d5f5ca14180b85be63666))
+* RBAC Dashboard, Navigations and Routes access control handled ([af0853e](https://gitlab.com/vignesh3/petromall-fe/commit/af0853ec49013a99cc6cbd7c94ed11abe07fb333))
+* **RBAC:** Access control for modules creditReload,withheld,transports and dealership ([b437221](https://gitlab.com/vignesh3/petromall-fe/commit/b4372211014e12464c93dae6a1be7ee2fb1a42d1))
+* **rbac:** access controlled on master page, dealership modules, access revoked page ([f009ff7](https://gitlab.com/vignesh3/petromall-fe/commit/f009ff76864e2321ef84bbdd33e8e7529d65f86e))
+* **rbac:** PD Report pages implemented with access control ([f93cbad](https://gitlab.com/vignesh3/petromall-fe/commit/f93cbad76262bf43faa7473e20b0d9dbc9e91717))
+
+
+### Bug Fixes
+
+* **score-card:** exposed common components for working sheet tables ([b3d4714](https://gitlab.com/vignesh3/petromall-fe/commit/b3d4714708256880e6ec2e7d91833292fe455241))
+* **scorecard:** updated ui for working sheet in dashboard drawer ([ffe20b0](https://gitlab.com/vignesh3/petromall-fe/commit/ffe20b091bfdaeedf939fef24417999f23941830))
+
 ### [2.24.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.24.0...v2.24.1) (2023-01-21)
 
 

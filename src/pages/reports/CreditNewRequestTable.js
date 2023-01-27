@@ -65,6 +65,10 @@ const CreditNewRequestTable = ({ data, currentUser, view }) => {
         options: { filter: false }
       },
       {
+        name: 'product_name',
+        label: 'Product',
+      },
+      {
         name: 'created_date',
         label: 'Requested Date',
         options: { filter: false }

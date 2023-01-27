@@ -44,7 +44,7 @@ const CreditReload = ({ currentUser }) => {
 
   return (
     <>
-      <DashboardFilter filterQry={setFilterQry} filterType='Credit Reload' setChartData={setChartData} filters={['zone', 'region', 'account', 'period']}/>
+      <DashboardFilter filterQry={setFilterQry} filterType='Credit Reload' setChartData={setChartData} filters={['zone', 'region', 'product', 'account', 'period']} />
       <Box p={2} borderRadius={4} bgcolor="background.paper" style={{marginBottom: 10, marginTop: 10}}>
         <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">
           <DashCard text="Zone" value={chartData[0]?.count?.length === 1 ? chartData[0]?.count[0]?.label : `${chartData[0]?.count[0]?.label} & ${chartData[0]?.count?.length - 1} more` || '-'} />

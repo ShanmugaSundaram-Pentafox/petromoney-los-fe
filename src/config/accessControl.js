@@ -54,6 +54,7 @@ export const action_id = {
     settings :'settings',
     noc :'noc',
     dashboardDealer :'dashboard:dealer',
+    dealer_referral :'dealer_referral',
     profileDealer :'profile:dealer',
     account_statement :'account_statement',
     profileTransports :'profile:transports',

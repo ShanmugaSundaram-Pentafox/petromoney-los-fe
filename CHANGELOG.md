@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.25.2](https://gitlab.com/vignesh3/petromall-fe/compare/v2.25.1...v2.25.2) (2023-01-28)
+
+
+### Bug Fixes
+
+* **dealer-referral:** add resource action ([38f5796](https://gitlab.com/vignesh3/petromall-fe/commit/38f579661aa8e1957ff9cd676b3e8e0bd8f2fa07))
+
 ### [2.25.1](https://gitlab.com/vignesh3/petromall-fe/compare/v2.25.0...v2.25.1) (2023-01-28)
 
 

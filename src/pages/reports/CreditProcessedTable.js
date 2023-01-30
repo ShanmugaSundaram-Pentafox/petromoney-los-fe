@@ -68,6 +68,10 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
         options: { filter: false }
       },
       {
+        name: 'product_name',
+        label: 'Product',
+      },
+      {
         name: 'utr',
         label: 'UTR',
         options: {

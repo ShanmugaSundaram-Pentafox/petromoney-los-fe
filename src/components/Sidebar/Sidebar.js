@@ -160,6 +160,12 @@ const Sidebar = props => {
       icon: <AccountBoxIcon />
     },
     {
+      id: action_id?.navigation.dealer_referral,
+      title: 'Dealer Referral',
+      href: '/referral',
+      icon: <AccountBoxIcon />
+    },
+    {
       id: action_id.navigation.profileDealer,
       title: 'Passbook',
       href: '/passbook',

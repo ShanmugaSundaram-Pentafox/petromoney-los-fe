@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.25.3](https://gitlab.com/vignesh3/petromall-fe/compare/v2.25.2...v2.25.3) (2023-01-30)
+
+
+### Bug Fixes
+
+* **credit-reload:** added product in reload table and filter ([5cb5ebf](https://gitlab.com/vignesh3/petromall-fe/commit/5cb5ebf280ab3704ca71bac823b38aa1b25420cc))
+
 ### [2.25.2](https://gitlab.com/vignesh3/petromall-fe/compare/v2.25.1...v2.25.2) (2023-01-28)
 
 

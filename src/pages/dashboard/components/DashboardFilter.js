@@ -153,7 +153,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const DashboardFilter = ({ filterQry, setChartData, setTotalLoans, filterType, filters }) => {
+const DashboardFilter = ({ filterQry, setChartData, type, setTotalLoans, filterType, filters }) => {
   const classes = useStyles();
   const [regions, setRegions] = useState([]);
   const [products, setProducts] = useState([]);
@@ -162,7 +162,7 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans, filterType, f
   const [selectedZones, setSelectedZones] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedAccountType, setSelectedAccountType] = useState([{ label: 'ALL', value: 0 }]);
   const [accountType, setAccountType] = useState();
-  const [selectedPeriodType, setSelectedPeriodType] = useState('UTD');
+  const [selectedPeriodType, setSelectedPeriodType] = useState(type=='credit' ? 'W' : 'UTD');
   const [selectedPeriod, setSelectedPeriod] = useState({});
   const [showPicker, setShowPicker] = useState();
   const [dateRange, setDateRange] = useState({
@@ -354,24 +354,47 @@ const DashboardFilter = ({ filterQry, setChartData, setTotalLoans, filterType, f
           filters.includes('period') &&
             <Box>
               <label style={{ color: 'hsl(0,0%,75%)' }}>Period</label>
-              <div className={classes.filterWrapper}>
-                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
-                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
-                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
-                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'Y' && 'active'}`} onClick={onDateChange('Y')} onKeyDown>YTD</div>
-                <Tooltip title='Up to Date'>
-                  <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')} onKeyDown>UTD</div>
-                </Tooltip>
-                <Tooltip title='Choose custom dates'>
-                  <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
-                    {
-                      selectedPeriodType === 'Custom' ? (
-                        `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`
-                      ) : 'Custom'
-                    }
+              {
+                type == 'credit' ? (
+                  <div className={classes.filterWrapper}>
+                    <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
+                    <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
+                    <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
+                    {/* <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'Y' && 'active'}`} onClick={onDateChange('Y')} onKeyDown>YTD</div>
+                  <Tooltip title='Up to Date'>
+                    <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')} onKeyDown>UTD</div>
+                  </Tooltip> */}
+                    <Tooltip title='Choose custom dates'>
+                      <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
+                        {
+                          selectedPeriodType === 'Custom' ? (
+                            `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`
+                          ) : 'Custom'
+                        }
+                      </div>
+                    </Tooltip>
                   </div>
-                </Tooltip>
-              </div>
+                ) : (
+                  <div className={classes.filterWrapper}>
+                    <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
+                    <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
+                    <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
+                    <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'Y' && 'active'}`} onClick={onDateChange('Y')} onKeyDown>YTD</div>
+                    <Tooltip title='Up to Date'>
+                      <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')} onKeyDown>UTD</div>
+                    </Tooltip>
+                    <Tooltip title='Choose custom dates'>
+                      <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
+                        {
+                          selectedPeriodType === 'Custom' ? (
+                            `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`
+                          ) : 'Custom'
+                        }
+                      </div>
+                    </Tooltip>
+                  </div>
+                )
+              }
               <Popover
                 id={showPicker ? 'dp' : undefined}
                 open={Boolean(showPicker)}

@@ -143,7 +143,11 @@ const CreditNewRequestTable = ({ data, currentUser, view }) => {
   const options = {
     print: false,
     selectableRowsHeader: false,
-    selectableRows: 'none',
+    filter:false,
+    download:false,
+    search:false,
+    viewColumns:false,
+    selectableRows:'none',
     rowsPerPage: 15,
     rowsPerPageOptions: [15, 20, 30],
     setRowProps: (row, dataIndex) => {

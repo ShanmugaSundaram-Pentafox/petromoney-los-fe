@@ -168,6 +168,10 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
     selectableRowsHeader: false,
     selectableRows: 'none',
     rowsPerPage: 15,
+    filter:false,
+    download:false,
+    search:false,
+    viewColumns:false,
     rowsPerPageOptions: [15, 20, 30],
     setRowProps: (row, dataIndex) => {
       if (row[13]) {

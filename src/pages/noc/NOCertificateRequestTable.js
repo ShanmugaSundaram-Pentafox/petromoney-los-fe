@@ -18,8 +18,10 @@ import RequestNocForm from './RequestNocForm';
 import CustomToken from '../../components/CommonComponents/CustomToken';
 import PdfViewer from '../../components/CommonComponents/PdfViewer/PdfViewer';
 import { permissionCheck } from '../../components/UserCan/UserCan';
+import { action_id, resources_id } from '../../config/accessControl';
 import { rulesList } from '../../config/userRules';
 import { getAllNocRequest } from '../../services/noc.services';
+import { isAllowed } from '../../utils/cerbos';
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -203,13 +205,15 @@ const NOCertificateRequestTable = ({ currentUser }) => {
     isRowSelectable: () => false,
     customToolbar: () => {
       return (
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={() => setOpenModal(true)}
-        >
-          Raise Request
-        </Button>
+        // noc request raise permissions
+        isAllowed(currentUser?.permissions, resources_id?.nocLetter, action_id?.nocLetter?.raiseRequest) ?
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={() => setOpenModal(true)}
+          >
+            Raise Request
+          </Button> : null
       );
     },
     onCellClick: (colData, cellMeta) => {

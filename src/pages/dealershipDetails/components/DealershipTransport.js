@@ -9,7 +9,9 @@ import React, { useState } from 'react';
 import Button from '../../../components/CommonComponents/Button/Button';
 import TransportOwnerTable from '../../../components/Tables/TransportOwnerTable';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { rulesList } from '../../../config/userRules';
+import CheckAllowed from '../../rbac/CheckAllowed';
 import AddNewTransportsOwnerForm from '../../transports/components/AddNewTransportsOwnerForm';
 
 const useStyles = makeStyles((theme) => ({
@@ -122,8 +124,7 @@ const DealershipTransport = ({ id, currentUser, titleAlign }) => {
       <div className={classes.wrapper}>
         <div className={classes.header}>
           <Typography style={{ width: '70%' }} variant="h5" align={titleAlign} className={classes.title}>Transport Owner</Typography>
-          {
-            !editable &&
+          <CheckAllowed currentUser={currentUser} resource={resources_id?.transporters} action={action_id.transporters.addOwner}>
             <Button
               color="primary"
               variant="contained"
@@ -136,7 +137,7 @@ const DealershipTransport = ({ id, currentUser, titleAlign }) => {
             >
               Add Owner
             </Button>
-          }
+          </CheckAllowed>
         </div>
         <div>
           <TransportOwnerTable id={id} onRowClick={showOwnerEditForm} />

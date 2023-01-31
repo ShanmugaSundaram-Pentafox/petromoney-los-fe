@@ -13,7 +13,7 @@ import {
 } from '../../services/users.service';
 import DashboardFilter from '../dashboard/components/DashboardFilter';
 
-const PaperWrapper = styled.div`
+export const PaperWrapper = styled.div`
 margin-bottom:10px;
 font-size:16px;
 background-color: #f1f1f1;
@@ -39,20 +39,20 @@ const CreditReload = ({ currentUser }) => {
 
   const view = permissionCheck(currentUser.role_name, rulesList.dealer_view)
 
-  const { data: tableData = [] } = useQuery(['new-request', filterQry], () => getCreditReload(0, filterQry), {refetchOnWindowFocus: false})
-  const { data: processedData = [] } = useQuery(['processed-request', filterQry], () => getCreditReload(1, filterQry), {refetchOnWindowFocus: false})
-
+  const { data: tableData = [] } = useQuery(['new-request', filterQry], () => getCreditReload(0, filterQry), { refetchOnWindowFocus: false })
+  // const { data: processedData = [] } = useQuery(['processed-request', filterQry], () => getCreditReload(1, filterQry), {refetchOnWindowFocus: false})
+  const processedData = []
   return (
     <>
-      <DashboardFilter filterQry={setFilterQry} filterType='Credit Reload' setChartData={setChartData} filters={['zone', 'region', 'account', 'period']}/>
-      <Box p={2} borderRadius={4} bgcolor="background.paper" style={{marginBottom: 10, marginTop: 10}}>
+      <DashboardFilter filterQry={setFilterQry} filterType='Credit Reload' setChartData={setChartData} type={'credit'} filters={['zone', 'region', 'product', 'account', 'period']} />
+      <Box p={2} borderRadius={4} bgcolor="background.paper" style={{ marginBottom: 10, marginTop: 10 }}>
         <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">
           <DashCard text="Zone" value={chartData[0]?.count?.length === 1 ? chartData[0]?.count[0]?.label : `${chartData[0]?.count[0]?.label} & ${chartData[0]?.count?.length - 1} more` || '-'} />
           {
             chartData?.map((item, i) => {
-              if(item.name !== 'Zone'){
-                return(
-                  <DashCard key={i} noBorder={i === chartData.length - 1} text={item.name} value={item.name === 'Total.Req. Amount' ? <Currency value={item.amount}/> : item.count || '-'} />
+              if (item.name !== 'Zone') {
+                return (
+                  <DashCard key={i} noBorder={i === chartData.length - 1} text={item.name} value={item.name === 'Total.Req. Amount' ? <Currency value={item.amount} /> : item.count || '-'} />
                 )
               }
             })
@@ -74,7 +74,7 @@ const CreditReload = ({ currentUser }) => {
         </Box>
       </PaperWrapper>
       {
-        selectedTab === 'processed' ? <CreditProcessedTable data={processedData} currentUser={currentUser} view={view}/> : <CreditNewRequestTable data={tableData} currentUser={currentUser} view={view}/>
+        selectedTab === 'processed' ? <CreditProcessedTable data={processedData} currentUser={currentUser} view={view} /> : <CreditNewRequestTable data={tableData} currentUser={currentUser} view={view} />
       }
     </>
   );

@@ -15,8 +15,10 @@ import { useQueryClient } from 'react-query';
 import CreditInfoSideWrapper from './CreditInfoSideWrapper';
 import CrimeInfoSideWrapper from './CrimeInfoSideWrapper';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -130,14 +132,16 @@ const GuarantorsTable = ({
           No Guarantors Found
         </Typography>
         <div style={{ textAlign: 'center', marginTop: 8 }}>
-          <Button
-            color="primary"
-            variant="outlined"
-            size="small"
-            onClick={() => onClickAddMenu('GUARANTOR')}
-          >
-            Add Guarantor
-          </Button>
+          <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorAdd}>
+            <Button
+              color="primary"
+              variant="outlined"
+              size="small"
+              onClick={() => onClickAddMenu('GUARANTOR')}
+            >
+              Add Guarantor
+            </Button>
+          </CheckAllowed>
         </div>
       </div>
     );
@@ -236,10 +240,15 @@ const GuarantorsTable = ({
                     alignItems: 'center',
                   }}
                 >
-                  {crime_permission && <Button style={{ marginRight: 12 }} size="small" variant="outlined" color="secondary" onClick={() => setCrimeData(row)}>Crime check</Button>}
-                  {cibil_permission && <Button size="small" variant="outlined" color="secondary" onClick={() => setRowData(row)}>Credit Info</Button>}
+                  <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorCrimeCheck}>
+                    <Button style={{ marginRight: 12 }} size="small" variant="outlined" color="secondary" onClick={() => setCrimeData(row)}>Crime check</Button>
+                  </CheckAllowed>
+                  <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorCreditCheck}>
+                    <Button size="small" variant="outlined" color="secondary" onClick={() => setRowData(row)}>Credit Info</Button>
+                  </CheckAllowed>                    
                   {
-                    adminOnlyEdit &&
+                    // Guarantor status change permissions
+                    <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorStatus}>
                       <div style={{ marginLeft: 12 }} onClick={() => DeleteApplicant(row)}>
                         {
                           row.is_active == 0 ? (
@@ -257,6 +266,7 @@ const GuarantorsTable = ({
                           )
                         }
                       </div>
+                    </CheckAllowed>
                   }
                 </div>
               </TableCell>

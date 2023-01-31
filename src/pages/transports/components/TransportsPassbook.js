@@ -12,10 +12,12 @@ import AsyncSelect from 'react-select/async';
 import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 import Currency from '../../../components/Number/Currency';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
 import usePageTitle from '../../../hooks/usePageTitle';
 import apiCall from '../../../utils/api.util';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 
 const useStyles = makeStyles({
@@ -618,28 +620,35 @@ function FastTagPassbook( {currentUser} ) {
             >
               Search
             </Button>
-            <Button
-              variant='outlined'
-              color='primary'
-              type='submit'
-              onClick={handleDownload}
-              startIcon={<GetAppIcon/>}
-            >
-              Download
-            </Button>
-            <Button
-              variant='outlined'
-              color='primary'
-              type='submit'
-              style={{marginLeft: 10 }}
-              onClick={handleShare}
-            >
-              <ShareIcon fontSize='small' style={{margin: 1.2}}/>
-            </Button>
+            {/* // Passbook statement download permission */}
+            <CheckAllowed currentUser={currentUser} resource={resources_id?.transportPassbook} action={action_id?.transportPassbook?.download}>
+              <Button
+                variant='outlined'
+                color='primary'
+                type='submit'
+                onClick={handleDownload}
+                startIcon={<GetAppIcon/>}
+              >
+                Download
+              </Button>
+            </CheckAllowed>
+            {/* // Passbook statement share permission */}
+            <CheckAllowed currentUser={currentUser} resource={resources_id?.transportPassbook} action={action_id?.transportPassbook?.share}>
+              <Button
+                variant='outlined'
+                color='primary'
+                type='submit'
+                style={{marginLeft: 10 }}
+                onClick={handleShare}
+              >
+                <ShareIcon fontSize='small' style={{margin: 1.2}}/>
+              </Button>
+            </CheckAllowed>
           </div>
           {
-            uploadPermission && (
-              <div className={classes.icon}>
+            // statement Upload permission
+            <div className={classes.icon}>
+              <CheckAllowed currentUser={currentUser} resource={resources_id?.transportPassbook} action={action_id?.transportPassbook?.upload}>
                 <input
                   type='file'
                   name='file'
@@ -652,8 +661,8 @@ function FastTagPassbook( {currentUser} ) {
                 <label htmlFor='file' className={!file? classes.label : classes.disabled}>
                   {file ? loading? <><CircularProgress size={11} style={{marginRight: 7}}/> {file.name}</> : file.name : <><PublishIcon fontSize='small' style={{paddingRight: 4,}}/> Upload Statement</>}
                 </label>
-              </div>
-            )
+              </CheckAllowed>
+            </div>
           }
         </div>
       </Paper>

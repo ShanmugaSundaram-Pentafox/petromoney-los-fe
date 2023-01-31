@@ -11,8 +11,10 @@ import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { NavLink as RouterLink } from 'react-router-dom';
+import { action_id, resources_id } from '../../config/accessControl';
 import { rulesList } from '../../config/userRules';
 import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
+import CheckAllowed from '../../pages/rbac/CheckAllowed';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
@@ -172,13 +174,15 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry, cur
           display: actionable ? true : 'excluded',
           customBodyRender: (value, r) => {
             return (
-              <Tooltip title="eSign Application">
-                <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setType('application'); setDealershipId(value); setModalVisible(true); }}>
-                  <div>
-                    <ESignIcon width={24} />
-                  </div>
-                </IconButton>
-              </Tooltip>
+              <CheckAllowed currentUser={currentUser} resource={resources_id?.dashboard} action={action_id?.dashboard?.submitted_documents}>
+                <Tooltip title="eSign Application">
+                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setType('application'); setDealershipId(value); setModalVisible(true); }}>
+                    <div>
+                      <ESignIcon width={24} />
+                    </div>
+                  </IconButton>
+                </Tooltip>
+              </CheckAllowed>
             )
           }
         }

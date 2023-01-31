@@ -33,6 +33,8 @@ import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput
 import { logger } from '../../../config/logger';
 import { updateLoanApprovalStatusById, deleteLoanDisbursementRecord } from '../../../services/loans.service';
 import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
+import { resources_id } from '../../../config/accessControl';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 
 
@@ -79,7 +81,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const DispApprovedDataTable = ({ id, loanData, editable }) => {
+const DispApprovedDataTable = ({ id, loanData, editable, currentUser }) => {
   const classes = useStyles();
   const [dispHistory, setDispHistory] = useState({});
   const [modalData, setModalData] = useState({});
@@ -199,8 +201,9 @@ const DispApprovedDataTable = ({ id, loanData, editable }) => {
           <TableRow>
             <TableCell colSpan={4} align="center">
               {
-                editable &&
+                <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'add_disb_amt'}>
                   <Button variant="outlined" size="medium" color="secondary" onClick={() => setModalData({ open: true })} startIcon={<AddRoundedIcon fontSize="small" />}>Add Disbursed Amount</Button>
+                </CheckAllowed>
               }
             </TableCell>
           </TableRow>

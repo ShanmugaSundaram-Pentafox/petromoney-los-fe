@@ -16,8 +16,10 @@ import React, { useState } from 'react';
 import * as Yup from 'yup';
 import Button from '../../../components/CommonComponents/Button/Button';
 import TextInput from '../../../components/TextInput/TextInput';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { addNewFleetOperator, updateFleetOperator } from '../../../services/transports.service';
 import { compareObject } from '../../../utils/compareObject.util';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -96,7 +98,7 @@ export const ViewData = ({ title, value }) => {
 }
 
 
-const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable }) => {
+const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable, currentUser }) => {
   const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
   const [loading, setLoading] = useState(false)
 
@@ -469,7 +471,7 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable }
                 </div>
               )
             ) : (
-              !editable &&
+              <CheckAllowed currentUser={currentUser} resource={resources_id?.fleetOperator} action={action_id?.fleetOperator?.edit}>
                 <Button
                   variant="contained"
                   type="submit"
@@ -480,6 +482,7 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable }
                 >
                   Edit
                 </Button>
+              </CheckAllowed>
             )
           }
         </div>

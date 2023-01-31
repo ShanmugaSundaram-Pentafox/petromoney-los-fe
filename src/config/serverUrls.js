@@ -35,4 +35,5 @@ export const URL = {
   passReset: 'passReset',
   guarantor: 'guarantors',
   ifscApiUrl: 'https://ifsc.razorpay.com/',
+  cerbos: 'user/access'
 }

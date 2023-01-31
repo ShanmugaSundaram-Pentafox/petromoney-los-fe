@@ -72,6 +72,7 @@ const DisbursedDrawer = ({ id, selectedLoanData, status, currentUser, readOnly, 
       </div>
       <div className={classes.contentWrapper}>
         <DealershipData data={data} readOnly={true} />
+        <Typography variant='h4' style={{ cursor: 'pointer' }}>Working sheet</Typography>
         <WorkingSheetDrawer id={id} />
         <LoanInfo viewable={true} status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} />
         <>
@@ -83,7 +84,7 @@ const DisbursedDrawer = ({ id, selectedLoanData, status, currentUser, readOnly, 
           {/* {loanData?.pushback_remarks && <DrawerRemarks label={'Push back Remarks'} loanData={loanData?.pushback_remarks} readOnly={readOnly} />} */}
         </>
         {
-          loanData?.isLoading ? <Skeleton variant="rect" width="100%" height={400} /> : <DispApprovedDataTable id={id} editable={editable} loanData={loanData} />
+          loanData?.isLoading ? <Skeleton variant="rect" width="100%" height={400} /> : <DispApprovedDataTable id={id} editable={editable} loanData={loanData} currentUser={currentUser} />
         }
       </div>
       <div>

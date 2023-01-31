@@ -6,9 +6,11 @@ import { useSnackbar } from 'notistack';
 import React, { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import TransferList from '../../../components/CommonComponents/TransferList';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { logger } from '../../../config/logger';
 import { addZones, editZones, getZones } from '../../../services/common.service';
 import { getUnmappedStates, getZonesMapById, updateZoneMapById } from '../../../services/master.service';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles(() => ({
   sidePanelFormWrapper: {
@@ -92,7 +94,7 @@ const ZoneGroup = ({data, setAddForm}) => {
   )
 }
 
-const Zones = ({ callback, title }) => {
+const Zones = ({ callback, title, currentUser }) => {
   const classes = useStyles()
   const queryClient = useQueryClient()
   const { enqueueSnackbar } = useSnackbar();
@@ -217,7 +219,7 @@ const Zones = ({ callback, title }) => {
               Back
             </Button>
           </div>
-          <div>
+          <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id.settings.zonesAdd}>
             <Button
               variant='contained'
               type='submit'
@@ -229,7 +231,7 @@ const Zones = ({ callback, title }) => {
             >
               Add
             </Button>
-          </div>
+          </CheckAllowed>
         </div>
       </div>
     </>

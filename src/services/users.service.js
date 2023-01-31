@@ -234,16 +234,17 @@ export const passReset = (password, userId) => {
   });
 }
 
-export const getCreditReload = (tab, filterQry={region: '0', account: '0', zone: '0'}) => {
+export const getCreditReload = (tab, filterQry = { region: '0', products: '0', account: '0', zone: '0' }) => {
   // const apiUrl = `credit/reload?processed=${tab}`
-  const { region, from, to, account, zone } = filterQry;
+  const { region, from, to, account, products, zone } = filterQry;
   let qry = []
   let apiUrl = `credit/reload?processed=${tab}`;
-  if (zone && zone !=='0') qry.push(`zone=${zone}`)
-  if (region && region !=='0') qry.push(`region=${region}`)
-  if (account && account !=='0') qry.push(`account_type=${account}`)
+  if (zone && zone !== '0') qry.push(`zone=${zone}`)
+  if (region && region !== '0') qry.push(`region=${region}`)
+  if (products && products !== '0') qry.push(`product=${products}`)
+  if (account && account !== '0') qry.push(`account_type=${account}`)
   if (from && to) qry.push(`from=${from}&to=${to}`)
-  if(qry.length) apiUrl += '&'+ qry.join('&')
+  if (qry.length) apiUrl += '&' + qry.join('&')
   return new Promise((resolve, reject) => {
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
@@ -277,7 +278,7 @@ export const getCreditReloadById = (id) => {
 
 export const getTypeOfAccount = () => {
   return new Promise((resolve, reject) => {
-    apiCall('credit/reload/typeofaccount')
+    apiCall('credit/reload/account/type')
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data)
@@ -399,14 +400,14 @@ export const getVoiceCallLogsById = (dealershipId) => {
     apiCall(`voicecall/logs/${dealershipId}`)
       .then(res => {
         if (res.status === 'SUCCESS') {
-          resolve(res.data); 
+          resolve(res.data);
         } else {
           reject(res);
         }
       })
       .catch(e => {
         reject(e.data);
-      
+
       })
   });
 }

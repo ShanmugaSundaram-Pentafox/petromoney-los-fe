@@ -3,7 +3,9 @@ import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import React, { useState } from 'react'
 import { useQuery } from 'react-query';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { getAllUserRoles } from '../../../services/users.service';
+import { isAllowed } from '../../../utils/cerbos';
 import MapProduct from '../../users/components/MapProduct';
 
 const useStyles = makeStyles(() => ({
@@ -73,22 +75,25 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
-const UserGroup = ({data, setAddForm}) => {
+const UserGroup = ({data, setAddForm, currentUser}) => {
   const classes = useStyles()
 
   return(
     <div className={classes.label}>
       <Typography variant="body1" style={{ paddingLeft: 10 }}>{`${data.role_name} (${data?.name})`}</Typography>
-      <Tooltip title='Edit'>
-        <IconButton size='small' className={classes.btn} onClick={() => setAddForm({action: 'Edit', name: data.role_name, id: data.id, role: data.name})}>
-          <EditIcon fontSize='small' />
-        </IconButton>
-      </Tooltip>
+      {
+        isAllowed(currentUser?.permissions, resources_id.settings, action_id.settings.assign_role_productsUpdate) &&
+          <Tooltip title='Edit'>
+            <IconButton size='small' className={classes.btn} onClick={() => setAddForm({action: 'Edit', name: data.role_name, id: data.id, role: data.name})}>
+              <EditIcon fontSize='small' />
+            </IconButton>
+          </Tooltip>
+      }
     </div>
   )
 }
 
-const AssignProducts = ({ callback, title }) => {
+const AssignProducts = ({ callback, title, currentUser }) => {
   const classes = useStyles()
   const [addForm, setAddForm] = useState()
   const { data: roles = [] } = useQuery('roles', () => getAllUserRoles(), {refetchOnWindowFocus: false})
@@ -104,7 +109,7 @@ const AssignProducts = ({ callback, title }) => {
         <div className={classes.content}>
           {
             roles.map((item, i) => {
-              return(<UserGroup data={item} key={i} setAddForm={setAddForm}/>)
+              return(<UserGroup data={item} key={i} setAddForm={setAddForm} currentUser={currentUser} />)
             })
           }
         </div>

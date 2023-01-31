@@ -12,8 +12,10 @@ import AsyncSelect from 'react-select/async';
 import * as Yup from 'yup';
 import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
 import TextInput from '../../components/TextInput/TextInput';
+import { action_id, resources_id } from '../../config/accessControl';
 import { getDealershipForSearch } from '../../services/common.service';
 import { addCreditReport } from '../../services/creditreport.service';
+import { isAllowed } from '../../utils/cerbos';
 const useStyles = makeStyles((theme) => ({
   sidePanelFormWrapper: {
     position: 'relative',
@@ -193,20 +195,21 @@ const CreditReloadForm = ({ data, callback, currentUser, view }) => {
                   <Grid item md={8} style={{ marginBottom: 10 }}>
                     <label style={{ marginBottom: 8 }}>Dealership</label>
                     {
-                      !view ? (
-                        <AsyncSelect
-                          components={optionsLoading ? null : { LoadingIndicator: null }}
-                          styles={{
-                            menu: provided => ({ ...provided, zIndex: 9999 })
-                          }}
-                          onChange={onChangeOption}
-                          loadingMessage={() => ' '}
-                          loadOptions={getOptions}
-                          placeholder='Search Dealership ID or Name'
-                        />
-                      ) : (
-                        <Typography variant='h6' style={{ marginTop: 7 }}>{selectedValue}</Typography>
-                      )
+                      isAllowed(currentUser?.permissions,resources_id?.creditReload,action_id?.creditReload?.disburse) ?
+                        (
+                          <AsyncSelect
+                            components={optionsLoading ? null : { LoadingIndicator: null }}
+                            styles={{
+                              menu: provided => ({ ...provided, zIndex: 9999 })
+                            }}
+                            onChange={onChangeOption}
+                            loadingMessage={() => ' '}
+                            loadOptions={getOptions}
+                            placeholder='Search Dealership ID or Name'
+                          />
+                        ) : (
+                          <Typography variant='h6' style={{ marginTop: 7 }}>{selectedValue}</Typography>
+                        )
                     }
                   </Grid>
                 </Grid>

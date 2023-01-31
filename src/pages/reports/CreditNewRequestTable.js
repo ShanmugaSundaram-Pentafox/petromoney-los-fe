@@ -8,10 +8,12 @@ import CreditReloadForm from './CreditReloadForm';
 import CreditReloadRemarks from './CreditReloadRemarks';
 import CustomToken from '../../components/CommonComponents/CustomToken';
 import Currency from '../../components/Number/Currency';
+import { action_id, resources_id } from '../../config/accessControl';
 import usePageTitle from '../../hooks/usePageTitle';
 import {
   getTypeOfAccount,
 } from '../../services/users.service';
+import { isAllowed } from '../../utils/cerbos';
 
 const CreditNewRequestTable = ({ data, currentUser, view }) => {
   const [accountType, setAccountType] = useState();
@@ -61,6 +63,10 @@ const CreditNewRequestTable = ({ data, currentUser, view }) => {
         name: 'request_id',
         label: 'Request ID',
         options: { filter: false }
+      },
+      {
+        name: 'product_name',
+        label: 'Product',
       },
       {
         name: 'created_date',
@@ -137,7 +143,11 @@ const CreditNewRequestTable = ({ data, currentUser, view }) => {
   const options = {
     print: false,
     selectableRowsHeader: false,
-    selectableRows: 'none',
+    filter:false,
+    download:false,
+    search:false,
+    viewColumns:false,
+    selectableRows:'none',
     rowsPerPage: 15,
     rowsPerPageOptions: [15, 20, 30],
     setRowProps: (row, dataIndex) => {
@@ -147,14 +157,16 @@ const CreditNewRequestTable = ({ data, currentUser, view }) => {
     },
     customToolbar: () => {
       return (
-        <Button
-          color='primary'
-          variant='contained'
-          onClick={() => setOpenModal(true)}
-        >
-          Add
-        </Button>
-      );
+      // Credit Reload create action
+        isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.create) ?
+          <Button
+            color='primary'
+            variant='contained'
+            onClick={() => setOpenModal(true)}
+          >
+            Add
+          </Button> : null
+      )
     },
     onCellClick: (colData, cellMeta) => {
       if (cellMeta.colIndex === 0 || cellMeta.colIndex === 1) {

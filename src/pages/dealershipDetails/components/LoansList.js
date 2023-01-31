@@ -21,11 +21,13 @@ import AccountStatement from './AccountStatement';
 import Currency from '../../../components/Number/Currency';
 import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { rulesList } from '../../../config/userRules';
 import { getUserRoleForReview } from '../../../services/common.service';
 import { getDealershipLoansById } from '../../../services/dealerships.service';
 import { getApplicationStatusById, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import apiCall from '../../../utils/api.util';
+import { isAllowed } from '../../../utils/cerbos';
 
 
 const useStyles = makeStyles({
@@ -62,20 +64,22 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
     if (!isLoading) {
       if (loanData.length) {
         let val = loanData[0].status === 'submitted' ? 'is_review=1' : 'is_approve=1'
-        getUserRoleForReview(val)
-          .then(res => {
-            let d = [];
-            res.forEach((item, i) => {
-              d.push({
-                label: <div>{item.first_name} {item.last_name}</div>,
-                value: item.id
+        if(isAllowed(currentUser?.permissions, resources_id.dashboard, action_id.dashboard.send_for_review)) {
+          getUserRoleForReview(val)
+            .then(res => {
+              let d = [];
+              res.forEach((item, i) => {
+                d.push({
+                  label: <div>{item.first_name} {item.last_name}</div>,
+                  value: item.id
+                })
               })
+              setUserRole(d);
             })
-            setUserRole(d);
-          })
-          .catch(e => {
-            console.log(e);
-          })
+            .catch(e => {
+              console.log(e);
+            })
+        }
       }
     }
     if (loanData[0]?.application_state_id) {
@@ -116,7 +120,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
       })
   }
 
-  const editable = permissionCheck(currentUser.role_name, rulesList.loan_approval)
+  const editable = isAllowed(currentUser?.permissions, resources_id?.loansList, action_id?.loansList?.action)
 
   const getRemarks = loan => () => {
     setDialogState({ open: true, data: loan });
@@ -193,7 +197,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
                       native
                       placeholder={'Select status'}
                       value={selectedStatus?.id}
-                      disabled={readOnly}
+                      disabled={!isAllowed(currentUser?.permissions, resources_id?.loansList, action_id?.loansList?.applicationStatus)}
                       onChange={e => {
                         const d = status?.find(i => i.id == e.target.value)
                         setSelectedStatus(d)
@@ -267,7 +271,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
         </TableBody>
       </Table>
       {
-        loanData[0]?.status === 'disbursed' &&
+        loanData[0]?.status === 'disbursed' && isAllowed(currentUser?.permissions, resources_id?.loansList, action_id?.loansList?.statement) &&
           <div style={{marginTop: 18}}>
             <AccountStatement id={id} currentUser={currentUser} />
           </div>

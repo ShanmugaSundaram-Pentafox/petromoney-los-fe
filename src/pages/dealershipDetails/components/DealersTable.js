@@ -15,8 +15,10 @@ import { useQueryClient } from 'react-query';
 import CreditInfoSideWrapper from './CreditInfoSideWrapper';
 import CrimeInfoSideWrapper from './CrimeInfoSideWrapper';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -129,9 +131,14 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
     return (
       <div className={classes.wrapper}>
         <Typography variant="h5" align={titleAlign} className={classes.title}>No Dealers Found</Typography>
-        <div style={{ textAlign: 'center', marginTop: 8 }}>
-          <Button color="primary" variant="outlined" size="small" onClick={() => onClickAddMenu('DEALER')}>Add dealer</Button>
-        </div>
+        {
+          // dealer add permission check
+          <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerAdd}>
+            <div style={{ textAlign: 'center', marginTop: 8 }}>
+              <Button color="primary" variant="outlined" size="small" onClick={() => onClickAddMenu('DEALER')}>Add dealer</Button>
+            </div>
+          </CheckAllowed>
+        }
       </div>
     );
   return (
@@ -177,25 +184,30 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
               </TableCell>
               <TableCell align="right" onClick={e => e.stopPropagation()}>
                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                  {crime_permission && <Button style={{ marginRight: 12 }} size='small' variant='outlined' color='secondary' onClick={() => setCrimeData(row)}>Crime check</Button>}
-                  {cibil_permission && <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>}
-                  {
-                    adminOnlyEdit &&
-                      <div style={{ marginLeft: 12 }} onClick={() => DeleteApplicant(row)}>
-                        {
-                          row.is_active == 0 ? (
-                            <Tooltip title='Activate'>
-                              <CheckCircleTwoToneIcon style={{ color: grey[500] }} />
-                            </Tooltip>
-                          ) : (
-                            <Tooltip title='Deactivate'>
-                              <CheckCircleTwoToneIcon style={{ color: green[200] }} />
-                            </Tooltip>
-                          )
-                        }
-                      </div>
-                  }
-
+                  {/* dealer crime check access permission */}
+                  <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerCrimeCheck}>
+                    <Button style={{ marginRight: 12 }} size='small' variant='outlined' color='secondary' onClick={() => setCrimeData(row)}>Crime check</Button>
+                  </CheckAllowed>
+                  {/* dealer credit check access permission */}
+                  <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerCreditCheck}>
+                    <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>
+                  </CheckAllowed>
+                  {/* // dealer status change permission */}
+                  <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerStatus}>
+                    <div style={{ marginLeft: 12 }} onClick={() => DeleteApplicant(row)}>
+                      {
+                        row.is_active == 0 ? (
+                          <Tooltip title='Activate'>
+                            <CheckCircleTwoToneIcon style={{ color: grey[500] }} />
+                          </Tooltip>
+                        ) : (
+                          <Tooltip title='Deactivate'>
+                            <CheckCircleTwoToneIcon style={{ color: green[200] }} />
+                          </Tooltip>
+                        )
+                      }
+                    </div>
+                  </CheckAllowed>
                 </div>
               </TableCell>
             </TableRow>

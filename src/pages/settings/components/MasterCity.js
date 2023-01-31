@@ -7,8 +7,10 @@ import { useSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import TextInput from '../../../components/TextInput/TextInput';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { getActiveStates } from '../../../services/common.service';
 import { getCity, updateCity} from '../../../services/master.service';
+import { isAllowed } from '../../../utils/cerbos';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -66,21 +68,24 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
-const DataGroup = ({data, setAddForm}) => {
+const DataGroup = ({data, setAddForm, currentUser}) => {
   const classes = useStyles()
   return(
     <div className={classes.label}>
       <Typography variant="body1" style={{ paddingLeft: 10 }}>{data.name}</Typography>
-      <Tooltip title='Edit'>
-        <IconButton size='small' className={classes.btn} onClick={() => setAddForm({action: 'Edit', name: data.name, id: data.id, state_code: data?.state_code})}>
-          <EditIcon fontSize='small' />
-        </IconButton>
-      </Tooltip>
+      {
+        isAllowed(currentUser?.permissions, resources_id.settings, action_id.settings.cityUpdate) &&
+          <Tooltip title='Edit'>
+            <IconButton size='small' className={classes.btn} onClick={() => setAddForm({action: 'Edit', name: data.name, id: data.id, state_code: data?.state_code})}>
+              <EditIcon fontSize='small' />
+            </IconButton>
+          </Tooltip>
+      }
     </div>
   )
 }
 
-const MasterCity = ({ callback, title }) => {
+const MasterCity = ({ callback, title, currentUser }) => {
   const classes = useStyles()
   const queryClient = useQueryClient()
   const { enqueueSnackbar } = useSnackbar();
@@ -170,7 +175,7 @@ const MasterCity = ({ callback, title }) => {
             <div className={classes.content}>
               {
                 filteredData.map((item, i) => {
-                  return(<DataGroup data={item} key={i} setAddForm={setAddForm}/>)
+                  return(<DataGroup data={item} key={i} setAddForm={setAddForm} currentUser={currentUser} />)
                 })
               }
             </div>
@@ -239,19 +244,22 @@ const MasterCity = ({ callback, title }) => {
               Back
             </Button>
           </div>
-          <div>
-            <Button
-              variant='contained'
-              type='submit'
-              startIcon={<AddIcon  />}
-              onClick={() => {
-                setAddForm({action:'Add'})
-              }}
-              color='primary'
-            >
-              Add
-            </Button>
-          </div>
+          {
+            isAllowed(currentUser?.permissions, resources_id.settings, action_id.settings.cityAdd) &&
+              <div>
+                <Button
+                  variant='contained'
+                  type='submit'
+                  startIcon={<AddIcon  />}
+                  onClick={() => {
+                    setAddForm({action:'Add'})
+                  }}
+                  color='primary'
+                >
+                  Add
+                </Button>
+              </div>
+          }
         </div>
       </div>
     </>

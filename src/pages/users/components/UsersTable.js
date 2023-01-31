@@ -6,6 +6,8 @@ import { makeStyles } from '@material-ui/styles'
 import MUIDataTable from 'mui-datatables'
 import React, { useMemo, useState } from 'react'
 import RightDrawer from './RightDrawer'
+import { action_id, resources_id } from '../../../config/accessControl';
+import { isAllowed } from '../../../utils/cerbos';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -139,7 +141,9 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
           sort: true,
         },
       }
-    ] : [...d, actionColumnData];
+    ] :
+      isAllowed(currentUser?.permissions, resources_id.users, action_id?.users.userStatus) ?
+        [...d, actionColumnData] : [...d]
   }, [withRole])
 
   const options = {
@@ -150,6 +154,7 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
     rowsPerPage: 10,
     isRowSelectable: () => false,
     onRowClick: (rowData, { dataIndex }) => {
+      isAllowed(currentUser?.permissions, resources_id.users, action_id?.users.userEdit) &&
       onRowClick(data[dataIndex].dealership_id, data[dataIndex])
     }
   }

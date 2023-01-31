@@ -11,8 +11,10 @@ import React, { Fragment, useState } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
+import { resources_id } from '../../config/accessControl';
 import { rulesList } from '../../config/userRules';
 import { ReactComponent as DownloadIcon } from '../../icons/downloadIcon.svg';
+import CheckAllowed from '../../pages/rbac/CheckAllowed';
 import SendEmailAction from '../../pages/reports/SendEmailAction';
 import { getPassbookDetails, refreshRedis } from '../../services/common.service';
 import { setDashboardView } from '../../store/common/common.actions';
@@ -191,8 +193,9 @@ const Topbar = (props) => {
               </>
             )}
             {
-              typeof pageTitle === 'string' && pageTitle?.toLowerCase() == 'dashboard' && user.role_name != 'DEALER' ? (
-                <span className={classes.optionsContainer}>
+              typeof pageTitle === 'string' && pageTitle?.toLowerCase() == 'dashboard' &&
+              <span className={classes.optionsContainer}>
+                <CheckAllowed currentUser={user} resource={resources_id.dashboard} action={'los_switch'}>
                   <RadioGroup onChange={(e, v) => updateDashboardView(v)} row aria-label="dashboard-view-type" name="dashboard-view-type" defaultValue={dashboardView}>
                     <Tooltip title="Loan Origination System">
                       <FormControlLabel
@@ -209,8 +212,8 @@ const Topbar = (props) => {
                       />
                     </Tooltip>
                   </RadioGroup>
-                </span>
-              ) : null
+                </CheckAllowed>
+              </span>
             }
             {
               typeof pageTitle === 'string' && pageTitle?.toLowerCase() == 'dashboard' && user.role_name === 'ADMIN' && dashboardView === 'LMS' && (
@@ -221,7 +224,7 @@ const Topbar = (props) => {
             {
               match?.path?.toLowerCase() == '/users' && (
                 <span className={classes.actionsContainer}>
-                  <AddNewUserAction />
+                  <AddNewUserAction currentUser={user} />
                 </span>
               )
             }

@@ -447,7 +447,6 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   helperText={errors.address}
                   onChange={onChange}
                   rows={3}
-                  // multiline={true}
                   InputLabelProps={{ shrink: true }}
                 />
               </Grid>

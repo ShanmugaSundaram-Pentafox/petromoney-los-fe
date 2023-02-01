@@ -1,17 +1,26 @@
-import { Grid, Badge, Box } from '@material-ui/core';
+import { Box } from '@material-ui/core';
+import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded';
+import ChevronRightRoundedIcon from '@material-ui/icons/ChevronRightRounded';
 import React, { useState } from 'react';
-import { useQuery } from 'react-query';
 import styled from 'styled-components';
-import CreditNewRequestTable from './CreditNewRequestTable';
-import CreditProcessedTable from './CreditProcessedTable';
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import Currency from '../../components/Number/Currency';
-import { permissionCheck } from '../../components/UserCan/UserCan';
-import { rulesList } from '../../config/userRules';
-import {
-  getCreditReload
-} from '../../services/users.service';
-import DashboardFilter from '../dashboard/components/DashboardFilter';
+import CreditDashboardFilter from '../dashboard/components/CreditDashboardFilter';
+
+export const TableFooter = ({ offset, statsCount, handleIncrease, handleDecrease }) => {
+  return (
+    <div style={{ padding: 8, display: 'flex', justifyContent: 'flex-end' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div onClick={!offset == 0 ? handleDecrease : null}>
+          <ChevronLeftRoundedIcon style={{ fontSize: 34, color: 'hsl(0,0%,75%)', cursor: 'pointer' }} />
+        </div>
+        <div onClick={statsCount > 25 ? handleIncrease : null}>
+          <ChevronRightRoundedIcon style={{ fontSize: 34, color: 'hsl(0,0%,75%)', cursor: 'pointer' }} />
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export const PaperWrapper = styled.div`
 margin-bottom:10px;
@@ -32,51 +41,23 @@ background-color: #f1f1f1;
   }
 `;
 
-const CreditReload = ({ currentUser }) => {
-  const [selectedTab, setSelectedTab] = useState('new');
-  const [chartData, setChartData] = useState([])
-  const [filterQry, setFilterQry] = useState()
-
-  const view = permissionCheck(currentUser.role_name, rulesList.dealer_view)
-
-  const { data: tableData = [] } = useQuery(['new-request', filterQry], () => getCreditReload(0, filterQry), { refetchOnWindowFocus: false })
-  // const { data: processedData = [] } = useQuery(['processed-request', filterQry], () => getCreditReload(1, filterQry), {refetchOnWindowFocus: false})
-  const processedData = []
+const CreditReload = ({ currentUser, filterQry, filterList, filterType, stats, refetch }) => {
+  const [chartData, setChartData] = useState()
   return (
-    <>
-      <DashboardFilter filterQry={setFilterQry} filterType='Credit Reload' setChartData={setChartData} type={'credit'} filters={['zone', 'region', 'product', 'account', 'period']} />
-      <Box p={2} borderRadius={4} bgcolor="background.paper" style={{ marginBottom: 10, marginTop: 10 }}>
-        <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">
-          <DashCard text="Zone" value={chartData[0]?.count?.length === 1 ? chartData[0]?.count[0]?.label : `${chartData[0]?.count[0]?.label} & ${chartData[0]?.count?.length - 1} more` || '-'} />
-          {
-            chartData?.map((item, i) => {
-              if (item.name !== 'Zone') {
-                return (
-                  <DashCard key={i} noBorder={i === chartData.length - 1} text={item.name} value={item.name === 'Total.Req. Amount' ? <Currency value={item.amount} /> : item.count || '-'} />
-                )
-              }
-            })
-          }
-        </Box>
-      </Box>
-      <PaperWrapper>
-        <Box borderRadius={4} bgcolor="background.paper">
-          <Grid container>
-            <Grid onClick={() => { setSelectedTab('new') }} className={selectedTab === 'new' ? 'inactive' : 'active'} style={{ textAlign: 'center', padding: 16 }} item md={6}>
-              <Badge badgeContent={tableData?.length || 0} style={{ paddingTop: 4, paddingRight: 8 }} color="primary">
-                <div>New Requests</div>
-              </Badge>
-            </Grid>
-            <Grid onClick={() => { setSelectedTab('processed') }} style={{ textAlign: 'center', padding: 16 }} className={selectedTab === 'processed' ? 'inactive' : 'active'} item md={6}>
-              <div>Processed</div>
-            </Grid>
-          </Grid>
-        </Box>
-      </PaperWrapper>
+    <div style={{ marginBottom: 10 }}>
+      <CreditDashboardFilter currentUser={currentUser} refetch={refetch} filterQry={filterQry} setChartData={setChartData} filters={filterList} filterType={filterType} />
       {
-        selectedTab === 'processed' ? <CreditProcessedTable data={processedData} currentUser={currentUser} view={view} /> : <CreditNewRequestTable data={tableData} currentUser={currentUser} view={view} />
+        (currentUser?.role_id !== 13 && filterType !== 'processed') && (
+          <Box p={2} borderRadius={4} bgcolor="background.paper" style={{ marginBottom: 10, marginTop: 10 }}>
+            <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">
+              <DashCard text="Zone" value={chartData?.count?.length === 1 ? chartData?.count[0]?.label : `${chartData?.count[0]?.label} & ${chartData?.count?.length - 1} more` || '-'} />
+              <DashCard text={'No.of. New Request'} value={stats?.count || '-'} />
+              <DashCard noBorder text={'Total.Req. Amount'} value={<Currency value={stats?.amount} /> || '-'}  amount={stats?.amount} />
+            </Box>
+          </Box>
+        )
       }
-    </>
+    </div>
   );
 };
 

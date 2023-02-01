@@ -1,27 +1,50 @@
 import { Button, Grid, Tooltip, Drawer } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
-import { classes } from 'istanbul-lib-coverage';
 import MUIDataTable from 'mui-datatables';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useMount } from 'react-use';
+import CreditReload, { TableFooter } from './CreditReload';
 import CreditReloadForm from './CreditReloadForm';
 import CreditReloadRemarks from './CreditReloadRemarks';
 import CustomToken from '../../components/CommonComponents/CustomToken';
 import Currency from '../../components/Number/Currency';
+import { permissionCheck } from '../../components/UserCan/UserCan';
+import { rulesList } from '../../config/userRules';
 import usePageTitle from '../../hooks/usePageTitle';
 import {
+  getCreditReload,
   getTypeOfAccount,
 } from '../../services/users.service';
 
 
-const CreditProcessedTable = ({ data, currentUser, view }) => {
+const CreditProcessedTable = ({ currentUser }) => {
   const [accountType, setAccountType] = useState();
   const [rowData, setRowData] = useState();
   const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [statusModal, setStatusModal] = useState(false);
+  const [filterQry, setFilterQry] = useState();
+  const [data, setdata] = useState([]);
+  const [offset, setOffset] = useState(0);
+
 
   usePageTitle('Credit Reload');
+  const view = permissionCheck(currentUser.role_name, rulesList.dealer_view)
+
+  const getCreditReloadProcessedData = () => {
+    getCreditReload(1, filterQry, currentUser?.dealership_id, offset)
+      .then(({ data, stats }) => {
+        setdata(data)
+      })
+      .catch((err) => 
+      {
+        setdata([])
+        console.log(err)
+      })
+  }
+  useEffect(() => {
+    getCreditReloadProcessedData()
+  }, [offset])
 
   useMount(() => {
     getTypeOfAccount()
@@ -168,10 +191,10 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
     selectableRowsHeader: false,
     selectableRows: 'none',
     rowsPerPage: 15,
-    filter:false,
-    download:false,
-    search:false,
-    viewColumns:false,
+    filter: false,
+    download: false,
+    search: false,
+    viewColumns: false,
     rowsPerPageOptions: [15, 20, 30],
     setRowProps: (row, dataIndex) => {
       if (row[13]) {
@@ -202,18 +225,24 @@ const CreditProcessedTable = ({ data, currentUser, view }) => {
     },
   };
   return (
-    <div className={classes.root}>
+    <div>
       {loading ? (
         <Grid item xs={12}>
           <Skeleton variant='rect' width='100%' height={400} />
         </Grid>
       ) : (
-        <MUIDataTable
-          title={'Processed'}
-          columns={columns}
-          options={options}
-          data={data}
-        />
+        <>
+          <CreditReload currentUser={currentUser} filterQry={setFilterQry} refetch={getCreditReloadProcessedData} filterList={[]} filterType={'processed'} />
+          <MUIDataTable
+            title={'Processed'}
+            columns={columns}
+            options={options}
+            data={data}
+            components={{
+              TableFooter: () => <TableFooter offset={offset} handleIncrease={() => setOffset(offset + 1)} handleDecrease={() => setOffset(offset - 1)} />
+            }}
+          />
+        </>
       )}
       <Drawer
         anchor='right'

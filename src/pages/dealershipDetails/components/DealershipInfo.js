@@ -382,7 +382,6 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                 </Grid>
                 <Grid {...gridProps} md={6}>
                   <TextInput
-                    multiline
                     labelText="Address"
                     name="address"
                     readOnly={readOnly}

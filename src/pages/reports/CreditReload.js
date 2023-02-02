@@ -9,7 +9,8 @@ import CreditDashboardFilter from '../dashboard/components/CreditDashboardFilter
 
 export const TableFooter = ({ offset, statsCount, handleIncrease, handleDecrease }) => {
   return (
-    <div style={{ padding: 8, display: 'flex', justifyContent: 'flex-end' }}>
+    <div style={{ padding: 8, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+      <label>Rows per page : 25</label>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <div onClick={!offset == 0 ? handleDecrease : null}>
           <ChevronLeftRoundedIcon style={{ fontSize: 34, color: 'hsl(0,0%,75%)', cursor: 'pointer' }} />
@@ -52,7 +53,7 @@ const CreditReload = ({ currentUser, filterQry, filterList, filterType, stats, r
             <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">
               <DashCard text="Zone" value={chartData?.count?.length === 1 ? chartData?.count[0]?.label : `${chartData?.count[0]?.label} & ${chartData?.count?.length - 1} more` || '-'} />
               <DashCard text={'No.of. New Request'} value={stats?.count || '-'} />
-              <DashCard noBorder text={'Total.Req. Amount'} value={<Currency value={stats?.amount} /> || '-'}  amount={stats?.amount} />
+              <DashCard noBorder text={'Total.Req. Amount'} value={<Currency value={stats?.amount} /> || '-'} amount={stats?.amount} />
             </Box>
           </Box>
         )

@@ -157,8 +157,7 @@ const CreditNewRequestTable = ({ currentUser }) => {
     search: false,
     viewColumns: false,
     selectableRows: 'none',
-    rowsPerPage: 15,
-    rowsPerPageOptions: [15, 20, 30],
+    rowsPerPage: 25,
     setRowProps: (row, dataIndex) => {
       if (row[12]) {
         return { style: { backgroundColor: '#ffec9bba' } }

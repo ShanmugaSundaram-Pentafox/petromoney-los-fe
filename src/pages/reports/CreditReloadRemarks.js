@@ -134,21 +134,21 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
       if (newRemarks || status === 'disburse') {
         if (typeof (newRemarks) === 'number') {
           if (status === 'decline') {
-            const submitData = { 'remarks_id': newRemarks, 'is_status': 0 }
+            const submitData = { 'remarks_id': newRemarks, 'reload_status': 'Declined' }
             postApiCall(submitData)
           } else {
             if (utrNumber) {
-              const submitData = { 'is_status': 1, 'utr': utrNumber }
+              const submitData = { 'reload_status': 'Disbursed', 'utr': utrNumber }
               postApiCall(submitData)
             }
           }
         } else {
           if (status === 'decline') {
-            const submitData = { 'remarks': newRemarks, 'is_status': 0 }
+            const submitData = { 'remarks': newRemarks, 'reload_status': 'Declined' }
             postApiCall(submitData)
           } else {
             if (utrNumber) {
-              const submitData = { 'is_status': 1, 'utr': utrNumber }
+              const submitData = { 'reload_status': 'Disbursed', 'utr': utrNumber }
               postApiCall(submitData)
             }
           }

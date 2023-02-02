@@ -294,84 +294,86 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
   }
 
   const handleClear = () => {
-    setSelectedDealership({})
+    setSelectedDealership({ id: '', error: '' })
     setSelectedRegion([{ label: 'ALL', value: 0 }])
     setSelectedProducts([{ label: 'ALL', value: 0 }])
     setSelectedAccountType([{ label: 'ALL', value: 0 }])
     setSelectedZones([{ label: 'ALL', value: 0 }])
     setSelectedPeriodType('W')
     setSelectedPeriod({})
-    refetch()
+    filterQry();
+    refetch();
   }
 
   return (
-    <Box p={3} borderRadius={4} bgcolor="background.paper" style={{ padding: 10 }}>
-      <Box style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
-        {
-          (filters.includes('zone') && currentUser?.role_id !== 13) &&
-            <Selector title="Zone" options={zones} value={selectedZones} setValue={setSelectedZones} />
-        }
-        {
-          (filters.includes('region') && currentUser?.role_id !== 13) &&
-            <Selector title="Region" options={regions} value={selectedRegion} setValue={setSelectedRegion} />
-        }
-        {
-          (filters.includes('product') && currentUser?.role_id !== 13) &&
-            <Selector title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} />
-        }
-        {
-          filters.includes('account') &&
-            <Selector title="Account Type" options={accountType} value={selectedAccountType} setValue={setSelectedAccountType} />
-        }
-        {
-          filters.includes('period') &&
-            <Box>
-              <label style={{ color: 'hsl(0,0%,75%)' }}>Period</label>
-              <div className={classes.filterWrapper}>
-                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
-                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
-                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
-                <Tooltip title='Choose custom dates'>
-                  <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
-                    {
-                      selectedPeriodType === 'Custom' ? (
-                        `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`
-                      ) : 'Custom'
-                    }
-                  </div>
-                </Tooltip>
-              </div>
-              <Popover
-                id={showPicker ? 'dp' : undefined}
-                open={Boolean(showPicker)}
-                anchorEl={showPicker}
-                onClose={onDateRangeClose}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'center',
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'center',
-                }}
-              >
-                <DateRange
-                  ranges={[dateRange]}
-                  onChange={onDatePickerChange}
-                  maxDate={new Date()}
-                  months={2}
-                  direction="horizontal"
-                  minDate={subDays(new Date(), 1095)}
-                />
-                <Box p={1} textAlign='right'>
-                  <Button variant="contained" color="primary" onClick={onDateRangeClose}>
-                    Apply
-                  </Button>
-                </Box>
-              </Popover>
-            </Box>
-        }
-        {
+    ((currentUser.role_id == 13 && filterType !== 'processed') || (currentUser.role_id !== 13)) &&
+      <Box p={3} borderRadius={4} bgcolor="background.paper" style={{ padding: 10 }}>
+        <Box style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
+          {
+            (filters.includes('zone') && currentUser?.role_id !== 13) &&
+              <Selector title="Zone" options={zones} value={selectedZones} setValue={setSelectedZones} />
+          }
+          {
+            (filters.includes('region') && currentUser?.role_id !== 13) &&
+              <Selector title="Region" options={regions} value={selectedRegion} setValue={setSelectedRegion} />
+          }
+          {
+            (filters.includes('product') && currentUser?.role_id !== 13) &&
+              <Selector title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} />
+          }
+          {
+            filters.includes('account') &&
+              <Selector title="Account Type" options={accountType} value={selectedAccountType} setValue={setSelectedAccountType} />
+          }
+          {
+            filters.includes('period') &&
+              <Box>
+                <label style={{ color: 'hsl(0,0%,75%)' }}>Period</label>
+                <div className={classes.filterWrapper}>
+                  <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
+                  <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
+                  <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
+                  <Tooltip title='Choose custom dates'>
+                    <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
+                      {
+                        selectedPeriodType === 'Custom' ? (
+                          `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`
+                        ) : 'Custom'
+                      }
+                    </div>
+                  </Tooltip>
+                </div>
+                <Popover
+                  id={showPicker ? 'dp' : undefined}
+                  open={Boolean(showPicker)}
+                  anchorEl={showPicker}
+                  onClose={onDateRangeClose}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                  }}
+                >
+                  <DateRange
+                    ranges={[dateRange]}
+                    onChange={onDatePickerChange}
+                    maxDate={new Date()}
+                    months={2}
+                    direction="horizontal"
+                    minDate={subDays(new Date(), 1095)}
+                  />
+                  <Box p={1} textAlign='right'>
+                    <Button variant="contained" color="primary" onClick={onDateRangeClose}>
+                      Apply
+                    </Button>
+                  </Box>
+                </Popover>
+              </Box>
+          }
+          {
           currentUser?.role_id !== 13 &&
             <Grid container spacing={2} style={{ marginTop: 2 }}>
               <Grid item md={3}>
@@ -384,34 +386,26 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
                 />
               </Grid>
             </Grid>
-        }
+          }
+        </Box>
+        <div style={{ display: 'flex', marginTop: 10 }}>
+          <Button
+            color="primary"
+            variant="outlined"
+            onClick={handleClear}
+          >
+            Cancel
+          </Button>
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={handleSearch}
+            style={{ marginLeft: 20 }}
+          >
+            Search
+          </Button>
+        </div>
       </Box>
-      <div style={{ display: 'flex', marginTop: 10 }}>
-        <Button
-          color="primary"
-          variant="outlined"
-          onClick={handleClear}
-        >
-          Clear
-        </Button>
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={handleSearch}
-          style={{ marginLeft: 20 }}
-        >
-          Search
-        </Button>
-        {/* <Button
-          color="primary"
-          variant="contained"
-          onClick={refetch}
-          style={{ marginLeft: 20 }}
-        >
-          Download
-        </Button> */}
-      </div>
-    </Box>
   )
 }
 

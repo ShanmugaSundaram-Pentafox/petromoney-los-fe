@@ -1,5 +1,6 @@
 import { Box, Tooltip, Popover, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import SearchIcon from '@material-ui/icons/Search';
 import { subDays, format } from 'date-fns'
 import React, { useEffect, useState } from 'react';
 import { DateRange } from 'react-date-range';
@@ -10,6 +11,7 @@ import Button from '../../../components/CommonComponents/Button/Button'
 import TextInput from '../../../components/TextInput/TextInput';
 import { getAllRegions, getFilteredProducts, getZones } from '../../../services/common.service';
 import { getTypeOfAccount } from '../../../services/users.service';
+
 
 const Option = (props) => {
   return (
@@ -208,6 +210,9 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
       break;
     }
   }
+  useEffect(() => {
+    setChartData({ name: 'Zone', count: selectedZones })
+  }, [])
 
   useEffect(() => {
     let zoneId = []
@@ -270,7 +275,6 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
     if (selectedDealership?.id) {
       qry.dealership_id = selectedDealership?.id
     }
-    setChartData({ name: 'Zone', count: selectedZones })
     filterQry(qry)
 
   }, [selectedRegion, selectedPeriod, filterQry, selectedProducts, selectedZones, selectedAccountType, selectedDealership?.id])
@@ -289,8 +293,10 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
       else
         setSelectedDealership({ ...selectedDealership, error: 'Please enter dealership ID to get data' })
     }
-    else
+    else {
       refetch()
+      setChartData({ name: 'Zone', count: selectedZones })
+    }
   }
 
   const handleClear = () => {
@@ -374,38 +380,34 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
               </Box>
           }
           {
-          currentUser?.role_id !== 13 &&
-            <Grid container spacing={2} style={{ marginTop: 2 }}>
-              <Grid item md={3}>
-                <label style={{ color: 'hsl(0,0%,75%)' }}>Enter dealership ID</label>
-                <TextInput
-                  number
-                  value={selectedDealership?.id}
-                  onChange={(e) => { setSelectedDealership({ ...selectedDealership, id: e?.target?.value }) }}
-                  error={selectedDealership?.error}
-                  helperText={selectedDealership?.error}
-                />
-              </Grid>
-              <Grid item>
-                <div style={{ display: 'flex', marginTop: 20, marginLeft: 20 }}>
+            (currentUser?.role_id !== 13) && (
+              <>
+                {
+                  filterType == 'processed' && (
+                    <Grid item md={3}>
+                      <label style={{ color: 'hsl(0,0%,75%)' }}>Enter dealership ID</label>
+                      <TextInput
+                        number
+                        value={selectedDealership?.id}
+                        onChange={(e) => { setSelectedDealership({ ...selectedDealership, id: e?.target?.value }) }}
+                        error={selectedDealership?.error}
+                        helperText={selectedDealership?.error}
+                      />
+                    </Grid>
+                  )
+                }
+                <div style={{ display: 'flex', marginTop: 15, marginLeft: 10 }}>
                   <Button
                     color="primary"
                     variant="contained"
+                    size='sm'
                     onClick={handleSearch}
                   >
-                    Search
-                  </Button>
-                  <Button
-                    color="primary"
-                    variant="outlined"
-                    onClick={handleClear}
-                    style={{ marginLeft: 20 }}
-                  >
-                    Clear
+                    <SearchIcon className="search-icon" />
                   </Button>
                 </div>
-              </Grid>
-            </Grid>
+              </>
+            )
           }
         </Box>
       </Box>

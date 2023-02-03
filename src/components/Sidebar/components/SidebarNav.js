@@ -245,7 +245,7 @@ const SidebarNav = props => {
                   activeClassName={classes.active}
                   className={classes.button}
                   component={CustomRouterLink}
-                  to={'/credit/relaod/new/reports'}
+                  to={'/credit/reload/new/reports'}
                   exact
                 >
                   <div className={classes.icon}><BookmarkBorderIcon /></div>
@@ -261,7 +261,7 @@ const SidebarNav = props => {
                   activeClassName={classes.active}
                   className={classes.button}
                   component={CustomRouterLink}
-                  to={'/credit/relaod/processed/reports'}
+                  to={'/credit/reload/processed/reports'}
                   exact
                 >
                   <div className={classes.icon}><BookmarkBorderIcon /></div>

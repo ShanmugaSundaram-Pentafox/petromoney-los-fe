@@ -107,8 +107,12 @@ const SidebarNav = props => {
   const [tap, setTap] = React.useState(false);
   const [check, setCheck] = React.useState(false);
   const [checkStatus, setCheckStatus] = useState(false);
+  const [checkCredit,setCheckCredit] = useState(false);
   const handleChange = () => {
     setChecked((prev) => !prev);
+  };
+  const handleCredit = () => {
+    setCheckCredit((prev) => !prev);
   };
   const handleClick = () => {
     setCheck((prev) => !prev);
@@ -125,7 +129,7 @@ const SidebarNav = props => {
       className={clsx(classes.root, className)}
     >
       {pages.map(page => (
-        page.title !== 'Loans' && page.title !== 'Transports' && page.title !== 'Report' && page.title !== 'Exception' && page.title !== 'Passbook' ? (
+        page.title !== 'Loans' && page.title !== 'Transports' && page.title !== 'Report' && page.title !== 'Exception' && page.title !== 'Passbook' && page.title !== 'Credit Reload' ? (
           <ListItem
             className={classes.item}
             disableGutters
@@ -200,6 +204,68 @@ const SidebarNav = props => {
                 >
                   <div className={classes.icon}><BookmarkBorderIcon /></div>
                   {'Vehicle Loans'}
+                </Button>
+              </ListItem>
+            </Collapse>
+          </Fragment>
+        ) : page.title === 'Credit Reload' ? (
+          <Fragment key={page.title}>
+            <ListItem
+              className={classes.item}
+              disableGutters
+              key={page.title}
+            >
+              <Button
+                activeClassName={classes.active}
+                className={classes.button}
+                onClick={handleCredit}
+                // to={page.href}
+                exact
+              >
+                <div className={classes.block1}>
+                  <div className={classes.block2}>
+                    <div className={classes.icon}>{page.icon}</div>
+                    {page.title}
+                  </div>
+                  {(checkCredit) ?
+                    <div className={classes.iconArrow}><ExpandLessIcon /></div>
+                    :
+                    <div className={classes.iconArrow}><ExpandMoreIcon /></div>
+                  }
+                </div>
+              </Button>
+            </ListItem>
+            <Collapse in={checkCredit} >
+              <ListItem
+                className={classes.itemSub}
+                disableGutters
+                key={'Credit'}
+              >
+                <Button
+                  activeClassName={classes.active}
+                  className={classes.button}
+                  component={CustomRouterLink}
+                  to={'/credit/relaod/new/reports'}
+                  exact
+                >
+                  <div className={classes.icon}><BookmarkBorderIcon /></div>
+                  {'New'}
+                </Button>
+              </ListItem>
+              <ListItem
+                className={classes.itemSub}
+                disableGutters
+                key={'All'}
+              >
+                <Button
+                  activeClassName={classes.active}
+                  className={classes.button}
+                  component={CustomRouterLink}
+                  to={'/credit/relaod/processed/reports'}
+                  exact
+                >
+                  <div className={classes.icon}><BookmarkBorderIcon /></div>
+                  {'Processed'}
                 </Button>
               </ListItem>
             </Collapse>
@@ -367,7 +433,7 @@ const SidebarNav = props => {
                   className={classes.itemSub}
                   disableGutters
                   key={'projection'}
-                > 
+                >
                   {
                     permissionCheck(currentUser.role_name, rulesList.opportunity_report) &&
                       <Button

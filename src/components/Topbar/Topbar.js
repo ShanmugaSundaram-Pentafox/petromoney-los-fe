@@ -141,8 +141,8 @@ const Topbar = (props) => {
     getPassbookDetails(user?.dealership_id, action)
       .then(res => {
         setLoading(false)
-        if(action === 'download') {window.open(res?.data, '_blank')}
-        if(action === 'share'){
+        if (action === 'download') { window.open(res?.data, '_blank') }
+        if (action === 'share') {
           enqueueSnackbar(res?.message, {
             anchorOrigin: {
               vertical: 'top',
@@ -194,30 +194,30 @@ const Topbar = (props) => {
             )}
             {
               typeof pageTitle === 'string' && pageTitle?.toLowerCase() == 'dashboard' &&
-              <span className={classes.optionsContainer}>
-                <CheckAllowed currentUser={user} resource={resources_id.dashboard} action={'los_switch'}>
-                  <RadioGroup onChange={(e, v) => updateDashboardView(v)} row aria-label="dashboard-view-type" name="dashboard-view-type" defaultValue={dashboardView}>
-                    <Tooltip title="Loan Origination System">
-                      <FormControlLabel
-                        value="LOS"
-                        control={<Radio color="primary" />}
-                        label="LOS"
-                      />
-                    </Tooltip>
-                    <Tooltip title="Loan Management System">
-                      <FormControlLabel
-                        value="LMS"
-                        control={<Radio color="secondary" />}
-                        label="LMS"
-                      />
-                    </Tooltip>
-                  </RadioGroup>
-                </CheckAllowed>
-              </span>
+                <span className={classes.optionsContainer}>
+                  <CheckAllowed currentUser={user} resource={resources_id.dashboard} action={'los_switch'}>
+                    <RadioGroup onChange={(e, v) => updateDashboardView(v)} row aria-label="dashboard-view-type" name="dashboard-view-type" defaultValue={dashboardView}>
+                      <Tooltip title="Loan Origination System">
+                        <FormControlLabel
+                          value="LOS"
+                          control={<Radio color="primary" />}
+                          label="LOS"
+                        />
+                      </Tooltip>
+                      <Tooltip title="Loan Management System">
+                        <FormControlLabel
+                          value="LMS"
+                          control={<Radio color="secondary" />}
+                          label="LMS"
+                        />
+                      </Tooltip>
+                    </RadioGroup>
+                  </CheckAllowed>
+                </span>
             }
             {
-              typeof pageTitle === 'string' && pageTitle?.toLowerCase() == 'dashboard' && user.role_name === 'ADMIN' && dashboardView === 'LMS' && (
-                <Button className={classes.refresh} size='small' style={{marginLeft: 12}} onClick={handleRefresh} startIcon={<RefreshIcon fontSize='small'/>}><span style={{color: 'hsl(0,0%,65%)', fontWeight: 500}}>Refresh</span></Button>
+              typeof pageTitle === 'string' && pageTitle?.toLowerCase() == 'dashboard' && [1, 8, 9].includes(user?.role_id) && dashboardView === 'LMS' && (
+                <Button className={classes.refresh} size='small' style={{ marginLeft: 12 }} onClick={handleRefresh} startIcon={<RefreshIcon fontSize='small' />}><span style={{ color: 'hsl(0,0%,65%)', fontWeight: 500 }}>Refresh</span></Button>
               )
             }
 
@@ -246,12 +246,12 @@ const Topbar = (props) => {
               match?.path?.toLowerCase() == '/passbook' && (
                 <span className={classes.actionsContainer}>
                   <Tooltip title="Download">
-                    <Button className={classes.refresh} size='small' startIcon={<DownloadIcon style={{width:18, height:18}} />} onClick={() => handleStatementShare('download')}>Download</Button>
+                    <Button className={classes.refresh} size='small' startIcon={<DownloadIcon style={{ width: 18, height: 18 }} />} onClick={() => handleStatementShare('download')}>Download</Button>
                   </Tooltip>
                   <Tooltip title="Share">
                     {
-                      loading ? <div style={{marginLeft: 30, display: 'inline'}}><CircularProgress size={15} /></div> :
-                      <Button className={classes.refresh} size='small' style={{marginLeft:9}} startIcon={<ShareIcon fontSize='small'/>} onClick={() => handleStatementShare('share')}>Share</Button>
+                      loading ? <div style={{ marginLeft: 30, display: 'inline' }}><CircularProgress size={15} /></div> :
+                        <Button className={classes.refresh} size='small' style={{ marginLeft: 9 }} startIcon={<ShareIcon fontSize='small' />} onClick={() => handleStatementShare('share')}>Share</Button>
                     }
                   </Tooltip>
                 </span>

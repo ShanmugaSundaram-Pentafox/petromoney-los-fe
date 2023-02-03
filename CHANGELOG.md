@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.25.5](https://gitlab.com/vignesh3/petromall-fe/compare/v2.25.4...v2.25.5) (2023-02-03)
+
+
+### Bug Fixes
+
+* **credit-reload:** disabled API while mount ([ba66436](https://gitlab.com/vignesh3/petromall-fe/commit/ba66436d314a971cb0ba6a147c36c6fa6946a451))
+* **credit-reload:** fixed filter issue ([5a73b9b](https://gitlab.com/vignesh3/petromall-fe/commit/5a73b9b622ebc7eba1a47a173594486c2a223d9a))
+* **credit-reload:** optimized functionality for response time out issue ([7dc2035](https://gitlab.com/vignesh3/petromall-fe/commit/7dc2035b6166ea03268d3eb6ce133dca4ef846d7))
+* **dealership-edit:** removed multiline input for address field ([69a7972](https://gitlab.com/vignesh3/petromall-fe/commit/69a7972b638456a7c70dcea337185747d4fb824c))
+* **LMS-db-refresh:** allows ops team to refresh database ([7696428](https://gitlab.com/vignesh3/petromall-fe/commit/76964284a55219c92ddf6aef83bb02922ca00a26))
+* Merge branch 'development' ([f949ec9](https://gitlab.com/vignesh3/petromall-fe/commit/f949ec97401738f66257e4ea687080c193eb18ce))
+* **score-card:** removed unwanted title in dashboard drawer ([e74919e](https://gitlab.com/vignesh3/petromall-fe/commit/e74919e03d8fdbc9537988e3161fdb744e77c6ab))
+
+### [2.25.4](https://gitlab.com/vignesh3/petromall-fe/compare/v2.25.3...v2.25.4) (2023-01-31)
+
+
+### Bug Fixes
+
+* **credit-reload:** fix filter for credit reload ([5178767](https://gitlab.com/vignesh3/petromall-fe/commit/5178767805d69cf88abce09e29c4455d24a62f57))
+
 ### [2.25.3](https://gitlab.com/vignesh3/petromall-fe/compare/v2.25.2...v2.25.3) (2023-01-30)
 
 

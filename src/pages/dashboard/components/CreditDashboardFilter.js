@@ -385,26 +385,28 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
                   helperText={selectedDealership?.error}
                 />
               </Grid>
+              <Grid item>
+                <div style={{ display: 'flex', marginTop: 20, marginLeft: 20 }}>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    onClick={handleSearch}
+                  >
+                    Search
+                  </Button>
+                  <Button
+                    color="primary"
+                    variant="outlined"
+                    onClick={handleClear}
+                    style={{ marginLeft: 20 }}
+                  >
+                    Clear
+                  </Button>
+                </div>
+              </Grid>
             </Grid>
           }
         </Box>
-        <div style={{ display: 'flex', marginTop: 10 }}>
-          <Button
-            color="primary"
-            variant="outlined"
-            onClick={handleClear}
-          >
-            Cancel
-          </Button>
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={handleSearch}
-            style={{ marginLeft: 20 }}
-          >
-            Search
-          </Button>
-        </div>
       </Box>
   )
 }

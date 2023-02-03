@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.25.6](https://gitlab.com/vignesh3/petromall-fe/compare/v2.25.5...v2.25.6) (2023-02-03)
+
+
+### Bug Fixes
+
+* **credit-reload:** fixed pagination and filter issue ([4fd938b](https://gitlab.com/vignesh3/petromall-fe/commit/4fd938bba1aa4247def75fd614b0cc2baf5e5e4a))
+* **credit-reload:** updated table options and filter UI ([c005fca](https://gitlab.com/vignesh3/petromall-fe/commit/c005fcadd7e6032d494a72bdb2572ff13a74d59a))
+
 ### [2.25.5](https://gitlab.com/vignesh3/petromall-fe/compare/v2.25.4...v2.25.5) (2023-02-03)
 
 

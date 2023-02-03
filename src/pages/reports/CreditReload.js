@@ -7,7 +7,8 @@ import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import Currency from '../../components/Number/Currency';
 import CreditDashboardFilter from '../dashboard/components/CreditDashboardFilter';
 
-export const TableFooter = ({ offset, statsCount, handleIncrease, handleDecrease }) => {
+export const TableFooter = ({ offset, stats, handleIncrease, handleDecrease }) => {
+
   return (
     <div style={{ padding: 8, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
       <label>Rows per page : 25</label>
@@ -15,7 +16,7 @@ export const TableFooter = ({ offset, statsCount, handleIncrease, handleDecrease
         <div onClick={!offset == 0 ? handleDecrease : null}>
           <ChevronLeftRoundedIcon style={{ fontSize: 34, color: 'hsl(0,0%,75%)', cursor: 'pointer' }} />
         </div>
-        <div onClick={statsCount > 25 ? handleIncrease : null}>
+        <div onClick={stats?.count > 25 ? handleIncrease : null}>
           <ChevronRightRoundedIcon style={{ fontSize: 34, color: 'hsl(0,0%,75%)', cursor: 'pointer' }} />
         </div>
       </div>

@@ -72,8 +72,8 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/reports/due" component={Due} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.transportsPassbook)} exact path="/transport/fastag/details" component={FastTagPassbook} />
       <ProtectedRoute allow exact path="/reports/overdue" component={OverDue} />
-      <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.credit_reload)} exact path="/credit/relaod/processed/reports" component={CreditProcessedTable} />
-      <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.credit_reload)} exact path="/credit/relaod/new/reports" component={CreditNewRequestTable} />
+      <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.credit_reload)} exact path="/credit/reload/processed/reports" component={CreditProcessedTable} />
+      <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.credit_reload)} exact path="/credit/reload/new/reports" component={CreditNewRequestTable} />
       <ProtectedRoute allow exact path="/vehicle-loan" component={VehiclesLoanTable} />
       <ProtectedRoute allow exact path="/owners/:id?" component={OwnerDetails} />
       <ProtectedRoute allow exact path="/profile" component={Profile} />

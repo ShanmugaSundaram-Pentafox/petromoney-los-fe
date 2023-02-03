@@ -379,6 +379,7 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
               <Grid item md={3}>
                 <label style={{ color: 'hsl(0,0%,75%)' }}>Enter dealership ID</label>
                 <TextInput
+                  number
                   value={selectedDealership?.id}
                   onChange={(e) => { setSelectedDealership({ ...selectedDealership, id: e?.target?.value }) }}
                   error={selectedDealership?.error}

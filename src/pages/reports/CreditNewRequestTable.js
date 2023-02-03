@@ -203,7 +203,7 @@ const CreditNewRequestTable = ({ currentUser }) => {
             options={options}
             data={tableData?.data}
             components={{
-              TableFooter: () => <TableFooter offset={offset} handleIncrease={() => setOffset(offset + 1)} handleDecrease={()=>setOffset(offset - 1)} />
+              TableFooter: () => <TableFooter offset={offset} handleIncrease={() => setOffset(offset + 1)} handleDecrease={() => setOffset(offset - 1)} stats={tableData?.stats} />
             }}
           />
         </>

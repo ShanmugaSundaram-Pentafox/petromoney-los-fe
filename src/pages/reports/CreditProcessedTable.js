@@ -31,7 +31,7 @@ const CreditProcessedTable = ({ currentUser }) => {
   usePageTitle('Credit Reload');
   const view = permissionCheck(currentUser.role_name, rulesList.dealer_view)
 
-  const { data = [], refetch, error } = useQuery(['processed-request', offset], () => getCreditReload(1, filterQry, currentUser?.dealership_id, offset), { refetchOnWindowFocus: false,enabled:false })
+  const { data = [], refetch, error } = useQuery(['processed-request', offset], () => getCreditReload(1, filterQry, currentUser?.dealership_id, offset), { refetchOnWindowFocus: false, enabled: false })
 
   useMount(() => {
     getTypeOfAccount()
@@ -224,7 +224,7 @@ const CreditProcessedTable = ({ currentUser }) => {
             title={'Processed'}
             columns={columns}
             options={options}
-            data={error ? []:data?.data}
+            data={error ? [] : data?.data}
             components={{
               TableFooter: () => <TableFooter offset={offset} handleIncrease={() => setOffset(offset + 1)} handleDecrease={() => setOffset(offset - 1)} />
             }}

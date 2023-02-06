@@ -1,164 +1,18 @@
-import { Box, Tooltip, Popover, Grid } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Box, Tooltip, Popover, Button } from '@material-ui/core';
+import GetAppIcon from '@material-ui/icons/GetApp';
 import SearchIcon from '@material-ui/icons/Search';
 import { subDays, format } from 'date-fns'
 import React, { useEffect, useState } from 'react';
 import { DateRange } from 'react-date-range';
 import { useQuery } from 'react-query';
-import Select, { components } from 'react-select'
 import { useMount } from 'react-use';
-import Button from '../../../components/CommonComponents/Button/Button'
+import { filterStyles, Selector } from '../../../components/CommonComponents/FilterCard';
 import TextInput from '../../../components/TextInput/TextInput';
 import { getAllRegions, getFilteredProducts, getZones } from '../../../services/common.service';
 import { getTypeOfAccount } from '../../../services/users.service';
 
-
-const Option = (props) => {
-  return (
-    <components.Option {...props} >
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <input
-          type="checkbox"
-          checked={props.isSelected}
-          onChange={() => null}
-        />
-        <label>&nbsp;{props.label}</label>
-      </div>
-    </components.Option>
-  );
-};
-
-const multiValueContainer = ({ selectProps, data }) => {
-  const label = data.label;
-  const allSelected = selectProps.value;
-  const index = allSelected?.findIndex(selected => selected?.label === label);
-  const isLastSelected = index === allSelected?.length - 1;
-  const labelSuffix = isLastSelected ? '' : ', ';
-  const val = `${label}${labelSuffix}`;
-  return val;
-};
-
-export const Selector = ({ options, value, setValue, title }) => {
-  return (
-    <>
-      <Box style={{ width: 180 }}>
-        <label style={{ color: 'hsl(0,0%,75%)' }}>{title}</label>
-        <Select
-          options={options}
-          isMulti={true}
-          closeMenuOnSelect={false}
-          hideSelectedOptions={false}
-          isClearable
-          value={value}
-          isSearchable={false}
-          components={{
-            MultiValueContainer: multiValueContainer,
-            Option,
-          }}
-          onChange={(selectedOption, triggeredAction) => {
-            if (triggeredAction?.action === 'clear') {
-              setValue([{ value: 0, label: 'ALL' }])
-            } else {
-              setValue(selectedOption.filter(item => item.label !== 'ALL'))
-            }
-          }}
-          styles={{
-            control: (provided) => ({
-              ...provided,
-              borderColor: 'hsl(0, 0%, 90%)',
-              minHeight: 29,
-              marginRight: 10,
-              '&:hover': {
-                boxShadow: 'none',
-                minHeight: 29,
-              },
-            }),
-            valueContainer: (provided, state) => ({
-              ...provided,
-              maxHeight: '29px',
-              padding: '0 6px',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              display: 'initial'
-            }),
-            menu: (provided) => ({
-              ...provided,
-              zIndex: 9999,
-            }),
-            indicatorsContainer: (provided) => ({
-              ...provided,
-              maxHeight: '29px',
-              '> div': {
-                padding: 5
-              }
-            }),
-            indicatorContainer: (provided) => ({
-              ...provided,
-            })
-          }}
-        />
-      </Box>
-    </>
-  )
-}
-
-const useStyles = makeStyles(theme => ({
-  card: {
-    [theme.breakpoints.up('sm')]: {
-      flexWrap: 'wrap',
-      [theme.breakpoints.up('md')]: {
-        flexWrap: 'nowrap',
-      }
-    }
-  },
-  filterWrapper: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 6,
-    border: '1px solid hsl(0, 0%, 90%)',
-    backgroundColor: 'hsl(0, 0%, 100%)',
-    minHeight: 32,
-    boxSizing: 'border-box',
-    padding: '0 4px',
-  },
-  filterItem: {
-    position: 'relative',
-    cursor: 'pointer',
-    borderRadius: 4,
-    marginRight: 2,
-    padding: '2px 4px',
-    minWidth: 50,
-    textAlign: 'center',
-    border: 'none',
-    backgroundColor: 'hsl(0, 0%, 100%)',
-    transition: 'all .2s ease-in-out',
-    '&:hover': {
-      backgroundColor: 'hsl(0, 0%, 95%)',
-    },
-    '&.active': {
-      backgroundColor: '#3f51b5',
-      color: '#fff',
-    },
-    '&.disabled': {
-      backgroundColor: 'hsl(0, 0%, 80%)',
-      padding: '4px 8px',
-      marginTop: 6,
-      borderRadius: 8,
-    },
-    '&:last-child': {
-      marginRight: 0,
-      '&::after': {
-        display: 'none',
-      }
-    }
-  },
-
-}))
-
-const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, filters, currentUser }) => {
-  const classes = useStyles();
+const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, filters, currentUser, handleDownload }) => {
+  const classes = filterStyles();
   const [regions, setRegions] = useState([]);
   const [products, setProducts] = useState([]);
   const [selectedRegion, setSelectedRegion] = useState([{ label: 'ALL', value: 0 }]);
@@ -299,20 +153,8 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
     }
   }
 
-  const handleClear = () => {
-    setSelectedDealership({ id: '', error: '' })
-    setSelectedRegion([{ label: 'ALL', value: 0 }])
-    setSelectedProducts([{ label: 'ALL', value: 0 }])
-    setSelectedAccountType([{ label: 'ALL', value: 0 }])
-    setSelectedZones([{ label: 'ALL', value: 0 }])
-    setSelectedPeriodType('W')
-    setSelectedPeriod({})
-    filterQry();
-    refetch();
-  }
-
   return (
-    ((currentUser.role_id == 13 && filterType !== 'processed') || (currentUser.role_id !== 13)) &&
+    currentUser.role_id !== 13 &&
       <Box p={3} borderRadius={4} bgcolor="background.paper" style={{ padding: 10 }}>
         <Box style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
           {
@@ -384,7 +226,7 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
               <>
                 {
                   filterType == 'processed' && (
-                    <Grid item md={3}>
+                    <div style={{ marginLeft: 10, minWidth: '20%' }}>
                       <label style={{ color: 'hsl(0,0%,75%)' }}>Enter dealership ID</label>
                       <TextInput
                         number
@@ -393,18 +235,31 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
                         error={selectedDealership?.error}
                         helperText={selectedDealership?.error}
                       />
-                    </Grid>
+                    </div>
                   )
                 }
                 <div style={{ display: 'flex', marginTop: 15, marginLeft: 10 }}>
                   <Button
                     color="primary"
                     variant="contained"
-                    size='sm'
+                    size='small'
                     onClick={handleSearch}
                   >
-                    <SearchIcon className="search-icon" />
+                    <SearchIcon />
                   </Button>
+                  {
+                    filterType == 'processed' && (
+                      <Button
+                        color="primary"
+                        variant="contained"
+                        size='small'
+                        style={{ marginLeft: 10 }}
+                        onClick={handleDownload}
+                      >
+                        <GetAppIcon />
+                      </Button>
+                    )
+                  }
                 </div>
               </>
             )

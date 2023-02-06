@@ -8,11 +8,11 @@ import Currency from '../../components/Number/Currency';
 import CreditDashboardFilter from '../dashboard/components/CreditDashboardFilter';
 
 export const TableFooter = ({ offset, stats, handleIncrease, handleDecrease }) => {
-
   return (
     <div style={{ padding: 8, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
       <label>Rows per page : 25</label>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <label style={{ marginLeft: 20 }}>{offset + 1} - {(!stats || stats?.count > 25) ? 1 : stats?.count / 25}</label>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div onClick={!offset == 0 ? handleDecrease : null}>
           <ChevronLeftRoundedIcon style={{ fontSize: 34, color: 'hsl(0,0%,75%)', cursor: 'pointer' }} />
         </div>
@@ -43,11 +43,11 @@ background-color: #f1f1f1;
   }
 `;
 
-const CreditReload = ({ currentUser, filterQry, filterList, filterType, stats, refetch }) => {
+const CreditReload = ({ currentUser, filterQry, filterList, handleDownload, filterType, stats, refetch }) => {
   const [chartData, setChartData] = useState()
   return (
     <div style={{ marginBottom: 10 }}>
-      <CreditDashboardFilter currentUser={currentUser} refetch={refetch} filterQry={filterQry} setChartData={setChartData} filters={filterList} filterType={filterType} />
+      <CreditDashboardFilter currentUser={currentUser} refetch={refetch} filterQry={filterQry} setChartData={setChartData} filters={filterList} filterType={filterType} handleDownload={handleDownload} />
       {
         (currentUser?.role_id !== 13 && filterType !== 'processed') && (
           <Box p={2} borderRadius={4} bgcolor="background.paper" style={{ marginBottom: 10, marginTop: 10 }}>

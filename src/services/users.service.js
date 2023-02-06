@@ -261,6 +261,28 @@ export const getCreditReload = (tab, filterQry = { region: '0', products: '0', a
   })
 }
 
+export const getCreditReportById = (filterQry={}, url, id) => {
+  const { from, to, dealership_id } = filterQry;
+  let qry = []
+  let apiUrl = `credit/reload/report?${url}&processed=${1}`;
+  if (dealership_id) qry.push(`dealership_id=${dealership_id}`)
+  if (from && to) qry.push(`from_date=${from}&to_date=${to}`)
+  if (qry.length) apiUrl += '&' + qry.join('&')
+  return new Promise((resolve, reject) => {
+    apiCall(apiUrl)
+      .then((res) => {
+        if (res?.status === 'SUCCESS') {
+          resolve(res)
+        } else {
+          reject(res?.message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
 export const getCreditReloadById = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`credit/reload/${id}`)

@@ -1,6 +1,7 @@
 import { Button, Grid, Tooltip, Drawer } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
 import MUIDataTable from 'mui-datatables';
+import { useSnackbar } from 'notistack';
 import React, { useState, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { useMount } from 'react-use';
@@ -14,6 +15,7 @@ import { rulesList } from '../../config/userRules';
 import usePageTitle from '../../hooks/usePageTitle';
 import {
   getCreditReload,
+  getCreditReportById,
   getTypeOfAccount,
 } from '../../services/users.service';
 
@@ -26,12 +28,11 @@ const CreditProcessedTable = ({ currentUser }) => {
   const [statusModal, setStatusModal] = useState(false);
   const [filterQry, setFilterQry] = useState();
   const [offset, setOffset] = useState(0);
-
-
+  const { enqueueSnackbar } = useSnackbar();
   usePageTitle('Credit Reload');
   const view = permissionCheck(currentUser.role_name, rulesList.dealer_view)
 
-  const { data = [], refetch, error } = useQuery(['processed-request', offset], () => getCreditReload(1, filterQry, currentUser?.dealership_id, offset), { refetchOnWindowFocus: false, enabled: false })
+  const { data = [], refetch, error } = useQuery(['processed-request', offset], () => getCreditReload(1, filterQry, currentUser?.dealership_id, offset), { refetchOnWindowFocus: false })
 
   useMount(() => {
     getTypeOfAccount()
@@ -49,6 +50,45 @@ const CreditProcessedTable = ({ currentUser }) => {
         console.log(e);
       })
   });
+
+  const handleDownload = () => {
+    getCreditReportById(filterQry, 'view=1')
+      .then((data) => {
+        if (data?.data?.length) {
+          window.open(data?.data[0]?.file_url, '_blank')
+        }
+      })
+      .then(() => {
+        getCreditReportById(filterQry, 'download=1')
+          .then(({ message }) => {
+            enqueueSnackbar(message, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'success',
+            });
+          })
+          .catch((err) => {
+            enqueueSnackbar(err, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            });
+          })
+      })
+      .catch((err) => {
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      })
+  }
 
   const columns = useMemo(() => {
     return [
@@ -177,7 +217,7 @@ const CreditProcessedTable = ({ currentUser }) => {
     print: false,
     selectableRowsHeader: false,
     selectableRows: 'none',
-    rowsPerPage: 15,
+    rowsPerPage: 25,
     filter: false,
     download: false,
     search: false,
@@ -219,14 +259,14 @@ const CreditProcessedTable = ({ currentUser }) => {
         </Grid>
       ) : (
         <>
-          <CreditReload currentUser={currentUser} filterQry={setFilterQry} refetch={refetch} filterList={[]} filterType={'processed'} />
+          <CreditReload currentUser={currentUser} filterQry={setFilterQry} refetch={refetch} filterList={['period']} filterType={'processed'} handleDownload={handleDownload} />
           <MUIDataTable
             title={'Processed'}
             columns={columns}
             options={options}
             data={error ? [] : data?.data}
             components={{
-              TableFooter: () => <TableFooter offset={offset} handleIncrease={() => setOffset(offset + 1)} handleDecrease={() => setOffset(offset - 1)} />
+              TableFooter: () => <TableFooter offset={offset} stats={data?.stats} handleIncrease={() => setOffset(offset + 1)} handleDecrease={() => setOffset(offset - 1)} />
             }}
           />
         </>

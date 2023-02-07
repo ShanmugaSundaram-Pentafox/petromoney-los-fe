@@ -234,10 +234,11 @@ export const passReset = (password, userId) => {
   });
 }
 
-export const getCreditReload = (tab, filterQry = { region: '0', products: '0', account: '0', zone: '0' }, dealershiId, offset) => {
+export const getCreditReload = (data) => {
+  const { processed, filterQry = { region: '0', products: '0', account: '0', zone: '0' }, dealershiId, offset } = data
   const { region, from, to, account, products, zone, dealership_id } = filterQry;
   let qry = []
-  let apiUrl = dealershiId ? `credit/reload/${dealershiId}?processed=${tab}` : `credit/reload?processed=${tab}`;
+  let apiUrl = dealershiId ? `credit/reload/${dealershiId}?processed=${processed}` : `credit/reload?processed=${processed}`;
   if (dealership_id) qry.push(`dealership_id=${dealership_id}`)
   if (zone && zone !== '0') qry.push(`zone=${zone}`)
   if (region && region !== '0') qry.push(`region=${region}`)
@@ -261,10 +262,10 @@ export const getCreditReload = (tab, filterQry = { region: '0', products: '0', a
   })
 }
 
-export const getCreditReportById = (filterQry={}, url, id) => {
+export const getCreditReportById = (filterQry = {}, url) => {
   const { from, to, dealership_id } = filterQry;
   let qry = []
-  let apiUrl = `credit/reload/report?${url}&processed=${1}`;
+  let apiUrl = `credit/reload/report?${url}&processed=1`;
   if (dealership_id) qry.push(`dealership_id=${dealership_id}`)
   if (from && to) qry.push(`from_date=${from}&to_date=${to}`)
   if (qry.length) apiUrl += '&' + qry.join('&')

@@ -1,17 +1,20 @@
-import { Box, Tooltip, Popover, Button } from '@material-ui/core';
+import { Box, Tooltip, Popover, Button, CircularProgress } from '@material-ui/core';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import SearchIcon from '@material-ui/icons/Search';
-import { subDays, format } from 'date-fns'
+import { subDays, format, isValid } from 'date-fns'
+import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import { DateRange } from 'react-date-range';
 import { useQuery } from 'react-query';
 import { useMount } from 'react-use';
 import { filterStyles, Selector } from '../../../components/CommonComponents/FilterCard';
 import TextInput from '../../../components/TextInput/TextInput';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { getAllRegions, getFilteredProducts, getZones } from '../../../services/common.service';
 import { getTypeOfAccount } from '../../../services/users.service';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
-const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, filters, currentUser, handleDownload }) => {
+const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, filters, currentUser, handleDownload, fileData, downloadLoading, searchLoading }) => {
   const classes = filterStyles();
   const [regions, setRegions] = useState([]);
   const [products, setProducts] = useState([]);
@@ -24,6 +27,7 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
   const [selectedPeriod, setSelectedPeriod] = useState({});
   const [showPicker, setShowPicker] = useState();
   const [selectedDealership, setSelectedDealership] = useState({});
+  const { enqueueSnackbar } = useSnackbar();
   const [dateRange, setDateRange] = useState({
     startDate: subDays(new Date(), 8),
     endDate: new Date(),
@@ -152,21 +156,34 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
       setChartData({ name: 'Zone', count: selectedZones })
     }
   }
-
+  const downloadExistingReport = () => {
+    if (fileData?.file_url) {
+      window.open(fileData?.file_url, '_blank')
+    }
+    else {
+      enqueueSnackbar('No report found please initiate download to get the report', {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'error',
+      });
+    }
+  }
   return (
-    currentUser.role_id !== 13 &&
+    <CheckAllowed currentUser={currentUser} resource={resources_id.creditReload} action={action_id.creditReload.dealer_search}>
       <Box p={3} borderRadius={4} bgcolor="background.paper" style={{ padding: 10 }}>
         <Box style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
           {
-            (filters.includes('zone') && currentUser?.role_id !== 13) &&
+            filters.includes('zone') &&
               <Selector title="Zone" options={zones} value={selectedZones} setValue={setSelectedZones} />
           }
           {
-            (filters.includes('region') && currentUser?.role_id !== 13) &&
+            filters.includes('region') &&
               <Selector title="Region" options={regions} value={selectedRegion} setValue={setSelectedRegion} />
           }
           {
-            (filters.includes('product') && currentUser?.role_id !== 13) &&
+            filters.includes('product') &&
               <Selector title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} />
           }
           {
@@ -222,50 +239,60 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
               </Box>
           }
           {
-            (currentUser?.role_id !== 13) && (
-              <>
-                {
-                  filterType == 'processed' && (
-                    <div style={{ marginLeft: 10, minWidth: '20%' }}>
-                      <label style={{ color: 'hsl(0,0%,75%)' }}>Enter dealership ID</label>
-                      <TextInput
-                        number
-                        value={selectedDealership?.id}
-                        onChange={(e) => { setSelectedDealership({ ...selectedDealership, id: e?.target?.value }) }}
-                        error={selectedDealership?.error}
-                        helperText={selectedDealership?.error}
-                      />
-                    </div>
-                  )
-                }
-                <div style={{ display: 'flex', marginTop: 15, marginLeft: 10 }}>
-                  <Button
-                    color="primary"
-                    variant="contained"
-                    size='small'
-                    onClick={handleSearch}
-                  >
-                    <SearchIcon />
-                  </Button>
-                  {
-                    filterType == 'processed' && (
-                      <Button
-                        color="primary"
-                        variant="contained"
-                        size='small'
-                        style={{ marginLeft: 10 }}
-                        onClick={handleDownload}
-                      >
-                        <GetAppIcon />
-                      </Button>
-                    )
-                  }
-                </div>
-              </>
+            filterType == 'processed' && (
+              <div style={{ marginLeft: 10, minWidth: '20%' }}>
+                <label style={{ color: 'hsl(0,0%,75%)' }}>Enter dealership ID</label>
+                <TextInput
+                  number
+                  value={selectedDealership?.id}
+                  onChange={(e) => { setSelectedDealership({ ...selectedDealership, id: e?.target?.value }) }}
+                  error={selectedDealership?.error}
+                  helperText={selectedDealership?.error}
+                />
+              </div>
             )
           }
+          <div style={{ display: 'flex', marginTop: 15, marginLeft: 10 }}>
+            <Button
+              color="primary"
+              variant="contained"
+              size='small'
+              disabled={searchLoading}
+              onClick={handleSearch}
+            >
+              {searchLoading ? <CircularProgress size={14} /> : <SearchIcon />}
+            </Button>
+            {
+              filterType == 'processed' && (
+                <>
+                  <Button
+                    color="primary"
+                    variant="outlined"
+                    size='small'
+                    disabled={downloadLoading}
+                    startIcon={<GetAppIcon />}
+                    style={{ marginLeft: 10 }}
+                    onClick={handleDownload}
+                  >
+                    Download Report
+                  </Button>
+                  <Button
+                    color="primary"
+                    variant="outlined"
+                    size='small'
+                    disabled={!fileData?.file_url}
+                    style={{ marginLeft: 10 }}
+                    onClick={downloadExistingReport}
+                  >
+                    {fileData?.file_url ? `Show Report ( Last update : ${isValid(new Date(fileData?.modified_date)) && format(new Date(fileData?.modified_date), 'MMM dd yyyy hh:mma')} )` : fileData?.status}
+                  </Button>
+                </>
+              )
+            }
+          </div>
         </Box>
       </Box>
+    </CheckAllowed>
   )
 }
 

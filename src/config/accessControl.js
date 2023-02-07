@@ -81,6 +81,7 @@ export const action_id = {
     create: 'request:create',
     decline: 'request:decline',
     disburse: 'request:disburse',
+    dealer_search:'dealer_search',
   },
   withheld: {
     create: 'request:create',

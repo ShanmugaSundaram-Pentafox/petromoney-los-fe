@@ -244,6 +244,7 @@ export const action_id = {
   users: {
     userCreate: 'user:create',
     userEdit: 'user:edit',
+    user_delete:'user_delete',
     userChange_password: 'user:change_password',
     userStatus: 'user:status',
   }

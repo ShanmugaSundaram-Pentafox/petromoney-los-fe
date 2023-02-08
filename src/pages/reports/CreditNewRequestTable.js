@@ -28,7 +28,7 @@ const CreditNewRequestTable = ({ currentUser }) => {
   const [filterQry, setFilterQry] = useState();
   const [offset, setOffset] = useState(0);
   usePageTitle('Credit Reload');
-  const { data: tableData = [], refetch } = useQuery(['new-request', offset], () => getCreditReload(0, filterQry, currentUser?.dealership_id, offset), { refetchOnWindowFocus: false })
+  const { data: tableData = [], refetch } = useQuery(['new-request', offset], () => getCreditReload({ processed: 0, filterQry: filterQry, currentUser: currentUser?.dealership_id, offset: offset }), { refetchOnWindowFocus: false })
   const view = permissionCheck(currentUser.role_name, rulesList.dealer_view)
 
 
@@ -54,7 +54,7 @@ const CreditNewRequestTable = ({ currentUser }) => {
         name: 'dealership_id',
         label: 'Dealership ID',
         options: {
-          filter:false,
+          filter: false,
           customBodyRender: (value) => {
             return <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value}</div>
           }
@@ -64,7 +64,7 @@ const CreditNewRequestTable = ({ currentUser }) => {
         name: 'name',
         label: 'Name',
         options: {
-          filter:false,
+          filter: false,
           customBodyRender: (value) => {
             return <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value?.toUpperCase()}</div>
           }
@@ -106,7 +106,7 @@ const CreditNewRequestTable = ({ currentUser }) => {
         name: 'last_modified_by',
         label: 'Submitted or Modified by',
         options: {
-          filter:false,
+          filter: false,
           customBodyRender: (value, tableMeta) => {
             return <div>{value}</div>
           }

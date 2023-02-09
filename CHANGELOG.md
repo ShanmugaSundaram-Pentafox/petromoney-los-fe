@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.25.7](https://gitlab.com/vignesh3/petromall-fe/compare/v2.25.6...v2.25.7) (2023-02-09)
+
+
+### Bug Fixes
+
+* **credit-reload:** added rbac for filter and ui update for download ([8f63ffb](https://gitlab.com/vignesh3/petromall-fe/commit/8f63ffba93404470c437f13b196984a4c3e90843))
+* **credit-reload:** fixed pagination issue ([7848c65](https://gitlab.com/vignesh3/petromall-fe/commit/7848c656d73ee7e6c5ff3c922875eaf1789a4467))
+* **credit-reload:** implemented download option for processed data ([8a85b68](https://gitlab.com/vignesh3/petromall-fe/commit/8a85b68fce00b553c2b99af469afebab94fc126e))
+
 ### [2.25.6](https://gitlab.com/vignesh3/petromall-fe/compare/v2.25.5...v2.25.6) (2023-02-03)
 
 

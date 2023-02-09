@@ -21,7 +21,7 @@ export const TableFooter = ({ offset, stats, handleIncrease, handleDecrease }) =
               <div onClick={!offset == 0 ? handleDecrease : null}>
                 <ChevronLeftRoundedIcon style={{ fontSize: 34, color: 'hsl(0,0%,75%)', cursor: 'pointer' }} />
               </div>
-              <div onClick={stats?.count > 25 ? handleIncrease : null}>
+              <div onClick={(stats?.count > 25 && (offset + 1 < Math.ceil(stats?.count / 25))) ? handleIncrease : null}>
                 <ChevronRightRoundedIcon style={{ fontSize: 34, color: 'hsl(0,0%,75%)', cursor: 'pointer' }} />
               </div>
             </div>

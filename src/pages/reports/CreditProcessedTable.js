@@ -207,12 +207,11 @@ const CreditProcessedTable = ({ currentUser }) => {
     print: false,
     selectableRowsHeader: false,
     selectableRows: 'none',
-    rowsPerPage: 5,
+    rowsPerPage: 25,
     filter: false,
     download: false,
     search: false,
     viewColumns: false,
-    rowsPerPageOptions: [5, 20, 30],
     setRowProps: (row, dataIndex) => {
       if (row[13]) {
         return { style: { backgroundColor: '#ffec9bba' } }

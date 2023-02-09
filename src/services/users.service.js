@@ -449,3 +449,40 @@ export const deleteVoiceCallById = (id) => {
       })
   });
 }
+
+export const verifyPasswordByLogin = (data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(URL.login, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  })}
+
+export const deleteUserAccount = (userId) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`user/account/${userId}`, {
+      method: 'DELETE'
+    })
+      .then(res => {
+        if (res.status === 'SUCCESS') {
+          resolve(res);
+        } else {
+          reject(res);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+  
+}

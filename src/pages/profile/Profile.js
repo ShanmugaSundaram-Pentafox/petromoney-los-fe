@@ -1,6 +1,9 @@
-import { Button, Dialog, Paper, DialogContent, Grid, Avatar, DialogContentText, makeStyles, Typography } from '@material-ui/core'
+import { Button, Dialog, Paper, DialogContent, Grid, Avatar, DialogContentText, makeStyles, Typography, InputAdornment, IconButton, Input, InputLabel, FormHelperText, } from '@material-ui/core'
 import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
+import VisibilityOffOutlinedIcon from '@material-ui/icons/VisibilityOffOutlined';
+import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
 import { useFormik } from 'formik';
+import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
@@ -8,6 +11,7 @@ import { createStructuredSelector } from 'reselect';
 import * as Yup from 'yup';
 import TextInput from '../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../config/accessControl';
+import { deleteUser, verifyPasswordByLogin, } from '../../services/users.service';
 import { resetCurrentUser } from '../../store/user/user.actions';
 import { selectCurrentUser } from '../../store/user/user.selector';
 import CheckAllowed from '../rbac/CheckAllowed';
@@ -59,7 +63,12 @@ const useStyles = makeStyles(theme => ({
 const Profile = (props) => {
   const { currentUser, logout } = props;
   const [openDialog, setOpenDialog] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState();
+  const [password, setPassword] = useState({});
+  const [showPassword, setShowPassword] = useState();
   const classes = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
+
   let readOnly = true;
 
   const gridItem = {
@@ -83,9 +92,41 @@ const Profile = (props) => {
     }
   });
   const OnAccountDelete = () => {
-    console.log('current user >>>>>>>>>>>>>>>>>>>>', currentUser)
-    logout();
+    if (password?.value) {
+      verifyPasswordByLogin({ mobile: currentUser.mobile, password: password?.value })
+        .then(() => {
+          deleteUser(currentUser?.id)
+            .then(res => {
+              logout();
+              enqueueSnackbar(res?.message, {
+                anchorOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+                variant: 'success',
+              });
+            })
+            .catch(err => {
+              enqueueSnackbar(err, {
+                anchorOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+                variant: 'error',
+              });
+            })
+        })
+        .catch(err => {
+          setPassword({ ...password, error: err })
+        })
+    }
+    else {
+      setPassword({ ...password, error: 'please enter password to verify' })
+    }
   }
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   return (
     <>
@@ -181,16 +222,47 @@ const Profile = (props) => {
         fullWidth
       >
         <DialogContent>
-          <div style={{ textAlign: 'center', marginBottom: 16 }}>
-            <InfoCircleOutlined style={{ fontSize: 48, color: 'rgb(255,59,48)', margin: 16, marginBottom: 20 }} />
-            <Typography variant='h3'>Are you sure?</Typography>
-          </div>
-          <DialogContentText >This action cannot be undone and will result in the permanent loss of your account information.</DialogContentText>
-          <DialogContentText>If you proceed with deletion, you will no longer be able to access any of the services associated with this account.</DialogContentText>
+          {
+            confirmDelete ? (
+              <div style={{ marginBottom: 20 }}>
+                <InputLabel>Confirm your password to delete your account</InputLabel>
+                <Input
+                  // autoFocus
+                  fullWidth
+                  type={showPassword ? 'text' : 'password'}
+                  onChange={(v) => setPassword({ ...password, value: v?.target?.value })}
+                  size="large"
+                  value={password?.value}
+                  error={password?.error}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                      >
+                        {showPassword ? <VisibilityOutlinedIcon fontSize="small" /> : <VisibilityOffOutlinedIcon fontSize='sm' />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+                <FormHelperText error>{password?.error}</FormHelperText>
+              </div>
+            ) : (
+              <>
+                <div style={{ textAlign: 'center', marginBottom: 16 }}>
+                  <InfoCircleOutlined style={{ fontSize: 48, color: 'rgb(255,59,48)', margin: 16, marginBottom: 20 }} />
+                  <Typography variant='h3'>Are you sure?</Typography>
+                </div>
+                <DialogContentText >This action cannot be undone and will result in the permanent loss of your account information.</DialogContentText>
+                <DialogContentText>If you proceed with deletion, you will no longer be able to access any of the services associated with this account.</DialogContentText>
+              </>
+            )
+          }
+
         </DialogContent>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: 19 }}>
-          <Button size='medium' variant='outlined' onClick={() => setOpenDialog(false)}>Cancel</Button>
-          <Button variant='contained' size='medium' style={{ backgroundColor: 'rgb(255,59,48)', color: 'white', marginLeft: 16 }} onClick={OnAccountDelete}>
+          <Button size='medium' variant='outlined' onClick={() => { setOpenDialog(false); setPassword({}); setShowPassword(false); setConfirmDelete(false) }}>Cancel</Button>
+          <Button variant='contained' size='medium' style={{ backgroundColor: 'rgb(255,59,48)', color: 'white', marginLeft: 16 }} onClick={() => confirmDelete ? OnAccountDelete() : setConfirmDelete(true)}>
             Delete
           </Button>
         </div>

@@ -157,3 +157,67 @@ export const updateCollectionRemark = (data, id) => {
       })
   });
 }
+
+export const getAllMailGroups = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('email/groups')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          const result = data.map(r => {
+            return {
+              ...r,
+              email_list: r.email_list.map(email => {
+                return { value: email, label: email };
+              })
+            };
+          });      
+          resolve(result || []);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(err => {
+        reject(err.message);
+      })
+  })
+}
+
+export const addEmailGroup = (data) => {
+  const apiUrl = 'email/groups'
+  return new Promise((resolve, reject) => {
+    apiCall(apiUrl, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const updateEmailListbyGroupId = (data, groupId) => {
+  const apiUrl = `email/groups/${groupId}`
+  return new Promise((resolve, reject) => {
+    apiCall(apiUrl, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

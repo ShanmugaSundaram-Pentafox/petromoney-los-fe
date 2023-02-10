@@ -468,9 +468,9 @@ export const verifyPasswordByLogin = (data) => {
       })
   })}
 
-export const deleteUserAccount = (userId) => {
+export const deleteUserAccount = () => {
   return new Promise((resolve, reject) => {
-    apiCall(`user/account/${userId}`, {
+    apiCall('user/account', {
       method: 'DELETE'
     })
       .then(res => {

@@ -11,7 +11,7 @@ import { createStructuredSelector } from 'reselect';
 import * as Yup from 'yup';
 import TextInput from '../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../config/accessControl';
-import { deleteUser, verifyPasswordByLogin, } from '../../services/users.service';
+import { deleteUserAccount, verifyPasswordByLogin, } from '../../services/users.service';
 import { resetCurrentUser } from '../../store/user/user.actions';
 import { selectCurrentUser } from '../../store/user/user.selector';
 import CheckAllowed from '../rbac/CheckAllowed';
@@ -95,7 +95,7 @@ const Profile = (props) => {
     if (password?.value) {
       verifyPasswordByLogin({ mobile: currentUser.mobile, password: password?.value })
         .then(() => {
-          deleteUser(currentUser?.id)
+          deleteUserAccount()
             .then(res => {
               logout();
               enqueueSnackbar(res?.message, {

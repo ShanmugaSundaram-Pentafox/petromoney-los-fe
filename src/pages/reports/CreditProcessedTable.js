@@ -1,8 +1,9 @@
 import { Button, Grid, Tooltip, Drawer } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
 import MUIDataTable from 'mui-datatables';
+import { useSnackbar } from 'notistack';
 import React, { useState, useMemo } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { useMount } from 'react-use';
 import CreditReload, { TableFooter } from './CreditReload';
 import CreditReloadForm from './CreditReloadForm';
@@ -14,6 +15,7 @@ import { rulesList } from '../../config/userRules';
 import usePageTitle from '../../hooks/usePageTitle';
 import {
   getCreditReload,
+  getCreditReportById,
   getTypeOfAccount,
 } from '../../services/users.service';
 
@@ -26,12 +28,14 @@ const CreditProcessedTable = ({ currentUser }) => {
   const [statusModal, setStatusModal] = useState(false);
   const [filterQry, setFilterQry] = useState();
   const [offset, setOffset] = useState(0);
-
-
+  const [downloadLoading, setDownloadLoading] = useState();
+  const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient()
   usePageTitle('Credit Reload');
   const view = permissionCheck(currentUser.role_name, rulesList.dealer_view)
 
-  const { data = [], refetch, error } = useQuery(['processed-request', offset], () => getCreditReload(1, filterQry, currentUser?.dealership_id, offset), { refetchOnWindowFocus: false, enabled: false })
+  const { data = [], refetch, error, isLoading: searchLoading } = useQuery(['processed-request', offset], () => getCreditReload({ processed: 1, filterQry: filterQry, dealershipId: currentUser?.dealership_id, offset: offset }), { refetchOnWindowFocus: false, enabled: offset ? true : false })
+  const { data: fileData } = useQuery(['view-credit-report'], () => getCreditReportById(filterQry, 'view=1'), { refetchOnWindowFocus: false })
 
   useMount(() => {
     getTypeOfAccount()
@@ -49,6 +53,32 @@ const CreditProcessedTable = ({ currentUser }) => {
         console.log(e);
       })
   });
+
+  const handleDownload = () => {
+    setDownloadLoading(true)
+    getCreditReportById(filterQry, 'download=1')
+      .then(({ message }) => {
+        queryClient.invalidateQueries(['view-credit-report'])
+        setDownloadLoading(false)
+        enqueueSnackbar(message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        });
+      })
+      .catch((err) => {
+        setDownloadLoading(false)
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      })
+  }
 
   const columns = useMemo(() => {
     return [
@@ -177,12 +207,11 @@ const CreditProcessedTable = ({ currentUser }) => {
     print: false,
     selectableRowsHeader: false,
     selectableRows: 'none',
-    rowsPerPage: 15,
+    rowsPerPage: 25,
     filter: false,
     download: false,
     search: false,
     viewColumns: false,
-    rowsPerPageOptions: [15, 20, 30],
     setRowProps: (row, dataIndex) => {
       if (row[13]) {
         return { style: { backgroundColor: '#ffec9bba' } }
@@ -219,14 +248,24 @@ const CreditProcessedTable = ({ currentUser }) => {
         </Grid>
       ) : (
         <>
-          <CreditReload currentUser={currentUser} filterQry={setFilterQry} refetch={refetch} filterList={[]} filterType={'processed'} />
+          <CreditReload
+            currentUser={currentUser}
+            filterQry={setFilterQry}
+            refetch={refetch}
+            filterList={['period']}
+            filterType={'processed'}
+            handleDownload={handleDownload}
+            fileData={fileData?.data[0]}
+            downloadLoading={downloadLoading}
+            searchLoading={searchLoading}
+          />
           <MUIDataTable
             title={'Processed'}
             columns={columns}
             options={options}
             data={error ? [] : data?.data}
             components={{
-              TableFooter: () => <TableFooter offset={offset} handleIncrease={() => setOffset(offset + 1)} handleDecrease={() => setOffset(offset - 1)} />
+              TableFooter: () => <TableFooter offset={offset} stats={data?.stats} handleIncrease={() => setOffset(offset + 1)} handleDecrease={() => setOffset(offset - 1)} />
             }}
           />
         </>
@@ -237,9 +276,7 @@ const CreditProcessedTable = ({ currentUser }) => {
         onClose={() => setStatusModal(false)}
         variant='temporary'
       >
-        {
-          <CreditReloadRemarks callback={() => setStatusModal(false)} rowData={rowData} currentUser={currentUser} />
-        }
+        <CreditReloadRemarks callback={() => setStatusModal(false)} rowData={rowData} currentUser={currentUser} />
       </Drawer>
       <Drawer
         anchor='right'

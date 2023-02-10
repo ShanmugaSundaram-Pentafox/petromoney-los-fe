@@ -5,21 +5,29 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import Currency from '../../components/Number/Currency';
+import { action_id, resources_id } from '../../config/accessControl';
 import CreditDashboardFilter from '../dashboard/components/CreditDashboardFilter';
+import CheckAllowed from '../rbac/CheckAllowed';
 
 export const TableFooter = ({ offset, stats, handleIncrease, handleDecrease }) => {
-
   return (
     <div style={{ padding: 8, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-      <label>Rows per page : 25</label>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <div onClick={!offset == 0 ? handleDecrease : null}>
-          <ChevronLeftRoundedIcon style={{ fontSize: 34, color: 'hsl(0,0%,75%)', cursor: 'pointer' }} />
-        </div>
-        <div onClick={stats?.count > 25 ? handleIncrease : null}>
-          <ChevronRightRoundedIcon style={{ fontSize: 34, color: 'hsl(0,0%,75%)', cursor: 'pointer' }} />
-        </div>
-      </div>
+      {
+        stats?.count && (
+          <>
+            <label>Rows per page : 25</label>
+            <label style={{ marginLeft: 20 }}>{offset + 1} - {Math.ceil(stats?.count / 25)}</label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div onClick={!offset == 0 ? handleDecrease : null}>
+                <ChevronLeftRoundedIcon style={{ fontSize: 34, color: 'hsl(0,0%,75%)', cursor: 'pointer' }} />
+              </div>
+              <div onClick={(stats?.count > 25 && (offset + 1 < Math.ceil(stats?.count / 25))) ? handleIncrease : null}>
+                <ChevronRightRoundedIcon style={{ fontSize: 34, color: 'hsl(0,0%,75%)', cursor: 'pointer' }} />
+              </div>
+            </div>
+          </>
+        )
+      }
     </div>
   )
 }
@@ -43,20 +51,33 @@ background-color: #f1f1f1;
   }
 `;
 
-const CreditReload = ({ currentUser, filterQry, filterList, filterType, stats, refetch }) => {
+const CreditReload = ({ currentUser, filterQry, filterList, handleDownload, filterType, stats, refetch, fileData, downloadLoading, searchLoading }) => {
   const [chartData, setChartData] = useState()
   return (
     <div style={{ marginBottom: 10 }}>
-      <CreditDashboardFilter currentUser={currentUser} refetch={refetch} filterQry={filterQry} setChartData={setChartData} filters={filterList} filterType={filterType} />
+      <CreditDashboardFilter
+        currentUser={currentUser}
+        refetch={refetch}
+        filterQry={filterQry}
+        setChartData={setChartData}
+        filters={filterList}
+        filterType={filterType}
+        handleDownload={handleDownload}
+        fileData={fileData}
+        downloadLoading={downloadLoading}
+        searchLoading={searchLoading}
+      />
       {
-        (currentUser?.role_id !== 13 && filterType !== 'processed') && (
-          <Box p={2} borderRadius={4} bgcolor="background.paper" style={{ marginBottom: 10, marginTop: 10 }}>
-            <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">
-              <DashCard text="Zone" value={chartData?.count?.length === 1 ? chartData?.count[0]?.label : `${chartData?.count[0]?.label} & ${chartData?.count?.length - 1} more` || '-'} />
-              <DashCard text={'No.of. New Request'} value={stats?.count || '-'} />
-              <DashCard noBorder text={'Total.Req. Amount'} value={<Currency value={stats?.amount} /> || '-'} amount={stats?.amount} />
+        (filterType !== 'processed') && (
+          <CheckAllowed currentUser={currentUser} resource={resources_id.creditReload} action={action_id.creditReload.dealer_search}>
+            <Box p={2} borderRadius={4} bgcolor="background.paper" style={{ marginBottom: 10, marginTop: 10 }}>
+              <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">
+                <DashCard text="Zone" value={chartData?.count?.length === 1 ? chartData?.count[0]?.label : `${chartData?.count[0]?.label} & ${chartData?.count?.length - 1} more` || '-'} />
+                <DashCard text={'No.of. New Request'} value={stats?.count || '-'} />
+                <DashCard noBorder text={'Total.Req. Amount'} value={<Currency value={stats?.amount} /> || '-'} amount={stats?.amount} />
+              </Box>
             </Box>
-          </Box>
+          </CheckAllowed>
         )
       }
     </div>

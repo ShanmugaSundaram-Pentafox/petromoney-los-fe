@@ -60,7 +60,7 @@ const PassbookDetails = ({ CurrentUser }) => {
       },
       {
         name: 'disbursement',
-        label: 'Credit',
+        label: 'Disbursement',
         options: {
           filter: false,
           sort: false,
@@ -71,7 +71,7 @@ const PassbookDetails = ({ CurrentUser }) => {
       },
       {
         name: 'repayment',
-        label: 'Debit',
+        label: 'Repayment',
         options: {
           filter: false,
           sort: false,

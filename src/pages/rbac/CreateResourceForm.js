@@ -271,6 +271,7 @@ const CreateResourceForm = ({ roles, close }) => {
                             'Action name should not contain spaces or any special characters'
                           )
                           .required('action name is required'),
+                        allowed_roles: resourceType === 'MDM' ? Yup.array().required('Please Select a role').min(1, 'Atleast One role should have access.') : Yup.array().notRequired(),
                       })
                     ),
                   })}
@@ -317,6 +318,7 @@ const CreateResourceForm = ({ roles, close }) => {
                                     <Grid item md={9}>
                                       <Select
                                         name={`actions.${index}.allowed_roles`}
+                                        isClearable={false}
                                         onChange={(option) =>
                                           setFieldValue(
                                             `actions[${index}].allowed_roles`,
@@ -328,6 +330,7 @@ const CreateResourceForm = ({ roles, close }) => {
                                         options={updatedArray}
                                         closeMenuOnSelect={false}
                                       />
+                                      <Typography variant='caption' color='error' >{errors?.actions?.[index]?.allowed_roles}</Typography>
                                     </Grid>
                                     <Grid>
                                       <IconButton
@@ -369,7 +372,8 @@ const CreateResourceForm = ({ roles, close }) => {
                                 Access
                               </label>
                               <Select
-                                name="read"
+                                name={action}
+                                isClearable={false}
                                 onChange={(option) => {
                                   setFieldValue(
                                     `actions[${index}].allowed_roles`,

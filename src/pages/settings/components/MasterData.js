@@ -6,6 +6,7 @@ import AssignProducts from './AssignProducts';
 import MasterCity from './MasterCity';
 import MasterCollectionRemarks from './MasterCollectionRemarks';
 import Contain from './MasterDataTable';
+import MasterEmailGroup from './MasterEmailGroup';
 import Products from './Products';
 import Zones from './Zones';
 import {resources_id, action_id} from '../../../config/accessControl';
@@ -17,6 +18,7 @@ import { ReactComponent as FuelIcon } from '../../../icons/fuelIcon.svg';
 import { ReactComponent as InfrastructureIcon } from '../../../icons/infrastructure.svg';
 import { ReactComponent as LoanIcon } from '../../../icons/loan.svg';
 import { ReactComponent as CityIcon } from '../../../icons/locationIcon.svg';
+import { ReactComponent as MailListIcon } from '../../../icons/MailList.svg';
 import { ReactComponent as OtherIcon } from '../../../icons/other_icons.svg';
 import { ReactComponent as RemarkIcon } from '../../../icons/remarkIcon.svg';
 import { ReactComponent as RolesIcon } from '../../../icons/rolesIcon.svg';
@@ -192,9 +194,19 @@ function MasterData({currentUser}) {
                 </Link>
               </Tooltip>
             </Grid>
+            <Grid item md={2}>
+              <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id?.settings?.emailGroup}>
+                <Tooltip title="Email Groups">
+                  <div className={classes.content} onClick={() => setCustomForm('email_groups')}>
+                    <MailListIcon className={classes.icons} />
+                    <Typography variant="h5" align='center' className={classes.title} >Email List</Typography>
+                  </div>
+                </Tooltip>
+              </CheckAllowed>
+            </Grid>
           </Grid>
         </div>
-        
+
         <Drawer
           anchor="right"
           open={openForm}
@@ -242,6 +254,14 @@ function MasterData({currentUser}) {
           variant="temporary"
         >
           <MasterCollectionRemarks currentUser={currentUser} title='Collection Remarks' callback={setCustomForm} />
+        </Drawer>
+        <Drawer
+          anchor="right"
+          open={customForm === 'email_groups'}
+          onClose={() => setCustomForm()}
+          variant="temporary"
+        >
+          <MasterEmailGroup currentUser={currentUser} title='Email Groups' callback={setCustomForm} />
         </Drawer>
       </Paper>
 

@@ -76,6 +76,7 @@ export const action_id = {
     los_switch :'los_switch',
     vivriti :'vivriti',
     loan_submit :'loan_submit',
+    submitted_documents:'submitted_documents',
   },
   creditReload: {
     create: 'request:create',
@@ -246,6 +247,7 @@ export const action_id = {
     userCreate: 'user:create',
     userEdit: 'user:edit',
     userChange_password: 'user:change_password',
+    user_delete:'user_delete',
     userStatus: 'user:status',
   }
 }

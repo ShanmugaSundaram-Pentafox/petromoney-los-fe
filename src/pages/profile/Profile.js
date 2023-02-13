@@ -204,13 +204,9 @@ const Profile = (props) => {
           </Grid>
           <CheckAllowed currentUser={currentUser} resource={resources_id?.users} action={action_id?.users.user_delete}>
             <Grid {...gridItem} md={12} style={{ display: 'flex', justifyContent: 'center' }}>
-              <Button
-                variant='contained'
-                size='medium'
-                style={{ backgroundColor: 'rgb(255,59,48)', color: 'white', marginTop: 20 }}
-                onClick={() => { setOpenDialog(true) }}>
+              <div style={{ color:'rgb(255,59,48)', marginTop: 20,cursor:'pointer',textDecoration:'underline' }} onClick={() => { setOpenDialog(true) }}>
                 Delete My Account
-              </Button>
+              </div>
             </Grid>
           </CheckAllowed>
         </Grid>

@@ -49,10 +49,10 @@ const PassbookDetails = ({ CurrentUser }) => {
   });
   const columns = useMemo(() => {
     return [
-      { name: 'cust_code', label: 'Dealership ID' },
+      { name: 'customer_id', label: 'Dealership ID' },
       { name: 'narrative', label: 'Payment Details' },
       {
-        name: 'trans_date',
+        name: 'transaction_date',
         label: 'Date',
         options: {
           filter: false,

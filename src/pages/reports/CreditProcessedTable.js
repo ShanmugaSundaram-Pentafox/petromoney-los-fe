@@ -214,7 +214,7 @@ const CreditProcessedTable = ({ currentUser }) => {
     viewColumns: false,
     setRowProps: (row, dataIndex) => {
       if (row[13]) {
-        return { style: { backgroundColor: '#ffec9bba' } }
+        return { style: { backgroundColor: '#ffb99b69' } }
       }
     },
     customToolbar: () => {

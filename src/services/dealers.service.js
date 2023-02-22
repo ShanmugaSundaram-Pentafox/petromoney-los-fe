@@ -4,7 +4,7 @@ import apiCall from '../utils/api.util';
 
 export const getDealersByDealershipId = id => {
   return new Promise((resolve, reject) => {
-    apiCall(`${URL.dealers}/${id}`)
+    apiCall(`applicant/${id}?category=DEALER`)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           const result = data.map(item => ({
@@ -26,7 +26,28 @@ export const getDealersByDealershipId = id => {
 
 export const getCoApplicantByDealershipId = id => {
   return new Promise((resolve, reject) => {
-    apiCall(`${URL.coApplicants}/${id}`)
+    apiCall(`applicant/${id}?category=COAPPLICANT`)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          const result = data.map(item => ({
+            ...item,
+            pan: item?.pan ? decrypt(item.pan) : item.pan,
+            aadhar: item?.aadhar ? decrypt(item.aadhar) : item.aadhar,
+          }));
+          resolve(result || []);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const getGuarantorByDealershipId = id => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${id}?category=GUARANTOR`)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           const result = data.map(item => ({

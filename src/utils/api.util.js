@@ -19,9 +19,13 @@ const apiCall = async (route, options = {}) => {
   } = options;
   const credentials = await selectCurrentUser(store.getState());
 
-  let headerObject = {
+
+
+  let headerObject = method != 'GET' ? {
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Credentials':'no-cors'
+    'Access-Control-Allow-Credentials': 'no-cors'
+  } : {
+    'Access-Control-Allow-Credentials': 'no-cors'
   };
 
   if (customHeader && !isEmpty(customHeader)) {
@@ -113,7 +117,7 @@ const apiCall = async (route, options = {}) => {
       ) {
         if (!isJustLoggedOut) {
           isJustLoggedOut = true;
-          
+
           // DebouncedAlert("Oops!", "Session Expired... Please Login again!");
           alert('Oops! Session Expired... Please Login again!');
         }

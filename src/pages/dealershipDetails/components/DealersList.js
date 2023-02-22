@@ -10,8 +10,7 @@ import GuarantorsTable from './GuarantorsTable';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { rulesList } from '../../../config/userRules';
-import { getDealersByDealershipId, getCoApplicantByDealershipId } from '../../../services/dealers.service';
-import { getAllGuarantor } from '../../../services/leegality.service';
+import { getDealersByDealershipId, getCoApplicantByDealershipId, getGuarantorByDealershipId } from '../../../services/dealers.service';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles(theme => ({
@@ -83,7 +82,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
     },
     refetchOnWindowFocus: false
   })
-  const { data: guarantorsData } = useQuery(['guarantors', id], () => getAllGuarantor(id), {
+  const { data: guarantorsData } = useQuery(['guarantors', id], () => getGuarantorByDealershipId(id), {
     initialData: [],
     select: res => {
       return res.map(d => ({

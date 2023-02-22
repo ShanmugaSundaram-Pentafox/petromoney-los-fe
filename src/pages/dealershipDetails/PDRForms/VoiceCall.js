@@ -11,8 +11,8 @@ import { useQuery } from 'react-query';
 import Button from '../../../components/CommonComponents/Button/Button';
 import DeleteButton from '../../../components/CommonComponents/Button/DeleteButton';
 import { action_id, resources_id } from '../../../config/accessControl';
-import { getCoApplicantByDealershipId, getDealersByDealershipId } from '../../../services/dealers.service';
-import { getAllGuarantor } from '../../../services/leegality.service';
+import { getCoApplicantByDealershipId, getDealersByDealershipId, getGuarantorByDealershipId } from '../../../services/dealers.service';
+// import { getAllGuarantor } from '../../../services/leegality.service';
 import { deleteVoiceCallById, getVoiceCallLogsById, makeVoiceCallById } from '../../../services/users.service';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
@@ -177,6 +177,7 @@ const VoiceCall = ({ id, callback, currentUser }) => {
     if (id) {
       getDealersByDealershipId(id)
         .then(res => {
+          console.log('dealers >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>',res)
           setDealers(res);
         })
         .catch(err => {
@@ -189,7 +190,7 @@ const VoiceCall = ({ id, callback, currentUser }) => {
         .catch(err => {
           console.log('getCoApplicantByDealershipId >> ', err)
         })
-      getAllGuarantor(id)
+      getGuarantorByDealershipId(id)
         .then(res => {
           setGuarantors(res);
         })
@@ -202,7 +203,7 @@ const VoiceCall = ({ id, callback, currentUser }) => {
   const handleVoiceCall = (item, type) => {
     var data = {
       To: item.mobile,
-      type: type,
+      type: type.toUpperCase(),
       module: 'pdr'
     }
     makeVoiceCallById(item.dealership_id, data)

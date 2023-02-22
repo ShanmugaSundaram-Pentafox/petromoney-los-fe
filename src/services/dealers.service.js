@@ -47,7 +47,7 @@ export const getCoApplicantByDealershipId = id => {
 
 export const getGuarantorByDealershipId = id => {
   return new Promise((resolve, reject) => {
-    apiCall(`${id}?category=GUARANTOR`)
+    apiCall(`applicant/${id}?category=GUARANTOR`)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           const result = data.map(item => ({
@@ -154,13 +154,10 @@ export const getDealerTransportsList = () => {
       })
   });
 }
-export const deleteProfileDoc = (data, dealership_id, dealer_id, type) => {
-  let apiURL = type === 'DEALER' ? 'dealers' : type === 'COAPPLICANT' ? 'coapplicants' : 'guarantors'
+export const deleteProfileDoc = (docType, dealership_id, dealer_id, type) => {
   return new Promise((resolve, reject) => {
-    apiCall(`${apiURL}/${dealer_id}/${dealership_id}`, {
+    apiCall(`applicant/${dealer_id}/${dealership_id}?type=${docType}`, {
       method: 'DELETE',
-      body: data
-
     })
       .then(async ({ res, status, message }) => {
         resolve({ res, message });

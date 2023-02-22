@@ -146,33 +146,33 @@ const DealerEditSideWrapper = ({
   const validationSchema = Yup.object().shape({
     first_name: Yup.string().nullable('Enter first name').required('Enter first name'),
     last_name: Yup.string().nullable('Enter last name').required('Enter last name'),
-    // father_name: Yup.string().nullable('Enter your father\'s name').required('Enter your father\'s name'),
-    // gender: Yup.string().nullable('Choose gender').required('Enter gender'),
-    // email: Yup.string().nullable('Enter email').email('Invalid email').required('Enter email'),
-    // city: Yup.string().nullable('Enter City').required('Enter City'),
-    // state: Yup.string().nullable('Enter State').required('Enter State'),
-    // address: Yup.string()
-    //   .required('Enter address')
-    //   .nullable('Enter address')
-    //   .min(6, 'address must be atleast 6 characters')
-    //   .test('Invalid characters', 'Please don\'t use _ # $ % ^ & * @ ( ) < > ! ~ { } = : ; " ? ', value => !/[_#$%^&*@()<>!~{}=:;"?]/.test(value)),
-    // mobile: Yup.string()
-    //   .nullable('Enter mobile number')
-    //   .matches(/^\d{10}$/, 'Invalid mobile number')
-    //   .required('Enter valid mobile number'),
-    // residing_since: Yup.number().nullable('Enter the year').required('Enter the year'),
-    // marital_status: Yup.string().nullable('Enter your Marital status').required('Enter your Marital status'),
-    // pincode: Yup.string().nullable('Enter pincode').matches(/^[1-9][0-9]{5}$/, 'Invalid pincode').required('Enter pincode'),
-    // aadhar: Yup.string()
-    //   .nullable('Enter Aadhar')
-    //   .matches(/^(\d{12})$|^(\d{16})$/, 'Invalid aadhar')
-    //   .required('Enter valid aadhar'),
-    // pan: Yup.string()
-    //   .nullable('Enter PAN')
-    //   .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
-    //   .uppercase(),
-    // ...coApplicantFields,
-    // ...adminFields,
+    father_name: Yup.string().nullable('Enter your father\'s name').required('Enter your father\'s name'),
+    gender: Yup.string().nullable('Choose gender').required('Enter gender'),
+    email: Yup.string().nullable('Enter email').email('Invalid email').required('Enter email'),
+    city: Yup.string().nullable('Enter City').required('Enter City'),
+    state: Yup.string().nullable('Enter State').required('Enter State'),
+    address: Yup.string()
+      .required('Enter address')
+      .nullable('Enter address')
+      .min(6, 'address must be atleast 6 characters')
+      .test('Invalid characters', 'Please don\'t use _ # $ % ^ & * @ ( ) < > ! ~ { } = : ; " ? ', value => !/[_#$%^&*@()<>!~{}=:;"?]/.test(value)),
+    mobile: Yup.string()
+      .nullable('Enter mobile number')
+      .matches(/^\d{10}$/, 'Invalid mobile number')
+      .required('Enter valid mobile number'),
+    residing_since: Yup.number().nullable('Enter the year').required('Enter the year'),
+    marital_status: Yup.string().nullable('Enter your Marital status').required('Enter your Marital status'),
+    pincode: Yup.string().nullable('Enter pincode').matches(/^[1-9][0-9]{5}$/, 'Invalid pincode').required('Enter pincode'),
+    aadhar: Yup.string()
+      .nullable('Enter Aadhar')
+      .matches(/^(\d{12})$|^(\d{16})$/, 'Invalid aadhar')
+      .required('Enter valid aadhar'),
+    pan: Yup.string()
+      .nullable('Enter PAN')
+      .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
+      .uppercase(),
+    ...coApplicantFields,
+    ...adminFields,
   });
 
   const handleIdChange = (e) => {
@@ -251,18 +251,31 @@ const DealerEditSideWrapper = ({
           })
       }
       const dob = selectedDate ? format(new Date(selectedDate), 'dd-MM-yyyy') : values.dob ? values.dob : null
-      const date_values = { ...values, relationship_id: 3, dob: dob, pan: values.pan.toUpperCase(), is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0 };
+      const date_values = { ...values, relationship_id: 3, dob: dob, pan: values.pan.toUpperCase(), is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0, category:  modelType};
 
       addApplicants(date_values, dealershipId, modelType, currentUser)
-        .then((res) => {
-          console.log('res api status >>>>>>>>>>>>>>>>>>>>>>>>', res)
+        .then((message) => {
+          enqueueSnackbar(message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          });
+          onClose()
+          queryClient.invalidateQueries(['co-applicants', id])
+          queryClient.invalidateQueries(['dealers-coapplicant', id])
+          queryClient.invalidateQueries(['guarantors', id])
         })
         .catch((err) => {
-          console.log('err api status >>>>>>>>>>>>>>>>>>>>>>>>', err)
+          enqueueSnackbar(err, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          });
         })
-      // setReadOnly(false);
-      // setLoading(false);
-
     },
   });
   const handleDateChange = (date) => {
@@ -273,7 +286,7 @@ const DealerEditSideWrapper = ({
   };
 
   const handleClose = () => {
-    // setOpen(!open);
+    setOpen(!open);
     setAgentId({})
   };
 
@@ -341,6 +354,8 @@ const DealerEditSideWrapper = ({
           aadharValidateData={aadharValidateData}
           validateField={validateField}
           currentUser={currentUser}
+          id={id}
+          onClose={onClose}
         />
       </div>
       <div className={classes.actionFooter}>

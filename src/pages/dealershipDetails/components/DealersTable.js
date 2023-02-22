@@ -77,13 +77,12 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
       formData.append('is_active', 1)
     }
 
-    const apiURL = URL.dealers;
-    let url = `${apiURL}/${id}`;
+    let url = `applicant/${id}`;
     if (values.id) {
       url += `/${values.id}`;
     }
     fetch(`${URL.base}${url}`, {
-      method: 'POST',
+      method: 'PUT',
       body: formData,
       headers: {
         Authorization: `Bearer ${currentUser.token}`,

@@ -78,13 +78,12 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
       formData.append('is_active', 1)
     }
 
-    const apiURL = URL.coApplicants;
-    let url = `${apiURL}/${id}`;
+    let url = `applicant/${id}`;
     if (values.id) {
       url += `/${values.id}`;
     }
     fetch(`${URL.base}${url}`, {
-      method: 'POST',
+      method: 'PUT',
       body: formData,
       headers: {
         Authorization: `Bearer ${currentUser.token}`,
@@ -135,11 +134,11 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
         <Typography variant="h5" align={titleAlign} className={classes.title}>No CoApplicants Found</Typography>
         {
           // coapplicants add permissions
-            <div style={{ textAlign: 'center', marginTop: 8 }}>
-              <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.coapplicantAdd}>
-                <Button color="primary" variant="outlined" size="small" onClick={() => onClickAddMenu('COAPPLICANT')}>Add CoApplicants</Button>
-              </CheckAllowed>
-            </div>
+          <div style={{ textAlign: 'center', marginTop: 8 }}>
+            <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.coapplicantAdd}>
+              <Button color="primary" variant="outlined" size="small" onClick={() => onClickAddMenu('COAPPLICANT')}>Add CoApplicants</Button>
+            </CheckAllowed>
+          </div>
         }
       </div>
     );

@@ -14,6 +14,7 @@ import { makeStyles } from '@material-ui/styles';
 import { parse } from 'date-fns';
 import { useSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
+import { useQueryClient } from 'react-query';
 import { DocAttachment } from '../../../components/Attachment/DocAttachment';
 import CustomToken from '../../../components/CommonComponents/CustomToken';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
@@ -76,8 +77,9 @@ const useStyles = makeStyles({
   },
 });
 
-const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave, setFieldValue, setPanValidateData, panValidateData, validateField, setAadharValidateData, aadharValidateData,currentUser }) => {
+const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave, setFieldValue, setPanValidateData, panValidateData, validateField, setAadharValidateData, aadharValidateData, currentUser, id, onClose }) => {
   const readOnly = readOnlyProps;
+  const queryClient = useQueryClient();
   const classes = useStyles();
   const [city, setCity] = useState([]);
   const [showUpload, setShowUpload] = useState(false);
@@ -119,6 +121,10 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
           },
           variant: 'success',
         });
+        onClose()
+        queryClient.invalidateQueries(['co-applicants', id])
+        queryClient.invalidateQueries(['dealers-coapplicant', id])
+        queryClient.invalidateQueries(['guarantors', id])
       })
       .catch(err => {
         enqueueSnackbar(err, {
@@ -687,9 +693,9 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 <Typography variant="title"><strong>Attachments</strong></Typography>
               </Grid>
               <div className={classes.attachmentContainer}>
-                <DocAttachment action={true} imgUrl={values?.profile_image_url} docName='Profile' onUpload={() => docUpload('Profile')} onDelete={() => onDocDelete({ profile_image_url: '' })} disabled={!values?.profile_image_url} />
-                <DocAttachment action={true} imgUrl={values?.pan_file_url} docName='PAN Card' onUpload={() => docUpload('PAN')} onDelete={() => onDocDelete({ pan_file_url: '' })} disabled={!values?.pan_file_url} />
-                <DocAttachment action={true} imgUrl={values?.aadhar_file_url} docName='Aadhaar' onUpload={() => docUpload('AADHAR')} onDelete={() => onDocDelete({ aadhar_file_url: '' })} disabled={!values?.aadhar_file_url} />
+                <DocAttachment action={true} imgUrl={values?.profile_image_url} docName='Profile' onUpload={() => docUpload('Profile')} onDelete={() => onDocDelete('profile')} disabled={!values?.profile_image_url} />
+                <DocAttachment action={true} imgUrl={values?.pan_file_url} docName='PAN Card' onUpload={() => docUpload('PAN')} onDelete={() => onDocDelete('pan')} disabled={!values?.pan_file_url} />
+                <DocAttachment action={true} imgUrl={values?.aadhar_file_url} docName='Aadhaar' onUpload={() => docUpload('AADHAR')} onDelete={() => onDocDelete('aadhar')} disabled={!values?.aadhar_file_url} />
               </div>
               {
                 showUpload && (

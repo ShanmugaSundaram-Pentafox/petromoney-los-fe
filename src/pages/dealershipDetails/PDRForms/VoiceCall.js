@@ -205,6 +205,7 @@ const VoiceCall = ({ id, callback, currentUser }) => {
       type: type.toUpperCase(),
       module: 'pdr'
     }
+    console.log('data >>>>>>>>>>>>>>>>>>>>',data)
     makeVoiceCallById(item.dealership_id, data)
       .then(res => {
         setOpenDialog(false);
@@ -274,7 +275,7 @@ const VoiceCall = ({ id, callback, currentUser }) => {
       })
       .catch((e) => {
         setDeleteModel(false)
-        enqueueSnackbar(e, {
+        enqueueSnackbar(e?.message, {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',

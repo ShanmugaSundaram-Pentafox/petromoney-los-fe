@@ -27,6 +27,7 @@ import { getKycAgents, getKycStatus, initiateKYC } from '../../../services/deale
 import { validateId } from '../../../services/dealerships.service';
 import { addApplicants } from '../../../services/fileUpload.service';
 import { isAllowed } from '../../../utils/cerbos';
+import { compareObject } from '../../../utils/compareObject.util';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
 
@@ -127,8 +128,8 @@ const DealerEditSideWrapper = ({
   let coApplicantFields = {};
   if (modelType === 'COAPPLICANT') {
     coApplicantFields = {
-      dealer_id: Yup.number().nullable('Enter Relation').required('Enter Relation'),
-      relationship: Yup.string().min(2).nullable('Enter Relationship type').required('Enter Relationship Type'),
+      relation_to: Yup.number().nullable('Enter Relation').required('Enter Relation'),
+      relationship: Yup.number().nullable('Enter Relationship type').required('Enter Relationship Type'),
     };
   }
 
@@ -233,7 +234,7 @@ const DealerEditSideWrapper = ({
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: (values) => {
-      // setLoading(true);
+      setLoading(true);
       if (isAdd === 'Add') {
         validateId('pan', values?.pan)
           .then((res) => {
@@ -251,9 +252,22 @@ const DealerEditSideWrapper = ({
           })
       }
       const dob = selectedDate ? format(new Date(selectedDate), 'dd-MM-yyyy') : values.dob ? values.dob : null
-      const date_values = { ...values, relationship_id: 3, dob: dob, pan: values.pan.toUpperCase(), is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0, category:  modelType};
-
-      addApplicants(date_values, dealershipId, modelType, currentUser)
+      const date_values = { ...values, dob: dob, pan: values.pan.toUpperCase(), is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0, category: modelType };
+      let commonObj = { category: modelType }
+      if (date_values?.pan !== data?.pan || date_values?.pan_file_url != data?.pan_file_url) {
+        if (date_values?.pan != data?.pan)
+          commonObj = { ...commonObj, pan_file_url: data?.pan_file_url }
+        else
+          commonObj = { ...commonObj, pan: data?.pan }
+      }
+      if (date_values?.aadhar !== data?.aadhar || date_values?.aadhar_file_url != data?.aadhar_file_url) {
+        if (date_values?.aadhar != data?.aadhar)
+          commonObj = { ...commonObj, aadhar_file_url: data?.aadhar_file_url }
+        else
+          commonObj = { ...commonObj, aadhar: data?.aadhar }
+      }
+      const resultObj = data?.id ? compareObject(data, date_values, commonObj) : date_values
+      addApplicants(resultObj, dealershipId, modelType, currentUser, data?.id)
         .then((message) => {
           enqueueSnackbar(message, {
             anchorOrigin: {
@@ -268,6 +282,7 @@ const DealerEditSideWrapper = ({
           queryClient.invalidateQueries(['guarantors', id])
         })
         .catch((err) => {
+          setLoading(false);
           enqueueSnackbar(err, {
             anchorOrigin: {
               vertical: 'top',

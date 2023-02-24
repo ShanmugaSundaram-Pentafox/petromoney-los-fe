@@ -14,13 +14,14 @@ import { makeStyles } from '@material-ui/styles';
 import { parse } from 'date-fns';
 import { useSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
-import { useQueryClient } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { DocAttachment } from '../../../components/Attachment/DocAttachment';
 import CustomToken from '../../../components/CommonComponents/CustomToken';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import FileUpload, { FILE_FORMAT_IMG, FILE_FORMAT_PDF } from '../../../components/FileUpload';
 import TextInput from '../../../components/TextInput/TextInput';
 import { logger } from '../../../config/logger';
+import { getRelationshipList } from '../../../services/common.service';
 import { deleteProfileDoc, getPincodeDetails } from '../../../services/dealers.service';
 import { validateId } from '../../../services/dealerships.service';
 
@@ -30,50 +31,19 @@ const useStyles = makeStyles({
     paddingRight: 12,
     paddingBottom: 14
   },
-  input: {
-    display: 'none'
-  },
-  details: {
-    padding: 4,
-    borderColor: 'grey',
-    minWidth: 80,
-    height: 50,
-    display: 'flex',
-    textAlign: 'left',
-    alignItems: 'left',
-    justifyContent: 'left'
-  },
   readOnlyWrapper: {
     margin: '2px 4px',
     maxWidth: '98%',
-  },
-
-  fileStyle: {
-    display: 'flex',
-    justifyContent: 'space-around',
-    marginTop: 12,
-  },
-  fileAttachement: {
-    display: 'flex',
-    // justifyContent:'center',
-    marginTop: 6
-  },
-  icon: {
-    marginRight: 4,
-    marginTop: 6,
-  },
-  typography: {
-    marginTop: 8,
-  },
-  text: {
-    marginBottom: 4,
-    fontSize: 12,
   },
   title: {
     fontSize: 11,
   },
   attachmentContainer: {
-    display: 'flex', justifyContent: 'space-between', width: '39vw', paddingRight: 12, flexWrap: 'wrap'
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '39vw',
+    paddingRight: 12,
+    flexWrap: 'wrap'
   },
 });
 
@@ -91,7 +61,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
   const { enqueueSnackbar } = useSnackbar();
   const [selectedDate, setSelectedDate] = useState(data?.dob && parse(data?.dob, 'dd-MM-yyyy', new Date()))
   const [anchorEl, setAnchorEl] = React.useState(null);
-
+  const { data: relationShipOptions = [] } = useQuery(['relationships'], () => getRelationshipList())
   const handleDateChange = (date) => {
     setSelectedDate(date)
     handleDate(date)
@@ -209,37 +179,6 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
   const date = new Date();
   const currentYear = date.getFullYear();
   const currentYearDiff = date.getFullYear() - 1970;
-  const relationShipOptions = [
-    { label: 'Choose Relationship', value: '' },
-    { label: 'Father', value: 'FATHER' },
-    { label: 'Mother', value: 'MOTHER' },
-    { label: 'Spouse', value: 'SPOUSE' },
-    { label: 'Uncle', value: 'UNCLE' },
-    { label: 'Aunt', value: 'AUNT' },
-    { label: 'Son', value: 'SON' },
-    { label: 'Daughter', value: 'DAUGHTER' },
-    { label: 'Grandfather', value: 'GRANDFATHER' },
-    { label: 'Grandmother', value: 'GRANDMOTHER' },
-    { label: 'Mother-in-law', value: 'MOTHER-IN-LAW' },
-    { label: 'Father-in-law', value: 'FATHER-IN-LAW' },
-    { label: 'Sister-in-law', value: 'SISTER-IN-LAW' },
-    { label: 'Brother-in-law', value: 'BROTHER-IN-LAW' },
-    { label: 'Brother', value: 'BROTHER' },
-    { label: 'Newphew', value: 'NEPHEW' },
-    { label: 'Partner', value: 'PARTNER' },
-    { label: 'Friend', value: 'FRIEND' },
-    { label: 'Shareholder', value: 'SHAREHOLDER' },
-    { label: 'Buyer', value: 'BUYER' },
-    { label: 'Supplier', value: 'SUPPLIER' },
-    { label: 'Business Neighbour', value: 'BUSINESS NEIGHBOUR' },
-    { label: 'Home Neighbour', value: 'HOME NEIGHBOUR' },
-    { label: 'Director', value: 'DIRECTOR' },
-    { label: 'Proprietor', value: 'PROPRIETOR' },
-    { label: 'Debtors', value: 'DEBTORS' },
-    { label: 'Creditors', value: 'CREDITORS' },
-    { label: 'Principal', value: 'PRINCIPAL' },
-    { label: 'Others', value: 'OTHERS' }
-  ]
 
   return (
     <>
@@ -600,11 +539,11 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                     <TextInput
                       select
                       label="Relation To"
-                      name="dealer_id"
-                      error={errors.dealer_id}
-                      helperText={errors.dealer_id}
+                      name="relation_to"
+                      error={errors.relation_to}
+                      helperText={errors.relation_to}
                       readOnly={readOnly}
-                      value={values.dealer_id}
+                      value={values.relation_to}
                       onChange={onChange}
                       disabled={readOnly}
                       SelectProps={{
@@ -641,7 +580,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                       {
                         relationShipOptions.map((item, i) => {
                           return (
-                            <option key={i} value={item.value}>{item.label}</option>
+                            <option key={i} value={item?.id}>{item.label}</option>
                           )
                         })
                       }

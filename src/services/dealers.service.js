@@ -323,3 +323,21 @@ export const getKycAgents = () => {
       })
   });
 }
+
+export const updateApplicantDataById = (id,applicantId) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`applicant/${id}/${applicantId}/swap`,{
+      method:'POST'
+    })
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

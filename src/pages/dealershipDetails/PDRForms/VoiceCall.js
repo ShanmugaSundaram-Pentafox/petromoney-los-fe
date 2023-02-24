@@ -177,7 +177,6 @@ const VoiceCall = ({ id, callback, currentUser }) => {
     if (id) {
       getDealersByDealershipId(id)
         .then(res => {
-          console.log('dealers >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>',res)
           setDealers(res);
         })
         .catch(err => {

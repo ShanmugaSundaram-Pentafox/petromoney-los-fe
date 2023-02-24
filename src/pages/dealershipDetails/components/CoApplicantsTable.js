@@ -14,10 +14,9 @@ import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import CreditInfoSideWrapper from './CreditInfoSideWrapper';
 import CrimeInfoSideWrapper from './CrimeInfoSideWrapper';
-import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { action_id, resources_id } from '../../../config/accessControl';
-import { URL } from '../../../config/serverUrls';
-import { rulesList } from '../../../config/userRules';
+import { addApplicants } from '../../../services/fileUpload.service';
+import { compareObject } from '../../../utils/compareObject.util';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles(theme => ({
@@ -61,69 +60,31 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
   const { enqueueSnackbar } = useSnackbar();
   const [rowData, setRowData] = useState();
   const [crimeData, setCrimeData] = useState();
-  const adminOnlyEdit = permissionCheck(currentUser.role_name, rulesList.admin_edit);
-  const cibil_permission = permissionCheck(currentUser.role_name, rulesList.cibil_edit);
-  const crime_permission = permissionCheck(currentUser.role_name, rulesList.crime_check);
 
   const DeleteApplicant = (values) => {
-    const formData = new FormData();
-    let obj = {};
-    Object.keys(obj).forEach((key) => {
-      formData.append(key, obj[key]);
-    });
-    if (values.is_active == 1) {
-      formData.append('is_active', 0)
-    }
-    else {
-      formData.append('is_active', 1)
-    }
-
-    let url = `applicant/${id}`;
-    if (values.id) {
-      url += `/${values.id}`;
-    }
-    fetch(`${URL.base}${url}`, {
-      method: 'PUT',
-      body: formData,
-      headers: {
-        Authorization: `Bearer ${currentUser.token}`,
-      },
-    })
-      .then(res => {
-        return res.json()
+    const obj = { ...values, is_active: values.is_active == 1 ? 0 : 1 };
+    const resObj = compareObject(values, obj, { category: values?.category })
+    addApplicants(resObj, id, currentUser, values?.id)
+      .then((message) => {
+        enqueueSnackbar(message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        });
+        queryClient.invalidateQueries(['co-applicants', id])
+        queryClient.invalidateQueries(['dealers-coapplicant', id])
+        queryClient.invalidateQueries(['guarantors', id])
       })
-      .then(({ status, message, data }) => {
-        if (status == 'SUCCESS') {
-          queryClient.invalidateQueries(['co-applicants', id])
-          enqueueSnackbar(message, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'success',
-          }
-          )
-        }
-        else {
-          enqueueSnackbar(message, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'error',
-          }
-          )
-        }
-      })
-      .catch(e => {
-        enqueueSnackbar(e.message, {
+      .catch((err) => {
+        enqueueSnackbar(err, {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',
           },
           variant: 'error',
-        }
-        )
+        });
       })
   }
 

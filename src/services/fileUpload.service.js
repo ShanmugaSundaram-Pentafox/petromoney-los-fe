@@ -1,19 +1,19 @@
 import { URL } from '../config/serverUrls';
 
-export const addApplicants = (values, dealershipId, category, currentUser ) => {
+export const addApplicants = (values, dealershipId, currentUser,rowId ) => {
   return new Promise((resolve, reject) => {
     let url = `applicant/${dealershipId}`;
-    if (values?.id) {
-      url += `/${values.id}`;
+    if (rowId) {
+      url += `/${rowId}`;
     }
-
+    
     const formData = new FormData();
     Object.keys(values).forEach((key) => {
       formData.append(key, values[key]);
     });
   
     fetch(URL.base+url, {
-      method: values?.id ? 'PUT' : 'POST',
+      method: rowId ? 'PUT' : 'POST',
       body: formData,
       headers: {
         Authorization: `Bearer ${currentUser.token}`,

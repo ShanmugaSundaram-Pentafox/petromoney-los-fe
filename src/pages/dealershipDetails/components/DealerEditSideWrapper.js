@@ -267,7 +267,11 @@ const DealerEditSideWrapper = ({
           commonObj = { ...commonObj, aadhar: data?.aadhar }
       }
       const resultObj = data?.id ? compareObject(data, date_values, commonObj) : date_values
-      addApplicants(resultObj, dealershipId, modelType, currentUser, data?.id)
+      let apiUrl = `applicant/${dealershipId}`;
+      if (date_values?.id) {
+        apiUrl += `/${date_values?.id}`;
+      }
+      addApplicants(resultObj, currentUser, apiUrl, data?.id)
         .then((message) => {
           enqueueSnackbar(message, {
             anchorOrigin: {

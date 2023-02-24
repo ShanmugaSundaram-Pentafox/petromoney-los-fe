@@ -16,18 +16,14 @@ import LeegalityPdfView from './components/LeegalityPdfView'
 import SignedLayout from './components/SignedLayout';
 import LeegalityLayout from './LeegalityLayout';
 import CustomToken from '../../components/CommonComponents/CustomToken';
-import { getCoApplicantByDealershipId, getDealersByDealershipId } from '../../services/dealers.service';
+import { getCoApplicantByDealershipId, getDealersByDealershipId, getGuarantorByDealershipId } from '../../services/dealers.service';
 import { getDealershipById } from '../../services/dealerships.service';
-import { getAllGuarantor, getPdfContent } from '../../services/leegality.service';
+import { getPdfContent } from '../../services/leegality.service';
 import { getLoanDocumentHistoryById } from '../../services/loans.service';
 import apiCall from '../../utils/api.util';
 
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    // padding: theme.spacing(3),
-    // paddingTop: 0,
-  },
   dTitle: {
     margin: 0,
     padding: theme.spacing(2),
@@ -136,7 +132,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
           console.log('getCoApplicantByDealershipId >> ', err)
         })
 
-      getAllGuarantor(dealershipId)
+      getGuarantorByDealershipId(dealershipId)
         .then(res => {
           const result = res?.filter(d => d?.is_active == 1)
           setGuarantor(result);

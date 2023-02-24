@@ -1,18 +1,13 @@
 import { URL } from '../config/serverUrls';
 
-export const addApplicants = (values, dealershipId, currentUser,rowId ) => {
+//  this function is alternate for apiCall  because its not supporting formData, this is a common function which supports formdata for fileupload.
+export const addApplicants = (values, currentUser, apiUrl, rowId) => {
   return new Promise((resolve, reject) => {
-    let url = `applicant/${dealershipId}`;
-    if (rowId) {
-      url += `/${rowId}`;
-    }
-    
     const formData = new FormData();
     Object.keys(values).forEach((key) => {
       formData.append(key, values[key]);
     });
-  
-    fetch(URL.base+url, {
+    fetch(URL.base + apiUrl, {
       method: rowId ? 'PUT' : 'POST',
       body: formData,
       headers: {
@@ -20,7 +15,7 @@ export const addApplicants = (values, dealershipId, currentUser,rowId ) => {
       },
     })
       .then((res) => res.json())
-      .then(({status, message}) => {
+      .then(({ status, message }) => {
         if (status === 'SUCCESS') {
           resolve(message)
         } else {

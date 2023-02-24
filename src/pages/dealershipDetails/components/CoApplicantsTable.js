@@ -64,7 +64,11 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
   const DeleteApplicant = (values) => {
     const obj = { ...values, is_active: values.is_active == 1 ? 0 : 1 };
     const resObj = compareObject(values, obj, { category: values?.category })
-    addApplicants(resObj, id, currentUser, values?.id)
+    let apiUrl = `applicant/${id}`;
+    if (values?.id) {
+      apiUrl += `/${values?.id}`;
+    }
+    addApplicants(resObj, currentUser, apiUrl, values?.id)
       .then((message) => {
         enqueueSnackbar(message, {
           anchorOrigin: {

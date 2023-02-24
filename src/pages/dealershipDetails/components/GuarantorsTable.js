@@ -64,7 +64,11 @@ const GuarantorsTable = ({
   const DeleteApplicant = (values) => {
     const obj = { ...values, is_active: values.is_active == 1 ? 0 : 1 };
     const resObj = compareObject(values, obj, { category: values?.category })
-    addApplicants(resObj, id, currentUser, values?.id)
+    let apiUrl = `applicant/${id}`;
+    if (values?.id) {
+      apiUrl += `/${values?.id}`;
+    }
+    addApplicants(resObj, currentUser, apiUrl, values?.id)
       .then((message) => {
         enqueueSnackbar(message, {
           anchorOrigin: {
@@ -208,7 +212,7 @@ const GuarantorsTable = ({
                   </CheckAllowed>
                   <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorCreditCheck}>
                     <Button size="small" variant="outlined" color="secondary" onClick={() => setRowData(row)}>Credit Info</Button>
-                  </CheckAllowed>                    
+                  </CheckAllowed>
                   {
                     // Guarantor status change permissions
                     <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorStatus}>

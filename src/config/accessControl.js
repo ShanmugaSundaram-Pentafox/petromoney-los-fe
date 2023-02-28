@@ -242,6 +242,7 @@ export const action_id = {
     productsUpdate :'products:update',
     assign_role_productsUpdate :'assign_role_products:update',
     collection_remarkUpdate :'collection_remark:update',
+    emailGroup: 'emailGroup'
   },
   users: {
     userCreate: 'user:create',

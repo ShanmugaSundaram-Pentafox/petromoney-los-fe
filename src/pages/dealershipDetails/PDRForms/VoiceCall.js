@@ -205,7 +205,6 @@ const VoiceCall = ({ id, callback, currentUser }) => {
       type: type.toUpperCase(),
       module: 'pdr'
     }
-    console.log('data >>>>>>>>>>>>>>>>>>>>',data)
     makeVoiceCallById(item.dealership_id, data)
       .then(res => {
         setOpenDialog(false);

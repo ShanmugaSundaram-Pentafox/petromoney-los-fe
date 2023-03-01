@@ -2,7 +2,7 @@ import { Button } from '@material-ui/core';
 import Drawer from '@material-ui/core/Drawer';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSnackbar } from 'notistack';
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import AddIconButon from './AddIcon';
 import CoApplicantsTable from './CoApplicantsTable';
@@ -167,47 +167,44 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
 
   return (
     <>
-      <div className={classes.addButton}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          {
-            <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerAdd}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minWidth: '20%' }}>
-                <div>
-                  <label>Change main Applicant</label>
-                  <TextInput
-                    select
-                    error={updateApplicant?.error}
-                    helperText={updateApplicant?.error}
-                    value={updateApplicant?.value}
-                    onChange={(e) => setUpdateApplicant({ updateApplicant, value: e?.target?.value })}
-                    SelectProps={{
-                      native: true,
-                    }}
-                    InputLabelProps={{ shrink: true }}
-                  >
-                    {
+      <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+        {
+            activeApplicant?.length > 1 &&
+              <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerAdd}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minWidth: '20%' }}>
+                  <div>
+                    <label>Change main Applicant</label>
+                    <TextInput
+                      select
+                      error={updateApplicant?.error}
+                      helperText={updateApplicant?.error}
+                      value={updateApplicant?.value}
+                      onChange={(e) => setUpdateApplicant({ updateApplicant, value: e?.target?.value })}
+                      SelectProps={{
+                        native: true,
+                      }}
+                      InputLabelProps={{ shrink: true }}
+                    >
+                      {
                       activeApplicant?.map((item, i) => {
                         return <option key={i} value={item?.id}>{item.first_name}</option>
                       })
-                    }
-                  </TextInput>
+                      }
+                    </TextInput>
+                  </div>
+                  <Button style={{ marginTop: 16, marginLeft: 20 }} variant='outlined' color='primary' onClick={updateApplicantData}>Update</Button>
                 </div>
-                <Button style={{ marginTop: 16, marginLeft: 20 }} variant='outlined' color='primary' onClick={updateApplicantData}>Update</Button>
-                {/* <Button variant='outlined'  >
-                  Update
-                </Button> */}
-
-              </div>
-            </CheckAllowed>
-          }
-          {
-            <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerAdd}>
-              <div style={{ marginTop: 16 }}>
-                <AddIconButon onClickAddMenu={onClickAddMenu} />
-              </div>
-            </CheckAllowed>
-          }
-        </div>
+              </CheckAllowed>
+        }
+        {
+          <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerAdd}>
+            <div style={{ marginTop: 16 }}>
+              <AddIconButon onClickAddMenu={onClickAddMenu} />
+            </div>
+          </CheckAllowed>
+        }
+      </div>
+      <div className={classes.addButton}>
       </div>
       <DealersTable
         id={id}

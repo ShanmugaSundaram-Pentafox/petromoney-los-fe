@@ -1,7 +1,9 @@
 import {
   Button,
+  Checkbox,
   Collapse,
   Divider,
+  FormControlLabel,
   Grid,
   IconButton,
   List,
@@ -31,7 +33,11 @@ const formValidationSchema = Yup.object().shape({
   usage_desc: Yup.string().required('Please enter the config name'),
   api_path: Yup.string().required('Please enter the config api path'),
   base_url_prod: Yup.string().required('Please enter the config prod url'),
-  base_url_uat: Yup.string().required('Please enter the config uat url')
+  base_url_uat: Yup.string().required('Please enter the config uat url'),
+  group_name:  Yup.string().required('Please enter group name'),
+  type:  Yup.string().required('Please enter config type'),
+  prod_header:  Yup.string().required('Please enter production header'),
+  uat_header:  Yup.string().required('Please enter UAT header')
 })
 
 const useStyles = makeStyles(() => ({
@@ -159,10 +165,10 @@ const ExternalApi = ({ callback }) => {
                       <div style={{display: 'flex', alignItems: 'center'}}>
                         <Typography>{`${d?.usage_desc} (${d?.group_name})`}</Typography>
                         {
-                          d?.is_current &&
+                          d?.is_current ?
                             <Tooltip title="In Use">
                               <Check style={{fontSize: 13, color: '#2cae66e6', marginLeft: 20}} />
-                            </Tooltip>
+                            </Tooltip> : null
                         }
                       </div>
                       <Tooltip title="Edit">
@@ -201,8 +207,9 @@ const ExternalApi = ({ callback }) => {
             validateOnChange={false}
             validationSchema={formValidationSchema}
             onSubmit={(values) => {
-              console.log(values, '-=-=-=>:');
+              values.is_current = values.is_current ? 1 : 0;
               let body = addForm?.usage_desc ? compareObject(addForm, values) : values;
+              console.log(body);
               updateExternalApi(body, values?.id)
                 .then((data) => {
                   callback(false);
@@ -284,6 +291,8 @@ const ExternalApi = ({ callback }) => {
                     label="Prod Header"
                     onChange={handleChange}
                     value={values?.prod_header}
+                    error={errors?.prod_header}
+                    helperText={errors?.prod_header}
                   />
                 </Grid>
                 <Grid item md={6}>
@@ -292,6 +301,8 @@ const ExternalApi = ({ callback }) => {
                     label="UAT Header"
                     onChange={handleChange}
                     value={values?.uat_header}
+                    error={errors?.uat_header}
+                    helperText={errors?.uat_header}
                   />
                 </Grid>
                 <Grid item md={6}>
@@ -300,6 +311,18 @@ const ExternalApi = ({ callback }) => {
                     label="Type"
                     value={values?.type}
                     onChange={handleChange}
+                    error={errors?.type}
+                    helperText={errors?.type}
+                  />
+                </Grid>
+                <Grid item md={6}>
+                  <TextInput
+                    name="group_name"
+                    label="Group Name"
+                    value={values?.group_name}
+                    onChange={handleChange}
+                    error={errors?.group_name}
+                    helperText={errors?.group_name}
                   />
                 </Grid>
                 <Grid item md={6}>
@@ -315,6 +338,9 @@ const ExternalApi = ({ callback }) => {
                     <option value="basic">Basic</option>
                     <option value="advanced">Advanced</option>
                   </TextInput>
+                </Grid>
+                <Grid item md={6}>
+                  <FormControlLabel label="Activate Service" control={<Checkbox name='is_current' checked={values?.is_current} onChange={handleChange} />} />
                 </Grid>
                 <Grid
                   item

@@ -169,36 +169,36 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
     <>
       <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
         {
-            activeApplicant?.length > 1 &&
-              <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerAdd}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minWidth: '20%' }}>
-                  <div>
-                    <label>Change main Applicant</label>
-                    <TextInput
-                      select
-                      error={updateApplicant?.error}
-                      helperText={updateApplicant?.error}
-                      value={updateApplicant?.value}
-                      onChange={(e) => setUpdateApplicant({ updateApplicant, value: e?.target?.value })}
-                      SelectProps={{
-                        native: true,
-                      }}
-                      InputLabelProps={{ shrink: true }}
-                    >
-                      {
-                      activeApplicant?.map((item, i) => {
-                        return <option key={i} value={item?.id}>{item.first_name}</option>
-                      })
-                      }
-                    </TextInput>
-                  </div>
-                  <Button style={{ marginTop: 16, marginLeft: 20 }} variant='outlined' color='primary' onClick={updateApplicantData}>Update</Button>
+          activeApplicant?.length > 1 &&
+            <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerAdd}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: 20 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <label style={{ marginRight: 8 }}>Change main Applicant</label>
+                  <TextInput
+                    select
+                    error={updateApplicant?.error}
+                    helperText={updateApplicant?.error}
+                    value={updateApplicant?.value}
+                    onChange={(e) => setUpdateApplicant({ updateApplicant, value: e?.target?.value })}
+                    SelectProps={{
+                      native: true,
+                    }}
+                    InputLabelProps={{ shrink: true }}
+                  >
+                    {
+                    activeApplicant?.map((item, i) => {
+                      return <option key={i} value={item?.id}>{item.first_name}</option>
+                    })
+                    }
+                  </TextInput>
                 </div>
-              </CheckAllowed>
+                <Button style={{ marginLeft: 20 }} variant='outlined' color='primary' onClick={updateApplicantData}>Update</Button>
+              </div>
+            </CheckAllowed>
         }
         {
           <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerAdd}>
-            <div style={{ marginTop: 16 }}>
+            <div>
               <AddIconButon onClickAddMenu={onClickAddMenu} />
             </div>
           </CheckAllowed>

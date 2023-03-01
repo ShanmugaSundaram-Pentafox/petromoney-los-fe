@@ -580,7 +580,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                       {
                         relationShipOptions.map((item, i) => {
                           return (
-                            <option key={i} value={item?.id}>{item.label}</option>
+                            <option key={i} value={item?.value}>{item.label}</option>
                           )
                         })
                       }

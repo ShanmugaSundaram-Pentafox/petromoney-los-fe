@@ -61,13 +61,10 @@ const GuarantorsTable = ({
   const [rowData, setRowData] = useState();
   const [crimeData, setCrimeData] = useState();
 
-  const DeleteApplicant = (values) => {
+  const deleteApplicant = (values) => {
     const obj = { ...values, is_active: values.is_active == 1 ? 0 : 1 };
     const resObj = compareObject(values, obj, { category: values?.category })
-    let apiUrl = `applicant/${id}`;
-    if (values?.id) {
-      apiUrl += `/${values?.id}`;
-    }
+    let apiUrl = `applicant/${id}/${values?.id}/active`;
     addApplicants(resObj, currentUser, apiUrl, values?.id)
       .then((message) => {
         enqueueSnackbar(message, {
@@ -216,7 +213,7 @@ const GuarantorsTable = ({
                   {
                     // Guarantor status change permissions
                     <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorStatus}>
-                      <div style={{ marginLeft: 12 }} onClick={() => DeleteApplicant(row)}>
+                      <div style={{ marginLeft: 12 }} onClick={() => deleteApplicant(row)}>
                         {
                           row.is_active == 0 ? (
                             <Tooltip title="Activate">

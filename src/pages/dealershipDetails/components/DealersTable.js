@@ -60,13 +60,10 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
   const [rowData, setRowData] = useState();
   const [crimeData, setCrimeData] = useState();
 
-  const DeleteApplicant = (values) => {
+  const deleteApplicant = (values) => {
     const obj = { ...values, is_active: values.is_active == 1 ? 0 : 1 };
     const resObj = compareObject(values, obj, { category: values?.category })
-    let apiUrl = `applicant/${id}`;
-    if (values?.id) {
-      apiUrl += `/${values?.id}`;
-    }
+    let apiUrl = `applicant/${id}/${values?.id}/active`;
     addApplicants(resObj, currentUser, apiUrl, values?.id)
       .then((message) => {
         enqueueSnackbar(message, {
@@ -108,7 +105,7 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
   return (
     <div className={classes.wrapper}>
       <div className={classes.header}>
-        <Typography style={{ width: '50%' }} variant="h5" align={titleAlign} className={classes.title}>Dealersssss</Typography>
+        <Typography style={{ width: '50%' }} variant="h5" align={titleAlign} className={classes.title}>Dealers</Typography>
       </div>
       <Table className={classes.table} size="small" aria-label="Dealers">
         <TableHead>
@@ -154,7 +151,7 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
                   </CheckAllowed>
                   {/* // dealer status change permission */}
                   <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerStatus}>
-                    <div style={{ marginLeft: 12 }} onClick={() => DeleteApplicant(row)}>
+                    <div style={{ marginLeft: 12 }} onClick={() => deleteApplicant(row)}>
                       {
                         row.is_active == 0 ? (
                           <Tooltip title='Activate'>

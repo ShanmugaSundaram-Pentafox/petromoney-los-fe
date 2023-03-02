@@ -141,7 +141,7 @@ const CreditNewRequestTable = ({ currentUser }) => {
                 </Tooltip>
               )
             }
-            else if (tableMeta?.rowData[13])
+            else if (tableMeta?.rowData[12])
               return <CustomToken label="Withheld" variant='warn' />
             else return <CustomToken label={value} variant='success' />
           },
@@ -160,7 +160,7 @@ const CreditNewRequestTable = ({ currentUser }) => {
     rowsPerPage: 10,
     rowsPerPageOptions: [10, 15, 20, 25, 30],
     setRowProps: (row, dataIndex) => {
-      if (row[13]) {
+      if (row[12]) {
         return { style: { backgroundColor: '#ffec9bba' } }
       }
     },

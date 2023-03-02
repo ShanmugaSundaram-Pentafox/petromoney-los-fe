@@ -19,6 +19,8 @@ const apiCall = async (route, options = {}) => {
   } = options;
   const credentials = await selectCurrentUser(store.getState());
 
+
+  // avoided content-type in header of GET Method to get the clear error log from BE.
   let headerObject = method == 'GET' ? {
     'Access-Control-Allow-Credentials': 'no-cors'
   } : {

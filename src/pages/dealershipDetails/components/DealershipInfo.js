@@ -351,7 +351,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                     labelText="GST"
                     name="gst"
                     readOnly={readOnly}
-                    disabled={gstValidateData?.loading || values?.gst_verified}
+                    disabled={gstValidateData?.loading || (values?.gst_verified && (currentUser.role_id !== 1))}
                     value={values?.gst?.toUpperCase()}
                     error={errors.gst}
                     helperText={errors.gst}
@@ -368,7 +368,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                     labelText="PAN"
                     name="pan"
                     readOnly={readOnly}
-                    disabled={panValidateData?.loading || values?.pan_verified}
+                    disabled={panValidateData?.loading || (values?.pan_verified && (currentUser.role_id !== 1))}
                     value={values?.pan?.toUpperCase()}
                     error={errors.pan}
                     helperText={errors.pan}
@@ -550,7 +550,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
         <Drawer
           anchor="right"
           open={crimeData}
-          onClose={()=> {setCrimeData()}}
+          onClose={() => { setCrimeData() }}
           variant="temporary"
         >
           <div className={classes.sidePanelWrapper}>

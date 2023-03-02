@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.27.0](///compare/v2.25.7...v2.27.0) (2023-03-02)
+
+
+### Features
+
+* **email-group:** added email list screen afbc2aa
+
+
+### Bug Fixes
+
+* **account-deletion:** account deletion button permission check and api update 0d798fd
+* **accout-deletion:** feature to allow dealer to delete their account 94448e9
+* **api-call:** added code  comments 5fdb6c8
+* **api-call:** fix JSON decoder error b1da806
+* credit reload withheld data highlight d8a97b2
+* credit reload withheld data highlight a0b72d6
+* credit reload withheld data highlight a4818c5
+* **dealer-delte:** intergrated API 8e897f8
+* **dealer-passbook:** column label update for passbook ce5c1da
+* **dealership-info:** allow only admin to edit dealership details 597d8d5
+* **profile:** fix delete button update 9c21b8e
+* validation added for allowed_roles 7d66c94
+* **withheld:** fixed withheld download issue 7784a77
+
 ## 2.26.0 (2023-02-13)
 
 

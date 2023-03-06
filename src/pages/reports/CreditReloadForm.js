@@ -2,11 +2,13 @@ import { Typography, Box, Grid, Button, Divider } from '@material-ui/core';
 import { green } from '@material-ui/core/colors';
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import CloseIcon from '@material-ui/icons/Close';
+import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
+import { useQuery } from 'react-query';
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
 import * as Yup from 'yup';
@@ -15,6 +17,7 @@ import TextInput from '../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../config/accessControl';
 import { getDealershipForSearch } from '../../services/common.service';
 import { addCreditReport } from '../../services/creditreport.service';
+import { getBankDetailsbyID } from '../../services/PDReport.services';
 import { isAllowed } from '../../utils/cerbos';
 const useStyles = makeStyles((theme) => ({
   sidePanelFormWrapper: {
@@ -87,8 +90,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 2
   }
 }));
-const CreditReloadForm = ({ data, callback, currentUser, view }) => {
-  const [accountId, setAccountId] = useState();
+const CreditReloadForm = ({ callback, currentUser, view }) => {
   const [repaymentType, setRepaymentType] = useState();
   const [amount, setAmount] = useState();
   const [selectedValue, setSelectedValue] = useState(!view ? null : currentUser.dealership_id);
@@ -96,6 +98,9 @@ const CreditReloadForm = ({ data, callback, currentUser, view }) => {
   const [optionsLoading, setOptionsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const { data: bankData = [] } = useQuery(['bank-data', selectedValue], () => getBankDetailsbyID(selectedValue, { type: 'CRR' }), { refetchOnWindowFocus: false, enabled: selectedValue ? true : false })
+  const [bankId, setBankId] = useState();
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setFieldValue, setFieldError } = useFormik({
     initialValues: {
@@ -104,16 +109,15 @@ const CreditReloadForm = ({ data, callback, currentUser, view }) => {
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      // mobile: Yup.number().nullable('Enter mobile number').required("Enter mobile number").test("maxDigits", "Mobile Number mush have 10 digits", (number) => String(number).length === 10),
-      amount: Yup.number().nullable('Enter Amount').required('Enter Amount').moreThan(0, 'Invalid Amount').test('maxDigits', 'Request Amount Invalid', (value) => String(value) >= 50000 && String(value) <= 3000000)
+      amount: Yup.number().nullable('Enter Amount').required('Enter Amount').moreThan(0, 'Invalid Amount').test('maxDigits', 'Request Amount Invalid', (value) => String(value) >= 50000 && String(value) <= 3000000),
     }),
     onSubmit: (values) => {
-      const d = { ...values, request_source: 'mdm', account_id: accountId?.id, repayment_made: repaymentType?.value }
+      const d = { ...values, request_source: 'mdm', bank_id: bankId, repayment_made: repaymentType?.value }
       const formData = new FormData();
       Object.keys(d).forEach((key) => {
         formData.append(key, d[key]);
       });
-      if (selectedValue && accountId) {
+      if (selectedValue && bankId) {
         setLoading(true)
         addCreditReport(formData, currentUser, selectedValue)
           .then(res => {
@@ -153,6 +157,12 @@ const CreditReloadForm = ({ data, callback, currentUser, view }) => {
               variant: 'error',
             });
           })
+      }
+      else {
+        if (selectedValue)
+          setErrorMessage('Please select bank account')
+        else
+          setErrorMessage('Please choose dealership ID & bank account')
       }
     }
   })
@@ -195,7 +205,7 @@ const CreditReloadForm = ({ data, callback, currentUser, view }) => {
                   <Grid item md={8} style={{ marginBottom: 10 }}>
                     <label style={{ marginBottom: 8 }}>Dealership</label>
                     {
-                      isAllowed(currentUser?.permissions,resources_id?.creditReload,action_id?.creditReload?.disburse) ?
+                      isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.disburse) ?
                         (
                           <AsyncSelect
                             components={optionsLoading ? null : { LoadingIndicator: null }}
@@ -215,8 +225,8 @@ const CreditReloadForm = ({ data, callback, currentUser, view }) => {
                 </Grid>
                 <Grid container spacing={2}>
                   <Grid item md={8} style={{ marginBottom: 10 }}>
-                    <label style={{ marginBottom: 8 }}>Account Type</label>
-                    <Select isClearable onChange={setAccountId} options={data} />
+                    <label style={{ marginBottom: 8 }}>Choose Bank</label>
+                    <Select name='bankId' isClearable value={bankId} onChange={setBankId} options={bankData} />
                   </Grid>
                 </Grid>
                 <Grid container spacing={2}>
@@ -363,6 +373,7 @@ const CreditReloadForm = ({ data, callback, currentUser, view }) => {
           </div>
         </div>
         <div className={classes.actionFooter}>
+          {errorMessage && <Alert severity={'error'}>{errorMessage}</Alert>}
           <Divider />
           <div className={classes.actionButtonsWrapper}>
             <div>

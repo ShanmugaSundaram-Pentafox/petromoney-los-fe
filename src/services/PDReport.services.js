@@ -293,12 +293,23 @@ export const updateTankerByID = (data, id) => {
       });
   });
 }
-export const getBankDetailsbyID = (id) => {
+export const getBankDetailsbyID = (id, resquestType) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/bank`)
-      .then(({ status, data, message }) => {
+      .then(({ status, data = [], message }) => {
+        // Check whether the request type is a Credit Reload Request (CRR).
+        // If it is, map the data to a new array of objects with 'label' and 'id' properties.
+        // Otherwise, resolve the promise with the original data array to use it in Personal Description Report(PDR).
         if (status === 'SUCCESS') {
-          resolve(data)
+          if (resquestType?.type == 'CRR') {
+            const result = data?.map((item) => ({
+              label: `${item.account_no} - ${item.bank_name}`,
+              id: item.id
+            }));
+            resolve(result || [])
+          }
+          else
+            resolve(data)
         } else {
           reject(message)
         }
@@ -310,7 +321,7 @@ export const getBankDetailsbyID = (id) => {
 }
 export const updateBankDetailsByID = (data, id) => {
   let url = `dealership/${id}/bank`;
-  if(data?.id) {
+  if (data?.id) {
     url += `/${data?.id}`
   }
   return new Promise((resolve, reject) => {
@@ -332,7 +343,7 @@ export const updateBankDetailsByID = (data, id) => {
 }
 export const deleteBankDetailsByID = (data, id) => {
   let url = `dealership/${id}/bank`;
-  if(data?.id) {
+  if (data?.id) {
     url += `/${data?.id}`
   }
   return new Promise((resolve, reject) => {
@@ -764,7 +775,7 @@ export const deleteOtherDetailsByID = (data, id) => {
       });
   });
 }
-export const bankAccValidate = (AccId=1175155000148626, IFSC='KVBL0001175') => {
+export const bankAccValidate = (AccId = 1175155000148626, IFSC = 'KVBL0001175') => {
   return new Promise((resolve, reject) => {
     apiCall(`bank/${AccId}/${IFSC}`, {
       method: 'POST'

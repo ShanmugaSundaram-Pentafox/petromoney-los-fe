@@ -7,7 +7,7 @@ import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
@@ -97,10 +97,31 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
   const classes = useStyles();
   const [optionsLoading, setOptionsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
-  const { data: bankData = [] } = useQuery(['bank-data', selectedValue], () => getBankDetailsbyID(selectedValue, { type: 'CRR' }), { refetchOnWindowFocus: false, enabled: selectedValue ? true : false })
-  const [bankId, setBankId] = useState();
   const [errorMessage, setErrorMessage] = useState(null);
+  const { enqueueSnackbar } = useSnackbar();
+  const [bankId, setBankId] = useState();
+  const { data: bankData = [] } = useQuery(['bank-data', selectedValue], () => getBankDetailsbyID(selectedValue), {
+    refetchOnWindowFocus: false,
+    enabled: selectedValue ? true : false,
+    select: d => {
+      return d?.map(item => {
+        if (item?.bank_verified === 1) {
+          return {
+            label: `${item?.bank_name} - ${item?.account_no}`,
+            value: item.id
+          };
+        }
+      })?.filter(item => item !== undefined)
+    }
+  })
+  useEffect(() => {
+    if (selectedValue) {
+      if ((bankData.length) <= 0)
+        setErrorMessage('Please add your bank details in PDR section to raise reload request')
+      else
+        setErrorMessage(null)
+    }
+  }, [bankData, selectedValue])
 
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setFieldValue, setFieldError } = useFormik({
     initialValues: {

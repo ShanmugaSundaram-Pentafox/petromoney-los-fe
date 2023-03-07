@@ -297,19 +297,8 @@ export const getBankDetailsbyID = (id, resquestType) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/bank`)
       .then(({ status, data = [], message }) => {
-        // Check whether the request type is a Credit Reload Request (CRR).
-        // If it is, map the data to a new array of objects with 'label' and 'id' properties.
-        // Otherwise, resolve the promise with the original data array to use it in Personal Description Report(PDR).
         if (status === 'SUCCESS') {
-          if (resquestType?.type == 'CRR') {
-            const result = data?.map((item) => ({
-              label: `${item.account_no} - ${item.bank_name}`,
-              id: item.id
-            }));
-            resolve(result || [])
-          }
-          else
-            resolve(data)
+          resolve(data)
         } else {
           reject(message)
         }

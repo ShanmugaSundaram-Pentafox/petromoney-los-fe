@@ -133,7 +133,7 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
       amount: Yup.number().nullable('Enter Amount').required('Enter Amount').moreThan(0, 'Invalid Amount').test('maxDigits', 'Request Amount Invalid', (value) => String(value) >= 50000 && String(value) <= 3000000),
     }),
     onSubmit: (values) => {
-      const d = { ...values, request_source: 'mdm', bank_id: bankId, repayment_made: repaymentType?.value }
+      const d = { ...values, request_source: 'mdm', bank_id: bankId?.value, repayment_made: repaymentType?.value }
       const formData = new FormData();
       Object.keys(d).forEach((key) => {
         formData.append(key, d[key]);

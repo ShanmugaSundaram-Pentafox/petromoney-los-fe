@@ -3,7 +3,6 @@ import { green } from '@material-ui/core/colors';
 import { Check, Close } from '@material-ui/icons';
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import CloseIcon from '@material-ui/icons/Close';
-import EditIcon from '@material-ui/icons/Edit';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
@@ -17,7 +16,6 @@ import FilePreview, { ViewData } from '../../components/CommonComponents/FilePre
 import FormDialog from '../../components/CommonComponents/FormDialog/FormDialog';
 import TextInput from '../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../config/accessControl';
-import CheckAllowed from '../../pages/rbac/CheckAllowed'
 import { addCreditReport, updateCreditReload } from '../../services/creditreport.service';
 import { getAllWithheldRemarks } from '../../services/withheld.services';
 import { isAllowed } from '../../utils/cerbos';
@@ -268,7 +266,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
                       ) : (
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                           <ViewData title='Amount' value={rowData?.amount} />
-                          <CheckAllowed currentUser={currentUser} resource={resources_id?.creditReload} action={action_id?.creditReload?.amount_edit}>
+                          {/* <CheckAllowed currentUser={currentUser} resource={resources_id?.creditReload} action={action_id?.creditReload?.amount_edit}>
                             {
                               !rowData?.tranche_code ? (
                                 <IconButton size='small' onClick={() => setAmount({ isEdit: true })}>
@@ -278,7 +276,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
                                 </IconButton>
                               ) : null
                             }
-                          </CheckAllowed>
+                          </CheckAllowed> */}
                         </div>
                       )
                     }

@@ -117,7 +117,7 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
   useEffect(() => {
     if (selectedValue) {
       if ((bankData.length) <= 0)
-        setErrorMessage('Please add your bank details in PDR section to raise reload request')
+        setErrorMessage('Please add and verify your bank details in PDR section to raise reload request')
       else
         setErrorMessage(null)
     }
@@ -181,7 +181,10 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
       }
       else {
         if (selectedValue)
-          setErrorMessage('Please select bank account')
+          if (bankData.length)
+            setErrorMessage('Please select bank account')
+          else
+            setErrorMessage('Please add and verify your bank details in PDR section to raise reload request')
         else
           setErrorMessage('Please choose dealership ID & bank account')
       }

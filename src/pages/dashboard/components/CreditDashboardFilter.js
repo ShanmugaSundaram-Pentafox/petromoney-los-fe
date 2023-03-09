@@ -11,7 +11,6 @@ import { filterStyles, Selector } from '../../../components/CommonComponents/Fil
 import TextInput from '../../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { getAllRegions, getFilteredProducts, getZones } from '../../../services/common.service';
-import { getTypeOfAccount } from '../../../services/users.service';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
 const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, filters, currentUser, handleDownload, fileData, downloadLoading, searchLoading }) => {
@@ -21,8 +20,6 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
   const [selectedRegion, setSelectedRegion] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedProducts, setSelectedProducts] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedZones, setSelectedZones] = useState([{ label: 'ALL', value: 0 }]);
-  const [selectedAccountType, setSelectedAccountType] = useState([{ label: 'ALL', value: 0 }]);
-  const [accountType, setAccountType] = useState();
   const [selectedPeriodType, setSelectedPeriodType] = useState('W');
   const [selectedPeriod, setSelectedPeriod] = useState({});
   const [showPicker, setShowPicker] = useState();
@@ -88,20 +85,6 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
         .then(setProducts)
         .catch(() => null)
     }
-    if (filters.includes('account')) {
-      getTypeOfAccount()
-        .then((data) => {
-          setAccountType(
-            data.map(({ id, type_of_account }) => ({
-              label: type_of_account,
-              value: id,
-            }))
-          );
-        })
-        .catch((e) => {
-          console.log(e);
-        })
-    }
   })
 
   useEffect(() => {
@@ -121,11 +104,6 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
       selectedProducts.forEach(item => productId.push(item.value))
       qry.products = productId.toString()
     }
-    if (filters.includes('account')) {
-      let accountTypeID = []
-      selectedAccountType.forEach(item => accountTypeID.push(item.value))
-      qry.account = accountTypeID.toString()
-    }
     if (selectedPeriod?.from) {
       qry.from = format(selectedPeriod?.from || new Date(), 'yyyy-MM-dd');
       qry.to = format(selectedPeriod?.to || new Date(), 'yyyy-MM-dd');
@@ -135,7 +113,7 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
     }
     filterQry(qry)
 
-  }, [selectedRegion, selectedPeriod, filterQry, selectedProducts, selectedZones, selectedAccountType, selectedDealership?.id])
+  }, [selectedRegion, selectedPeriod, filterQry, selectedProducts, selectedZones, selectedDealership?.id])
 
   const onDateRangeClose = () => {
     setSelectedPeriod({
@@ -185,10 +163,6 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
           {
             filters.includes('product') &&
               <Selector title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} />
-          }
-          {
-            filters.includes('account') &&
-              <Selector title="Account Type" options={accountType} value={selectedAccountType} setValue={setSelectedAccountType} />
           }
           {
             filters.includes('period') &&

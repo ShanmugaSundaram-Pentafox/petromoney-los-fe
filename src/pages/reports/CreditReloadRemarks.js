@@ -1,5 +1,6 @@
-import { Box, Button, Divider, FormHelperText, Grid, Typography } from '@material-ui/core';
+import { Box, Button, CircularProgress, Divider, FormHelperText, Grid, IconButton, InputAdornment, Tooltip, Typography } from '@material-ui/core';
 import { green } from '@material-ui/core/colors';
+import { Check, Close } from '@material-ui/icons';
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
@@ -8,16 +9,16 @@ import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
+import { useQueryClient } from 'react-query';
 import CreatableSelect from 'react-select/creatable';
 import { useMount } from 'react-use';
 import FilePreview, { ViewData } from '../../components/CommonComponents/FilePreview';
 import FormDialog from '../../components/CommonComponents/FormDialog/FormDialog';
 import TextInput from '../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../config/accessControl';
-import { addCreditReport } from '../../services/creditreport.service';
+import { addCreditReport, updateCreditReload } from '../../services/creditreport.service';
 import { getAllWithheldRemarks } from '../../services/withheld.services';
 import { isAllowed } from '../../utils/cerbos';
-
 
 
 const useStyles = makeStyles((theme) => ({
@@ -92,7 +93,9 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
   const [imageModal, setImageModal] = useState({})
   const [utrNumber, setUtrNumber] = useState();
   const [disburseLoading, setDisburseLoading] = useState(false);
+  const [amount, setAmount] = useState({ isEdit: false, value: rowData?.amount, loading: false })
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient()
 
   const postApiCall = (submitData) => {
     setDisburseLoading(true)
@@ -175,6 +178,36 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
         console.log(e);
       })
   })
+  const handleAmountChange = () => {
+    if (amount?.value >= 50000 && amount?.value <= 3000000) {
+      setAmount({ ...amount, loading: true });
+      const data = { amount: amount?.value, dealership_id: rowData?.dealership_id }
+      updateCreditReload(data, rowData?.request_id)
+        .then(res => {
+          setAmount({ ...amount, isEdit: false, loading: false });
+          callback()
+          queryClient.invalidateQueries('new-request')
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          });
+        })
+        .catch(e => {
+          enqueueSnackbar(e, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          });
+        })
+    }
+    else
+      setAmount({ ...amount, error: 'Enter valid amount to raise request' })
+  }
 
   const handleRemarkChange = (newValue) => {
     if (remarks?.includes(newValue?.label)) {
@@ -198,7 +231,55 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
                 <Grid item md={6}>
                   <Box>
                     <ViewData title="Dealership ID" value={rowData?.dealership_id} />
-                    <ViewData title='Amount' value={rowData?.amount} />
+                    {
+                      amount?.isEdit ? (
+                        <div style={{ marginTop: 10, marginBottom: 10 }}>
+                          <label>Amount</label>
+                          <TextInput
+                            money
+                            number
+                            name="description"
+                            value={amount?.value}
+                            error={amount?.error}
+                            helperText={amount?.error}
+                            onChange={(e) => setAmount({ ...amount, value: e?.target.value })}
+                            InputProps={{
+                              startAdornment: <InputAdornment position="start">₹</InputAdornment>,
+                              endAdornment:
+                                amount?.loading ? <CircularProgress size={11} style={{ marginRight: 7 }} /> : (
+                                  <div style={{ padding: 8, display: 'flex' }}>
+                                    <IconButton size='small' onClick={handleAmountChange}>
+                                      <Tooltip title="Save" >
+                                        <Check fontSize='small' style={{ color: '#4caf50' }} />
+                                      </Tooltip>
+                                    </IconButton>
+                                    <IconButton size='small' onClick={() => setAmount({ isEdit: false })}>
+                                      <Tooltip title="Cancel" >
+                                        <Close fontSize='small' color='error' />
+                                      </Tooltip>
+                                    </IconButton>
+                                  </div>
+                                )
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          <ViewData title='Amount' value={rowData?.amount} />
+                          {/* <CheckAllowed currentUser={currentUser} resource={resources_id?.creditReload} action={action_id?.creditReload?.amount_edit}>
+                            {
+                              !rowData?.tranche_code ? (
+                                <IconButton size='small' onClick={() => setAmount({ isEdit: true })}>
+                                  <Tooltip title={'Click to Edit amount'}>
+                                    <EditIcon fontSize="small" style={{ color: 'rgb(0,0,0,0.4)' }} />
+                                  </Tooltip>
+                                </IconButton>
+                              ) : null
+                            }
+                          </CheckAllowed> */}
+                        </div>
+                      )
+                    }
                     <ViewData title='Remarks' value={rowData?.remarks} />
                   </Box>
                 </Grid>
@@ -206,6 +287,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
                   <Box>
                     <ViewData title="Request ID" value={rowData?.request_id} />
                     <ViewData title="Status" value={rowData?.status} />
+                    <ViewData title='Bank details' value={rowData?.bank} />
                   </Box>
                 </Grid>
               </Grid>
@@ -297,34 +379,35 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
               </Grid>
             </>
             {
-              isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.disburse) && (
-                rowData.status == 'Disbursed' || rowData.status == 'Declined' ? null : (
-                  <>
-                    <Grid container spacing={2}>
-                      <Grid item md={8} style={{ display: 'flex', flexDirection: 'column' }}>
-                        <label style={{ marginBottom: 8, marginTop: 25 }}>Remarks</label>
-                        <CreatableSelect
-                          name='remarks'
-                          isClearable
-                          onChange={handleRemarkChange}
-                          options={remarks}
-                        />
-                        <FormHelperText style={{ color: '#FF5C58', marginLeft: 5 }}>{!newRemarks && status === 'decline' ? 'Need a Remark to Proceed!' : null}</FormHelperText>
+              rowData?.product_name != 'Vivriti' && (
+                isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.disburse) && (
+                  rowData.status == 'Disbursed' || rowData.status == 'Declined' ? null : (
+                    <>
+                      <Grid container spacing={2}>
+                        <Grid item md={8} style={{ display: 'flex', flexDirection: 'column' }}>
+                          <label style={{ marginBottom: 8, marginTop: 25 }}>Remarks</label>
+                          <CreatableSelect
+                            name='remarks'
+                            isClearable
+                            onChange={handleRemarkChange}
+                            options={remarks}
+                          />
+                          <FormHelperText style={{ color: '#FF5C58', marginLeft: 5 }}>{!newRemarks && status === 'decline' ? 'Need a Remark to Proceed!' : null}</FormHelperText>
+                        </Grid>
+                        <Grid item md={8} style={{ display: 'flex', flexDirection: 'column' }}>
+                          <TextInput
+                            direction='column'
+                            alignTop={true}
+                            labelText="UTR"
+                            value={utrNumber}
+                            onChange={e => setUtrNumber((e.target.value).toUpperCase())}
+                          />
+                          <FormHelperText style={{ color: '#FF5C58', marginLeft: 5 }}>{!utrNumber && status === 'disburse' ? 'Need UTR to Proceed!' : null}</FormHelperText>
+                        </Grid>
                       </Grid>
-                      <Grid item md={8} style={{ display: 'flex', flexDirection: 'column' }}>
-                        <TextInput
-                          direction='column'
-                          alignTop={true}
-                          labelText="UTR"
-                          value={utrNumber}
-                          onChange={e => setUtrNumber((e.target.value).toUpperCase())}
-                        />
-                        <FormHelperText style={{ color: '#FF5C58', marginLeft: 5 }}>{!utrNumber && status === 'disburse' ? 'Need UTR to Proceed!' : null}</FormHelperText>
-                      </Grid>
-                    </Grid>
-                  </>
-                )
-              )
+                    </>
+                  )
+                ))
             }
           </Box>
         </div >
@@ -346,7 +429,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
               <div style={{ display: 'flex', justifyContent: 'center' }}>
                 {
                 // Credit Reload decline permission check
-                  isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.decline) ?
+                  (isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.decline) && rowData?.product_name != 'Vivriti') ?
                     <Button
                       variant='contained'
                       type='submit'
@@ -358,7 +441,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
                 }
                 {
                 // Credit Reload disburse permission check
-                  isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.disburse) ?
+                  (isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.disburse) && rowData?.product_name != 'Vivriti') ?
                     <Button
                       variant='contained'
                       type='submit'

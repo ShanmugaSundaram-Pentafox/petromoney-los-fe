@@ -106,6 +106,8 @@ const useStyles = makeStyles(() => ({
     visibility: 'hidden',
     color: '#687980',
   },
+  section: {display: 'flex', width: '100%', alignItems: 'center', marginLeft: 10, marginTop: 5},
+  divider: {width: '100%', borderBottom: '1px solid rgba(0,0,0,0.1)', marginLeft: 10, marginRight: 10}
 }));
 
 const ExternalApi = ({ callback }) => {
@@ -146,7 +148,7 @@ const ExternalApi = ({ callback }) => {
               <ListSubheader
                 component={Paper}
                 style={{
-                  fontFamily: 'Inter',
+                  fontFamily: 'Inter !important',
                   fontWeight: 600,
                   cursor: 'pointer',
                   backgroundColor: '#FFF',
@@ -209,7 +211,6 @@ const ExternalApi = ({ callback }) => {
             onSubmit={(values) => {
               values.is_current = values.is_current ? 1 : 0;
               let body = addForm?.usage_desc ? compareObject(addForm, values) : values;
-              console.log(body);
               updateExternalApi(body, values?.id)
                 .then((data) => {
                   callback(false);
@@ -255,26 +256,6 @@ const ExternalApi = ({ callback }) => {
                     helperText={errors?.api_path}
                   />
                 </Grid>
-                <Grid item md={6}>
-                  <TextInput
-                    name="base_url_prod"
-                    label="Prod URL"
-                    onChange={handleChange}
-                    value={values?.base_url_prod}
-                    error={errors?.base_url_prod}
-                    helperText={errors?.base_url_prod}
-                  />
-                </Grid>
-                <Grid item md={6}>
-                  <TextInput
-                    name="base_url_uat"
-                    label="UAT URL"
-                    onChange={handleChange}
-                    value={values?.base_url_uat}
-                    error={errors?.base_url_uat}
-                    helperText={errors?.base_url_uat}
-                  />
-                </Grid>
                 <Grid item md={12}>
                   <TextInput
                     name="payload"
@@ -283,26 +264,6 @@ const ExternalApi = ({ callback }) => {
                     rows={4}
                     onChange={handleChange}
                     value={values?.payload}
-                  />
-                </Grid>
-                <Grid item md={6}>
-                  <TextInput
-                    name="prod_header"
-                    label="Prod Header"
-                    onChange={handleChange}
-                    value={values?.prod_header}
-                    error={errors?.prod_header}
-                    helperText={errors?.prod_header}
-                  />
-                </Grid>
-                <Grid item md={6}>
-                  <TextInput
-                    name="uat_header"
-                    label="UAT Header"
-                    onChange={handleChange}
-                    value={values?.uat_header}
-                    error={errors?.uat_header}
-                    helperText={errors?.uat_header}
                   />
                 </Grid>
                 <Grid item md={6}>
@@ -341,6 +302,54 @@ const ExternalApi = ({ callback }) => {
                 </Grid>
                 <Grid item md={6}>
                   <FormControlLabel label="Activate Service" control={<Checkbox name='is_current' checked={values?.is_current} onChange={handleChange} />} />
+                </Grid>
+                <div className={classes.section}>
+                  <Typography variant='h6'>Sandbox</Typography>
+                  <div className={classes.divider} />
+                </div>
+                <Grid item md={6}>
+                  <TextInput
+                    name="base_url_uat"
+                    label="URL"
+                    onChange={handleChange}
+                    value={values?.base_url_uat}
+                    error={errors?.base_url_uat}
+                    helperText={errors?.base_url_uat}
+                  />
+                </Grid>
+                <Grid item md={6}>
+                  <TextInput
+                    name="uat_header"
+                    label="Header"
+                    onChange={handleChange}
+                    value={values?.uat_header}
+                    error={errors?.uat_header}
+                    helperText={errors?.uat_header}
+                  />
+                </Grid>
+                <div className={classes.section}>
+                  <Typography variant='h6'>Production</Typography>
+                  <div className={classes.divider} />
+                </div>
+                <Grid item md={6}>
+                  <TextInput
+                    name="base_url_prod"
+                    label="URL"
+                    onChange={handleChange}
+                    value={values?.base_url_prod}
+                    error={errors?.base_url_prod}
+                    helperText={errors?.base_url_prod}
+                  />
+                </Grid>
+                <Grid item md={6}>
+                  <TextInput
+                    name="prod_header"
+                    label="Header"
+                    onChange={handleChange}
+                    value={values?.prod_header}
+                    error={errors?.prod_header}
+                    helperText={errors?.prod_header}
+                  />
                 </Grid>
                 <Grid
                   item

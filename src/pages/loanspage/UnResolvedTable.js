@@ -24,13 +24,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const UnresolvedTable = ({currentUser}) => {
+const UnresolvedTable = ({ currentUser }) => {
   const queryClient = useQueryClient()
   const [openModal, setOpenModal] = useState(false);
   const [dealershipData, setDealershipData] = useState([]);
   const classes = useStyles()
   const { enqueueSnackbar } = useSnackbar();
-  const {data=[], isLoading} = useQuery('withheld-loans', () => getAllWithheldLoans(0), {refetchOnWindowFocus: false})
+  const { data = [], isLoading } = useQuery('withheld-loans', () => getAllWithheldLoans(0), { refetchOnWindowFocus: false })
 
 
   useMount(() => {
@@ -140,20 +140,20 @@ const UnresolvedTable = ({currentUser}) => {
                 return (
                   <div style={{ marginBottom: 12, display: 'flex' }} key={i}>
                     <div style={{ minWidth: 250, maxWidth: 250 }}>{remark.remarks} {remark.comment && '- ' + remark.comment}</div>
-                      <CheckAllowed currentUser={currentUser} resource={resources_id?.withheld} action={action_id?.withheld?.resolve}>
-                        <div onClick={() => handleResolve(remark.id)} style={{ marginLeft: 12 }}>
-                          <Tooltip title="Click to resolve">
-                            <CheckOutlinedIcon style={{ color: green[200] }} fontSize={'small'} />
-                          </Tooltip>
-                        </div>
-                      </CheckAllowed>
-                      <CheckAllowed currentUser={currentUser} resource={resources_id?.withheld} action={action_id?.withheld?.delete}>
-                        <div onClick={() => { handleDelete(remark.id) }} style={{ marginLeft: 12 }}>
-                          <Tooltip title='Click to delete'>
-                            <DeleteOutlineRounded style={{ color: '#ff6666' }} fontSize={'small'} />
-                          </Tooltip>
-                        </div>
-                      </CheckAllowed>
+                    <CheckAllowed currentUser={currentUser} resource={resources_id?.withheld} action={action_id?.withheld?.resolve}>
+                      <div onClick={() => handleResolve(remark.id)} style={{ marginLeft: 12 }}>
+                        <Tooltip title="Click to resolve">
+                          <CheckOutlinedIcon style={{ color: green[200] }} fontSize={'small'} />
+                        </Tooltip>
+                      </div>
+                    </CheckAllowed>
+                    <CheckAllowed currentUser={currentUser} resource={resources_id?.withheld} action={action_id?.withheld?.delete}>
+                      <div onClick={() => { handleDelete(remark.id) }} style={{ marginLeft: 12 }}>
+                        <Tooltip title='Click to delete'>
+                          <DeleteOutlineRounded style={{ color: '#ff6666' }} fontSize={'small'} />
+                        </Tooltip>
+                      </div>
+                    </CheckAllowed>
                   </div>
                 )
               })
@@ -172,8 +172,26 @@ const UnresolvedTable = ({currentUser}) => {
     download: true,
     filter: true,
     isRowSelectable: () => false,
-    customToolbar: () => 
-    {
+    onDownload: (buildHead, buildBody, columns, data) => {
+      let Data = () => {
+        let tempArray = []
+        data.map((item, index) => {
+          let buffer = []
+          item.data.map((data, i) => {
+            if (typeof (data) !== 'object') {
+              buffer.push(data)
+            } else {
+              let result = data.map(obj => `${obj.remarks} - ${obj.comment}\n`)
+              buffer.push(result)
+            }
+          })
+          tempArray.push({ index: index, data: buffer })
+        })
+        return tempArray
+      }
+      return '\uFEFF' + buildHead(columns) + buildBody(Data())
+    },
+    customToolbar: () => {
       return (
         // Withheld create permission check
         <CheckAllowed currentUser={currentUser} resource={resources_id?.withheld} action={action_id?.withheld?.create}>
@@ -187,25 +205,6 @@ const UnresolvedTable = ({currentUser}) => {
         </CheckAllowed>
       );
     },
-    onDownload: (buildHead, buildBody, columns, data) => {
-      let Data = () => {
-        let array = []
-        data.map((item, index) => {
-          let buffer = []
-          item.data.map((data, i) => {
-            if(typeof(data) !== 'object'){
-              buffer.push(data)
-            } else {
-              let est = data.map((obj, num) => Object.values(obj)[2])
-              buffer.push(est.toString())
-            }
-          })
-          array.push({index: index, data: buffer})
-        })
-        return array
-      }
-      return '\uFEFF' + buildHead(columns) + buildBody(Data())
-    }
   }
 
   return (

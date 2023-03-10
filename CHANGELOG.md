@@ -2,6 +2,45 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.27.1](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/compare/v2.26.0...v2.27.1) (2023-03-08)
+
+
+### Bug Fixes
+
+* **api-call:** added code  comments ([5fdb6c8](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/5fdb6c89a657644ca3ca8c0ba6b6b46b0c14453f))
+* **api-call:** fix JSON decoder error ([b1da806](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/b1da8066a27564f665e33d8faed627e6132e3ce7))
+* credit reload withheld data highlight ([d8a97b2](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/d8a97b240f3d38bb94ceb9081f787ae8efc1a043))
+* credit reload withheld data highlight ([a0b72d6](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/a0b72d6dcba44e7fc8ac70f0444e70ee71f9c331))
+* credit reload withheld data highlight ([a4818c5](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/a4818c5c6575b136f7504662c8a0ccfa1d7ad449))
+* **dashboard:** removed unused code ([3cf6204](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/3cf620420d0529adf776626abb1a07a6ba3db236))
+* **dealership-info:** allow only admin to edit dealership details ([597d8d5](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/597d8d58f3d7b00c35d277695f0f88d26573d4b5))
+* **lms:** removed vivriti data in dashboard ([aa8f35f](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/aa8f35fa277ef7305186902d3fd08460183c595c))
+* **withheld:** fixed withheld download issue ([7784a77](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/7784a777093583ad9a95c74ddae7d2979e549d2e))
+
+## [2.27.0](///compare/v2.25.7...v2.27.0) (2023-03-02)
+
+
+### Features
+
+* **email-group:** added email list screen afbc2aa
+
+
+### Bug Fixes
+
+* **account-deletion:** account deletion button permission check and api update 0d798fd
+* **accout-deletion:** feature to allow dealer to delete their account 94448e9
+* **api-call:** added code  comments 5fdb6c8
+* **api-call:** fix JSON decoder error b1da806
+* credit reload withheld data highlight d8a97b2
+* credit reload withheld data highlight a0b72d6
+* credit reload withheld data highlight a4818c5
+* **dealer-delte:** intergrated API 8e897f8
+* **dealer-passbook:** column label update for passbook ce5c1da
+* **dealership-info:** allow only admin to edit dealership details 597d8d5
+* **profile:** fix delete button update 9c21b8e
+* validation added for allowed_roles 7d66c94
+* **withheld:** fixed withheld download issue 7784a77
+
 ## 2.26.0 (2023-02-13)
 
 

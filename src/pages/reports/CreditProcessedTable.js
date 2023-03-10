@@ -4,7 +4,6 @@ import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
 import React, { useState, useMemo } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
-import { useMount } from 'react-use';
 import CreditReload, { TableFooter } from './CreditReload';
 import CreditReloadForm from './CreditReloadForm';
 import CreditReloadRemarks from './CreditReloadRemarks';
@@ -16,12 +15,10 @@ import usePageTitle from '../../hooks/usePageTitle';
 import {
   getCreditReload,
   getCreditReportById,
-  getTypeOfAccount,
 } from '../../services/users.service';
 
 
 const CreditProcessedTable = ({ currentUser }) => {
-  const [accountType, setAccountType] = useState();
   const [rowData, setRowData] = useState();
   const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -37,22 +34,6 @@ const CreditProcessedTable = ({ currentUser }) => {
   const { data = [], refetch, error, isLoading: searchLoading } = useQuery(['processed-request', offset], () => getCreditReload({ processed: 1, filterQry: filterQry, dealershipId: currentUser?.dealership_id, offset: offset }), { refetchOnWindowFocus: false, enabled: offset ? true : false })
   const { data: fileData } = useQuery(['view-credit-report'], () => getCreditReportById(filterQry, 'view=1'), { refetchOnWindowFocus: false })
 
-  useMount(() => {
-    getTypeOfAccount()
-      .then((data) => {
-        setLoading(false);
-        setAccountType(
-          data.map(({ id, type_of_account }) => ({
-            label: type_of_account,
-            id: id,
-          }))
-        );
-      })
-      .catch((e) => {
-        setLoading(false);
-        console.log(e);
-      })
-  });
 
   const handleDownload = () => {
     setDownloadLoading(true)
@@ -139,10 +120,6 @@ const CreditProcessedTable = ({ currentUser }) => {
             return <Currency value={value} />
           }
         }
-      },
-      {
-        name: 'type_of_account',
-        label: 'Account Type'
       },
       {
         name: 'created_by',
@@ -287,7 +264,6 @@ const CreditProcessedTable = ({ currentUser }) => {
         {
           <CreditReloadForm
             callback={() => setOpenModal(false)}
-            data={accountType}
             currentUser={currentUser}
             view={view}
           />

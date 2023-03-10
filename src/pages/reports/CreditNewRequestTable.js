@@ -3,7 +3,6 @@ import Skeleton from '@material-ui/lab/Skeleton';
 import MUIDataTable from 'mui-datatables';
 import React, { useState, useMemo } from 'react';
 import { useQuery } from 'react-query';
-import { useMount } from 'react-use';
 import CreditReload from './CreditReload';
 import CreditReloadForm from './CreditReloadForm';
 import CreditReloadRemarks from './CreditReloadRemarks';
@@ -15,12 +14,10 @@ import { rulesList } from '../../config/userRules';
 import usePageTitle from '../../hooks/usePageTitle';
 import {
   getCreditReload,
-  getTypeOfAccount,
 } from '../../services/users.service';
 import { isAllowed } from '../../utils/cerbos';
 
 const CreditNewRequestTable = ({ currentUser }) => {
-  const [accountType, setAccountType] = useState();
   const [rowData, setRowData] = useState();
   const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -32,22 +29,6 @@ const CreditNewRequestTable = ({ currentUser }) => {
   const view = permissionCheck(currentUser.role_name, rulesList.dealer_view)
 
 
-  useMount(() => {
-    getTypeOfAccount()
-      .then((data) => {
-        setLoading(false);
-        setAccountType(
-          data.map(({ id, type_of_account }) => ({
-            label: type_of_account,
-            id: id,
-          }))
-        );
-      })
-      .catch((e) => {
-        setLoading(false);
-        console.log(e);
-      })
-  });
   const columns = useMemo(() => {
     return [
       {
@@ -99,10 +80,6 @@ const CreditNewRequestTable = ({ currentUser }) => {
         }
       },
       {
-        name: 'type_of_account',
-        label: 'Account Type'
-      },
-      {
         name: 'last_modified_by',
         label: 'Submitted or Modified by',
         options: {
@@ -141,7 +118,7 @@ const CreditNewRequestTable = ({ currentUser }) => {
                 </Tooltip>
               )
             }
-            else if (tableMeta?.rowData[12])
+            else if (tableMeta?.rowData[13])
               return <CustomToken label="Withheld" variant='warn' />
             else return <CustomToken label={value} variant='success' />
           },
@@ -160,7 +137,7 @@ const CreditNewRequestTable = ({ currentUser }) => {
     rowsPerPage: 10,
     rowsPerPageOptions: [10, 15, 20, 25, 30],
     setRowProps: (row, dataIndex) => {
-      if (row[12]) {
+      if (row[13]) {
         return { style: { backgroundColor: '#ffec9bba' } }
       }
     },
@@ -197,7 +174,7 @@ const CreditNewRequestTable = ({ currentUser }) => {
         </Grid>
       ) : (
         <>
-          <CreditReload refetch={refetch} currentUser={currentUser} filterQry={setFilterQry} filterList={['zone', 'region', 'product', 'account', 'period']} filterType={'new'} stats={tableData?.stats} />
+          <CreditReload refetch={refetch} currentUser={currentUser} filterQry={setFilterQry} filterList={['zone', 'region', 'product', 'period']} filterType={'new'} stats={tableData?.stats} />
           <MUIDataTable
             title={'New Request'}
             columns={columns}
@@ -225,7 +202,6 @@ const CreditNewRequestTable = ({ currentUser }) => {
         {
           <CreditReloadForm
             callback={() => setOpenModal(false)}
-            data={accountType}
             currentUser={currentUser}
             view={view}
           />

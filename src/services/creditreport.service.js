@@ -119,6 +119,26 @@ export const addCreditReport = (data, currentUser, id) => {
       })
   });
 }
+
+export const updateCreditReload = (data, id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`credit/reload/${id}`, {
+      method: 'PUT',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+
 export const getCibilReport = (applicantId, rowId, PAN, applicantType) => {
   return new Promise((resolve, reject) => {
     apiCall(`cibil/${applicantId}/${rowId}/${PAN}?type=${applicantType}`)
@@ -137,7 +157,7 @@ export const getCibilReport = (applicantId, rowId, PAN, applicantType) => {
 export const updatePanApplicant = (applicantType, dealership_id, currentUser, formData, id) => {
   const apiUrl = `${applicantType === 'Dealer' && URL.dealers || applicantType === 'Coapplicant' && URL.coApplicants || applicantType === 'Guarantor' && URL.guarantor}/${dealership_id}/${id}`
   return new Promise((resolve, reject) => {
-    fetch(`${URL.base}${apiUrl}`,{
+    fetch(`${URL.base}${apiUrl}`, {
       method: 'POST',
       body: formData,
       headers: {

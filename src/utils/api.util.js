@@ -20,11 +20,11 @@ const apiCall = async (route, options = {}) => {
   const credentials = await selectCurrentUser(store.getState());
 
 
-
-  let headerObject = method != 'GET' ? {
-    'Content-Type': 'application/json',
+  // avoided content-type in header of GET Method to get the clear error log from BE.
+  let headerObject = method == 'GET' ? {
     'Access-Control-Allow-Credentials': 'no-cors'
   } : {
+    'Content-Type': 'application/json',
     'Access-Control-Allow-Credentials': 'no-cors'
   };
 

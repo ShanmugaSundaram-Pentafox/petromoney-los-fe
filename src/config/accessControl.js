@@ -83,6 +83,7 @@ export const action_id = {
     decline: 'request:decline',
     disburse: 'request:disburse',
     dealer_search:'dealer_search',
+    amount_edit:'amount_edit',
   },
   withheld: {
     create: 'request:create',

@@ -15,10 +15,10 @@ import * as Yup from 'yup';
 import BankDetailsCard from './Components/BankDetailsCard';
 import Button from '../../../components/CommonComponents/Button/Button';
 import TextInput from '../../../components/TextInput/TextInput';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { URL } from '../../../config/serverUrls';
 import { getBankDetailsbyID, updateBankDetailsByID } from '../../../services/PDReport.services';
 import { compareObject } from '../../../utils/compareObject.util';
-import { action_id, resources_id } from '../../../config/accessControl';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles((theme) => ({
@@ -134,7 +134,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, edita
       ifsc: Yup.string().required('Enter IFSC code').nullable('Enter IFSC code').matches(/^[A-Za-z]{4}0[A-Z0-9]{6}$/, 'Enter valid IFSC'),
       account_name: Yup.string('Enter valid name').nullable('Enter Account Holder name').required('Enter Account holder name'),
       bank_name: Yup.string('Enter valid name').nullable('Enter bank name').required('Enter name'),
-      account_no: Yup.number().nullable('Enter account number').required('Enter account number'),
+      account_no: Yup.string().nullable('Enter account number').required('Enter account number'),
       bank_branch: Yup.string('Enter valid branch name').nullable('Enter branch name').required('Enter branch name'),
       account_type: Yup.string('Enter valid type').nullable('Enter account type').required('Enter account type'),
     }),
@@ -251,10 +251,9 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, edita
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
-                      number
                       labelText="Account Number"
                       name="account_no"
-                      value={values.account_no}
+                      value={values.account_no?.toUpperCase()}
                       error={errors.account_no}
                       helperText={errors.account_no}
                     />

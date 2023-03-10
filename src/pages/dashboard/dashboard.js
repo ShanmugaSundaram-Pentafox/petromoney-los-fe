@@ -16,14 +16,12 @@ import Currency from '../../../src/components/Number/Currency';
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import LoanBookTable from '../../components/Tables/LoanBookTable';
 import { permissionCheck } from '../../components/UserCan/UserCan';
+import { action_id, resources_id } from '../../config/accessControl';
 import { rulesList } from '../../config/userRules';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getDealerDetails } from '../../services/dealers.service';
 import { getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd } from '../../services/loans.service';
 import { isAllowed } from '../../utils/cerbos';
-import { action_id, resources_id } from '../../config/accessControl';
-import CheckAllowed from '../rbac/CheckAllowed';
-// import { getAll_ls1_Metrices, getAll_ls2_Metrices, getAllOmcDpd, getAllRegionDpd } from '../../services/loans.service';
 
 const currencyFormat = (value) => {
   const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumSignificantDigits: 8 }).format(value)
@@ -301,7 +299,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                     <Box p={2} borderRadius={4} bgcolor="background.paper">
                       <div className={classes.creditBookHeader}>
                         <Typography variant="h5" style={{width: 120}}>Credit Book</Typography>
-                        {
+                        {/* {
                           // Access control for show and hide external charts switch in LMS
                           <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'vivriti'}>
                             <div className={classes.creditView}>
@@ -313,7 +311,7 @@ const Dashboard = ({ currentUser, dashboardView }) => {
                               </Box>
                             </div>
                           </CheckAllowed>
-                        }
+                        } */}
                       </div>
                       <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">
                         <DashCard text="Date (Opening)" value={ls1_metrices.opening ? format(new Date(ls1_metrices.opening?.split(' ')?.[0]), 'dd MMM, yyyy') : '-'} />

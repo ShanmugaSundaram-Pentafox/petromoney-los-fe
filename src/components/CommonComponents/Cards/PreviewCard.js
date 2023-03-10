@@ -45,17 +45,17 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 
-const PreviewCard = ({ children, action=true, onEdit, onDelete, onCustom, customButton = false, customIcon, token=false, tokenLabel, tokenIcon, variant }) => {
+const PreviewCard = ({ children, action = true, onEdit, onDelete, onCustom, customButton = false, customIcon, token = false, tokenLabel, tokenIcon, variant }) => {
   const classes = useStyles()
   const [deleteModal, setDeleteModal] = useState(false)
   return (
-    <Card style={{marginBottom:0}}>
+    <Card style={{ marginBottom: 0 }}>
       <div className="card-body">
         {children}
       </div>
       {
         action &&
-          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingLeft: 10}} >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingLeft: 10 }} >
             <div>
               {
                 customButton &&
@@ -69,7 +69,7 @@ const PreviewCard = ({ children, action=true, onEdit, onDelete, onCustom, custom
                     onClick={onCustom}
                   >
                     {tokenLabel}
-                  </Button> 
+                  </Button>
               }
             </div>
             <div className='card-footer'>
@@ -93,15 +93,15 @@ const PreviewCard = ({ children, action=true, onEdit, onDelete, onCustom, custom
 }
 export default PreviewCard;
 
-export const PreviewCardBank = ({ children, onEdit, action=true, onDelete, onCustom, verified = false, customIcon, tokenLabel, verifiedDate, currentUser }) => {
+export const PreviewCardBank = ({ children, onEdit, action = true, onDelete, onCustom, verified = false, customIcon, tokenLabel, verifiedDate, currentUser }) => {
   const classes = useStyles()
   const [deleteModal, setDeleteModal] = useState(false)
   return (
-    <Card style={{marginBottom:0}}>
+    <Card style={{ marginBottom: 0 }}>
       <div className="card-body">
         {children}
       </div>
-      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingLeft: 10}} >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingLeft: 10 }} >
         {
           verified ?
             <Typography variant='body2' style={{ color: 'rgb(0,0,0,0.4)', margin: '16px 0px' }}>
@@ -121,26 +121,32 @@ export const PreviewCardBank = ({ children, onEdit, action=true, onDelete, onCus
               </Button>
             </CheckAllowed>
         }
-        <div className='card-footer'>
-          <CheckAllowed
-            currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.bankEdit}
-          >
-            <Button
-              size="small"
-              variant="outlined"
-              color="success"
-              style={{ margin: 4 }}
-              className={classes.btnSuccess}
-              startIcon={<EditIcon color="primary" />}
-              onClick={onEdit}
-            >
-              Edit
-            </Button>
-          </CheckAllowed>
-          <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.bankDelete}>
-            <DeleteButton deleteModal={deleteModal} deleteAction={onDelete} setDeleteModal={setDeleteModal} />
-          </CheckAllowed>
-        </div>
+        {
+          !verified && (
+            <div className='card-footer'>
+              <CheckAllowed
+                currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.bankEdit}
+              >
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="success"
+                  style={{ margin: 4 }}
+                  className={classes.btnSuccess}
+                  startIcon={<EditIcon color="primary" />}
+                  onClick={onEdit}
+                >
+                  Edit
+                </Button>
+              </CheckAllowed>
+              <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.bankDelete}>
+                <DeleteButton deleteModal={deleteModal} deleteAction={onDelete} setDeleteModal={setDeleteModal} />
+              </CheckAllowed>
+            </div>
+          )
+
+        }
+
       </div>
     </Card>
   )

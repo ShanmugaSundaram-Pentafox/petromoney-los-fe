@@ -300,22 +300,6 @@ export const getCreditReloadById = (id) => {
   })
 }
 
-export const getTypeOfAccount = () => {
-  return new Promise((resolve, reject) => {
-    apiCall('credit/reload/account/type')
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          resolve(data)
-        } else {
-          reject(message)
-        }
-      })
-      .catch((e) => {
-        reject(e.message)
-      })
-  })
-}
-
 export const getCollectionRemark = () => {
   return new Promise((resolve, reject) => {
     apiCall('collection/remarks')

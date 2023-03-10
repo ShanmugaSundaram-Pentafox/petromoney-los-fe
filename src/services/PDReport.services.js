@@ -293,10 +293,10 @@ export const updateTankerByID = (data, id) => {
       });
   });
 }
-export const getBankDetailsbyID = (id) => {
+export const getBankDetailsbyID = (id, resquestType) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/bank`)
-      .then(({ status, data, message }) => {
+      .then(({ status, data = [], message }) => {
         if (status === 'SUCCESS') {
           resolve(data)
         } else {
@@ -310,7 +310,7 @@ export const getBankDetailsbyID = (id) => {
 }
 export const updateBankDetailsByID = (data, id) => {
   let url = `dealership/${id}/bank`;
-  if(data?.id) {
+  if (data?.id) {
     url += `/${data?.id}`
   }
   return new Promise((resolve, reject) => {
@@ -332,7 +332,7 @@ export const updateBankDetailsByID = (data, id) => {
 }
 export const deleteBankDetailsByID = (data, id) => {
   let url = `dealership/${id}/bank`;
-  if(data?.id) {
+  if (data?.id) {
     url += `/${data?.id}`
   }
   return new Promise((resolve, reject) => {
@@ -764,7 +764,7 @@ export const deleteOtherDetailsByID = (data, id) => {
       });
   });
 }
-export const bankAccValidate = (AccId=1175155000148626, IFSC='KVBL0001175') => {
+export const bankAccValidate = (AccId = 1175155000148626, IFSC = 'KVBL0001175') => {
   return new Promise((resolve, reject) => {
     apiCall(`bank/${AccId}/${IFSC}`, {
       method: 'POST'

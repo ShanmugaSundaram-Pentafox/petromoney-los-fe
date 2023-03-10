@@ -1,9 +1,9 @@
-import { Box, Button, Divider, Grid, IconButton, makeStyles, Table, TableBody, TableCell, TableFooter, TableHead, TableRow, Typography } from '@material-ui/core';
+import { Box, Button, Divider, Grid, IconButton, makeStyles, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@material-ui/core';
 import ChatOutlinedIcon from '@material-ui/icons/ChatOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import sumBy from 'lodash-es/sumBy';
-import React, { useState } from 'react';
+import MUIDataTable from 'mui-datatables';
+import React, { useState,useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { useMount } from 'react-use';
 import { ViewData } from '../../components/CommonComponents/FilePreview';
@@ -16,7 +16,7 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     height: '100vh',
-    width: '60vw'
+    width: '70vw'
   },
   sidePanelTitle: {
     padding: '8px 16px',
@@ -38,46 +38,69 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     justifyContent: 'space-between',
     padding: '12px 16px'
-  },
-  btnDelete: {
-    '&.MuiButton-root': { color: '#ef5350' },
-    border: '1px #ef5350 solid',
-    margin: 2
-  },
-  btnEdit: {
-    '&.MuiButton-root': { color: '#2196f3' },
-    border: '1px #2196f3 solid',
-    margin: 2
-  },
-  sidePanelWrapper: {
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100vh',
-    width: '40vw'
-  },
+  }
 }))
 
 export const CollectionRemarksDrawer = ({ callback, rowData = [] }) => {
   const classes = useStyles();
   const [loanReport, setLoanReport] = useState({})
-  const [combined, setCombined] = useState([])
 
   const FetchRemarks = (loan_id) => {
     const dealershipRemarks = useQuery(['remarks-by-loan-id', loan_id], () => getCollectionRemarkByLoanId(loan_id), { refetchOnWindowFocus: false })
     return dealershipRemarks;
   }
-
   useMount(() => {
     getLoanReportByDealershipId(rowData[0])
       .then(res => {
         setLoanReport(res)
-        setCombined(res?.due && res?.overdue && [...res?.due, ...res?.overdue])
       })
       .catch(e => {
         console.log(e);
       })
   })
+
+  const columns = useMemo(() => {
+    return [
+      {
+        name: 'prospectcode',
+        label: 'Prospect Code',
+        options: {
+          customBodyRender: (value) => rowData[7].map((row) => <div key={row?.prospectcode} style={{display:'flex',justifyContent:'space-between'}}><p>{value}</p> {row?.prospectcode === value ? <ChatOutlinedIcon style={{ fontSize: 13, marginLeft: 5, color: 'rgb(0,0,0,0.4)' }} /> : null}</div>)
+        }
+
+      },
+      {
+        name: 'disb_amount',
+        label: 'Disb Amount',
+        options: {
+          customBodyRender: value => <Currency value={value} />
+        }
+      },
+      { name: 'disb_date', label: 'Disb Date' },
+      { name: 'duedate', label: 'Due date' },
+      { name: 'prin_due', label: 'Prin Due' },
+      { name: 'prin_overdue', label: 'Prin overdue' },
+      { name: 'int_overdue', label: 'Int Overdue' },
+      { name: 'penal_overdue', label: 'Penal Overdue' },
+      { name: 'dpd', label: 'DPD' },
+    ]
+  }, []);
+
+  const options = {
+    selectableRowsHeader: false,
+    selectableRows: 'none',
+    print: false,
+    filter: false,
+    rowsPerPage: 5,
+    viewColumns:false,
+    rowsPerPageOptions: [5, 10, 15],
+    setRowProps: (row) => {
+      if (row[6]) {
+        return { style: { backgroundColor: '#ffb99b69' } }
+      }
+    },
+  };
+
 
   return (
     <div className={classes.sidePanelFormWrapper}>
@@ -117,90 +140,20 @@ export const CollectionRemarksDrawer = ({ callback, rowData = [] }) => {
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 16, marginBottom: 8 }}>
             <Typography variant="h6">Due & Overdue</Typography>
           </div>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Prospect Code</TableCell>
-                <TableCell>Disb Amount</TableCell>
-                <TableCell>Disb Date</TableCell>
-                <TableCell>Due Date</TableCell>
-                <TableCell>Prin Due</TableCell>
-                <TableCell>Prin Overdue</TableCell>
-                <TableCell>Int Overdue</TableCell>
-                <TableCell>Penal Overdue</TableCell>
-                <TableCell>DPD</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {
-                loanReport.due?.map((item, i) => {
-                  return (
-                    <TableRow key={i} style={{ backgroundColor: '#ffec9b69' }}>
-                      <TableCell style={{ display: 'flex', alignItems: 'center' }}>
-                        {item.prospectcode}
-                        {
-                          rowData[7].map((row) => {
-                            return (row.prospectcode === item.prospectcode && <ChatOutlinedIcon style={{ fontSize: 13, marginLeft: 5, color: 'rgb(0,0,0,0.4)' }} />)
-                          })
-                        }
-                      </TableCell>
-                      <TableCell><Currency value={item.disb_amt} /></TableCell>
-                      <TableCell>{item.disb_date}</TableCell>
-                      <TableCell>{item.duedate}</TableCell>
-                      <TableCell><Currency value={item.prin_due} /></TableCell>
-                      <TableCell><Currency value={item.prin_overdue} /></TableCell>
-                      <TableCell><Currency value={item.int_overdue} /></TableCell>
-                      <TableCell><Currency value={item.penal_overdue} /></TableCell>
-                      <TableCell>{item.dpd}</TableCell>
-                    </TableRow>
-                  )
-                })
-              }
-              {
-                loanReport?.overdue?.map((item, i) => {
-                  return (
-                    <TableRow key={i} style={{ backgroundColor: '#ffb99b69' }}>
-                      <TableCell style={{ display: 'flex', alignItems: 'center' }}>
-                        {item.prospectcode}
-                        {
-                          rowData[7].map((row) => {
-                            return (row.prospectcode === item.prospectcode && <ChatOutlinedIcon style={{ fontSize: 13, marginLeft: 5, color: 'rgb(0,0,0,0.3)' }} />)
-                          })
-                        }
-                      </TableCell>
-                      <TableCell><Currency value={item.disb_amt} /></TableCell>
-                      <TableCell>{item.disb_date}</TableCell>
-                      <TableCell>{item.duedate}</TableCell>
-                      <TableCell><Currency value={item.prin_due} /></TableCell>
-                      <TableCell><Currency value={item.prin_overdue} /></TableCell>
-                      <TableCell><Currency value={item.int_overdue} /></TableCell>
-                      <TableCell><Currency value={item.penal_overdue} /></TableCell>
-                      <TableCell>{item.dpd}</TableCell>
-                    </TableRow>
-                  )
-                })
-              }
-            </TableBody>
-            <TableFooter>
-              <TableRow style={{ backgroundColor: '#fff' }}>
-                <TableCell><strong>Total</strong></TableCell>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
-                <TableCell><Currency value={sumBy(combined, 'prin_due')} /></TableCell>
-                <TableCell><Currency value={sumBy(combined, 'prin_overdue')} /></TableCell>
-                <TableCell><Currency value={sumBy(combined, 'int_overdue')} /></TableCell>
-                <TableCell><Currency value={sumBy(combined, 'penal_overdue')} /></TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-            </TableFooter>
-          </Table>
+          <div>
+            <MUIDataTable
+              title="Remarks"
+              columns={columns}
+              options={options}
+              data={(loanReport?.due && loanReport?.overdue) ? [...loanReport?.due, ...loanReport?.overdue] : []}
+            />
+          </div>
           {
             rowData[7]?.map((item, i) => {
               const { data, isLoading } = item?.prospectcode && FetchRemarks(item.prospectcode)
               return (
                 <div key={i} style={{ marginBottom: 20, marginTop: 16 }}>
-                  <h4 style={{ marginBottom: 8 }}>Prospect code : {item?.prospectcode}</h4>
+                  <h4>Prospect code : {item?.prospectcode}</h4>
                   <Table>
                     <TableHead>
                       <TableRow>

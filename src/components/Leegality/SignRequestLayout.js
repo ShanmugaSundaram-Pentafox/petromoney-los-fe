@@ -68,6 +68,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
   const [loading, setLoading] = useState(true);
   const [hideSend, setHideSend] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false)
+  const [reinitiate, setReinitiate] = useState(false)
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
@@ -77,7 +78,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
         .then(res => {
           setLoansData(res);
           setSignedLetterUrl(res.sanction_url)
-          if (!res?.document_id) {
+          if (!res?.document_id || reinitiate) {
             handleDataWithOutDocID()
           }
           setLoading(false);
@@ -87,7 +88,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
           setLoansData();
         })
     }
-  }, []);
+  }, [reinitiate]);
 
   const handleDataWithOutDocID = () => {
     if (['sanction', 'application'].includes(type)) {
@@ -109,7 +110,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
           });
         })
     }
-    if(dealershipId && !loansData?.document_id) {
+    if(dealershipId && !loansData?.document_id || reinitiate) {
       getDealershipById(dealershipId)
         .then(setDealership)
         .catch(err => {
@@ -204,8 +205,13 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
 
   const sendInvitees = () => {
     setHideSend(true);
-    if (selectedCoAppicants.length !== 0 && selectedDealers.length !== 0) {
-      apiCall('document/sign', {
+    if (selectedDealers.length !== 0) {
+      let apiUrl = 'document/sign'
+      let qry = []
+      if(reinitiate) { qry.push('reinitiate') }
+      if(qry?.length) apiUrl += '?' + qry.join('&')
+
+      apiCall(apiUrl, {
         body: {
           dealer: selectedDealers,
           coapplicants: selectedCoAppicants,
@@ -268,7 +274,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
         <CloseIcon />
       </IconButton>
       {
-        loansData?.is_signed ?
+        loansData?.is_signed && !reinitiate ?
           (
             <SignedLayout loansData={loansData}/>
           ) : (
@@ -276,7 +282,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
               {
                 loading ? (
                   <CircularProgress className="circular-progress-color" variant="determinate" color="green" />
-                ) : (loansData?.document_id ? (
+                ) : (loansData?.document_id && !reinitiate ? (
                   <LeegalityLayout docId={loansData?.document_id} dealershipId={dealershipId} currentUser={currentUser} />
                 ) : (
                   <Grid container spacing={2}>
@@ -320,11 +326,15 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
             }
           </div>
           {
-            !loading && loansData?.document_id ? null : hideSend ? null : (
+            !loading && loansData?.document_id && !reinitiate ? null : hideSend ? null : (
               <Button variant="contained" onClick={sendInvitees} color="primary">
                 Send
               </Button>
             )
+          }
+          {
+            loansData?.is_signed == '1' && !reinitiate &&
+              <Button variant="contained" color='primary' onClick={() => setReinitiate(true)}>Re-Initiate</Button>
           }
         </Box>
       </DialogActions>

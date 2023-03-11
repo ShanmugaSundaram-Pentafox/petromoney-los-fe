@@ -355,7 +355,7 @@ export const getCollectionRemarkOptions = () => {
 
 export const getCollectionRemarkByLoanId = (loan_id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`dealership/${loan_id}/collection/remarks`)
+    apiCall(`loan/${loan_id}/collection/remarks`)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data)

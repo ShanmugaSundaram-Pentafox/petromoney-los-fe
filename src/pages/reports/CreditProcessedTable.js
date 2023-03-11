@@ -190,7 +190,7 @@ const CreditProcessedTable = ({ currentUser }) => {
     search: false,
     viewColumns: false,
     setRowProps: (row, dataIndex) => {
-      if (row[13]) {
+      if (row[12]) {
         return { style: { backgroundColor: '#ffb99b69' } }
       }
     },

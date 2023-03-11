@@ -134,6 +134,7 @@ export const action_id = {
     guarantorCreditCheck: 'guarantor:creditCheck',
     guarantorStatus: 'guarantor:status',
     Vkyc: 'vkyc',
+    applicantSwap:'dealer_applicantSwap',
   },
   scoreCard: {
     upload: 'scorecard:upload',

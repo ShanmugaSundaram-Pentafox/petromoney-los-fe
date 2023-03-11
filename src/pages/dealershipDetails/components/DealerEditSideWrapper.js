@@ -254,17 +254,11 @@ const DealerEditSideWrapper = ({
       const dob = selectedDate ? format(new Date(selectedDate), 'dd-MM-yyyy') : values.dob ? values.dob : null
       const date_values = { ...values, dob: dob, pan: values.pan.toUpperCase(), is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0, category: modelType };
       let commonObj = { category: modelType }
-      if (date_values?.pan !== data?.pan || date_values?.pan_file_url != data?.pan_file_url) {
-        if (date_values?.pan != data?.pan)
-          commonObj = { ...commonObj, pan_file_url: data?.pan_file_url }
-        else
-          commonObj = { ...commonObj, pan: data?.pan }
+      if (date_values?.pan_file_url != data?.pan_file_url) {
+        commonObj = { ...commonObj, pan: data?.pan }
       }
-      if (date_values?.aadhar !== data?.aadhar || date_values?.aadhar_file_url != data?.aadhar_file_url) {
-        if (date_values?.aadhar != data?.aadhar)
-          commonObj = { ...commonObj, aadhar_file_url: data?.aadhar_file_url }
-        else
-          commonObj = { ...commonObj, aadhar: data?.aadhar }
+      if (date_values?.aadhar_file_url != data?.aadhar_file_url) {
+        commonObj = { ...commonObj, aadhar: data?.aadhar }
       }
       const resultObj = data?.id ? compareObject(data, date_values, commonObj) : date_values
       let apiUrl = `applicant/${dealershipId}`;

@@ -102,10 +102,17 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
   useMemo(() => {
     getResignList()
       .then(res => {
-        setResign(dealershipId == res?.dealership_id)
+        setResign(dealershipId == res[0]?.dealership_id)
       })
       .catch(err => {
         console.log(err);
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
       })
   }, [])
 

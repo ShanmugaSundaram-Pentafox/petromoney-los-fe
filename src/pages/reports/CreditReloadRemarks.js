@@ -287,7 +287,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
                   <Box>
                     <ViewData title="Request ID" value={rowData?.request_id} />
                     <ViewData title="Status" value={rowData?.status} />
-                    <ViewData title='Bank details' value={rowData?.bank} />
+                    <ViewData title='Bank details' value={`${rowData?.account_no} - ${rowData?.bank_name}`} />
                   </Box>
                 </Grid>
               </Grid>
@@ -379,35 +379,39 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
               </Grid>
             </>
             {
-              rowData?.product_name != 'Vivriti' && (
-                isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.disburse) && (
-                  rowData.status == 'Disbursed' || rowData.status == 'Declined' ? null : (
-                    <>
-                      <Grid container spacing={2}>
-                        <Grid item md={8} style={{ display: 'flex', flexDirection: 'column' }}>
-                          <label style={{ marginBottom: 8, marginTop: 25 }}>Remarks</label>
-                          <CreatableSelect
-                            name='remarks'
-                            isClearable
-                            onChange={handleRemarkChange}
-                            options={remarks}
-                          />
-                          <FormHelperText style={{ color: '#FF5C58', marginLeft: 5 }}>{!newRemarks && status === 'decline' ? 'Need a Remark to Proceed!' : null}</FormHelperText>
-                        </Grid>
-                        <Grid item md={8} style={{ display: 'flex', flexDirection: 'column' }}>
-                          <TextInput
-                            direction='column'
-                            alignTop={true}
-                            labelText="UTR"
-                            value={utrNumber}
-                            onChange={e => setUtrNumber((e.target.value).toUpperCase())}
-                          />
-                          <FormHelperText style={{ color: '#FF5C58', marginLeft: 5 }}>{!utrNumber && status === 'disburse' ? 'Need UTR to Proceed!' : null}</FormHelperText>
-                        </Grid>
+              isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.disburse) && (
+                rowData.status == 'Disbursed' || rowData.status == 'Declined' ? null : (
+                  <>
+                    <Grid container spacing={2}>
+                      <Grid item md={8} style={{ display: 'flex', flexDirection: 'column' }}>
+                        <label style={{ marginBottom: 8, marginTop: 25 }}>Remarks</label>
+                        <CreatableSelect
+                          name='remarks'
+                          isClearable
+                          onChange={handleRemarkChange}
+                          options={remarks}
+                        />
+                        <FormHelperText style={{ color: '#FF5C58', marginLeft: 5 }}>{!newRemarks && status === 'decline' ? 'Need a Remark to Proceed!' : null}</FormHelperText>
                       </Grid>
-                    </>
-                  )
-                ))
+                      {
+                        // show only for loans except vivriti
+                        !rowData?.product_name?.includes('Vivriti') && (
+                          <Grid item md={8} style={{ display: 'flex', flexDirection: 'column' }}>
+                            <TextInput
+                              direction='column'
+                              alignTop={true}
+                              labelText="UTR"
+                              value={utrNumber}
+                              onChange={e => setUtrNumber((e.target.value).toUpperCase())}
+                            />
+                            <FormHelperText style={{ color: '#FF5C58', marginLeft: 5 }}>{!utrNumber && status === 'disburse' ? 'Need UTR to Proceed!' : null}</FormHelperText>
+                          </Grid>
+                        )
+                      }
+                    </Grid>
+                  </>
+                )
+              )
             }
           </Box>
         </div >
@@ -428,8 +432,8 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
             rowData.status != 'Disbursed' && rowData.status != 'Declined' &&
               <div style={{ display: 'flex', justifyContent: 'center' }}>
                 {
-                // Credit Reload decline permission check
-                  (isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.decline) && rowData?.product_name != 'Vivriti') ?
+                // Credit Reload decline permission check for vivriti loans which doesn't have tranche_code and for other petromoney loans 
+                  (isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.decline) && (!rowData?.tranche_code)) ?
                     <Button
                       variant='contained'
                       type='submit'
@@ -440,8 +444,8 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
                     </Button> : null
                 }
                 {
-                // Credit Reload disburse permission check
-                  (isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.disburse) && rowData?.product_name != 'Vivriti') ?
+                // Credit Reload disburse permission check, don't allow user to disburse the vivirit loans
+                  (isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.disburse) && !rowData?.product_name?.includes('Vivriti')) ?
                     <Button
                       variant='contained'
                       type='submit'

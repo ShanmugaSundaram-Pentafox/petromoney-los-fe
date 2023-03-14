@@ -9,7 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import LeegalityAgreementTable from './components/LeegalityAgreementTable';
 import LeegalityInvitees from './components/LeegalityInvitees';
 import LeegalityPdfView from './components/LeegalityPdfView'
@@ -17,7 +17,7 @@ import SignedLayout from './components/SignedLayout';
 import LeegalityLayout from './LeegalityLayout';
 import CustomToken from '../../components/CommonComponents/CustomToken';
 import { getCoApplicantByDealershipId, getDealersByDealershipId, getGuarantorByDealershipId } from '../../services/dealers.service';
-import { getDealershipById } from '../../services/dealerships.service';
+import { deleteResignDocument, getDealershipById, getResignList } from '../../services/dealerships.service';
 import { getPdfContent } from '../../services/leegality.service';
 import { getLoanDocumentHistoryById } from '../../services/loans.service';
 import apiCall from '../../utils/api.util';
@@ -69,7 +69,16 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
   const [hideSend, setHideSend] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false)
   const [reinitiate, setReinitiate] = useState(false)
+  const [resign, setResign] = useState(false)
   const { enqueueSnackbar } = useSnackbar();
+
+  const handleResign = () => {
+    deleteResignDocument(dealershipId)
+      .then((data) => {
+        onClose()
+      })
+      .catch (err => console.log(err))
+  }
 
   useEffect(() => {
     if (loanId) {
@@ -89,6 +98,23 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
         })
     }
   }, [reinitiate]);
+
+  useMemo(() => {
+    getResignList()
+      .then(res => {
+        setResign(dealershipId == res[0]?.dealership_id)
+      })
+      .catch(err => {
+        console.log(err);
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      })
+  }, [])
 
   const handleDataWithOutDocID = () => {
     if (['sanction', 'application'].includes(type)) {
@@ -335,6 +361,10 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
           {
             loansData?.is_signed == '1' && !reinitiate &&
               <Button variant="contained" color='primary' onClick={() => setReinitiate(true)}>Re-Initiate</Button>
+          }
+          {
+            !loansData?.is_signed && loansData?.document_id && resign && type === 'agreement' ?
+              <Button variant="contained" color='primary' onClick={handleResign} style={{marginLeft: 12}}>Override Document</Button> : null
           }
         </Box>
       </DialogActions>

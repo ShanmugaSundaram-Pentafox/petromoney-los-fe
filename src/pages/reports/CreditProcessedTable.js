@@ -122,6 +122,11 @@ const CreditProcessedTable = ({ currentUser }) => {
         }
       },
       {
+        name: 'account_no',
+        label: 'Account number',
+        options: { filter: false }
+      },
+      {
         name: 'created_by',
         label: 'Created by'
       },

@@ -185,6 +185,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
                     }}
                     InputLabelProps={{ shrink: true }}
                   >
+                    <option value=''>choose applicant</option>
                     {
                     activeApplicant?.map((item, i) => {
                       return <option key={i} value={item?.id}>{item.first_name}</option>
@@ -192,7 +193,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
                     }
                   </TextInput>
                 </div>
-                <Button style={{ marginLeft: 20 }} variant='outlined' color='primary' onClick={updateApplicantData}>Update</Button>
+                {updateApplicant?.value ?<Button style={{ marginLeft: 20 }} variant='outlined' color='primary' onClick={updateApplicantData}>Update</Button> : null}
               </div>
             </CheckAllowed>
         }

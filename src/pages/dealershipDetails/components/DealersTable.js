@@ -118,9 +118,15 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
         </TableHead>
         <TableBody>
           {data.map((row, index) => (
-            <TableRow className={classes.tableRow} key={row.id} onClick={e => dealersClickRow(e, row, 'DEALER')}>
-              <TableCell>
-                {row.first_name}&nbsp;&nbsp;
+            <TableRow className={classes.tableRow} style={{ backgroundColor: row?.is_main_applicant == 1 ? '#EAFAF1' : null }} key={row.id} onClick={e => dealersClickRow(e, row, 'DEALER')}>
+              <TableCell >
+                <div style={{display:'flex',alignItems:'center'}}>
+                  <Typography>{row.first_name}&nbsp;&nbsp;</Typography>
+                  {
+                  row?.is_main_applicant == 1 ?
+                    <Typography variant='caption'>( mainapplicant )</Typography> : null
+                  }
+                </div>
               </TableCell>
               <TableCell align="center">{row.mobile}</TableCell>
               <TableCell align="center">

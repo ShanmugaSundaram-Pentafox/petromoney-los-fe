@@ -172,15 +172,16 @@ const ReferralTable = ({ currentUser }) => {
         label: 'Action',
         name: 'dealership_id',
         options: {
-          customBodyRender: value => {
+          customBodyRender: (value, tableMeta) => {
             return (
-              <Tooltip title="click to add settlement">
-                <Button variant='outlined' size='small' color='primary'
-                  onClick={() => setOpen({ open: true, id: value })}
-                >
-                  Add settlement
-                </Button>
-              </Tooltip>
+              !tableMeta?.rowData[8] ?
+                <Tooltip title="click to add settlement">
+                  <Button variant='outlined' size='small' color='primary'
+                    onClick={() => setOpen({ open: true, id: value })}
+                  >
+                    Add settlement
+                  </Button>
+                </Tooltip> : '-'
             )
           }
         }

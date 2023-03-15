@@ -80,6 +80,11 @@ const CreditNewRequestTable = ({ currentUser }) => {
         }
       },
       {
+        name: 'account_no',
+        label: 'Account number',
+        options: { filter: false }
+      },
+      {
         name: 'last_modified_by',
         label: 'Submitted or Modified by',
         options: {

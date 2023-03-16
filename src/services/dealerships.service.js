@@ -231,3 +231,37 @@ export const postReferralData = (dealershipID, data, id) => {
       });
   });
 };
+
+export const getResignList = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('document/resign/list')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
+
+export const deleteResignDocument = (dealership_id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`document/resign/list?dealership_id=${dealership_id}`, {
+      method: 'DELETE'
+    })
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};

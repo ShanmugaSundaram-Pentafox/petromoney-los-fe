@@ -3,8 +3,6 @@ import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { green } from '@material-ui/core/colors';
 import Divider from '@material-ui/core/Divider';
-import Step from '@material-ui/core/Step';
-import Stepper from '@material-ui/core/Stepper';
 import Typography from '@material-ui/core/Typography';
 import CheckRoundedIcon from '@material-ui/icons/CheckRounded';
 import CloseIcon from '@material-ui/icons/Close';
@@ -22,15 +20,12 @@ import { useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import DealerEditForm from './DealerEditForm';
 import TextInput from '../../../components/TextInput/TextInput';
-import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { API } from '../../../config/api';
 import { logger } from '../../../config/logger';
-import { URL } from '../../../config/serverUrls';
-import { rulesList } from '../../../config/userRules';
-import { cryptoEncrypt } from '../../../services/crypto.service';
 import { getKycAgents, getKycStatus, initiateKYC } from '../../../services/dealers.service';
 import { validateId } from '../../../services/dealerships.service';
+import { addApplicants } from '../../../services/fileUpload.service';
 import { isAllowed } from '../../../utils/cerbos';
 import { compareObject } from '../../../utils/compareObject.util';
 import CheckAllowed from '../../rbac/CheckAllowed';
@@ -55,22 +50,12 @@ const useStyles = makeStyles((theme) => ({
   sidePanelFormContentWrapper: {
     flex: 1,
     overflow: 'auto',
+    padding: 16,
   },
   actionButtonsWrapper: {
     display: 'flex',
     justifyContent: 'space-between',
     padding: '12px 16px',
-  },
-  stepperRoot: {
-    padding: 16,
-    paddingRight: 0,
-    paddingTop: 8,
-  },
-  stepTitle: {
-    '& .MuiStepLabel-label.MuiStepLabel-active': {
-      fontSize: 15,
-      fontWeight: 600,
-    },
   },
   editButton: {
     marginRight: '8px',
@@ -93,7 +78,6 @@ const DealerEditSideWrapper = ({
   dealersList,
   isAdd,
   dealershipId,
-  getDealerApiCall,
   data,
   currentUser,
   onClose,
@@ -102,10 +86,7 @@ const DealerEditSideWrapper = ({
   const classes = useStyles();
   const queryClient = useQueryClient()
   const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
-  const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [apicallStatus, setApicallStatus] = useState(null);
-  const [apiCallMessage, setApiCallMessage] = useState('');
   const [selectedDate, setSelectedDate] = useState();
   const [selectedState, setSelectedState] = useState();
   const [panValidateData, setPanValidateData] = useState({ icon: false })
@@ -115,7 +96,6 @@ const DealerEditSideWrapper = ({
   const [agentId, setAgentId] = useState();
   const [agentIdList, setAgentIdList] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
-  const vkyc_permission = permissionCheck(currentUser.role_name, rulesList.vkyc_edit);
 
 
   const handleEdit = () => {
@@ -123,7 +103,7 @@ const DealerEditSideWrapper = ({
   };
 
   useEffect(() => {
-    if(isAllowed(currentUser?.permissions, resources_id.dealer, action_id.dealer.Vkyc)){
+    if (isAllowed(currentUser?.permissions, resources_id.dealer, action_id.dealer.Vkyc)) {
       getKycStatus(modelType.toLowerCase(), values.dealership_id, values.id)
         .then((data) => {
           if (data?.is_initiated === 1)
@@ -148,8 +128,8 @@ const DealerEditSideWrapper = ({
   let coApplicantFields = {};
   if (modelType === 'COAPPLICANT') {
     coApplicantFields = {
-      dealer_id: Yup.number().nullable('Enter Relation').required('Enter Relation'),
-      relationship: Yup.string().min(2).nullable('Enter Relationship type').required('Enter Relationship Type'),
+      relation_to: Yup.number().nullable('Enter Relation').required('Enter Relation'),
+      relationship: Yup.number().nullable('Enter Relationship type').required('Enter Relationship Type'),
     };
   }
 
@@ -230,10 +210,8 @@ const DealerEditSideWrapper = ({
   const handleSave = (value, fileType) => {
     if (fileType === 'PAN') {
       setFieldValue('pan_file_url', value[0]);
-    } else if (fileType === 'Front') {
-      setFieldValue('aadhar_f_file_url', value[0]);
-    } else if (fileType === 'Back') {
-      setFieldValue('aadhar_b_file_url', value[0]);
+    } else if (fileType === 'AADHAR') {
+      setFieldValue('aadhar_file_url', value[0]);
     } else {
       setFieldValue('profile_image_url', value[0]);
     }
@@ -249,7 +227,6 @@ const DealerEditSideWrapper = ({
     initialValues: {
       ...data, state: data?.state_code, state_name: data?.state, city_name: data?.city, city: data?.city_name
     },
-
     onReset: (values, e) => {
       setReadOnly(true);
     },
@@ -257,6 +234,7 @@ const DealerEditSideWrapper = ({
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: (values) => {
+      setLoading(true);
       if (isAdd === 'Add') {
         validateId('pan', values?.pan)
           .then((res) => {
@@ -273,93 +251,44 @@ const DealerEditSideWrapper = ({
             setPanValidateData({ icon: true, idType: 'PAN' })
           })
       }
-      values.first_name = values.first_name.toUpperCase();
-      values.last_name = values.last_name.toUpperCase();
-      values.father_name = values.father_name.toUpperCase();
-      setLoading(true);
       const dob = selectedDate ? format(new Date(selectedDate), 'dd-MM-yyyy') : values.dob ? values.dob : null
-      const date_values = { ...values, dob: dob, pan: values.pan.toUpperCase(), is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0 };
-      let obj = {};
-      if (values.id) {
-        obj = compareObject(data, date_values)
+      const date_values = { ...values, dob: dob, pan: values.pan.toUpperCase(), is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0, category: modelType };
+      let commonObj = { category: modelType }
+      if (date_values?.pan_file_url != data?.pan_file_url) {
+        commonObj = { ...commonObj, pan: data?.pan }
       }
-      else {
-        obj = { ...date_values }
+      if (date_values?.aadhar_file_url != data?.aadhar_file_url) {
+        commonObj = { ...commonObj, aadhar: data?.aadhar }
       }
-      const formData = new FormData();
-      Object.keys(obj).forEach((key) => {
-        if (key === 'pan') {
-          let pan = values?.pan ? cryptoEncrypt(values.pan) : values?.pan;
-          formData.append(key, pan)
-        } else if (key === 'aadhar') {
-          let aadhar = values?.aadhar ? cryptoEncrypt(values.aadhar) : values?.aadhar;
-          formData.append(key, aadhar)
-        } else {
-          formData.append(key, obj[key]);
-        }
-      });
-      const apiURL =
-        modelType === 'DEALER'
-          ? URL.dealers
-          : modelType === 'GUARANTOR'
-            ? URL.guarantor
-            : URL.coApplicants;
-      let url = `${apiURL}/${dealershipId}`;
-      if (values.id) {
-        url += `/${values.id}`;
+      const resultObj = data?.id ? compareObject(data, date_values, commonObj) : date_values
+      let apiUrl = `applicant/${dealershipId}`;
+      if (date_values?.id) {
+        apiUrl += `/${date_values?.id}`;
       }
-      if (modelType !== 'GUARANTOR') {
-        formData.append('user_id', currentUser.id);
-      }
-      fetch(`${URL.base}${url}`, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${currentUser.token}`,
-        },
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((res) => {
-          setLoading(false);
-          if (res.status === 'SUCCESS') {
-            setApicallStatus('success');
-            enqueueSnackbar(res.message, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-              variant: 'success',
-            });
-            onClose();
-            modelType === 'DEALER' &&
-              queryClient.invalidateQueries(['dealers-coapplicant', id])
-
-            modelType === 'COAPPLICANT' ?
-              queryClient.invalidateQueries(['co-applicants', id]) : queryClient.invalidateQueries(['guarantors', id])
-          } else {
-            enqueueSnackbar(res.message, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-              variant: 'error',
-            });
-          }
+      addApplicants(resultObj, currentUser, apiUrl, data?.id)
+        .then((message) => {
+          enqueueSnackbar(message, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          });
+          onClose()
+          queryClient.invalidateQueries(['co-applicants', id])
+          queryClient.invalidateQueries(['dealers-coapplicant', id])
+          queryClient.invalidateQueries(['guarantors', id])
         })
         .catch((err) => {
-          setReadOnly(false);
           setLoading(false);
-          enqueueSnackbar(err.message, {
+          enqueueSnackbar(err, {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',
             },
             variant: 'error',
           });
-          logger(err);
-        });
+        })
     },
   });
   const handleDateChange = (date) => {
@@ -419,37 +348,28 @@ const DealerEditSideWrapper = ({
         </IconButton>
       </Typography>
       <div className={classes.sidePanelFormContentWrapper}>
-        <Stepper
-          activeStep={activeStep}
-          orientation='vertical'
-          className={classes.stepperRoot}
-        >
-          <Step key={data.id}>
-            <DealerEditForm
-              dealersList={dealersList}
-              deleteFile={deleteFile}
-              readOnlyProps={readOnly}
-              modelType={modelType}
-              data={data}
-              handleDate={handleDateChange}
-              handleState={handleStateChange}
-              values={values}
-              errors={errors}
-              onChange={handleChange}
-              handleSave={handleSave}
-              setFieldValue={setFieldValue}
-              setPanValidateData={setPanValidateData}
-              panValidateData={panValidateData}
-              setAadharValidateData={setAadharValidateData}
-              aadharValidateData={aadharValidateData}
-              validateField={validateField}
-              currentUser={currentUser}
-            />
-          </Step>
-        </Stepper>
-        {apicallStatus ? (
-          <Alert severity={apicallStatus}>{apiCallMessage}</Alert>
-        ) : null}
+        <DealerEditForm
+          dealersList={dealersList}
+          deleteFile={deleteFile}
+          readOnlyProps={readOnly}
+          modelType={modelType}
+          data={data}
+          handleDate={handleDateChange}
+          handleState={handleStateChange}
+          values={values}
+          errors={errors}
+          onChange={handleChange}
+          handleSave={handleSave}
+          setFieldValue={setFieldValue}
+          setPanValidateData={setPanValidateData}
+          panValidateData={panValidateData}
+          setAadharValidateData={setAadharValidateData}
+          aadharValidateData={aadharValidateData}
+          validateField={validateField}
+          currentUser={currentUser}
+          id={id}
+          onClose={onClose}
+        />
       </div>
       <div className={classes.actionFooter}>
         <Divider />

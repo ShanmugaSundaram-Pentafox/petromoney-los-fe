@@ -1,4 +1,4 @@
-import { Drawer, Tooltip } from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, Drawer, Tooltip } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import { green, grey } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
@@ -9,6 +9,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
+import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
@@ -60,6 +61,7 @@ const GuarantorsTable = ({
   const { enqueueSnackbar } = useSnackbar();
   const [rowData, setRowData] = useState();
   const [crimeData, setCrimeData] = useState();
+  const [openDialog, setOpenDialog] = useState({ open: false });
 
   const deleteApplicant = (values) => {
     const obj = { ...values, is_active: values.is_active == 1 ? 0 : 1 };
@@ -74,6 +76,7 @@ const GuarantorsTable = ({
           },
           variant: 'success',
         });
+        setOpenDialog({ open: false })
         queryClient.invalidateQueries(['co-applicants', id])
         queryClient.invalidateQueries(['dealers-coapplicant', id])
         queryClient.invalidateQueries(['guarantors', id])
@@ -86,6 +89,7 @@ const GuarantorsTable = ({
           },
           variant: 'error',
         });
+        setOpenDialog({ open: false })
       })
   };
 
@@ -213,7 +217,7 @@ const GuarantorsTable = ({
                   {
                     // Guarantor status change permissions
                     <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorStatus}>
-                      <div style={{ marginLeft: 12 }} onClick={() => deleteApplicant(row)}>
+                      <div style={{ marginLeft: 12 }} onClick={() => { setOpenDialog({ open: true, data: row }) }}>
                         {
                           row.is_active == 0 ? (
                             <Tooltip title="Activate">
@@ -238,6 +242,26 @@ const GuarantorsTable = ({
           ))}
         </TableBody>
       </Table>
+      <Dialog
+        open={openDialog?.open}
+        onClose={() => setOpenDialog({ ...openDialog, open: false })}
+        maxWidth='xs'
+        fullWidth
+      >
+        <DialogContent>
+          <div style={{ textAlign: 'center', marginBottom: 16 }}>
+            <InfoCircleOutlined style={{ fontSize: 48, margin: 16, marginBottom: 20, color: openDialog?.data?.is_active ? 'rgb(255,59,48)' : 'rgb(62, 175, 118)' }} />
+            <Typography variant='h3'>Are you sure?</Typography>
+          </div>
+          <DialogContentText style={{ textAlign: 'center' }}>{`Do you really want to delete ${openDialog?.data?.first_name}?`}</DialogContentText>
+        </DialogContent>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: 19 }}>
+          <Button size='medium' variant='outlined' onClick={() => setOpenDialog({ ...openDialog, open: false })}>Cancel</Button>
+          <Button variant='contained' size='medium' style={openDialog?.data?.is_active == 1 ? { backgroundColor: 'rgb(255,59,48)', color: 'white', marginLeft: 16 } : { backgroundColor: 'rgb(62, 175, 118)', color: 'white', marginLeft: 16 }} onClick={() => deleteApplicant(openDialog?.data)}>
+            {openDialog?.data?.is_active == 1 ? 'Deactivate' : 'Activate'}
+          </Button>
+        </div>
+      </Dialog>
       <Drawer anchor="right" open={rowData} variant="temporary">
         <div className={classes.sidePanelWrapper}>
           {

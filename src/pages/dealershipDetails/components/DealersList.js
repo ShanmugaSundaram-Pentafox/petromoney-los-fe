@@ -81,7 +81,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
     },
     refetchOnWindowFocus: false
   })
-  const { data: dealerData } = useQuery(['dealers-coapplicant', id], () => getDealersByDealershipId(id), {
+  const { data: dealerData, refetch } = useQuery(['dealers-coapplicant', id], () => getDealersByDealershipId(id), {
     initialData: [],
     select: res => {
       return res.map(d => ({
@@ -143,6 +143,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   const updateApplicantData = () => {
     updateApplicantDataById(id, updateApplicant?.value)
       .then((res) => {
+        refetch();
         enqueueSnackbar(res, {
           anchorOrigin: {
             vertical: 'top',
@@ -193,7 +194,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
                     }
                   </TextInput>
                 </div>
-                {updateApplicant?.value ?<Button style={{ marginLeft: 20 }} variant='outlined' color='primary' onClick={updateApplicantData}>Update</Button> : null}
+                {updateApplicant?.value ? <Button style={{ marginLeft: 20 }} variant='outlined' color='primary' onClick={updateApplicantData}>Update</Button> : null}
               </div>
             </CheckAllowed>
         }

@@ -4,7 +4,7 @@ import apiCall from '../utils/api.util';
 
 export const getDealersByDealershipId = id => {
   return new Promise((resolve, reject) => {
-    apiCall(`${URL.dealers}/${id}`)
+    apiCall(`applicant/${id}?category=DEALER`)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           const result = data.map(item => ({
@@ -26,7 +26,28 @@ export const getDealersByDealershipId = id => {
 
 export const getCoApplicantByDealershipId = id => {
   return new Promise((resolve, reject) => {
-    apiCall(`${URL.coApplicants}/${id}`)
+    apiCall(`applicant/${id}?category=COAPPLICANT`)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          const result = data.map(item => ({
+            ...item,
+            pan: item?.pan ? decrypt(item.pan) : item.pan,
+            aadhar: item?.aadhar ? decrypt(item.aadhar) : item.aadhar,
+          }));
+          resolve(result || []);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const getGuarantorByDealershipId = id => {
+  return new Promise((resolve, reject) => {
+    apiCall(`applicant/${id}?category=GUARANTOR`)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           const result = data.map(item => ({
@@ -133,13 +154,10 @@ export const getDealerTransportsList = () => {
       })
   });
 }
-export const deleteProfileDoc = (data, dealership_id, dealer_id, type) => {
-  let apiURL = type === 'DEALER' ? 'dealers' : type === 'COAPPLICANT' ? 'coapplicants' : 'guarantors'
+export const deleteProfileDoc = (docType, dealership_id, dealer_id, type) => {
   return new Promise((resolve, reject) => {
-    apiCall(`${apiURL}/${dealer_id}/${dealership_id}`, {
+    apiCall(`applicant/${dealer_id}/${dealership_id}?type=${docType}`, {
       method: 'DELETE',
-      body: data
-
     })
       .then(async ({ res, status, message }) => {
         resolve({ res, message });
@@ -296,6 +314,24 @@ export const getKycAgents = () => {
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const updateApplicantDataById = (id,applicantId) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`applicant/${id}/${applicantId}/swap`,{
+      method:'POST'
+    })
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
         } else {
           reject(message);
         }

@@ -1,7 +1,7 @@
 import apiCall from '../utils/api.util';
 
-export const getRbacAccessDetails = (role_id, type='MDM') => {
-  if(typeof(role_id) != 'undefined') {
+export const getRbacAccessDetails = (role_id, type = 'MDM') => {
+  if (typeof (role_id) != 'undefined') {
     return new Promise((resolve, reject) => {
       apiCall(`role/${role_id}/access?type=${type}`)
         .then(({ status, data, message }) => {
@@ -18,7 +18,7 @@ export const getRbacAccessDetails = (role_id, type='MDM') => {
   }
 }
 
-export const getRbacResources = (resource_type='MDM', resource_id) => {
+export const getRbacResources = (resource_type = 'MDM', resource_id) => {
   return new Promise((resolve, reject) => {
     apiCall(`rbac/resource${resource_id ? `/${resource_id}` : `?type=${resource_type}`}`)
       .then(({ status, data, message }) => {
@@ -94,6 +94,60 @@ export const createNewResource = (data) => {
 export const AddActionsToResource = (data, resource_id) => {
   return new Promise((resolve, reject) => {
     apiCall(`rbac/resource/${resource_id}`, {
+      method: 'PUT',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
+
+export const getRbacRouteList = (resource_id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`route/${resource_id}`)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  });
+}
+
+export const addApiRoute = (resourceId, data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`route/${resourceId}`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
+
+export const updateApiRoute = (resourceId, routeId, data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`route/${resourceId}/${routeId}`, {
       method: 'PUT',
       body: data,
     })

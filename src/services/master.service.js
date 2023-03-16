@@ -221,3 +221,43 @@ export const updateEmailListbyGroupId = (data, groupId) => {
       })
   });
 }
+
+export const getExternalApi = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('master/external')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(err => {
+        reject(err.message);
+      })
+  })
+}
+
+export const updateExternalApi = (data, id) => {
+  console.log(data, id);
+  let apiUrl = 'master/external'
+  if (id) {
+    apiUrl += `/${id}`
+  }
+  return new Promise((resolve, reject) => {
+    apiCall(apiUrl, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

@@ -1,4 +1,4 @@
-import { Drawer, Tooltip } from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, Drawer, Tooltip } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import { green, grey } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
@@ -9,15 +9,15 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
+import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import CreditInfoSideWrapper from './CreditInfoSideWrapper';
 import CrimeInfoSideWrapper from './CrimeInfoSideWrapper';
-import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { action_id, resources_id } from '../../../config/accessControl';
-import { URL } from '../../../config/serverUrls';
-import { rulesList } from '../../../config/userRules';
+import { addApplicants } from '../../../services/fileUpload.service';
+import { compareObject } from '../../../utils/compareObject.util';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles(theme => ({
@@ -61,70 +61,36 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
   const { enqueueSnackbar } = useSnackbar();
   const [rowData, setRowData] = useState();
   const [crimeData, setCrimeData] = useState();
-  const adminOnlyEdit = permissionCheck(currentUser.role_name, rulesList.admin_edit);
-  const cibil_permission = permissionCheck(currentUser.role_name, rulesList.cibil_edit);
-  const crime_permission = permissionCheck(currentUser.role_name, rulesList.crime_check);
+  const [openDialog, setOpenDialog] = useState({ open: false });
 
-  const DeleteApplicant = (values) => {
-    const formData = new FormData();
-    let obj = {};
-    Object.keys(obj).forEach((key) => {
-      formData.append(key, obj[key]);
-    });
-    if (values.is_active == 1) {
-      formData.append('is_active', 0)
-    }
-    else {
-      formData.append('is_active', 1)
-    }
 
-    const apiURL = URL.coApplicants;
-    let url = `${apiURL}/${id}`;
-    if (values.id) {
-      url += `/${values.id}`;
-    }
-    fetch(`${URL.base}${url}`, {
-      method: 'POST',
-      body: formData,
-      headers: {
-        Authorization: `Bearer ${currentUser.token}`,
-      },
-    })
-      .then(res => {
-        return res.json()
+  const deleteApplicant = (values) => {
+    const obj = { ...values, is_active: values.is_active == 1 ? 0 : 1 };
+    const resObj = compareObject(values, obj, { category: values?.category })
+    let apiUrl = `applicant/${id}/${values?.id}/active`;
+    addApplicants(resObj, currentUser, apiUrl, values?.id)
+      .then((message) => {
+        enqueueSnackbar(message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        });
+        setOpenDialog({ open: false })
+        queryClient.invalidateQueries(['co-applicants', id])
+        queryClient.invalidateQueries(['dealers-coapplicant', id])
+        queryClient.invalidateQueries(['guarantors', id])
       })
-      .then(({ status, message, data }) => {
-        if (status == 'SUCCESS') {
-          queryClient.invalidateQueries(['co-applicants', id])
-          enqueueSnackbar(message, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'success',
-          }
-          )
-        }
-        else {
-          enqueueSnackbar(message, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'error',
-          }
-          )
-        }
-      })
-      .catch(e => {
-        enqueueSnackbar(e.message, {
+      .catch((err) => {
+        enqueueSnackbar(err, {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',
           },
           variant: 'error',
-        }
-        )
+        });
+        setOpenDialog({ open: false })
       })
   }
 
@@ -135,11 +101,11 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
         <Typography variant="h5" align={titleAlign} className={classes.title}>No CoApplicants Found</Typography>
         {
           // coapplicants add permissions
-            <div style={{ textAlign: 'center', marginTop: 8 }}>
-              <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.coapplicantAdd}>
-                <Button color="primary" variant="outlined" size="small" onClick={() => onClickAddMenu('COAPPLICANT')}>Add CoApplicants</Button>
-              </CheckAllowed>
-            </div>
+          <div style={{ textAlign: 'center', marginTop: 8 }}>
+            <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.coapplicantAdd}>
+              <Button color="primary" variant="outlined" size="small" onClick={() => onClickAddMenu('COAPPLICANT')}>Add CoApplicants</Button>
+            </CheckAllowed>
+          </div>
         }
       </div>
     );
@@ -196,14 +162,14 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
                   {
                     // Coapp status change permission
                     <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.coapplicantStatus}>
-                      <div style={{ marginLeft: 12 }} onClick={() => DeleteApplicant(row)}>
+                      <div style={{ marginLeft: 12 }} onClick={() => { setOpenDialog({ open: true, data: row }) }}>
                         {
                           row.is_active == 0 ? (
-                            <Tooltip title='Deactivate'>
+                            <Tooltip title='Activate'>
                               <CheckCircleTwoToneIcon style={{ color: grey[500] }} />
                             </Tooltip>
                           ) : (
-                            <Tooltip title='Activate'>
+                            <Tooltip title='Deactivate'>
                               <CheckCircleTwoToneIcon style={{ color: green[200] }} />
                             </Tooltip>
                           )
@@ -217,6 +183,26 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
           ))}
         </TableBody>
       </Table>
+      <Dialog
+        open={openDialog?.open}
+        onClose={() => setOpenDialog({ ...openDialog, open: false })}
+        maxWidth='xs'
+        fullWidth
+      >
+        <DialogContent>
+          <div style={{ textAlign: 'center', marginBottom: 16 }}>
+            <InfoCircleOutlined style={{ fontSize: 48, margin: 16, marginBottom: 20, color: openDialog?.data?.is_active ? 'rgb(255,59,48)' : 'rgb(62, 175, 118)' }} />
+            <Typography variant='h3'>Are you sure?</Typography>
+          </div>
+          <DialogContentText style={{ textAlign: 'center' }}>{`Do you really want to delete ${openDialog?.data?.first_name}?`}</DialogContentText>
+        </DialogContent>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: 19 }}>
+          <Button size='medium' variant='outlined' onClick={() => setOpenDialog({ ...openDialog, open: false })}>Cancel</Button>
+          <Button variant='contained' size='medium' style={openDialog?.data?.is_active == 1 ? { backgroundColor: 'rgb(255,59,48)', color: 'white', marginLeft: 16 } : { backgroundColor: 'rgb(62, 175, 118)', color: 'white', marginLeft: 16 }} onClick={() => deleteApplicant(openDialog?.data)}>
+            {openDialog?.data?.is_active == 1 ? 'Deactivate' : 'Activate'}
+          </Button>
+        </div>
+      </Dialog>
       <Drawer
         anchor="right"
         open={rowData}

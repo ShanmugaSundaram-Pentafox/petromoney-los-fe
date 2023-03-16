@@ -1,18 +1,21 @@
+import { Button } from '@material-ui/core';
 import Drawer from '@material-ui/core/Drawer';
 import { makeStyles } from '@material-ui/core/styles';
-import React, { useState } from 'react';
+import { useSnackbar } from 'notistack';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import AddIconButon from './AddIcon';
 import CoApplicantsTable from './CoApplicantsTable';
 import DealerEditSideWrapper from './DealerEditSideWrapper';
 import DealersTable from './DealersTable';
 import GuarantorsTable from './GuarantorsTable';
+import TextInput from '../../../components/TextInput/TextInput';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { rulesList } from '../../../config/userRules';
-import { getDealersByDealershipId, getCoApplicantByDealershipId } from '../../../services/dealers.service';
-import { getAllGuarantor } from '../../../services/leegality.service';
+import { getDealersByDealershipId, getCoApplicantByDealershipId, getGuarantorByDealershipId, updateApplicantDataById } from '../../../services/dealers.service';
 import CheckAllowed from '../../rbac/CheckAllowed';
+
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -21,7 +24,9 @@ const useStyles = makeStyles(theme => ({
   addButton: {
     textAlign: 'right',
     float: 'right',
+    width: '40%',
     marginTop: '8px',
+    marginBottom: '8px',
     marginRight: '8px'
   },
   title: {
@@ -63,6 +68,9 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   const [formType, setFormType] = useState('');
   const [modelType, setModelType] = useState('');
   const [rowData, setRowData] = useState({});
+  const [updateApplicant, setUpdateApplicant] = useState({})
+  const [activeApplicant, setActiveApplicant] = useState([])
+  const { enqueueSnackbar } = useSnackbar();
   const { data: coApplicantsData } = useQuery(['co-applicants', id], () => getCoApplicantByDealershipId(id), {
     initialData: [],
     select: res => {
@@ -73,7 +81,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
     },
     refetchOnWindowFocus: false
   })
-  const { data: dealerData } = useQuery(['dealers-coapplicant', id], () => getDealersByDealershipId(id), {
+  const { data: dealerData, refetch } = useQuery(['dealers-coapplicant', id], () => getDealersByDealershipId(id), {
     initialData: [],
     select: res => {
       return res.map(d => ({
@@ -83,7 +91,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
     },
     refetchOnWindowFocus: false
   })
-  const { data: guarantorsData } = useQuery(['guarantors', id], () => getAllGuarantor(id), {
+  const { data: guarantorsData } = useQuery(['guarantors', id], () => getGuarantorByDealershipId(id), {
     initialData: [],
     select: res => {
       return res.map(d => ({
@@ -93,6 +101,12 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
     },
     refetchOnWindowFocus: false
   })
+  useEffect(() => {
+    if (dealerData) {
+      const res = dealerData?.filter(d => d?.is_active == 1)
+      setActiveApplicant(res)
+    }
+  }, [dealerData])
 
   const openCloseCreditForm = () => {
     setShowCreditForm(!showCreditForm);
@@ -126,17 +140,74 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   const editFormClose = (type) => {
     setShowDealerEditForm(false)
   }
+  const updateApplicantData = () => {
+    updateApplicantDataById(id, updateApplicant?.value)
+      .then((res) => {
+        refetch();
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        });
+      })
+      .catch((err) => {
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      })
+
+  }
 
   const deletable = permissionCheck(currentUser.role_name, rulesList.applicant_delete);
+
   return (
     <>
-      {
-        <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerAdd}>
-          <div className={classes.addButton}>
-            <AddIconButon onClickAddMenu={onClickAddMenu} />
-          </div>
-        </CheckAllowed>
-      }
+      <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+        {
+          activeApplicant?.length > 1 &&
+            <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.applicantSwap}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: 20 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <label style={{ marginRight: 8 }}>Change main Applicant</label>
+                  <TextInput
+                    select
+                    error={updateApplicant?.error}
+                    helperText={updateApplicant?.error}
+                    value={updateApplicant?.value}
+                    onChange={(e) => setUpdateApplicant({ updateApplicant, value: e?.target?.value })}
+                    SelectProps={{
+                      native: true,
+                    }}
+                    InputLabelProps={{ shrink: true }}
+                  >
+                    <option value=''>choose applicant</option>
+                    {
+                    activeApplicant?.map((item, i) => {
+                      return <option key={i} value={item?.id}>{item.first_name}</option>
+                    })
+                    }
+                  </TextInput>
+                </div>
+                {updateApplicant?.value ? <Button style={{ marginLeft: 20 }} variant='outlined' color='primary' onClick={updateApplicantData}>Update</Button> : null}
+              </div>
+            </CheckAllowed>
+        }
+        {
+          <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerAdd}>
+            <div>
+              <AddIconButon onClickAddMenu={onClickAddMenu} />
+            </div>
+          </CheckAllowed>
+        }
+      </div>
+      <div className={classes.addButton}>
+      </div>
       <DealersTable
         id={id}
         deletable={deletable}
@@ -191,7 +262,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         <div className={classes.sidePanelWrapper}>
           <DealerEditSideWrapper
             id={id}
-            dealersList={dealerData}
+            dealersList={activeApplicant}
             isAdd={formType}
             modelType={modelType}
             dealershipId={id}

@@ -316,9 +316,14 @@ export const getCollectionRemark = () => {
   })
 }
 
-export const getCollectionRemarkData = () => {
+export const getCollectionRemarkData = (data) => {
+  let qry = []
+  let apiUrl = 'loan/collection/remarks';
+  if (data?.type=='id') qry.push(`dealership_id=${data?.value}`)
+  if (data?.type === 'name') qry.push(`dealership_name=${data?.value}`)
+  if (qry.length) apiUrl += '?' + qry.join('&')
   return new Promise((resolve, reject) => {
-    apiCall('loan/collection/remarks')
+    apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data)
@@ -350,7 +355,7 @@ export const getCollectionRemarkOptions = () => {
 
 export const getCollectionRemarkByLoanId = (loan_id) => {
   return new Promise((resolve, reject) => {
-    apiCall(`dealership/${loan_id}/collection/remarks`)
+    apiCall(`loan/${loan_id}/collection/remarks`)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data)
@@ -491,5 +496,5 @@ export const deleteUserAccount = () => {
         reject(e.message);
       })
   });
-  
+
 }

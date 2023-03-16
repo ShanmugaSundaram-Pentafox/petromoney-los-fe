@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Drawer,
   makeStyles,
   Paper,
   Table,
@@ -19,9 +20,10 @@ import { Skeleton } from '@material-ui/lab';
 import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
-import { useQueryClient } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
+import AddRouteForm from './AddRouteForm';
 import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
-import { updateRbacAccess } from '../../services/rbac.service';
+import { getRbacRouteList, updateRbacAccess } from '../../services/rbac.service';
 import { checkValue, parseValue } from '../../utils/cerbos';
 
 const useStyles = makeStyles((theme) => ({
@@ -42,6 +44,10 @@ const useStyles = makeStyles((theme) => ({
       marginRight: 15,
     },
   },
+  sidePanelWrapper: {
+    width: '40vw',
+    minWidth: 300
+  },
   editButton: {
     marginRight: '8px',
     '&.MuiButton-contained': {
@@ -61,6 +67,9 @@ const APIAccessPage = ({ accessControl, selectedRole, accessLoading }) => {
   const [buffer, setBuffer] = useState([]);
   const [updateDialog, setUpdateDialog] = useState(false);
   const [updateLoading, setUpdateLoading] = useState(false);
+  const [openDrawer, setOpenDrawer] = useState({});
+  const { data: routeList = [] } = useQuery(['api-route-list', openDrawer?.resource_id], () => getRbacRouteList(openDrawer?.resource_id), { refetchOnWindowFocus: false, enabled: openDrawer?.resource_id ? true : false })
+
 
   // filter particular action from a resource with action_name [read, edit, delete]
   const findActionById = (array, action_name) => {
@@ -138,8 +147,8 @@ const APIAccessPage = ({ accessControl, selectedRole, accessLoading }) => {
             <TableCell>Delete</TableCell>
           </TableHead>
           <TableBody>
-            { 
-              accessLoading ? [1,2,1,1,2,1,2,1,2,1,2,1,2,1].map((a, i) => (
+            {
+              accessLoading ? [1, 2, 1, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1].map((a, i) => (
                 <TableRow key={i}>
                   <TableCell>
                     <Skeleton variant='text' />
@@ -158,33 +167,33 @@ const APIAccessPage = ({ accessControl, selectedRole, accessLoading }) => {
                   </TableCell>
                 </TableRow>
               )) :
-            accessControl?.map((access, i) => {
-              return (
-                <TableRow key={i} hover>
-                  <TableCell>
-                    {accessLoading ? <Skeleton variant='text' /> : access?.resource?.kind}
-                  </TableCell>
-                  <TableCell>
-                    {access?.resource?.description}
-                  </TableCell>
-                  {
-                    ['read', 'edit', 'delete'].map((act, i) => (
-                      <TableCell component="th" scope="row" key={i}>
-                        <Checkbox
-                          size="small"
-                          id={findActionById(access, act)?.action_name}
-                          onChange={(event) => handleAccessChange(event, access)}
-                          disabled={selectedRole == 1}
-                          checked={checkValue(
-                            findActionById(access, act)?.permission
-                          )}
-                        />
+                accessControl?.map((access, i) => {
+                  return (
+                    <TableRow onClick={() => setOpenDrawer({ open: true, resource_id: access?.resource?.id })} key={i} hover>
+                      <TableCell>
+                        {accessLoading ? <Skeleton variant='text' /> : access?.resource?.kind}
                       </TableCell>
-                    ))
-                  }
-                </TableRow>
-              );
-            })}
+                      <TableCell>
+                        {access?.resource?.description}
+                      </TableCell>
+                      {
+                        ['read', 'edit', 'delete'].map((act, i) => (
+                          <TableCell component="th" scope="row" key={i}>
+                            <Checkbox
+                              size="small"
+                              id={findActionById(access, act)?.action_name}
+                              onChange={(event) => handleAccessChange(event, access)}
+                              disabled={selectedRole == 1}
+                              checked={checkValue(
+                                findActionById(access, act)?.permission
+                              )}
+                            />
+                          </TableCell>
+                        ))
+                      }
+                    </TableRow>
+                  );
+                })}
           </TableBody>
         </Table>
       </TableContainer>
@@ -231,7 +240,7 @@ const APIAccessPage = ({ accessControl, selectedRole, accessLoading }) => {
                           }
                         >
                           {findActionById(action, act)?.permission ==
-                          undefined ? null : checkValue(
+                            undefined ? null : checkValue(
                               findActionById(action, act)?.permission
                             ) ? (
                               <Check />
@@ -274,6 +283,16 @@ const APIAccessPage = ({ accessControl, selectedRole, accessLoading }) => {
           ) : null}
         </div>
       </Dialog>
+      <Drawer
+        anchor="right"
+        open={openDrawer?.open}
+        onClose={() => { setOpenDrawer({ ...openDrawer, open: false }) }}
+        variant="temporary"
+      >
+        <div className={classes.sidePanelWrapper}>
+          <AddRouteForm data={routeList} callback={() => setOpenDrawer({ open: false })} />
+        </div>
+      </Drawer>
     </Paper>
   );
 };

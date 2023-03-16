@@ -1,4 +1,4 @@
-import { Drawer, Tooltip } from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, Drawer, Tooltip } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import { green, grey } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
@@ -9,15 +9,15 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
+import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import CreditInfoSideWrapper from './CreditInfoSideWrapper';
 import CrimeInfoSideWrapper from './CrimeInfoSideWrapper';
-import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { action_id, resources_id } from '../../../config/accessControl';
-import { URL } from '../../../config/serverUrls';
-import { rulesList } from '../../../config/userRules';
+import { addApplicants } from '../../../services/fileUpload.service';
+import { compareObject } from '../../../utils/compareObject.util';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
 const useStyles = makeStyles(theme => ({
@@ -29,11 +29,11 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 8
   },
   table: {
-    // minWidth: 650,
     padding: 8
   },
   header: {
     display: 'flex',
+    alignItems: 'center',
     marginBottom: 8
   },
   sidePanelWrapper: {
@@ -54,76 +54,42 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
+
 const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, dealersClickRow }) => {
   const classes = useStyles();
   const queryClient = useQueryClient()
   const { enqueueSnackbar } = useSnackbar();
   const [rowData, setRowData] = useState();
   const [crimeData, setCrimeData] = useState();
-  const adminOnlyEdit = permissionCheck(currentUser.role_name, rulesList.admin_edit);
-  const cibil_permission = permissionCheck(currentUser.role_name, rulesList.cibil_edit);
-  const crime_permission = permissionCheck(currentUser.role_name, rulesList.crime_check);
+  const [openDialog, setOpenDialog] = useState({ open: false });
 
-  const DeleteApplicant = (values) => {
-    const formData = new FormData();
-    let obj = {};
-    Object.keys(obj).forEach((key) => {
-      formData.append(key, obj[key]);
-    });
-    if (values.is_active == 1) {
-      formData.append('is_active', 0)
-    }
-    else {
-      formData.append('is_active', 1)
-    }
-
-    const apiURL = URL.dealers;
-    let url = `${apiURL}/${id}`;
-    if (values.id) {
-      url += `/${values.id}`;
-    }
-    fetch(`${URL.base}${url}`, {
-      method: 'POST',
-      body: formData,
-      headers: {
-        Authorization: `Bearer ${currentUser.token}`,
-      },
-    })
-      .then(res => {
-        return res.json()
+  const deleteApplicant = (values) => {
+    const obj = { ...values, is_active: values.is_active == 1 ? 0 : 1 };
+    const resObj = compareObject(values, obj, { category: values?.category })
+    let apiUrl = `applicant/${id}/${values?.id}/active`;
+    addApplicants(resObj, currentUser, apiUrl, values?.id)
+      .then((message) => {
+        enqueueSnackbar(message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        });
+        setOpenDialog({ open: false })
+        queryClient.invalidateQueries(['co-applicants', id])
+        queryClient.invalidateQueries(['dealers-coapplicant', id])
+        queryClient.invalidateQueries(['guarantors', id])
       })
-      .then(({ status, message, data }) => {
-        if (status == 'SUCCESS') {
-          queryClient.invalidateQueries(['dealers-coapplicant', id])
-          enqueueSnackbar(message, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'success',
-          }
-          )
-        }
-        else {
-          enqueueSnackbar(message, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'error',
-          }
-          )
-        }
-      })
-      .catch(e => {
-        enqueueSnackbar(e.message, {
+      .catch((err) => {
+        enqueueSnackbar(err, {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',
           },
           variant: 'error',
-        }
-        )
+        });
+        setOpenDialog({ open: false })
       })
   }
 
@@ -144,7 +110,7 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
   return (
     <div className={classes.wrapper}>
       <div className={classes.header}>
-        <Typography style={{ width: '90%' }} variant="h5" align={titleAlign} className={classes.title}>Dealers</Typography>
+        <Typography style={{ width: '50%' }} variant="h5" align={titleAlign} className={classes.title}>Dealers</Typography>
       </div>
       <Table className={classes.table} size="small" aria-label="Dealers">
         <TableHead>
@@ -157,27 +123,29 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
         </TableHead>
         <TableBody>
           {data.map((row, index) => (
-            <TableRow className={classes.tableRow} key={row.id} onClick={e => dealersClickRow(e, row, 'DEALER')}>
-              <TableCell>
-                {row.first_name}&nbsp;&nbsp;
+            <TableRow className={classes.tableRow} style={{ backgroundColor: row?.is_main_applicant == 1 ? '#EAFAF1' : null }} key={row.id} onClick={e => dealersClickRow(e, row, 'DEALER')}>
+              <TableCell >
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <Typography>{row.first_name}&nbsp;&nbsp;</Typography>
+                  {
+                    row?.is_main_applicant == 1 ?
+                      <Typography variant='caption'>( mainapplicant )</Typography> : null
+                  }
+                </div>
               </TableCell>
               <TableCell align="center">{row.mobile}</TableCell>
               <TableCell align="center">
-                {row.aadhar_f_file_url && <TableCell style={{ border: 0 }} align="center">
+                {row.aadhar_file_url && <TableCell style={{ border: 0 }} align="center">
                   <a className={classes.document}
-                    href={row.aadhar_f_file_url} target="_blank" title={'Aadhar Front'} rel="noreferrer">{'Aadhar Front'}</a>
-
-                </TableCell>}
-                {row.aadhar_b_file_url && <TableCell style={{ border: 0 }} align="center">
-                  <a className={classes.document}
-                    href={row.aadhar_b_file_url} target="_blank" title={'Aadhar Back'} rel="noreferrer">{'Aadhar Back'}</a>
-
+                    href={row.aadhar_file_url} target="_blank" title={'Aadhaar'} rel="noreferrer">
+                    {'Aadhaar'}
+                  </a>
                 </TableCell>}
                 {row.pan_file_url && <TableCell style={{ border: 0 }} align="center">
                   <a className={classes.document}
                     href={row.pan_file_url} target="_blank" title={'PAN'} rel="noreferrer">{'PAN'}</a>
                 </TableCell>}
-                {!row.pan_file_url && !row.aadhar_b_file_url && !row.aadhar_f_file_url &&
+                {!row.pan_file_url && !row.aadhar_file_url &&
                   <TableCell style={{ border: 0 }} align="center">
                     -
                   </TableCell>}
@@ -194,7 +162,7 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
                   </CheckAllowed>
                   {/* // dealer status change permission */}
                   <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerStatus}>
-                    <div style={{ marginLeft: 12 }} onClick={() => DeleteApplicant(row)}>
+                    <div style={{ marginLeft: 12 }} onClick={() => { setOpenDialog({ open: true, data: row }) }}>
                       {
                         row.is_active == 0 ? (
                           <Tooltip title='Activate'>
@@ -214,15 +182,33 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
           ))}
         </TableBody>
       </Table>
+      <Dialog
+        open={openDialog?.open}
+        onClose={() => setOpenDialog({ ...openDialog, open: false })}
+        maxWidth='xs'
+        fullWidth
+      >
+        <DialogContent>
+          <div style={{ textAlign: 'center', marginBottom: 16 }}>
+            <InfoCircleOutlined style={{ fontSize: 48, margin: 16, marginBottom: 20,color:openDialog?.data?.is_active ?'rgb(255,59,48)' :'rgb(62, 175, 118)' }} />
+            <Typography variant='h3'>Are you sure?</Typography>
+          </div>
+          <DialogContentText style={{ textAlign: 'center' }}>{`Do you really want to delete ${openDialog?.data?.first_name}?`}</DialogContentText>
+        </DialogContent>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: 19 }}>
+          <Button size='medium' variant='outlined' onClick={() => setOpenDialog({ ...openDialog, open: false })}>Cancel</Button>
+          <Button variant='contained' size='medium' style={openDialog?.data?.is_active == 1 ? { backgroundColor: 'rgb(255,59,48)', color: 'white', marginLeft: 16 } : { backgroundColor: 'rgb(62, 175, 118)', color: 'white', marginLeft: 16 }} onClick={() => deleteApplicant(openDialog?.data)}>
+            {openDialog?.data?.is_active == 1 ? 'Deactivate' : 'Activate'}
+          </Button>
+        </div>
+      </Dialog>
       <Drawer
         anchor="right"
         open={rowData}
         variant="temporary"
       >
         <div className={classes.sidePanelWrapper}>
-          {
-            <CreditInfoSideWrapper dealershipId={id} data={rowData} currentUser={currentUser} onClose={() => setRowData()} />
-          }
+          <CreditInfoSideWrapper dealershipId={id} data={rowData} currentUser={currentUser} onClose={() => setRowData()} />
         </div>
       </Drawer>
       <Drawer
@@ -232,9 +218,7 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
         variant="temporary"
       >
         <div className={classes.sidePanelWrapper}>
-          {
-            <CrimeInfoSideWrapper dealershipId={id} data={crimeData} currentUser={currentUser} onClose={() => setCrimeData()} />
-          }
+          <CrimeInfoSideWrapper dealershipId={id} data={crimeData} currentUser={currentUser} onClose={() => setCrimeData()} />
         </div>
       </Drawer>
     </div>

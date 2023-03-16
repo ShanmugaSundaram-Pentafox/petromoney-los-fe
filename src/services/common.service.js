@@ -227,6 +227,22 @@ export const getStates = () => {
   });
 };
 
+export const getRelationshipList = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('relationships')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data || []);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((err) => {
+        reject(err.message);
+      });
+  });
+};
+
 export const getAssetType = () => {
   return new Promise((resolve, reject) => {
     apiCall('asset')

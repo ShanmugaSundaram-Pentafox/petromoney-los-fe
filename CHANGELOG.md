@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.29.1](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/compare/v2.29.0...v2.29.1) (2023-03-17)
+
+
+### Bug Fixes
+
+* **disubursement:** remove add disbursed amount button for vivriti cases ([856d842](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/856d842990543243163dcb889fe96d2effdc4801))
+
 ## [2.29.0](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/compare/v2.26.0...v2.29.0) (2023-03-16)
 
 

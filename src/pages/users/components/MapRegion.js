@@ -55,13 +55,14 @@ const MapRegion = (data) => {
         return getAllRegion()
       })
       .then((d) => {
-        if(d.filter(item => item.region_name === 'All' || item.region_id === 0)) {
-          let reg = d
-          reg.splice(0,1)
-          setAllRegion(reg)
-        } else {
-          setAllRegion(d);
-        }
+        // removed region_name: all from the Database so no need to use this condition
+        // if(d.filter(item => item.region_name === 'All' || item.region_id === 0)) {
+        //   let reg = d
+        //   reg.splice(0,1)
+        //   setAllRegion(reg)
+        // } else {
+        setAllRegion(d);
+        // }
         setLoading(false);
       })
       .catch((e) => {
@@ -71,8 +72,8 @@ const MapRegion = (data) => {
   });
 
   const handleSelectAllRegion = (list, action, func) => {
-    if(func){
-      if(action === 'allRegion'){
+    if (func) {
+      if (action === 'allRegion') {
         setRegion(list.map(r => r.region_name ? r.region_id : r.region))
         setAllReg(true)
       } else {
@@ -88,8 +89,8 @@ const MapRegion = (data) => {
 
   const getValue = (e, list) => {
     const val = parseInt(e?.target?.value);
-    if(val === 0) {
-      if(region.includes(val)) {
+    if (val === 0) {
+      if (region.includes(val)) {
         setRegion([])
       } else {
         setRegion(list.map(r => r.region_name ? r.region_id : r.region))
@@ -98,18 +99,18 @@ const MapRegion = (data) => {
     }
     if (region.includes(val)) {
       var n = region.indexOf(val);
-      
+
       setRegion((d) => {
         let re = [...d];
         re.splice(n, 1)
-        if(re.includes(0)) {
+        if (re.includes(0)) {
           re.splice(re.indexOf(0), 1);
         }
         return re;
       });
     } else {
       setRegion((d) => {
-        if([...d, val].length === list.length - 1) {
+        if ([...d, val].length === list.length - 1) {
           d.unshift(0);
         }
         return d.concat(val);
@@ -178,12 +179,12 @@ const MapRegion = (data) => {
       <Typography variant="h4" component="h3">
         Regions Map
       </Typography>
-      <Grid container spacing={2} style={{padding: 10}}>
-        <Grid container style={{display: 'flex', justifyContent: 'space-between', marginTop: 10}}>
+      <Grid container spacing={2} style={{ padding: 10 }}>
+        <Grid container style={{ display: 'flex', justifyContent: 'space-between', marginTop: 10 }}>
           <Grid item md={5}>
             {
               regionList.length != 0 &&
-                <Button variant='outlined' size='small' onClick={() => handleSelectAllRegion(regionList, 'allRegion' , !allReg)}>{allReg ? 'Deselect All' : 'Select All'}</Button>
+                <Button variant='outlined' size='small' onClick={() => handleSelectAllRegion(regionList, 'allRegion', !allReg)}>{allReg ? 'Deselect All' : 'Select All'}</Button>
             }
           </Grid>
           <Grid item md={5}>
@@ -209,10 +210,10 @@ const MapRegion = (data) => {
                     </FormGroup>
                   </Paper>
                 );
-              }) : <Typography variant='body1' style={{color: 'rgb(0,0,0,0.4)'}}>All Regions are Mapped!</Typography>
+              }) : <Typography variant='body1' style={{ color: 'rgb(0,0,0,0.4)' }}>All Regions are Mapped!</Typography>
           }
         </Grid>
-        <Grid item xs={2} style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 15}}>
+        <Grid item xs={2} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 15 }}>
           <Button
             variant="outlined"
             color="secondary"
@@ -248,7 +249,7 @@ const MapRegion = (data) => {
                       />
                     </FormGroup>
                   );
-                }) : <Typography variant='body1' style={{color: 'rgb(0,0,0,0.4)'}}>No Regions are Mapped!</Typography>
+                }) : <Typography variant='body1' style={{ color: 'rgb(0,0,0,0.4)' }}>No Regions are Mapped!</Typography>
             }
           </Paper>
         </Grid>

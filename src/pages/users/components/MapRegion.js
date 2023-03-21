@@ -55,13 +55,14 @@ const MapRegion = (data) => {
         return getAllRegion()
       })
       .then((d) => {
-        if(d.filter(item => item.region_name === 'All' || item.region_id === 0)) {
-          let reg = d
-          reg.splice(0,1)
-          setAllRegion(reg)
-        } else {
-          setAllRegion(d);
-        }
+        // removed region_name: all from the Database so no need to use this condition
+        // if(d.filter(item => item.region_name === 'All' || item.region_id === 0)) {
+        //   let reg = d
+        //   reg.splice(0,1)
+        //   setAllRegion(reg)
+        // } else {
+        setAllRegion(d);
+        // }
         setLoading(false);
       })
       .catch((e) => {

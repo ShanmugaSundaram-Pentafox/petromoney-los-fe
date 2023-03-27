@@ -113,6 +113,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
         approver_id: user.value,
         product_id: info?.product_id,
         approval_remarks: remarks,
+        amount_requested: info?.amount_requested
       }
       updateLoanApprovalStatusById(id, loanData?.id, 'approval', reqBody)
         .then(res => {

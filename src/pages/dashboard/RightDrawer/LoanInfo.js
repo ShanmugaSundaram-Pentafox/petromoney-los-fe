@@ -59,7 +59,7 @@ const LoanInfo = ({
               <TableCell>Loan Type</TableCell>
               <TableCell>Interest %</TableCell>
               <TableCell>Penal Interest %</TableCell>
-              <TableCell align="right">Req. Amount</TableCell>
+              <TableCell align="right">Amount</TableCell>
               {viewable && <TableCell align="right">Amount Approved</TableCell>}
               {
                 ['disbursed', 'disbursement_approval'].includes(status) ? <TableCell align="right">Disbursement Amount</TableCell> : null
@@ -95,7 +95,33 @@ const LoanInfo = ({
               </TableCell>
               <TableCell scope="row" component="th"><strong>{selectedProduct?.interest}</strong></TableCell>
               <TableCell scope="row" component="th"><strong>{selectedProduct?.penal_interest}</strong></TableCell>
-              <TableCell align="right"><Currency value={row?.amount_requested} /></TableCell>
+              {/* option to edit requested amount of the loan in submit and review queue */}
+              <TableCell align="right">
+                {
+                  ['submitted','loan_review']?.includes(status) ? (
+                    <UserCan
+                      role={currentUser.role_name}
+                      perform={rulesList.loan_approval}
+                      yes={() => (
+                        <TextInput
+                          money
+                          number
+                          fullWidth={false}
+                          defaultValue={row?.amount_requested}
+                          onChange={e => {
+                            updateNewLoanInfo({
+                              ...newInfo,
+                              amount_requested: e.target.value
+                            })
+                          }}
+                        />
+                      )}
+                      no={() => <Currency value={row?.amount_requested} />}
+                    />
+                  )
+                    : <Currency value={row?.amount_requested} />
+                }
+              </TableCell>
               <TableCell align="right">
                 {
                   status === 'loan_approval' ? (

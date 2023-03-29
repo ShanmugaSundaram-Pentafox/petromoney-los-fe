@@ -68,7 +68,7 @@ const useStyles = makeStyles(theme => ({
 
 const PendingApprovalDrawer = ({ id, selectedLoanData, status, currentUser, readOnly, editable, data, onClose }) => {
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
-  const [info, setInfo] = useState({ amount_approved: selectedLoanData?.amount_approved })
+  const [info, setInfo] = useState({ amount_approved: selectedLoanData?.amount_requested })
   const [openModal, setOpenModal] = useState(false)
   const [loading, setLoading] = useState(false)
   const classes = useStyles();

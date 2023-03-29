@@ -51,22 +51,22 @@ const useStyles = makeStyles({
   }
 })
 
-export const DocAttachment = ({imgUrl, onUpload, onDelete, docName, action=false, disabled=false, tooltip='View', style={marginRight: 0}}) => {
+export const DocAttachment = ({ imgUrl, onUpload, onDelete, docName, action = false, disabled = false, tooltip = 'View', style = { marginRight: 0 } }) => {
   const classes = useStyles();
   const [imageModal, setImageModal] = useState({})
-  return(
+  return (
     <Grid item md={2} style={style}>
       <Grid item>
         <Tooltip title={!disabled ? tooltip : ''}>
-          <div className={classes.imgContainer} onClick={() => setImageModal({open: true, image: imgUrl, type: imgUrl?.endsWith('.pdf')})}>
+          <div className={classes.imgContainer} onClick={() => typeof (imgUrl) == 'string' ? setImageModal({ open: true, image: imgUrl, type: imgUrl?.endsWith('.pdf') }) : null}>
             {
-              typeof(imgUrl) === 'string' || imgUrl === null || imgUrl === undefined ?
+              typeof (imgUrl) === 'string' || imgUrl === null || imgUrl === undefined ?
                 imgUrl?.endsWith('.pdf') ?
                   <PictureAsPdfIcon style={{ color: '#63686E' }} /> :
-                  <img src={imgUrl || Thumbnail} alt={docName} height="100%" width="100%" style={{ borderRadius: 6, padding: 1, objectFit: 'cover', display: 'block' }}/> :
-                  <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
+                  <img src={imgUrl || Thumbnail} alt={docName} height="100%" width="100%" style={{ borderRadius: 6, padding: 1, objectFit: 'cover', display: 'block' }} /> :
+                <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
             }
-            <div className={classes.overlay} style={{background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(201,201,201,0) 0%, rgba(0,0,0,0.7598389697675946) 100%)'}}>{docName}</div>
+            <div className={classes.overlay} style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(201,201,201,0) 0%, rgba(0,0,0,0.7598389697675946) 100%)' }}>{docName}</div>
           </div>
         </Tooltip>
       </Grid>
@@ -83,7 +83,7 @@ export const DocAttachment = ({imgUrl, onUpload, onDelete, docName, action=false
             <Grid item>
               <Tooltip title={!disabled ? 'Delete' : ''}>
                 <div className={!disabled ? classes.buttons : classes.disbButtons} onClick={!disabled && onDelete}>
-                  <DeleteIcon fontSize='small' style={disabled ? {color: 'gray'}: {color: '#ff3d00'}} />
+                  <DeleteIcon fontSize='small' style={disabled ? { color: 'gray' } : { color: '#ff3d00' }} />
                 </div>
               </Tooltip>
             </Grid>

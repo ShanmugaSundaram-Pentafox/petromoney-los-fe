@@ -28,12 +28,12 @@ import { useFormik } from 'formik';
 import moment from 'moment';
 import React, { useState, useEffect } from 'react';
 import * as Yup from 'yup';
+import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 import Currency from '../../../components/Number/Currency';
 import TextInput, { InputWrapper } from '../../../components/TextInput/TextInput';
+import { resources_id } from '../../../config/accessControl';
 import { logger } from '../../../config/logger';
 import { updateLoanApprovalStatusById, deleteLoanDisbursementRecord } from '../../../services/loans.service';
-import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
-import { resources_id } from '../../../config/accessControl';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
 
@@ -127,6 +127,7 @@ const DispApprovedDataTable = ({ id, loanData, editable, currentUser }) => {
           setApiStatus({ status: 'success', message });
           setTimeout(() => {
             setModalData({ open: false })
+            window.location.reload();
             setValues({})
           }, 500);
         })

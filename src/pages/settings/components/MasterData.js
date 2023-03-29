@@ -1,7 +1,6 @@
 import { Drawer, Grid, Paper, Tooltip, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import React, {useState} from 'react';
-import { Link } from 'react-router-dom';
 import AssignProducts from './AssignProducts';
 import MasterCity from './MasterCity';
 import MasterCollectionRemarks from './MasterCollectionRemarks';
@@ -10,7 +9,6 @@ import MasterEmailGroup from './MasterEmailGroup';
 import Products from './Products';
 import Zones from './Zones';
 import {resources_id, action_id} from '../../../config/accessControl';
-import { ReactComponent as AccessIcon } from '../../../icons/accessIcon.svg';
 import { ReactComponent as AssetIcon } from '../../../icons/assets.svg';
 import { ReactComponent as BunkIcon } from '../../../icons/bunk.svg';
 import { ReactComponent as BusinessIcon } from '../../../icons/business.svg';
@@ -183,16 +181,6 @@ function MasterData({currentUser}) {
                   </div>
                 </Tooltip>
               </CheckAllowed>
-            </Grid>
-            <Grid item md={2}>
-              <Tooltip title="RBAC">
-                <Link to='/rbac'>
-                  <div className={classes.content}>
-                    <AccessIcon className={classes.icons} />
-                    <Typography variant="h5" align='center' className={classes.title} >RBAC</Typography>
-                  </div>
-                </Link>
-              </Tooltip>
             </Grid>
             <Grid item md={2}>
               <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id?.settings?.emailGroup}>

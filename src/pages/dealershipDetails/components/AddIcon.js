@@ -44,7 +44,7 @@ const AddIconButton = ({ onClickAddMenu }) => {
         <ButtonGroup variant="outlined" color="primary" ref={anchorRef} aria-label="split button">
           <Button
             color="primary"
-            size="small"
+            size="large"
             aria-controls={open ? 'split-button-menu' : undefined}
             aria-expanded={open ? 'true' : undefined}
             aria-label="select merge strategy"

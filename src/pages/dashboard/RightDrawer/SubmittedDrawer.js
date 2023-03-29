@@ -111,6 +111,7 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
         reviewer_id: user?.value,
         review_remarks: remarks,
         product_id: info?.product_id,
+        amount_requested: info?.amount_requested
       }
       updateLoanApprovalStatusById(id, loanData?.id, 'approval', reqBody)
         .then(res => {

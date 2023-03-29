@@ -14,12 +14,14 @@ import { makeStyles } from '@material-ui/styles';
 import { parse } from 'date-fns';
 import { useSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
 import { DocAttachment } from '../../../components/Attachment/DocAttachment';
 import CustomToken from '../../../components/CommonComponents/CustomToken';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import FileUpload, { FILE_FORMAT_IMG, FILE_FORMAT_PDF } from '../../../components/FileUpload';
 import TextInput from '../../../components/TextInput/TextInput';
 import { logger } from '../../../config/logger';
+import { getRelationshipList } from '../../../services/common.service';
 import { deleteProfileDoc, getPincodeDetails } from '../../../services/dealers.service';
 import { validateId } from '../../../services/dealerships.service';
 
@@ -29,55 +31,25 @@ const useStyles = makeStyles({
     paddingRight: 12,
     paddingBottom: 14
   },
-  input: {
-    display: 'none'
-  },
-  details: {
-    padding: 4,
-    borderColor: 'grey',
-    minWidth: 80,
-    height: 50,
-    display: 'flex',
-    textAlign: 'left',
-    alignItems: 'left',
-    justifyContent: 'left'
-  },
   readOnlyWrapper: {
     margin: '2px 4px',
     maxWidth: '98%',
-  },
-
-  fileStyle: {
-    display: 'flex',
-    justifyContent: 'space-around',
-    marginTop: 12,
-  },
-  fileAttachement: {
-    display: 'flex',
-    // justifyContent:'center',
-    marginTop: 6
-  },
-  icon: {
-    marginRight: 4,
-    marginTop: 6,
-  },
-  typography: {
-    marginTop: 8,
-  },
-  text: {
-    marginBottom: 4,
-    fontSize: 12,
   },
   title: {
     fontSize: 11,
   },
   attachmentContainer: {
-    display: 'flex', justifyContent: 'space-between', width: '39vw', paddingRight: 12, flexWrap: 'wrap'
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '39vw',
+    paddingRight: 12,
+    flexWrap: 'wrap'
   },
 });
 
-const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave, setFieldValue, setPanValidateData, panValidateData, validateField, setAadharValidateData, aadharValidateData,currentUser }) => {
+const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, editableValues, readOnlyProps, values, errors, onChange, handleState, handleSave, setFieldValue, setPanValidateData, panValidateData, validateField, setAadharValidateData, aadharValidateData, currentUser, id, onClose }) => {
   const readOnly = readOnlyProps;
+  const queryClient = useQueryClient();
   const classes = useStyles();
   const [city, setCity] = useState([]);
   const [showUpload, setShowUpload] = useState(false);
@@ -89,7 +61,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
   const { enqueueSnackbar } = useSnackbar();
   const [selectedDate, setSelectedDate] = useState(data?.dob && parse(data?.dob, 'dd-MM-yyyy', new Date()))
   const [anchorEl, setAnchorEl] = React.useState(null);
-
+  const { data: relationShipOptions = [] } = useQuery(['relationships'], () => getRelationshipList())
   const handleDateChange = (date) => {
     setSelectedDate(date)
     handleDate(date)
@@ -119,6 +91,10 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
           },
           variant: 'success',
         });
+        onClose()
+        queryClient.invalidateQueries(['co-applicants', id])
+        queryClient.invalidateQueries(['dealers-coapplicant', id])
+        queryClient.invalidateQueries(['guarantors', id])
       })
       .catch(err => {
         enqueueSnackbar(err, {
@@ -134,7 +110,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
   const handleValidate = (action, id, data) => {
     /*
      * If action is pan, only id is required else pan validateField will be called.
-     * If action is aadhar, id and name is required else aadhar validateField and name validateField will be called.
+     * If action is aadhaar, id and name is required else aadhaar validateField and name validateField will be called.
      */
     if ((action === 'pan' && id) || (action === 'aadhar' && id && values?.first_name)) {
       action === 'pan' && setPanValidateData({ icon: true, loading: true })
@@ -203,37 +179,6 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
   const date = new Date();
   const currentYear = date.getFullYear();
   const currentYearDiff = date.getFullYear() - 1970;
-  const relationShipOptions = [
-    { label: 'Choose Relationship', value: '' },
-    { label: 'Father', value: 'FATHER' },
-    { label: 'Mother', value: 'MOTHER' },
-    { label: 'Spouse', value: 'SPOUSE' },
-    { label: 'Uncle', value: 'UNCLE' },
-    { label: 'Aunt', value: 'AUNT' },
-    { label: 'Son', value: 'SON' },
-    { label: 'Daughter', value: 'DAUGHTER' },
-    { label: 'Grandfather', value: 'GRANDFATHER' },
-    { label: 'Grandmother', value: 'GRANDMOTHER' },
-    { label: 'Mother-in-law', value: 'MOTHER-IN-LAW' },
-    { label: 'Father-in-law', value: 'FATHER-IN-LAW' },
-    { label: 'Sister-in-law', value: 'SISTER-IN-LAW' },
-    { label: 'Brother-in-law', value: 'BROTHER-IN-LAW' },
-    { label: 'Brother', value: 'BROTHER' },
-    { label: 'Newphew', value: 'NEPHEW' },
-    { label: 'Partner', value: 'PARTNER' },
-    { label: 'Friend', value: 'FRIEND' },
-    { label: 'Shareholder', value: 'SHAREHOLDER' },
-    { label: 'Buyer', value: 'BUYER' },
-    { label: 'Supplier', value: 'SUPPLIER' },
-    { label: 'Business Neighbour', value: 'BUSINESS NEIGHBOUR' },
-    { label: 'Home Neighbour', value: 'HOME NEIGHBOUR' },
-    { label: 'Director', value: 'DIRECTOR' },
-    { label: 'Proprietor', value: 'PROPRIETOR' },
-    { label: 'Debtors', value: 'DEBTORS' },
-    { label: 'Creditors', value: 'CREDITORS' },
-    { label: 'Principal', value: 'PRINCIPAL' },
-    { label: 'Others', value: 'OTHERS' }
-  ]
 
   return (
     <>
@@ -275,19 +220,18 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 </Tooltip>
               </Grid>
               <Grid item md={6}>
-                <ViewData title='Aadhar' value={values.aadhar} endIcon={<CustomToken variant={values?.aadhar_verified ? 'success' : 'error'} label={values?.aadhar_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.aadhar_verified ? 'tick' : 'cross'} />} />
+                <ViewData title='Aadhaar' value={values.aadhar} endIcon={<CustomToken variant={values?.aadhar_verified ? 'success' : 'error'} label={values?.aadhar_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.aadhar_verified ? 'tick' : 'cross'} />} />
               </Grid>
             </Grid>
             <Divider />
             {
-              values?.profile_image_url || values?.pan_file_url || values?.aadhar_f_file_url || values?.aadhar_b_file_url ? (
+              values?.profile_image_url || values?.pan_file_url || values?.aadhar_file_url ? (
                 <div className={classes.readOnlyWrapper}>
                   <Typography variant="h6" style={{ marginTop: 8 }}>Attachments</Typography>
                   <div style={{ display: 'flex', marginTop: 16 }}>
                     {values.profile_image_url && <DocAttachment tooltip='View Profile' imgUrl={values?.profile_image_url} docName='Profile' style={{ marginRight: 20 }} />}
                     {values.pan_file_url && <DocAttachment tooltip='View PAN' imgUrl={values?.pan_file_url} docName='PAN' style={{ marginRight: 20 }} />}
-                    {values.aadhar_f_file_url && <DocAttachment tooltip='View Aadhar Front' imgUrl={values?.aadhar_f_file_url} docName='Aadhar front' style={{ marginRight: 20 }} />}
-                    {values.aadhar_b_file_url && <DocAttachment tooltip='View Aadhar Back' imgUrl={values?.aadhar_b_file_url} docName='Aadhar back' style={{ marginRight: 20 }} />}
+                    {values.aadhar_file_url && <DocAttachment tooltip='View Aadhaar' imgUrl={values?.aadhar_file_url} docName='Aadhaar' style={{ marginRight: 20 }} />}
                   </div>
                 </div>
               ) : (
@@ -327,7 +271,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
               <Grid {...gridItem} md={6}>
                 <TextInput
                   number
-                  label="Aadhar"
+                  label="Aadhaar"
                   name="aadhar"
                   value={values.aadhar}
                   disabled={aadharValidateData?.loading || values?.aadhar_verified}
@@ -340,7 +284,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 />
                 {
                   !values?.aadhar_verified || values?.aadhar !== data?.aadhar ?
-                    <Typography variant="caption" style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleValidate('aadhar', values?.aadhar, values?.first_name)}>Validate Aadhar</Typography> : null
+                    <Typography variant="caption" style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleValidate('aadhar', values?.aadhar, values?.first_name)}>Validate Aadhaar</Typography> : null
                 }
               </Grid>
               <Grid {...gridItem} md={12} >
@@ -595,11 +539,11 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                     <TextInput
                       select
                       label="Relation To"
-                      name="dealer_id"
-                      error={errors.dealer_id}
-                      helperText={errors.dealer_id}
+                      name="relation_to"
+                      error={errors.relation_to}
+                      helperText={errors.relation_to}
                       readOnly={readOnly}
-                      value={values.dealer_id}
+                      value={values.relation_to}
                       onChange={onChange}
                       disabled={readOnly}
                       SelectProps={{
@@ -636,7 +580,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                       {
                         relationShipOptions.map((item, i) => {
                           return (
-                            <option key={i} value={item.value}>{item.label}</option>
+                            <option key={i} value={item?.value}>{item.label}</option>
                           )
                         })
                       }
@@ -667,7 +611,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   <Grid {...gridItem} md={6}>
                     <Typography component="div" >
                       <Grid component="label" container style={{ marginBottom: '8px', marginTop: '6px' }} alignItems="center" spacing={2}>
-                        <Grid md={12} style={{ paddingLeft: 8, fontSize: 12 }}>Mobile number linked with AADHAR?</Grid>
+                        <Grid md={12} style={{ paddingLeft: 8, fontSize: 12 }}>Mobile number linked with AADHAAR?</Grid>
                         <Grid style={{ paddingLeft: '8px' }}>No</Grid>
                         <Grid>
                           <Switch
@@ -688,20 +632,23 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 <Typography variant="title"><strong>Attachments</strong></Typography>
               </Grid>
               <div className={classes.attachmentContainer}>
-                <DocAttachment action={true} imgUrl={values?.profile_image_url} docName='Profile' onUpload={() => docUpload('Profile')} onDelete={() => onDocDelete({ profile_image_url: '' })} disabled={!values?.profile_image_url} />
-                <DocAttachment action={true} imgUrl={values?.pan_file_url} docName='PAN Card' onUpload={() => docUpload('PAN')} onDelete={() => onDocDelete({ pan_file_url: '' })} disabled={!values?.pan_file_url} />
-                <DocAttachment action={true} imgUrl={values?.aadhar_f_file_url} docName='Aadhar Front' onUpload={() => docUpload('Front')} onDelete={() => onDocDelete({ aadhar_f_file_url: '' })} disabled={!values?.aadhar_f_file_url} />
-                <DocAttachment action={true} imgUrl={values?.aadhar_b_file_url} docName='Aadhar Back' onUpload={() => docUpload('Back')} onDelete={() => onDocDelete({ aadhar_b_file_url: '' })} disabled={!values?.aadhar_b_file_url} />
+                <DocAttachment action={true} imgUrl={values?.profile_image_url} docName='Profile' onUpload={() => docUpload('Profile')} onDelete={() => onDocDelete('profile')} disabled={!values?.profile_image_url} />
+                <DocAttachment action={true} imgUrl={values?.pan_file_url} docName='PAN Card' onUpload={() => docUpload('PAN')} onDelete={() => onDocDelete('pan')} disabled={!values?.pan_file_url} />
+                <DocAttachment action={true} imgUrl={values?.aadhar_file_url} docName='Aadhaar' onUpload={() => docUpload('AADHAR')} onDelete={() => onDocDelete('aadhar')} disabled={!values?.aadhar_file_url} />
               </div>
               {
-                showUpload && <FileUpload
-                  handleSave={(value) => {
-                    handleSave(value, fileType)
-                    showUpload && setShowUpload(false);
-                  }}
-                  FILE_FORMAT={[...FILE_FORMAT_IMG, ...FILE_FORMAT_PDF]}
-                  title='Upload Documents'
-                  open={showUpload} onCloseUploader={() => { setShowUpload(false) }} />
+                showUpload && (
+                  <FileUpload
+                    handleSave={(value) => {
+                      handleSave(value, fileType)
+                      showUpload && setShowUpload(false);
+                    }}
+                    FILE_FORMAT={[...FILE_FORMAT_IMG, ...FILE_FORMAT_PDF]}
+                    title='Upload Documents'
+                    open={showUpload}
+                    onCloseUploader={() => { setShowUpload(false) }}
+                  />
+                )
               }
             </>
           </Grid>

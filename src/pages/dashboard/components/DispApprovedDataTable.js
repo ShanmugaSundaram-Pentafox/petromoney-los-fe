@@ -156,7 +156,7 @@ const DispApprovedDataTable = ({ id, loanData, editable, currentUser }) => {
     setLoading(true);
     deleteLoanDisbursementRecord(id, loanData.id, data)
       .then(({ data, message }) => {
-        setDispHistory({disbursement_details: data?.disbursement_details ? data.disbursement_details : []})
+        setDispHistory({ disbursement_details: data?.disbursement_details ? data.disbursement_details : [] })
         setLoading(false);
         setApiStatus({ status: 'success', message });
         setTimeout(() => {
@@ -169,7 +169,6 @@ const DispApprovedDataTable = ({ id, loanData, editable, currentUser }) => {
         logger(e);
       })
   }
-
   return (
     <div className={classes.root}>
       <Typography variant="h5" style={{ marginBottom: 16 }}>Disbursement Details</Typography>
@@ -180,7 +179,7 @@ const DispApprovedDataTable = ({ id, loanData, editable, currentUser }) => {
             <TableCell>Prospect Code</TableCell>
             <TableCell align="center">Disb Date</TableCell>
             <TableCell align="right">Amount</TableCell>
-            <TableCell align="right">Action</TableCell>
+            {!((loanData?.type)?.includes('Vivriti')) && <TableCell align="right">Action</TableCell>}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -190,10 +189,13 @@ const DispApprovedDataTable = ({ id, loanData, editable, currentUser }) => {
                 <TableCell scope="row" component="th">{row.prospect_code}</TableCell>
                 <TableCell align="center">{row.disbursement_date}</TableCell>
                 <TableCell align="right"><Currency value={row.amount} /></TableCell>
-                <TableCell align="right">
-                  <Button variant="outlined" className={classes.btnEdit} size="small" onClick={() => onRowEdit(row)}>Edit</Button>
-                  <Button variant="outlined" className={classes.btnDelete} size="small" onClick={() => onRowDelete(row)}>Delete</Button>
-                </TableCell>
+                {
+                  !((loanData?.type)?.includes('Vivriti')) &&
+                    <TableCell align="right">
+                      <Button variant="outlined" className={classes.btnEdit} size="small" onClick={() => onRowEdit(row)}>Edit</Button>
+                      <Button variant="outlined" className={classes.btnDelete} size="small" onClick={() => onRowDelete(row)}>Delete</Button>
+                    </TableCell>
+                }
               </TableRow>
             ))
           }
@@ -202,9 +204,10 @@ const DispApprovedDataTable = ({ id, loanData, editable, currentUser }) => {
           <TableRow>
             <TableCell colSpan={4} align="center">
               {
-                <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'add_disb_amt'}>
-                  <Button variant="outlined" size="medium" color="secondary" onClick={() => setModalData({ open: true })} startIcon={<AddRoundedIcon fontSize="small" />}>Add Disbursed Amount</Button>
-                </CheckAllowed>
+                !((loanData?.type)?.includes('Vivriti')) &&
+                  <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'add_disb_amt'}>
+                    <Button variant="outlined" size="medium" color="secondary" onClick={() => setModalData({ open: true })} startIcon={<AddRoundedIcon fontSize="small" />}>Add Disbursed Amount</Button>
+                  </CheckAllowed>
               }
             </TableCell>
           </TableRow>
@@ -312,7 +315,7 @@ const DispApprovedDataTable = ({ id, loanData, editable, currentUser }) => {
                   </Grid>
                   <Grid item xs={12} className={classes.actionFooter}>
                     <Button disabled={loading} variant="outlined" color="default" onClick={() => { setModalData({}); setValues({}) }}>Cancel</Button>
-                    <LoaderButton 
+                    <LoaderButton
                       variant='outlined'
                       className={classes.actionButton}
                       color='primary'

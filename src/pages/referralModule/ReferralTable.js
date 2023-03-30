@@ -3,7 +3,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
 import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
 import React, { useMemo, useState } from 'react';
@@ -94,22 +93,13 @@ const ReferralTable = ({ currentUser }) => {
       },
       {
         label: 'Dealership Name',
-        name: 'dealership_name',
+        name: 'name',
         options: {
           filter: false,
           sort: true,
           customBodyRender: (value) => {
             return <>{value?.toUpperCase()}</>
           },
-        }
-      },
-      {
-        label: 'Dealer Region',
-        name: 'dealership_region',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
         }
       },
       {
@@ -133,39 +123,12 @@ const ReferralTable = ({ currentUser }) => {
         }
       },
       {
-        label: 'Referred by Region',
-        name: 'referred_dealership_region',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: value => <span>{value}</span>
-        }
-      },
-      {
         label: 'Bonus Amount',
-        name: 'bonus_amount',
+        name: 'current_eligible_bonus',
         options: {
           filter: true,
           sort: true,
           customBodyRender: value => <Currency value={value ? value : '-'} />
-        }
-      },
-      {
-        label: 'Settlement Type',
-        name: 'settlement_type',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: value => <span>{value ? value : '-'}</span>
-        }
-      },
-      {
-        label: 'Reference Number',
-        name: 'referrence_number',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: value => <span>{value ? value : '-'}</span>
         }
       },
       {
@@ -198,7 +161,7 @@ const ReferralTable = ({ currentUser }) => {
       return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
     },
     onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex === 9) {
+      if (cellMeta.colIndex === 5) {
         setRowData(loans[cellMeta.dataIndex])
       }
       else {

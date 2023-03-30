@@ -55,6 +55,7 @@ const useStyles = makeStyles((theme) => ({
 const AddSettlementForm = ({ dealershipId, rowData, callback }) => {
   const [settlementType, setSettlementType] = useState();
   const [reference, setReference] = useState('');
+  const [amount, setAmount] = useState('');
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState();
@@ -62,7 +63,7 @@ const AddSettlementForm = ({ dealershipId, rowData, callback }) => {
   const handleSubmit = () => {
     if (reference && settlementType) {
       setLoading(true);
-      postReferralData(dealershipId, { settlement_type: settlementType?.value, referrence_number: reference },rowData?.id)
+      postReferralData(dealershipId, { settlement_type: settlementType?.value, ref_no: reference, amount: amount }, rowData?.referral_id)
         .then((res) => {
           setLoading(false);
           enqueueSnackbar(res, {
@@ -122,6 +123,14 @@ const AddSettlementForm = ({ dealershipId, rowData, callback }) => {
                     <label>UTR/Loan number</label>
                     <TextInput
                       onChange={(e) => { setReference(e.target.value) }}
+                    />
+                  </Grid>
+                </Grid>
+                <Grid container spacing={2}>
+                  <Grid item md={8}>
+                    <label>Settled Amount</label>
+                    <TextInput
+                      onChange={(e) => { setAmount(e.target.value) }}
                     />
                   </Grid>
                 </Grid>

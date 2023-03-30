@@ -71,8 +71,8 @@ const EditReferralDataForm = ({ dealershipId, rowData, callback }) => {
   const handleSubmit = () => {
     if (selectedValue?.dealership_id) {
       setLoading(true);
-      let body = { referred_dealership_id: selectedValue?.dealership_id, referred_dealership_name: selectedValue?.name, referred_dealership_region: selectedValue?.region }
-      postReferralData(dealershipId, body, rowData?.id)
+      let body = { referred_dealership_id: selectedValue?.dealership_id, referred_dealership_name: selectedValue?.name}
+      postReferralData(dealershipId, body, rowData?.referral_id)
         .then((res) => {
           setLoading(false);
           enqueueSnackbar(res, {

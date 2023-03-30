@@ -16,7 +16,6 @@ import ListAltIcon from '@material-ui/icons/ListAlt';
 import LocalShippingIcon from '@material-ui/icons/LocalShipping';
 import ReportIcon from '@material-ui/icons/Report';
 import ReportProblemIcon from '@material-ui/icons/ReportProblem';
-import TimelineIcon from '@material-ui/icons/Timeline';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
@@ -409,25 +408,6 @@ const SidebarNav = props => {
                     <div className={classes.icon}><AssignmentIcon /></div>
                     {'DPD Report'}
                   </Button>
-                </ListItem>
-                <ListItem
-                  className={classes.itemSub}
-                  disableGutters
-                  key={'projection'}
-                >
-                  {
-                    permissionCheck(currentUser.role_name, rulesList.projection_report) &&
-                      <Button
-                        className={classes.button}
-                        activeClassName={classes.active}
-                        component={CustomRouterLink}
-                        to={'/reports/projection'}
-                        exact
-                      >
-                        <div className={classes.icon}><TimelineIcon /></div>
-                        {'Projection Report'}
-                      </Button>
-                  }
                 </ListItem>
                 <ListItem
                   className={classes.itemSub}

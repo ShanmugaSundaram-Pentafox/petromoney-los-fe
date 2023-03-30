@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.30.1](///compare/v2.30.0...v2.30.1) (2023-03-30)
+
+
+### Bug Fixes
+
+* **dealer-referral:** updated dealer referral module key 47cdc98
+
 ## [2.30.0](///compare/v2.28.0...v2.30.0) (2023-03-29)
 
 

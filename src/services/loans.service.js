@@ -225,27 +225,6 @@ export const updateLoanApprovalStatusById = (dealershipId, loanId, status, body)
   });
 }
 
-export const deleteLoanDisbursementRecord = (dealershipId, loanId, body) => {
-  return new Promise((resolve, reject) => {
-    apiCall(`${URL.dealership}/${dealershipId}/loan/${loanId}/approval`, {
-      method: 'DELETE',
-      body,
-    })
-      .then(async ({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          const res = await getDealershipLoansById(dealershipId);
-          const updatedLoanData = await getLoanById(dealershipId, loanId);
-          resolve({ loans: res, data: updatedLoanData, message });
-        } else {
-          reject(message);
-        }
-      })
-      .catch(e => {
-        reject(e.message);
-      })
-  });
-}
-
 export const getAllExceptions = () => {
   return new Promise((resolve, reject) => {
     apiCall(URL.exceptions)

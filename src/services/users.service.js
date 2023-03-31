@@ -78,21 +78,6 @@ export const deleteUser = (userId) => {
       })
   });
 }
-export const getReport = () => {
-  return new Promise((resolve, reject) => {
-    apiCall(URL.report)
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          resolve(data)
-        } else {
-          reject(message)
-        }
-      })
-      .catch((e) => {
-        reject(e.message)
-      })
-  })
-}
 export const getLoanReportByDealershipId = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.report}/dealership/${id}`)

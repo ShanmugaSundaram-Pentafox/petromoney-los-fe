@@ -8,14 +8,11 @@ import AssignmentIcon from '@material-ui/icons/Assignment';
 import BarChartOutlinedIcon from '@material-ui/icons/BarChartOutlined';
 import BookIcon from '@material-ui/icons/Book';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
-// import ChatIcon from '@material-ui/icons/Chat';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import InputIcon from '@material-ui/icons/Input';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import LocalShippingIcon from '@material-ui/icons/LocalShipping';
-import ReportIcon from '@material-ui/icons/Report';
-import ReportProblemIcon from '@material-ui/icons/ReportProblem';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
@@ -23,9 +20,7 @@ import React, { useState, forwardRef, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { rulesList } from '../../../config/userRules';
-// import { getAllExceptions, getTransportsExceptions } from '../../../services/loans.service';
 import { resetCurrentUser } from '../../../store/user/user.actions';
-// import { getAllWithheldLoans } from '../../../services/withheld.services';
 import { permissionCheck } from '../../UserCan/UserCan';
 
 
@@ -156,7 +151,6 @@ const SidebarNav = props => {
                 activeClassName={classes.active}
                 className={classes.button}
                 onClick={handleClick}
-                // to={page.href}
                 exact
               >
                 <div className={classes.block1}>
@@ -218,7 +212,6 @@ const SidebarNav = props => {
                 activeClassName={classes.active}
                 className={classes.button}
                 onClick={handleCredit}
-                // to={page.href}
                 exact
               >
                 <div className={classes.block1}>
@@ -361,38 +354,6 @@ const SidebarNav = props => {
                 </Button>
               </ListItem>
               <Collapse in={checked} >
-                <ListItem
-                  className={classes.itemSub}
-                  disableGutters
-                  key={'Due'}
-                >
-                  <Button
-                    activeClassName={classes.active}
-                    className={classes.button}
-                    component={CustomRouterLink}
-                    to={'/reports/due'}
-                    exact
-                  >
-                    <div className={classes.icon}><ReportIcon /></div>
-                    {'Loan Due'}
-                  </Button>
-                </ListItem>
-                <ListItem
-                  className={classes.itemSub}
-                  disableGutters
-                  key={'Overdue'}
-                >
-                  <Button
-                    className={classes.button}
-                    activeClassName={classes.active}
-                    component={CustomRouterLink}
-                    to={'/reports/overdue'}
-                    exact
-                  >
-                    <div className={classes.icon}><ReportProblemIcon /></div>
-                    {'Loan Overdue'}
-                  </Button>
-                </ListItem>
                 <ListItem
                   className={classes.itemSub}
                   disableGutters

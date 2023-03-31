@@ -31,8 +31,6 @@ import CollectionRemarks from '../pages/reports/CollectionRemarks';
 import CreditNewRequestTable from '../pages/reports/CreditNewRequestTable';
 import CreditProcessedTable from '../pages/reports/CreditProcessedTable';
 import DealersDueReport from '../pages/reports/DealersDueReport';
-import Due from '../pages/reports/DueReport';
-import OverDue from '../pages/reports/OverDueReport';
 import Settings from '../pages/settings/settings';
 import Solar from '../pages/solar/solar';
 import Survey from '../pages/survey/survey';
@@ -68,9 +66,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/transports/:id?" component={TransportsDetails} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.exceptionTransports)} exact path='/transport/exceptions' component={TransportException} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.settings)} exact path="/settings" component={Settings} />
-      <ProtectedRoute allow exact path="/reports/due" component={Due} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.transportsPassbook)} exact path="/transport/fastag/details" component={FastTagPassbook} />
-      <ProtectedRoute allow exact path="/reports/overdue" component={OverDue} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.credit_reload)} exact path="/credit/reload/processed/reports" component={CreditProcessedTable} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.credit_reload)} exact path="/credit/reload/new/reports" component={CreditNewRequestTable} />
       <ProtectedRoute allow exact path="/vehicle-loan" component={VehiclesLoanTable} />

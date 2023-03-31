@@ -12,7 +12,6 @@ import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import { rulesList } from '../../config/userRules';
 import { ReactComponent as DownloadIcon } from '../../icons/downloadIcon.svg';
-import SendEmailAction from '../../pages/reports/SendEmailAction';
 import { getPassbookDetails } from '../../services/common.service';
 import { resetCurrentUser } from '../../store/user/user.actions';
 import AddNewUserAction from '../AddNewUser/AddNewUserAction';
@@ -157,20 +156,6 @@ const Topbar = (props) => {
               match?.path?.toLowerCase() == '/users' && (
                 <span className={classes.actionsContainer}>
                   <AddNewUserAction currentUser={user} />
-                </span>
-              )
-            }
-            {
-              match?.path?.toLowerCase() == '/reports/due' && (
-                <span className={classes.actionsContainer}>
-                  <SendEmailAction />
-                </span>
-              )
-            }
-            {
-              match?.path?.toLowerCase() == '/reports/overdue' && (
-                <span className={classes.actionsContainer}>
-                  <SendEmailAction />
                 </span>
               )
             }

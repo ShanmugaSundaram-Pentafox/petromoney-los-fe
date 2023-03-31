@@ -821,24 +821,6 @@ export const editZones = (id, data) => {
   });
 };
 
-export const refreshRedis = () => {
-  return new Promise((resolve, reject) => {
-    apiCall('redis/refresh', {
-      method: 'POST',
-    })
-      .then(({ status, message }) => {
-        if (status === 'SUCCESS') {
-          resolve(message);
-        } else {
-          reject(message);
-        }
-      })
-      .catch((e) => {
-        reject(e.message);
-      });
-  });
-};
-
 export const getFilteredProducts = () => {
   return new Promise((resolve, reject) => {
     apiCall('products/los')

@@ -94,6 +94,12 @@ const Sidebar = props => {
       icon: <DashboardIcon />
     },
     {
+      id: action_id?.navigation.pre_submit,
+      title: 'Pre Submit',
+      href: '/pre-submit',
+      icon: <AccountBoxIcon />
+    },
+    {
       id: action_id?.navigation.loans,
       title: 'Loans',
       href: '/loans',
@@ -124,12 +130,6 @@ const Sidebar = props => {
       icon: <PeopleIcon />
     },
     {
-      id: action_id?.navigation.transports,
-      title: 'Transports',
-      href: '/transports',
-      icon: <LocalShippingIcon />
-    },
-    {
       id: action_id?.navigation.profileDealer,
       title: 'Profile',
       href: `/dealership/${currentUser.dealership_id}`,
@@ -154,12 +154,6 @@ const Sidebar = props => {
       icon: <LocalShippingIcon />
     },
     {
-      id: action_id?.navigation.exception,
-      title: 'Exception',
-      href: '/loans',
-      icon: <AccountBoxIcon />
-    },
-    {
       id: action_id?.navigation.dealer_referral,
       title: 'Dealer Referral',
       href: '/referral',
@@ -178,21 +172,15 @@ const Sidebar = props => {
       icon: <ListAltIcon />
     },
     {
-      id: action_id?.navigation.pre_submit,
-      title: 'Pre Submit',
-      href: '/pre-submit',
-      icon: <AccountBoxIcon />
-    },
-    {
       id: action_id?.navigation.profileTransports,
       title: 'FASTag Passbook',
       href: '/transport/fastag/details',
       icon: <ListIcon />
     },
     {
-      id: action_id?.navigation.users,
-      title: 'Users',
-      href: '/users',
+      id: action_id?.navigation.noc,
+      title: 'NOC Letter',
+      href: '/noc',
       icon: <AccountBoxIcon />
     },
     {
@@ -202,23 +190,29 @@ const Sidebar = props => {
       icon: <PermPhoneMsgIcon />
     },
     {
+      id: action_id?.navigation.transports,
+      title: 'Transports',
+      href: '/transports',
+      icon: <LocalShippingIcon />
+    },
+    {
+      id: action_id?.navigation.users,
+      title: 'Users',
+      href: '/users',
+      icon: <AccountBoxIcon />
+    },
+    {
       id: action_id?.navigation.settings,
       title: 'Settings',
       href: '/settings',
       icon: <SettingsIcon />
     },
-    {
-      id: action_id?.navigation.noc,
-      title: 'NOC Letter',
-      href: '/noc',
-      icon: <AccountBoxIcon />
-    }
   ]
 
   let pages = []
 
   for (let i = 0; i < pageData.length; i++) {
-    if(isAllowed(currentUser?.permissions, resources_id?.navigation, pageData[i]?.id)) {
+    if (isAllowed(currentUser?.permissions, resources_id?.navigation, pageData[i]?.id)) {
       pages.push(pageData[i])
     }
   }

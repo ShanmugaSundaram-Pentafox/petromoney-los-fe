@@ -154,12 +154,6 @@ const Sidebar = props => {
       icon: <LocalShippingIcon />
     },
     {
-      id: action_id?.navigation.exception,
-      title: 'Exception',
-      href: '/loans',
-      icon: <AccountBoxIcon />
-    },
-    {
       id: action_id?.navigation.dealer_referral,
       title: 'Dealer Referral',
       href: '/referral',

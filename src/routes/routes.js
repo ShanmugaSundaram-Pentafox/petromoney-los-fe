@@ -17,7 +17,6 @@ import Dealership from '../pages/dealership/dealership';
 import DealershipDetails from '../pages/dealershipDetails/dealershipDetails';
 import PresubmitLoansTable from '../pages/loans/PresubmitLoansTable';
 import BlacklistTable from '../pages/loanspage/BlacklistTable';
-import LmsLos from '../pages/loanspage/lmsLosTable';
 import Loans from '../pages/loanspage/loans'
 import RenewalTable from '../pages/loanspage/RenewalTable';
 import Login from '../pages/login/login';
@@ -32,9 +31,7 @@ import CreditNewRequestTable from '../pages/reports/CreditNewRequestTable';
 import CreditProcessedTable from '../pages/reports/CreditProcessedTable';
 import DealersDueReport from '../pages/reports/DealersDueReport';
 import Settings from '../pages/settings/settings';
-import Solar from '../pages/solar/solar';
 import Survey from '../pages/survey/survey';
-import TransportException from '../pages/transports/components/TransportException';
 import FastTagPassbook from '../pages/transports/components/TransportsPassbook';
 import VehiclesLoanTable from '../pages/transports/components/VehiclesLoanTable';
 import Transport from '../pages/transports/transports';
@@ -55,16 +52,12 @@ const Routes = ({ currentUser }) => {
         component={Dashboard}
         allow={isAllowed(currentUser?.permissions,resources_id.navigation,action_id.navigation.dashboard)}
       />
-      <ProtectedRoute allow exact path="/solar" component={Solar} />
-      <ProtectedRoute allow exact path="/solar/feasibility" component={Solar} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.dealerships)} exact path="/dealership" component={Dealership} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.loans)} exact path="/loans" component={Loans} />
-      <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.exceptionLoans)} exact path="/loans/exceptions" component={LmsLos} />
       <ProtectedRoute allow exact path="/dealership/:id?" component={DealershipDetails} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.transports)} exact path='/transports' component={Transport} />
       <ProtectedRoute allow exact path='/transports-field' component={TransportsPortal} />
       <ProtectedRoute allow exact path="/transports/:id?" component={TransportsDetails} />
-      <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.exceptionTransports)} exact path='/transport/exceptions' component={TransportException} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.settings)} exact path="/settings" component={Settings} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.transportsPassbook)} exact path="/transport/fastag/details" component={FastTagPassbook} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.credit_reload)} exact path="/credit/reload/processed/reports" component={CreditProcessedTable} />
@@ -93,7 +86,6 @@ const Routes = ({ currentUser }) => {
         path="/customer/callback"
         component={CallRequestPage}
         allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.call_request)}
-        // allow={permissionCheck(currentUser?.role_name, rulesList.users_view)}
       />
       <ProtectedRoute
         exact
@@ -111,7 +103,6 @@ const Routes = ({ currentUser }) => {
         exact
         path="/statements"
         component={DealersAccountStatement}
-        // allow={permissionCheck(currentUser?.role_name, rulesList.dealer_view)}
         allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.account_statement)}
       />
       <Route exact path="/survey" render={props => <Survey {...props} />} />

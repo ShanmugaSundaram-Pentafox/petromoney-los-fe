@@ -7,8 +7,6 @@ export const URL = {
   userRoles: 'user/roles',
   addNewUser: 'signup',
   loans: 'loans',
-  exceptions: 'loans/exceptions',
-  transport_exceptions: 'transporters/exceptions',
   sanction: 'loans/sanction',
   dealership: 'dealership',
   transport: 'transporterslist',

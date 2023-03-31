@@ -123,7 +123,7 @@ const SidebarNav = props => {
       className={clsx(classes.root, className)}
     >
       {pages.map(page => (
-        page.title !== 'Loans' && page.title !== 'Transports' && page.title !== 'Report' && page.title !== 'Exception' && page.title !== 'Passbook' && page.title !== 'Credit Reload' ? (
+        page.title !== 'Loans' && page.title !== 'Transports' && page.title !== 'Report' && page.title !== 'Passbook' && page.title !== 'Credit Reload' ? (
           <ListItem
             className={classes.item}
             disableGutters
@@ -393,67 +393,6 @@ const SidebarNav = props => {
 
             </Fragment>
 
-          ) : page.title === 'Exception' ? (
-            <Fragment>
-              <ListItem
-                className={classes.item}
-                disableGutters
-                key={page.title}
-              >
-                <Button
-                  activeClassName={classes.active}
-                  className={classes.button}
-                  onClick={handleOpen}
-                  exact
-                >
-                  <div className={classes.block1}>
-                    <div className={classes.block2}>
-                      <div className={classes.icon}>{page.icon}</div>
-                      {page.title}
-                    </div>
-                    {(checkStatus) ?
-                      <div className={classes.iconArrow}><ExpandLessIcon /></div>
-                      :
-                      <div className={classes.iconArrow}><ExpandMoreIcon /></div>
-                    }
-                  </div>
-                </Button>
-              </ListItem>
-              <Collapse in={checkStatus}>
-                <ListItem
-                  className={classes.itemSub}
-                  disableGutters
-                  key={'LosLms'}
-                >
-                  <Button
-                    className={classes.button}
-                    activeClassName={classes.active}
-                    component={CustomRouterLink}
-                    to={'/loans/exceptions'}
-                    exact
-                  >
-                    <div className={classes.icon}><AssessmentOutlinedIcon /></div>
-                    Loans &nbsp;
-                  </Button>
-                </ListItem>
-                <ListItem
-                  className={classes.itemSub}
-                  disableGutters
-                  key={'LosLms'}
-                >
-                  <Button
-                    className={classes.button}
-                    activeClassName={classes.active}
-                    component={CustomRouterLink}
-                    to={'/transport/exceptions'}
-                    exact
-                  >
-                    <div className={classes.icon}><AssessmentOutlinedIcon /></div>
-                    Transports &nbsp;
-                  </Button>
-                </ListItem>
-              </Collapse>
-            </Fragment>
           ) : page.title === 'Passbook' ? (
             <Fragment>
               <ListItem

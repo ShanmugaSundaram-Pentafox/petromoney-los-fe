@@ -40,7 +40,6 @@ export const action_id = {
     report :'report',
     reportLoan_due :'report:loan_due',
     reportLoan_overdue :'report:loan_overdue',
-    reportDpd_report :'report:dpd_report',
     reportOpportunity :'report:opportunity',
     dealerships :'dealerships',
     pre_submit :'pre_submit',

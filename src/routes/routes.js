@@ -4,7 +4,6 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 import ProtectedRoute from './ProtectedRoute';
 import EnvTag from '../components/CommonComponents/EnvTag/EnvTag';
-import DpdReport from '../components/Tables/DpdReport';
 import OpportunityReport from '../components/Tables/OpportunityReport';
 import { permissionCheck } from '../components/UserCan/UserCan';
 import { action_id, resources_id } from '../config/accessControl';
@@ -69,7 +68,6 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.renewal)} exact path="/renewal" component={RenewalTable} />
       <ProtectedRoute allow exact path="/reports" component={DealersDueReport} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.collection_remarks)} exact path="/reports/remarks" component={CollectionRemarks} />
-      <ProtectedRoute allow exact path="/reports/dpd" component={DpdReport} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.noc)} exact path="/noc" component={NOCertificateRequestTable} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.pre_submit)} exact path="/pre-submit" component={PresubmitLoansTable} />
       <ProtectedRoute allow exact path="/rbac" component={UserControl} />

@@ -4,7 +4,6 @@ import { List, ListItem, Button, colors, Hidden } from '@material-ui/core';
 import Collapse from '@material-ui/core/Collapse';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
-import AssignmentIcon from '@material-ui/icons/Assignment';
 import BarChartOutlinedIcon from '@material-ui/icons/BarChartOutlined';
 import BookIcon from '@material-ui/icons/Book';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
@@ -101,7 +100,7 @@ const SidebarNav = props => {
   const [tap, setTap] = React.useState(false);
   const [check, setCheck] = React.useState(false);
   const [checkStatus, setCheckStatus] = useState(false);
-  const [checkCredit,setCheckCredit] = useState(false);
+  const [checkCredit, setCheckCredit] = useState(false);
   const handleChange = () => {
     setChecked((prev) => !prev);
   };
@@ -357,22 +356,6 @@ const SidebarNav = props => {
                 <ListItem
                   className={classes.itemSub}
                   disableGutters
-                  key={'dpd'}
-                >
-                  <Button
-                    className={classes.button}
-                    activeClassName={classes.active}
-                    component={CustomRouterLink}
-                    to={'/reports/dpd'}
-                    exact
-                  >
-                    <div className={classes.icon}><AssignmentIcon /></div>
-                    {'DPD Report'}
-                  </Button>
-                </ListItem>
-                <ListItem
-                  className={classes.itemSub}
-                  disableGutters
                   key={'projection'}
                 >
                   {
@@ -390,7 +373,6 @@ const SidebarNav = props => {
                   }
                 </ListItem>
               </Collapse>
-
             </Fragment>
 
           ) : page.title === 'Passbook' ? (

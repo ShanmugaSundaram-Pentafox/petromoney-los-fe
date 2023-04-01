@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.30.2](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/compare/v2.30.1...v2.30.2) (2023-04-01)
+
+
+### Bug Fixes
+
+* **lms-fix:** removed dpd report module ([9cf9d8f](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/9cf9d8f3ac8772c6675bef2f21f20223ff8a23a3))
+* **lms:** aligned sidebar ([8d89a37](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/8d89a37cf19fc754ee6fbab40e64d376e294a4f4))
+* **lms:** removed lms tables ([4fefc57](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/4fefc577e6fd29b5f0f123c4c87e1af52c46fca1))
+* merge branch 'development' into fix/dealer-passbook ([f9195a2](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/f9195a2f9ab1acdf6c43b444b53850482b187c08))
+* **projection-report:** removed projection report section. ([5eb3ae0](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/5eb3ae06593c36b2a77567a6c5373fb10bf97b77))
+* removed due/overdue report section ([72f1414](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/72f14143780ae1e6888a0b100e7fdb8a26e882ee))
+* removed due/overdue reports ([f79b55e](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/f79b55ecf8afb808448b07d0a5530a92f7cbea10))
+* removed option to add/edit or delete disbursement details ([e5ad8d9](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/e5ad8d9d9a162fa87d8b8f791a91ec9498800a81))
+
 ### [2.30.1](///compare/v2.30.0...v2.30.1) (2023-03-30)
 
 

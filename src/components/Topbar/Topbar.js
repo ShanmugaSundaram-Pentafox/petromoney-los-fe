@@ -1,7 +1,6 @@
-import { AppBar, Toolbar, Hidden, Tooltip, IconButton, RadioGroup, Radio, FormControlLabel, Button, CircularProgress } from '@material-ui/core';
+import { AppBar, Toolbar, Hidden, Tooltip, IconButton, Button, CircularProgress } from '@material-ui/core';
 import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 import MenuIcon from '@material-ui/icons/Menu';
-import RefreshIcon from '@material-ui/icons/Refresh';
 import ShareIcon from '@material-ui/icons/Share';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
@@ -11,13 +10,9 @@ import React, { Fragment, useState } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
-import { resources_id } from '../../config/accessControl';
 import { rulesList } from '../../config/userRules';
 import { ReactComponent as DownloadIcon } from '../../icons/downloadIcon.svg';
-import CheckAllowed from '../../pages/rbac/CheckAllowed';
-import SendEmailAction from '../../pages/reports/SendEmailAction';
-import { getPassbookDetails, refreshRedis } from '../../services/common.service';
-import { setDashboardView } from '../../store/common/common.actions';
+import { getPassbookDetails } from '../../services/common.service';
 import { resetCurrentUser } from '../../store/user/user.actions';
 import AddNewUserAction from '../AddNewUser/AddNewUserAction';
 import LoginUserInfo from '../CommonComponents/LoginUserInfo';
@@ -35,13 +30,6 @@ const useStyles = makeStyles(theme => {
     flexGrow: {
       flexGrow: 1
     },
-    signOutButton: {
-      color: '#DC143C',
-      marginLeft: theme.spacing(1)
-    },
-    logoLink: {
-      backgroundColor: theme.palette.white
-    },
     title: {
       ...theme.typography.h2,
       fontSize: 16,
@@ -50,13 +38,6 @@ const useStyles = makeStyles(theme => {
     },
     topbarStyle: {
       minHeight: 48
-    },
-    optionsContainer: {
-      paddingRight: theme.spacing(2),
-      paddingLeft: theme.spacing(2),
-      marginLeft: theme.spacing(1),
-      borderRadius: 20,
-      boxShadow: 'inset 0 0 8px 0px #cdcdcd',
     },
     actionsContainer: {
       paddingRight: theme.spacing(2),
@@ -108,33 +89,12 @@ const CardWrapper = styled.div`
 `;
 
 const Topbar = (props) => {
-  const { className, onSidebarOpen, pageTitle, user, logout, match, history, goBackIcon, appBarProps, dashboardView, updateDashboardView } = props;
+  const { className, onSidebarOpen, pageTitle, user, logout, match, history, goBackIcon, appBarProps} = props;
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false)
   const [showNotificationSidebar, setShowNotificationSidebar] = useState(false);
   const editable = permissionCheck(user.role_name, rulesList.dealer_edit)
-  const handleRefresh = () => {
-    refreshRedis()
-      .then(message => {
-        enqueueSnackbar(message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
-        });
-      })
-      .catch(e => {
-        enqueueSnackbar(e, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        });
-      })
-  }
 
   const handleStatementShare = (action) => {
     setLoading(true)
@@ -193,52 +153,9 @@ const Topbar = (props) => {
               </>
             )}
             {
-              typeof pageTitle === 'string' && pageTitle?.toLowerCase() == 'dashboard' &&
-                <span className={classes.optionsContainer}>
-                  <CheckAllowed currentUser={user} resource={resources_id.dashboard} action={'los_switch'}>
-                    <RadioGroup onChange={(e, v) => updateDashboardView(v)} row aria-label="dashboard-view-type" name="dashboard-view-type" defaultValue={dashboardView}>
-                      <Tooltip title="Loan Origination System">
-                        <FormControlLabel
-                          value="LOS"
-                          control={<Radio color="primary" />}
-                          label="LOS"
-                        />
-                      </Tooltip>
-                      <Tooltip title="Loan Management System">
-                        <FormControlLabel
-                          value="LMS"
-                          control={<Radio color="secondary" />}
-                          label="LMS"
-                        />
-                      </Tooltip>
-                    </RadioGroup>
-                  </CheckAllowed>
-                </span>
-            }
-            {
-              typeof pageTitle === 'string' && pageTitle?.toLowerCase() == 'dashboard' && [1, 8, 9].includes(user?.role_id) && dashboardView === 'LMS' && (
-                <Button className={classes.refresh} size='small' style={{ marginLeft: 12 }} onClick={handleRefresh} startIcon={<RefreshIcon fontSize='small' />}><span style={{ color: 'hsl(0,0%,65%)', fontWeight: 500 }}>Refresh</span></Button>
-              )
-            }
-
-            {
               match?.path?.toLowerCase() == '/users' && (
                 <span className={classes.actionsContainer}>
                   <AddNewUserAction currentUser={user} />
-                </span>
-              )
-            }
-            {
-              match?.path?.toLowerCase() == '/reports/due' && (
-                <span className={classes.actionsContainer}>
-                  <SendEmailAction />
-                </span>
-              )
-            }
-            {
-              match?.path?.toLowerCase() == '/reports/overdue' && (
-                <span className={classes.actionsContainer}>
-                  <SendEmailAction />
                 </span>
               )
             }
@@ -257,8 +174,6 @@ const Topbar = (props) => {
                 </span>
               )
             }
-
-
           </h2>
           <div className={classes.flexGrow} />
           <Hidden mdDown>
@@ -285,15 +200,13 @@ Topbar.propTypes = {
   onSidebarOpen: PropTypes.func
 };
 
-const mapStateToProps = ({ common, users }) => ({
+const mapStateToProps = ({ common }) => ({
   pageTitle: common.pageTitle,
-  dashboardView: common.dashboardView,
   goBackIcon: common.goBackIcon,
   searchText: common.searchText
 })
 
 const mapDispatchToProps = dispatch => ({
-  updateDashboardView: view => dispatch(setDashboardView(view)),
   logout: () => dispatch(resetCurrentUser())
 })
 

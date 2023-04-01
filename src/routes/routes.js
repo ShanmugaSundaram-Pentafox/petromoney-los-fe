@@ -4,9 +4,7 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 import ProtectedRoute from './ProtectedRoute';
 import EnvTag from '../components/CommonComponents/EnvTag/EnvTag';
-import DpdReport from '../components/Tables/DpdReport';
 import OpportunityReport from '../components/Tables/OpportunityReport';
-import ProjectionReport from '../components/Tables/ProjectionReport';
 import { permissionCheck } from '../components/UserCan/UserCan';
 import { action_id, resources_id } from '../config/accessControl';
 import { rulesList } from '../config/userRules';
@@ -18,7 +16,6 @@ import Dealership from '../pages/dealership/dealership';
 import DealershipDetails from '../pages/dealershipDetails/dealershipDetails';
 import PresubmitLoansTable from '../pages/loans/PresubmitLoansTable';
 import BlacklistTable from '../pages/loanspage/BlacklistTable';
-import LmsLos from '../pages/loanspage/lmsLosTable';
 import Loans from '../pages/loanspage/loans'
 import RenewalTable from '../pages/loanspage/RenewalTable';
 import Login from '../pages/login/login';
@@ -32,12 +29,8 @@ import CollectionRemarks from '../pages/reports/CollectionRemarks';
 import CreditNewRequestTable from '../pages/reports/CreditNewRequestTable';
 import CreditProcessedTable from '../pages/reports/CreditProcessedTable';
 import DealersDueReport from '../pages/reports/DealersDueReport';
-import Due from '../pages/reports/DueReport';
-import OverDue from '../pages/reports/OverDueReport';
 import Settings from '../pages/settings/settings';
-import Solar from '../pages/solar/solar';
 import Survey from '../pages/survey/survey';
-import TransportException from '../pages/transports/components/TransportException';
 import FastTagPassbook from '../pages/transports/components/TransportsPassbook';
 import VehiclesLoanTable from '../pages/transports/components/VehiclesLoanTable';
 import Transport from '../pages/transports/transports';
@@ -58,20 +51,14 @@ const Routes = ({ currentUser }) => {
         component={Dashboard}
         allow={isAllowed(currentUser?.permissions,resources_id.navigation,action_id.navigation.dashboard)}
       />
-      <ProtectedRoute allow exact path="/solar" component={Solar} />
-      <ProtectedRoute allow exact path="/solar/feasibility" component={Solar} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.dealerships)} exact path="/dealership" component={Dealership} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.loans)} exact path="/loans" component={Loans} />
-      <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.exceptionLoans)} exact path="/loans/exceptions" component={LmsLos} />
       <ProtectedRoute allow exact path="/dealership/:id?" component={DealershipDetails} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.transports)} exact path='/transports' component={Transport} />
       <ProtectedRoute allow exact path='/transports-field' component={TransportsPortal} />
       <ProtectedRoute allow exact path="/transports/:id?" component={TransportsDetails} />
-      <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.exceptionTransports)} exact path='/transport/exceptions' component={TransportException} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.settings)} exact path="/settings" component={Settings} />
-      <ProtectedRoute allow exact path="/reports/due" component={Due} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.transportsPassbook)} exact path="/transport/fastag/details" component={FastTagPassbook} />
-      <ProtectedRoute allow exact path="/reports/overdue" component={OverDue} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.credit_reload)} exact path="/credit/reload/processed/reports" component={CreditProcessedTable} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.credit_reload)} exact path="/credit/reload/new/reports" component={CreditNewRequestTable} />
       <ProtectedRoute allow exact path="/vehicle-loan" component={VehiclesLoanTable} />
@@ -81,18 +68,11 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.renewal)} exact path="/renewal" component={RenewalTable} />
       <ProtectedRoute allow exact path="/reports" component={DealersDueReport} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.collection_remarks)} exact path="/reports/remarks" component={CollectionRemarks} />
-      <ProtectedRoute allow exact path="/reports/dpd" component={DpdReport} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.noc)} exact path="/noc" component={NOCertificateRequestTable} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.pre_submit)} exact path="/pre-submit" component={PresubmitLoansTable} />
       <ProtectedRoute allow exact path="/rbac" component={UserControl} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.dealer_referral)}  exact path="/referral" component={ReferralTable} />
 
-      <ProtectedRoute
-        exact 
-        path="/reports/projection" 
-        component={ProjectionReport} 
-        allow={permissionCheck(currentUser?.role_name, rulesList.projection_report)} 
-      />
       <ProtectedRoute 
         exact 
         path="/reports/opportunities" 
@@ -104,7 +84,6 @@ const Routes = ({ currentUser }) => {
         path="/customer/callback"
         component={CallRequestPage}
         allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.call_request)}
-        // allow={permissionCheck(currentUser?.role_name, rulesList.users_view)}
       />
       <ProtectedRoute
         exact
@@ -122,7 +101,6 @@ const Routes = ({ currentUser }) => {
         exact
         path="/statements"
         component={DealersAccountStatement}
-        // allow={permissionCheck(currentUser?.role_name, rulesList.dealer_view)}
         allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.account_statement)}
       />
       <Route exact path="/survey" render={props => <Survey {...props} />} />

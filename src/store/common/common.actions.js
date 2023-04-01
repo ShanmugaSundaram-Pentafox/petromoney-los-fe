@@ -8,11 +8,6 @@ export const setPageTitle = (pageTitle, goBackIcon) => ({
   }
 });
 
-export const setDashboardView = (dashboardView) => ({
-  type: CommonActionTypes.SET_DASHBOARD_VIEW,
-  payload: dashboardView
-});
-
 export const setSearchText = searchText => ({
   type: CommonActionTypes.SET_SEARCH_TEXT,
   payload: searchText

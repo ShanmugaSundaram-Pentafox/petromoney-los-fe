@@ -4,19 +4,14 @@ import { List, ListItem, Button, colors, Hidden } from '@material-ui/core';
 import Collapse from '@material-ui/core/Collapse';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
-import AssignmentIcon from '@material-ui/icons/Assignment';
 import BarChartOutlinedIcon from '@material-ui/icons/BarChartOutlined';
 import BookIcon from '@material-ui/icons/Book';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
-// import ChatIcon from '@material-ui/icons/Chat';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import InputIcon from '@material-ui/icons/Input';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import LocalShippingIcon from '@material-ui/icons/LocalShipping';
-import ReportIcon from '@material-ui/icons/Report';
-import ReportProblemIcon from '@material-ui/icons/ReportProblem';
-import TimelineIcon from '@material-ui/icons/Timeline';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
@@ -24,9 +19,7 @@ import React, { useState, forwardRef, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { rulesList } from '../../../config/userRules';
-// import { getAllExceptions, getTransportsExceptions } from '../../../services/loans.service';
 import { resetCurrentUser } from '../../../store/user/user.actions';
-// import { getAllWithheldLoans } from '../../../services/withheld.services';
 import { permissionCheck } from '../../UserCan/UserCan';
 
 
@@ -107,7 +100,7 @@ const SidebarNav = props => {
   const [tap, setTap] = React.useState(false);
   const [check, setCheck] = React.useState(false);
   const [checkStatus, setCheckStatus] = useState(false);
-  const [checkCredit,setCheckCredit] = useState(false);
+  const [checkCredit, setCheckCredit] = useState(false);
   const handleChange = () => {
     setChecked((prev) => !prev);
   };
@@ -129,7 +122,7 @@ const SidebarNav = props => {
       className={clsx(classes.root, className)}
     >
       {pages.map(page => (
-        page.title !== 'Loans' && page.title !== 'Transports' && page.title !== 'Report' && page.title !== 'Exception' && page.title !== 'Passbook' && page.title !== 'Credit Reload' ? (
+        page.title !== 'Loans' && page.title !== 'Transports' && page.title !== 'Report' && page.title !== 'Passbook' && page.title !== 'Credit Reload' ? (
           <ListItem
             className={classes.item}
             disableGutters
@@ -157,7 +150,6 @@ const SidebarNav = props => {
                 activeClassName={classes.active}
                 className={classes.button}
                 onClick={handleClick}
-                // to={page.href}
                 exact
               >
                 <div className={classes.block1}>
@@ -219,7 +211,6 @@ const SidebarNav = props => {
                 activeClassName={classes.active}
                 className={classes.button}
                 onClick={handleCredit}
-                // to={page.href}
                 exact
               >
                 <div className={classes.block1}>
@@ -365,73 +356,6 @@ const SidebarNav = props => {
                 <ListItem
                   className={classes.itemSub}
                   disableGutters
-                  key={'Due'}
-                >
-                  <Button
-                    activeClassName={classes.active}
-                    className={classes.button}
-                    component={CustomRouterLink}
-                    to={'/reports/due'}
-                    exact
-                  >
-                    <div className={classes.icon}><ReportIcon /></div>
-                    {'Loan Due'}
-                  </Button>
-                </ListItem>
-                <ListItem
-                  className={classes.itemSub}
-                  disableGutters
-                  key={'Overdue'}
-                >
-                  <Button
-                    className={classes.button}
-                    activeClassName={classes.active}
-                    component={CustomRouterLink}
-                    to={'/reports/overdue'}
-                    exact
-                  >
-                    <div className={classes.icon}><ReportProblemIcon /></div>
-                    {'Loan Overdue'}
-                  </Button>
-                </ListItem>
-                <ListItem
-                  className={classes.itemSub}
-                  disableGutters
-                  key={'dpd'}
-                >
-                  <Button
-                    className={classes.button}
-                    activeClassName={classes.active}
-                    component={CustomRouterLink}
-                    to={'/reports/dpd'}
-                    exact
-                  >
-                    <div className={classes.icon}><AssignmentIcon /></div>
-                    {'DPD Report'}
-                  </Button>
-                </ListItem>
-                <ListItem
-                  className={classes.itemSub}
-                  disableGutters
-                  key={'projection'}
-                >
-                  {
-                    permissionCheck(currentUser.role_name, rulesList.projection_report) &&
-                      <Button
-                        className={classes.button}
-                        activeClassName={classes.active}
-                        component={CustomRouterLink}
-                        to={'/reports/projection'}
-                        exact
-                      >
-                        <div className={classes.icon}><TimelineIcon /></div>
-                        {'Projection Report'}
-                      </Button>
-                  }
-                </ListItem>
-                <ListItem
-                  className={classes.itemSub}
-                  disableGutters
                   key={'projection'}
                 >
                   {
@@ -449,70 +373,8 @@ const SidebarNav = props => {
                   }
                 </ListItem>
               </Collapse>
-
             </Fragment>
 
-          ) : page.title === 'Exception' ? (
-            <Fragment>
-              <ListItem
-                className={classes.item}
-                disableGutters
-                key={page.title}
-              >
-                <Button
-                  activeClassName={classes.active}
-                  className={classes.button}
-                  onClick={handleOpen}
-                  exact
-                >
-                  <div className={classes.block1}>
-                    <div className={classes.block2}>
-                      <div className={classes.icon}>{page.icon}</div>
-                      {page.title}
-                    </div>
-                    {(checkStatus) ?
-                      <div className={classes.iconArrow}><ExpandLessIcon /></div>
-                      :
-                      <div className={classes.iconArrow}><ExpandMoreIcon /></div>
-                    }
-                  </div>
-                </Button>
-              </ListItem>
-              <Collapse in={checkStatus}>
-                <ListItem
-                  className={classes.itemSub}
-                  disableGutters
-                  key={'LosLms'}
-                >
-                  <Button
-                    className={classes.button}
-                    activeClassName={classes.active}
-                    component={CustomRouterLink}
-                    to={'/loans/exceptions'}
-                    exact
-                  >
-                    <div className={classes.icon}><AssessmentOutlinedIcon /></div>
-                    Loans &nbsp;
-                  </Button>
-                </ListItem>
-                <ListItem
-                  className={classes.itemSub}
-                  disableGutters
-                  key={'LosLms'}
-                >
-                  <Button
-                    className={classes.button}
-                    activeClassName={classes.active}
-                    component={CustomRouterLink}
-                    to={'/transport/exceptions'}
-                    exact
-                  >
-                    <div className={classes.icon}><AssessmentOutlinedIcon /></div>
-                    Transports &nbsp;
-                  </Button>
-                </ListItem>
-              </Collapse>
-            </Fragment>
           ) : page.title === 'Passbook' ? (
             <Fragment>
               <ListItem

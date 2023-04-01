@@ -42,78 +42,6 @@ export const getAllLoans = () => {
   });
 }
 
-export const getAll_ls1_Metrices = (view) => {
-  return new Promise((resolve, reject) => {
-    let apiUrl = URL.ls1_metrices
-    if(view === 'External') apiUrl += '?external=1'
-    apiCall(apiUrl)
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          resolve(data);
-        } else {
-          reject(message);
-        }
-      })
-      .catch(e => {
-        reject(e.message);
-      })
-  });
-}
-
-export const getAll_ls2_Metrices = (view) => {
-  return new Promise((resolve, reject) => {
-    let apiUrl = URL.ls2_metrices
-    if(view === 'External') apiUrl += '?external=1'
-    apiCall(apiUrl)
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          resolve(data);
-        } else {
-          reject(message);
-        }
-      })
-      .catch(e => {
-        reject(e.message);
-      })
-  });
-}
-
-export const getAllOmcDpd = (view) => {
-  return new Promise((resolve, reject) => {
-    let apiUrl = 'app/dpd/omc'
-    if(view === 'External') apiUrl += '?external=1'
-    apiCall(apiUrl)
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          resolve(data);
-        } else {
-          reject(message);
-        }
-      })
-      .catch(e => {
-        reject(e.message);
-      })
-  });
-}
-
-export const getAllRegionDpd = (view) => {
-  return new Promise((resolve, reject) => {
-    let apiUrl = 'app/dpd/region'
-    if(view === 'External') apiUrl += '?external=1'
-    apiCall(apiUrl)
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          resolve(data);
-        } else {
-          reject(message);
-        }
-      })
-      .catch(e => {
-        reject(e.message);
-      })
-  });
-}
-
 export const getLoanBookData = (view) => {
   return new Promise((resolve, reject) => {
     let apiUrl = URL.loanBook
@@ -225,58 +153,6 @@ export const updateLoanApprovalStatusById = (dealershipId, loanId, status, body)
   });
 }
 
-export const deleteLoanDisbursementRecord = (dealershipId, loanId, body) => {
-  return new Promise((resolve, reject) => {
-    apiCall(`${URL.dealership}/${dealershipId}/loan/${loanId}/approval`, {
-      method: 'DELETE',
-      body,
-    })
-      .then(async ({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          const res = await getDealershipLoansById(dealershipId);
-          const updatedLoanData = await getLoanById(dealershipId, loanId);
-          resolve({ loans: res, data: updatedLoanData, message });
-        } else {
-          reject(message);
-        }
-      })
-      .catch(e => {
-        reject(e.message);
-      })
-  });
-}
-
-export const getAllExceptions = () => {
-  return new Promise((resolve, reject) => {
-    apiCall(URL.exceptions)
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          resolve(data);
-        } else {
-          reject(message);
-        }
-      })
-      .catch(e => {
-        reject(e.message);
-      })
-  });
-}
-export const getTransportsExceptions = () => {
-  return new Promise((resolve, reject) => {
-    apiCall(URL.transport_exceptions)
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          resolve(data);
-        } else {
-          reject(message);
-        }
-      })
-      .catch(e => {
-        reject(e.message);
-      })
-  });
-}
-
 export const updateLoanStats = (dealershipId, loanId) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.dealership}/${dealershipId}/loan/${loanId}/resubmit`, {
@@ -326,103 +202,14 @@ export const getLoanRejectReason = () => {
   });
 };
 
-export const getOpportunities = () => {
-  return new Promise((resolve, reject) => {
-    apiCall('business/projection')
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          resolve(data[0] || {});
-        } else {
-          reject(message);
-        }
-      })
-      .catch(e => {
-        reject(e.message);
-      })
-  });
-}
-
 export const getPotentialOpportunity = (view, body) => {
   let qry = []
   let apiUrl = 'potential/opportunities';
   qry.push(`conversion_ratio=${body?.conversion_ratio || 30}&ticket_size=${body?.ticket_size || 15}`)
   if(view) qry.push(`view=${view}`)
   if(qry.length) apiUrl += '?' + qry.join('&')
-  // apiUrl += `?conversion_ratio=${body?.conversion_ratio || 30}&ticket_size=${body?.ticket_size || 15}`
   return new Promise((resolve, reject) => {
     apiCall(apiUrl)
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          resolve(data);
-        } else {
-          reject(message);
-        }
-      })
-      .catch(e => {
-        reject(e.message);
-      })
-  });
-}
-
-export const getProjectionReport = () => {
-  return new Promise((resolve, reject) => {
-    apiCall('projection')
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          resolve(data);
-        } else {
-          reject(message);
-        }
-      })
-      .catch(e => {
-        reject(e.message);
-      })
-  });
-}
-
-export const getVivProjectionReport = () => {
-  return new Promise((resolve, reject) => {
-    apiCall('projection?external=1')
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          resolve(data);
-        } else {
-          reject(message);
-        }
-      })
-      .catch(e => {
-        reject(e.message);
-      })
-  });
-}
-
-export const getCreditStats = (qryStr = {}) => {
-  return new Promise((resolve, reject) => {
-    const { region, from, to, account, zone } = qryStr;
-    let qry = []
-    let apiUrl = 'credit/reload/stats';
-    if (zone && zone !=='0') qry.push(`zone=${zone}`)
-    if (region && region !=='0') qry.push(`region=${region}`)
-    if (account && account !=='0') qry.push(`account_type=${account}`)
-    if (from && to) qry.push(`from=${from}&to=${to}`)
-    if(qry.length) apiUrl += '?' + qry.join('&')
-    apiCall(apiUrl)
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          resolve(data[0] || []);
-        } else {
-          reject(message);
-        }
-      })
-      .catch(e => {
-        reject(e.message);
-      })
-  });
-}
-
-export const getDpdReportData = () => {
-  return new Promise((resolve, reject) => {
-    apiCall('app/dpd/report')
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data);

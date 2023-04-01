@@ -2,6 +2,43 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.30.1](///compare/v2.30.0...v2.30.1) (2023-03-30)
+
+
+### Bug Fixes
+
+* **dealer-referral:** updated dealer referral module key 47cdc98
+
+## [2.30.0](///compare/v2.28.0...v2.30.0) (2023-03-29)
+
+
+### Features
+
+* Admin UI page and initial functionalities 94fcf80
+* **leegality:** Loan Agreement Resign feature issued 9827e84
+* **route-integration:** added route integration option in RBAC 8c0e8ab
+
+
+### Bug Fixes
+
+* applicants e8a05f5
+* **applicants:** applicants bug fixes 2167456
+* **applicants:** fixed deactivate account url issue 9c13a46
+* **applicants:** highlighted main applicants in the list f7014ff
+* **applicants:** removed logs 031a9ed
+* **applicants:** updated api call for applicants add/update and delete 461c947
+* **applicants:** updated payloads for KYC update cb0b0ed
+* **collection-remarks:** custom search and download 96a5ca0
+* **collection-remarks:** updated UI for search d7c5b55
+* **crr:** credit reload decline/disburse permission fix e0dae7e
+* **disubursement:** remove add disbursed amount button for vivriti cases 856d842
+* **loan-approval:** option to edit requested amount in submitted & review queue 19f43b8
+* Merge branch 'development' into fix/approval d7aecc9
+* update value for amount_approved 043e6e4
+* **user-table:** fixed region missing issue 4439574
+* **user-table:** fixed region missing issue 69f27b9
+* **voice-call:** fixed error log issue 270572e
+
 ### [2.29.1](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/compare/v2.29.0...v2.29.1) (2023-03-21)
 
 

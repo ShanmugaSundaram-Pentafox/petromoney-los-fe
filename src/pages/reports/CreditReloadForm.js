@@ -1,4 +1,4 @@
-import { Typography, Box, Grid, Button, Divider } from '@material-ui/core';
+import { Typography, Box, Grid, Button, Divider, FormHelperText } from '@material-ui/core';
 import { green } from '@material-ui/core/colors';
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import CloseIcon from '@material-ui/icons/Close';
@@ -13,10 +13,12 @@ import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
 import * as Yup from 'yup';
 import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
+import Currency from '../../components/Number/Currency';
 import TextInput from '../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../config/accessControl';
 import { getDealershipForSearch } from '../../services/common.service';
 import { addCreditReport } from '../../services/creditreport.service';
+import { getCreditReloadLimitById } from '../../services/dealerships.service';
 import { getBankDetailsbyID } from '../../services/PDReport.services';
 import { isAllowed } from '../../utils/cerbos';
 const useStyles = makeStyles((theme) => ({
@@ -113,6 +115,10 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
         }
       })?.filter(item => item !== undefined)
     }
+  })
+  const { data: creditLimit } = useQuery(['credit-reload-limit', selectedValue], () => getCreditReloadLimitById(selectedValue), {
+    refetchOnWindowFocus: false,
+    enabled: selectedValue ? true : false,
   })
   useEffect(() => {
     if (selectedValue) {
@@ -278,6 +284,12 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
                       helperText={errors.amount}
                       onChange={handleChange}
                     />
+                    <FormHelperText variant='contained'>
+                      {
+                        creditLimit &&
+                          <h3 style={{ color: 'black' }}>Available Limit: < Currency value={creditLimit} /></h3>
+                      }
+                    </FormHelperText>
                   </Grid>
                 </Grid>
                 <Grid container spacing={2} style={{ marginTop: 11 }}>

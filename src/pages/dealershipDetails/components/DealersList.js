@@ -13,7 +13,7 @@ import TextInput from '../../../components/TextInput/TextInput';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { rulesList } from '../../../config/userRules';
-import { getDealersByDealershipId, getCoApplicantByDealershipId, getGuarantorByDealershipId, updateApplicantDataById } from '../../../services/dealers.service';
+import { getAllApplicantsByDealershipId, updateApplicantDataById } from '../../../services/dealers.service';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
 
@@ -71,42 +71,16 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
   const [updateApplicant, setUpdateApplicant] = useState({})
   const [activeApplicant, setActiveApplicant] = useState([])
   const { enqueueSnackbar } = useSnackbar();
-  const { data: coApplicantsData } = useQuery(['co-applicants', id], () => getCoApplicantByDealershipId(id), {
+  const { data: applicantsData, refetch } = useQuery(['dealership-applicants', id], () => getAllApplicantsByDealershipId(id), {
     initialData: [],
-    select: res => {
-      return res.map(d => ({
-        ...d,
-        userType: 'Co-Applicant'
-      }))
-    },
-    refetchOnWindowFocus: false
-  })
-  const { data: dealerData, refetch } = useQuery(['dealers-coapplicant', id], () => getDealersByDealershipId(id), {
-    initialData: [],
-    select: res => {
-      return res.map(d => ({
-        ...d,
-        userType: 'Dealer'
-      }))
-    },
-    refetchOnWindowFocus: false
-  })
-  const { data: guarantorsData } = useQuery(['guarantors', id], () => getGuarantorByDealershipId(id), {
-    initialData: [],
-    select: res => {
-      return res.map(d => ({
-        ...d,
-        userType: 'Guarantor'
-      }))
-    },
     refetchOnWindowFocus: false
   })
   useEffect(() => {
-    if (dealerData) {
-      const res = dealerData?.filter(d => d?.is_active == 1)
+    if (applicantsData) {
+      const res = applicantsData?.filter(d => ((d?.is_active == 1) && (d?.category === 'DEALER')))
       setActiveApplicant(res)
     }
-  }, [dealerData])
+  }, [applicantsData])
 
   const openCloseCreditForm = () => {
     setShowCreditForm(!showCreditForm);
@@ -211,7 +185,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
       <DealersTable
         id={id}
         deletable={deletable}
-        data={dealerData}
+        data={applicantsData?.filter(item => item.category === 'DEALER')}
         formType={formType}
         rowData={rowData}
         titleAlign={titleAlign}
@@ -227,7 +201,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         id={id}
         deletable={deletable}
         titleAlign={titleAlign}
-        coApplicantsData={coApplicantsData}
+        coApplicantsData={applicantsData?.filter(item => item.category === 'COAPPLICANT')}
         formType={formType}
         rowData={rowData}
         showCreditForm={showCreditForm}
@@ -242,7 +216,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         id={id}
         deletable={deletable}
         titleAlign={titleAlign}
-        guarantorsData={guarantorsData}
+        guarantorsData={applicantsData?.filter(item => item.category === 'GUARANTOR')}
         formType={formType}
         rowData={rowData}
         showCreditForm={showCreditForm}

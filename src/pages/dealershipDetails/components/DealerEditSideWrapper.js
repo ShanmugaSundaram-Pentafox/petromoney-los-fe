@@ -275,9 +275,7 @@ const DealerEditSideWrapper = ({
             variant: 'success',
           });
           onClose()
-          queryClient.invalidateQueries(['co-applicants', id])
-          queryClient.invalidateQueries(['dealers-coapplicant', id])
-          queryClient.invalidateQueries(['guarantors', id])
+          queryClient.invalidateQueries(['dealership-applicants', id])
         })
         .catch((err) => {
           setLoading(false);

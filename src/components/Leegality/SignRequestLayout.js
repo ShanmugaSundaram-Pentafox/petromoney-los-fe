@@ -16,7 +16,7 @@ import LeegalityPdfView from './components/LeegalityPdfView'
 import SignedLayout from './components/SignedLayout';
 import LeegalityLayout from './LeegalityLayout';
 import CustomToken from '../../components/CommonComponents/CustomToken';
-import { getCoApplicantByDealershipId, getDealersByDealershipId, getGuarantorByDealershipId } from '../../services/dealers.service';
+import { getAllApplicantsByDealershipId } from '../../services/dealers.service';
 import { deleteResignDocument, getDealershipById, getResignList } from '../../services/dealerships.service';
 import { getPdfContent } from '../../services/leegality.service';
 import { getLoanDocumentHistoryById } from '../../services/loans.service';
@@ -46,15 +46,14 @@ const useStyles = makeStyles(theme => ({
   },
   info: {
     color: 'rgb(0,0,0,0.4)',
-    marginTop:8
+    marginTop: 8
   }
 
 }));
 
-const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callback, loanAmount, productId,currentUser }) => {
+const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callback, loanAmount, productId, currentUser }) => {
   const classes = useStyles();
   const [dealership, setDealership] = useState({})
-  const [dealers, setDealers] = useState([])
   const [applicants, setApplicants] = useState([])
   const [selectedDealers, setSelectedDealers] = useState([])
   const [selectedCoAppicants, setSelectedCoAppicants] = useState([])
@@ -64,7 +63,6 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
   const [loansData, setLoansData] = useState({});
   const [pdfUrl, setPdfUrl] = useState();
   const [signedLetterUrl, setSignedLetterUrl] = useState();
-  const [guarantor, setGuarantor] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hideSend, setHideSend] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false)
@@ -77,7 +75,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
       .then((data) => {
         onClose()
       })
-      .catch (err => console.log(err))
+      .catch(err => console.log(err))
   }
 
   useEffect(() => {
@@ -136,37 +134,21 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
           });
         })
     }
-    if(dealershipId && !loansData?.document_id || reinitiate) {
+    if (dealershipId && !loansData?.document_id || reinitiate) {
       getDealershipById(dealershipId)
         .then(setDealership)
         .catch(err => {
           console.log('getDealershipDetails >>', err);
         })
-      getDealersByDealershipId(dealershipId)
-        .then(res => {
-          const result = res?.filter(d => d?.is_active == 1)
-          setDealers(result);
-        })
-        .catch(err => {
-          console.log('getDealersByDealershipId >> ', err);
-        });
-      getCoApplicantByDealershipId(dealershipId)
+      getAllApplicantsByDealershipId(dealershipId)
         .then(res => {
           const result = res?.filter(d => d?.is_active == 1)
           setApplicants(result);
         })
         .catch(err => {
-          console.log('getCoApplicantByDealershipId >> ', err)
+          console.log('getApplicantByDealershipId >> ', err)
         })
 
-      getGuarantorByDealershipId(dealershipId)
-        .then(res => {
-          const result = res?.filter(d => d?.is_active == 1)
-          setGuarantor(result);
-        })
-        .catch(err => {
-          console.log('getAllGuarantor >>', err)
-        })
     }
   }
 
@@ -178,7 +160,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
 
   const updateSelectedDealers = (selectedStatus, inviteeData) => {
     if (selectedStatus) {
-      if(inviteeData?.signatures?.length === 2){
+      if (inviteeData?.signatures?.length === 2) {
         let buffer = [...selectedDealers, inviteeData]
         const result = buffer.filter(d => d?.id !== inviteeData?.id)
         setSelectedDealers([...result, inviteeData]);
@@ -192,9 +174,9 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
   }
   const updateSelectedCoAppicants = (selectedStatus, inviteeData) => {
     if (selectedStatus) {
-      if(inviteeData?.signatures?.length === 2){
+      if (inviteeData?.signatures?.length === 2) {
         let buffer = [...selectedCoAppicants, inviteeData]
-        const result = buffer.filter(d=> d?.id !== inviteeData?.id)
+        const result = buffer.filter(d => d?.id !== inviteeData?.id)
         setSelectedCoAppicants([...result, inviteeData])
       } else {
         setSelectedCoAppicants([...selectedCoAppicants, inviteeData])
@@ -206,9 +188,9 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
   }
   const updateSelectedGuarantors = (selectedStatus, inviteeData) => {
     if (selectedStatus) {
-      if(inviteeData?.signatures?.length === 2){
+      if (inviteeData?.signatures?.length === 2) {
         let buffer = [...selectedGuarantors, inviteeData]
-        const result = buffer.filter(d=> d?.id !== inviteeData?.id)
+        const result = buffer.filter(d => d?.id !== inviteeData?.id)
         setSelectedGuarantors([...result, inviteeData])
       } else {
         setSelectedGuarantors([...selectedGuarantors, inviteeData])
@@ -234,8 +216,8 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
     if (selectedDealers.length !== 0) {
       let apiUrl = 'document/sign'
       let qry = []
-      if(reinitiate) { qry.push('reinitiate') }
-      if(qry?.length) apiUrl += '?' + qry.join('&')
+      if (reinitiate) { qry.push('reinitiate') }
+      if (qry?.length) apiUrl += '?' + qry.join('&')
 
       apiCall(apiUrl, {
         body: {
@@ -302,7 +284,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
       {
         loansData?.is_signed && !reinitiate ?
           (
-            <SignedLayout loansData={loansData}/>
+            <SignedLayout loansData={loansData} />
           ) : (
             <DialogContent dividers className={classes.content}>
               {
@@ -319,14 +301,14 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
                         <LeegalityAgreementTable
                           loanAmount={loanAmount}
                           dealership={dealership}
-                          dealers={dealers}
-                          applicants={applicants}
-                          guarantor={guarantor}
+                          dealers={applicants?.filter(item => item?.category === 'DEALER')}
+                          applicants={applicants?.filter(item => item?.category === 'COAPPLICANT')}
+                          guarantor={applicants?.filter(item => item?.category === 'GUARANTOR')}
                           productId={productId}
                         />
                       )
                     }
-                    <LeegalityInvitees dealers={dealers} applicants={applicants} guarantor={guarantor} updateSelectedDealers={updateSelectedDealers} updateSelectedCoAppicants={updateSelectedCoAppicants} updateSelectedGuarantors={updateSelectedGuarantors} />
+                    <LeegalityInvitees dealers={applicants?.filter(item => item?.category === 'DEALER')} applicants={applicants?.filter(item => item?.category === 'COAPPLICANT')} guarantor={applicants?.filter(item => item?.category === 'GUARANTOR')} updateSelectedDealers={updateSelectedDealers} updateSelectedCoAppicants={updateSelectedCoAppicants} updateSelectedGuarantors={updateSelectedGuarantors} />
                   </Grid>
                 ))
               }
@@ -364,7 +346,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId , loanId, callba
           }
           {
             !loansData?.is_signed && loansData?.document_id && resign && type === 'agreement' ?
-              <Button variant="contained" color='primary' onClick={handleResign} style={{marginLeft: 12}}>Override Document</Button> : null
+              <Button variant="contained" color='primary' onClick={handleResign} style={{ marginLeft: 12 }}>Override Document</Button> : null
           }
         </Box>
       </DialogActions>

@@ -77,9 +77,7 @@ const GuarantorsTable = ({
           variant: 'success',
         });
         setOpenDialog({ open: false })
-        queryClient.invalidateQueries(['co-applicants', id])
-        queryClient.invalidateQueries(['dealers-coapplicant', id])
-        queryClient.invalidateQueries(['guarantors', id])
+        queryClient.invalidateQueries(['dealership-applicants', id])
       })
       .catch((err) => {
         enqueueSnackbar(err, {

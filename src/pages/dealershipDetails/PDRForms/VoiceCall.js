@@ -11,8 +11,7 @@ import { useQuery } from 'react-query';
 import Button from '../../../components/CommonComponents/Button/Button';
 import DeleteButton from '../../../components/CommonComponents/Button/DeleteButton';
 import { action_id, resources_id } from '../../../config/accessControl';
-import { getCoApplicantByDealershipId, getDealersByDealershipId, getGuarantorByDealershipId } from '../../../services/dealers.service';
-// import { getAllGuarantor } from '../../../services/leegality.service';
+import { getAllApplicantsByDealershipId } from '../../../services/dealers.service';
 import { deleteVoiceCallById, getVoiceCallLogsById, makeVoiceCallById } from '../../../services/users.service';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
@@ -156,15 +155,10 @@ const VoiceCall = ({ id, callback, currentUser }) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [openDialog, setOpenDialog] = useState(false);
-  const [dealers, setDealers] = useState([]);
-  const [coapplicants, setCoapplicants] = useState([]);
-  const [guarantors, setGuarantors] = useState([]);
-  const [audio, setAudio] = useState(false)
+  const [applicants, setApplicants] = useState([]);
   const [playing, setPlaying] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
   const [soundurl, setSoundurl] = useState(null);
   const [deleteModel, setDeleteModel] = useState(false);
-  const [deleteId, setDeleteId] = useState();
   const sound = new Howl({
     urls: [soundurl],
     src: [soundurl],
@@ -175,26 +169,13 @@ const VoiceCall = ({ id, callback, currentUser }) => {
 
   useEffect(() => {
     if (id) {
-      getDealersByDealershipId(id)
+      getAllApplicantsByDealershipId(id)
         .then(res => {
-          setDealers(res);
-        })
-        .catch(err => {
-          console.log('getDealersByDealershipId >> ', err);
-        });
-      getCoApplicantByDealershipId(id)
-        .then(res => {
-          setCoapplicants(res);
+          const r = res?.filter(item => item?.is_active === 1)
+          setApplicants(r);
         })
         .catch(err => {
           console.log('getCoApplicantByDealershipId >> ', err)
-        })
-      getGuarantorByDealershipId(id)
-        .then(res => {
-          setGuarantors(res);
-        })
-        .catch(err => {
-          console.log('getAllGuarantor >>', err)
         })
     }
   }, [id])
@@ -375,15 +356,15 @@ const VoiceCall = ({ id, callback, currentUser }) => {
               <div className={classes.dialogWrapper}>
                 <div className={classes.dialogcontent}>
                   <div style={{ display: 'flex', flexDirection: 'row', marginTop: 12, width: '100%', justifyContent: 'space-between' }}>
-                    <CardWrapper title={'Dealers'} type={'dealer'} data={dealers} callback={handleVoiceCall} />
+                    <CardWrapper title={'Dealers'} type={'dealer'} data={applicants?.filter(item => item?.category === 'DEALER')} callback={handleVoiceCall} />
                     <Divider orientation='vertical' />
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'row', marginTop: 12, width: '100%', justifyContent: 'space-between' }}>
-                    <CardWrapper title={'Co-applicants'} type={'coapplicant'} data={coapplicants} callback={handleVoiceCall} />
+                    <CardWrapper title={'Co-applicants'} type={'coapplicant'} data={applicants?.filter(item => item?.category === 'COAPPLICANT')} callback={handleVoiceCall} />
                     <Divider orientation='vertical' />
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'row', marginTop: 12, width: '100%', justifyContent: 'space-between' }}>
-                    <CardWrapper title={'Guarantors'} type={'guarantor'} data={guarantors} callback={handleVoiceCall} />
+                    <CardWrapper title={'Guarantors'} type={'guarantor'} data={applicants?.filter(item => item?.category === 'GUARANTOR')} callback={handleVoiceCall} />
                   </div>
                 </div>
               </div>

@@ -22,7 +22,7 @@ const useStyles = makeStyles({
 
 const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, currentUser, setFieldValue, cibilEditMode, editable }) => {
   let pan = dealerData?.pan
-  let userType = dealerData?.userType
+  let userType = dealerData?.category
   let dealership_id = dealerData?.dealership_id
   let id = dealerData?.id
   const queryClient = useQueryClient()

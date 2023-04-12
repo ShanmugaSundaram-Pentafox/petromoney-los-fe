@@ -764,7 +764,7 @@ export const deleteOtherDetailsByID = (data, id) => {
       });
   });
 }
-export const bankAccValidate = (AccId = 1175155000148626, IFSC = 'KVBL0001175') => {
+export const bankAccValidate = (AccId, IFSC) => {
   return new Promise((resolve, reject) => {
     apiCall(`bank/${AccId}/${IFSC}`, {
       method: 'POST'

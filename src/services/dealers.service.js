@@ -24,55 +24,19 @@ export const getDealersByDealershipId = id => {
   });
 }
 
-export const getCoApplicantByDealershipId = id => {
-  return new Promise((resolve, reject) => {
-    apiCall(`applicant/${id}?category=COAPPLICANT`)
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          const result = data.map(item => ({
-            ...item,
-            pan: item?.pan ? decrypt(item.pan) : item.pan,
-            aadhar: item?.aadhar ? decrypt(item.aadhar) : item.aadhar,
-          }));
-          resolve(result || []);
-        } else {
-          reject(message);
-        }
-      })
-      .catch(e => {
-        reject(e.message);
-      })
-  });
-}
-
-export const getGuarantorByDealershipId = id => {
-  return new Promise((resolve, reject) => {
-    apiCall(`applicant/${id}?category=GUARANTOR`)
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          const result = data.map(item => ({
-            ...item,
-            pan: item?.pan ? decrypt(item.pan) : item.pan,
-            aadhar: item?.aadhar ? decrypt(item.aadhar) : item.aadhar,
-          }));
-          resolve(result || []);
-        } else {
-          reject(message);
-        }
-      })
-      .catch(e => {
-        reject(e.message);
-      })
-  });
-}
-
 export const getAllApplicantsByDealershipId = id => {
   return new Promise((resolve, reject) => {
-    apiCall(`${URL.applicants}/${id}`)
+    apiCall(`applicant/${id}`)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
-          resolve(data);
-        } else {
+          const result = data.map(item => ({
+            ...item,
+            pan: item?.pan ? decrypt(item.pan) : item.pan,
+            aadhar: item?.aadhar ? decrypt(item.aadhar) : item.aadhar,
+          }));
+          resolve(result || []);
+        }
+        else {
           reject(message);
         }
       })
@@ -324,10 +288,10 @@ export const getKycAgents = () => {
   });
 }
 
-export const updateApplicantDataById = (id,applicantId) => {
+export const updateApplicantDataById = (id, applicantId) => {
   return new Promise((resolve, reject) => {
-    apiCall(`applicant/${id}/${applicantId}/swap`,{
-      method:'POST'
+    apiCall(`applicant/${id}/${applicantId}/swap`, {
+      method: 'POST'
     })
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {

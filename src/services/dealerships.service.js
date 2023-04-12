@@ -265,3 +265,20 @@ export const deleteResignDocument = (dealership_id) => {
       });
   });
 };
+
+export const getCreditReloadLimitById = (id) => {
+  const url = `credit/reload/${id}/limit`;
+  return new Promise((resolve, reject) => {
+    apiCall(url)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data[0]?.available_limit);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};

@@ -49,7 +49,7 @@ const CrimeInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => {
     rulesList.external_view
   );
   const queryClient = useQueryClient();
-  const { data: crimeData } = useQuery('crime',() =>getCrimeInfo(data?.id,data?.userType?.replace(/[- ]/g, '')?.toLowerCase()),{
+  const { data: crimeData } = useQuery('crime', () => getCrimeInfo(data?.id, data?.category?.toLowerCase()), {
     onSuccess: (data) => {
       if (data?.length) {
         setEditMode(true);
@@ -62,7 +62,7 @@ const CrimeInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => {
   });
 
   const refreshCrimeReport = () => {
-    let type = data?.userType?.replace(/[- ]/g, '')?.toLowerCase();
+    let type = data?.category?.toLowerCase();
     let url = `${data?.id}/crimecheck?type=${type}&crimewatch=1`;
     getCrimeReport(url)
       .then((data) => {
@@ -87,7 +87,7 @@ const CrimeInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => {
   };
 
   const crimeReport = () => {
-    let app_type = data?.userType?.replace(/[- ]/g, '')?.toLowerCase();
+    let app_type = data?.category?.toLowerCase();
     let url = `${data?.id}/crimecheck?type=${app_type}`;
     getCrimeReport(url)
       .then((data) => {
@@ -133,13 +133,13 @@ const CrimeInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => {
           <Grid item md={6}>
             <ViewData
               title="User Type"
-              value={data?.userType}
+              value={data?.category}
               style={{ marginBottom: 0 }}
             />
           </Grid>
         </Grid>
         <div style={{ margin: 10 }}>
-          <Grid container spacing={2} style={{ marginTop: 10,marginBottom:20 }}>
+          <Grid container spacing={2} style={{ marginTop: 10, marginBottom: 20 }}>
             {editMode ? (
               <Grid
                 item

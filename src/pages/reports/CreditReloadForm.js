@@ -136,7 +136,7 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      amount: Yup.number().nullable('Enter Amount').required('Enter Amount').moreThan(0, 'Invalid Amount').test('maxDigits', 'Request Amount Invalid', (value) => String(value) >= 50000 && String(value) <= 3000000),
+      amount: Yup.number().nullable('Enter Amount').required('Enter Amount').moreThan(0, 'Invalid Amount').test('maxDigits', creditLimit ? `You can request amount from 50k to ${creditLimit}` : 'Enter dealership ID to check the limit', (value) => String(value) >= 50000 && String(value) <= creditLimit),
     }),
     onSubmit: (values) => {
       const d = { ...values, request_source: 'mdm', bank_id: bankId?.value, repayment_made: repaymentType?.value }

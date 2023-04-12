@@ -98,7 +98,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
   })
 
   const CIBILReport = () => {
-    getCibilReport(dealershipId, data?.id, data?.pan, data?.userType?.replace(/[- ]/g,'')?.toLowerCase())
+    getCibilReport(dealershipId, data?.id, data?.pan, data?.category?.toLowerCase())
       .then(data => {
         queryClient.invalidateQueries('credit')
       })
@@ -183,7 +183,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
                   <ViewData title='Mobile' value={data?.mobile} style={{marginBottom: 0}} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='User Type' value={data?.userType} style={{marginBottom: 0}} />
+                  <ViewData title='User Type' value={data?.category} style={{marginBottom: 0}} />
                 </Grid>
               </Grid>
               <Grid container spacing={2} style={{marginTop: 10}}>

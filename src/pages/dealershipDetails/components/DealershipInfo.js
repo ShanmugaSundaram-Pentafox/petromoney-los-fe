@@ -542,7 +542,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                   color="primary"
                   variant="contained"
                   size="small"
-                  onClick={() => setCrimeData({ ...crimeData, userType: 'dealership', id: data?.id, first_name: data?.name })}>Crime check</Button>
+                  onClick={() => setCrimeData({ ...crimeData, category: 'dealership', id: data?.id, first_name: data?.name })}>Crime check</Button>
               </CheckAllowed>
             </>
           )}

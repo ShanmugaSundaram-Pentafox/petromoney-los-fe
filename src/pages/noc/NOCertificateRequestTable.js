@@ -140,19 +140,15 @@ const NOCertificateRequestTable = ({ currentUser }) => {
           customBodyRender: (value, tableMeta) => {
             if (value === 'rejected') {
               return (
-                <Tooltip title={tableMeta.rowData[7]}>
-                  <div>
-                    <CustomToken label={value} variant="error" icon="cross" />
-                  </div>
-                </Tooltip>
+                <div>
+                  <CustomToken label={value} variant="error" icon="cross" />
+                </div>
               );
             } else if (value === 'Approved') {
               return (
-                <Tooltip title={tableMeta.rowData[7]}>
-                  <div>
-                    <CustomToken label={value} variant="success" icon="tick" />
-                  </div>
-                </Tooltip>
+                <div>
+                  <CustomToken label={value} variant="success" icon="tick" />
+                </div>
               );
             } else return <CustomToken label={value} variant="warn" />;
           },
@@ -217,9 +213,9 @@ const NOCertificateRequestTable = ({ currentUser }) => {
       );
     },
     onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex !== 6) {
+      if (cellMeta.colIndex !== 6 && list[cellMeta.dataIndex]?.status !== 'rejected') {
         currentUser.role_id == 1 &&
-          onRowClick(list[cellMeta.dataIndex].dealership_id, list[cellMeta.dataIndex]);
+          onRowClick(list[cellMeta.dataIndex], list[cellMeta.dataIndex]);
       }
     },
   };

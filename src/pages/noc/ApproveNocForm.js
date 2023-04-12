@@ -12,6 +12,7 @@ import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
+import { ViewData } from '../../components/CommonComponents/FilePreview';
 import {
   approveNocRequestbyDealershipID,
   rejectNocRequestbyDealershipID,
@@ -40,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
   stepperRoot: {
     padding: 16,
-    paddingTop: 8,
+    paddingTop: 20,
   },
   actionButtonsWrapper: {
     display: 'flex',
@@ -72,7 +73,7 @@ const ApproveNocForm = ({ data, callback, currentUser, view }) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const handleReject = () => {
-    rejectNocRequestbyDealershipID(data,remark)
+    rejectNocRequestbyDealershipID(data?.dealership_id, remark)
       .then((message) => {
         enqueueSnackbar(message, {
           anchorOrigin: {
@@ -90,7 +91,7 @@ const ApproveNocForm = ({ data, callback, currentUser, view }) => {
   };
 
   const handleSubmit = () => {
-    approveNocRequestbyDealershipID(data, remark)
+    approveNocRequestbyDealershipID(data?.dealership_id, remark)
       .then((message) => {
         enqueueSnackbar(message, {
           anchorOrigin: {
@@ -119,7 +120,13 @@ const ApproveNocForm = ({ data, callback, currentUser, view }) => {
       <>
         <div className={classes.sidePanelFormContentWrapper}>
           <div className={classes.stepperRoot}>
-            <Box>
+            <Grid container spacing={2}>
+              <Grid item md={6}><ViewData title={'Dealership ID'} value={data?.dealership_id} /></Grid>
+              <Grid item md={6}><ViewData title={'Dealership Name'} value={data?.name} /></Grid>
+              <Grid item md={6}><ViewData title={'Applicant code'} value={data?.applicant_code} /></Grid>
+              <Grid item md={6}><ViewData title={'NOC Type'} value={data?.noc_type} /></Grid>
+            </Grid>
+            <Box style={{ marginTop: 20 }}>
               <form>
                 <Grid item md={7}>
                   <label style={{ marginBottom: 8 }}>Remarks</label>

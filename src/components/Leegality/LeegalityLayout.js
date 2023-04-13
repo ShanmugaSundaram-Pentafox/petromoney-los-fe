@@ -196,7 +196,13 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
               }
             } else {
               setLoading(false);
-              console.log('>> Document Details status error >> ', res);
+              enqueueSnackbar(res?.message, {
+                anchorOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+                variant: 'error',
+              });
               setDocDetails();
             }
           })
@@ -474,7 +480,7 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
 
         <Grid item sm={3}>
           <Box>
-            {auditTrails.map((item, i) => (
+            {auditTrails?.map((item, i) => (
               <ActivityBox key={'act-' + i} {...item} />
             ))}
             {successStatus && (

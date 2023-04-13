@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.30.3](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/compare/v2.30.2...v2.30.3) (2023-04-13)
+
+
+### Bug Fixes
+
+* **applicants:** applicants data api call ([167d256](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/167d25699d0151eb8ee9c972b7a7a3b06e676958))
+* **applicants:** crimecheck prod bug ([84cac2a](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/84cac2a4562c7fabf53ef7539f45d67961b91dc8))
+* **applicants:** update the documents while updating the pan/aadhar ([99b64cf](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/99b64cfb84ee5f3afa2133c54b84db4ef93bea7d))
+* **credit-reload:** available limit amount fix ([d5c5b19](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/d5c5b1901239d00ca8377493c48d88fdff433369))
+* **credit-reload:** show available limit in form ([fd781da](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/fd781dab81981de280bef7f132385eef316e1892))
+* **leegality:** audit trail fetch issue fixed ([57661f3](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/57661f3184cc0ef542a577958ed664b623a03ef5))
+* updated version ([85e9fc0](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/85e9fc08b4c2648f438879908c5bf63ad0761d4e))
+
 ### [2.30.2](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/compare/v2.30.1...v2.30.2) (2023-04-01)
 
 

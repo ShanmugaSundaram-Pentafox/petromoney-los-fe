@@ -260,6 +260,12 @@ const DealerEditSideWrapper = ({
       if (date_values?.aadhar_file_url != data?.aadhar_file_url) {
         commonObj = { ...commonObj, aadhar: data?.aadhar }
       }
+      if (date_values?.aadhar != data?.aadhar) {
+        commonObj = { ...commonObj, aadhar_file_url: data?.aadhar_file_url }
+      }
+      if (date_values?.pan != data?.pan) {
+        commonObj = { ...commonObj, pan_file_url: data?.pan_file_url }
+      }
       const resultObj = data?.id ? compareObject(data, date_values, commonObj) : date_values
       let apiUrl = `applicant/${dealershipId}`;
       if (date_values?.id) {

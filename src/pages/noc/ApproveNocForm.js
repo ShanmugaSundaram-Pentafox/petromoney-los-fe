@@ -69,10 +69,11 @@ const useStyles = makeStyles((theme) => ({
 const ApproveNocForm = ({ data, callback, currentUser, view }) => {
   const classes = useStyles();
   const [remark, setRemark] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState({ approve: false, reject: false });
   const { enqueueSnackbar } = useSnackbar();
 
   const handleReject = () => {
+    setLoading({ ...loading, reject: true })
     rejectNocRequestbyDealershipID(data?.dealership_id, remark)
       .then((message) => {
         enqueueSnackbar(message, {
@@ -82,15 +83,24 @@ const ApproveNocForm = ({ data, callback, currentUser, view }) => {
           },
           variant: 'success',
         });
-        setLoading(false);
+        setLoading({ ...loading, reject: false });
         callback();
       })
       .catch((e) => {
-        setLoading(false);
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+        setLoading({ ...loading, reject: false });
+        callback();
       });
   };
 
   const handleSubmit = () => {
+    setLoading({ ...loading, approve: true })
     approveNocRequestbyDealershipID(data?.dealership_id, remark)
       .then((message) => {
         enqueueSnackbar(message, {
@@ -100,11 +110,19 @@ const ApproveNocForm = ({ data, callback, currentUser, view }) => {
           },
           variant: 'success',
         });
-        setLoading(false);
+        setLoading({ ...loading, approve: false });
         callback();
       })
       .catch((e) => {
-        setLoading(false);
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+        setLoading({ ...loading, approve: false });
+        callback();
       });
   };
 
@@ -157,8 +175,8 @@ const ApproveNocForm = ({ data, callback, currentUser, view }) => {
                   <LoaderButton
                     variant="contained"
                     className={clsx(classes.btn, classes.btnError)}
-                    isLoading={loading}
-                    loadingText="Submitting..."
+                    isLoading={loading?.reject}
+                    loadingText="Rejecting..."
                     type="submit"
                     onClick={handleReject}
                   >
@@ -171,7 +189,8 @@ const ApproveNocForm = ({ data, callback, currentUser, view }) => {
                   <LoaderButton
                     variant="contained"
                     className={clsx(classes.btn, classes.editButton)}
-                    isLoading={loading}
+                    isLoading={loading?.approve}
+                    loadingText='Approving...'
                     type="submit"
                     onClick={handleSubmit}
                   >

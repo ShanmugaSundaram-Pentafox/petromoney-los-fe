@@ -92,6 +92,7 @@ const RequestNocForm = ({ data, callback, currentUser, view }) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const handleSubmit = () => {
+    setLoading(true)
     SubmitNocRequestbyDealershipID(selectedValue)
       .then((message) => {
         enqueueSnackbar(message, {
@@ -105,7 +106,15 @@ const RequestNocForm = ({ data, callback, currentUser, view }) => {
         callback();
       })
       .catch((e) => {
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
         setLoading(false);
+        callback();
       });
   };
 

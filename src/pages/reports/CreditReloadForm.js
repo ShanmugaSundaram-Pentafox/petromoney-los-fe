@@ -109,7 +109,7 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
       return d?.map(item => {
         if (item?.bank_verified === 1) {
           return {
-            label: `${item?.bank_name} - ${item?.account_no}`,
+            label: `${item?.bank_name}(${item?.account_name}) - ${item?.account_no}`,
             value: item.id
           };
         }

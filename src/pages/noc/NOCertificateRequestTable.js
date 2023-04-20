@@ -12,6 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import DescriptionIcon from '@material-ui/icons/Description';
 import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from 'mui-datatables';
+import { useSnackbar } from 'notistack';
 import React, { useMemo, useState, useEffect } from 'react';
 import ApproveNocForm from './ApproveNocForm';
 import RequestNocForm from './RequestNocForm';
@@ -59,6 +60,7 @@ const NOCertificateRequestTable = ({ currentUser }) => {
   const [openApproveModal, setOpenApproveModal] = useState();
   const [openViewer, setOpenViewer] = useState({ open: false });
   const [list, setList] = useState();
+  const { enqueueSnackbar } = useSnackbar();
 
   const actionable = !permissionCheck(
     currentUser.role_name,
@@ -78,8 +80,19 @@ const NOCertificateRequestTable = ({ currentUser }) => {
   }, [refresh]);
 
   const onRowClick = (rowData) => {
-    setOpenApproveModal(true);
-    setRowData(rowData);
+    if (rowData?.status == 'approved' || rowData?.status == 'rejected') {
+      enqueueSnackbar(`NOC is already ${rowData?.status}`, {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'warning',
+      });
+    }
+    else {
+      setOpenApproveModal(true);
+      setRowData(rowData);
+    }
   };
 
   const columns = useMemo(() => {
@@ -138,13 +151,13 @@ const NOCertificateRequestTable = ({ currentUser }) => {
         label: 'Status',
         options: {
           customBodyRender: (value, tableMeta) => {
-            if (value === 'rejected') {
+            if (value == 'rejected') {
               return (
                 <div>
                   <CustomToken label={value} variant="error" icon="cross" />
                 </div>
               );
-            } else if (value === 'Approved') {
+            } else if (value == 'approved') {
               return (
                 <div>
                   <CustomToken label={value} variant="success" icon="tick" />
@@ -213,7 +226,7 @@ const NOCertificateRequestTable = ({ currentUser }) => {
       );
     },
     onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex !== 6 && list[cellMeta.dataIndex]?.status !== 'rejected') {
+      if (cellMeta.colIndex !== 6) {
         currentUser.role_id == 1 &&
           onRowClick(list[cellMeta.dataIndex], list[cellMeta.dataIndex]);
       }

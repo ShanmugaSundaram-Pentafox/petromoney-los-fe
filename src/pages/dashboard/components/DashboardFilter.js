@@ -17,7 +17,7 @@ const DashboardFilter = ({ filterQry, setChartData, type, setTotalLoans, filterT
   const [selectedRegion, setSelectedRegion] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedProducts, setSelectedProducts] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedZones, setSelectedZones] = useState([{ label: 'ALL', value: 0 }]);
-  const [selectedPeriodType, setSelectedPeriodType] = useState(type=='credit' ? 'W' : 'UTD');
+  const [selectedPeriodType, setSelectedPeriodType] = useState(type == 'credit' ? 'W' : 'UTD');
   const [selectedPeriod, setSelectedPeriod] = useState({});
   const [showPicker, setShowPicker] = useState();
   const [dateRange, setDateRange] = useState({
@@ -32,30 +32,34 @@ const DashboardFilter = ({ filterQry, setChartData, type, setTotalLoans, filterT
     setDateRange(range)
   }
 
+  let today = new Date();
+  let year = today.getFullYear(); // to get the current year
+  let month = today.getMonth(); // to get the current month if it is with January being 0 and December being 11. 
   const onDateChange = type => (event) => {
     setSelectedPeriodType(type)
     switch (type) {
     case 'D':
       setSelectedPeriod({
-        from: new Date(),
-        to: new Date(),
+        from: today,
+        to: today,
       })
       break;
     case 'W':
       setSelectedPeriod({
-        from: subDays(new Date(), 8),
-        to: new Date(),
+        from: subDays(today, 8),
+        to: today,
       })
       break;
     case 'M':
       setSelectedPeriod({
-        from: new Date(new Date().getFullYear(), new Date().getMonth()),
+        from: new Date(year, month),
         to: new Date(),
       })
       break;
     case 'Y':
+      year = month < 3 ? year - 1 : year // if the user choose YTD from the month between JAN to March the period is set from the previous year APR month.
       setSelectedPeriod({
-        from: new Date(new Date().getFullYear(), 0),
+        from: new Date(year, 3),
         to: new Date(),
       })
       break;

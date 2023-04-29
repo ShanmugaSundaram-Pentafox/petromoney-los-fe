@@ -32,10 +32,10 @@ const DashboardFilter = ({ filterQry, setChartData, type, setTotalLoans, filterT
     setDateRange(range)
   }
 
-  let today = new Date();
-  let year = today.getFullYear(); // to get the current year
-  let month = today.getMonth(); // to get the current month if it is with January being 0 and December being 11. 
   const onDateChange = type => (event) => {
+    let today = new Date();
+    let year = today.getFullYear(); // to get the current year
+    let month = today.getMonth(); // to get the current month if it is with January being 0 and December being 11. 
     setSelectedPeriodType(type)
     switch (type) {
     case 'D':

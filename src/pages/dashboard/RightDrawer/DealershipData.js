@@ -5,7 +5,7 @@ import { ViewData } from '../../../components/CommonComponents/FilePreview';
 
 const useStyles = makeStyles(({
   root: {
-    // backgroundColor: '#E7E7E7',
+    marginBottom:20
   }
 
 }))

@@ -7,7 +7,7 @@ import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import RenewalDrawerFooter from './RenewalDrawerFooter';
 import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
-import { TextEditor } from '../../../components/TextEditor/TextEditor'; 
+import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { updateRenewalLoanStatus } from '../../../services/renewal.service';
 import DealershipData from '../../dashboard/RightDrawer/DealershipData';
 import WorkingSheetDrawer from '../../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
@@ -53,6 +53,7 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
   const [reviewModal, setReviewModal] = useState(false);
   const [loading, setLoading] = useState(false)
   const [remarks, setRemarks] = useState();
+  const [isReject,setIsReject] = useState(false);
   const [errorStatus, setErrorStatus] = useState()
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
@@ -61,17 +62,22 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
     setReviewModal(!reviewModal)
   }
 
+  const handleReject = () => {
+    setIsReject(true)
+    setReviewModal(!reviewModal)
+  }
+
   const updateLoanStatus = () => {
     if (remarks) {
       setLoading(true)
       let reqBody = {
         remarks: remarks,
-        loan_id:selectedLoanData?.loan_id,
+        loan_id: selectedLoanData?.loan_id,
         status: status
       }
-      updateRenewalLoanStatus(selectedLoanData?.id,reqBody)
+      updateRenewalLoanStatus(reqBody,isReject)
         .then(res => {
-          enqueueSnackbar(res.message, {
+          enqueueSnackbar(res, {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',
@@ -110,7 +116,7 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
           <WorkingSheetDrawer id={id} />
         </div>
         <div>
-          <RenewalDrawerFooter selectedLoanData={selectedLoanData} handleReviewModal={status == 'pre_submit' ? updateLoanStatus : handleReviewModal} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
+          <RenewalDrawerFooter selectedLoanData={selectedLoanData} handleReviewModal={handleReviewModal} handleReject={handleReject} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
         </div>
       </div >
       <Dialog

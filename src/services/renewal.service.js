@@ -87,7 +87,6 @@ export const getPageDetails = (status) => {
     apiCall(`renewal/record_count?status=${status}`)
       .then(({ status, data, message }) => {
         if (status.toUpperCase() === 'SUCCESS') {
-
           resolve(data);
         } else {
           reject(message);
@@ -99,9 +98,10 @@ export const getPageDetails = (status) => {
   });
 }
 
-export const updateRenewalLoanStatus = (id,data) => {
+export const updateRenewalLoanStatus = (data,isReject) => {
+  console.log('isReject in api call >>>>>>>>>>>>>>>>>>>>>>>>',isReject)
   return new Promise((resolve, reject) => {
-    let apiUrl = data?.status == 'draft' ? 'renewal/direct_save' : `renewal/${id}/status/change`
+    let apiUrl = (data?.status == 'draft' && !isReject) ? 'renewal/direct_save' : isReject ? `renewal/${data?.loan_id}/rejected`:  `renewal/${data?.loan_id}/status/change`
     apiCall(apiUrl, {
       method: 'POST',
       body: data

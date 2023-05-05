@@ -1,18 +1,15 @@
-import { Dialog, DialogActions, DialogContent, FormGroup, Checkbox, Tooltip, FormControlLabel, Button, Typography, Chip, IconButton, CircularProgress } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';
-import CloseIcon from '@material-ui/icons/CloseRounded';
 import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
-import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { Link as RouterLink } from 'react-router-dom';
-import { useMount } from 'react-use';
 import { resources_id } from '../../../config/accessControl';
-import { getLoanById, getLoanRejectReason, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
+import { getLoanById, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
 import { isAllowed } from '../../../utils/cerbos';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
@@ -85,6 +82,7 @@ const RenewalDrawerFooter = ({
   status,
   selectedLoanData,
   handleReviewModal,
+  handleReject,
   handleApprovalModal,
   handlePendingApprovalModal,
   updateApprovalStatus
@@ -112,30 +110,20 @@ const RenewalDrawerFooter = ({
     /* The role_id = 1 is for Admin */
     pushback_condition.push('approved')
   }
-  useMount(() => {
-    getLoanRejectReason()
-      .then(data => {
-        const optionsBuffer = []
-        const dataBuffer = []
-        data.map((data, index) => {
-          optionsBuffer.push({ value: index, label: data.reason })
-          dataBuffer.push([data.list.map((d) => { return ({ value: d.id, label: `${d.code} - ${d.description}` }) })])
-        })
-        setOptionsData(optionsBuffer)
-        setReasonData(dataBuffer)
-      })
-      .catch(() => null)
-  })
-
-  const sortByKey = (a, b, key) => {
-    if (a[key]?.trim() < b[key]?.trim()) {
-      return -1;
-    }
-    if (a[key]?.trim() > b[key]?.trim()) {
-      return 1;
-    }
-    return 0;
-  }
+  // useMount(() => {
+  //   getLoanRejectReason()
+  //     .then(data => {
+  //       const optionsBuffer = []
+  //       const dataBuffer = []
+  //       data.map((data, index) => {
+  //         optionsBuffer.push({ value: index, label: data.reason })
+  //         dataBuffer.push([data.list.map((d) => { return ({ value: d.id, label: `${d.code} - ${d.description}` }) })])
+  //       })
+  //       setOptionsData(optionsBuffer)
+  //       setReasonData(dataBuffer)
+  //     })
+  //     .catch(() => null)
+  // })
 
   const handleResubmit = () => {
     setReloader(true);
@@ -248,7 +236,8 @@ const RenewalDrawerFooter = ({
                   disabled={loanData?.loading}
                   className={clsx(classes.btn, classes.btnError)}
                   startIcon={<ThumbDownAltIcon />}
-                  onClick={() => setRejectModal(true)}
+                  // onClick={() => setRejectModal(true)}
+                  onClick={handleReject}
                 >
                   Reject
                 </Button>
@@ -261,7 +250,7 @@ const RenewalDrawerFooter = ({
                 disabled={loanData?.loading}
                 className={clsx(classes.btn, classes.btnSuccess)}
                 startIcon={<ThumbUpAltIcon />}
-                onClick={handlePendingApprovalModal}
+                onClick={handleReviewModal}
               >
                 Approve
               </Button>
@@ -282,7 +271,7 @@ const RenewalDrawerFooter = ({
           }
         </div>
       </div>
-      <Dialog
+      {/* <Dialog
         open={rejectModal}
         onClose={() => setRejectModal(false)}
       >
@@ -361,7 +350,7 @@ const RenewalDrawerFooter = ({
             <Button color='primary' variant='outlined' onClick={updateLoanStatus}>{loading ? <CircularProgress size={22} /> : 'Confirm'}</Button>
           </div>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
     </div >
   )
 }

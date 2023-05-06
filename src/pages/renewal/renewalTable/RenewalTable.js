@@ -7,7 +7,6 @@ import React, { useState } from 'react';
 import ApprovalTable from './ApprovalTable';
 import ApprovedTable from './ApprovedTable';
 import DraftTable from './DraftTable';
-import PushbackTable from './pushbackTable';
 import RejectedTable from './RejectedTable';
 import ReviewTable from './ReviewTable';
 import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
@@ -103,15 +102,6 @@ const RenewalTable = ({ currentUser, value, filterQry }) => {
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
                     <RejectedTable title={'Rejected Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
-                  </Paper>
-                </Grid>
-              ) : null
-            }
-            {
-              value === 'pushback' ? (
-                <Grid item xs={12}>
-                  <Paper className={classes.tableContainer}>
-                    <PushbackTable title={'Pushback Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
               ) : null

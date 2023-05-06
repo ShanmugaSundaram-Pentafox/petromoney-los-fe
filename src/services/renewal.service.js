@@ -98,6 +98,22 @@ export const getPageDetails = (status) => {
   });
 }
 
+export const getRenewalRemarks = (loanId) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`renewal/${loanId}/remark`)
+      .then(({ status, data, message }) => {
+        if (status.toUpperCase() === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
 export const updateRenewalLoanStatus = (data, isReject, isPushBack) => {
   return new Promise((resolve, reject) => {
     let apiUrl = '';

@@ -1,17 +1,18 @@
-import { Button } from '@material-ui/core';
+import { Button, Drawer } from '@material-ui/core';
 import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';
 import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded'
 import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { Link as RouterLink } from 'react-router-dom';
 import { resources_id } from '../../../config/accessControl';
 import { getLoanById } from '../../../services/loans.service';
 import { isAllowed } from '../../../utils/cerbos';
 import CheckAllowed from '../../rbac/CheckAllowed';
+import ViewRemarks from '../renewalTable/ViewRemarks';
 
 const useStyles = makeStyles(theme => ({
   actionButtonsWrapper: {
@@ -98,11 +99,17 @@ const RenewalDrawerFooter = ({
 }) => {
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.loan_id))
   const classes = useStyles();
+  const [openDrawer, setOpenDrawer] = useState(false)
 
   return (
     <div>
       <div className={classes.actionButtonsWrapper}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Button variant='outlined' size='small' color='primary'
+            onClick={() => setOpenDrawer(true)}
+          >
+            View Remarks
+          </Button>
           <Button
             component={RouterLink}
             to={`/dealership/${id}`}
@@ -183,6 +190,14 @@ const RenewalDrawerFooter = ({
           }
         </div>
       </div>
+      <Drawer
+        anchor="right"
+        open={openDrawer}
+        onClose={() => setOpenDrawer(false)}
+        variant="temporary"
+      >
+        <ViewRemarks handleClose={()=>setOpenDrawer(false)} loanId={selectedLoanData?.loan_id} />
+      </Drawer>
     </div >
   )
 }

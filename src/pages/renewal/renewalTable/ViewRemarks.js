@@ -81,7 +81,7 @@ const ViewRemarks = ({ loanId, handleClose }) => {
                       </p>
                     </Box>
                   </Box>
-                  <div style={{ marginTop: 20 }}>
+                  <div style={{ marginTop: 12 }}>
                     {remark?.reason ?
                       <Typography size='xs'>
                         Reason: {remark?.reason}

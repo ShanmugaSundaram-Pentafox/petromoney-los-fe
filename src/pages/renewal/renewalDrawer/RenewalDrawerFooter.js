@@ -58,15 +58,15 @@ const useStyles = makeStyles(theme => ({
   },
   btnWarn: {
     '&.MuiButton-contained': {
-      backgroundColor: theme.palette.warning.light,
+      backgroundColor: theme.palette.info.dark,
       color: theme.palette.white
     },
     '&.MuiButton-outlined': {
-      color: theme.palette.warning.light,
-      borderColor: theme.palette.error.main
+      color: theme.palette.info.light,
+      borderColor: theme.palette.info.light
     },
     '&.MuiButton-contained:hover': {
-      backgroundColor: theme.palette.warning.light
+      backgroundColor: theme.palette.info.light
     }
   },
 

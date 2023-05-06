@@ -54,6 +54,7 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
   const [loading, setLoading] = useState(false)
   const [remarks, setRemarks] = useState();
   const [isReject,setIsReject] = useState(false);
+  const [isPushback,setIsPushback] = useState(false);
   const [errorStatus, setErrorStatus] = useState()
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
@@ -67,6 +68,11 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
     setReviewModal(!reviewModal)
   }
 
+  const handlePushBack = () => {
+    setIsPushback(true)
+    setReviewModal(!reviewModal)
+  }
+
   const updateLoanStatus = () => {
     if (remarks) {
       setLoading(true)
@@ -75,7 +81,7 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
         loan_id: selectedLoanData?.loan_id,
         status: status
       }
-      updateRenewalLoanStatus(reqBody,isReject)
+      updateRenewalLoanStatus(reqBody,isReject,isPushback)
         .then(res => {
           enqueueSnackbar(res, {
             anchorOrigin: {
@@ -100,7 +106,7 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
           })
         })
     } else {
-      setErrorStatus('Please select reviewer and enter remarks.')
+      setErrorStatus('Please enter remarks.')
     }
   }
 
@@ -116,7 +122,7 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
           <WorkingSheetDrawer id={id} />
         </div>
         <div>
-          <RenewalDrawerFooter selectedLoanData={selectedLoanData} handleReviewModal={handleReviewModal} handleReject={handleReject} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
+          <RenewalDrawerFooter selectedLoanData={selectedLoanData} handleReviewModal={handleReviewModal} handlePushBack={handlePushBack} handleReject={handleReject} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
         </div>
       </div >
       <Dialog

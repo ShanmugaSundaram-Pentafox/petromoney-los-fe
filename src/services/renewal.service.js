@@ -1,6 +1,6 @@
 import apiCall from '../utils/api.util';
 
-export const getRenewalLoanByStatus = (status, filterQry,page,searchText) => {
+export const getRenewalLoanByStatus = (status, filterQry, page, searchText) => {
   return new Promise((resolve, reject) => {
     const { region, from, to, products, zone } = filterQry;
     let qry = []
@@ -51,7 +51,7 @@ export const getRenewalLoanStats = (qryStr = {}) => {
 }
 
 export const getStatusWiseRecordCount = () => {
-  return new Promise((resolve, reject) => {  
+  return new Promise((resolve, reject) => {
     apiCall('renewal/status_wise_record_count')
       .then(({ status, data, message }) => {
         if (status.toUpperCase() === 'SUCCESS') {
@@ -66,7 +66,7 @@ export const getStatusWiseRecordCount = () => {
   });
 }
 export const getRenewalStatusList = () => {
-  return new Promise((resolve, reject) => {  
+  return new Promise((resolve, reject) => {
     apiCall('renewal/status')
       .then(({ status, data, message }) => {
         if (status.toUpperCase() === 'SUCCESS') {
@@ -83,7 +83,7 @@ export const getRenewalStatusList = () => {
 }
 
 export const getPageDetails = (status) => {
-  return new Promise((resolve, reject) => {  
+  return new Promise((resolve, reject) => {
     apiCall(`renewal/record_count?status=${status}`)
       .then(({ status, data, message }) => {
         if (status.toUpperCase() === 'SUCCESS') {
@@ -98,10 +98,18 @@ export const getPageDetails = (status) => {
   });
 }
 
-export const updateRenewalLoanStatus = (data,isReject) => {
-  console.log('isReject in api call >>>>>>>>>>>>>>>>>>>>>>>>',isReject)
+export const updateRenewalLoanStatus = (data, isReject, isPushBack) => {
   return new Promise((resolve, reject) => {
-    let apiUrl = (data?.status == 'draft' && !isReject) ? 'renewal/direct_save' : isReject ? `renewal/${data?.loan_id}/rejected`:  `renewal/${data?.loan_id}/status/change`
+    let apiUrl = '';
+    if (isReject) {
+      apiUrl = `renewal/${data?.loan_id}/rejected`
+    } else if (isPushBack) {
+      apiUrl = `renewal/${data?.loan_id}/pushback`
+    } else if (data?.status) {
+      apiUrl = 'renewal/direct_save'
+    } else {
+      apiUrl = `renewal/${data?.loan_id}/status/change`
+    }
     apiCall(apiUrl, {
       method: 'POST',
       body: data

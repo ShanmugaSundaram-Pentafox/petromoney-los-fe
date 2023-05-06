@@ -3,6 +3,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
+import DescriptionIcon from '@material-ui/icons/Description';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import MUIDataTable from 'mui-datatables';
@@ -12,10 +13,9 @@ import MuiTableFooter from '../../../components/CommonComponents/MuiTableFooter'
 import SignRequestLayout from '../../../components/Leegality/SignRequestLayout';
 import Currency from '../../../components/Number/Currency';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
-import { action_id, resources_id } from '../../../config/accessControl';
 import { rulesList } from '../../../config/userRules';
 import { ReactComponent as ESignIcon } from '../../../icons/e-sign.svg';
-import CheckAllowed from '../../../pages/rbac/CheckAllowed';
+import { ReactComponent as LoanAgreementIcon } from '../../../icons/loan_agreement.svg';
 import { getPageDetails, getRenewalLoanByStatus } from '../../../services/renewal.service';
 import { dateCustomSort } from '../../../utils/commonFunctions.util';
 
@@ -40,10 +40,12 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const classes = useStyles();
   const [loanId, setloanId] = useState();
   const [dealershipId, setDealershipId] = useState();
+  const [loanAmount, setLoanAmount] = useState();
   const [modalVisible, setModalVisible] = useState(false);
   const [type, setType] = useState('');
   const [loans, setLoans] = useState([]);
   const [page, setPage] = useState();
+  const [productTypeId, setProductTypeId] = useState();
   const [pageData, setPageData] = useState();
   const [search, setSearch] = useState();
   const [loading, setLoading] = useState(false);
@@ -68,6 +70,17 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
       })
       .catch((e) => console.log('getPageCountError >>>', e))
   }, [])
+  const getLoansTable = () => {
+    setLoading(true);
+    getRenewalLoanByStatus('approved')
+      .then(data => {
+        setLoans(data);
+        setLoading(false);
+      })
+      .catch(e => {
+        setLoading(false);
+      })
+  }
 
   const columns = useMemo(() => {
     return [
@@ -159,17 +172,28 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
           filter: false,
           sort: false,
           display: actionable ? true : 'excluded',
+          setCellProps: () => ({
+            align: 'center',
+          }),
           customBodyRender: (value, r) => {
             return (
-              <CheckAllowed currentUser={currentUser} resource={resources_id?.dashboard} action={action_id?.dashboard?.submitted_documents}>
-                <Tooltip title="eSign Application">
-                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setType('application'); setDealershipId(value); setModalVisible(true); }}>
-                    <div>
-                      <ESignIcon width={24} />
-                    </div>
+              <div style={{ minWidth: 70 }}>
+                <Tooltip title="Sanction Letter">
+                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setDealershipId(value); setType('sanction'); setModalVisible(true); }}>
+                    <DescriptionIcon style={{ width: 19 }} />
                   </IconButton>
                 </Tooltip>
-              </CheckAllowed>
+                <Tooltip title="Loan Agreement">
+                  <IconButton style={{ marginRight: 3 }} size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['approved_amount']); setProductTypeId(loans?.[r.rowIndex]['product_id']) }}>
+                    <LoanAgreementIcon width={12} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="eSign Application">
+                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setType('application'); setDealershipId(value); setModalVisible(true); }}>
+                    <ESignIcon width={17} />
+                  </IconButton>
+                </Tooltip>
+              </div>
             )
           }
         }
@@ -223,9 +247,12 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
         <SignRequestLayout
           dealershipId={dealershipId}
           loanId={loanId}
+          loanAmount={loanAmount}
+          productId={productTypeId}
           type={type}
-          title={'eSign Application Form'}
+          title={type === 'application' ? 'eSign Application Form' : 'Sanction Letter'}
           onClose={() => setModalVisible(false)}
+          callback={getLoansTable}
           currentUser={currentUser}
         />
       </Dialog>

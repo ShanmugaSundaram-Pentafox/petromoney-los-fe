@@ -1,15 +1,15 @@
 import { Button } from '@material-ui/core';
 import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';
+import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded'
 import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
-import { useSnackbar } from 'notistack';
-import React, { useState } from 'react';
+import React from 'react';
 import { useQuery } from 'react-query';
 import { Link as RouterLink } from 'react-router-dom';
 import { resources_id } from '../../../config/accessControl';
-import { getLoanById, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
+import { getLoanById } from '../../../services/loans.service';
 import { isAllowed } from '../../../utils/cerbos';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
@@ -55,6 +55,19 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: theme.palette.error.dark
     }
   },
+  btnWarn: {
+    '&.MuiButton-contained': {
+      backgroundColor: theme.palette.warning.light,
+      color: theme.palette.white
+    },
+    '&.MuiButton-outlined': {
+      color: theme.palette.warning.light,
+      borderColor: theme.palette.error.main
+    },
+    '&.MuiButton-contained:hover': {
+      backgroundColor: theme.palette.warning.light
+    }
+  },
 
   items: {
     borderBottom: '1px solid #c9c7c7',
@@ -76,130 +89,16 @@ const useStyles = makeStyles(theme => ({
 
 const RenewalDrawerFooter = ({
   id,
-  editable,
   currentUser,
-  onClose,
   status,
   selectedLoanData,
   handleReviewModal,
   handleReject,
-  handleApprovalModal,
-  handlePendingApprovalModal,
-  updateApprovalStatus
+  handlePushBack,
 }) => {
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.loan_id))
   const classes = useStyles();
-  const [reLoader, setReloader] = useState(false);
-  const [rejectModal, setRejectModal] = useState(false);
-  const [pushback, setPushback] = useState(false);
-  const [pushbackRemarks, setPushbackRemarks] = useState();
-  const [optionsData, setOptionsData] = useState([])
-  const [selectedCategory, setSelectedCategory] = useState();
-  const [activeTab, setActiveTab] = useState();
-  const [reasonData, setReasonData] = useState()
-  const [rejectReason, setRejectReason] = useState([])
-  const [displayReason, setDisplayReason] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [errorMsg, setErrorMsg] = useState();
-  const { enqueueSnackbar } = useSnackbar();
-  var pushback_condition = ['loan_approval', 'disbursement_approval', 'disbursement_approved'];
-  /* The pushback_condition array is to check the condition for the pushback button, 
-  The push back button want to show for all the user expect the Approved field, 
-  Only the admin has the permission for the Approved field. */
-  if (currentUser.role_id == '1') {
-    /* The role_id = 1 is for Admin */
-    pushback_condition.push('approved')
-  }
-  // useMount(() => {
-  //   getLoanRejectReason()
-  //     .then(data => {
-  //       const optionsBuffer = []
-  //       const dataBuffer = []
-  //       data.map((data, index) => {
-  //         optionsBuffer.push({ value: index, label: data.reason })
-  //         dataBuffer.push([data.list.map((d) => { return ({ value: d.id, label: `${d.code} - ${d.description}` }) })])
-  //       })
-  //       setOptionsData(optionsBuffer)
-  //       setReasonData(dataBuffer)
-  //     })
-  //     .catch(() => null)
-  // })
 
-  const handleResubmit = () => {
-    setReloader(true);
-    updateLoanStats(id, loanData.id)
-      .then(res => {
-        setReloader(false);
-        enqueueSnackbar(res, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
-        })
-        setTimeout(() => {
-          setReloader(false);
-          window.location.reload();
-        }, 2000)
-      })
-      .catch(() => {
-        setReloader(false);
-      })
-  }
-  const handlePushBack = () => {
-    let reqBody = {
-      user_id: currentUser.id,
-      pushback_remarks: pushbackRemarks,
-    }
-    if (pushbackRemarks?.length) {
-      setLoading(true)
-      updateLoanApprovalStatusById(id, loanData.id, 'pushback', reqBody)
-        .then(res => {
-          enqueueSnackbar(res.message, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'success',
-          })
-          setTimeout(() => {
-            window.location.reload();
-            setLoading(false)
-          }, 1500)
-        })
-        .catch(err => {
-          setLoading(false)
-          enqueueSnackbar(err, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'error',
-          })
-        })
-    } else {
-      setErrorMsg('Please enter the Remarks')
-    }
-  }
-  const removeItem = (item) => {
-    setRejectReason(rejectReason.filter(value => value !== item.value))
-    setDisplayReason(displayReason.filter(label => label.label !== item.label))
-  }
-  const handleReasonChange = (event) => {
-    if (errorMsg) setErrorMsg()
-    let reasonArray = [...displayReason, { label: event.target.name, value: event.target.value }];
-    let arrayCheck = [...rejectReason, event.target.value];
-    if (rejectReason.includes(event.target.value)) {
-      arrayCheck = arrayCheck.filter(value => value !== event.target.value)
-      reasonArray = reasonArray.filter(name => name.label !== event.target.name)
-    }
-    setDisplayReason(reasonArray)
-    setRejectReason(arrayCheck)
-  }
-
-  const updateLoanStatus = () => {
-
-  }
   return (
     <div>
       <div className={classes.actionButtonsWrapper}>
@@ -229,6 +128,20 @@ const RenewalDrawerFooter = ({
               </CheckAllowed>
           }
           {
+            status && ['review'].includes(status.toLowerCase()) &&
+              <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_reject'}>
+                <Button
+                  variant="contained"
+                  disabled={loanData?.loading}
+                  className={clsx(classes.btn, classes.btnWarn)}
+                  startIcon={<ChevronLeftRoundedIcon />}
+                  onClick={handlePushBack}
+                >
+                  Pushback
+                </Button>
+              </CheckAllowed>
+          }
+          {
             status && ['approval', 'review'].includes(status.toLowerCase()) &&
               <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_reject'}>
                 <Button
@@ -236,7 +149,6 @@ const RenewalDrawerFooter = ({
                   disabled={loanData?.loading}
                   className={clsx(classes.btn, classes.btnError)}
                   startIcon={<ThumbDownAltIcon />}
-                  // onClick={() => setRejectModal(true)}
                   onClick={handleReject}
                 >
                   Reject
@@ -271,86 +183,6 @@ const RenewalDrawerFooter = ({
           }
         </div>
       </div>
-      {/* <Dialog
-        open={rejectModal}
-        onClose={() => setRejectModal(false)}
-      >
-        <DialogContent className={classes.rejectModal}>
-          {
-            <>
-              <div>
-                {
-                  errorMsg &&
-                    <Alert severity='error' style={{ marginBottom: 12 }}>{errorMsg}</Alert>
-                }
-                <Typography style={{ marginBottom: 16 }} variant='body1'>Choose category and reasons for rejection.</Typography>
-                <Typography variant='body2'>Category</Typography>
-                {
-                  optionsData.map((item, i) => {
-                    return <Chip key={i} label={item.label} className={classes.chip} variant={activeTab === i ? 'default' : 'outlined'} onClick={() => {
-                      setSelectedCategory({ label: item?.label, value: item?.value })
-                      setActiveTab(item.value)
-                    }} clickable color={activeTab === i ? 'primary' : ''} />
-                  })
-                }
-              </div>
-              {
-                selectedCategory && (
-                  <div className={classes.actions}>
-                    <Typography variant='body1'>Reason</Typography>
-                    <FormGroup>
-                      {
-                        reasonData[selectedCategory.value][0].map((data, index) => {
-                          return (
-                            <FormControlLabel
-                              key={index}
-                              control={
-                                <Checkbox
-                                  className={classes.checkbox}
-                                  onChange={handleReasonChange}
-                                  value={data.value} key={data.value} checked={rejectReason.includes(data.value)} name={data.label}
-                                />}
-                              label={data.label}
-                              color={activeTab === data.label ? 'primary' : ''}
-                            />
-                          )
-                        })
-                      }
-                    </FormGroup>
-                  </div>
-                )
-              }
-              {
-                displayReason.length != 0 && (
-                  <div className={classes.actions2}>
-                    <Typography variant='body1'><strong>Selected Reasons</strong></Typography>
-                    {
-                      displayReason.sort((a, b) => sortByKey(a, b, 'label')).map((item, i) => {
-                        return (
-                          <div key={i} className={classes.items}>
-                            <p className={classes.eachItem}><span className={classes.itemNotation}>{i + 1}.</span> {item.label}</p>
-                            <Tooltip title="Remove">
-                              <IconButton size='small'>
-                                <CloseIcon fontSize='small' onClick={() => removeItem(item)} />
-                              </IconButton>
-                            </Tooltip>
-                          </div>
-                        )
-                      })
-                    }
-                  </div>
-                )
-              }
-            </>
-          }
-        </DialogContent>
-        <DialogActions>
-          <div>
-            <Button onClick={() => setRejectModal(false)}>Cancel</Button>
-            <Button color='primary' variant='outlined' onClick={updateLoanStatus}>{loading ? <CircularProgress size={22} /> : 'Confirm'}</Button>
-          </div>
-        </DialogActions>
-      </Dialog> */}
     </div >
   )
 }

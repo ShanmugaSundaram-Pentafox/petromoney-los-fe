@@ -1,7 +1,4 @@
-import { Dialog } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
@@ -9,13 +6,7 @@ import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState, useEffect } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import MuiTableFooter from '../../../components/CommonComponents/MuiTableFooter';
-import SignRequestLayout from '../../../components/Leegality/SignRequestLayout';
 import Currency from '../../../components/Number/Currency';
-import { permissionCheck } from '../../../components/UserCan/UserCan';
-import { action_id, resources_id } from '../../../config/accessControl';
-import { rulesList } from '../../../config/userRules';
-import { ReactComponent as ESignIcon } from '../../../icons/e-sign.svg';
-import CheckAllowed from '../../../pages/rbac/CheckAllowed';
 import { getPageDetails, getRenewalLoanByStatus } from '../../../services/renewal.service';
 import { dateCustomSort } from '../../../utils/commonFunctions.util';
 
@@ -38,16 +29,11 @@ const useStyles = makeStyles(theme => ({
 
 const DraftTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const classes = useStyles();
-  const [loanId, setloanId] = useState();
-  const [dealershipId, setDealershipId] = useState();
-  const [modalVisible, setModalVisible] = useState(false);
-  const [type, setType] = useState('');
   const [loans, setLoans] = useState([]);
   const [page, setPage] = useState();
   const [pageData, setPageData] = useState();
   const [search, setSearch] = useState();
   const [loading, setLoading] = useState(false);
-  const actionable = !permissionCheck(currentUser.role_name, rulesList.external_view);
 
   useEffect(() => {
     setLoading(true);
@@ -152,28 +138,6 @@ const DraftTable = ({ title, onRowClick, filterQry, currentUser }) => {
           },
         }
       },
-      {
-        label: 'Documents',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: false,
-          display: actionable ? true : 'excluded',
-          customBodyRender: (value, r) => {
-            return (
-              <CheckAllowed currentUser={currentUser} resource={resources_id?.dashboard} action={action_id?.dashboard?.submitted_documents}>
-                <Tooltip title="eSign Application">
-                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setType('application'); setDealershipId(value); setModalVisible(true); }}>
-                    <div>
-                      <ESignIcon width={24} />
-                    </div>
-                  </IconButton>
-                </Tooltip>
-              </CheckAllowed>
-            )
-          }
-        }
-      }
     ]
   }, [loans]);
 
@@ -186,7 +150,7 @@ const DraftTable = ({ title, onRowClick, filterQry, currentUser }) => {
     onSearchChange: (searchText) => {
       setSearch(searchText)
     },
-    customFooter: (count, page, rowsPerPage, changeRowsPerPage, changePage, textLabels) => {
+    customFooter: () => {
       return (
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <MuiTableFooter
@@ -219,16 +183,6 @@ const DraftTable = ({ title, onRowClick, filterQry, currentUser }) => {
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
       }
-      <Dialog fullWidth maxWidth="md" open={modalVisible} onClose={() => setModalVisible(false)}>
-        <SignRequestLayout
-          dealershipId={dealershipId}
-          loanId={loanId}
-          type={type}
-          title={'eSign Application Form'}
-          onClose={() => setModalVisible(false)}
-          currentUser={currentUser}
-        />
-      </Dialog>
     </div>
   )
 }

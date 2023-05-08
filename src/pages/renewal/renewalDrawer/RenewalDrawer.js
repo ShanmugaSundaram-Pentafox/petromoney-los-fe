@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogContentText, Button } from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, Button, DialogTitle } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/CloseRounded';
 import Alert from '@material-ui/lab/Alert';
@@ -12,6 +12,33 @@ import { updateRenewalLoanStatus } from '../../../services/renewal.service';
 import DealershipData from '../../dashboard/RightDrawer/DealershipData';
 import WorkingSheetDrawer from '../../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
 
+const getRemarksMessage = (status, isReject, isPushback) => {
+  if (isReject) {
+    return 'Rejected';
+  }
+  if (isPushback) {
+    return 'Please check again!'
+  }
+  if (status === 'approval') {
+    return 'Approved'
+  }
+  if (status === 'review') {
+    return 'Please approve'
+  }
+  return 'Please approve'
+}
+const getMessage = (status, isReject, isPushback) => {
+  if (isReject) {
+    return 'Are you sure you want to REJECT this renewal?'
+  }
+  if (isPushback) {
+    return 'Move to Previous Stage?'
+  }
+  if (status === 'approval') {
+    return 'Are you sure you want to APPROVE this renewal?'
+  }
+  return 'Move to Next Stage?'
+}
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -59,18 +86,27 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
-  const handleReviewModal = () => {
-    setReviewModal(!reviewModal)
+  const closeReviewModal = () => {
+    setIsReject(false);
+    setIsPushback(false);
+    setReviewModal(false)
+  }
+
+  const openReviewModal = () => {
+    setRemarks(getRemarksMessage(status, isReject, isPushback))
+    setReviewModal(true)
   }
 
   const handleReject = () => {
     setIsReject(true)
-    setReviewModal(!reviewModal)
+    setRemarks(getRemarksMessage(status, true, isPushback))
+    setReviewModal(true)
   }
 
   const handlePushBack = () => {
     setIsPushback(true)
-    setReviewModal(!reviewModal)
+    setRemarks(getRemarksMessage(status, isReject, true))
+    setReviewModal(true)
   }
 
   const updateLoanStatus = () => {
@@ -79,9 +115,11 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
       let reqBody = {
         remarks: remarks,
         loan_id: selectedLoanData?.loan_id,
-        status: status
+        status,
+        isReject,
+        isPushback,
       }
-      updateRenewalLoanStatus(reqBody,isReject,isPushback)
+      updateRenewalLoanStatus(reqBody)
         .then(res => {
           enqueueSnackbar(res, {
             anchorOrigin: {
@@ -92,11 +130,9 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
           })
           setTimeout(() => {
             window.location.reload();
-            setLoading(false)
-          }, 1500)
+          }, 1000)
         })
         .catch(err => {
-          setLoading(false)
           enqueueSnackbar(err, {
             anchorOrigin: {
               vertical: 'top',
@@ -104,6 +140,10 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
             },
             variant: 'error',
           })
+        })
+        .finally(() => {
+          closeReviewModal()
+          setLoading(false)
         })
     } else {
       setErrorStatus('Please enter remarks.')
@@ -122,26 +162,27 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
           <WorkingSheetDrawer id={id} />
         </div>
         <div>
-          <RenewalDrawerFooter selectedLoanData={selectedLoanData} handleReviewModal={handleReviewModal} handlePushBack={handlePushBack} handleReject={handleReject} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
+          <RenewalDrawerFooter selectedLoanData={selectedLoanData} handleReviewModal={openReviewModal} handlePushBack={handlePushBack} handleReject={handleReject} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
         </div>
       </div >
       <Dialog
         open={reviewModal}
-        onClose={handleReviewModal}
+        onClose={closeReviewModal}
       >
+        <DialogTitle>{getMessage(status, isReject, isPushback)}</DialogTitle>
         <DialogContent>
           <div className={classes.dialog}>
             <DialogContentText id="approval-remarks-desc">
-              Please enter your remarks for sending this to review.
+              Please enter your remarks.
             </DialogContentText>
-            <TextEditor setJSON={setRemarks} toolBar={true} />
+            <TextEditor setJSON={setRemarks} toolBar={true} remarkData={remarks} />
             {
-              errorStatus &&
-                <Alert severity="error" style={{ padding: '0px 16px' }}>{errorStatus}</Alert>
+              errorStatus ?
+                <Alert severity="error" style={{ padding: '0px 16px' }}>{errorStatus}</Alert> : null
             }
           </div>
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 8, marginBottom: 5 }}>
-            <Button variant='outlined' onClick={handleReviewModal} style={{ marginRight: 8 }}>Cancel</Button>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: 8, marginBottom: 5 }}>
+            <Button variant='outlined' onClick={closeReviewModal} style={{ marginRight: 8 }}>Cancel</Button>
             <LoaderButton
               variant='contained'
               color='primary'
@@ -149,7 +190,7 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
               size='medium'
               isLoading={loading}
               loadingText="Submitting..."
-              onClick={() => updateLoanStatus('loan_review')}
+              onClick={() => updateLoanStatus()}
             >Confirm</LoaderButton>
           </div>
         </DialogContent>

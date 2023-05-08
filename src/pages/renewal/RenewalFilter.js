@@ -116,7 +116,7 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
   }, [selectedRegion, selectedPeriod, filterQry, selectedProducts, selectedZones])
 
   const getStats = (qry) => {
-    getStatusWiseRecordCount()
+    getStatusWiseRecordCount(qry)
       .then(res => {
         const cdata = res?.map((item) => {
           return { name: item?.status, count: item?.record_count };

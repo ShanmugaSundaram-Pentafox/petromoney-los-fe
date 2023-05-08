@@ -137,20 +137,19 @@ export const updateRenewalLoanStatus = ({ isReject, isPushback, ...data}) => {
     }
 
     // console.log('API URL >>', apiUrl);
-    reject(apiUrl);
-    // apiCall(apiUrl, {
-    //   method: 'POST',
-    //   body: data
-    // })
-    //   .then(({ status, message }) => {
-    //     if (status.toUpperCase() === 'SUCCESS') {
-    //       resolve(message);
-    //     } else {
-    //       reject(message);
-    //     }
-    //   })
-    //   .catch((e) => {
-    //     reject(e.message);
-    //   });
+    apiCall(apiUrl, {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status.toUpperCase() === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
   });
 };

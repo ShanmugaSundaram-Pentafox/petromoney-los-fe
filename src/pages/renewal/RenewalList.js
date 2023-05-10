@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import RenewalFilter from './RenewalFilter';
 import RenewalTable from './renewalTable/RenewalTable';
 import usePageTitle from '../../hooks/usePageTitle';
-import { getStatusWiseRecordCount } from '../../services/renewal.service';
+import { getRenewalStatusList, getStatusWiseRecordCount } from '../../services/renewal.service';
 import LoanStats from '../dashboard/components/LoanStats';
 
 const currencyFormat = (value) => {
@@ -19,15 +19,20 @@ const RenewalList = ({ currentUser }) => {
   const [filterQry, setFilterQry] = useState();
 
   const handleClick = (name) => {
-    getStatusWiseRecordCount(filterQry)
-      .then(res => {
-        const cdata = res?.map((item) => {
-          return { name: item?.status, count: item?.record_count };
-        });
-        setChartData(cdata);
-      })
-      .catch(err => {
-        console.log(err);
+    getRenewalStatusList()
+      .then((status) => {
+        getStatusWiseRecordCount(filterQry)
+          .then(res => {
+            const cdata = status?.map((item) => {
+              const matchingItem = res.find((el) => el.status === item.status);
+              return matchingItem ? { name: item?.status, count: matchingItem?.record_count } : { name: item?.status, count: 0 };
+            });
+            setChartData(cdata);
+          })
+          .catch(err => {
+            console.log(err);
+          })
+          .catch((err) => console.log('err >>', err))
       })
     setSelectedStatsCard(name)
   }

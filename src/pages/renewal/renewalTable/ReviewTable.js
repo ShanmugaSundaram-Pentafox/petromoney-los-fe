@@ -2,6 +2,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
+import moment from 'moment';
 import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState, useEffect } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
@@ -121,9 +122,7 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
             align: 'center',
           }),
           customBodyRender: value => {
-            return <div>
-              {value ? value : '-'}
-            </div>
+            return <div>{value ? moment(new Date(value), 'YYYY-MM-DD').format('MMM, YY') : '-'}</div>
           }
         }
       },

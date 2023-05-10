@@ -6,7 +6,7 @@ import { useQuery } from 'react-query';
 import { useMount } from 'react-use';
 import { filterStyles, Selector } from '../../components/CommonComponents/FilterCard';
 import { getAllRegions, getFilteredProducts, getZones } from '../../services/common.service';
-import { getStatusWiseRecordCount } from '../../services/renewal.service';
+import { getRenewalStatusList, getStatusWiseRecordCount } from '../../services/renewal.service';
 
 const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterType, filters }) => {
   const classes = filterStyles();
@@ -116,21 +116,26 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
   }, [selectedRegion, selectedPeriod, filterQry, selectedProducts, selectedZones])
 
   const getStats = (qry) => {
-    getStatusWiseRecordCount(qry)
-      .then(res => {
-        const cdata = res?.map((item) => {
-          return { name: item?.status, count: item?.record_count };
-        });
-        setChartData(cdata);
-        let s = 0;
-        for (let i = 0; i < cdata.length; i++) {
-          s += cdata[i].record_count;
-        }
-        setTotalLoans(s)
+    getRenewalStatusList()
+      .then((status) => {
+        getStatusWiseRecordCount(qry)
+          .then(res => {
+            const cdata = status?.map((item) => {
+              const matchingItem = res.find((el) => el.status === item.status);
+              return matchingItem ? { name: item?.status, count: matchingItem?.record_count } : {name:item?.status, count:0};
+            });
+            setChartData(cdata);
+            let s = 0;
+            for (let i = 0; i < cdata.length; i++) {
+              s += cdata[i].record_count;
+            }
+            setTotalLoans(s)
+          })
+          .catch(err => {
+            console.log(err);
+          })
       })
-      .catch(err => {
-        console.log(err);
-      })
+      .catch((err) => console.log('err >>', err))
   }
 
   const onDateRangeClose = () => {

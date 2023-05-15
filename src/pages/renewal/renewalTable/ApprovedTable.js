@@ -1,8 +1,9 @@
-import { Dialog } from '@material-ui/core';
+import { Button, Dialog } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import DescriptionIcon from '@material-ui/icons/Description';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
@@ -17,9 +18,8 @@ import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { ReactComponent as ESignIcon } from '../../../icons/e-sign.svg';
 import { ReactComponent as LoanAgreementIcon } from '../../../icons/loan_agreement.svg';
-import { getPageDetails, getRenewalLoanByStatus } from '../../../services/renewal.service';
+import { downloadRenewalData, getPageDetails, getRenewalLoanByStatus } from '../../../services/renewal.service';
 import { dateCustomSort } from '../../../utils/commonFunctions.util';
-
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -82,6 +82,13 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
         setLoading(false);
       })
   }
+  const onDownloadClick = () => {
+    downloadRenewalData('draft', filterQry)
+      .then(data => {
+        window.open(data[0]?.url, '_blank')
+      })
+      .catch(e => console.log('Download error >>>', e))
+  }
 
   const columns = useMemo(() => {
     return [
@@ -111,7 +118,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
         label: 'Type',
         name: 'product_name',
         options: {
-          filter: true,
+          filter: false,
           sort: true,
           customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
         }
@@ -120,7 +127,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
         label: 'Region',
         name: 'region_name',
         options: {
-          filter: true,
+          filter: false,
           sort: true,
           customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
         }
@@ -205,6 +212,10 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
     selectableRows: 'none',
     isRowSelectable: () => true,
     rowsPerPage: 10,
+    filter: false,
+    print: false,
+    sort: false,
+    viewColumns: false,
     searchPlaceholder: 'Search by dealreship ID/Name',
     onSearchChange: (searchText) => {
       setSearch(searchText)
@@ -224,6 +235,15 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
       if (cellMeta.colIndex !== 7) {
         onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'approved')
       }
+    },
+    customToolbar: () => {
+      return (
+        <>
+          <Tooltip title="Download">
+            <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
+          </Tooltip>
+        </>
+      );
     },
     customSort: (data, dataIndex, rowIndex) => {
       let dateIndex = 5

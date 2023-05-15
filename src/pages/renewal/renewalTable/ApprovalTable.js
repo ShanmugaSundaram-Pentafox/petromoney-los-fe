@@ -1,5 +1,7 @@
+import { Button, Tooltip } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import moment from 'moment';
@@ -8,9 +10,8 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import MuiTableFooter from '../../../components/CommonComponents/MuiTableFooter';
 import Currency from '../../../components/Number/Currency';
-import { getPageDetails, getRenewalLoanByStatus } from '../../../services/renewal.service';
+import { downloadRenewalData, getPageDetails, getRenewalLoanByStatus } from '../../../services/renewal.service';
 import { dateCustomSort } from '../../../utils/commonFunctions.util';
-
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -55,6 +56,13 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
       })
       .catch((e) => console.log('getPageCountError >>>', e))
   }, [])
+  const onDownloadClick = () => {
+    downloadRenewalData('draft', filterQry)
+      .then(data => {
+        window.open(data[0]?.url, '_blank')
+      })
+      .catch(e => console.log('Download error >>>', e))
+  }
 
   const columns = useMemo(() => {
     return [
@@ -84,7 +92,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
         label: 'Type',
         name: 'product_name',
         options: {
-          filter: true,
+          filter: false,
           sort: true,
           customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
         }
@@ -93,7 +101,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
         label: 'Region',
         name: 'region_name',
         options: {
-          filter: true,
+          filter: false,
           sort: true,
           customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
         }
@@ -145,6 +153,10 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
     selectableRows: 'none',
     isRowSelectable: () => true,
     rowsPerPage: 10,
+    filter: false,
+    print: false,
+    sort: false,
+    viewColumns: false,
     searchPlaceholder: 'Search by dealreship ID/Name',
     onSearchChange: (searchText) => {
       setSearch(searchText)
@@ -168,7 +180,16 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
     customSort: (data, dataIndex, rowIndex) => {
       let dateIndex = 5
       return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-    }
+    },
+    customToolbar: () => {
+      return (
+        <>
+          <Tooltip title="Download">
+            <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
+          </Tooltip>
+        </>
+      );
+    },
   };
 
   return (

@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.31.0](///compare/v2.30.1...v2.31.0) (2023-05-15)
+
+
+### Features
+
+* **renewal:** option to process renewal loans 230bd41
+
+
+### Bug Fixes
+
+* added data in noc approve form 957c773
+* **applicants:** applicants data api call 167d256
+* **applicants:** crimecheck prod bug 84cac2a
+* **applicants:** update the documents while updating the pan/aadhar 99b64cf
+* **credit-reload:** available limit amount fix d5c5b19
+* **credit-reload:** show available limit in form fd781da
+* **CRR:** updated error validation 20c2479
+* **filter:** update from date for YTD c5132a8
+* **filter:** updated onDateChange function 84d77f8
+* **leegality:** audit trail fetch issue fixed 57661f3
+* **lleegality:** added leegality section and push back option for review table 239b003
+* **lms-fix:** removed dpd report module 9cf9d8f
+* **lms:** aligned sidebar 8d89a37
+* **lms:** removed lms tables 4fefc57
+* merge branch 'development' into fix/dealer-passbook f9195a2
+* **noc:** updated error messages d789c84
+* **projection-report:** removed projection report section. 5eb3ae0
+* removed due/overdue report section 72f1414
+* removed due/overdue reports f79b55e
+* removed option to add/edit or delete disbursement details e5ad8d9
+* **renewal:** added custom download option a528153
+* **Renewal:** added timeline component for remarks a6ff085
+* **renewal:** filters and status api updated 19ec183
+* **renewal:** filters and status api updated 522ff4d
+* **renewal:** option to reject the renewal loan c223902
+* **renewalTable:** removed pushback table 3d185fc
+* **renewal:** update filter api call 6f69bc2
+* **renewal:** updated button color and spacing 2d357cd
+* updated version 85e9fc0
+
 ### [2.30.3](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/compare/v2.30.2...v2.30.3) (2023-04-13)
 
 

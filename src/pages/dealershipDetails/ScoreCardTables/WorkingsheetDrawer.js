@@ -49,8 +49,8 @@ const WorkingSheetDrawer = ({ id }) => {
       setCollapse(id);
   }
   return (
-    <div style={{ marginBottom: 20 }}>
-      <Typography variant='h4' component='h6' style={{ cursor: 'pointer' }}>Working sheet</Typography>
+    <div style={{ marginBottom: 20,marginTop:20,padding:10 }}>
+      {/* <Typography variant='h3' component='h3' style={{ cursor: 'pointer' }}>Working sheet</Typography> */}
       {
         scoreCardData?.ws_summary_data[0] ? (tableData?.map(item => {
           return (

@@ -91,208 +91,209 @@ const GuarantorsTable = ({
       })
   };
 
-  if (!guarantorsData || !guarantorsData.length)
-    return (
-      <div className={classes.wrapper}>
-        <Typography variant="h5" align={titleAlign} className={classes.title}>
-          No Guarantors Found
-        </Typography>
-        <div style={{ textAlign: 'center', marginTop: 8 }}>
-          <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorAdd}>
-            <Button
-              color="primary"
-              variant="outlined"
-              size="small"
-              onClick={() => onClickAddMenu('GUARANTOR')}
-            >
-              Add Guarantor
-            </Button>
-          </CheckAllowed>
-        </div>
-      </div>
-    );
+  //   return (
+  //     <div className={classes.wrapper}>
+  //       <Typography variant="h5" align={titleAlign} className={classes.title}>
+  //         No Guarantors Found
+  //       </Typography>
+  //       <div style={{ textAlign: 'center', marginTop: 8 }}>
+  //         <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorAdd}>
+  //           <Button
+  //             color="primary"
+  //             variant="outlined"
+  //             size="small"
+  //             onClick={() => onClickAddMenu('GUARANTOR')}
+  //           >
+  //             Add Guarantor
+  //           </Button>
+  //         </CheckAllowed>
+  //       </div>
+  //     </div>
+  //   );
+
 
   return (
-    <div className={classes.wrapper}>
-      <div className={classes.header}>
-        <Typography
-          style={{ width: '90%' }}
-          variant="h5"
-          align={titleAlign}
-          className={classes.title}
-        >
-          Guarantor
-        </Typography>
-      </div>
-      <Table className={classes.table} size="small" aria-label="Dealers">
-        <TableHead>
-          <TableRow>
-            <TableCell>Guarantor Name</TableCell>
-            <TableCell align="center">Mobile</TableCell>
-            <TableCell align="center">Documents</TableCell>
-            <TableCell align="center">Action</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {guarantorsData.map((row, index) => (
-            <TableRow
-              className={classes.tableRow}
-              key={row.id}
-              onClick={(e) => dealersClickRow(e, row, 'GUARANTOR')}>
-              <TableCell>{row.first_name}&nbsp;&nbsp;</TableCell>
-              <TableCell
-                align="center"
-                onClick={(e) =>
-                  editable || (dealersClickRow(e, row, 'GUARANTOR'))
-                }
-              >
-                {row.mobile}
-              </TableCell>
-              <TableCell align="center">
-                {row.aadhar_f_file_url && (
-                  <TableCell style={{ border: 0 }} align="center">
-                    <a
-                      className={classes.document}
-                      href={row.aadhar_f_file_url}
-                      target="_blank"
-                      title={'Aadhar Front'}
-                      rel="noreferrer"
-                    >
-                      {'Aadhar Front'}
-                    </a>
-                  </TableCell>
-                )}
-                {row.aadhar_b_file_url && (
-                  <TableCell style={{ border: 0 }} align="center">
-                    <a
-                      className={classes.document}
-                      href={row.aadhar_b_file_url}
-                      target="_blank"
-                      title={'Aadhar Back'}
-                      rel="noreferrer"
-                    >
-                      {'Aadhar Back'}
-                    </a>
-                  </TableCell>
-                )}
-                {row.pan_file_url && (
-                  <TableCell style={{ border: 0 }} align="center">
-                    <a
-                      className={classes.document}
-                      href={row.pan_file_url}
-                      target="_blank"
-                      title={'PAN'}
-                      rel="noreferrer"
-                    >
-                      {'PAN'}
-                    </a>
-                  </TableCell>
-                )}
-                {!row.pan_file_url &&
-                  !row.aadhar_b_file_url &&
-                  !row.aadhar_f_file_url && (
-                    <TableCell style={{ border: 0 }} align="center">
-                    -
-                  </TableCell>
-                )}
-              </TableCell>
-
-              <TableCell align="right" onClick={(e) => e.stopPropagation()}>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                >
-                  <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorCrimeCheck}>
-                    <Button style={{ marginRight: 12 }} size="small" variant="outlined" color="secondary" onClick={() => setCrimeData(row)}>Crime check</Button>
-                  </CheckAllowed>
-                  <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorCreditCheck}>
-                    <Button size="small" variant="outlined" color="secondary" onClick={() => setRowData(row)}>Credit Info</Button>
-                  </CheckAllowed>
-                  {
-                    // Guarantor status change permissions
-                    <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorStatus}>
-                      <div style={{ marginLeft: 12 }} onClick={() => { setOpenDialog({ open: true, data: row }) }}>
-                        {
-                          row.is_active == 0 ? (
-                            <Tooltip title="Activate">
-                              <CheckCircleTwoToneIcon
-                                style={{ color: grey[500] }}
-                              />
-                            </Tooltip>
-                          ) : (
-                            <Tooltip title="Deactivate">
-                              <CheckCircleTwoToneIcon
-                                style={{ color: green[200] }}
-                              />
-                            </Tooltip>
-                          )
-                        }
-                      </div>
-                    </CheckAllowed>
-                  }
-                </div>
-              </TableCell>
+    (guarantorsData?.length > 0) && (
+      <div className={classes.wrapper}>
+        <div className={classes.header}>
+          <Typography
+            style={{ width: '90%' }}
+            variant="h5"
+            align={titleAlign}
+            className={classes.title}
+          >
+            Guarantor
+          </Typography>
+        </div>
+        <Table className={classes.table} size="small" aria-label="Dealers">
+          <TableHead>
+            <TableRow>
+              <TableCell>Guarantor Name</TableCell>
+              <TableCell align="center">Mobile</TableCell>
+              <TableCell align="center">Documents</TableCell>
+              <TableCell align="center">Action</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <Dialog
-        open={openDialog?.open}
-        onClose={() => setOpenDialog({ ...openDialog, open: false })}
-        maxWidth='xs'
-        fullWidth
-      >
-        <DialogContent>
-          <div style={{ textAlign: 'center', marginBottom: 16 }}>
-            <InfoCircleOutlined style={{ fontSize: 48, margin: 16, marginBottom: 20, color: openDialog?.data?.is_active ? 'rgb(255,59,48)' : 'rgb(62, 175, 118)' }} />
-            <Typography variant='h3'>Are you sure?</Typography>
+          </TableHead>
+          <TableBody>
+            {guarantorsData.map((row, index) => (
+              <TableRow
+                className={classes.tableRow}
+                key={row.id}
+                onClick={(e) => dealersClickRow(e, row, 'GUARANTOR')}>
+                <TableCell>{row.first_name}&nbsp;&nbsp;</TableCell>
+                <TableCell
+                  align="center"
+                  onClick={(e) =>
+                    editable || (dealersClickRow(e, row, 'GUARANTOR'))
+                  }
+                >
+                  {row.mobile}
+                </TableCell>
+                <TableCell align="center">
+                  {row.aadhar_f_file_url && (
+                    <TableCell style={{ border: 0 }} align="center">
+                      <a
+                        className={classes.document}
+                        href={row.aadhar_f_file_url}
+                        target="_blank"
+                        title={'Aadhar Front'}
+                        rel="noreferrer"
+                      >
+                        {'Aadhar Front'}
+                      </a>
+                    </TableCell>
+                  )}
+                  {row.aadhar_b_file_url && (
+                    <TableCell style={{ border: 0 }} align="center">
+                      <a
+                        className={classes.document}
+                        href={row.aadhar_b_file_url}
+                        target="_blank"
+                        title={'Aadhar Back'}
+                        rel="noreferrer"
+                      >
+                        {'Aadhar Back'}
+                      </a>
+                    </TableCell>
+                  )}
+                  {row.pan_file_url && (
+                    <TableCell style={{ border: 0 }} align="center">
+                      <a
+                        className={classes.document}
+                        href={row.pan_file_url}
+                        target="_blank"
+                        title={'PAN'}
+                        rel="noreferrer"
+                      >
+                        {'PAN'}
+                      </a>
+                    </TableCell>
+                  )}
+                  {!row.pan_file_url &&
+                    !row.aadhar_b_file_url &&
+                    !row.aadhar_f_file_url && (
+                      <TableCell style={{ border: 0 }} align="center">
+                      -
+                    </TableCell>
+                  )}
+                </TableCell>
+
+                <TableCell align="right" onClick={(e) => e.stopPropagation()}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorCrimeCheck}>
+                      <Button style={{ marginRight: 12 }} size="small" variant="outlined" color="secondary" onClick={() => setCrimeData(row)}>Crime check</Button>
+                    </CheckAllowed>
+                    <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorCreditCheck}>
+                      <Button size="small" variant="outlined" color="secondary" onClick={() => setRowData(row)}>Credit Info</Button>
+                    </CheckAllowed>
+                    {
+                      // Guarantor status change permissions
+                      <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorStatus}>
+                        <div style={{ marginLeft: 12 }} onClick={() => { setOpenDialog({ open: true, data: row }) }}>
+                          {
+                            row.is_active == 0 ? (
+                              <Tooltip title="Activate">
+                                <CheckCircleTwoToneIcon
+                                  style={{ color: grey[500] }}
+                                />
+                              </Tooltip>
+                            ) : (
+                              <Tooltip title="Deactivate">
+                                <CheckCircleTwoToneIcon
+                                  style={{ color: green[200] }}
+                                />
+                              </Tooltip>
+                            )
+                          }
+                        </div>
+                      </CheckAllowed>
+                    }
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <Dialog
+          open={openDialog?.open}
+          onClose={() => setOpenDialog({ ...openDialog, open: false })}
+          maxWidth='xs'
+          fullWidth
+        >
+          <DialogContent>
+            <div style={{ textAlign: 'center', marginBottom: 16 }}>
+              <InfoCircleOutlined style={{ fontSize: 48, margin: 16, marginBottom: 20, color: openDialog?.data?.is_active ? 'rgb(255,59,48)' : 'rgb(62, 175, 118)' }} />
+              <Typography variant='h3'>Are you sure?</Typography>
+            </div>
+            <DialogContentText style={{ textAlign: 'center' }}>{`Do you really want to delete ${openDialog?.data?.first_name}?`}</DialogContentText>
+          </DialogContent>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: 19 }}>
+            <Button size='medium' variant='outlined' onClick={() => setOpenDialog({ ...openDialog, open: false })}>Cancel</Button>
+            <Button variant='contained' size='medium' style={openDialog?.data?.is_active == 1 ? { backgroundColor: 'rgb(255,59,48)', color: 'white', marginLeft: 16 } : { backgroundColor: 'rgb(62, 175, 118)', color: 'white', marginLeft: 16 }} onClick={() => deleteApplicant(openDialog?.data)}>
+              {openDialog?.data?.is_active == 1 ? 'Deactivate' : 'Activate'}
+            </Button>
           </div>
-          <DialogContentText style={{ textAlign: 'center' }}>{`Do you really want to delete ${openDialog?.data?.first_name}?`}</DialogContentText>
-        </DialogContent>
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: 19 }}>
-          <Button size='medium' variant='outlined' onClick={() => setOpenDialog({ ...openDialog, open: false })}>Cancel</Button>
-          <Button variant='contained' size='medium' style={openDialog?.data?.is_active == 1 ? { backgroundColor: 'rgb(255,59,48)', color: 'white', marginLeft: 16 } : { backgroundColor: 'rgb(62, 175, 118)', color: 'white', marginLeft: 16 }} onClick={() => deleteApplicant(openDialog?.data)}>
-            {openDialog?.data?.is_active == 1 ? 'Deactivate' : 'Activate'}
-          </Button>
-        </div>
-      </Dialog>
-      <Drawer anchor="right" open={rowData} variant="temporary">
-        <div className={classes.sidePanelWrapper}>
-          {
-            <CreditInfoSideWrapper
-              dealershipId={id}
-              data={rowData}
-              currentUser={currentUser}
-              onClose={() => setRowData()}
-            />
-          }
-        </div>
-      </Drawer>
-      <Drawer
-        anchor="right"
-        open={crimeData}
-        onClose={() => {
-          setCrimeData();
-        }}
-        variant="temporary"
-      >
-        <div className={classes.sidePanelWrapper}>
-          {
-            <CrimeInfoSideWrapper
-              dealershipId={id}
-              data={crimeData}
-              currentUser={currentUser}
-              onClose={() => setCrimeData()}
-            />
-          }
-        </div>
-      </Drawer>
-    </div>
-  );
+        </Dialog>
+        <Drawer anchor="right" open={rowData} variant="temporary">
+          <div className={classes.sidePanelWrapper}>
+            {
+              <CreditInfoSideWrapper
+                dealershipId={id}
+                data={rowData}
+                currentUser={currentUser}
+                onClose={() => setRowData()}
+              />
+            }
+          </div>
+        </Drawer>
+        <Drawer
+          anchor="right"
+          open={crimeData}
+          onClose={() => {
+            setCrimeData();
+          }}
+          variant="temporary"
+        >
+          <div className={classes.sidePanelWrapper}>
+            {
+              <CrimeInfoSideWrapper
+                dealershipId={id}
+                data={crimeData}
+                currentUser={currentUser}
+                onClose={() => setCrimeData()}
+              />
+            }
+          </div>
+        </Drawer>
+      </div>
+    ));
 };
 
 export default GuarantorsTable;

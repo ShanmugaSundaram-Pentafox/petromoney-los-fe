@@ -6,10 +6,8 @@ import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import React, { useState } from 'react';
-import { useQuery } from 'react-query';
 import { Link as RouterLink } from 'react-router-dom';
 import { resources_id } from '../../../config/accessControl';
-import { getLoanById } from '../../../services/loans.service';
 import { isAllowed } from '../../../utils/cerbos';
 import CheckAllowed from '../../rbac/CheckAllowed';
 import ViewRemarks from '../renewalTable/ViewRemarks';
@@ -29,10 +27,6 @@ const useStyles = makeStyles(theme => ({
     maxHeight: '50vh',
     display: 'flex',
     flexDirection: 'column',
-  },
-  chip: {
-    borderRadius: 2,
-    marginRight: 10
   },
   btnSuccess: {
     '&.MuiButton-contained': {
@@ -69,23 +63,6 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: theme.palette.info.light
     }
   },
-
-  items: {
-    borderBottom: '1px solid #c9c7c7',
-    paddingTop: 5,
-    paddingBottom: 5,
-    '&:hover': {
-      backgroundColor: '#ffffff',
-      borderRadius: 2
-    },
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  eachItem: {
-    textOverflow: 'ellipsis',
-    paddingLeft: 5
-  },
 }))
 
 const RenewalDrawerFooter = ({
@@ -97,7 +74,6 @@ const RenewalDrawerFooter = ({
   handleReject,
   handlePushBack,
 }) => {
-  const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.loan_id))
   const classes = useStyles();
   const [openDrawer, setOpenDrawer] = useState(false)
 
@@ -114,7 +90,6 @@ const RenewalDrawerFooter = ({
             component={RouterLink}
             to={`/dealership/${id}`}
             variant="contained"
-            disabled={loanData?.isLoading}
             className={clsx(classes.btn, classes.btnSuccess)}
             startIcon={<AccountTreeRoundedIcon />}
           >
@@ -125,7 +100,6 @@ const RenewalDrawerFooter = ({
               <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'send_for_review'}>
                 <Button
                   variant="contained"
-                  disabled={loanData?.isLoading}
                   className={clsx(classes.btn, classes.btnSuccess)}
                   startIcon={<ThumbUpAltIcon />}
                   onClick={handleReviewModal}
@@ -139,7 +113,6 @@ const RenewalDrawerFooter = ({
               <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_reject'}>
                 <Button
                   variant="contained"
-                  disabled={loanData?.loading}
                   className={clsx(classes.btn, classes.btnWarn)}
                   startIcon={<ChevronLeftRoundedIcon />}
                   onClick={handlePushBack}
@@ -153,7 +126,6 @@ const RenewalDrawerFooter = ({
               <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_reject'}>
                 <Button
                   variant="contained"
-                  disabled={loanData?.loading}
                   className={clsx(classes.btn, classes.btnError)}
                   startIcon={<ThumbDownAltIcon />}
                   onClick={handleReject}
@@ -166,7 +138,6 @@ const RenewalDrawerFooter = ({
             status && status.toLowerCase() === 'approval' && (isAllowed(currentUser?.permissions, resources_id.dashboard, 'loan_approve')) &&
               <Button
                 variant="contained"
-                disabled={loanData?.loading}
                 className={clsx(classes.btn, classes.btnSuccess)}
                 startIcon={<ThumbUpAltIcon />}
                 onClick={handleReviewModal}
@@ -179,7 +150,6 @@ const RenewalDrawerFooter = ({
               <div>
                 <Button
                   variant="contained"
-                  disabled={loanData?.isLoading}
                   className={clsx(classes.btn, classes.btnSuccess)}
                   startIcon={<ThumbUpAltIcon />}
                   onClick={handleReviewModal}
@@ -196,7 +166,7 @@ const RenewalDrawerFooter = ({
         onClose={() => setOpenDrawer(false)}
         variant="temporary"
       >
-        <ViewRemarks handleClose={()=>setOpenDrawer(false)} loanId={selectedLoanData?.loan_id} />
+        <ViewRemarks handleClose={() => setOpenDrawer(false)} loanId={selectedLoanData?.loan_id} />
       </Drawer>
     </div >
   )

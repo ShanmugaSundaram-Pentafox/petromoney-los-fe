@@ -15,6 +15,7 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
   const [selectedRegion, setSelectedRegion] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedProducts, setSelectedProducts] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedZones, setSelectedZones] = useState([{ label: 'ALL', value: 0 }]);
+  const [selectedMonth, setSelectedMonth] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedPeriodType, setSelectedPeriodType] = useState(type == 'credit' ? 'W' : 'UTD');
   const [selectedPeriod, setSelectedPeriod] = useState({});
   const [showPicker, setShowPicker] = useState();
@@ -23,6 +24,20 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
     endDate: new Date(),
     key: 'range'
   });
+  const month = [
+    { label: 'January', value: 1 },
+    { label: 'February', value: 2 },
+    { label: 'March', value: 3 },
+    { label: 'April', value: 4 },
+    { label: 'May', value: 5 },
+    { label: 'June', value: 6 },
+    { label: 'July', value: 7 },
+    { label: 'August', value: 8 },
+    { label: 'September', value: 9 },
+    { label: 'October', value: 10 },
+    { label: 'November', value: 11 },
+    { label: 'December', value: 12 },
+  ]
 
   const { data: zones = [] } = useQuery('zones', () => { return getZones(1) }, { refetchOnWindowFocus: false })
 
@@ -111,9 +126,14 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
       qry.from = format(selectedPeriod?.from || new Date(), 'yyyy-MM-dd');
       qry.to = format(selectedPeriod?.to || new Date(), 'yyyy-MM-dd');
     }
+    if (filters.includes('month')) {
+      let monthId = []
+      selectedMonth.forEach(item => monthId.push(item.value))
+      qry.month = monthId.toString()
+    }
     getStats(qry)
     filterQry(qry)
-  }, [selectedRegion, selectedPeriod, filterQry, selectedProducts, selectedZones])
+  }, [selectedRegion, selectedPeriod, filterQry, selectedProducts, selectedZones,selectedMonth])
 
   const getStats = (qry) => {
     getRenewalStatusList()
@@ -122,7 +142,7 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
           .then(res => {
             const cdata = status?.map((item) => {
               const matchingItem = res.find((el) => el.status === item.status);
-              return matchingItem ? { name: item?.status, count: matchingItem?.record_count } : {name:item?.status, count:0};
+              return matchingItem ? { name: item?.status, count: matchingItem?.record_count } : { name: item?.status, count: 0 };
             });
             setChartData(cdata);
             let s = 0;
@@ -166,25 +186,33 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
         {
           filters.includes('period') &&
             <Box>
-              <label style={{ color: 'hsl(0,0%,75%)' }}>Period</label>
-              <div className={classes.filterWrapper}>
-                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
-                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
-                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
-                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'Y' && 'active'}`} onClick={onDateChange('Y')} onKeyDown>YTD</div>
-                <Tooltip title='Up to Date'>
-                  <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')} onKeyDown>UTD</div>
-                </Tooltip>
-                <Tooltip title='Choose custom dates'>
-                  <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
-                    {
-                      selectedPeriodType === 'Custom' ? (
-                        `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`
-                      ) : 'Custom'
-                    }
-                  </div>
-                </Tooltip>
-              </div>
+              <>
+                <label style={{ color: 'hsl(0,0%,75%)' }}>Period</label>
+                <div className={classes.filterWrapper}>
+                  <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
+                  <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
+                  <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
+                  <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'Y' && 'active'}`} onClick={onDateChange('Y')} onKeyDown>YTD</div>
+                  <Tooltip title='Up to Date'>
+                    <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')} onKeyDown>UTD</div>
+                  </Tooltip>
+                  <Tooltip title='Choose custom dates'>
+                    <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
+                      {
+                        selectedPeriodType === 'Custom' ? (
+                          `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`
+                        ) : 'Custom'
+                      }
+                    </div>
+                  </Tooltip>
+                </div>
+              </>
+              <>
+                {
+                  ['Y','UTD','Custom'].includes(selectedPeriodType) &&
+                    <Selector title="Renewal month" options={month} value={selectedMonth} setValue={setSelectedMonth} />
+                }
+              </>
               <Popover
                 id={showPicker ? 'dp' : undefined}
                 open={Boolean(showPicker)}

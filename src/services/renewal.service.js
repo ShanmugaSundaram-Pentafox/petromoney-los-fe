@@ -2,13 +2,14 @@ import apiCall from '../utils/api.util';
 
 export const getRenewalLoanByStatus = (status, filterQry, page, searchText) => {
   return new Promise((resolve, reject) => {
-    const { region, from, to, products, zone } = filterQry;
+    const { region, from, to, products, zone, month } = filterQry;
     let qry = []
     let apiUrl = `renewal/application?status=${status}`;
     if (zone && zone !== '0') qry.push(`zone=${zone}`)
     if (region && region !== '0') qry.push(`region=${region}`)
     if (products && products !== '0') qry.push(`product=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
+    if (month) qry.push(`month=${month}`)
     if (page) qry.push(`page=${page}`)
     if (searchText) qry.push(`dealership_id_name=${searchText}`)
     if (qry.length) apiUrl += '&' + qry.join('&')
@@ -28,13 +29,14 @@ export const getRenewalLoanByStatus = (status, filterQry, page, searchText) => {
 
 export const getRenewalLoanStats = (qryStr = {}) => {
   return new Promise((resolve, reject) => {
-    const { region, from, to, products, zone } = qryStr;
+    const { region, from, to, products, zone, month } = qryStr;
     let qry = []
     let apiUrl = 'metrics/loan/stats';
     if (zone && zone !== '0') qry.push(`zone=${zone}`)
     if (region && region !== '0') qry.push(`region=${region}`)
     if (products && products !== '0') qry.push(`product=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
+    if (month) qry.push(`month=${month}`)
     if (qry.length) apiUrl += '?' + qry.join('&')
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
@@ -52,10 +54,11 @@ export const getRenewalLoanStats = (qryStr = {}) => {
 
 export const getStatusWiseRecordCount = (filterQry) => {
   return new Promise((resolve, reject) => {
-    const { region, from, to, products, zone } = filterQry;
+    const { region, from, to, products, zone, month } = filterQry;
     let qry = []
     let apiUrl = 'renewal/status_wise_record_count';
     if (zone && zone !== '0') qry.push(`zone=${zone}`)
+    if (month) qry.push(`month=${month}`)
     if (region && region !== '0') qry.push(`region=${region}`)
     if (products && products !== '0') qry.push(`product=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
@@ -91,9 +94,18 @@ export const getRenewalStatusList = () => {
   });
 }
 
-export const getPageDetails = (status) => {
+export const getPageDetails = (status, filterQry) => {
   return new Promise((resolve, reject) => {
-    apiCall(`renewal/record_count?status=${status}`)
+    const { region, from, to, products, zone, month } = filterQry;
+    let qry = []
+    let apiUrl = `renewal/record_count?status=${status}`;
+    if (zone && zone !== '0') qry.push(`zone=${zone}`)
+    if (region && region !== '0') qry.push(`region=${region}`)
+    if (month) qry.push(`month=${month}`)
+    if (products && products !== '0') qry.push(`product=${products}`)
+    if (from && to) qry.push(`from=${from}&to=${to}`)
+    if (qry.length) apiUrl += '?' + qry.join('&')
+    apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status.toUpperCase() === 'SUCCESS') {
           resolve(data);
@@ -123,7 +135,7 @@ export const getRenewalRemarks = (loanId) => {
   });
 }
 
-export const updateRenewalLoanStatus = ({ isReject, isPushback, ...data}) => {
+export const updateRenewalLoanStatus = ({ isReject, isPushback, ...data }) => {
   return new Promise((resolve, reject) => {
     let apiUrl = '';
     if (isReject) {
@@ -153,3 +165,29 @@ export const updateRenewalLoanStatus = ({ isReject, isPushback, ...data}) => {
       });
   });
 };
+
+
+export const downloadRenewalData = (status, qryStr = {}) => {
+  return new Promise((resolve, reject) => {
+    const { region, from, to, products, zone, month } = qryStr;
+    let qry = []
+    let apiUrl = `renewal/application?status=${status}&download_as_csv=yes`;
+    if (zone && zone !== '0') qry.push(`zone=${zone}`)
+    if (region && region !== '0') qry.push(`region=${region}`)
+    if (month) qry.push(`month=${month}`)
+    if (products && products !== '0') qry.push(`product=${products}`)
+    if (from && to) qry.push(`from=${from}&to=${to}`)
+    if (qry.length) apiUrl += '?' + qry.join('&')
+    apiCall(apiUrl)
+      .then(({ status, data, message }) => {
+        if (status.toUpperCase() === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

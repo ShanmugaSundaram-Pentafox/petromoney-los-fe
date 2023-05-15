@@ -1,15 +1,19 @@
-import { Dialog, DialogContent, DialogContentText, Button, DialogTitle } from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, Button, DialogTitle, Divider, Paper, Collapse } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
+import { ArrowDropDownSharp, ArrowRightOutlined } from '@material-ui/icons';
 import CloseIcon from '@material-ui/icons/CloseRounded';
 import Alert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
+import { useQuery } from 'react-query';
 import RenewalDrawerFooter from './RenewalDrawerFooter';
 import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 import { TextEditor } from '../../../components/TextEditor/TextEditor';
+import { getDealershipById } from '../../../services/dealerships.service';
 import { updateRenewalLoanStatus } from '../../../services/renewal.service';
-import DealershipData from '../../dashboard/RightDrawer/DealershipData';
+import DealershipInfo from '../../dealershipDetails/components/DealershipInfo';
+import DealersList from '../../dealershipDetails/components/DealersList';
 import WorkingSheetDrawer from '../../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
 
 const getRemarksMessage = (status, isReject, isPushback) => {
@@ -73,6 +77,12 @@ const useStyles = makeStyles(theme => ({
   closeIcon: {
     marginTop: 8,
   },
+  collapseCard: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10
+  }
 }))
 
 
@@ -80,10 +90,12 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
   const [reviewModal, setReviewModal] = useState(false);
   const [loading, setLoading] = useState(false)
   const [remarks, setRemarks] = useState();
-  const [isReject,setIsReject] = useState(false);
-  const [isPushback,setIsPushback] = useState(false);
+  const [isReject, setIsReject] = useState(false);
+  const [isPushback, setIsPushback] = useState(false);
   const [errorStatus, setErrorStatus] = useState()
+  const [collapse, setCollapse] = useState(false);
   const classes = useStyles();
+  const dealershipData = useQuery(['dealership-info', id], () => getDealershipById(id), { refetchOnWindowFocus: false })
   const { enqueueSnackbar } = useSnackbar();
 
   const closeReviewModal = () => {
@@ -150,6 +162,25 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
     }
   }
 
+  const collapseComponent = [
+    {
+      id: 0,
+      name: 'Applicants',
+      component: <DealersList id={id} currentUser={currentUser} />
+    },
+    {
+      id: 1,
+      name: 'Working Sheet',
+      component: <WorkingSheetDrawer id={id} />
+    }  
+  ]
+  const handleClick = (id) => {
+    if (id == collapse)
+      setCollapse();
+    else
+      setCollapse(id);
+  }
+
   return (
     <>
       <div className={classes.wrapper}>
@@ -158,8 +189,27 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
           <CloseIcon className={classes.closeIcon} onClick={onClose} />
         </div>
         <div className={classes.contentWrapper}>
-          <DealershipData data={data} readOnly={true} />
-          <WorkingSheetDrawer id={id} />
+          <DealershipInfo data={dealershipData?.data} currentUser={currentUser} />
+          <Divider />
+          <div>
+            {
+              collapseComponent?.map((item) => {
+                return (
+                  <Paper variant='outlined' key={item?.id} style={{ marginTop: 20, marginBottom: 20, cursor: 'pointer' }}>
+                    <div className={classes.collapseCard} onClick={() => handleClick(item.id)}>
+                      <Typography variant='h6' style={{ cursor: 'pointer' }}>{item?.name}</Typography>
+                      {collapse == item?.id ? <ArrowDropDownSharp /> : <ArrowRightOutlined />}
+                    </div>
+                    <Collapse in={collapse == item?.id}>
+                      {item.component}
+                    </Collapse>
+                  </Paper>
+                )
+              })
+            }
+          </div>
+          {/* <Divider /> */}
+          {/* <WorkingSheetDrawer id={id} /> */}
         </div>
         <div>
           <RenewalDrawerFooter selectedLoanData={selectedLoanData} handleReviewModal={openReviewModal} handlePushBack={handlePushBack} handleReject={handleReject} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />

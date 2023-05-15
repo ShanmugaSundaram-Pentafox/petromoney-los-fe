@@ -142,7 +142,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center',paddingRight:10 }}>
         {
           activeApplicant?.length > 1 &&
             <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.applicantSwap}>

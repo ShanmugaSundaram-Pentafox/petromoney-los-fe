@@ -17,7 +17,6 @@ import DealershipDetails from '../pages/dealershipDetails/dealershipDetails';
 import PresubmitLoansTable from '../pages/loans/PresubmitLoansTable';
 import BlacklistTable from '../pages/loanspage/BlacklistTable';
 import Loans from '../pages/loanspage/loans'
-import RenewalTable from '../pages/loanspage/RenewalTable';
 import Login from '../pages/login/login';
 import NOCertificateRequestTable from '../pages/noc/NOCertificateRequestTable';
 import NotFound from '../pages/NotFound/NotFound';
@@ -25,6 +24,7 @@ import RevokedAccess from '../pages/NotFound/RevokedAccess';
 import Profile from '../pages/profile/Profile';
 import UserControl from '../pages/rbac/UserControl';
 import ReferralTable from '../pages/referralModule/ReferralTable';
+import RenewalList from '../pages/renewal/RenewalList';
 import CollectionRemarks from '../pages/reports/CollectionRemarks';
 import CreditNewRequestTable from '../pages/reports/CreditNewRequestTable';
 import CreditProcessedTable from '../pages/reports/CreditProcessedTable';
@@ -65,7 +65,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/owners/:id?" component={OwnerDetails} />
       <ProtectedRoute allow exact path="/profile" component={Profile} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.withheld)} exact path="/withheld" component={BlacklistTable} />
-      <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.renewal)} exact path="/renewal" component={RenewalTable} />
+      <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.renewal)} exact path="/renewal" component={RenewalList} />
       <ProtectedRoute allow exact path="/reports" component={DealersDueReport} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.collection_remarks)} exact path="/reports/remarks" component={CollectionRemarks} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.noc)} exact path="/noc" component={NOCertificateRequestTable} />

@@ -93,134 +93,139 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
   }
 
 
-  if (!coApplicantsData || !coApplicantsData.length)
-    return (
-      <div className={classes.wrapper}>
-        <Typography variant="h5" align={titleAlign} className={classes.title}>No CoApplicants Found</Typography>
-        {
-          // coapplicants add permissions
-          <div style={{ textAlign: 'center', marginTop: 8 }}>
-            <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.coapplicantAdd}>
-              <Button color="primary" variant="outlined" size="small" onClick={() => onClickAddMenu('COAPPLICANT')}>Add CoApplicants</Button>
-            </CheckAllowed>
-          </div>
-        }
-      </div>
-    );
+  // if (!coApplicantsData || !coApplicantsData.length)
+  //   return (
+  //     <div className={classes.wrapper}>
+  //       <Typography variant="h5" align={titleAlign} className={classes.title}>No CoApplicants Found</Typography>
+  //       {
+  //         // coapplicants add permissions
+  //         <div style={{ textAlign: 'center', marginTop: 8 }}>
+  //           <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.coapplicantAdd}>
+  //             <Button color="primary" variant="outlined" size="small" onClick={() => onClickAddMenu('COAPPLICANT')}>Add CoApplicants</Button>
+  //           </CheckAllowed>
+  //         </div>
+  //       }
+  //     </div>
+  //   );
 
   return (
-    <div className={classes.wrapper}>
-      <div className={classes.header}>
-        <Typography style={{ width: '90%' }} variant="h5" align={titleAlign} className={classes.title}>Co-Applicants</Typography>
-      </div>
-      <Table className={classes.table} size="small" aria-label="Dealers">
-        <TableHead>
-          <TableRow>
-            <TableCell>Co Applicant Name</TableCell>
-            <TableCell align="center">Mobile</TableCell>
-            <TableCell align="center">Documents</TableCell>
-            <TableCell align="center">Action</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {coApplicantsData.map((row, index) => (
-            <TableRow className={classes.tableRow} key={row.id} onClick={e => dealersClickRow(e, row, 'COAPPLICANT')}>
-              <TableCell>
-                {row.first_name}&nbsp;&nbsp;
-              </TableCell>
-              <TableCell align="center">{row.mobile}</TableCell>
-              <TableCell align="center">
-                {row.aadhar_f_file_url && <TableCell style={{ border: 0 }} align="center">
-                  <a className={classes.document}
-                    href={row.aadhar_f_file_url} target="_blank" title={'Aadhar Front'} rel="noreferrer">{'Aadhar Front'}</a>
+    <>
+      {
+        (coApplicantsData?.length >0) &&
+          <div className={classes.wrapper}>
+            <div className={classes.header}>
+              <Typography style={{ width: '90%' }} variant="h5" align={titleAlign} className={classes.title}>Co-Applicants</Typography>
+            </div>
+            <Table className={classes.table} size="small" aria-label="Dealers">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Co Applicant Name</TableCell>
+                  <TableCell align="center">Mobile</TableCell>
+                  <TableCell align="center">Documents</TableCell>
+                  <TableCell align="center">Action</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {coApplicantsData.map((row, index) => (
+                  <TableRow className={classes.tableRow} key={row.id} onClick={e => dealersClickRow(e, row, 'COAPPLICANT')}>
+                    <TableCell>
+                      {row.first_name}&nbsp;&nbsp;
+                    </TableCell>
+                    <TableCell align="center">{row.mobile}</TableCell>
+                    <TableCell align="center">
+                      {row.aadhar_f_file_url && <TableCell style={{ border: 0 }} align="center">
+                        <a className={classes.document}
+                          href={row.aadhar_f_file_url} target="_blank" title={'Aadhar Front'} rel="noreferrer">{'Aadhar Front'}</a>
 
-                </TableCell>}
-                {row.aadhar_b_file_url && <TableCell style={{ border: 0 }} align="center">
-                  <a className={classes.document}
-                    href={row.aadhar_b_file_url} target="_blank" title={'Aadhar Back'} rel="noreferrer">{'Aadhar Back'}</a>
+                      </TableCell>}
+                      {row.aadhar_b_file_url && <TableCell style={{ border: 0 }} align="center">
+                        <a className={classes.document}
+                          href={row.aadhar_b_file_url} target="_blank" title={'Aadhar Back'} rel="noreferrer">{'Aadhar Back'}</a>
 
-                </TableCell>}
-                {row.pan_file_url && <TableCell style={{ border: 0 }} align="center">
-                  <a className={classes.document}
-                    href={row.pan_file_url} target="_blank" title={'PAN'} rel="noreferrer">{'PAN'}</a>
-                </TableCell>}
-                {!row.pan_file_url && !row.aadhar_b_file_url && !row.aadhar_f_file_url &&
-                  <TableCell style={{ border: 0 }} align="center">
-                    -
-                  </TableCell>}
-              </TableCell>
-              <TableCell align="right" onClick={e => e.stopPropagation()}>
-                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                  <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.coapplicantCrimeCheck}>
-                    <Button style={{ marginRight: 12 }} size='small' variant='outlined' color='secondary' onClick={() => setCrimeData(row)}>Crime check</Button>
-                  </CheckAllowed>
-                  <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.coapplicantCreditCheck}>
-                    <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>
-                  </CheckAllowed>
-                  {
-                    // Coapp status change permission
-                    <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.coapplicantStatus}>
-                      <div style={{ marginLeft: 12 }} onClick={() => { setOpenDialog({ open: true, data: row }) }}>
+                      </TableCell>}
+                      {row.pan_file_url && <TableCell style={{ border: 0 }} align="center">
+                        <a className={classes.document}
+                          href={row.pan_file_url} target="_blank" title={'PAN'} rel="noreferrer">{'PAN'}</a>
+                      </TableCell>}
+                      {!row.pan_file_url && !row.aadhar_b_file_url && !row.aadhar_f_file_url &&
+                        <TableCell style={{ border: 0 }} align="center">
+                          -
+                        </TableCell>}
+                    </TableCell>
+                    <TableCell align="right" onClick={e => e.stopPropagation()}>
+                      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                        <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.coapplicantCrimeCheck}>
+                          <Button style={{ marginRight: 12 }} size='small' variant='outlined' color='secondary' onClick={() => setCrimeData(row)}>Crime check</Button>
+                        </CheckAllowed>
+                        <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.coapplicantCreditCheck}>
+                          <Button size='small' variant='outlined' color='secondary' onClick={() => setRowData(row)}>Credit Info</Button>
+                        </CheckAllowed>
                         {
-                          row.is_active == 0 ? (
-                            <Tooltip title='Activate'>
-                              <CheckCircleTwoToneIcon style={{ color: grey[500] }} />
-                            </Tooltip>
-                          ) : (
-                            <Tooltip title='Deactivate'>
-                              <CheckCircleTwoToneIcon style={{ color: green[200] }} />
-                            </Tooltip>
-                          )
+                        // Coapp status change permission
+                          <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.coapplicantStatus}>
+                            <div style={{ marginLeft: 12 }} onClick={() => { setOpenDialog({ open: true, data: row }) }}>
+                              {
+                                row.is_active == 0 ? (
+                                  <Tooltip title='Activate'>
+                                    <CheckCircleTwoToneIcon style={{ color: grey[500] }} />
+                                  </Tooltip>
+                                ) : (
+                                  <Tooltip title='Deactivate'>
+                                    <CheckCircleTwoToneIcon style={{ color: green[200] }} />
+                                  </Tooltip>
+                                )
+                              }
+                            </div>
+                          </CheckAllowed>
                         }
                       </div>
-                    </CheckAllowed>
-                  }
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <Dialog
+              open={openDialog?.open}
+              onClose={() => setOpenDialog({ ...openDialog, open: false })}
+              maxWidth='xs'
+              fullWidth
+            >
+              <DialogContent>
+                <div style={{ textAlign: 'center', marginBottom: 16 }}>
+                  <InfoCircleOutlined style={{ fontSize: 48, margin: 16, marginBottom: 20, color: openDialog?.data?.is_active ? 'rgb(255,59,48)' : 'rgb(62, 175, 118)' }} />
+                  <Typography variant='h3'>Are you sure?</Typography>
                 </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <Dialog
-        open={openDialog?.open}
-        onClose={() => setOpenDialog({ ...openDialog, open: false })}
-        maxWidth='xs'
-        fullWidth
-      >
-        <DialogContent>
-          <div style={{ textAlign: 'center', marginBottom: 16 }}>
-            <InfoCircleOutlined style={{ fontSize: 48, margin: 16, marginBottom: 20, color: openDialog?.data?.is_active ? 'rgb(255,59,48)' : 'rgb(62, 175, 118)' }} />
-            <Typography variant='h3'>Are you sure?</Typography>
+                <DialogContentText style={{ textAlign: 'center' }}>{`Do you really want to delete ${openDialog?.data?.first_name}?`}</DialogContentText>
+              </DialogContent>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: 19 }}>
+                <Button size='medium' variant='outlined' onClick={() => setOpenDialog({ ...openDialog, open: false })}>Cancel</Button>
+                <Button variant='contained' size='medium' style={openDialog?.data?.is_active == 1 ? { backgroundColor: 'rgb(255,59,48)', color: 'white', marginLeft: 16 } : { backgroundColor: 'rgb(62, 175, 118)', color: 'white', marginLeft: 16 }} onClick={() => deleteApplicant(openDialog?.data)}>
+                  {openDialog?.data?.is_active == 1 ? 'Deactivate' : 'Activate'}
+                </Button>
+              </div>
+            </Dialog>
+            <Drawer
+              anchor="right"
+              open={rowData}
+              variant="temporary"
+            >
+              <div className={classes.sidePanelWrapper}>
+                <CreditInfoSideWrapper dealershipId={id} data={rowData} currentUser={currentUser} onClose={() => setRowData()} />
+              </div>
+            </Drawer>
+            <Drawer
+              anchor="right"
+              open={crimeData}
+              onClose={() => { setCrimeData() }}
+              variant="temporary"
+            >
+              <div className={classes.sidePanelWrapper}>
+                <CrimeInfoSideWrapper dealershipId={id} data={crimeData} currentUser={currentUser} onClose={() => setCrimeData()} />
+              </div>
+            </Drawer>
           </div>
-          <DialogContentText style={{ textAlign: 'center' }}>{`Do you really want to delete ${openDialog?.data?.first_name}?`}</DialogContentText>
-        </DialogContent>
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: 19 }}>
-          <Button size='medium' variant='outlined' onClick={() => setOpenDialog({ ...openDialog, open: false })}>Cancel</Button>
-          <Button variant='contained' size='medium' style={openDialog?.data?.is_active == 1 ? { backgroundColor: 'rgb(255,59,48)', color: 'white', marginLeft: 16 } : { backgroundColor: 'rgb(62, 175, 118)', color: 'white', marginLeft: 16 }} onClick={() => deleteApplicant(openDialog?.data)}>
-            {openDialog?.data?.is_active == 1 ? 'Deactivate' : 'Activate'}
-          </Button>
-        </div>
-      </Dialog>
-      <Drawer
-        anchor="right"
-        open={rowData}
-        variant="temporary"
-      >
-        <div className={classes.sidePanelWrapper}>
-          <CreditInfoSideWrapper dealershipId={id} data={rowData} currentUser={currentUser} onClose={() => setRowData()} />
-        </div>
-      </Drawer>
-      <Drawer
-        anchor="right"
-        open={crimeData}
-        onClose={() => { setCrimeData() }}
-        variant="temporary"
-      >
-        <div className={classes.sidePanelWrapper}>
-          <CrimeInfoSideWrapper dealershipId={id} data={crimeData} currentUser={currentUser} onClose={() => setCrimeData()} />
-        </div>
-      </Drawer>
-    </div>
+      }
+    </>
   )
 }
 

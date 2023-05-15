@@ -91,20 +91,20 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
       })
   }
 
-  if (!data || !data.length)
-    return (
-      <div className={classes.wrapper}>
-        <Typography variant="h5" align={titleAlign} className={classes.title}>No Dealers Found</Typography>
-        {
-          // dealer add permission check
-          <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerAdd}>
-            <div style={{ textAlign: 'center', marginTop: 8 }}>
-              <Button color="primary" variant="outlined" size="small" onClick={() => onClickAddMenu('DEALER')}>Add dealer</Button>
-            </div>
-          </CheckAllowed>
-        }
-      </div>
-    );
+  // if (!data || !data.length)
+  //   return (
+  //     <div className={classes.wrapper}>
+  //       <Typography variant="h5" align={titleAlign} className={classes.title}>No Dealers Found</Typography>
+  //       {
+  //         // dealer add permission check
+  //         <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerAdd}>
+  //           <div style={{ textAlign: 'center', marginTop: 8 }}>
+  //             <Button color="primary" variant="outlined" size="small" onClick={() => onClickAddMenu('DEALER')}>Add dealer</Button>
+  //           </div>
+  //         </CheckAllowed>
+  //       }
+  //     </div>
+  //   );
   return (
     <div className={classes.wrapper}>
       <div className={classes.header}>

@@ -140,7 +140,7 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      amount: Yup.number().nullable('Enter Amount').required('Enter Amount').moreThan(0, 'Invalid Amount').test('maxDigits', creditLimit ? `You can request amount from 50k to ${creditLimit}` : 'Enter dealership ID to check the limit', (value) => String(value) >= 50000 && String(value) <= creditLimit),
+      amount: Yup.number().nullable('Enter Amount').required('Enter Amount').moreThan(0, 'Invalid Amount').test('maxDigits', creditLimit?.available_limit ? `You can request amount from 50k to ${creditLimit?.available_limit}` : 'Enter dealership ID to check the limit', (value) => String(value) >= 50000 && String(value) <= creditLimit?.available_limit),
     }),
     onSubmit: (values) => {
       const d = { ...values, request_source: 'mdm', bank_id: bankId?.value, repayment_made: repaymentType?.value }
@@ -292,10 +292,13 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
                             onChange={handleChange}
                           />
                           <FormHelperText variant='contained'>
-                            {
-                              creditLimit &&
-                                <h3 style={{ color: 'black' }}>Available Limit: < Currency value={creditLimit} /></h3>
-                            }
+                            <div>
+                              <h3 style={{ color: 'black' }}>Available Limit: < Currency value={creditLimit?.available_limit} /></h3>
+                              {
+                                typeof(creditLimit?.available_tranche_limit) == 'number' &&
+                                  <h3 style={{ color: 'black', marginTop: 10 }}>Available tranche count: {creditLimit?.available_tranche_limit}</h3>
+                              }
+                            </div>
                           </FormHelperText>
                         </Grid>
                       </Grid>

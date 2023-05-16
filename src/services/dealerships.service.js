@@ -272,7 +272,7 @@ export const getCreditReloadLimitById = (id) => {
     apiCall(url)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
-          resolve(data[0]?.available_limit);
+          resolve(data[0]);
         } else {
           reject(message);
         }

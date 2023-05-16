@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.31.2](///compare/v2.31.1...v2.31.2) (2023-05-16)
+
+
+### Bug Fixes
+
+* **renewal:** api query params updated da95270
+* **renewal:** api query params updated ed49a36
+
 ### [2.31.1](///compare/v2.31.0...v2.31.1) (2023-05-16)
 
 

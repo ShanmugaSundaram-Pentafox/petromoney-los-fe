@@ -9,7 +9,7 @@ export const getRenewalLoanByStatus = (status, filterQry, page, searchText) => {
     if (region && region !== '0') qry.push(`region=${region}`)
     if (products && products !== '0') qry.push(`product=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
-    if (month) qry.push(`renewal_month=${month}`)
+    if (month && month !== '0') qry.push(`renewal_month=${month}`)
     if (page) qry.push(`page=${page}`)
     if (searchText) qry.push(`dealership_id_name=${searchText}`)
     if (qry.length) apiUrl += '&' + qry.join('&')
@@ -27,6 +27,7 @@ export const getRenewalLoanByStatus = (status, filterQry, page, searchText) => {
   });
 }
 
+// TODO: remove this unused method
 export const getRenewalLoanStats = (qryStr = {}) => {
   return new Promise((resolve, reject) => {
     const { region, from, to, products, zone, month } = qryStr;
@@ -58,7 +59,7 @@ export const getStatusWiseRecordCount = (filterQry) => {
     let qry = []
     let apiUrl = 'renewal/status_wise_record_count';
     if (zone && zone !== '0') qry.push(`zone=${zone}`)
-    if (month) qry.push(`renewal_month=${month}`)
+    if (month && month !== '0') qry.push(`renewal_month=${month}`)
     if (region && region !== '0') qry.push(`region=${region}`)
     if (products && products !== '0') qry.push(`product=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
@@ -101,7 +102,7 @@ export const getPageDetails = (status, filterQry) => {
     let apiUrl = `renewal/record_count?status=${status}`;
     if (zone && zone !== '0') qry.push(`zone=${zone}`)
     if (region && region !== '0') qry.push(`region=${region}`)
-    if (month) qry.push(`renewal_month=${month}`)
+    if (month && month !== '0') qry.push(`renewal_month=${month}`)
     if (products && products !== '0') qry.push(`product=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
     if (qry.length) apiUrl += '&' + qry.join('&')
@@ -171,10 +172,10 @@ export const downloadRenewalData = (status, qryStr = {}) => {
   return new Promise((resolve, reject) => {
     const { region, from, to, products, zone, month } = qryStr;
     let qry = []
-    let apiUrl = `renewal/application?status=${status}&download_as_csv=yes`;
+    let apiUrl = 'renewal/download_as_csv';
     if (zone && zone !== '0') qry.push(`zone=${zone}`)
     if (region && region !== '0') qry.push(`region=${region}`)
-    if (month) qry.push(`renewal_month=${month}`)
+    if (month && month !== '0') qry.push(`renewal_month=${month}`)
     if (products && products !== '0') qry.push(`product=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
     if (qry.length) apiUrl += '?' + qry.join('&')

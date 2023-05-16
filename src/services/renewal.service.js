@@ -104,7 +104,7 @@ export const getPageDetails = (status, filterQry) => {
     if (month) qry.push(`renewal_month=${month}`)
     if (products && products !== '0') qry.push(`product=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
-    if (qry.length) apiUrl += '?' + qry.join('&')
+    if (qry.length) apiUrl += '&' + qry.join('&')
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status.toUpperCase() === 'SUCCESS') {

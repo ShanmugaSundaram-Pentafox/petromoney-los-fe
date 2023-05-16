@@ -195,7 +195,7 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
   return (
     <div className={classes.root}>
       <MUIDataTable
-        title={title ? <Typography className={classes.title} variant="h4" component="h4">{title} ({loans.length})</Typography> : null}
+        title={title ? <Typography className={classes.title} variant="h4" component="h4">{title}</Typography> : null}
         data={loans}
         columns={columns}
         options={options}

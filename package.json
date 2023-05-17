@@ -1,6 +1,6 @@
 {
   "name": "mdm-dashboard",
-  "version": "2.31.2",
+  "version": "2.31.3",
   "private": true,
   "dependencies": {
     "@date-io/date-fns": "1.x",

@@ -7,6 +7,7 @@ import clsx from 'clsx';
 import moment from 'moment';
 import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState, useEffect } from 'react';
+import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
 import MuiTableFooter from '../../../components/CommonComponents/MuiTableFooter';
 import Currency from '../../../components/Number/Currency';
@@ -33,9 +34,13 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
   const classes = useStyles();
   const [loans, setLoans] = useState([]);
   const [page, setPage] = useState();
-  const [pageData, setPageData] = useState();
   const [search, setSearch] = useState();
   const [loading, setLoading] = useState(false);
+
+  const pageDetailsQuery = useQuery({
+    queryKey: ['renewal_reviewRecordCount', filterQry, search],
+    queryFn: () => getPageDetails('review', filterQry),
+  })
 
   useEffect(() => {
     setLoading(true);
@@ -49,13 +54,6 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
       })
   }, [filterQry, page, search])
 
-  useEffect(() => {
-    getPageDetails('review')
-      .then((res) => {
-        setPageData(res)
-      })
-      .catch((e) => console.log('getPageCountError >>>', e))
-  }, [])
   const onDownloadClick = () => {
     downloadRenewalData('draft', filterQry)
       .then(data => {
@@ -174,7 +172,7 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
       return (
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <MuiTableFooter
-            totalCount={pageData?.total_number_of_pages}
+            totalCount={pageDetailsQuery?.data?.total_number_of_pages}
             pageSize={10}
             onPageChange={(value) => { setPage(value) }}
           />

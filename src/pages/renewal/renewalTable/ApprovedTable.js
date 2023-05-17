@@ -10,6 +10,7 @@ import clsx from 'clsx';
 import moment from 'moment';
 import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState, useEffect } from 'react';
+import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
 import MuiTableFooter from '../../../components/CommonComponents/MuiTableFooter';
 import SignRequestLayout from '../../../components/Leegality/SignRequestLayout';
@@ -47,10 +48,14 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const [loans, setLoans] = useState([]);
   const [page, setPage] = useState();
   const [productTypeId, setProductTypeId] = useState();
-  const [pageData, setPageData] = useState();
   const [search, setSearch] = useState();
   const [loading, setLoading] = useState(false);
   const actionable = !permissionCheck(currentUser?.role_name, rulesList?.external_view);
+
+  const pageDetailsQuery = useQuery(
+    ['renewal_approvedRecordCount', filterQry, search],
+    () => getPageDetails('approved', filterQry),
+  );
 
   useEffect(() => {
     setLoading(true);
@@ -64,13 +69,6 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
       })
   }, [filterQry, page, search])
 
-  useEffect(() => {
-    getPageDetails('approved')
-      .then((res) => {
-        setPageData(res)
-      })
-      .catch((e) => console.log('getPageCountError >>>', e))
-  }, [])
   const getLoansTable = () => {
     setLoading(true);
     getRenewalLoanByStatus('approved')
@@ -224,7 +222,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
       return (
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <MuiTableFooter
-            totalCount={pageData?.total_number_of_pages}
+            totalCount={pageDetailsQuery?.data?.total_number_of_pages}
             pageSize={10}
             onPageChange={(value) => { setPage(value) }}
           />

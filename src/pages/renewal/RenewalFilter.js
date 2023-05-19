@@ -136,9 +136,9 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
   }, [selectedRegion, selectedPeriod, filterQry, selectedProducts, selectedZones,selectedMonth])
 
   const getStats = (qry) => {
-    getRenewalStatusList()
+    getRenewalStatusList(filterType)
       .then((status) => {
-        getStatusWiseRecordCount(qry)
+        getStatusWiseRecordCount(filterType,qry)
           .then(res => {
             const cdata = status?.map((item) => {
               const matchingItem = res.find((el) => el.status === item.status);
@@ -209,7 +209,7 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
               </>
               <>
                 {
-                  ['Y','UTD','Custom'].includes(selectedPeriodType) &&
+                  ['Y','UTD','Custom'].includes(selectedPeriodType) && filters.includes('month') &&
                     <Selector title="Renewal month" options={month} value={selectedMonth} setValue={setSelectedMonth} />
                 }
               </>

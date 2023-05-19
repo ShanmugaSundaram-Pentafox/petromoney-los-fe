@@ -1,15 +1,14 @@
 import apiCall from '../utils/api.util';
 
-export const getRenewalLoanByStatus = (status, filterQry, page, searchText) => {
+export const getEnhancedLoanByStatus = (status, filterQry, page, searchText) => {
   return new Promise((resolve, reject) => {
-    const { region, from, to, products, zone, month } = filterQry;
+    const { region, from, to, products, zone } = filterQry;
     let qry = []
-    let apiUrl = `renewal/application?status=${status}`;
+    let apiUrl = `enhancement/application?status=${status}`;
     if (zone && zone !== '0') qry.push(`zone=${zone}`)
     if (region && region !== '0') qry.push(`region=${region}`)
     if (products && products !== '0') qry.push(`product=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
-    if (month && month !== '0') qry.push(`renewal_month=${month}`)
     if (page) qry.push(`page=${page}`)
     if (searchText) qry.push(`dealership_id_name=${searchText}`)
     if (qry.length) apiUrl += '&' + qry.join('&')
@@ -27,13 +26,12 @@ export const getRenewalLoanByStatus = (status, filterQry, page, searchText) => {
   });
 }
 
-export const getStatusWiseRecordCount = (filterType, filterQry) => {
+export const getStatusWiseRecordCount = (filterQry) => {
   return new Promise((resolve, reject) => {
-    const { region, from, to, products, zone, month } = filterQry;
+    const { region, from, to, products, zone } = filterQry;
     let qry = []
-    let apiUrl = filterType == 'enhancement' ? 'enhancement/status_wise_record_count' : 'renewal/status_wise_record_count';
+    let apiUrl = 'enhancement/status_wise_record_count';
     if (zone && zone !== '0') qry.push(`zone=${zone}`)
-    if (month && month !== '0') qry.push(`renewal_month=${month}`)
     if (region && region !== '0') qry.push(`region=${region}`)
     if (products && products !== '0') qry.push(`product=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
@@ -52,10 +50,9 @@ export const getStatusWiseRecordCount = (filterType, filterQry) => {
       })
   });
 }
-export const getRenewalStatusList = (filterType) => {
+export const getEnhancementStatusList = () => {
   return new Promise((resolve, reject) => {
-    let apiUrl = filterType == 'enhancement' ? 'enhancement/status' : 'renewal/status'
-    apiCall(apiUrl)
+    apiCall('enhancement/status')
       .then(({ status, data, message }) => {
         if (status.toUpperCase() === 'SUCCESS') {
 
@@ -72,15 +69,14 @@ export const getRenewalStatusList = (filterType) => {
 
 export const getPageDetails = (status, filterQry) => {
   return new Promise((resolve, reject) => {
-    const { region, from, to, products, zone, month } = filterQry;
+    const { region, from, to, products, zone } = filterQry;
     let qry = []
-    let apiUrl = `renewal/record_count?status=${status}`;
+    let apiUrl = `enhancement/record_count?status=${status}`;
     if (zone && zone !== '0') qry.push(`zone=${zone}`)
     if (region && region !== '0') qry.push(`region=${region}`)
-    if (month && month !== '0') qry.push(`renewal_month=${month}`)
     if (products && products !== '0') qry.push(`product=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
-    if (qry.length) apiUrl += '&' + qry.join('&')
+    if (qry.length) apiUrl += '?' + qry.join('&')
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status.toUpperCase() === 'SUCCESS') {
@@ -95,36 +91,38 @@ export const getPageDetails = (status, filterQry) => {
   });
 }
 
-export const getRenewalRemarks = (loanId, filterType) => {
-  return new Promise((resolve, reject) => {
-    let apiUrl = filterType == 'enhancement' ? `enhancement/${loanId}/remark` : `renewal/${loanId}/remark`
-    apiCall(apiUrl)
-      .then(({ status, data, message }) => {
-        if (status.toUpperCase() === 'SUCCESS') {
-          resolve(data);
-        } else {
-          reject(message);
-        }
-      })
-      .catch(e => {
-        reject(e.message);
-      })
-  });
-}
-
-export const updateRenewalLoanStatus = ({ isReject, isPushback, ...data }) => {
+export const updateEnhancementLoanStatus = ({ isReject, isPushback, ...data }, id) => {
   return new Promise((resolve, reject) => {
     let apiUrl = '';
     if (isReject) {
-      apiUrl = `renewal/${data?.loan_id}/rejected`
+      apiUrl = `enhancement/${id}/rejected`
     } else if (isPushback) {
-      apiUrl = `renewal/${data?.loan_id}/pushback`
+      apiUrl = `enhancement/${id}/pushback`
     } else if (data?.status === 'draft') {
-      apiUrl = 'renewal/direct_save'
+      apiUrl = 'enhancement/direct_save'
     } else {
-      apiUrl = `renewal/${data?.loan_id}/status/change`
+      apiUrl = `enhancement/${id}/status/change`
     }
+    apiCall(apiUrl, {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status.toUpperCase() === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
 
+export const sendLoanForEnhancement = (data) => {
+  return new Promise((resolve, reject) => {
+    let apiUrl = 'enhancement/submit';
     apiCall(apiUrl, {
       method: 'POST',
       body: data
@@ -143,14 +141,13 @@ export const updateRenewalLoanStatus = ({ isReject, isPushback, ...data }) => {
 };
 
 
-export const downloadRenewalData = (status, qryStr = {}) => {
+export const downloadEnhancementData = (status, qryStr = {}) => {
   return new Promise((resolve, reject) => {
-    const { region, from, to, products, zone, month } = qryStr;
+    const { region, from, to, products, zone } = qryStr;
     let qry = []
-    let apiUrl = 'renewal/download_as_csv';
+    let apiUrl = 'enhancement/download_as_csv';
     if (zone && zone !== '0') qry.push(`zone=${zone}`)
     if (region && region !== '0') qry.push(`region=${region}`)
-    if (month && month !== '0') qry.push(`renewal_month=${month}`)
     if (products && products !== '0') qry.push(`product=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
     if (qry.length) apiUrl += '?' + qry.join('&')

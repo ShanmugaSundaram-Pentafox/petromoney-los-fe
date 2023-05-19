@@ -14,7 +14,8 @@ import { Link as RouterLink } from 'react-router-dom';
 import { useMount } from 'react-use';
 import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 import { TextEditor } from '../../../components/TextEditor/TextEditor';
-import { action_id, resources_id } from '../../../config/accessControl';
+import { resources_id } from '../../../config/accessControl';
+import { sendLoanForEnhancement } from '../../../services/enhancement.service';
 import { getLoanById, getLoanRejectReason, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
 import { isAllowed } from '../../../utils/cerbos';
 import CheckAllowed from '../../rbac/CheckAllowed';
@@ -54,8 +55,8 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.white
     },
     '&.MuiButton-outlined': {
-      color:theme.palette.error.main,
-      borderColor:theme.palette.error.main
+      color: theme.palette.error.main,
+      borderColor: theme.palette.error.main
     },
     '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.error.dark
@@ -106,12 +107,14 @@ const DrawerFooter = ({
   const [displayReason, setDisplayReason] = useState([])
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState();
+  const [openEnhancementModal, setEnhancementModal] = useState(false)
+  const [enhancementRemarks, setEnhancementRemarks] = useState();
   const { enqueueSnackbar } = useSnackbar();
-  var pushback_condition = [ 'loan_approval', 'disbursement_approval', 'disbursement_approved' ];
+  var pushback_condition = ['loan_approval', 'disbursement_approval', 'disbursement_approved'];
   /* The pushback_condition array is to check the condition for the pushback button, 
   The push back button want to show for all the user expect the Approved field, 
   Only the admin has the permission for the Approved field. */
-  if(currentUser.role_id == '1'){
+  if (currentUser.role_id == '1') {
     /* The role_id = 1 is for Admin */
     pushback_condition.push('approved')
   }
@@ -166,7 +169,7 @@ const DrawerFooter = ({
       user_id: currentUser.id,
       pushback_remarks: pushbackRemarks,
     }
-    if(pushbackRemarks?.length){
+    if (pushbackRemarks?.length) {
       setLoading(true)
       updateLoanApprovalStatusById(id, loanData.id, 'pushback', reqBody)
         .then(res => {
@@ -201,7 +204,7 @@ const DrawerFooter = ({
     setDisplayReason(displayReason.filter(label => label.label !== item.label))
   }
   const handleReasonChange = (event) => {
-    if(errorMsg) setErrorMsg()
+    if (errorMsg) setErrorMsg()
     let reasonArray = [...displayReason, { label: event.target.name, value: event.target.value }];
     let arrayCheck = [...rejectReason, event.target.value];
     if (rejectReason.includes(event.target.value)) {
@@ -212,12 +215,46 @@ const DrawerFooter = ({
     setRejectReason(arrayCheck)
   }
 
+  const handlePushToEnhancement = () => {
+    const { amount_approved, id, product_id, dealership_id } = selectedLoanData
+    let reqBody = {
+      loan_amount: amount_approved,
+      loan_id: id,
+      dealership_id: dealership_id,
+      product_id: product_id,
+      remarks: enhancementRemarks
+    }
+    sendLoanForEnhancement(reqBody)
+      .then(res => {
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
+        setLoading(false)
+        setEnhancementModal(false)
+
+      })
+      .catch(err => {
+        setLoading(false)
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+      })
+  }
+
   const updateLoanStatus = () => {
     let reqBody = {
       user_id: currentUser.id,
       reason_id: rejectReason,
     }
-    if(rejectReason?.length){
+    if (rejectReason?.length) {
       setLoading(true)
       updateLoanApprovalStatusById(id, loanData.id, 'reject', reqBody)
         .then(res => {
@@ -246,7 +283,6 @@ const DrawerFooter = ({
     } else {
       setErrorMsg('Please Select a reason to reject this loan')
     }
-
   }
   return (
     <div>
@@ -259,7 +295,7 @@ const DrawerFooter = ({
             Back
           </Button>
           {
-            isAllowed(currentUser?.permissions, resources_id.dashboard, 'loan_resubmit') && status && ['loan_review', 'loan_approval', 'approved', 'rejected', 'disbursed'].includes(status.toLowerCase()) &&
+            isAllowed(currentUser?.permissions, resources_id.dashboard, 'loan_resubmit') && status && ['loan_review', 'loan_approval', 'approved', 'rejected'].includes(status.toLowerCase()) &&
               <LoaderButton
                 variant={'contained'}
                 className={clsx(classes.btn, classes.btnError)}
@@ -267,22 +303,15 @@ const DrawerFooter = ({
                 onClick={handleResubmit}
                 loadingText='submitting...'>{'Re-Submit'}</LoaderButton>
           }
-          {/* {
-            editable && status && pushback_condition.includes(status.toLowerCase()) && (
-              <UserCan
-                role={currentUser.role_name}
-                perform={rulesList.loan_approval}
-                yes={() => (
-                  <LoaderButton
-                    variant="outlined"
-                    className={clsx(classes.btn, classes.btnError)}
-                    isLoading={reLoader}
-                    onClick={() => setPushback(true)}
-                    loadingText='pushing back...'>Push Back</LoaderButton>
-                )}
-              />)
-          } */}
-          {/* Push back API is not merged */}
+          {
+            isAllowed(currentUser?.permissions, resources_id.dashboard, 'loan_resubmit') && status && ['disbursed'].includes(status.toLowerCase()) &&
+              <LoaderButton
+                variant={'outlined'}
+                className={clsx(classes.btn)}
+                isLoading={reLoader}
+                onClick={() => setEnhancementModal(true)}
+                loadingText='sending...'>{'Send for Enhancement'}</LoaderButton>
+          }
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Button
@@ -325,31 +354,31 @@ const DrawerFooter = ({
           }
           {
             status && ['loan_approval', 'loan_review', 'disbursement_approval'].includes(status.toLowerCase()) &&
-            <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_reject'}>
-              <Button
-                variant="contained"
-                disabled={loanData?.loading}
-                className={clsx(classes.btn, classes.btnError)}
-                startIcon={<ThumbDownAltIcon />}
-                onClick={() => setRejectModal(true)}
-              >
-                Reject
-              </Button>
-            </CheckAllowed>
+              <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_reject'}>
+                <Button
+                  variant="contained"
+                  disabled={loanData?.loading}
+                  className={clsx(classes.btn, classes.btnError)}
+                  startIcon={<ThumbDownAltIcon />}
+                  onClick={() => setRejectModal(true)}
+                >
+                  Reject
+                </Button>
+              </CheckAllowed>
           }
           {
-            status && ['disbursement_approval'].includes(status.toLowerCase()) && 
-            <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_approve'}>
-              <Button
-                variant="contained"
-                disabled={loanData?.loading}
-                className={clsx(classes.btn, classes.btnSuccess)}
-                startIcon={<ThumbUpAltIcon />}
-                onClick={updateApprovalStatus}
-              >
-                Approve
-              </Button>
-            </CheckAllowed>
+            status && ['disbursement_approval'].includes(status.toLowerCase()) &&
+              <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_approve'}>
+                <Button
+                  variant="contained"
+                  disabled={loanData?.loading}
+                  className={clsx(classes.btn, classes.btnSuccess)}
+                  startIcon={<ThumbUpAltIcon />}
+                  onClick={updateApprovalStatus}
+                >
+                  Approve
+                </Button>
+              </CheckAllowed>
           }
           {
             status && status.toLowerCase() === 'loan_approval' && (currentUser.id == loanData?.approver_id || isAllowed(currentUser?.permissions, resources_id.dashboard, 'loan_approve')) &&
@@ -389,7 +418,7 @@ const DrawerFooter = ({
               <div>
                 {
                   errorMsg &&
-                    <Alert severity='error' style={{marginBottom: 12}}>{errorMsg}</Alert>
+                    <Alert severity='error' style={{ marginBottom: 12 }}>{errorMsg}</Alert>
                 }
                 <Typography style={{ marginBottom: 16 }} variant='body1'>Choose category and reasons for rejection.</Typography>
                 <Typography variant='body2'>Category</Typography>
@@ -470,10 +499,10 @@ const DrawerFooter = ({
           <TextEditor setJSON={setPushbackRemarks} toolBar={true} />
           {
             errorMsg &&
-              <Alert severity="error" style={{padding: '0px 16px'}}>{errorMsg}</Alert>
+              <Alert severity="error" style={{ padding: '0px 16px' }}>{errorMsg}</Alert>
           }
-          <div style={{display: 'flex', justifyContent: 'center', marginTop: 8, marginBottom: 5}}>
-            <Button variant='outlined' style={{marginRight: 8}} onClick={() => setPushback(false)}>Cancel</Button>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 8, marginBottom: 5 }}>
+            <Button variant='outlined' style={{ marginRight: 8 }} onClick={() => setPushback(false)}>Cancel</Button>
             <LoaderButton
               color='primary'
               variant='contained'
@@ -481,6 +510,26 @@ const DrawerFooter = ({
               loadingText='Submitting...'
               onClick={handlePushBack}
             >Confirm</LoaderButton>
+          </div>
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={openEnhancementModal}
+        onClose={() => setEnhancementModal(false)}
+      >
+        <DialogContent>
+          <DialogContentText>
+            Are you sure want to move your loan for Enhancement?
+          </DialogContentText>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 8, marginBottom: 5 }}>
+            <Button variant='outlined' style={{ marginRight: 8 }} onClick={() => setEnhancementModal(false)}>Cancel</Button>
+            <LoaderButton
+              color='primary'
+              variant='contained'
+              isLoading={loading}
+              loadingText='Submitting...'
+              onClick={handlePushToEnhancement}
+            >Yes</LoaderButton>
           </div>
         </DialogContent>
       </Dialog>

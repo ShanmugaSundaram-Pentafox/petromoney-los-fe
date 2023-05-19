@@ -6,7 +6,7 @@ import TimelineContent from '@material-ui/lab/TimelineContent';
 import TimelineDot from '@material-ui/lab/TimelineDot';
 import TimelineItem from '@material-ui/lab/TimelineItem';
 import TimelineSeparator from '@material-ui/lab/TimelineSeparator';
-import React,{ useState,useEffect }  from 'react';
+import React, { useState, useEffect } from 'react';
 import { getRenewalRemarks } from '../../../services/renewal.service';
 
 const useStyles = makeStyles((theme) => ({
@@ -34,12 +34,12 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-const ViewRemarks = ({ loanId, handleClose }) => {
+const ViewRemarks = ({ filterType, loanId, handleClose }) => {
   const classes = useStyles();
   const [remarks, setRemarks] = useState([])
 
   useEffect(() => {
-    getRenewalRemarks(loanId)
+    getRenewalRemarks(loanId, filterType)
       .then((res) => {
         setRemarks(res)
       })

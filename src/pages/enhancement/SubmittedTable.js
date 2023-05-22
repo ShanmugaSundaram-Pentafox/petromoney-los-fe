@@ -116,7 +116,10 @@ const SubmittedTable = ({ title, onRowClick, filterQry }) => {
           filter: false,
           sort: true,
           setCellProps: () => ({
-            align: 'left',
+            align: 'right',
+          }),
+          setCellHeaderProps: () => ({
+            align: 'right',
           }),
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }

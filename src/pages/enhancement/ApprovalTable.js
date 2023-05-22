@@ -126,7 +126,10 @@ const ApprovalTable = ({ title, onRowClick, filterQry, currentUser }) => {
           filter: false,
           sort: true,
           setCellProps: () => ({
-            align: 'left',
+            align: 'right',
+          }),
+          setCellHeaderProps: () => ({
+            align: 'right',
           }),
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }
@@ -138,7 +141,10 @@ const ApprovalTable = ({ title, onRowClick, filterQry, currentUser }) => {
           filter: false,
           sort: true,
           setCellProps: () => ({
-            align: 'left',
+            align: 'right',
+          }),
+          setCellHeaderProps: () => ({
+            align: 'right',
           }),
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }

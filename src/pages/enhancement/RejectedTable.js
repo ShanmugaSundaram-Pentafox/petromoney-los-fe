@@ -126,7 +126,10 @@ const RejectedTable = ({ title, onRowClick, filterQry, currentUser }) => {
           filter: false,
           sort: true,
           setCellProps: () => ({
-            align: 'left',
+            align: 'right',
+          }),
+          setCellHeaderProps: () => ({
+            align: 'right',
           }),
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }
@@ -137,8 +140,11 @@ const RejectedTable = ({ title, onRowClick, filterQry, currentUser }) => {
         options: {
           filter: false,
           sort: true,
+          setCellHeaderProps: () => ({
+            align: 'right',
+          }),
           setCellProps: () => ({
-            align: 'left',
+            align: 'right',
           }),
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }

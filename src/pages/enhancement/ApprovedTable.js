@@ -177,7 +177,10 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
           filter: false,
           sort: true,
           setCellProps: () => ({
-            align: 'left',
+            align: 'right',
+          }),
+          setCellHeaderProps: () => ({
+            align: 'right',
           }),
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }
@@ -189,7 +192,10 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
           filter: false,
           sort: true,
           setCellProps: () => ({
-            align: 'left',
+            align: 'right',
+          }),
+          setCellHeaderProps: () => ({
+            align: 'right',
           }),
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }

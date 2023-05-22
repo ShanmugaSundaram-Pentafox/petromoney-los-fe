@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.32.0](///compare/v2.31.3...v2.32.0) (2023-05-22)
+
+
+### Features
+
+* **enhancement:** add enhancement flow 99adf87
+
+
+### Bug Fixes
+
+* **enhancement:** added sync button a99ac25
+* **enhancement:** aligned table columns 1c6c54b
+* **enhancement:** bug fixes 5471d9b
+* **enhancement:** updated sync dialog content 95fb6ca
+* **rbac:** fix user to add new route to the resouse 4ced18f
+
 ### [2.31.3](///compare/v2.31.2...v2.31.3) (2023-05-17)
 
 

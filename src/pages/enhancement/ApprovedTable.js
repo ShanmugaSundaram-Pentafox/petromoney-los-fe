@@ -54,6 +54,10 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
 
   useEffect(() => {
     setLoading(true);
+    getEnhancementApprovedData();
+  }, [filterQry, page, search])
+
+  const getEnhancementApprovedData = () => {
     getEnhancedLoanByStatus('approved', filterQry, page, search)
       .then(data => {
         setLoans(data);
@@ -62,7 +66,7 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
       .catch(e => {
         setLoading(false);
       })
-  }, [filterQry, page, search])
+  }
 
   useEffect(() => {
     getPageDetails('approved', filterQry)
@@ -103,6 +107,8 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
           },
           variant: 'success',
         })
+        getEnhancementApprovedData()
+        setOpenDialog(false)
       })
       .catch(err => {
         enqueueSnackbar(err, {
@@ -112,7 +118,7 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
           },
           variant: 'error',
         })
-
+        setOpenDialog(false)
       })
   }
 

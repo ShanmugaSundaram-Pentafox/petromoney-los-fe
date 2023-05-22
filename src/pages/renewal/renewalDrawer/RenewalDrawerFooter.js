@@ -1,12 +1,10 @@
 import { Button, Drawer } from '@material-ui/core';
-import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';
 import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded'
 import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import React, { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
 import { resources_id } from '../../../config/accessControl';
 import { isAllowed } from '../../../utils/cerbos';
 import CheckAllowed from '../../rbac/CheckAllowed';
@@ -69,6 +67,7 @@ const RenewalDrawerFooter = ({
   id,
   currentUser,
   status,
+  filterType,
   selectedLoanData,
   handleReviewModal,
   handleReject,
@@ -81,22 +80,17 @@ const RenewalDrawerFooter = ({
     <div>
       <div className={classes.actionButtonsWrapper}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Button variant='outlined' size='small' color='primary'
-            onClick={() => setOpenDrawer(true)}
-          >
-            View Remarks
-          </Button>
-          <Button
-            component={RouterLink}
-            to={`/dealership/${id}`}
-            variant="contained"
-            className={clsx(classes.btn, classes.btnSuccess)}
-            startIcon={<AccountTreeRoundedIcon />}
-          >
-            View more
-          </Button>
           {
-            status && ['draft'].includes(status.toLowerCase()) &&
+            ['review', 'approval', 'approved', 'rejected'].includes(status) && (
+              <Button variant='outlined' size='small' color='primary'
+                onClick={() => setOpenDrawer(true)}
+              >
+                View Remarks
+              </Button>
+            )
+          }
+          {
+            status && ['draft', 'submit'].includes(status.toLowerCase()) &&
               <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'send_for_review'}>
                 <Button
                   variant="contained"
@@ -109,7 +103,7 @@ const RenewalDrawerFooter = ({
               </CheckAllowed>
           }
           {
-            status && ['review'].includes(status.toLowerCase()) &&
+            status && ['review', 'approval'].includes(status.toLowerCase()) &&
               <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_reject'}>
                 <Button
                   variant="contained"
@@ -166,7 +160,7 @@ const RenewalDrawerFooter = ({
         onClose={() => setOpenDrawer(false)}
         variant="temporary"
       >
-        <ViewRemarks handleClose={() => setOpenDrawer(false)} loanId={selectedLoanData?.loan_id} />
+        <ViewRemarks filterType={filterType} handleClose={() => setOpenDrawer(false)} loanId={filterType == 'enhancement' ? selectedLoanData?.id : selectedLoanData?.loan_id} />
       </Drawer>
     </div >
   )

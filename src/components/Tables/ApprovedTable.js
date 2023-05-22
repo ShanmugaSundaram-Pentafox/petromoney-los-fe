@@ -36,19 +36,7 @@ const useStyles = makeStyles(theme => ({
     fontWeight: '600',
     minWidth: '30px',
     textAlign: 'center',
-  },
-  pills_FUEL: {
-    color: '#d35178',
-    backgroundColor: '#f7eae8'
-  },
-  pills_SOLAR: {
-    color: '#51b37f',
-    backgroundColor: '#e1f8e5',
-  },
-  anchorTag: {
-    textDecoration: 'none',
-    color: '#d35178',
-  },
+  }
 }));
 
 const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, currentUser }) => {

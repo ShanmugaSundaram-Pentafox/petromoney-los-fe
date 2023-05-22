@@ -91,17 +91,7 @@ const SubmittedTable = ({ title, onRowClick, filterQry }) => {
         }
       },
       {
-        label: 'Old Product Type',
-        name: 'old_product_name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
-        }
-      },
-      
-      {
-        label: 'New Product Type',
+        label: 'Product Type',
         name: 'new_product_name',
         options: {
           filter: false,
@@ -120,19 +110,7 @@ const SubmittedTable = ({ title, onRowClick, filterQry }) => {
 
       },
       {
-        label: 'Old loan Amount',
-        name: 'old_loan_amount',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({
-            align: 'left',
-          }),
-          customBodyRender: value => <strong><Currency value={value} /></strong>
-        }
-      },
-      {
-        label: 'New Loan Amount',
+        label: 'Loan Amount',
         name: 'new_loan_amount',
         options: {
           filter: false,

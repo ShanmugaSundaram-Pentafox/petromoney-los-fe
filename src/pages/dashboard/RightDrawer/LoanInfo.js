@@ -6,6 +6,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
 import UserCan from '../../../components/UserCan/UserCan';
@@ -27,6 +28,7 @@ const LoanInfo = ({
   newInfo,
   currentUser,
   editable,
+  type,
   updateNewLoanInfo,
   viewable
 }) => {
@@ -39,7 +41,7 @@ const LoanInfo = ({
         setProducts(data)
         if (row.product_id) {
           const re = data.find(d => d.product_id == row.product_id)
-          setSelectedProduct({ ...re, disabled: status !== 'loan_approval' && status !== 'submitted' && status !== 'loan_review' } || {})
+          setSelectedProduct({ ...re, disabled: status !== 'loan_approval' && status !== 'submitted' && status !== 'loan_review' && status !== 'review' && status !== 'submit' } || {})
         }
       })
       .catch(() => null)
@@ -53,6 +55,10 @@ const LoanInfo = ({
   return (
     <>
       <LoanInfoWrapper>
+        <div style={{ display: 'flex' }}>
+          <ViewData title='Old Product' value={newInfo?.old_product_name} />
+          <ViewData title='Old loan Amount' value={newInfo?.old_loan_amount} />
+        </div>
         <Table size="small">
           <TableHead>
             <TableRow>
@@ -74,11 +80,13 @@ const LoanInfo = ({
                   native
                   placeholder={'Select Loan Product'}
                   value={selectedProduct?.product_id}
-                  disabled={selectedProduct?.disabled || !isAllowed(currentUser?.permissions, resources_id.dashboard,'edit_loantype')}
+                  disabled={selectedProduct?.disabled || !isAllowed(currentUser?.permissions, resources_id.dashboard, 'edit_loantype')}
                   onChange={e => {
                     const d = products.find(i => i.product_id == e.target.value)
                     setSelectedProduct(d)
-                    updateNewLoanInfo({
+                    updateNewLoanInfo(['status', 'review', 'approval'].includes(status) ? {
+                      product_id: e.target.value
+                    } : {
                       ...newInfo,
                       product_id: e.target.value
                     })
@@ -96,32 +104,65 @@ const LoanInfo = ({
               <TableCell scope="row" component="th"><strong>{selectedProduct?.interest}</strong></TableCell>
               <TableCell scope="row" component="th"><strong>{selectedProduct?.penal_interest}</strong></TableCell>
               {/* option to edit requested amount of the loan in submit and review queue */}
-              <TableCell align="right">
-                {
-                  ['submitted','loan_review']?.includes(status) ? (
-                    <UserCan
-                      role={currentUser.role_name}
-                      perform={rulesList.loan_approval}
-                      yes={() => (
-                        <TextInput
-                          money
-                          number
-                          fullWidth={false}
-                          defaultValue={row?.amount_requested}
-                          onChange={e => {
-                            updateNewLoanInfo({
-                              ...newInfo,
-                              amount_requested: e.target.value
-                            })
-                          }}
+              {
+                ['submit', 'review', 'approval']?.includes(status) && (
+                  <TableCell align="right">
+                    {
+                      ['submit', 'review', 'approval']?.includes(status) ? (
+                        <UserCan
+                          role={currentUser.role_name}
+                          perform={rulesList.loan_approval}
+                          yes={() => (
+                            <TextInput
+                              money
+                              number
+                              fullWidth={false}
+                              defaultValue={newInfo?.new_loan_amount}
+                              onChange={e => {
+                                updateNewLoanInfo({
+                                  loan_amount: e.target.value
+                                })
+                              }}
+                            />
+                          )}
+                          no={() => <Currency value={row?.amount_requested} />}
                         />
-                      )}
-                      no={() => <Currency value={row?.amount_requested} />}
-                    />
-                  )
-                    : <Currency value={row?.amount_requested} />
-                }
-              </TableCell>
+                      )
+                        : <Currency value={row?.amount_requested} />
+                    }
+                  </TableCell>
+                )
+              }
+              {
+                ['submitted', 'loan_review']?.includes(status) && (
+                  <TableCell align="right">
+                    {
+                      ['submitted', 'loan_review']?.includes(status) ? (
+                        <UserCan
+                          role={currentUser.role_name}
+                          perform={rulesList.loan_approval}
+                          yes={() => (
+                            <TextInput
+                              money
+                              number
+                              fullWidth={false}
+                              defaultValue={row?.amount_requested}
+                              onChange={e => {
+                                updateNewLoanInfo({
+                                  ...newInfo,
+                                  amount_requested: e.target.value
+                                })
+                              }}
+                            />
+                          )}
+                          no={() => <Currency value={row?.amount_requested} />}
+                        />
+                      )
+                        : <Currency value={row?.amount_requested} />
+                    }
+                  </TableCell>
+                )
+              }
               <TableCell align="right">
                 {
                   status === 'loan_approval' ? (

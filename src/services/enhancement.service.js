@@ -76,7 +76,7 @@ export const getPageDetails = (status, filterQry) => {
     if (region && region !== '0') qry.push(`region=${region}`)
     if (products && products !== '0') qry.push(`product=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
-    if (qry.length) apiUrl += '?' + qry.join('&')
+    if (qry.length) apiUrl += '&' + qry.join('&')
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status.toUpperCase() === 'SUCCESS') {
@@ -152,6 +152,22 @@ export const downloadEnhancementData = (status, qryStr = {}) => {
     if (from && to) qry.push(`from=${from}&to=${to}`)
     if (qry.length) apiUrl += '?' + qry.join('&')
     apiCall(apiUrl)
+      .then(({ status, data, message }) => {
+        if (status.toUpperCase() === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const getEnhancementSync = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`enhancement/${id}/sync`)
       .then(({ status, data, message }) => {
         if (status.toUpperCase() === 'SUCCESS') {
           resolve(data);

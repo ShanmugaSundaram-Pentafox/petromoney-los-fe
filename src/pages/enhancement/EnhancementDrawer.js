@@ -96,6 +96,7 @@ const EnhancementDrawer = ({ id, selectedLoanData, status, currentUser, data, on
   const [isPushback, setIsPushback] = useState(false);
   const [errorStatus, setErrorStatus] = useState()
   const [collapse, setCollapse] = useState(false);
+  const [info, setInfo] = useState();
   const classes = useStyles();
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.loan_id))
   const dealershipData = useQuery(['dealership-info', id], () => getDealershipById(id), { refetchOnWindowFocus: false })
@@ -127,8 +128,8 @@ const EnhancementDrawer = ({ id, selectedLoanData, status, currentUser, data, on
       setLoading(true)
       let reqBody = {
         remarks: remarks,
-        product_id: selectedLoanData?.new_product_id,
-        loan_amount: loanData?.amount_approved,
+        product_id: info?.product_id ? parseInt(info?.product_id) : parseInt(selectedLoanData?.new_product_id),
+        loan_amount: info?.loan_amount ? parseInt(info?.loan_amount) : parseInt(loanData?.amount_approved),
         loan_id: loanData?.id || selectedLoanData?.loan_id,
         status,
         isReject,
@@ -164,12 +165,18 @@ const EnhancementDrawer = ({ id, selectedLoanData, status, currentUser, data, on
       setErrorStatus('Please enter remarks.')
     }
   }
+  const updateNewLoanInfo = (data) => {
+    setInfo({
+      ...info,
+      ...data
+    })
+  }
 
   const collapseComponent = [
     {
       id: 0,
       name: 'Loan Info',
-      component: <LoanInfo status={status} currentUser={currentUser} editable={true} data={loanData} />
+      component: <LoanInfo updateNewLoanInfo={updateNewLoanInfo} status={status} currentUser={currentUser} data={loanData} newInfo={selectedLoanData} />
     },
     {
       id: 1,

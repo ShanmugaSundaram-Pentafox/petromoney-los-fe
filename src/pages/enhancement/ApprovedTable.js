@@ -1,15 +1,21 @@
-import { Button, Tooltip } from '@material-ui/core';
+import { Button, Tooltip, Dialog } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { green } from '@material-ui/core/colors';
 import Typography from '@material-ui/core/Typography';
+import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+import SyncIcon from '@material-ui/icons/Sync';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import MUIDataTable from 'mui-datatables';
+import { useSnackbar } from 'notistack';
 import React, { useMemo, useState, useEffect } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import MuiTableFooter from '../../components/CommonComponents/MuiTableFooter';
+import SignRequestLayout from '../../components/Leegality/SignRequestLayout';
 import Currency from '../../components/Number/Currency';
-import { downloadEnhancementData, getEnhancedLoanByStatus, getPageDetails } from '../../services/enhancement.service';
+import { downloadEnhancementData, getEnhancedLoanByStatus, getEnhancementSync, getPageDetails } from '../../services/enhancement.service';
+import { getLoansByStatus } from '../../services/loans.service';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
 
 
@@ -29,13 +35,21 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const ApprovedTable = ({ title, onRowClick, filterQry, currentUser }) => {
+const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }) => {
   const classes = useStyles();
   const [loans, setLoans] = useState([]);
   const [page, setPage] = useState();
   const [pageData, setPageData] = useState();
   const [search, setSearch] = useState();
   const [loading, setLoading] = useState(false);
+  const [type, setType] = useState('');
+  const [loanId, setloanId] = useState();
+  const [loansData, setLoansData] = useState();
+  const [loanAmount, setLoanAmount] = useState();
+  const [productTypeId, setProductTypeId] = useState();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [dealershipId, setDealershipId] = useState();
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     setLoading(true);
@@ -65,6 +79,42 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser }) => {
       })
       .catch(e => console.log('Download error >>>', e))
   }
+
+  const getLoansTable = () => {
+    setLoading(true);
+    getLoansByStatus('approved')
+      .then(data => {
+        setLoansData('approved', data);
+        setLoading(false);
+      })
+      .catch(e => {
+        setLoading(false);
+      })
+  }
+
+  const syncData = (enhancementId) => {
+    getEnhancementSync(enhancementId)
+      .then(res => {
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
+      })
+      .catch(err => {
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+
+      })
+  }
+
 
   const columns = useMemo(() => {
     return [
@@ -99,7 +149,7 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser }) => {
           customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
         }
       },
-      
+
       {
         label: 'New Product Type',
         name: 'new_product_name',
@@ -143,6 +193,54 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser }) => {
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }
       },
+      {
+        label: 'Sync',
+        name: 'is_sync',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: (value, r) => {
+            return (
+              value == 1 ?
+                <Tooltip title='Already synced'>
+                  <CheckCircleTwoToneIcon style={{ color: green[200] }} />
+                </Tooltip> :
+                <div>
+                  <Tooltip title="click to sync">
+                    <SyncIcon style={{ color: 'grey' }} onClick={() => syncData(loans?.[r.rowIndex]['id'])} />
+                  </Tooltip>
+                </div>
+            )
+          },
+        }
+      },
+      // {
+      //   label: 'Documents',
+      //   name: 'dealership_id',
+      //   options: {
+      //     filter: false,
+      //     sort: false,
+      //     setCellProps: () => ({
+      //       align: 'center',
+      //     }),
+      //     customBodyRender: (value, r) => {
+      //       return (
+      //         <div style={{ minWidth: 70 }}>
+      //           <Tooltip title="Sanction Letter">
+      //             <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType('sanction'); setModalVisible(true); }}>
+      //               <DescriptionIcon style={{ width: 19 }} />
+      //             </IconButton>
+      //           </Tooltip>
+      //           <Tooltip title="eSign Application">
+      //             <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setType('application'); setDealershipId(value); setModalVisible(true); }}>
+      //               <ESignIcon width={17} />
+      //             </IconButton>
+      //           </Tooltip>
+      //         </div>
+      //       )
+      //     }
+      //   }
+      // }
     ]
   }, [loans]);
 
@@ -203,6 +301,19 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser }) => {
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
       }
+      <Dialog fullWidth maxWidth="md" open={modalVisible} onClose={() => setModalVisible(false)}>
+        <SignRequestLayout
+          dealershipId={dealershipId}
+          loanId={loanId}
+          loanAmount={loanAmount}
+          productId={productTypeId}
+          type={type}
+          title={type === 'application' ? 'eSign Application Form' : 'Sanction Letter'}
+          onClose={() => setModalVisible(false)}
+          callback={getLoansTable}
+          currentUser={currentUser}
+        />
+      </Dialog>
     </div>
   )
 }

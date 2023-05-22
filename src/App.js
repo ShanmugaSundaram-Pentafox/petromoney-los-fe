@@ -18,7 +18,13 @@ const actionStyle = {
 }
 
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+})
 const notistackRef = React.createRef();
 const onClickClose = key => {
   notistackRef.current.closeSnackbar(key);

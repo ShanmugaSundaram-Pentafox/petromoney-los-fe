@@ -14,6 +14,7 @@ import OwnerDetails from '../pages/dashboard/components/OwnerDetails';
 import Dashboard from '../pages/dashboard/dashboard';
 import Dealership from '../pages/dealership/dealership';
 import DealershipDetails from '../pages/dealershipDetails/dealershipDetails';
+import EnhancementList from '../pages/enhancement/EnhancementList';
 import PresubmitLoansTable from '../pages/loans/PresubmitLoansTable';
 import BlacklistTable from '../pages/loanspage/BlacklistTable';
 import Loans from '../pages/loanspage/loans'
@@ -66,6 +67,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/profile" component={Profile} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.withheld)} exact path="/withheld" component={BlacklistTable} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.renewal)} exact path="/renewal" component={RenewalList} />
+      <ProtectedRoute allow exact path="/enhancement" component={EnhancementList} />
       <ProtectedRoute allow exact path="/reports" component={DealersDueReport} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.collection_remarks)} exact path="/reports/remarks" component={CollectionRemarks} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.noc)} exact path="/noc" component={NOCertificateRequestTable} />

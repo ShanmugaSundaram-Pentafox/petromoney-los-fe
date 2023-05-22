@@ -5,6 +5,7 @@ import AssignmentLateRoundedIcon from '@material-ui/icons/AssignmentLateRounded'
 import CachedIcon from '@material-ui/icons/Cached';
 import ChatIcon from '@material-ui/icons/Chat';
 import DashboardIcon from '@material-ui/icons/Dashboard';
+import ExtensionIcon from '@material-ui/icons/Extension';
 import ListIcon from '@material-ui/icons/List';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import LocalShippingIcon from '@material-ui/icons/LocalShipping';
@@ -106,6 +107,18 @@ const Sidebar = props => {
       icon: <AccountBoxIcon />
     },
     {
+      id: action_id?.navigation.renewal,
+      title: 'Enhancement',
+      href: '/enhancement',
+      icon: <ExtensionIcon />
+    },
+    {
+      id: action_id?.navigation.renewal,
+      title: 'Renewal',
+      href: '/renewal',
+      icon: <Repeat />
+    },
+    {
       id: action_id?.navigation.credit_reload,
       title: 'Credit Reload',
       href: '/reports/credit/reload',
@@ -116,12 +129,6 @@ const Sidebar = props => {
       title: 'Withheld',
       href: '/withheld',
       icon: <AssignmentLateRoundedIcon />
-    },
-    {
-      id: action_id?.navigation.renewal,
-      title: 'Renewal',
-      href: '/renewal',
-      icon: <Repeat />
     },
     {
       id: action_id?.navigation.dealerships,

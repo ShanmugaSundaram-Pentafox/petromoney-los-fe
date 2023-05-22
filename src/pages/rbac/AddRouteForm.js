@@ -86,13 +86,13 @@ const RouteGroup = ({ data, setAddForm }) => {
 }
 
 
-const AddRouteForm = ({ data, callback }) => {
+const AddRouteForm = ({ data, callback, resourceId }) => {
   const [addForm, setAddForm] = useState()
   const classes = useStyles()
   const queryClient = useQueryClient()
   const { enqueueSnackbar } = useSnackbar();
 
-  const { mutate: addRoute } = useMutation(data => addForm.route_id ? updateApiRoute(addForm.resource_id, addForm.route_id, data) : addApiRoute(addForm.resource_id, data), {
+  const { mutate: addRoute } = useMutation(data => addForm.route_id ? updateApiRoute(resourceId, addForm.route_id, data) : addApiRoute(resourceId, data), {
     onSuccess: (message) => {
       queryClient.invalidateQueries('api-route-list')
       setAddForm()
@@ -105,7 +105,6 @@ const AddRouteForm = ({ data, callback }) => {
       });
     },
     onError: (message) => {
-      console.log(message);
       enqueueSnackbar(message, {
         anchorOrigin: {
           vertical: 'top',
@@ -188,7 +187,7 @@ const AddRouteForm = ({ data, callback }) => {
             type='submit'
             startIcon={<AddIcon />}
             onClick={() => {
-              setAddForm({ action: 'Add', resource_id: data[0]?.resource_id })
+              setAddForm({ action: 'Add', resource_id: resourceId })
             }}
             color='primary'
           >

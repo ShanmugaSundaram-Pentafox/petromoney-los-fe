@@ -169,11 +169,11 @@ const APIAccessPage = ({ accessControl, selectedRole, accessLoading }) => {
               )) :
                 accessControl?.map((access, i) => {
                   return (
-                    <TableRow onClick={() => setOpenDrawer({ open: true, resource_id: access?.resource?.id })} key={i} hover>
-                      <TableCell>
+                    <TableRow key={i} hover>
+                      <TableCell onClick={() => setOpenDrawer({ open: true, resource_id: access?.resource?.id })} >
                         {accessLoading ? <Skeleton variant='text' /> : access?.resource?.kind}
                       </TableCell>
-                      <TableCell>
+                      <TableCell onClick={() => setOpenDrawer({ open: true, resource_id: access?.resource?.id })} >
                         {access?.resource?.description}
                       </TableCell>
                       {
@@ -290,7 +290,7 @@ const APIAccessPage = ({ accessControl, selectedRole, accessLoading }) => {
         variant="temporary"
       >
         <div className={classes.sidePanelWrapper}>
-          <AddRouteForm data={routeList} callback={() => setOpenDrawer({ open: false })} />
+          <AddRouteForm resourceId={openDrawer?.resource_id} data={routeList} callback={() => setOpenDrawer({ open: false })} />
         </div>
       </Drawer>
     </Paper>

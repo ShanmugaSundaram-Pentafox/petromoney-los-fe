@@ -1,4 +1,4 @@
-import { Button, Tooltip, Dialog } from '@material-ui/core';
+import { Button, Tooltip, Dialog, DialogContent, DialogActions } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { green } from '@material-ui/core/colors';
 import Typography from '@material-ui/core/Typography';
@@ -49,6 +49,7 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
   const [productTypeId, setProductTypeId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
   const [dealershipId, setDealershipId] = useState();
+  const [openDialog, setOpenDialog] = useState(false)
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
@@ -207,8 +208,9 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
                 </Tooltip> :
                 <div>
                   <Tooltip title="click to sync">
-                    <SyncIcon style={{ color: 'grey' }} onClick={() => syncData(loans?.[r.rowIndex]['id'])} />
+                    <SyncIcon style={{ color: 'grey' }} onClick={() => setOpenDialog(true)} />
                   </Tooltip>
+
                 </div>
             )
           },
@@ -313,6 +315,17 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
           callback={getLoansTable}
           currentUser={currentUser}
         />
+      </Dialog>
+      <Dialog fullWidth maxWidth="xs" open={openDialog} onClose={() => setOpenDialog(true)}>
+        <DialogContent dividers>
+          <Typography>Ready to sync data with LMS?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <div>
+            <Button variant='outlined' onClick={() => setOpenDialog(false)}>Cancel</Button>
+            <Button variant='contained' color='primary' style={{ color: 'white', marginLeft: 15 }} onClick={() => syncData()}>Yes</Button>
+          </div>
+        </DialogActions>
       </Dialog>
     </div>
   )

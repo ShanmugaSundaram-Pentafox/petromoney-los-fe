@@ -103,7 +103,7 @@ const RenewalDrawerFooter = ({
               </CheckAllowed>
           }
           {
-            status && ['review'].includes(status.toLowerCase()) &&
+            status && ['review', 'approval'].includes(status.toLowerCase()) &&
               <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_reject'}>
                 <Button
                   variant="contained"

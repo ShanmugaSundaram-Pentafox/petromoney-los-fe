@@ -41,7 +41,7 @@ const LoanInfo = ({
         setProducts(data)
         if (row.product_id) {
           const re = data.find(d => d.product_id == row.product_id)
-          setSelectedProduct({ ...re, disabled: status !== 'loan_approval' && status !== 'submitted' && status !== 'loan_review' && status !== 'review' && status !== 'submit' } || {})
+          setSelectedProduct({ ...re, disabled: status !== 'loan_approval' && status !== 'submitted' && status !== 'loan_review' } || {})
         }
       })
       .catch(() => null)
@@ -105,7 +105,7 @@ const LoanInfo = ({
               <TableCell scope="row" component="th"><strong>{selectedProduct?.penal_interest}</strong></TableCell>
               {/* option to edit requested amount of the loan in submit and review queue */}
               {
-                ['submit', 'review', 'approval']?.includes(status) && (
+                type == 'enhancement' ? (
                   <TableCell align="right">
                     {
                       ['submit', 'review', 'approval']?.includes(status) ? (
@@ -125,16 +125,13 @@ const LoanInfo = ({
                               }}
                             />
                           )}
-                          no={() => <Currency value={row?.amount_requested} />}
+                          no={() => <Currency value={newInfo?.new_loan_amount} />}
                         />
                       )
-                        : <Currency value={row?.amount_requested} />
+                        : <Currency value={newInfo?.new_loan_amount} />
                     }
                   </TableCell>
-                )
-              }
-              {
-                ['submitted', 'loan_review']?.includes(status) && (
+                ) : (
                   <TableCell align="right">
                     {
                       ['submitted', 'loan_review']?.includes(status) ? (

@@ -35,7 +35,6 @@ const EnhancementTable = ({ currentUser, value, filterQry }) => {
   const [loansData, setLoansData] = useState();
 
   const showDealershipInfo = (id, selectedLoanData, status) => {
-    console.log('selected Loans data >>>>>>>>>>>>>>>>>>>>>>>',selectedLoanData)
     setLoansData(selectedLoanData);
     getDealershipById(id)
       .then(data => {
@@ -54,7 +53,6 @@ const EnhancementTable = ({ currentUser, value, filterQry }) => {
     onClose: () => { setShowPanel({ status: false }) },
     selectedLoanData: loansData,
   }
-  console.log('loansData >>>>>>>>>>>>>>>>>>>',loansData)
   return (
     <Box pt={2}>
       <UserCan

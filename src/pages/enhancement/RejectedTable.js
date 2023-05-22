@@ -182,7 +182,7 @@ const RejectedTable = ({ title, onRowClick, filterQry, currentUser }) => {
     },
     onCellClick: (colData, cellMeta) => {
       if (cellMeta.colIndex !== 7) {
-        onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'draft')
+        onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'rejected')
       }
     },
     customSort: (data, dataIndex, rowIndex) => {

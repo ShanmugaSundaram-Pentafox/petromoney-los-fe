@@ -129,7 +129,7 @@ const EnhancementDrawer = ({ id, selectedLoanData, status, currentUser, data, on
       let reqBody = {
         remarks: remarks,
         product_id: info?.product_id ? parseInt(info?.product_id) : parseInt(selectedLoanData?.new_product_id),
-        loan_amount: info?.loan_amount ? parseInt(info?.loan_amount) : parseInt(loanData?.amount_approved),
+        loan_amount: info?.loan_amount ? parseInt(info?.loan_amount) : parseInt(selectedLoanData?.new_loan_amount),
         loan_id: loanData?.id || selectedLoanData?.loan_id,
         status,
         isReject,
@@ -176,7 +176,7 @@ const EnhancementDrawer = ({ id, selectedLoanData, status, currentUser, data, on
     {
       id: 0,
       name: 'Loan Info',
-      component: <LoanInfo updateNewLoanInfo={updateNewLoanInfo} status={status} currentUser={currentUser} data={loanData} newInfo={selectedLoanData} />
+      component: <LoanInfo type='enhancement' updateNewLoanInfo={updateNewLoanInfo} status={status} currentUser={currentUser} data={loanData} newInfo={selectedLoanData} />
     },
     {
       id: 1,

@@ -234,6 +234,7 @@ const DrawerFooter = ({
           variant: 'success',
         })
         setLoading(false)
+        onClose()
         setEnhancementModal(false)
 
       })

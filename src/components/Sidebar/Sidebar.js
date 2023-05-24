@@ -107,7 +107,7 @@ const Sidebar = props => {
       icon: <AccountBoxIcon />
     },
     {
-      id: action_id?.navigation.renewal,
+      id: action_id?.navigation.enhancement,
       title: 'Enhancement',
       href: '/enhancement',
       icon: <ExtensionIcon />

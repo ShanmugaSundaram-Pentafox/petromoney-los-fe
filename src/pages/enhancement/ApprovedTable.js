@@ -13,6 +13,7 @@ import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
 import React, { useMemo, useState, useEffect } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
+import CustomToken from '../../components/CommonComponents/CustomToken';
 import MuiTableFooter from '../../components/CommonComponents/MuiTableFooter';
 import SignRequestLayout from '../../components/Leegality/SignRequestLayout';
 import Currency from '../../components/Number/Currency';
@@ -243,27 +244,33 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
           }),
           customBodyRender: (value, r) => {
             return (
-              <div style={{ minWidth: 70 }}>
-                <Tooltip title="Sanction Letter">
-                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setLoanAmount(loans?.[r.rowIndex]['enhancement_amount']); setDealershipId(value); setType('sanction'); setModalVisible(true); }}>
-                    <DescriptionIcon style={{ width: 19 }} />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="eSign Application">
-                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setType('application'); setLoanAmount(loans?.[r.rowIndex]['enhancement_amount']); setDealershipId(value); setModalVisible(true); }}>
-                    <ESignIcon width={17} />
-                  </IconButton>
-                </Tooltip>
-                {
-                  loans?.[r.rowIndex]['enhancement_category'] != 'decrease' && (
-                    <Tooltip title="Loan Agreement">
-                      <IconButton style={{ marginRight: 3 }} size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['enhancement_amount']); setProductTypeId(loans?.[r.rowIndex]['product_id']) }}>
-                        <LoanAgreementIcon width={12} />
+              loans?.[r.rowIndex]['is_document_signed'] ? (
+                <CustomToken label={'Signed'} variant="success" icon="tick" />
+              ) : (
+                <>
+                  <div style={{ minWidth: 70 }}>
+                    <Tooltip title="Sanction Letter">
+                      <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setLoanAmount(loans?.[r.rowIndex]['enhancement_amount']); setDealershipId(value); setType('sanction'); setModalVisible(true); }}>
+                        <DescriptionIcon style={{ width: 19 }} />
                       </IconButton>
                     </Tooltip>
-                  )
-                }
-              </div>
+                    <Tooltip title="eSign Application">
+                      <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setType('application'); setLoanAmount(loans?.[r.rowIndex]['enhancement_amount']); setDealershipId(value); setModalVisible(true); }}>
+                        <ESignIcon width={17} />
+                      </IconButton>
+                    </Tooltip>
+                    {
+                      loans?.[r.rowIndex]['enhancement_category'] != 'decrease' && (
+                        <Tooltip title="Loan Agreement">
+                          <IconButton style={{ marginRight: 3 }} size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['enhancement_amount']); setProductTypeId(loans?.[r.rowIndex]['product_id']) }}>
+                            <LoanAgreementIcon width={12} />
+                          </IconButton>
+                        </Tooltip>
+                      )
+                    }
+                  </div>
+                </>
+              )
             )
           }
         }

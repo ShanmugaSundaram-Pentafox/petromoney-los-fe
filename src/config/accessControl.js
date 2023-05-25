@@ -27,6 +27,7 @@ export const resources_id = {
 export const action_id = {
   navigation: {
     dashboard :'dashboard',
+    enhancement: 'enhancement',
     loans :'loans',
     loansFuel_loans :'loans:fuel_loans',
     loansVehicle_loans :'loans:vehicle_loans',

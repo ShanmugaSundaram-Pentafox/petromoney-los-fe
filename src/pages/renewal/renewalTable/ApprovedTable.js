@@ -69,17 +69,6 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
       })
   }, [filterQry, page, search])
 
-  const getLoansTable = () => {
-    setLoading(true);
-    getRenewalLoanByStatus('approved')
-      .then(data => {
-        setLoans(data);
-        setLoading(false);
-      })
-      .catch(e => {
-        setLoading(false);
-      })
-  }
   const onDownloadClick = () => {
     downloadRenewalData('draft', filterQry)
       .then(data => {
@@ -212,6 +201,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
     rowsPerPage: 10,
     filter: false,
     print: false,
+    download: false,
     sort: false,
     viewColumns: false,
     searchPlaceholder: 'Search by dealreship ID/Name',
@@ -269,7 +259,6 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
           type={type}
           title={type === 'application' ? 'eSign Application Form' : 'Sanction Letter'}
           onClose={() => setModalVisible(false)}
-          callback={getLoansTable}
           currentUser={currentUser}
         />
       </Dialog>

@@ -7,7 +7,7 @@ export const getEnhancedLoanByStatus = (status, filterQry, page, searchText) => 
     let apiUrl = `enhancement/application?status=${status}`;
     if (zone && zone !== '0') qry.push(`zone=${zone}`)
     if (region && region !== '0') qry.push(`region=${region}`)
-    if (products && products !== '0') qry.push(`product=${products}`)
+    if (products && products !== '0') qry.push(`old_product_id=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
     if (page) qry.push(`page=${page}`)
     if (searchText) qry.push(`dealership_id_name=${searchText}`)
@@ -33,7 +33,7 @@ export const getStatusWiseRecordCount = (filterQry) => {
     let apiUrl = 'enhancement/status_wise_record_count';
     if (zone && zone !== '0') qry.push(`zone=${zone}`)
     if (region && region !== '0') qry.push(`region=${region}`)
-    if (products && products !== '0') qry.push(`product=${products}`)
+    if (products && products !== '0') qry.push(`old_product_id=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
     if (qry.length) apiUrl += '?' + qry.join('&')
 
@@ -74,7 +74,7 @@ export const getPageDetails = (status, filterQry) => {
     let apiUrl = `enhancement/record_count?status=${status}`;
     if (zone && zone !== '0') qry.push(`zone=${zone}`)
     if (region && region !== '0') qry.push(`region=${region}`)
-    if (products && products !== '0') qry.push(`product=${products}`)
+    if (products && products !== '0') qry.push(`old_product_id=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
     if (qry.length) apiUrl += '&' + qry.join('&')
     apiCall(apiUrl)
@@ -148,7 +148,7 @@ export const downloadEnhancementData = (status, qryStr = {}) => {
     let apiUrl = `enhancement/download_as_csv?status=${status}`;
     if (zone && zone !== '0') qry.push(`zone=${zone}`)
     if (region && region !== '0') qry.push(`region=${region}`)
-    if (products && products !== '0') qry.push(`product=${products}`)
+    if (products && products !== '0') qry.push(`old_product_id=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
     if (qry.length) apiUrl += '&' + qry.join('&')
     apiCall(apiUrl)

@@ -57,7 +57,7 @@ const LoanInfo = ({
       <LoanInfoWrapper>
         <div style={{ display: 'flex' }}>
           <ViewData title='Old Product' value={newInfo?.old_product_name} />
-          <ViewData title='Old loan Amount' value={newInfo?.old_loan_amount} />
+          <ViewData style={{ marginLeft: 10 }} title='Old loan Amount' value={newInfo?.old_loan_amount} />
         </div>
         <Table size="small">
           <TableHead>

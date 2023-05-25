@@ -201,6 +201,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
     rowsPerPage: 10,
     filter: false,
     print: false,
+    download: false,
     sort: false,
     viewColumns: false,
     searchPlaceholder: 'Search by dealreship ID/Name',

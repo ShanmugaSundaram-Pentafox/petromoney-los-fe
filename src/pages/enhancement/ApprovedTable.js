@@ -237,19 +237,19 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
                 <>
                   <div style={{ minWidth: 70 }}>
                     <Tooltip title="Sanction Letter">
-                      <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setLoanAmount(loans?.[r.rowIndex]['enhancement_amount']); setDealershipId(value); setType('sanction'); setModalVisible(true); }}>
+                      <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setLoanAmount(loans?.[r.rowIndex]['current_loan_amount']); setDealershipId(value); setType('sanction'); setModalVisible(true); }}>
                         <DescriptionIcon style={{ width: 19 }} />
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="eSign Application">
-                      <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setType('application'); setLoanAmount(loans?.[r.rowIndex]['enhancement_amount']); setDealershipId(value); setModalVisible(true); }}>
+                      <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setType('application'); setLoanAmount(loans?.[r.rowIndex]['current_loan_amount']); setDealershipId(value); setModalVisible(true); }}>
                         <ESignIcon width={17} />
                       </IconButton>
                     </Tooltip>
                     {
                       loans?.[r.rowIndex]['enhancement_category'] != 'decrease' && (
                         <Tooltip title="Loan Agreement">
-                          <IconButton style={{ marginRight: 3 }} size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['enhancement_amount']); setProductTypeId(loans?.[r.rowIndex]['product_id']) }}>
+                          <IconButton style={{ marginRight: 3 }} size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['current_loan_amount']); setProductTypeId(loans?.[r.rowIndex]['product_id']) }}>
                             <LoanAgreementIcon width={12} />
                           </IconButton>
                         </Tooltip>

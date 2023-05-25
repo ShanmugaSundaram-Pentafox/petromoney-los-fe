@@ -35,7 +35,7 @@ export const getStatusWiseRecordCount = (filterType, filterQry) => {
     if (zone && zone !== '0') qry.push(`zone=${zone}`)
     if (month && month !== '0') qry.push(`renewal_month=${month}`)
     if (region && region !== '0') qry.push(`region=${region}`)
-    if (products && products !== '0') qry.push(`product=${products}`)
+    if (products && products !== '0') qry.push(filterType == 'enhancement' ? `old_product_id=${products}` : `product=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
     if (qry.length) apiUrl += '?' + qry.join('&')
 

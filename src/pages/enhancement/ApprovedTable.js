@@ -20,7 +20,6 @@ import Currency from '../../components/Number/Currency';
 import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
 import { ReactComponent as LoanAgreementIcon } from '../../icons/loan_agreement.svg';
 import { downloadEnhancementData, getEnhancedLoanByStatus, getEnhancementSync, getPageDetails } from '../../services/enhancement.service';
-import { getLoansByStatus } from '../../services/loans.service';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
 
 
@@ -50,6 +49,7 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
   const [type, setType] = useState('');
   const [loanId, setloanId] = useState();
   const [loansData, setLoansData] = useState();
+  const [enhancementId,setEnhancementId] = useState();
   const [loanAmount, setLoanAmount] = useState();
   const [productTypeId, setProductTypeId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
@@ -90,19 +90,7 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
       .catch(e => console.log('Download error >>>', e))
   }
 
-  const getLoansTable = () => {
-    setLoading(true);
-    getLoansByStatus('approved')
-      .then(data => {
-        setLoansData('approved', data);
-        setLoading(false);
-      })
-      .catch(e => {
-        setLoading(false);
-      })
-  }
-
-  const syncData = (enhancementId) => {
+  const syncData = () => {
     getEnhancementSync(enhancementId)
       .then(res => {
         enqueueSnackbar(res, {
@@ -225,9 +213,8 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
                 </Tooltip> :
                 <div>
                   <Tooltip title="click to sync">
-                    <SyncIcon style={{ color: 'grey' }} onClick={() => setOpenDialog(true)} />
+                    <SyncIcon style={{ color: 'grey' }} onClick={() => {setOpenDialog(true);setEnhancementId(loans?.[r.rowIndex]['id'])}} />
                   </Tooltip>
-
                 </div>
             )
           },
@@ -344,7 +331,6 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
           type={type}
           title={type === 'application' ? 'eSign Application Form' : 'Sanction Letter'}
           onClose={() => setModalVisible(false)}
-          callback={getLoansTable}
           currentUser={currentUser}
         />
       </Dialog>

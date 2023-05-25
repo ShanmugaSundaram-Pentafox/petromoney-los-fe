@@ -257,7 +257,7 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
                 {
                   loans?.[r.rowIndex]['enhancement_category'] != 'decrease' && (
                     <Tooltip title="Loan Agreement">
-                      <IconButton style={{ marginRight: 3 }} size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['amount_approved']); setProductTypeId(loans?.[r.rowIndex]['product_id']) }}>
+                      <IconButton style={{ marginRight: 3 }} size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['enhancement_amount']); setProductTypeId(loans?.[r.rowIndex]['product_id']) }}>
                         <LoanAgreementIcon width={12} />
                       </IconButton>
                     </Tooltip>

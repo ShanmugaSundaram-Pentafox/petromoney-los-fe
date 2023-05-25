@@ -1,9 +1,11 @@
 import { Button, Tooltip, Dialog, DialogContent, DialogActions } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { green } from '@material-ui/core/colors';
+import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+import DescriptionIcon from '@material-ui/icons/Description';
 import SyncIcon from '@material-ui/icons/Sync';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
@@ -14,6 +16,8 @@ import { NavLink as RouterLink } from 'react-router-dom';
 import MuiTableFooter from '../../components/CommonComponents/MuiTableFooter';
 import SignRequestLayout from '../../components/Leegality/SignRequestLayout';
 import Currency from '../../components/Number/Currency';
+import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
+import { ReactComponent as LoanAgreementIcon } from '../../icons/loan_agreement.svg';
 import { downloadEnhancementData, getEnhancedLoanByStatus, getEnhancementSync, getPageDetails } from '../../services/enhancement.service';
 import { getLoansByStatus } from '../../services/loans.service';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
@@ -228,33 +232,42 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
           },
         }
       },
-      // {
-      //   label: 'Documents',
-      //   name: 'dealership_id',
-      //   options: {
-      //     filter: false,
-      //     sort: false,
-      //     setCellProps: () => ({
-      //       align: 'center',
-      //     }),
-      //     customBodyRender: (value, r) => {
-      //       return (
-      //         <div style={{ minWidth: 70 }}>
-      //           <Tooltip title="Sanction Letter">
-      //             <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType('sanction'); setModalVisible(true); }}>
-      //               <DescriptionIcon style={{ width: 19 }} />
-      //             </IconButton>
-      //           </Tooltip>
-      //           <Tooltip title="eSign Application">
-      //             <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setType('application'); setDealershipId(value); setModalVisible(true); }}>
-      //               <ESignIcon width={17} />
-      //             </IconButton>
-      //           </Tooltip>
-      //         </div>
-      //       )
-      //     }
-      //   }
-      // }
+      {
+        label: 'Documents',
+        name: 'dealership_id',
+        options: {
+          filter: false,
+          sort: false,
+          setCellProps: () => ({
+            align: 'center',
+          }),
+          customBodyRender: (value, r) => {
+            return (
+              <div style={{ minWidth: 70 }}>
+                <Tooltip title="Sanction Letter">
+                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setLoanAmount(loans?.[r.rowIndex]['enhancement_amount']); setDealershipId(value); setType('sanction'); setModalVisible(true); }}>
+                    <DescriptionIcon style={{ width: 19 }} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="eSign Application">
+                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setType('application'); setLoanAmount(loans?.[r.rowIndex]['enhancement_amount']); setDealershipId(value); setModalVisible(true); }}>
+                    <ESignIcon width={17} />
+                  </IconButton>
+                </Tooltip>
+                {
+                  loans?.[r.rowIndex]['enhancement_category'] != 'decrease' && (
+                    <Tooltip title="Loan Agreement">
+                      <IconButton style={{ marginRight: 3 }} size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['amount_approved']); setProductTypeId(loans?.[r.rowIndex]['product_id']) }}>
+                        <LoanAgreementIcon width={12} />
+                      </IconButton>
+                    </Tooltip>
+                  )
+                }
+              </div>
+            )
+          }
+        }
+      }
     ]
   }, [loans]);
 
@@ -293,7 +306,7 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
       )
     },
     onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex !== 7) {
+      if ((cellMeta.colIndex !== 8) && (cellMeta.colIndex !== 7)) {
         onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'approved')
       }
     },

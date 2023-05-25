@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.32.1](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/compare/v2.32.0...v2.32.1) (2023-05-25)
+
+
+### Bug Fixes
+
+* **enhancement:** added document sign check ([c61302c](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/c61302c57f2e697f6412e2d7e6f2ac94ed906dc9))
+* **enhancement:** added leegality flow ([6761b9f](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/6761b9f227bca0f6a4b4413d781f56d244a5bad9))
+* **Enhancement:** Added the RBACK for enhancement ([b9f76fc](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/b9f76fc130cb3c9a2f213539b32aab5a829fe327))
+* **enhancement:** fixed query parameter key ([ba5e8d1](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/ba5e8d1c7f4b2a022f7366dd9a7b3a0f028826ea))
+* **enhancement:** removed unused API call ([ead4cf8](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/ead4cf8a52c921c46e6ba42790fe22fd156be1ed))
+* **enhancement:** update loan amount  key ([9e925bc](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/9e925bc8cf03c0a3e6fa9c8f78d456cc9912efa9))
+
 ## [2.32.0](///compare/v2.31.3...v2.32.0) (2023-05-22)
 
 

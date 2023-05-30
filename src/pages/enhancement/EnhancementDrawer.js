@@ -176,7 +176,7 @@ const EnhancementDrawer = ({ id, selectedLoanData, status, currentUser, data, on
     {
       id: 0,
       name: 'Loan Info',
-      component: <LoanInfo type='enhancement' updateNewLoanInfo={updateNewLoanInfo} status={status} currentUser={currentUser} data={loanData} newInfo={selectedLoanData} />
+      component: <LoanInfo type='enhancement' updateNewLoanInfo={updateNewLoanInfo} status={status} currentUser={currentUser} data={data} newInfo={selectedLoanData} />
     },
     {
       id: 1,

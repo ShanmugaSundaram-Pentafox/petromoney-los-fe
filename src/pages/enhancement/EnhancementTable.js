@@ -38,7 +38,7 @@ const EnhancementTable = ({ currentUser, value, filterQry }) => {
     setLoansData(selectedLoanData);
     getDealershipById(id)
       .then(data => {
-        setDealershipData(data)
+        setDealershipData({...data, 'product_id': selectedLoanData?.new_product_id})
       })
       .catch(e => null);
 

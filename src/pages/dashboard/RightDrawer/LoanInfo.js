@@ -10,10 +10,8 @@ import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
 import UserCan from '../../../components/UserCan/UserCan';
-import { resources_id } from '../../../config/accessControl';
 import { rulesList } from '../../../config/userRules';
 import { getProductsMaster } from '../../../services/common.service';
-import { isAllowed } from '../../../utils/cerbos';
 
 const LoanInfoWrapper = styled.div`
   padding: 12px;
@@ -41,7 +39,7 @@ const LoanInfo = ({
         setProducts(data)
         if (row.product_id) {
           const re = data.find(d => d.product_id == row.product_id)
-          setSelectedProduct({ ...re, disabled: status !== 'loan_approval' && status !== 'submitted' && status !== 'loan_review' } || {})
+          setSelectedProduct({ ...re, disabled: Boolean(status === 'approved' || status === 'rejected') } || {})
         }
       })
       .catch(() => null)
@@ -80,11 +78,11 @@ const LoanInfo = ({
                   native
                   placeholder={'Select Loan Product'}
                   value={selectedProduct?.product_id}
-                  disabled={selectedProduct?.disabled || !isAllowed(currentUser?.permissions, resources_id.dashboard, 'edit_loantype')}
+                  disabled={selectedProduct?.disabled}
                   onChange={e => {
                     const d = products.find(i => i.product_id == e.target.value)
                     setSelectedProduct(d)
-                    updateNewLoanInfo(['status', 'review', 'approval'].includes(status) ? {
+                    updateNewLoanInfo(!['approved', 'rejected'].includes(status) ? {
                       product_id: e.target.value
                     } : {
                       ...newInfo,
@@ -108,7 +106,7 @@ const LoanInfo = ({
                 type == 'enhancement' ? (
                   <TableCell align="right">
                     {
-                      ['submit', 'review', 'approval']?.includes(status) ? (
+                      !['approved', 'rejected']?.includes(status) ? (
                         <UserCan
                           role={currentUser.role_name}
                           perform={rulesList.loan_approval}

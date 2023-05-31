@@ -70,7 +70,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
   }, [filterQry, page, search])
 
   const onDownloadClick = () => {
-    downloadRenewalData('draft', filterQry)
+    downloadRenewalData('approved', filterQry)
       .then(data => {
         window.open(data[0]?.url, '_blank')
       })

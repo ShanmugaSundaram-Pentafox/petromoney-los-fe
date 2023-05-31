@@ -147,13 +147,13 @@ export const downloadRenewalData = (status, qryStr = {}) => {
   return new Promise((resolve, reject) => {
     const { region, from, to, products, zone, month } = qryStr;
     let qry = []
-    let apiUrl = 'renewal/download_as_csv';
+    let apiUrl = `renewal/download_as_csv?status=${status}`;
     if (zone && zone !== '0') qry.push(`zone=${zone}`)
     if (region && region !== '0') qry.push(`region=${region}`)
     if (month && month !== '0') qry.push(`renewal_month=${month}`)
     if (products && products !== '0') qry.push(`product=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
-    if (qry.length) apiUrl += '?' + qry.join('&')
+    if (qry.length) apiUrl += '&' + qry.join('&')
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status.toUpperCase() === 'SUCCESS') {

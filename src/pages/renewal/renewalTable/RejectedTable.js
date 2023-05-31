@@ -55,7 +55,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
   }, [filterQry, page, search])
 
   const onDownloadClick = () => {
-    downloadRenewalData('draft', filterQry)
+    downloadRenewalData('rejected', filterQry)
       .then(data => {
         window.open(data[0]?.url, '_blank')
       })
@@ -153,6 +153,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
     filter:false,
     print:false,
     sort:false,
+    download:false,
     viewColumns:false,
     searchPlaceholder: 'Search by dealreship ID/Name',
     onSearchChange: (searchText) => {

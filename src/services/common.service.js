@@ -744,6 +744,26 @@ export const getZones = (filter) => {
       });
   });
 };
+export const getEntity = () => {
+  return new Promise((resolve, reject) => {
+    let apiUrl = 'lms/entities';
+    apiCall(apiUrl)
+      .then(({ status, data, message }) => {
+        if (status.toUpperCase() === 'SUCCESS') {
+          const result = data?.map((item) => ({
+            label: item?.name,
+            value: item?.id,
+          }));
+          resolve(result || []);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((err) => {
+        reject(err.message);
+      });
+  });
+};
 
 export const insertNewProduct = (data) => {
   return new Promise((resolve, reject) => {

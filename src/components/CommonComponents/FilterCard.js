@@ -28,14 +28,14 @@ const Option = (props) => {
   );
 };
 
-export const Selector = ({ options, value, setValue, title }) => {
+export const Selector = ({ options, isMulti = true, value, setValue, title }) => {
   return (
     <>
       <Box style={{ width: 180 }}>
         <label style={{ color: 'hsl(0,0%,75%)' }}>{title}</label>
         <Select
           options={options}
-          isMulti={true}
+          isMulti={isMulti}
           closeMenuOnSelect={false}
           hideSelectedOptions={false}
           isClearable
@@ -47,9 +47,9 @@ export const Selector = ({ options, value, setValue, title }) => {
           }}
           onChange={(selectedOption, triggeredAction) => {
             if (triggeredAction?.action === 'clear') {
-              setValue([{ value: 0, label: 'ALL' }])
+              setValue(isMulti ? [{ value: 0, label: 'ALL' }] : { value: 0, label: 'ALL' })
             } else {
-              setValue(selectedOption.filter(item => item.label !== 'ALL'))
+              setValue(isMulti ? selectedOption.filter(item => item.label !== 'ALL') : selectedOption)
             }
           }}
           styles={{

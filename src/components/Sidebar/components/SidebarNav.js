@@ -372,6 +372,22 @@ const SidebarNav = props => {
                       </Button>
                   }
                 </ListItem>
+                <ListItem
+                  className={classes.itemSub}
+                  disableGutters
+                  key={'LosLms'}
+                >
+                  <Button
+                    className={classes.button}
+                    activeClassName={classes.active}
+                    component={CustomRouterLink}
+                    to={'/report/dpd'}
+                    exact
+                  >
+                    <div className={classes.icon}><AssessmentOutlinedIcon /></div>
+                    DPD Report &nbsp;
+                  </Button>
+                </ListItem>
               </Collapse>
             </Fragment>
 

@@ -97,7 +97,7 @@ const AddBlackListForm = ({ data, callback }) => {
   }
 
   const handleSave = () => {
-    if (dealerID) {
+    if (dealerID && comment) {
       let body = {
         comment: comment ? comment : null
       }
@@ -129,7 +129,7 @@ const AddBlackListForm = ({ data, callback }) => {
       if (!dealerID)
         setError('Choose dealership ID to add')
       else
-        setError('Add remarks to save')
+        setError('Add a comment to save')
     }
   }
 

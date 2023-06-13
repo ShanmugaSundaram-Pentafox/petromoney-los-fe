@@ -5,13 +5,14 @@ import { DateRange } from 'react-date-range';
 import { useQuery } from 'react-query';
 import { useMount } from 'react-use';
 import { filterStyles, Selector } from '../../components/CommonComponents/FilterCard';
-import { getAllRegions, getFilteredProducts, getZones } from '../../services/common.service';
+import { getAllRegions, getEntity, getFilteredProducts, getZones } from '../../services/common.service';
 import { getRenewalStatusList, getStatusWiseRecordCount } from '../../services/renewal.service';
 
 const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterType, filters }) => {
   const classes = filterStyles();
   const [regions, setRegions] = useState([]);
   const [products, setProducts] = useState([]);
+  const [selectedEntity, setSelectedEntity] = useState({ label: 'ALL', value: 0 });
   const [selectedRegion, setSelectedRegion] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedProducts, setSelectedProducts] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedZones, setSelectedZones] = useState([{ label: 'ALL', value: 0 }]);
@@ -40,7 +41,7 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
   ]
 
   const { data: zones = [] } = useQuery('zones', () => { return getZones(1) }, { refetchOnWindowFocus: false })
-
+  const { data: entity = [] } = useQuery('entity', () => { return getEntity() }, { refetchOnWindowFocus: false })
   const onDatePickerChange = ({ range }) => {
     setDateRange(range)
   }
@@ -131,14 +132,18 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
       selectedMonth.forEach(item => monthId.push(item.value))
       qry.month = monthId.toString()
     }
-    getStats(qry)
+    if (filters.includes('entity')) {
+      qry.entity = (selectedEntity.value)?.toString()
+    }
+    if (filterType != 'dpd') {
+      getStats(qry)
+    }
     filterQry(qry)
-  }, [selectedRegion, selectedPeriod, filterQry, selectedProducts, selectedZones,selectedMonth])
-
+  }, [selectedRegion, selectedPeriod, filterQry, selectedProducts, selectedZones, selectedMonth, selectedEntity])
   const getStats = (qry) => {
     getRenewalStatusList(filterType)
       .then((status) => {
-        getStatusWiseRecordCount(filterType,qry)
+        getStatusWiseRecordCount(filterType, qry)
           .then(res => {
             const cdata = status?.map((item) => {
               const matchingItem = res.find((el) => el.status === item.status);
@@ -182,6 +187,10 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
             filters.includes('product') &&
               <Selector title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} />
           }
+          {
+            filters.includes('entity') &&
+              <Selector title="Entity" isMulti={false} options={entity} value={selectedEntity} setValue={setSelectedEntity} />
+          }
         </Box>
         {
           filters.includes('period') &&
@@ -209,7 +218,7 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
               </>
               <>
                 {
-                  ['Y','UTD','Custom'].includes(selectedPeriodType) && filters.includes('month') &&
+                  ['Y', 'UTD', 'Custom'].includes(selectedPeriodType) && filters.includes('month') &&
                     <Selector title="Renewal month" options={month} value={selectedMonth} setValue={setSelectedMonth} />
                 }
               </>

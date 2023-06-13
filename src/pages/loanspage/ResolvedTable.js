@@ -52,7 +52,7 @@ const ResolvedTable = () => {
       },
       {
         label: 'Remarks',
-        name: 'remarks',
+        name: 'comments',
         options: {
           filter: false,
           sort: true,
@@ -64,7 +64,7 @@ const ResolvedTable = () => {
               value?.map((remark, i) => {
                 return (
                   <div style={{ marginBottom: 12, display: 'flex' }} key={i}>
-                    <div style={{ minWidth: 250, maxWidth: 250 }}>{remark.remarks} {remark.comment && '- ' + remark.comment}</div>
+                    <div style={{ minWidth: 250, maxWidth: 250 }}>{remark.comment && remark.comment}</div>
                   </div>
                 )
               })
@@ -92,7 +92,7 @@ const ResolvedTable = () => {
             if (typeof (data) !== 'object') {
               buffer.push(data)
             } else {
-              let result = data.map(obj => `${obj.remarks} - ${obj.comment}\n`)
+              let result = data.map(obj => `${obj.comment}\n`)
               buffer.push(result)
             }
           })

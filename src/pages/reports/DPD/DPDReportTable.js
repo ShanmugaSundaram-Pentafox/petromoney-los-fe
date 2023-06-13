@@ -3,7 +3,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
 import moment from 'moment';
 import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState, useEffect } from 'react';
@@ -11,8 +10,9 @@ import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
 import MuiTableFooter from '../../../components/CommonComponents/MuiTableFooter';
 import Currency from '../../../components/Number/Currency';
-import { downloadRenewalData, getPageDetails, getRenewalLoanByStatus } from '../../../services/renewal.service';
+import { getDpdPageDetails, getDpdReportData, } from '../../../services/report.service';
 import { dateCustomSort } from '../../../utils/commonFunctions.util';
+
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -30,43 +30,40 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
+const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const classes = useStyles();
   const [loans, setLoans] = useState([]);
   const [page, setPage] = useState();
   const [search, setSearch] = useState();
   const [loading, setLoading] = useState(false);
+  const [download, setDownload] = useState(false);
 
   const pageDetailsQuery = useQuery({
-    queryKey: ['renewal_approvalRecordCount', filterQry, search],
-    queryFn: () => getPageDetails('approval', filterQry),
-  });
+    queryKey: ['dpd_pageCount', filterQry,page, search],
+    queryFn: () => getDpdPageDetails(filterQry,page, search),
+  })
 
   useEffect(() => {
     setLoading(true);
-    getRenewalLoanByStatus('approval', filterQry, page, search)
-      .then(data => {
+    getDpdReportData(filterQry, page, search, download)
+      .then(({ data, report_url }) => {
         setLoans(data);
+        if (report_url) {
+          window.open(report_url, '_blank')
+        }
+        setDownload(false);
         setLoading(false);
       })
       .catch(e => {
         setLoading(false);
       })
-  }, [filterQry, page, search])
-
-  const onDownloadClick = () => {
-    downloadRenewalData('approval', filterQry)
-      .then(data => {
-        window.open(data[0]?.url, '_blank')
-      })
-      .catch(e => console.log('Download error >>>', e))
-  }
+  }, [filterQry, page, search, download])
 
   const columns = useMemo(() => {
     return [
       {
-        label: 'Dealership Id',
-        name: 'dealership_id',
+        label: 'Customer Code',
+        name: 'customer_code',
         options: {
           filter: false,
           sort: true,
@@ -76,8 +73,8 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
         }
       },
       {
-        label: 'Name',
-        name: 'dealership_name',
+        label: 'Prospect Code',
+        name: 'prospect_code',
         options: {
           filter: false,
           sort: true,
@@ -87,39 +84,33 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
         }
       },
       {
-        label: 'Type',
-        name: 'product_name',
+        label: 'Customer Name',
+        name: 'customer_name',
         options: {
           filter: false,
           sort: true,
-          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
+          setCellProps: () => ({ style: { minWidth: '200px', maxWidth: '200px' } }),
         }
       },
       {
         label: 'Region',
-        name: 'region_name',
+        name: 'region',
         options: {
           filter: false,
           sort: true,
-          customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
         }
-
       },
       {
-        label: 'Req. Amount',
-        name: 'requested_amount',
+        label: 'OMC',
+        name: 'omc',
         options: {
           filter: false,
           sort: true,
-          setCellProps: () => ({
-            align: 'left',
-          }),
-          customBodyRender: value => <strong><Currency value={value} /></strong>
         }
       },
       {
-        label: 'Month of renewal',
-        name: 'renewal_month',
+        label: 'Disbursal Date',
+        name: 'disbursal_date',
         options: {
           filter: true,
           filterWidth: '100%',
@@ -133,14 +124,74 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
         }
       },
       {
-        label: 'Renewal Fee status',
-        name: 'renewal_fee_payment_status',
+        label: 'Due date',
+        name: 'due_date',
+        options: {
+          filter: false,
+          sort: true,
+          setCellProps: () => ({
+            style: { minWidth: '100px', maxWidth: '100px' },
+          }),
+          customBodyRender: value => {
+            return <div>{value ? moment(new Date(value), 'YYYY-MM-DD').format('MMM, YY') : '-'}</div>
+          }
+        }
+      },
+      {
+        label: 'Loan Amount',
+        name: 'loan_amount',
+        options: {
+          filter: false,
+          sort: true,
+          setCellProps: () => ({
+            style: { minWidth: '100px', maxWidth: '100px' },
+            align: 'right'
+          }),
+          customBodyRender: value => <strong><Currency value={value} /></strong>
+        }
+      },
+      {
+        label: 'Principle Amount',
+        name: 'principle_amount',
+        options: {
+          filter: false,
+          sort: true,
+          setCellProps: () => ({
+            style: { minWidth: '100px', maxWidth: '100px' },
+            align: 'right'
+          }),
+          customBodyRender: value => <strong><Currency value={value} /></strong>
+        }
+      },
+      {
+        label: 'Loan status',
+        name: 'loan_status',
         options: {
           filter: false,
           sort: true,
           customBodyRender: (value) => {
             return <>{value?.toUpperCase()}</>
           },
+        }
+      },
+      {
+        label: 'Last Receipt Date',
+        name: 'last_receipt_date',
+        options: {
+          filter: false,
+          sort: true,
+          setCellProps: () => ({ style: { minWidth: '100px', maxWidth: '100px' } }),
+          customBodyRender: value => {
+            return <div>{value ? moment(new Date(value), 'YYYY-MM-DD').format('MMM, YY') : '-'}</div>
+          }
+        }
+      },
+      {
+        label: 'DPD',
+        name: 'dpd',
+        options: {
+          filter: false,
+          sort: true,
         }
       },
     ]
@@ -154,41 +205,36 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
     filter: false,
     print: false,
     sort: false,
-    download:false,
+    download: false,
     viewColumns: false,
     searchPlaceholder: 'Search by dealreship ID/Name',
     onSearchChange: (searchText) => {
       setSearch(searchText)
     },
+    customToolbar: () => {
+      return (
+        <>
+          <Tooltip title="Download">
+            <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={() => setDownload(true)}></Button>
+          </Tooltip>
+        </>
+      );
+    },
     customFooter: () => {
       return (
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <MuiTableFooter
-            totalCount={pageDetailsQuery?.data?.total_number_of_pages}
+            totalCount={pageDetailsQuery?.data}
             pageSize={10}
             onPageChange={(value) => { setPage(value) }}
           />
         </div>
       )
     },
-    onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex !== 7) {
-        onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'approval')
-      }
-    },
     customSort: (data, dataIndex, rowIndex) => {
       let dateIndex = 5
       return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-    },
-    customToolbar: () => {
-      return (
-        <>
-          <Tooltip title="Download">
-            <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
-          </Tooltip>
-        </>
-      );
-    },
+    }
   };
 
   return (
@@ -196,6 +242,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
       <MUIDataTable
         title={title ? <Typography className={classes.title} variant="h4" component="h4">{title}</Typography> : null}
         data={loans}
+        style={classes.tableStyle}
         columns={columns}
         options={options}
       />
@@ -206,4 +253,4 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
   )
 }
 
-export default ReviewTable;
+export default DpdReportTable;

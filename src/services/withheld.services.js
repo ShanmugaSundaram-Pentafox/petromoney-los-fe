@@ -5,7 +5,14 @@ export const getAllWithheldLoans = (id) => {
     apiCall(`withheld/loans?is_resolved=${id}`)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
-          resolve(data)
+          let res=[]
+          data.forEach((item, i) => {
+            res.push({
+              ...item,
+              comments: typeof (item.comments) === 'string' ? JSON.parse(item.comments) : (item.comments || [])
+            })
+          })
+          resolve(res)
         } else {
           reject(message)
         }

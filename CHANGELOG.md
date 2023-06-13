@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.33.0](///compare/v2.32.0...v2.33.0) (2023-06-13)
+
+
+### Features
+
+* **DPD:** feature to show DPD report 5327fc4
+
+
+### Bug Fixes
+
+* **enhancement:** added document sign check c61302c
+* **enhancement:** added leegality flow 6761b9f
+* **Enhancement:** Added the RBACK for enhancement b9f76fc
+* **enhancement:** fixed query parameter key ba5e8d1
+* **Enhancement:** fixed the product issue in enhancement flow 26f7cff
+* **enhancement:** removed unused API call ead4cf8
+* **enhancement:** update loan amount  key 9e925bc
+* **renewal:** fixed download issue d23f66b
+* **withheld:** removed remarks section 343f438
+* **withheld:** updated API call d8970e2
+
 ### [2.32.1](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/compare/v2.32.0...v2.32.1) (2023-05-25)
 
 

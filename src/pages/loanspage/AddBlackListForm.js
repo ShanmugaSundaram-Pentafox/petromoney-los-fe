@@ -11,11 +11,9 @@ import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import AsyncSelect from 'react-select/async';
-import CreatableSelect from 'react-select/creatable';
-import { useMount } from 'react-use';
 import Button from '../../components/CommonComponents/Button/Button';
 import { getDealershipForSearch } from '../../services/common.service';
-import { getAllWithheldRemarks, updateRemarks } from '../../services/withheld.services';
+import {  updateRemarks } from '../../services/withheld.services';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -68,25 +66,12 @@ const useStyles = makeStyles((theme) => ({
 
 const AddBlackListForm = ({ data, callback }) => {
   const queryClient = useQueryClient()
-  const [newRemarks, setNewRemarks] = useState()
   const [dealerID, setDealerID] = useState()
-  const [remarks, setRemarks] = useState()
   const [comment, setComment] = useState()
   const [error, setError] = useState();
-  const [value, setValue] = useState()
   const [optionsLoading, setOptionsLoading] = useState(false);
   const classes = useStyles()
   const { enqueueSnackbar } = useSnackbar();
-
-  useMount(() => {
-    getAllWithheldRemarks()
-      .then((data) => {
-        setRemarks(data)
-      })
-      .catch((e) => {
-        console.log(e);
-      })
-  })
 
   const handleChange = (event) => {
     setComment(event.target.value)
@@ -111,19 +96,9 @@ const AddBlackListForm = ({ data, callback }) => {
     }
   }
 
-  const handleRemarkChange = (newValue, actionMeta) => {
-    if (remarks?.includes(newValue?.label)) {
-      setNewRemarks(newValue?.label)
-    }
-    else {
-      setValue(newValue?.value)
-    }
-  };
   const handleSave = () => {
-    if ((value || newRemarks) && dealerID) {
-      const res = value ? value : newRemarks;
+    if (dealerID) {
       let body = {
-        [typeof (res) === 'number' ? 'remarks_id' : 'remarks']: res,
         comment: comment ? comment : null
       }
       updateRemarks(dealerID, body)
@@ -137,8 +112,6 @@ const AddBlackListForm = ({ data, callback }) => {
           })
           queryClient.invalidateQueries('withheld-loans')
           callback()
-          setNewRemarks('')
-          setValue('')
           setError()
         })
         .catch(err => {
@@ -185,14 +158,6 @@ const AddBlackListForm = ({ data, callback }) => {
                           loadingMessage={() => ' '}
                           loadOptions={getOptions}
                           placeholder='Search Dealership ID or Name'
-                        />
-                      </Grid>
-                      <Grid item md={7}>
-                        <label style={{ marginBottom: 8 }}>Remarks</label>
-                        <CreatableSelect
-                          isClearable
-                          onChange={handleRemarkChange}
-                          options={remarks}
                         />
                       </Grid>
                       <Grid item md={7}>

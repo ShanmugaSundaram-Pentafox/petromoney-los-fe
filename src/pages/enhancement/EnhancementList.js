@@ -12,7 +12,7 @@ const currencyFormat = (value) => {
 }
 
 const EnhancementList = ({ currentUser }) => {
-  usePageTitle('Renewal Loans');
+  usePageTitle('Enhanced Loans');
   const [chartData, setChartData] = useState([{}, {}, {}, {}, {}, {}]);
   const [totalLoans, setTotalLoans] = useState()
   const [selectedStatsCard, setSelectedStatsCard] = useState('submit');

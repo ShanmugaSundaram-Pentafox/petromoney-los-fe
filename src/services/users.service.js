@@ -1,4 +1,3 @@
-import { format } from 'date-fns'
 import { URL } from '../config/serverUrls'
 import apiCall from '../utils/api.util'
 
@@ -221,10 +220,8 @@ export const passReset = (password, userId) => {
 }
 
 export const getCreditReload = (data) => {
-  const { processed, category, filterQry = { region: '0', products: '0', account: '0', zone: '0', from: format(new Date(), 'yyyy-MM-dd'), to: format(new Date(), 'yyyy-MM-dd') }, dealershiId, offset } = data
+  const { processed, category, filterQry = { region: '0', products: '0', account: '0', zone: '0' }, dealershiId, offset } = data
   const { region, from, to, account, products, zone, dealership_id } = filterQry;
-  console.log('filter qry >>>>>>>>>>>>>', filterQry)
-  console.log('category >>>>>>>>>>>>', category)
   let qry = []
   let apiUrl = dealershiId ? `credit/reload/${dealershiId}?processed=${processed}` : category ? `credit/reload?processed=${processed}&category=${category}` : `credit/reload?processed=${processed}`;
   if (dealership_id) qry.push(`dealership_id=${dealership_id}`)
@@ -250,7 +247,7 @@ export const getCreditReload = (data) => {
   })
 }
 
-export const getCreditReportById = (filterQry = { from: format(new Date(), 'yyyy-MM-dd'), to: format(new Date(), 'yyyy-MM-dd') }, url) => {
+export const getCreditReportById = (filterQry = {}, url) => {
   const { from, to, dealership_id } = filterQry;
   let qry = []
   let apiUrl = `credit/reload/report?${url}&processed=1`;

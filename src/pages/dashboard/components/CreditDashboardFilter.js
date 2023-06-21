@@ -20,7 +20,7 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
   const [selectedRegion, setSelectedRegion] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedProducts, setSelectedProducts] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedZones, setSelectedZones] = useState([{ label: 'ALL', value: 0 }]);
-  const [selectedPeriodType, setSelectedPeriodType] = useState('W');
+  const [selectedPeriodType, setSelectedPeriodType] = useState(filterType == 'processed' ? 'D' : 'W');
   const [selectedPeriod, setSelectedPeriod] = useState({});
   const [showPicker, setShowPicker] = useState();
   const [selectedDealership, setSelectedDealership] = useState({});

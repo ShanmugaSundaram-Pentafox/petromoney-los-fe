@@ -20,8 +20,8 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
   const [selectedRegion, setSelectedRegion] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedProducts, setSelectedProducts] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedZones, setSelectedZones] = useState([{ label: 'ALL', value: 0 }]);
-  const [selectedPeriodType, setSelectedPeriodType] = useState('W');
-  const [selectedPeriod, setSelectedPeriod] = useState({});
+  const [selectedPeriodType, setSelectedPeriodType] = useState(filterType == 'processed' ? 'D' : 'W');
+  const [selectedPeriod, setSelectedPeriod] = useState({ from: new Date(), to: new Date() });
   const [showPicker, setShowPicker] = useState();
   const [selectedDealership, setSelectedDealership] = useState({});
   const { enqueueSnackbar } = useSnackbar();
@@ -124,7 +124,7 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
   }
   const handleSearch = () => {
     if (filterType == 'processed') {
-      if (selectedDealership?.id)
+      if (selectedDealership?.id || selectedPeriodType == 'D')
         refetch()
       else
         setSelectedDealership({ ...selectedDealership, error: 'Please enter dealership ID to get data' })

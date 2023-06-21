@@ -1,3 +1,4 @@
+import { format } from 'date-fns'
 import { URL } from '../config/serverUrls'
 import apiCall from '../utils/api.util'
 
@@ -220,10 +221,12 @@ export const passReset = (password, userId) => {
 }
 
 export const getCreditReload = (data) => {
-  const { processed, filterQry = { region: '0', products: '0', account: '0', zone: '0' }, dealershiId, offset } = data
+  const { processed, category, filterQry = { region: '0', products: '0', account: '0', zone: '0', from: format(new Date(), 'yyyy-MM-dd'), to: format(new Date(), 'yyyy-MM-dd') }, dealershiId, offset } = data
   const { region, from, to, account, products, zone, dealership_id } = filterQry;
+  console.log('filter qry >>>>>>>>>>>>>', filterQry)
+  console.log('category >>>>>>>>>>>>', category)
   let qry = []
-  let apiUrl = dealershiId ? `credit/reload/${dealershiId}?processed=${processed}` : `credit/reload?processed=${processed}`;
+  let apiUrl = dealershiId ? `credit/reload/${dealershiId}?processed=${processed}` : category ? `credit/reload?processed=${processed}&category=${category}` : `credit/reload?processed=${processed}`;
   if (dealership_id) qry.push(`dealership_id=${dealership_id}`)
   if (zone && zone !== '0') qry.push(`zone=${zone}`)
   if (region && region !== '0') qry.push(`region=${region}`)
@@ -247,7 +250,7 @@ export const getCreditReload = (data) => {
   })
 }
 
-export const getCreditReportById = (filterQry = {}, url) => {
+export const getCreditReportById = (filterQry = { from: format(new Date(), 'yyyy-MM-dd'), to: format(new Date(), 'yyyy-MM-dd') }, url) => {
   const { from, to, dealership_id } = filterQry;
   let qry = []
   let apiUrl = `credit/reload/report?${url}&processed=1`;
@@ -304,7 +307,7 @@ export const getCollectionRemark = () => {
 export const getCollectionRemarkData = (data) => {
   let qry = []
   let apiUrl = 'loan/collection/remarks';
-  if (data?.type=='id') qry.push(`dealership_id=${data?.value}`)
+  if (data?.type == 'id') qry.push(`dealership_id=${data?.value}`)
   if (data?.type === 'name') qry.push(`dealership_name=${data?.value}`)
   if (qry.length) apiUrl += '?' + qry.join('&')
   return new Promise((resolve, reject) => {
@@ -463,7 +466,8 @@ export const verifyPasswordByLogin = (data) => {
       .catch(e => {
         reject(e.message);
       })
-  })}
+  })
+}
 
 export const deleteUserAccount = () => {
   return new Promise((resolve, reject) => {

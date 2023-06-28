@@ -19,6 +19,7 @@ import SignRequestLayout from '../../components/Leegality/SignRequestLayout';
 import Currency from '../../components/Number/Currency';
 import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
 import { ReactComponent as LoanAgreementIcon } from '../../icons/loan_agreement.svg';
+import { getSignedUrl } from '../../services/common.service';
 import { downloadEnhancementData, getEnhancedLoanByStatus, getEnhancementSync, getPageDetails } from '../../services/enhancement.service';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
 
@@ -48,8 +49,7 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
   const [loading, setLoading] = useState(false);
   const [type, setType] = useState('');
   const [loanId, setloanId] = useState();
-  const [loansData, setLoansData] = useState();
-  const [enhancementId,setEnhancementId] = useState();
+  const [enhancementId, setEnhancementId] = useState();
   const [loanAmount, setLoanAmount] = useState();
   const [productTypeId, setProductTypeId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
@@ -85,9 +85,29 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
   const onDownloadClick = () => {
     downloadEnhancementData('approved', filterQry)
       .then(data => {
-        window.open(data[0]?.url, '_blank')
+        getSignedUrl(data[0]?.url)
+          .then((res) => {
+            window.open(res?.url, '_blank');
+          })
+          .catch(e => {
+            enqueueSnackbar(e, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            });
+          })
       })
-      .catch(e => console.log('Download error >>>', e))
+      .catch(e => {
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      })
   }
 
   const syncData = () => {
@@ -213,7 +233,7 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
                 </Tooltip> :
                 <div>
                   <Tooltip title="click to sync">
-                    <SyncIcon style={{ color: 'grey' }} onClick={() => {setOpenDialog(true);setEnhancementId(loans?.[r.rowIndex]['id'])}} />
+                    <SyncIcon style={{ color: 'grey' }} onClick={() => { setOpenDialog(true); setEnhancementId(loans?.[r.rowIndex]['id']) }} />
                   </Tooltip>
                 </div>
             )

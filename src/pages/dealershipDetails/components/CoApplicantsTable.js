@@ -15,6 +15,8 @@ import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import CreditInfoSideWrapper from './CreditInfoSideWrapper';
 import CrimeInfoSideWrapper from './CrimeInfoSideWrapper';
+import FilePreview from '../../../components/CommonComponents/FilePreview';
+import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { addApplicants } from '../../../services/fileUpload.service';
 import { compareObject } from '../../../utils/compareObject.util';
@@ -61,6 +63,7 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
   const { enqueueSnackbar } = useSnackbar();
   const [rowData, setRowData] = useState();
   const [crimeData, setCrimeData] = useState();
+  const [openFilePreview, setOpenFilePreview] = useState({ open: false });
   const [openDialog, setOpenDialog] = useState({ open: false });
 
 
@@ -91,27 +94,10 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
         setOpenDialog({ open: false })
       })
   }
-
-
-  // if (!coApplicantsData || !coApplicantsData.length)
-  //   return (
-  //     <div className={classes.wrapper}>
-  //       <Typography variant="h5" align={titleAlign} className={classes.title}>No CoApplicants Found</Typography>
-  //       {
-  //         // coapplicants add permissions
-  //         <div style={{ textAlign: 'center', marginTop: 8 }}>
-  //           <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.coapplicantAdd}>
-  //             <Button color="primary" variant="outlined" size="small" onClick={() => onClickAddMenu('COAPPLICANT')}>Add CoApplicants</Button>
-  //           </CheckAllowed>
-  //         </div>
-  //       }
-  //     </div>
-  //   );
-
   return (
     <>
       {
-        (coApplicantsData?.length >0) &&
+        (coApplicantsData?.length > 0) &&
           <div className={classes.wrapper}>
             <div className={classes.header}>
               <Typography style={{ width: '90%' }} variant="h5" align={titleAlign} className={classes.title}>Co-Applicants</Typography>
@@ -133,24 +119,30 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
                     </TableCell>
                     <TableCell align="center">{row.mobile}</TableCell>
                     <TableCell align="center">
-                      {row.aadhar_f_file_url && <TableCell style={{ border: 0 }} align="center">
-                        <a className={classes.document}
-                          href={row.aadhar_f_file_url} target="_blank" title={'Aadhar Front'} rel="noreferrer">{'Aadhar Front'}</a>
-
-                      </TableCell>}
-                      {row.aadhar_b_file_url && <TableCell style={{ border: 0 }} align="center">
-                        <a className={classes.document}
-                          href={row.aadhar_b_file_url} target="_blank" title={'Aadhar Back'} rel="noreferrer">{'Aadhar Back'}</a>
-
-                      </TableCell>}
-                      {row.pan_file_url && <TableCell style={{ border: 0 }} align="center">
-                        <a className={classes.document}
-                          href={row.pan_file_url} target="_blank" title={'PAN'} rel="noreferrer">{'PAN'}</a>
-                      </TableCell>}
-                      {!row.pan_file_url && !row.aadhar_b_file_url && !row.aadhar_f_file_url &&
-                        <TableCell style={{ border: 0 }} align="center">
-                          -
-                        </TableCell>}
+                      {
+                        row.aadhar_file_url && (
+                          <TableCell style={{ border: 0 }} align="center">
+                            <div className={classes.document} onClick={() => { setOpenFilePreview({ open: true, image: row.aadhar_file_url, type: row?.aadhar_file_url?.endsWith('.pdf') }); }}>
+                              <p>{'Aadhaar'}</p>
+                            </div>
+                          </TableCell>
+                        )
+                      }
+                      {
+                        row.pan_file_url && (
+                          <TableCell style={{ border: 0 }} align="center">
+                            <div className={classes.document} onClick={() => { setOpenFilePreview({ open: true, image: row.pan_file_url, type: row?.pan_file_url?.endsWith('.pdf') }); }}>
+                              <p>{'PAN'}</p>
+                            </div>
+                          </TableCell>
+                        )
+                      }
+                      {
+                        !row.pan_file_url && !row.aadhar_file_url &&
+                          <TableCell style={{ border: 0 }} align="center">
+                            -
+                          </TableCell>
+                      }
                     </TableCell>
                     <TableCell align="right" onClick={e => e.stopPropagation()}>
                       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
@@ -225,6 +217,9 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
             </Drawer>
           </div>
       }
+      <FormDialog className={classes.dialogBox} onDownload={openFilePreview?.image} open={openFilePreview?.image} onClose={() => setOpenFilePreview({ open: false })}>
+        <FilePreview data={openFilePreview} />
+      </FormDialog>
     </>
   )
 }

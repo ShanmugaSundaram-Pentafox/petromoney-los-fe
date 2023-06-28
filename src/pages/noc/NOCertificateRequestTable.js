@@ -1,7 +1,5 @@
 import {
   Button,
-  Dialog,
-  DialogContent,
   Drawer,
   IconButton,
 } from '@material-ui/core';
@@ -17,7 +15,8 @@ import React, { useMemo, useState, useEffect } from 'react';
 import ApproveNocForm from './ApproveNocForm';
 import RequestNocForm from './RequestNocForm';
 import CustomToken from '../../components/CommonComponents/CustomToken';
-import PdfViewer from '../../components/CommonComponents/PdfViewer/PdfViewer';
+import FilePreview from '../../components/CommonComponents/FilePreview';
+import FormDialog from '../../components/CommonComponents/FormDialog/FormDialog';
 import { permissionCheck } from '../../components/UserCan/UserCan';
 import { action_id, resources_id } from '../../config/accessControl';
 import { rulesList } from '../../config/userRules';
@@ -191,7 +190,8 @@ const NOCertificateRequestTable = ({ currentUser }) => {
                         setOpenViewer({
                           ...openViewer,
                           open: true,
-                          file: value,
+                          image: value,
+                          type: value?.endsWith('.pdf') 
                         })
                       }
                     >
@@ -290,17 +290,9 @@ const NOCertificateRequestTable = ({ currentUser }) => {
           data={rowData}
         />
       </Drawer>
-      <Dialog
-        open={openViewer.open}
-        onClose={() => {
-          setOpenViewer({ ...openViewer, open: false });
-        }}
-        fullWidth
-      >
-        <DialogContent>
-          <PdfViewer file={openViewer?.file} loading={false} />
-        </DialogContent>
-      </Dialog>
+      <FormDialog className={classes.dialogBox} title={'NOC letter'} open={openViewer.open} onClose={() => setOpenViewer({ open: false })}>
+        <FilePreview data={openViewer} />
+      </FormDialog>
     </div>
   );
 };

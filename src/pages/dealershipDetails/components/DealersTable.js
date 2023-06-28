@@ -15,6 +15,8 @@ import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import CreditInfoSideWrapper from './CreditInfoSideWrapper';
 import CrimeInfoSideWrapper from './CrimeInfoSideWrapper';
+import FilePreview from '../../../components/CommonComponents/FilePreview';
+import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { addApplicants } from '../../../services/fileUpload.service';
 import { compareObject } from '../../../utils/compareObject.util';
@@ -62,6 +64,7 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
   const [rowData, setRowData] = useState();
   const [crimeData, setCrimeData] = useState();
   const [openDialog, setOpenDialog] = useState({ open: false });
+  const [openFilePreview, setOpenFilePreview] = useState();
 
   const deleteApplicant = (values) => {
     const obj = { ...values, is_active: values.is_active == 1 ? 0 : 1 };
@@ -91,20 +94,6 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
       })
   }
 
-  // if (!data || !data.length)
-  //   return (
-  //     <div className={classes.wrapper}>
-  //       <Typography variant="h5" align={titleAlign} className={classes.title}>No Dealers Found</Typography>
-  //       {
-  //         // dealer add permission check
-  //         <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerAdd}>
-  //           <div style={{ textAlign: 'center', marginTop: 8 }}>
-  //             <Button color="primary" variant="outlined" size="small" onClick={() => onClickAddMenu('DEALER')}>Add dealer</Button>
-  //           </div>
-  //         </CheckAllowed>
-  //       }
-  //     </div>
-  //   );
   return (
     <div className={classes.wrapper}>
       <div className={classes.header}>
@@ -133,20 +122,30 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
               </TableCell>
               <TableCell align="center">{row.mobile}</TableCell>
               <TableCell align="center">
-                {row.aadhar_file_url && <TableCell style={{ border: 0 }} align="center">
-                  <a className={classes.document}
-                    href={row.aadhar_file_url} target="_blank" title={'Aadhaar'} rel="noreferrer">
-                    {'Aadhaar'}
-                  </a>
-                </TableCell>}
-                {row.pan_file_url && <TableCell style={{ border: 0 }} align="center">
-                  <a className={classes.document}
-                    href={row.pan_file_url} target="_blank" title={'PAN'} rel="noreferrer">{'PAN'}</a>
-                </TableCell>}
-                {!row.pan_file_url && !row.aadhar_file_url &&
-                  <TableCell style={{ border: 0 }} align="center">
-                    -
-                  </TableCell>}
+                {
+                  row.aadhar_file_url && (
+                    <TableCell style={{ border: 0 }} align="center">
+                      <div className={classes.document} onClick={() => { setOpenFilePreview({ open: true, image: row.aadhar_file_url,type: row?.aadhar_file_url?.endsWith('.pdf') }); }}>
+                        <p>{'Aadhaar'}</p>
+                      </div>
+                    </TableCell>
+                  )
+                }
+                {
+                  row.pan_file_url && (
+                    <TableCell style={{ border: 0 }} align="center">
+                      <div className={classes.document} onClick={() => { setOpenFilePreview({ open: true, image: row.pan_file_url,type: row?.pan_file_url?.endsWith('.pdf') }); }}>
+                        <p>{'PAN'}</p>
+                      </div>
+                    </TableCell>
+                  )
+                }
+                {
+                  !row.pan_file_url && !row.aadhar_file_url &&
+                    <TableCell style={{ border: 0 }} align="center">
+                      -
+                    </TableCell>
+                }
               </TableCell>
               <TableCell align="right" onClick={e => e.stopPropagation()}>
                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
@@ -188,7 +187,7 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
       >
         <DialogContent>
           <div style={{ textAlign: 'center', marginBottom: 16 }}>
-            <InfoCircleOutlined style={{ fontSize: 48, margin: 16, marginBottom: 20,color:openDialog?.data?.is_active ?'rgb(255,59,48)' :'rgb(62, 175, 118)' }} />
+            <InfoCircleOutlined style={{ fontSize: 48, margin: 16, marginBottom: 20, color: openDialog?.data?.is_active ? 'rgb(255,59,48)' : 'rgb(62, 175, 118)' }} />
             <Typography variant='h3'>Are you sure?</Typography>
           </div>
           <DialogContentText style={{ textAlign: 'center' }}>{`Do you really want to delete ${openDialog?.data?.first_name}?`}</DialogContentText>
@@ -219,6 +218,9 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
           <CrimeInfoSideWrapper dealershipId={id} data={crimeData} currentUser={currentUser} onClose={() => setCrimeData()} />
         </div>
       </Drawer>
+      <FormDialog className={classes.dialogBox} onDownload={openFilePreview?.image} open={openFilePreview?.image} onClose={() => setOpenFilePreview({ open: false })}>
+        <FilePreview data={openFilePreview} />
+      </FormDialog>
     </div>
   )
 }

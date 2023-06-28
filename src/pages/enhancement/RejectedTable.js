@@ -5,10 +5,12 @@ import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import MUIDataTable from 'mui-datatables';
+import { useSnackbar } from 'notistack';
 import React, { useMemo, useState, useEffect } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import MuiTableFooter from '../../components/CommonComponents/MuiTableFooter';
 import Currency from '../../components/Number/Currency';
+import { getSignedUrl } from '../../services/common.service';
 import { downloadEnhancementData, getEnhancedLoanByStatus, getPageDetails } from '../../services/enhancement.service';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
 
@@ -29,13 +31,14 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const RejectedTable = ({ title, onRowClick, filterQry, currentUser }) => {
+const RejectedTable = ({ title, onRowClick, filterQry }) => {
   const classes = useStyles();
   const [loans, setLoans] = useState([]);
   const [page, setPage] = useState();
   const [pageData, setPageData] = useState();
   const [search, setSearch] = useState();
   const [loading, setLoading] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     setLoading(true);
@@ -61,9 +64,29 @@ const RejectedTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const onDownloadClick = () => {
     downloadEnhancementData('rejected', filterQry)
       .then(data => {
-        window.open(data[0]?.url, '_blank')
+        getSignedUrl(data[0]?.url)
+          .then((res) => {
+            window.open(res?.url, '_blank');
+          })
+          .catch(e =>{
+            enqueueSnackbar(e, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            });
+          })
       })
-      .catch(e => console.log('Download error >>>', e))
+      .catch(e => {
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      })
   }
 
   const columns = useMemo(() => {

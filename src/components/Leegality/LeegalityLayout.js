@@ -32,7 +32,7 @@ import styled from 'styled-components';
 import ActivityBox from './components/ActivityBox';
 import { deleteRequestUrl } from '../../services/leegality.service';
 import apiCall from '../../utils/api.util';
-import PdfViewer from '../CommonComponents/PdfViewer/PdfViewer';
+import FilePreview from '../CommonComponents/FilePreview';
 
 const Card = styled.div`
   background-color: #fff;
@@ -222,9 +222,9 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
       <Grid container spacing={2}>
         <Grid item sm={6} style={{ position: 'relative' }}>
           {docId && docDetails?.file && (
-            <PdfViewer
-              title="Some Random File"
-              file={docDetails?.file}
+            <FilePreview
+              title="Leegality"
+              file={{ image: docDetails?.file, type: docDetails?.file?.endsWith('.pdf') }}
               showDownload
             />
           )}

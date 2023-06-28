@@ -15,6 +15,8 @@ import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import CreditInfoSideWrapper from './CreditInfoSideWrapper';
 import CrimeInfoSideWrapper from './CrimeInfoSideWrapper';
+import FilePreview from '../../../components/CommonComponents/FilePreview';
+import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { addApplicants } from '../../../services/fileUpload.service';
 import { compareObject } from '../../../utils/compareObject.util';
@@ -62,6 +64,7 @@ const GuarantorsTable = ({
   const [rowData, setRowData] = useState();
   const [crimeData, setCrimeData] = useState();
   const [openDialog, setOpenDialog] = useState({ open: false });
+  const [openFilePreview, setOpenFilePreview] = useState({ open: false });
 
   const deleteApplicant = (values) => {
     const obj = { ...values, is_active: values.is_active == 1 ? 0 : 1 };
@@ -90,27 +93,6 @@ const GuarantorsTable = ({
         setOpenDialog({ open: false })
       })
   };
-
-  //   return (
-  //     <div className={classes.wrapper}>
-  //       <Typography variant="h5" align={titleAlign} className={classes.title}>
-  //         No Guarantors Found
-  //       </Typography>
-  //       <div style={{ textAlign: 'center', marginTop: 8 }}>
-  //         <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorAdd}>
-  //           <Button
-  //             color="primary"
-  //             variant="outlined"
-  //             size="small"
-  //             onClick={() => onClickAddMenu('GUARANTOR')}
-  //           >
-  //             Add Guarantor
-  //           </Button>
-  //         </CheckAllowed>
-  //       </div>
-  //     </div>
-  //   );
-
 
   return (
     (guarantorsData?.length > 0) && (
@@ -150,52 +132,30 @@ const GuarantorsTable = ({
                   {row.mobile}
                 </TableCell>
                 <TableCell align="center">
-                  {row.aadhar_f_file_url && (
-                    <TableCell style={{ border: 0 }} align="center">
-                      <a
-                        className={classes.document}
-                        href={row.aadhar_f_file_url}
-                        target="_blank"
-                        title={'Aadhar Front'}
-                        rel="noreferrer"
-                      >
-                        {'Aadhar Front'}
-                      </a>
-                    </TableCell>
-                  )}
-                  {row.aadhar_b_file_url && (
-                    <TableCell style={{ border: 0 }} align="center">
-                      <a
-                        className={classes.document}
-                        href={row.aadhar_b_file_url}
-                        target="_blank"
-                        title={'Aadhar Back'}
-                        rel="noreferrer"
-                      >
-                        {'Aadhar Back'}
-                      </a>
-                    </TableCell>
-                  )}
-                  {row.pan_file_url && (
-                    <TableCell style={{ border: 0 }} align="center">
-                      <a
-                        className={classes.document}
-                        href={row.pan_file_url}
-                        target="_blank"
-                        title={'PAN'}
-                        rel="noreferrer"
-                      >
-                        {'PAN'}
-                      </a>
-                    </TableCell>
-                  )}
-                  {!row.pan_file_url &&
-                    !row.aadhar_b_file_url &&
-                    !row.aadhar_f_file_url && (
+                  {
+                    row.aadhar_file_url && (
                       <TableCell style={{ border: 0 }} align="center">
-                      -
-                    </TableCell>
-                  )}
+                        <div className={classes.document} onClick={() => { setOpenFilePreview({ open: true, image: row.aadhar_file_url, type: row?.aadhar_file_url?.endsWith('.pdf') }); }}>
+                          <p>{'Aadhaar'}</p>
+                        </div>
+                      </TableCell>
+                    )
+                  }
+                  {
+                    row.pan_file_url && (
+                      <TableCell style={{ border: 0 }} align="center">
+                        <div className={classes.document} onClick={() => { setOpenFilePreview({ open: true, image: row.pan_file_url, type: row?.pan_file_url?.endsWith('.pdf') }); }}>
+                          <p>{'PAN'}</p>
+                        </div>
+                      </TableCell>
+                    )
+                  }
+                  {
+                    !row.pan_file_url && !row.aadhar_file_url &&
+                      <TableCell style={{ border: 0 }} align="center">
+                        -
+                      </TableCell>
+                  }
                 </TableCell>
 
                 <TableCell align="right" onClick={(e) => e.stopPropagation()}>
@@ -292,6 +252,9 @@ const GuarantorsTable = ({
             }
           </div>
         </Drawer>
+        <FormDialog className={classes.dialogBox} onDownload={openFilePreview?.image} open={openFilePreview?.image} onClose={() => setOpenFilePreview({ open: false })}>
+          <FilePreview data={openFilePreview} />
+        </FormDialog>
       </div>
     ));
 };

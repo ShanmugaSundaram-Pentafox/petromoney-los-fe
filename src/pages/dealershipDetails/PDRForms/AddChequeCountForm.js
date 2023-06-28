@@ -5,28 +5,20 @@ import {
   Radio,
   Button,
 } from '@material-ui/core';
-import  toInteger from 'lodash-es/toInteger'
+import toInteger from 'lodash-es/toInteger'
 import { useSnackbar } from 'notistack';
-import React, { useEffect, useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import TextInput from '../../../components/TextInput/TextInput';
-import { addPdcCollection, getPdcCollection, updatePdcCollection } from '../../../services/pdc.service';
+import { addPdcCollection, updatePdcCollection } from '../../../services/pdc.service';
 
-const AddChequeCountForm = ({ dealershipId }) => {
+const AddChequeCountForm = ({ dealershipId, initData }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [allowEdit, setAllowEdit] = useState(false);
-  const [data, setData] = useState({})
-
-
+  const [data, setData] = useState();
   useEffect(() => {
-    getPdcCollection(dealershipId)
-      .then(res => {
-        if (res?.total_no_of_cheques) {
-          setAllowEdit(false)
-          setData(res)
-        }
-      })
-  }, [dealershipId])
-
+    if (initData)
+      setData(initData)
+  }, [initData])
   const addPdcData = () => {
     let d = {
       dpn: data?.dpn,
@@ -36,7 +28,6 @@ const AddChequeCountForm = ({ dealershipId }) => {
       updatePdcCollection(d, dealershipId)
         .then((res) => {
           setAllowEdit(false)
-          console.log('updatepdc collectoin',res)
           enqueueSnackbar(res, {
             anchorOrigin: {
               vertical: 'top',
@@ -81,19 +72,9 @@ const AddChequeCountForm = ({ dealershipId }) => {
   return (
     <>
       <div>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <div style={{ width: '40%' }}>
-            <p style={{ fontSize: 11, marginTop: 8, color: '#888', marginRight: 20, alignItems: 'center' }}>Total Number of Cheque</p>
-            <TextInput
-              number
-              disabled={!allowEdit}
-              direction='column'
-              onChange={(e) => setData({ ...data, total_no_of_cheques: e.target.value })}
-              value={data?.total_no_of_cheques}
-            />
-          </div>
-          <div style={{ marginLeft: 20 }}>
-            <p style={{ fontSize: 11, marginTop: 13, color: '#888', marginRight: 20, alignItems: 'center' }}>DPN</p>
+        <div style={{ display: 'flex', alignItems: 'center', marginTop: 12 }}>
+          <div>
+            <p style={{ fontSize: 11, color: '#888', marginRight: 20, alignItems: 'center' }}>DPN</p>
             <FormControl component="fieldset">
               <RadioGroup
                 row
@@ -115,13 +96,23 @@ const AddChequeCountForm = ({ dealershipId }) => {
               </RadioGroup>
             </FormControl>
           </div>
-        </div>
-        <div style={{ marginTop: 12, marginRight: 20 }}>
-          {
-            allowEdit ?
-              <Button variant='contained' color='primary' onClick={addPdcData}>{'Save & Continue'}</Button> :
-              <Button variant='contained' color='primary' onClick={() => setAllowEdit(true)}>{'Edit'}</Button>
-          }
+          <div style={{ width: '30%', marginLeft: 20 }}>
+            <p style={{ fontSize: 11, color: '#888', marginRight: 20, alignItems: 'center' }}>Total Number of Cheque</p>
+            <TextInput
+              number
+              disabled={!allowEdit}
+              direction='column'
+              onChange={(e) => setData({ ...data, total_no_of_cheques: e.target.value })}
+              value={data?.total_no_of_cheques}
+            />
+          </div>
+          <div style={{ marginLeft: 32, marginTop: 16 }}>
+            {
+              allowEdit ?
+                <Button variant='contained' color='primary' onClick={addPdcData}>{'Save & Continue'}</Button> :
+                <Button variant='contained' color='primary' onClick={() => setAllowEdit(true)}>{'Edit'}</Button>
+            }
+          </div>
         </div>
       </div>
     </>

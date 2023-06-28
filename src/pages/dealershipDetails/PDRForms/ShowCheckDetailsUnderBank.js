@@ -35,20 +35,22 @@ const ShowChequeDetailsUnderbank = ({ data }) => {
         <TableHead>
           <TableRow>
             <TableCell>Applicant Type</TableCell>
-            <TableCell align="center">Cheque Number</TableCell>
-            <TableCell align="center">Cheque type</TableCell>
-            <TableCell align="center">Amount Filled</TableCell>
-            <TableCell align="center">File</TableCell>
+            <TableCell>Account Details</TableCell>
+            <TableCell>Amount Filled</TableCell>
+            <TableCell>Cheque Details</TableCell>
+            <TableCell>Cheque type</TableCell>
+            <TableCell>File</TableCell>
           </TableRow>
         </TableHead>
-        <TableBody>
+        <TableBody style={{ backgroundColor: '#FFFFFF' }}>
           {data?.map(row => (
             <TableRow className={classes.tableRow} key={row.id} onClick={e => null}>
-              <TableCell align="center">{row.applicant_type.toUpperCase()}&nbsp;&nbsp;</TableCell>
-              <TableCell align="center">{row.cheque_number}&nbsp;&nbsp;</TableCell>
-              <TableCell align="center">{row.cheque_type.toUpperCase()}</TableCell>
-              <TableCell align="center">{row.amount_filled}</TableCell>
-              <TableCell align="center"><Button onClick={() => {setImageModal({ image: row.soft_copy_url, type: row?.soft_copy_url?.endsWith('.pdf') }); setOpenModal(true) }}>View file</Button></TableCell>
+              <TableCell>{row?.applicant_type.toUpperCase()}&nbsp;&nbsp;</TableCell>
+              <TableCell>{row.account_number} <br />{row.account_name.toUpperCase()}</TableCell>
+              <TableCell>{row.amount_filled}</TableCell>
+              <TableCell>{row.cheque_number}<br />{row.bank_name}, {row?.branch_name}</TableCell>
+              <TableCell>{row.cheque_type.toUpperCase()}</TableCell>
+              <TableCell><Button variant='outlined' size='small' color='primary' onClick={() => { setImageModal({ image: row.soft_copy_url, type: row?.soft_copy_url?.endsWith('.pdf') }); setOpenModal(true) }}>View file</Button></TableCell>
             </TableRow>
           ))}
         </TableBody>

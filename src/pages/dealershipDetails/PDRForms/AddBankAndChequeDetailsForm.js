@@ -1,3 +1,4 @@
+import { Typography } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
 import { makeStyles } from '@material-ui/styles';
@@ -119,6 +120,7 @@ const AddBankAndChequeDetailsForm = ({ dealer_id, isEdit, callback, currentUser,
   }
   return (
     <div>
+      <Typography variant='h6' style={{marginBottom:12}}>Add Bank Details</Typography>
       <Grid container spacing={2}>
         <Grid item md={6}>
           <TextInput

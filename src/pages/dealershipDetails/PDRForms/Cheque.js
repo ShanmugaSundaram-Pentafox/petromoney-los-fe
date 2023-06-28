@@ -8,11 +8,12 @@ import Modal from '@material-ui/core/Modal';
 import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { makeStyles } from '@material-ui/styles';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AddBankAndChequeDetailsForm from './AddBankAndChequeDetailsForm';
 import AddChequeCountForm from './AddChequeCountForm';
 import AddChequeDetailsForm from './AddChequeDetailsForm';
 import ShowChequeListTable from './ShowChequeListTable';
+import { getPdcCollectionDetails } from '../../../services/pdc.service';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -30,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     height: '100vh',
-    width: '70vw'
+    width: '55vw'
   },
   sidePanelFormContentWrapper: {
     backgroundColor: '#FAFAFA',
@@ -77,7 +78,39 @@ const Cheque = ({ dealershipId, dealershipData, callback, currentUser }) => {
   const classes = useStyles();
   const [openModal, setOpenModal] = useState(false);
   const [openBankModal, setOpenBankModal] = useState(false)
+  const [tableData, setTableData] = useState([])
+  const [collectionDetails, setCollectionDetails] = useState({})
 
+  useEffect(() => {
+    getData()
+  }, [dealershipId])
+  const getData = () => {
+    getPdcCollectionDetails(dealershipId)
+      .then((res) => {
+        if (res?.pdc_banks_and_cheques) {
+          let finalData = []
+          let d = res?.pdc_banks_and_cheques.forEach((item) => {
+            item.cheque_details.forEach((cheque) => {
+              finalData.push({
+                ...cheque,
+                account_name: item.account_name,
+                account_number: item.account_number,
+                applicant_type: item.applicant_type,
+                bank_name: item.bank_name,
+                branch_name: item.branch_name,
+                created_by: item.created_by,
+                id: item.id,
+                ifsc_code: item.ifsc_code,
+                verified: item.verified,
+              });
+            });
+          });
+          setTableData(finalData)
+        }
+        setCollectionDetails(res?.pdc_collection)
+      })
+      .catch((err) => console.log('err >>>', err))
+  }
 
   const handleClose = () => {
     callback();
@@ -95,9 +128,10 @@ const Cheque = ({ dealershipId, dealershipData, callback, currentUser }) => {
             <div style={{ display: 'flex' }}>
               <Typography variant='h6'>{dealershipData?.name} ({dealershipId})</Typography>
             </div>
-            <AddChequeCountForm dealershipId={dealershipId} dealershipData={dealershipData} />
+            <AddChequeCountForm initData={collectionDetails} dealershipId={dealershipId} dealershipData={dealershipData} />
             <Divider className={classes.divider} />
-            <ShowChequeListTable dealershipId={dealershipId} />
+            <Typography variant='h6' style={{ marginBottom: 12 }}>Cheque Details</Typography>
+            <ShowChequeListTable data={tableData} dealershipId={dealershipId} />
             <Divider />
 
           </div>
@@ -143,7 +177,7 @@ const Cheque = ({ dealershipId, dealershipData, callback, currentUser }) => {
         }}
       >
         <div className={classes.paper}>
-          <AddChequeDetailsForm callback={() => setOpenModal(false)} dealer_id={dealershipId} currentUser={currentUser} />
+          <AddChequeDetailsForm callback={() => { getData(); setOpenModal(false); }} dealer_id={dealershipId} currentUser={currentUser} />
         </div>
       </Modal>
       <Modal

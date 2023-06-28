@@ -100,7 +100,7 @@ export const getPdcCollectionDetails = (id) => {
     apiCall(`pdc-collection/${id}?consolidate_pdc=yes`)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
-          resolve(data?.pdc_banks_and_cheques || [])
+          resolve(data)
         } else {
           reject(message)
         }

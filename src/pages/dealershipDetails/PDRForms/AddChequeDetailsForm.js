@@ -1,4 +1,4 @@
-import { Checkbox, FormControlLabel, FormGroup } from '@material-ui/core';
+import { Checkbox, FormControlLabel, FormGroup, Typography } from '@material-ui/core';
 import { green } from '@material-ui/core/colors';
 import Grid from '@material-ui/core/Grid';
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
@@ -6,10 +6,10 @@ import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { useFormik } from 'formik';
-import toInteger  from 'lodash-es/toInteger';
+import toInteger from 'lodash-es/toInteger';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery } from 'react-query';
 import * as Yup from 'yup';
 import Button from '../../../components/CommonComponents/Button/Button';
 import TextInput from '../../../components/TextInput/TextInput';
@@ -18,7 +18,6 @@ import { getPdcBank } from '../../../services/pdc.service';
 
 const useStyles = makeStyles((theme) => ({
   actionFoot: {
-    // marginBottom: 16,
     marginTop: 12,
   },
   btn: {
@@ -54,21 +53,19 @@ const useStyles = makeStyles((theme) => ({
 
 const AddChequeDetailsForm = ({ dealer_id, isEdit, callback, currentUser, editable }) => {
   const { enqueueSnackbar } = useSnackbar();
-  const queryClient = useQueryClient()
   const classes = useStyles();
   const [isBlankCheque, setIsBlankCheque] = useState(false);
-  const { data: bankData = [] } = useQuery('pdc-bank-data', () => getPdcBank(2), {
+  const { data: bankData = [] } = useQuery('pdc-bank-data', () => getPdcBank(dealer_id), {
     refetchOnWindowFocus: false,
   })
 
-  const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues, setFieldValue } = useFormik({
+  const { values, errors, handleChange, handleSubmit, setFieldValue } = useFormik({
     initialValues: {},
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       applicant_type: Yup.string('Enter valid applicant type').nullable('Enter valid applicant type').required('Enter valid applicant type'),
       pdc_bank_details_id: Yup.number('select valid bank details').nullable('select valid bank details').required('select valid bank details'),
-      cheque_type: Yup.string('Enter cheque type').nullable('Enter cheque type').required('Enter cheque type'),
       amount_filled: Yup.string().nullable('Enter filled amount in cheque').required('Enter filled amount in cheque'),
       cheque_number: Yup.number('Enter valid cheque number').nullable('Enter valid cheque number').required('Enter valid cheque number'),
     }),
@@ -132,6 +129,7 @@ const AddChequeDetailsForm = ({ dealer_id, isEdit, callback, currentUser, editab
 
   return (
     <div>
+      <Typography variant='h6' style={{ marginBottom: 12 }}>Add cheque</Typography>
       <Grid container style={{ margin: 0 }} spacing={2}>
         <Grid item md={6}>
           <TextInput
@@ -144,6 +142,7 @@ const AddChequeDetailsForm = ({ dealer_id, isEdit, callback, currentUser, editab
             error={errors.pdc_bank_details_id}
             helperText={errors.pdc_bank_details_id}
           >
+            <option value=''>Choose bank</option>
             {
               bankData?.map((item, index) => <option key={index} value={item?.id}>{item.account_name} ({item.account_number})</option>)
             }
@@ -199,6 +198,7 @@ const AddChequeDetailsForm = ({ dealer_id, isEdit, callback, currentUser, editab
         <Grid item md={12}>
           <Grid container spacing={2}>
             <Grid item md={3}>
+              <Typography variant='h6' style={{ marginBottom: 12 }}>Add File</Typography>
               <div className={classes.grid}>
                 <input
                   type='file'

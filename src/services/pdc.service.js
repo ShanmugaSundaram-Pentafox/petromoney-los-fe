@@ -135,7 +135,7 @@ export const updatePdcCollection = (data, id) => {
     })
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
-          resolve(data)
+          resolve(message)
         } else {
           reject(message)
         }

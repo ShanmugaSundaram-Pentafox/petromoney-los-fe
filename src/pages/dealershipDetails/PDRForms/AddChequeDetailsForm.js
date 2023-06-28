@@ -6,7 +6,7 @@ import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { useFormik } from 'formik';
-import { toInteger } from 'lodash-es/toInteger';
+import toInteger  from 'lodash-es/toInteger';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';

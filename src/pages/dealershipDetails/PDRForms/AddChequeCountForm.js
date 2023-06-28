@@ -5,12 +5,14 @@ import {
   Radio,
   Button,
 } from '@material-ui/core';
-import { toInteger } from 'lodash-es/toInteger'
+import  toInteger from 'lodash-es/toInteger'
+import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import TextInput from '../../../components/TextInput/TextInput';
 import { addPdcCollection, getPdcCollection, updatePdcCollection } from '../../../services/pdc.service';
 
 const AddChequeCountForm = ({ dealershipId }) => {
+  const { enqueueSnackbar } = useSnackbar();
   const [allowEdit, setAllowEdit] = useState(false);
   const [data, setData] = useState({})
 
@@ -34,13 +36,45 @@ const AddChequeCountForm = ({ dealershipId }) => {
       updatePdcCollection(d, dealershipId)
         .then((res) => {
           setAllowEdit(false)
+          console.log('updatepdc collectoin',res)
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          });
         })
-        .catch((err) => console.log('addPDCCollection error >>>>', err))
+        .catch((err) => {
+          enqueueSnackbar(err, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          });
+        })
     }
     else {
       addPdcCollection(d, dealershipId)
-        .then((res) => console.log('successfully added >>>>>>>>', res))
-        .catch((err) => console.log('addPDCCollection error >>>>', err))
+        .then((res) => {
+          enqueueSnackbar(res, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'success',
+          });
+        })
+        .catch((err) => {
+          enqueueSnackbar(err, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          });
+        })
     }
   }
 
@@ -58,7 +92,7 @@ const AddChequeCountForm = ({ dealershipId }) => {
               value={data?.total_no_of_cheques}
             />
           </div>
-          <div style={{ display: 'flex', marginTop: 14, marginLeft: 20 }}>
+          <div style={{ marginLeft: 20 }}>
             <p style={{ fontSize: 11, marginTop: 13, color: '#888', marginRight: 20, alignItems: 'center' }}>DPN</p>
             <FormControl component="fieldset">
               <RadioGroup

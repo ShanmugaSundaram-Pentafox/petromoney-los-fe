@@ -507,7 +507,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         onClose={() => setOpenChequeDrawer(false)}
         variant="temporary"
       >
-        <Cheque dealershipId={id} currentUser={currentUser} dealershipData={dealershipData} />
+        <Cheque dealershipId={id} callback={() => setOpenChequeDrawer(false)} currentUser={currentUser} dealershipData={dealershipData} />
       </Drawer>
     </div >
   );

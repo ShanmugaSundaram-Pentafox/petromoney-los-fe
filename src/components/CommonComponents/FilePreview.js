@@ -91,11 +91,13 @@ export const AvatarCard = ({ file, title, tooltip }) => {
 const FilePreview = ({ data }) => {
   const [signedUrl, setSignedUrl] = useState()
   useEffect(() => {
-    getSignedUrl(data?.image)
-      .then((res) => {
-        setSignedUrl(res?.url)
-      })
-      .catch((err) => console.log('err >>>>>', err))
+    if (data?.image) {
+      getSignedUrl(data?.image)
+        .then((res) => {
+          setSignedUrl(res?.url)
+        })
+        .catch((err) => console.log('err >>>>>', err))
+    }
 
   }, [data?.image])
   return (

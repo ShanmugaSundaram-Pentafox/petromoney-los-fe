@@ -10,7 +10,7 @@ import { useMount } from 'react-use';
 import { filterStyles, Selector } from '../../../components/CommonComponents/FilterCard';
 import TextInput from '../../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../../config/accessControl';
-import { getAllRegions, getFilteredProducts, getZones } from '../../../services/common.service';
+import { getAllRegions, getFilteredProducts, getSignedUrl, getZones } from '../../../services/common.service';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
 const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, filters, currentUser, handleDownload, fileData, downloadLoading, searchLoading }) => {
@@ -136,7 +136,19 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
   }
   const downloadExistingReport = () => {
     if (fileData?.file_url) {
-      window.open(fileData?.file_url, '_blank')
+      getSignedUrl(fileData?.file_url)
+        .then((res) => {
+          window.open(res?.url, '_blank');
+        })
+        .catch(e => {
+          enqueueSnackbar(e, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          });
+        })
     }
     else {
       enqueueSnackbar('No report found please initiate download to get the report', {

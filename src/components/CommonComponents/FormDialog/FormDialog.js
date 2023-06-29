@@ -7,7 +7,8 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import CloudDownloadOutlinedIcon from '@material-ui/icons/CloudDownloadOutlined';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { getSignedUrl } from '../../../services/common.service';
 
 const styles = (theme) => ({
   root: {
@@ -74,10 +75,19 @@ const FormDialog = (props) => {
     onDownload,
     maxWidth,
   } = props;
+  const [fileUrl, setFileUrl] = useState()
+  useEffect(() => {
+    getSignedUrl(onDownload)
+      .then(res => {
+        setFileUrl(res?.url)
+      })
+      .catch(err => console.log(' getSignedUrl err >>>', err))
+
+  }, [onDownload])
 
   return (
     <Dialog onClose={onClose} aria-labelledby="form-dialog-title" open={open} maxWidth={maxWidth}>
-      <DialogTitle id="form-dialog-title" onDownload={onDownload} onClose={onClose}>
+      <DialogTitle id="form-dialog-title" onDownload={fileUrl} onClose={onClose}>
         {title}
       </DialogTitle>
       <DialogContent dividers>

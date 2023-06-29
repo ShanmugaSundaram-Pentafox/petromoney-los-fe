@@ -6,6 +6,7 @@ import AudiotrackIcon from '@material-ui/icons/Audiotrack';
 import EditIcon from '@material-ui/icons/Edit';
 import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
 import ListAltIcon from '@material-ui/icons/ListAlt';
+import PermMediaIcon from '@material-ui/icons/PermMedia';
 import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
 import { format } from 'date-fns';
 import { useSnackbar } from 'notistack';
@@ -16,6 +17,7 @@ import FormDialog from '../../../components/CommonComponents/FormDialog/FormDial
 import TextInput from '../../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { ReactComponent as DeleteIcon } from '../../../icons/deleteIcon.svg';
+import { getSignedUrl } from '../../../services/common.service';
 import { deleteDocsImage, editDocsImage } from '../../../services/dealerships.service';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
@@ -85,7 +87,7 @@ const usePreviewStyles = makeStyles((theme) => ({
     display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 19, width: '100%'
   }
 }))
-const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name, fileId, dealershipId, editable,crimeCheck, currentUser }) => {
+const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name, fileId, dealershipId, editable, crimeCheck, currentUser }) => {
   const queryClient = useQueryClient()
   const [imageModal, setImageModal] = useState({});
   const classes = usePreviewStyles();
@@ -128,6 +130,21 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
         });
       });
   }
+  const handleDownload = (fileUrl) => {
+    getSignedUrl(fileUrl)
+      .then((res) => {
+        window.open(res?.url, '_blank');
+      })
+      .catch(e => {
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      })
+  }
   return (
     <>
       {
@@ -135,11 +152,11 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
           <Tooltip title={DocName ? `${file_name} (${updatedDateTime})` : 'click to view'}>
             <span>
               <div className={classes.container}
-                onClick={() => csvFileTypes.includes(fileType) ? window.open(url) : audioFileTypes.includes(fileType) ? window.open(url) : setImageModal({ open: true, image: url, type: fileType })}
+                onClick={() => csvFileTypes.includes(fileType) ? handleDownload(url) : audioFileTypes.includes(fileType) ? handleDownload(url) : setImageModal({ open: true, image: url, type: fileType })}
               >
                 {
                   imgFileTypes.includes(fileType) ?
-                    <img src={url} height="100%" width="100%" style={{ borderRadius: 6, padding: 1, objectFit: 'cover' }} alt={url} />
+                    <PermMediaIcon style={{ color: '#63686E' }} />
                     : fileType === 'pdf' ?
                       <PictureAsPdfIcon style={{ color: '#63686E' }} />
                       : audioFileTypes.includes(fileType) ?
@@ -148,15 +165,15 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
                 }
                 {
                   DocName &&
-                  <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.delete}>
-                    <div className={classes.attachmentDelete} onClick={(e) => { e.stopPropagation(); setDeleteModal({ open: true, fileId: fileId }) }}><DeleteIcon width={16} /></div>
-                  </CheckAllowed>
+                    <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.delete}>
+                      <div className={classes.attachmentDelete} onClick={(e) => { e.stopPropagation(); setDeleteModal({ open: true, fileId: fileId }) }}><DeleteIcon width={16} /></div>
+                    </CheckAllowed>
                 }
                 {
                   DocName &&
-                  <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.edit}>
-                    <div className={classes.attachmentEdit} onClick={(e) => { e.stopPropagation(); setEditModal({ open: true, fileId: fileId, fileUrl: url, fileName: file_name }) }}><EditIcon fontSize='small' style={{ color: 'white' }} /></div>
-                  </CheckAllowed>
+                    <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.edit}>
+                      <div className={classes.attachmentEdit} onClick={(e) => { e.stopPropagation(); setEditModal({ open: true, fileId: fileId, fileUrl: url, fileName: file_name }) }}><EditIcon fontSize='small' style={{ color: 'white' }} /></div>
+                    </CheckAllowed>
                 }
               </div>
               <h5 style={{ width: 100, whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden', marginLeft: 15 }}>{file_name}</h5>
@@ -224,7 +241,7 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
   )
 }
 
-const DocListPreview = ({ docName, upload, file, id, docId, dealershipId, editable,crimeCheck, currentUser }) => {
+const DocListPreview = ({ docName, upload, file, id, docId, dealershipId, editable, crimeCheck, currentUser }) => {
   const classes = useStyles();
   const [collapse, setCollapse] = useState(false);
   const handleCollapse = () => {
@@ -243,11 +260,11 @@ const DocListPreview = ({ docName, upload, file, id, docId, dealershipId, editab
         }
         {
           upload &&
-          <div className={classes.titleBtns}>
-            <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.upload}>
-              <Button size='small' style={{ marginLeft: 15 }} variant='outlined' onClick={upload} color='primary' startIcon={<AddIcon style={{ fontSize: 'small' }} />}>Upload</Button>
-            </CheckAllowed>
-          </div>
+            <div className={classes.titleBtns}>
+              <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.upload}>
+                <Button size='small' style={{ marginLeft: 15 }} variant='outlined' onClick={upload} color='primary' startIcon={<AddIcon style={{ fontSize: 'small' }} />}>Upload</Button>
+              </CheckAllowed>
+            </div>
         }
       </div>
       <div

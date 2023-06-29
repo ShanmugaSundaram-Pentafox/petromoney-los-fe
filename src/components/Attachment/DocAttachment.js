@@ -2,10 +2,10 @@ import { Grid, makeStyles, Tooltip } from '@material-ui/core';
 import { green } from '@material-ui/core/colors';
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import DeleteIcon from '@material-ui/icons/DeleteOutlineOutlined';
+import PermMediaIcon from '@material-ui/icons/PermMedia';
 import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
 import React, { useState } from 'react';
 import { ReactComponent as UploadingIcon } from '../../icons/uploadIcon.svg';
-import Thumbnail from '../../image/thumbnailAttach.png';
 import FilePreview from '../CommonComponents/FilePreview';
 import FormDialog from '../CommonComponents/FormDialog/FormDialog';
 
@@ -63,7 +63,9 @@ export const DocAttachment = ({ imgUrl, onUpload, onDelete, docName, action = fa
               typeof (imgUrl) === 'string' || imgUrl === null || imgUrl === undefined ?
                 imgUrl?.endsWith('.pdf') ?
                   <PictureAsPdfIcon style={{ color: '#63686E' }} /> :
-                  <img src={imgUrl || Thumbnail} alt={docName} height="100%" width="100%" style={{ borderRadius: 6, padding: 1, objectFit: 'cover', display: 'block' }} /> :
+                  // <img src={imgUrl || Thumbnail} alt={docName} height="100%" width="100%" style={{ borderRadius: 6, padding: 1, objectFit: 'cover', display: 'block' }} />
+                  <PermMediaIcon style={{ color: '#63686E' }} />
+                :
                 <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
             }
             <div className={classes.overlay} style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(201,201,201,0) 0%, rgba(0,0,0,0.7598389697675946) 100%)' }}>{docName}</div>

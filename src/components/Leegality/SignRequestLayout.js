@@ -290,27 +290,30 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
               {
                 loading ? (
                   <CircularProgress className="circular-progress-color" variant="determinate" color="green" />
-                ) : (loansData?.document_id && !reinitiate ? (
-                  <LeegalityLayout docId={loansData?.document_id} dealershipId={dealershipId} currentUser={currentUser} />
-                ) : (
-                  <Grid container spacing={2}>
-                    {
-                      type === 'sanction' || type === 'application' ? (
-                        <LeegalityPdfView pdfUrl={pdfUrl} loading={pdfLoading} />
-                      ) : (
-                        <LeegalityAgreementTable
-                          loanAmount={loanAmount}
-                          dealership={dealership}
-                          dealers={applicants?.filter(item => item?.category === 'DEALER')}
-                          applicants={applicants?.filter(item => item?.category === 'COAPPLICANT')}
-                          guarantor={applicants?.filter(item => item?.category === 'GUARANTOR')}
-                          productId={productId}
-                        />
-                      )
-                    }
-                    <LeegalityInvitees dealers={applicants?.filter(item => item?.category === 'DEALER')} applicants={applicants?.filter(item => item?.category === 'COAPPLICANT')} guarantor={applicants?.filter(item => item?.category === 'GUARANTOR')} updateSelectedDealers={updateSelectedDealers} updateSelectedCoAppicants={updateSelectedCoAppicants} updateSelectedGuarantors={updateSelectedGuarantors} />
-                  </Grid>
-                ))
+                )
+                  : 
+                  (loansData?.document_id && !reinitiate ? (
+                    <LeegalityLayout docId={loansData?.document_id} dealershipId={dealershipId} currentUser={currentUser} />
+                  )
+                    : (
+                      <Grid container spacing={2}>
+                        {
+                          type === 'sanction' || type === 'application' ? (
+                            <LeegalityPdfView pdfUrl={pdfUrl} loading={pdfLoading} />
+                          ) : (
+                            <LeegalityAgreementTable
+                              loanAmount={loanAmount}
+                              dealership={dealership}
+                              dealers={applicants?.filter(item => item?.category === 'DEALER')}
+                              applicants={applicants?.filter(item => item?.category === 'COAPPLICANT')}
+                              guarantor={applicants?.filter(item => item?.category === 'GUARANTOR')}
+                              productId={productId}
+                            />
+                          )
+                        }
+                        <LeegalityInvitees dealers={applicants?.filter(item => item?.category === 'DEALER')} applicants={applicants?.filter(item => item?.category === 'COAPPLICANT')} guarantor={applicants?.filter(item => item?.category === 'GUARANTOR')} updateSelectedDealers={updateSelectedDealers} updateSelectedCoAppicants={updateSelectedCoAppicants} updateSelectedGuarantors={updateSelectedGuarantors} />
+                      </Grid>
+                    ))
               }
             </DialogContent>
           )

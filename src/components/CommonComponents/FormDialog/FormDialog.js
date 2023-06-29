@@ -7,7 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import CloudDownloadOutlinedIcon from '@material-ui/icons/CloudDownloadOutlined';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { getSignedUrl } from '../../../services/common.service';
 
 const styles = (theme) => ({
@@ -31,16 +31,24 @@ const styles = (theme) => ({
 
 const DialogTitle = withStyles(styles)((props) => {
   const { children, classes, onClose, onDownload, ...other } = props;
+
+  const handleClick = () => {
+    if (onDownload) {
+      getSignedUrl(onDownload)
+        .then(res => {
+          window.open(res?.url)
+        })
+        .catch(err => console.log(' getSignedUrl err >>>', err))
+    }
+  }
   return (
     <MuiDialogTitle disableTypography className={classes.root} {...other}>
       <Typography variant="h5">{children}</Typography>
       {
         onDownload ? (
-          <a href={onDownload} target="_blank" rel="noreferrer">
-            <IconButton aria-label="close" className={classes.downloadButton} onClick={onDownload}>
-              <CloudDownloadOutlinedIcon />
-            </IconButton>
-          </a>
+          <IconButton aria-label="close" className={classes.downloadButton} onClick={handleClick}>
+            <CloudDownloadOutlinedIcon />
+          </IconButton>
         ) : null
       }
       {onClose ? (
@@ -75,19 +83,10 @@ const FormDialog = (props) => {
     onDownload,
     maxWidth,
   } = props;
-  const [fileUrl, setFileUrl] = useState()
-  useEffect(() => {
-    getSignedUrl(onDownload)
-      .then(res => {
-        setFileUrl(res?.url)
-      })
-      .catch(err => console.log(' getSignedUrl err >>>', err))
-
-  }, [onDownload])
 
   return (
     <Dialog onClose={onClose} aria-labelledby="form-dialog-title" open={open} maxWidth={maxWidth}>
-      <DialogTitle id="form-dialog-title" onDownload={fileUrl} onClose={onClose}>
+      <DialogTitle id="form-dialog-title" onDownload={onDownload} onClose={onClose}>
         {title}
       </DialogTitle>
       <DialogContent dividers>
